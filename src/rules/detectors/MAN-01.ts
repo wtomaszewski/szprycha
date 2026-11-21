@@ -43,6 +43,13 @@ export class ManeuverDetector {
         : this.signal;
   }
 
+  signalingFor(tick: number) {
+    return (
+      this.activeSignal !== 'none' &&
+      (tick - this.signalSince) / TICKS_PER_SECOND >= this.minimum
+    );
+  }
+
   evaluate(rider: RiderState, zones: ZoneTracker, tick: number) {
     this.junctionEntryHeading = undefined;
     this.turnedLeft = false;

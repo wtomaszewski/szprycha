@@ -7,7 +7,13 @@ import {
 } from '../world/WorldModel';
 
 type PriorityRule =
-  'PIER-01' | 'PIER-02' | 'PIER-03' | 'PIER-08' | 'PIER-09' | 'ZNAK-S2';
+  | 'PIER-01'
+  | 'PIER-02'
+  | 'PIER-03'
+  | 'PIER-08'
+  | 'PIER-09'
+  | 'ZNAK-S2'
+  | 'ZNAK-A7';
 interface Path {
   lane: Lane;
   end: Vec2;
@@ -146,8 +152,11 @@ export class IntersectionManager {
     at: number,
     env: EnvState,
   ): PriorityRule | undefined {
-    const phase = this.world.phase(lane, at, env);
-    const otherPhase = this.world.phase(other, at, env);
+    const phase = this.world.trafficPhase(lane, at, env);
+    const otherPhase = this.world.trafficPhase(other, at, env);
+    if (env.officerOrders?.[lane.id] || env.officerOrders?.[other.id]) {
+      if (phase !== 'green' || otherPhase !== 'green') return;
+    }
     if (phase !== 'off' || otherPhase !== 'off') {
       if (
         phase === 'arrow' &&
@@ -182,6 +191,10 @@ export class IntersectionManager {
       other.priorityClass === 'roundabout_in'
     )
       return;
+    if (phase === 'off') {
+      if (lane.stopSign?.code === 'A-7' && !other.stopSign) return 'ZNAK-A7';
+      if (other.stopSign?.code === 'A-7' && !lane.stopSign) return;
+    }
     if (
       phase === 'off' &&
       lane.priorityClass === 'equal' &&

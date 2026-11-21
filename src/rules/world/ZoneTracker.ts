@@ -1,3 +1,4 @@
+import { distanceInto } from '../priority/ConflictGeometry';
 import type { RiderState } from '../types';
 import {
   contains,
@@ -11,6 +12,8 @@ import {
 
 export class ZoneTracker {
   zone?: Zone;
+  roadway?: Zone;
+  cycleSignal?: Crossing;
   crossing?: Crossing;
   intersection?: Intersection;
   lane?: Lane;
@@ -40,6 +43,36 @@ export class ZoneTracker {
         this.crossing = crossing;
         break;
       }
+    }
+    this.cycleSignal = undefined;
+    const bikeInfra =
+      this.zone?.kind === 'bike_lane' || this.zone?.kind === 'bike_path';
+    if (this.crossing?.kind === 'bike' && this.crossing.signal)
+      this.cycleSignal = this.crossing;
+    else if (bikeInfra) {
+      for (const crossing of this.world.crossings) {
+        if (
+          crossing.kind === 'bike' &&
+          crossing.signal &&
+          (crossing.axis === 'x'
+            ? Math.abs(dx) > Math.abs(dy)
+            : Math.abs(dy) > Math.abs(dx)) &&
+          distanceInto(crossing, pos, heading) <= 3
+        ) {
+          this.cycleSignal = crossing;
+          break;
+        }
+      }
+    }
+    this.roadway = undefined;
+    if (!this.zone || this.zone.kind === 'roadway') {
+      const horizontal = Math.abs(dx) > Math.abs(dy);
+      this.roadway = this.world.zones.find(
+        (zone) =>
+          zone.kind === 'roadway' &&
+          zone.width > zone.height === horizontal &&
+          contains(zone, pos),
+      );
     }
     this.intersection = undefined;
     for (const intersection of this.world.intersections) {

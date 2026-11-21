@@ -7,7 +7,7 @@ Stan: 21.11.2026. Gałąź: `feat/15-m3b-uczestnicy`.
 | M0     | Szkielet, menu, treści, narzędzia i CI web  | Ukończony — kontrole lokalne i GitHub Actions zielone                                        |
 | M1     | Jazda, testowa mapa, kamera, bloki 2.5D     | Grywalny prototyp; lokalne kontrole zielone, test fizycznego Androida pozostaje do wykonania |
 | M2     | Silnik zasad v1                             | Scalony w `main` w PR #13                                                                    |
-| M3     | Ruch drogowy AI i pozostałe detektory       | M3a scalone w main. M3b gotowe do recenzji. M3c pozostaje otwarte.                           |
+| M3     | Ruch drogowy AI i pozostałe detektory       | Zakończone w PR domykającym #16, gotowe do recenzji.                                         |
 | M4     | Misje i fabuła                              | Nierozpoczęty                                                                                |
 | M5     | Punktacja, progresja, zapis                 | Nierozpoczęty                                                                                |
 | M6     | Mapy Warszawy i Wrocławia                   | Nierozpoczęty                                                                                |
@@ -124,4 +124,11 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 
 - Piesi chodzą po chodnikach i korzystają z zebr z sygnalizacją oraz bez niej. Rowerzyści AI jeżdżą po DDR, pasie rowerowym i przy prawej krawędzi jezdni. Trasy i kontrolę przejazdów opisują dane Tiled.
 - Tramwaj korzysta ze wspólnego rozstrzygania pierwszeństwa i obsługuje przystanek bez wysepki. Pojazd uprzywilejowany włącza niebieskie światła i syrenę, a auta zjeżdżają na prawo i czekają. F3 pokazuje uczestników i stan zdarzenia.
-- Testy obejmują dwa 10-minutowe przebiegi wszystkich typów uczestników, deterministyczny reset i scenariusze YAML interakcji z graczem. Werdykty PIER-07, PIER-09 i MSC-02 pozostają do M3c. Zachowania oparte na SYG-02, PIER-04, PIER-05 i PIER-09 korzystają z listy do konsultacji w [NOTES_FOR_HUMAN.md](NOTES_FOR_HUMAN.md).
+- Testy obejmują dwa 10-minutowe przebiegi wszystkich typów uczestników, deterministyczny reset i scenariusze YAML interakcji z graczem. PIER-07, PIER-09 i MSC-02 zostały podłączone do tych stanów w M3c. Zachowania oparte na SYG-02, PIER-04, PIER-05 i PIER-09 korzystają z listy do konsultacji w [NOTES_FOR_HUMAN.md](NOTES_FOR_HUMAN.md).
+
+## M3c — pozostałe detektory
+
+- PR #20 dodał 19 detektorów. Część 2 dodaje 18 detektorów, uzupełnia scenariusze i usuwa listę przejściową z testu pokrycia.
+- Każda reguła ma jawny tryb oceny. GDZIE-10 i MSC-05 są w quizie, a warianty praktyczne wymagają misji z nadzorowaną eskortą lub pełną kolumną.
+- Testy ruchu AI sprawdzają po 10 minut symulacji wszystkich uczestników dla dwóch ziaren. Kontrolują postęp, kolizje, wysiadanie i ustępowanie pojazdowi uprzywilejowanemu.
+- Miasteczko dostarcza m.in. jezdnie, pas, przejazd z sygnalizacją rowerową i wloty A-7. Scenariusze uzupełniają je o warianty oznakowania, pobocza, strefę zamieszkania i polecenia kierującego ruchem. Oznakowanie dzielnic i zdarzenia misji, w tym prezentacja poleceń, należą do M4 i M6. Flagi merytoryczne pozostają do konsultacji.

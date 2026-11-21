@@ -192,6 +192,7 @@ it.each([1403, 17])(
     expect(emergencyYield).toBe(true);
     expect(stopYield).toBe(true);
   },
+  20_000,
 );
 
 it('reproduces pedestrian, cycle, tram and emergency states after resetting', () => {

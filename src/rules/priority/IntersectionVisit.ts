@@ -7,6 +7,8 @@ import { oncomingPriority } from '../detectors/PIER-03';
 import { roundaboutPriority } from '../detectors/PIER-08';
 import { tramPriority } from '../detectors/PIER-09';
 import { trafficLight } from '../detectors/SYG-01';
+import { officerStop } from '../detectors/SYG-03';
+import { yieldSign } from '../detectors/ZNAK-A7';
 import { conditionalArrow } from '../detectors/ZNAK-S2';
 import { stopSign } from '../detectors/ZNAK-STOP';
 import {
@@ -156,7 +158,16 @@ export class IntersectionVisit {
       return;
     }
     this.debugLane = lane;
-    const phase = (this.debugPhase = this.world.phase(lane, at, env));
+    const order = env.officerOrders?.[lane.id];
+    const cyclePhase =
+      !order && zones.cycleSignal
+        ? this.world.crossingPhase(zones.cycleSignal, at, env)
+        : 'off';
+    const cycleControl = cyclePhase !== 'off';
+    const phase = (this.debugPhase = cycleControl
+      ? cyclePhase
+      : this.world.trafficPhase(lane, at, env));
+    if (order || cycleControl) this.stoppedForLight = false;
     const maneuver: Maneuver =
       rider.maneuver ??
       (phase === 'arrow' && lane.arrow
@@ -261,6 +272,8 @@ export class IntersectionVisit {
     }
     this.crossed = true;
 
+    if (order === 'stop') return officerStop(lane, rider, at);
+    if (cycleControl) return;
     if (phase !== 'off') {
       if (phase === 'arrow' && this.world.arrowMatches(lane, maneuver)) {
         let candidate = conditionalArrow(lane, rider, at, this.stopped);
@@ -319,6 +332,15 @@ export class IntersectionVisit {
         priority = rightHand(kind, rider, at, lane, opportunity);
       if (opportunity.ruleId === 'PIER-02')
         priority = subordinateRoad(kind, rider, at, lane, opportunity);
+      if (
+        dangerous &&
+        kind !== 'good' &&
+        (opportunity.ruleId === 'ZNAK-A7' || opportunity.ruleId === 'PIER-02')
+      )
+        priority = preferVerdict(
+          priority,
+          yieldSign(kind, lane, rider, at, opportunity),
+        );
       if (opportunity.ruleId === 'PIER-03' && rider.maneuver)
         priority = oncomingPriority(kind, rider, at, lane, opportunity);
       if (opportunity.ruleId === 'PIER-08')

@@ -4,6 +4,10 @@ import { sidewalkException, sidewalkVerdict } from './detectors/GDZIE-04';
 import { sidewalkPedestrian } from './detectors/GDZIE-05';
 import { pedestrianCrossing } from './detectors/GDZIE-06';
 import { HelmetDetector } from './detectors/KASK-01';
+import { RightTurnDetector } from './detectors/MAN-02';
+import { passingTechnique } from './detectors/MAN-04';
+import { passingOnRight } from './detectors/MAN-05';
+import { restrictedPassing } from './detectors/MAN-12';
 import { ManeuverDetector } from './detectors/MAN-01';
 import { shoulderCheck } from './detectors/MAN-03';
 import { ParkedClearanceDetector } from './detectors/MAN-06';
@@ -19,6 +23,11 @@ import { TurningCrossingDetector } from './detectors/PIER-04';
 import { BikeCrossingDetector } from './detectors/PIER-05';
 import { EmergencyYieldDetector } from './detectors/PIER-07';
 import { IntersectionManager } from './priority/IntersectionManager';
+import {
+  PassingMonitor,
+  type PassingObservation,
+} from './priority/PassingMonitor';
+import { RoadVisit } from './world/RoadVisit';
 import { IntersectionVisit } from './priority/IntersectionVisit';
 import {
   TICKS_PER_SECOND,
@@ -53,6 +62,25 @@ export class RuleEngine {
   private readonly emergency = new EmergencyYieldDetector();
   private readonly emitStartingVerdict = (verdict?: Verdict) =>
     this.emit(verdict);
+  private readonly road: RoadVisit;
+  private readonly passing: PassingMonitor;
+  private readonly rightTurn = new RightTurnDetector();
+  private readonly onPass = (
+    pass: PassingObservation,
+    rider: RiderState,
+    at: number,
+  ) => {
+    const restricted = restrictedPassing(pass, rider, at);
+    if (restricted || pass.nearRail) {
+      this.emit(restricted);
+      return;
+    }
+    const clearance = this.settings.silnik.odstep_od_zaparkowanych_m;
+    this.emit(
+      passingOnRight(pass, rider, at, clearance) ??
+        passingTechnique(pass, rider, at, clearance),
+    );
+  };
   private readonly bikeInfra = new BikeInfrastructureDetector();
   private readonly maneuver: ManeuverDetector;
   private readonly listeners = new Set<Listener>();
@@ -73,6 +101,8 @@ export class RuleEngine {
     private readonly settings: GameContent['balans'],
     manager = new IntersectionManager(world),
   ) {
+    this.road = new RoadVisit(world, settings.silnik);
+    this.passing = new PassingMonitor(world);
     this.railway = new RailwayDetector(world);
     this.zones = new ZoneTracker(world);
     this.junction = new IntersectionVisit(world, settings.silnik, manager);
@@ -128,6 +158,28 @@ export class RuleEngine {
         this.signal,
       ),
     );
+    const leftCheck = rider.shoulderCheck?.lastLeftAt ?? -Infinity;
+    const checked =
+      leftCheck <= at &&
+      at - leftCheck <= this.settings.silnik.obejrzenie_okno_s;
+    const preparation =
+      checked && this.signal === 'left' && this.maneuver.signalingFor(this.tick)
+        ? this.signal
+        : 'none';
+    this.passing.evaluate(rider, agents, at, env, preparation, this.onPass);
+    this.road.evaluate(
+      rider,
+      agents,
+      env,
+      this.tick,
+      this.zones,
+      this.tick > 0 ? this.previous : undefined,
+      this.junction.debugLane,
+      this.passing.active,
+      this.signal,
+      this.emitStartingVerdict,
+    );
+    this.emit(this.rightTurn.evaluate(rider, this.zones, at));
     const maneuver = this.maneuver.evaluate(rider, this.zones, this.tick);
     this.emit(maneuver);
     const entryHeading = this.maneuver.junctionEntryHeading;

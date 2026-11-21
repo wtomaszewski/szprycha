@@ -105,10 +105,20 @@ Ważność (`kind`) domyślnie z `przepisy.yaml` (`waga_bledu`), detektor może 
 
 **Stan roweru i nawyki.** MAN-06 mierzy boczny odstęp od obrysów pojazdów w warstwie `parked_cars`. Światła oceniają WYP-04, WYP-05 i MSC-04. Ich działanie można sprawdzić po zmroku, ustawianym przez `dusk_at_s` mapy oraz przełącznik świateł w sterowaniu. MAN-09, MAN-10 i MAN-11 odczytują stan rąk i nóg, przytrzymanie pojazdu, pasażera na jednoosobowym rowerze i telefon w ręku. Scenariusze mogą podać te stany bezpośrednio. Zdarzenia z propozycją podwózki i telefonem będą dostarczane przez misje.
 
+**Jazda i dostęp w M3c, część 2.** GDZIE-02 sprawdza kierunek oznaczonego pasa, a GDZIE-01 nadal ocenia wybór infrastruktury przypisanej do kierunku. GDZIE-03 ocenia jazdę na prostym, czytelnym obrysie jezdni. Wykrywa jazdę ponad 2 m od prawej krawędzi po sekundzie obserwacji poza skrzyżowaniem, przejściem i rozpoznanym manewrem. Próg jest tolerancją ćwiczenia. GDZIE-03b używa pary `lanes.parallelShoulder` i `zones.shoulderUsable`, z uwzględnieniem kierunku, ciągłości pobocza, pogody i uczestników na poboczu. Pierwszeństwo ma przypisana droga lub pas dla rowerów. GDZIE-07 ocenia limit 20 km/h i konflikt z pieszym w obrębie `living_zone`, również gdy strefa pokrywa jezdnię. Przy jeździe obok siebie GDZIE-08 wykrywa hamowanie ochronne pojazdu jadącego za parą. `shared_path` obejmuje wspólną drogę, a opcjonalne `sharedSide: pedestrian | bike` oznacza wydzieloną część. GDZIE-11 sprawdza wybór części i zachowanie wobec pieszych.
+
+Znaki B-1, B-2 i B-9 wskazują objęty odcinek przez `signs.affects` (identyfikator strefy lub wlotu). B-1 dotyczy całego oznaczonego odcinka w obu kierunkach. B-2 i B-9 korzystają z `facing`, a `exceptBicycles: true` na B-1 lub B-2 opisuje wyjątek dla roweru gracza. GDZIE-09 odczytuje odcinek `no_bikes`, również bez osobnego znaku. ZNAK-B9 obsługuje znak wskazujący odcinek bez takiej strefy. ZNAK-A7 wykorzystuje macierz konfliktów i działa również na wlocie, na którym pierwszeństwo ustalono tylko za pomocą A-7, bez osobnej klasy drogi głównej.
+
+**Światła i kierowanie ruchem.** SYG-02 sprawdza wjazd na przejazd rowerowy z przypisanym `crossing_signals` na czerwonym. Na tym torze jazdy obowiązuje faza dla roweru. Sygnalizacja jezdni nadal obowiązuje na sąsiednim pasie. SYG-03 wykorzystuje jawne polecenia `EnvState.officerOrders` (identyfikator wlotu → `stop` lub `go`). Polecenie nadpisuje sygnały i znaki na danym wlocie, a z tego samego rozstrzygnięcia korzysta AI. Misje dostarczą polecenia oraz animację osoby kierującej ruchem.
+
+**Manewry.** MAN-02 obserwuje prawy skręt od wjazdu do wyjazdu i mierzy odległość od krawędzi na obu końcach. MAN-04, MAN-05 i MAN-12 korzystają ze zmiany kolejności względem tego samego uczestnika lub zaparkowanego auta. Uwzględniają zmianę toru, wcześniejsze spojrzenie i sygnał, odstęp, stronę oraz ruch drugiego pojazdu. Przy wyprzedzaniu z prawej dymek ostrzega przed małym odstępem lub możliwym skrętem pojazdu w prawo. Na niekierowanym przejściu, przejeździe i bezpośrednio przed nimi oraz na niekierowanym skrzyżowaniu poza rondem MAN-12 wykrywa wyprzedzenie. Wykrywa też ominięcie pojazdu, który zatrzymał się w celu ustąpienia pieszemu. Przy przejeździe kolejowym wyprzedzenie ocenia MSC-01. MAN-08 szacuje drogę zatrzymania odpowiednio do pogody. Bierze pod uwagę pieszego na torze jazdy, zajęty wyjazd oraz oznaczoną nierówną nawierzchnię (`surface: rough`).
+
 ## 6. Dobre nawyki (werdykty `good`) — lista obowiązkowa
 Werdykt `good` wymaga zachowania z tej listy oraz pola `dobry_nawyk` przy regule.
 
 Zasygnalizowany manewr · ustąpione pierwszeństwo · zatrzymanie na STOP · zatrzymanie na czerwonym · przeprowadzenie roweru przez przejście · obejrzenie się przed manewrem · włączenie świateł o zmroku (raz na misję) · zachowanie odstępu od zaparkowanych aut (> 1 m) · zjazd na prawo przed pojazdem uprzywilejowanym · przepuszczenie pieszych na przystanku bez wysepki · wybór DDR zamiast jezdni · zwolnienie na chodniku przy pieszych · odebranie telefonu dopiero po zatrzymaniu.
+
+MAN-04 daje pochwałę za odpowiednio wczesne obejrzenie się i zasygnalizowanie zmiany toru w lewo przed bezpiecznym ominięciem lub wyprzedzeniem.
 
 Przepuszczenie tramwaju, przepuszczenie pasażera oraz ułatwienie przejazdu pojazdowi uprzywilejowanemu są w M3b zachowaniami symulacji. Detektory PIER-07, PIER-09 i MSC-02 wykorzystują te same stany uczestników w M3c.
 
@@ -140,6 +150,8 @@ Dla każdej reguły testujemy `good`, `minor` i `major` tam, gdzie dana waga ist
 
 Scenariusze [M3c, część 1](../tests/rules/m3c.yaml) uzupełniają format o próbki położenia i stanu uczestników, wymuszone stany zapór oraz sprawdzenie wybranych dowodów werdyktu. Część scenariuszy ronda zmienia klasy wlotów i oznakowanie w pliku YAML.
 
+Scenariusze [M3c, część 2](../tests/rules/m3c-part2.yaml) korzystają z tej samej mapy bazowej i mogą dodać obiekty Tiled do istniejących warstw. Sprawdzają m.in. warunki graniczne, hierarchię wlotów, rozpoznanie manewrów i brak podwójnego werdyktu.
+
 Scenariusze [M3b](../tests/sim/m3b.yaml) uruchamiają rzeczywistą symulację. Sprawdzają pierwszeństwo tramwaju, jego reakcję na zablokowanie toru i sygnalizację oraz zatrzymanie pojazdu uprzywilejowanego przed graczem i wznowienie przejazdu po zjechaniu gracza na prawo. Test dziesięciu minut obejmuje wszystkie typy uczestników, postęp każdego z nich, odstępy, wysiadanie i ustępowanie pojazdowi z sygnałami.
 
 ## 9. Debug overlay (F3)
@@ -156,7 +168,9 @@ Pole `detektor` w `przepisy.yaml` jest obowiązkowe. `sim` wymaga detektora wyko
 
 MSC-05 jest oznaczone jako `quiz-only`, ponieważ ocenienie liczebności i odległości pomiędzy całymi kolumnami poza oskryptowaną misją wymaga danych, których ruch swobodny nie posiada. Pierwsza pomoc pozostaje w scence. KASK-01 zachowuje ochronny werdykt za jazdę bez kasku dla graczy poniżej 16 lat. Założenie kasku i opcjonalnych odblasków nie daje punktów za nawyki jazdy z §6.
 
-Test pokrycia sprawdza przypisanie trybu każdej reguły i wymaga co najmniej trzech scenariuszy dla każdego uruchomionego detektora `sim`. Do domknięcia #16 wymienia jedynie identyfikatory 19 detektorów zaplanowanych w części 2.
+GDZIE-10 jest oznaczone jako `quiz-only`. Swobodna jazda nie daje graczowi roli dziecka poniżej 10 lat pod opieką konkretnego dorosłego. Sytuację z Frankiem można odtworzyć w oskryptowanej eskorcie. GDZIE-04 nadal obsługuje odwrotną perspektywę, gdy scenariusz jawnie przypisuje graczowi rolę dorosłego opiekuna.
+
+Test pokrycia wymaga implementacji i co najmniej trzech scenariuszy dla każdej reguły `sim`, w tym scenariusza naruszenia oraz zachowania neutralnego lub poprawnego. KASK-01 ma przypisany garaż i sprawdzany scenariuszami obowiązek podczas jazdy.
 
 ## 11. Priorytety werdyktów i deduplikacja
 
@@ -168,9 +182,10 @@ Epizod wiąże kandydatów opisujących jedno zdarzenie. Wygrywa najpierw waga (
 | Wymuszenie przy wyjeździe z posesji | MSC-03 → PIER-06 | Gracz + wyjazd |
 | Jazda bez wymaganych świateł | MSC-04 → WYP-04 → WYP-05 | Gracz + ciągła jazda w warunkach ograniczonej widoczności |
 | Wjazd z wlotu podporządkowanego | ZNAK-STOP → PIER-02 → ZNAK-A7 | Gracz + wlot + pojedynczy przejazd |
-| Wjazd przy aktywnej sygnalizacji | SYG-01; przy warunkowym skręcie ZNAK-S2 | Gracz + wlot + pojedynczy przejazd |
+| Wjazd przy aktywnej sygnalizacji | Na torze przejazdu rowerowego SYG-02, na jezdni SYG-01 lub ZNAK-S2; polecenie kierującego ruchem daje pierwszeństwo SYG-03 | Gracz + linia wjazdu + pojedynczy przejazd |
+| Ominięcie lub wyprzedzenie | MAN-12 → MAN-05 → MAN-04; wyprzedzenie przed przejazdem kolejowym ocenia MSC-01 | Gracz + mijany pojazd + pojedynczy manewr |
 
-STOP bez konfliktu daje `minor` za pominięcie zatrzymania albo `good` po postoju. Gdy gracz zatrzymał się prawidłowo i następnie wymusił pierwszeństwo, werdykt PIER-02 zastępuje pochwałę za STOP. Gdy pominął postój i jednocześnie wymusił pierwszeństwo, STOP przejmuje wagę i dowód konfliktu. Brak jednej lampki daje werdykt WYP-04 lub WYP-05, a brak obu daje jeden werdykt MSC-04. Włączenie świateł przy ograniczonej widoczności może dać jeden bonus w przebiegu. Wjazd z zakazem B-9 należy do części 2 M3c.
+STOP bez konfliktu daje `minor` za pominięcie zatrzymania albo `good` po postoju. Gdy gracz zatrzymał się prawidłowo i następnie wymusił pierwszeństwo, werdykt PIER-02 zastępuje pochwałę za STOP. Gdy pominął postój i jednocześnie wymusił pierwszeństwo, STOP przejmuje wagę i dowód konfliktu. Brak jednej lampki daje werdykt WYP-04 lub WYP-05, a brak obu daje jeden werdykt MSC-04. Włączenie świateł przy ograniczonej widoczności może dać jeden bonus w przebiegu.
 
 Ocena wjazdu odbywa się przy przekroczeniu skierowanej linii wlotu. W epizodach strefowych tolerancja wyjścia wynosi 0,25 s. Krótki powrót do tej samej strefy podtrzymuje stan epizodu, a czas poza strefą nie liczy się do progu naruszenia. Po wjeździe na skrzyżowanie epizod wygasa po 0,25 s poza obszarem albo po wycofaniu ponad 3 m przed linię. Bezpośredni przejazd po jezdni przez zebrę wzdłuż ruchu pojazdów nie jest użyciem przejścia.
 

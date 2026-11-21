@@ -1,0 +1,590 @@
+map: maps/miasteczko.tmj
+scenarios:
+  - name: GDZIE-02 jazda zgodna z kierunkiem pasa
+    player: { x: 890, y: 531, heading: 180, speed: 4 }
+    inputs: [{ t: 1, x: 805 }]
+    expect: { GDZIE-02: [], GDZIE-01: [good] }
+
+  - name: GDZIE-02 jazda pod prąd odbiera pochwałę za wybór pasa
+    player: { x: 805, y: 531, heading: 0, speed: 4 }
+    inputs: [{ t: 1, x: 890 }]
+    expect: { GDZIE-02: [minor], GDZIE-01: [] }
+
+  - name: GDZIE-02 prowadzenie roweru po pasie nie jest jazdą pod prąd
+    player: { x: 805, y: 531, heading: 0, speed: 1, mode: walking_bike }
+    inputs: [{ t: 1, x: 825 }]
+    expect: { GDZIE-02: [] }
+
+  - name: GDZIE-03 jazda dwa metry od prawej krawędzi
+    player: { x: 800, y: 661.3333333333334, speed: 4 }
+    inputs: [{ t: 1, x: 890 }]
+    expect: { GDZIE-03: [] }
+
+  - name: GDZIE-03 jazda lewą stroną także poza grafem właściwego pasa
+    player: { x: 800, y: 562, speed: 4 }
+    duration: 2
+    inputs: [{ t: 2, x: 970 }]
+    expect: { GDZIE-03: [minor] }
+
+  - name: GDZIE-03 zmiana pozycji w przygotowaniu do lewego skrętu
+    player: { x: 800, y: 616, speed: 4, signal: left, maneuver: left }
+    duration: 2
+    inputs: [{ t: 2, x: 970 }]
+    expect: { GDZIE-03: [] }
+
+  - name: GDZIE-03b jazda po przejezdnym poboczu
+    objects: &shoulder
+      zones:
+        - {
+            name: training-shoulder,
+            x: 785,
+            y: 704,
+            width: 375,
+            height: 24,
+            properties: { kind: shoulder, direction: E, shoulderUsable: true },
+          }
+    properties:
+      &withShoulder { yield-W: { parallelShoulder: training-shoulder } }
+    player: { x: 800, y: 716, speed: 4 }
+    inputs: [{ t: 1, x: 885 }]
+    expect: { GDZIE-03b: [] }
+
+  - name: GDZIE-03b jezdnia przy przejezdnym poboczu
+    objects: *shoulder
+    properties: *withShoulder
+    player: { x: 800, y: 665, speed: 4 }
+    inputs: [{ t: 1, x: 885 }]
+    expect: { GDZIE-03b: [minor] }
+
+  - name: GDZIE-03b nieprzejezdne lub nieprzypisane pobocze
+    objects: *shoulder
+    properties:
+      yield-W: { parallelShoulder: training-shoulder }
+      training-shoulder: { shoulderUsable: false }
+    player: { x: 800, y: 665, speed: 4 }
+    inputs: [{ t: 1, x: 885 }]
+    expect: { GDZIE-03b: [] }
+
+  - name: GDZIE-03b pobocze w przeciwnym kierunku
+    objects: *shoulder
+    properties:
+      yield-W: { parallelShoulder: training-shoulder }
+      training-shoulder: { direction: W }
+    player: { x: 800, y: 665, speed: 4 }
+    inputs: [{ t: 1, x: 885 }]
+    expect: { GDZIE-03b: [] }
+
+  - name: GDZIE-07 dokładnie 20 km/h przy braku pieszych
+    objects: &living
+      zones:
+        - {
+            name: dwell,
+            x: 760,
+            y: 560,
+            width: 280,
+            height: 144,
+            properties: { kind: living_zone },
+          }
+    player: { x: 800, y: 675, speed: 5.555555555555555 }
+    inputs: [{ t: 1, x: 915 }]
+    expect: { GDZIE-07: [] }
+
+  - name: GDZIE-07 przekroczenie 20 km/h w nakładanej strefie
+    objects: *living
+    player: { x: 800, y: 675, speed: 5.56 }
+    inputs: [{ t: 1, x: 915 }]
+    expect: { GDZIE-07: [minor] }
+
+  - name: GDZIE-07 konflikt z pieszym będącym na jezdni mimo małej prędkości
+    objects: *living
+    player: { x: 800, y: 675, speed: 2 }
+    agents: [{ id: ped, kind: pedestrian, x: 863, y: 675 }]
+    inputs: [{ t: 1, x: 843 }]
+    expect: { GDZIE-07: [minor] }
+    evidence: { GDZIE-07: { pedestrian: ped } }
+
+  - name: GDZIE-08 spokojna jazda obok drugiego roweru
+    player: { x: 800, y: 675, speed: 3 }
+    agents:
+      [
+        {
+          id: bike,
+          kind: cyclist,
+          x: 800,
+          y: 650,
+          speed: 3,
+          inputs: [{ t: 1, x: 864 }],
+        },
+      ]
+    inputs: [{ t: 1, x: 864 }]
+    expect: { GDZIE-08: [] }
+
+  - name: GDZIE-08 jazda obok siebie a hamowanie ochronne auta z tyłu
+    player: { x: 800, y: 675, speed: 3 }
+    agents:
+      - {
+          id: bike,
+          kind: cyclist,
+          x: 800,
+          y: 650,
+          speed: 3,
+          inputs: [{ t: 1, x: 864 }],
+        }
+      - {
+          id: auto,
+          kind: car,
+          x: 755,
+          y: 676,
+          speed: 2,
+          protectiveBrake: true,
+          inputs: [{ t: 1, x: 800 }],
+        }
+    inputs: [{ t: 1, x: 864 }]
+    expect: { GDZIE-08: [minor] }
+    evidence: { GDZIE-08: { companion: bike, blocked: auto } }
+
+  - name: GDZIE-08 jazda w pojedynczym rzędzie
+    player: { x: 800, y: 675, speed: 3 }
+    agents:
+      - {
+          id: bike,
+          kind: cyclist,
+          x: 838,
+          y: 675,
+          speed: 3,
+          inputs: [{ t: 1, x: 902 }],
+        }
+      - { id: auto, kind: car, x: 755, y: 676, speed: 2, protectiveBrake: true }
+    inputs: [{ t: 1, x: 864 }]
+    expect: { GDZIE-08: [] }
+
+  - name: GDZIE-09 oznaczony odcinek zakazu pokrywa się ze znakiem B-9
+    objects: &barred
+      zones:
+        - {
+            name: barred,
+            x: 825,
+            y: 590,
+            width: 95,
+            height: 114,
+            properties: { kind: no_bikes },
+          }
+      signs:
+        - {
+            name: barred-sign,
+            x: 825,
+            y: 702,
+            properties: { code: B-9, affects: barred, facing: W },
+          }
+    player: { x: 805, y: 668, speed: 4 }
+    inputs: [{ t: 1, x: 890 }]
+    expect: { GDZIE-09: [major], ZNAK-B9: [] }
+
+  - name: GDZIE-09 zakaz obszarowy bez znaku B-9
+    objects:
+      zones:
+        - {
+            name: expressway,
+            x: 825,
+            y: 590,
+            width: 95,
+            height: 114,
+            properties: { kind: no_bikes },
+          }
+    player: { x: 805, y: 668, speed: 4 }
+    inputs: [{ t: 1, x: 890 }]
+    expect: { GDZIE-09: [major] }
+
+  - name: GDZIE-09 prowadzenie roweru chodnikiem obok zakazu B-9
+    objects: *barred
+    player: { x: 805, y: 716, speed: 1, mode: walking_bike }
+    inputs: [{ t: 1, x: 845 }]
+    expect: { GDZIE-09: [], ZNAK-B9: [] }
+
+  - name: GDZIE-11 wolny przejazd wspólną drogą obok pieszego
+    objects: &shared
+      zones:
+        - {
+            name: shared,
+            x: 100,
+            y: 100,
+            width: 200,
+            height: 92,
+            properties: { kind: shared_path },
+          }
+    player: { x: 140, y: 145, speed: 2.5 }
+    agents: [{ id: ped, kind: pedestrian, x: 173, y: 173 }]
+    inputs: [{ t: 1, x: 193 }]
+    expect: { GDZIE-11: [] }
+
+  - name: GDZIE-11 zbyt szybka jazda blisko pieszego na wspólnej drodze
+    objects: *shared
+    player: { x: 140, y: 145, speed: 3 }
+    agents: [{ id: ped, kind: pedestrian, x: 173, y: 173 }]
+    inputs: [{ t: 1, x: 200 }]
+    expect: { GDZIE-11: [minor] }
+
+  - name: GDZIE-11 część piesza oddzielonej drogi
+    objects: *shared
+    properties: { shared: { sharedSide: pedestrian } }
+    player: { x: 140, y: 145, speed: 2 }
+    inputs: [{ t: 1, x: 180 }]
+    expect: { GDZIE-11: [minor] }
+
+  - name: GDZIE-11 część rowerowa oddzielonej drogi
+    objects: *shared
+    properties: { shared: { sharedSide: bike } }
+    player: { x: 140, y: 145, speed: 2 }
+    inputs: [{ t: 1, x: 180 }]
+    expect: { GDZIE-11: [] }
+
+  - name: SYG-02 osobne czerwone rowerowe mimo zielonego dla jezdni
+    env: { signalOverrides: { lights-E: green, cycle-lane-lights: red } }
+    player: { x: 2265, y: 531, heading: 180, speed: 4 }
+    inputs: [{ t: 1, x: 2180 }]
+    expect: { SYG-02: [major], SYG-01: [] }
+
+  - name: SYG-02 osobne zielone rowerowe mimo czerwonego dla jezdni
+    env: { signalOverrides: { lights-E: red, cycle-lane-lights: green } }
+    player: { x: 2265, y: 531, heading: 180, speed: 4 }
+    inputs: [{ t: 1, x: 2180 }]
+    expect: { SYG-02: [], SYG-01: [] }
+
+  - name: SYG-02 czerwone rowerowe nie dotyczy jadącego w sąsiednim pasie jezdni
+    env: { signalOverrides: { lights-E: green, cycle-lane-lights: red } }
+    player: { x: 2265, y: 575, heading: 180, speed: 4 }
+    inputs: [{ t: 1, x: 2180 }]
+    expect: { SYG-02: [], SYG-01: [] }
+
+  - name: SYG-02 rozpoczętego przejazdu nie oceniamy po przełączeniu fazy
+    env: { signalOverrides: { lights-E: green, cycle-lane-lights: red } }
+    player: { x: 2220, y: 531, heading: 180, speed: 4 }
+    inputs: [{ t: 1, x: 2135 }]
+    expect: { SYG-02: [] }
+
+  - name: SYG-03 polecenie stój ważniejsze niż zielone
+    env: { officerOrders: { lights-S: stop }, phase: green }
+    player: { x: 2192, y: 729, heading: -90, speed: 4 }
+    inputs: [{ t: 1, y: 660 }]
+    expect: { SYG-03: [major], SYG-01: [], ZNAK-S2: [] }
+
+  - name: SYG-03 polecenie jedź ważniejsze niż czerwone
+    env: { officerOrders: { lights-S: go }, phase: red }
+    player: { x: 2192, y: 729, heading: -90, speed: 4 }
+    inputs: [{ t: 1, y: 660 }]
+    expect: { SYG-03: [], SYG-01: [], ZNAK-S2: [] }
+
+  - name: SYG-03 wjazd na polecenie mimo znaku STOP
+    env: { officerOrders: { stop-S: go } }
+    player: { x: 528, y: 1500, heading: -90, speed: 4 }
+    inputs: [{ t: 1, y: 1440 }]
+    expect: { SYG-03: [], ZNAK-STOP: [], PIER-02: [] }
+
+  - name: SYG-03 policjant ma pierwszeństwo przed sygnalizatorem rowerowym
+    env:
+      {
+        officerOrders: { lights-E: stop },
+        signalOverrides: { lights-E: green, cycle-lane-lights: green },
+      }
+    player: { x: 2265, y: 531, heading: 180, speed: 4 }
+    inputs: [{ t: 1, x: 2180 }]
+    expect: { SYG-03: [major], SYG-02: [], SYG-01: [] }
+
+  - name: ZNAK-A7 znak ustąpienia bez oznaczenia drogi głównej
+    properties: &yieldSign { yield-W: { priorityClass: equal } }
+    player: { x: 1360, y: 725, heading: -90, speed: 4 }
+    agents:
+      &yieldAgents [
+        { id: car, kind: car, x: 1228, y: 655, speed: 8, laneId: yield-W },
+      ]
+    inputs: [{ t: 1, y: 682 }]
+    expect: { ZNAK-A7: [major], PIER-02: [] }
+
+  - name: ZNAK-A7 ustąpienie na wlocie potwierdzonym znakiem
+    properties: *yieldSign
+    player: { x: 1360, y: 725, heading: -90, speed: 0 }
+    agents:
+      [
+        {
+          id: car,
+          kind: car,
+          x: 1228,
+          y: 655,
+          speed: 8,
+          laneId: yield-W,
+          leaveAt: 0.5,
+        },
+      ]
+    inputs: [{ t: 0.6, speed: 4 }, { t: 1, y: 682 }]
+    interpolate: false
+    expect: { ZNAK-A7: [] }
+
+  - name: ZNAK-A7 pojedynczy werdykt PIER-02 na drodze głównej
+    player: { x: 1360, y: 725, heading: -90, speed: 4 }
+    agents: *yieldAgents
+    inputs: [{ t: 1, y: 682 }]
+    expect: { ZNAK-A7: [], PIER-02: [major] }
+
+  - name: ZNAK-B2T22 zakaz wjazdu bez wyjątku rowerowego
+    objects: &b2
+      signs:
+        - {
+            name: entry-west,
+            x: 740,
+            y: 702,
+            properties: { code: B-2, affects: yield-W, facing: W },
+          }
+    player: { x: 800, y: 665, speed: 4 }
+    inputs: [{ t: 1, x: 885 }]
+    expect: { ZNAK-B2T22: [major] }
+
+  - name: ZNAK-B2T22 tabliczka pozwala na kontraruch
+    objects: *b2
+    properties: { entry-west: { exceptBicycles: true } }
+    player: { x: 800, y: 665, speed: 4 }
+    inputs: [{ t: 1, x: 885 }]
+    expect: { ZNAK-B2T22: [] }
+
+  - name: ZNAK-B2T22 znak odwrócony do przeciwnego kierunku
+    objects: *b2
+    properties: { entry-west: { facing: E } }
+    player: { x: 800, y: 665, speed: 4 }
+    inputs: [{ t: 1, x: 885 }]
+    expect: { ZNAK-B2T22: [] }
+
+  - name: ZNAK-B9 sam znak bez strefy zakazu
+    objects: &b9
+      signs:
+        - {
+            name: bikes-west,
+            x: 740,
+            y: 702,
+            properties: { code: B-9, affects: yield-W, facing: W },
+          }
+    player: { x: 800, y: 665, speed: 4 }
+    inputs: [{ t: 1, x: 885 }]
+    expect: { ZNAK-B9: [minor], GDZIE-09: [] }
+
+  - name: ZNAK-B9 znak dotyczy przeciwnego kierunku
+    objects: *b9
+    properties: { bikes-west: { facing: E } }
+    player: { x: 800, y: 665, speed: 4 }
+    inputs: [{ t: 1, x: 885 }]
+    expect: { ZNAK-B9: [] }
+
+  - name: ZNAK-B9 stanie przed zakazem bez wjazdu
+    objects: *b9
+    player: { x: 800, y: 665, speed: 0 }
+    expect: { ZNAK-B9: [] }
+
+  - name: ZNAK-B1 zakaz dotyczy roweru w obu kierunkach
+    objects: &b1
+      zones:
+        - {
+            name: closed-road,
+            x: 825,
+            y: 545,
+            width: 100,
+            height: 159,
+            properties: { kind: roadway },
+          }
+      signs:
+        - {
+            name: closed-road-sign,
+            x: 825,
+            y: 702,
+            properties: { code: B-1, affects: closed-road, facing: W },
+          }
+    player: { x: 960, y: 570, heading: 180, speed: 4 }
+    inputs: [{ t: 1, x: 875 }]
+    expect: { ZNAK-B1: [minor] }
+
+  - name: ZNAK-B1 tabliczka wyłącza rowery z zakazu
+    objects: *b1
+    properties: { closed-road-sign: { exceptBicycles: true } }
+    player: { x: 800, y: 665, speed: 4 }
+    inputs: [{ t: 1, x: 885 }]
+    expect: { ZNAK-B1: [] }
+
+  - name: ZNAK-B1 przeprowadzenie roweru nie jest ruchem pojazdu
+    objects: *b1
+    player: { x: 800, y: 665, speed: 1, mode: walking_bike }
+    inputs: [{ t: 1, x: 846 }]
+    expect: { ZNAK-B1: [] }
+
+  - name: MAN-02 prawy skręt przy krawędzi przed i po skrzyżowaniu
+    player: { x: 552, y: 732, heading: -90, speed: 3 }
+    inputs:
+      [
+        { t: 0.25, y: 675 },
+        { t: 0.5, x: 570, y: 678, heading: 0 },
+        { t: 0.9, x: 605 },
+      ]
+    expect: { MAN-02: [] }
+
+  - name: MAN-02 szeroki prawy skręt od środka drogi lub na środek jezdni
+    player: { x: 505, y: 732, heading: -90, speed: 3 }
+    inputs:
+      [
+        { t: 0.25, y: 628 },
+        { t: 0.5, x: 565, y: 628, heading: 0 },
+        { t: 0.9, x: 605 },
+      ]
+    expect: { MAN-02: [minor] }
+
+  - name: MAN-02 przejazd prosto szerokim wlotem
+    player: { x: 506, y: 732, heading: -90, speed: 3 }
+    inputs: [{ t: 1, y: 492 }]
+    expect: { MAN-02: [] }
+
+  - name: MAN-04 bezpieczne ominięcie po spojrzeniu i sygnalizacji
+    duration: 4
+    player:
+      {
+        x: 825,
+        y: 660,
+        speed: 4,
+        signal: left,
+        shoulderCheck: { lastLeftAt: -0.1 },
+      }
+    agents: &passAuto [{ id: auto, kind: car, x: 960, y: 660 }]
+    inputs: [{ t: 1.55, x: 865 }, { t: 2.5, x: 928, y: 629 }, { t: 4, x: 1009 }]
+    expect: { MAN-04: [good] }
+
+  - name: MAN-04 ominięcie z przesunięciem bez spojrzenia i sygnalizacji
+    duration: 2
+    player: { x: 825, y: 660, speed: 4 }
+    agents: *passAuto
+    inputs: [{ t: 0.9, x: 928, y: 629 }, { t: 2, x: 1009 }]
+    expect: { MAN-04: [minor] }
+
+  - name: MAN-04 jazda za pojazdem nie jest zakończonym manewrem
+    player: { x: 825, y: 660, speed: 3 }
+    agents: *passAuto
+    inputs: [{ t: 1, x: 908 }]
+    expect: { MAN-04: [] }
+
+  - name: MAN-04 zbyt bliskie minięcie pojazdu zaparkowanego na mapie
+    player: { x: 862, y: 1310, speed: 4 }
+    inputs: [{ t: 1, x: 1020 }]
+    expect: { MAN-04: [minor] }
+
+  - name: MAN-05 ostrożne minięcie wolno jadącego auta z prawej
+    player: { x: 810, y: 685, speed: 5 }
+    agents:
+      &movingAuto [
+        {
+          id: auto,
+          kind: car,
+          x: 886,
+          y: 650,
+          speed: 1,
+          inputs: [{ t: 1, x: 910 }],
+        },
+      ]
+    inputs: [{ t: 1, x: 955 }]
+    expect: { MAN-05: [] }
+
+  - name: MAN-05 zbyt mały odstęp przy wyprzedzaniu z prawej
+    player: { x: 810, y: 659, speed: 5 }
+    agents: *movingAuto
+    inputs: [{ t: 1, x: 955 }]
+    expect: { MAN-05: [minor], MAN-04: [] }
+
+  - name: MAN-05 zbyt mały odstęp po lewej ocenia MAN-04
+    player: { x: 810, y: 640, speed: 5 }
+    agents: *movingAuto
+    inputs: [{ t: 1, x: 955 }]
+    expect: { MAN-05: [], MAN-04: [minor] }
+
+  - name: MAN-05 omijanie stojącego auta ocenia MAN-04
+    player: { x: 810, y: 659, speed: 5 }
+    agents: [{ id: auto, kind: car, x: 886, y: 650 }]
+    inputs: [{ t: 1, x: 955 }]
+    expect: { MAN-05: [], MAN-04: [minor] }
+
+  - name: MAN-08 wolna jazda daje czas na reakcję przy pieszym
+    player: { x: 800, y: 670, speed: 2 }
+    agents: [{ id: ped, kind: pedestrian, x: 884, y: 670 }]
+    inputs: [{ t: 0.4, x: 816, speed: 0 }]
+    expect: { MAN-08: [] }
+
+  - name: MAN-08 prędkość powoduje zbyt długą drogę zatrzymania
+    player: { x: 800, y: 670, speed: 5 }
+    agents: [{ id: ped, kind: pedestrian, x: 884, y: 670 }]
+    inputs: [{ t: 0.4, x: 839, speed: 0 }]
+    expect: { MAN-08: [minor] }
+
+  - name: MAN-08 gołoledź wydłuża drogę zatrzymania przy tej samej prędkości
+    env: { weather: ice }
+    player: { x: 800, y: 670, speed: 3.5 }
+    agents: [{ id: ped, kind: pedestrian, x: 881, y: 670 }]
+    inputs: [{ t: 0.3, x: 822, speed: 0 }]
+    expect: { MAN-08: [minor] }
+
+  - name: MAN-08 sucha nawierzchnia pozwala zdążyć przed tym samym pieszym
+    player: { x: 800, y: 670, speed: 3.5 }
+    agents: [{ id: ped, kind: pedestrian, x: 881, y: 670 }]
+    inputs: [{ t: 0.2, x: 814, speed: 0 }]
+    expect: { MAN-08: [] }
+
+  - name: MAN-12 pozostanie za pojazdem czekającym przed zebrą
+    player: { x: 545, y: 665, speed: 3 }
+    agents:
+      &crossingAuto [
+        { id: auto, kind: car, x: 630, y: 660, yieldingAtCrossing: true },
+      ]
+    inputs: [{ t: 0.7, x: 600, speed: 0 }]
+    expect: { MAN-12: [] }
+
+  - name: MAN-12 ominięcie pojazdu zatrzymanego dla pieszego przed zebrą
+    player: { x: 545, y: 665, speed: 4 }
+    agents: *crossingAuto
+    inputs: [{ t: 0.65, x: 630, y: 628 }, { t: 1, x: 667 }]
+    expect: { MAN-12: [major], MAN-04: [] }
+    evidence: { MAN-12: { yieldingAtCrossing: true } }
+
+  - name: MAN-12 samo zatrzymanie pojazdu przed zebrą nie ustala powodu
+    player: { x: 545, y: 625, speed: 4 }
+    agents: [{ id: auto, kind: car, x: 630, y: 660 }]
+    inputs: [{ t: 1, x: 681 }]
+    expect: { MAN-12: [] }
+
+  - name: MAN-12 wyprzedzenie jadącego pojazdu bezpośrednio przed zebrą
+    player: { x: 555, y: 630, speed: 4 }
+    agents:
+      [
+        {
+          id: auto,
+          kind: car,
+          x: 600,
+          y: 660,
+          speed: 1,
+          inputs: [{ t: 1, x: 635 }],
+        },
+      ]
+    inputs: [{ t: 1, x: 668 }]
+    expect: { MAN-12: [major] }
+
+  - name: MAN-12 wyprzedzenie jadącego pojazdu na skrzyżowaniu bez świateł
+    player: { x: 414, y: 615, speed: 4 }
+    agents:
+      [
+        {
+          id: auto,
+          kind: car,
+          x: 467,
+          y: 655,
+          speed: 1,
+          inputs: [{ t: 1, x: 490 }],
+        },
+      ]
+    inputs: [{ t: 1, x: 531 }]
+    expect: { MAN-12: [major] }
+    evidence: { MAN-12: { area: equal } }
+
+  - name: MAN-12 zwykłe wyprzedzenie na odcinku bez zebr i skrzyżowań
+    player: { x: 810, y: 615, speed: 5 }
+    agents: *movingAuto
+    inputs: [{ t: 1, x: 955 }]
+    expect: { MAN-12: [] }

@@ -42,6 +42,7 @@ export interface AgentState {
   stopId?: string;
   signalActive?: boolean;
   bikeInfrastructure?: boolean;
+  yieldingAtCrossing?: boolean;
   junctionProgress?: number; // signed distance along the movement from the stop line
 }
 
@@ -51,6 +52,7 @@ export interface EnvState {
   visibilityLow: boolean;
   railOverrides?: Readonly<Record<string, RailState>>;
   signalOverrides?: Readonly<Record<string, SignalPhase>>;
+  officerOrders?: Readonly<Partial<Record<string, 'stop' | 'go'>>>;
 }
 
 export interface RailState {

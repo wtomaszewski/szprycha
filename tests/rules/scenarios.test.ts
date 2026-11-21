@@ -47,6 +47,17 @@ interface Scenario {
   interpolate?: boolean;
   env?: Partial<EnvState> & { phase?: SignalPhase };
   properties?: Record<string, Record<string, unknown>>;
+  objects?: Record<
+    string,
+    {
+      name: string;
+      x: number;
+      y: number;
+      width?: number;
+      height?: number;
+      properties: Record<string, unknown>;
+    }[]
+  >;
   expect: Record<string, Verdict['kind'][]>;
   evidence?: Record<string, Verdict['evidence']>;
 }
@@ -72,6 +83,7 @@ const goodHabitRules = new Set(
 const simGood = new Set([
   'MAN-01',
   'MAN-03',
+  'MAN-04',
   'MAN-06',
   'MAN-07',
   'MAN-11',
@@ -101,15 +113,38 @@ const envDefaults: EnvState = {
   visibilityLow: false,
 };
 
-function makeWorld(properties: Scenario['properties'] = {}) {
+function makeWorld(
+  properties: Scenario['properties'] = {},
+  objects: Scenario['objects'] = {},
+) {
   const data = JSON.parse(mapText) as {
     layers: {
+      name: string;
       objects?: {
         name: string;
+        x: number;
+        y: number;
+        width: number;
+        height: number;
         properties: { name: string; value: unknown }[];
       }[];
     }[];
   };
+  for (const [name, entries] of Object.entries(objects)) {
+    const layer = data.layers.find((layer) => layer.name === name);
+    if (!layer?.objects) throw new Error(`Unknown object layer: ${name}`);
+    layer.objects.push(
+      ...entries.map(({ properties, ...object }) => ({
+        width: 0,
+        height: 0,
+        ...object,
+        properties: Object.entries(properties).map(([name, value]) => ({
+          name,
+          value,
+        })),
+      })),
+    );
+  }
   for (const layer of data.layers) {
     for (const object of layer.objects ?? []) {
       for (const [name, value] of Object.entries(
@@ -124,8 +159,13 @@ function makeWorld(properties: Scenario['properties'] = {}) {
   return new WorldModel(data, engineOptions.silnik.kafel_m);
 }
 
+const baseWorld = makeWorld();
+
 function run(scenario: Scenario) {
-  const world = makeWorld(scenario.properties);
+  const world =
+    scenario.properties || scenario.objects
+      ? makeWorld(scenario.properties, scenario.objects)
+      : baseWorld;
   const engine = new RuleEngine(world, engineOptions);
   const received: Verdict[] = [];
   engine.onVerdict((verdict) => received.push(verdict));
