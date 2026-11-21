@@ -533,7 +533,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Zatrzymanie przed przejazdem przy sygnale"
-    feedback: "Przed torami sprawdź światła i zapory, a po otwarciu przejedź bez zatrzymywania."
+    feedback: "Gdy migają czerwone światła, dzwoni sygnał lub zapory się ruszają, stój przed torami, a przez tory przejedź bez zatrzymywania."
   - id: MSC-02
     modul: M06
     tytul: Przystanek tramwajowy bez wysepki

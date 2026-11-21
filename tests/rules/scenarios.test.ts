@@ -359,6 +359,13 @@ it('loads all M2 road features from the reproducible training map', () => {
   ).toEqual(['green', 'yellow', 'red', 'arrow', 'red', 'green']);
 });
 
+it('tells the rider when to wait before the railway crossing', () => {
+  const rule = content.przepisy.przepisy.find(({ id }) => id === 'MSC-01');
+  expect(rule?.feedback).toBe(
+    'Gdy migają czerwone światła, dzwoni sygnał lub zapory się ruszają, stój przed torami, a przez tory przejedź bez zatrzymywania.',
+  );
+});
+
 it('keeps emitted feedback to one sentence and bonus-only rules without a penalty', () => {
   const rules = new Map(
     content.przepisy.przepisy.map((rule) => [rule.id, rule]),
