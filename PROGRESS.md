@@ -2,19 +2,19 @@
 
 Stan: 21.11.2026. Gałąź: `feat/m0-szkielet`.
 
-| Kamień | Zakres                                      | Status                                                                                    |
-| ------ | ------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| M0     | Szkielet, menu, treści, narzędzia i CI web  | Implementacja ukończona; kontrole lokalne zielone; zdalne CI oczekuje repozytorium GitHub |
-| M1     | Jazda, testowa mapa, kamera, bloki 2.5D     | Nierozpoczęty                                                                             |
-| M2     | Silnik zasad v1                             | Nierozpoczęty                                                                             |
-| M3     | Ruch drogowy AI i pozostałe detektory       | Nierozpoczęty                                                                             |
-| M4     | Misje i fabuła                              | Nierozpoczęty                                                                             |
-| M5     | Punktacja, progresja, zapis                 | Nierozpoczęty                                                                             |
-| M6     | Mapy Warszawy i Wrocławia                   | Nierozpoczęty                                                                             |
-| M7     | Plac, quiz, egzamin                         | Nierozpoczęty                                                                             |
-| M8     | Audio i szlif                               | Nierozpoczęty                                                                             |
-| M9     | PWA, Capacitor, Android/iOS                 | Nierozpoczęty                                                                             |
-| M10    | Rankingi online i panel klasy (opcjonalnie) | Nierozpoczęty                                                                             |
+| Kamień | Zakres                                      | Status                                                |
+| ------ | ------------------------------------------- | ----------------------------------------------------- |
+| M0     | Szkielet, menu, treści, narzędzia i CI web  | Ukończony — kontrole lokalne i GitHub Actions zielone |
+| M1     | Jazda, testowa mapa, kamera, bloki 2.5D     | Nierozpoczęty                                         |
+| M2     | Silnik zasad v1                             | Nierozpoczęty                                         |
+| M3     | Ruch drogowy AI i pozostałe detektory       | Nierozpoczęty                                         |
+| M4     | Misje i fabuła                              | Nierozpoczęty                                         |
+| M5     | Punktacja, progresja, zapis                 | Nierozpoczęty                                         |
+| M6     | Mapy Warszawy i Wrocławia                   | Nierozpoczęty                                         |
+| M7     | Plac, quiz, egzamin                         | Nierozpoczęty                                         |
+| M8     | Audio i szlif                               | Nierozpoczęty                                         |
+| M9     | PWA, Capacitor, Android/iOS                 | Nierozpoczęty                                         |
+| M10    | Rankingi online i panel klasy (opcjonalnie) | Nierozpoczęty                                         |
 
 ## Przygotowanie
 
@@ -41,7 +41,9 @@ Stan: 21.11.2026. Gałąź: `feat/m0-szkielet`.
 - `npm run build` — zielony, sprawdza też typy.
 - `npm run test:e2e` — 2 testy zielone na serwerze `npm run dev`: przejście do menu oraz komunikat przy błędzie HTTP treści.
 - `test-results/menu.png` — lokalny zrzut menu, nie jest wersjonowany.
-- GitHub Actions **nie uruchomiono**: brak remote / docelowego repozytorium GitHub. Lokalny wynik nie jest oznaczany jako zielony zdalny run; ta część DoD pozostaje do potwierdzenia po pushu.
+- GitHub Actions — **zielone** dla commitu `02d271f`: [run PR](https://github.com/wtomaszewski/szprycha/actions/runs/44895919210) i [run push](https://github.com/wtomaszewski/szprycha/actions/runs/44895915338). Wszystkie kroki, także smoke Chromium, zakończone sukcesem na Ubuntu / Node 24.
+- Pierwszy run ujawnił zależność testu od lokalnego katalogu public/. Naprawiono: test sam generuje poprawny JSON w tymczasowym katalogu przed wprowadzeniem błędnego ruleId.
+- Kod wysłano do `wtomaszewski/szprycha`; [PR #1](https://github.com/wtomaszewski/szprycha/pull/1) jest roboczy, bez scalania do main.
 
 ## Uruchomienie
 

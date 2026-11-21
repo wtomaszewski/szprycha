@@ -31,7 +31,7 @@ Stan: 21.11.2026. Przeczytano AGENTS.md, dokumenty w kolejności §1, wszystkie 
 - **Materiały nie są dowodem aktualności prawa:** stan_prawny i weryfikacja:false pochodzą z paczki. M0 weryfikuje strukturę, nie potwierdza prawdziwości przepisów. KASK-01, daty reform i całość banku także wymagają końcowej recenzji wskazanej w docs/zrodla_i_stan_prawny.md.
 - **Obrazek Q024:** B-2+T-22 jest kompozycją dwóch znaków, nie pojedynczym kodem albumu. Przyszły loader ilustracji powinien rozpoznawać kompozycje; M0 nie ładuje ilustracji quizu.
 - **Egzamin praktyczny:** 90% z sześciu binarnych elementów oznacza w praktyce 6/6; sposób liczenia punktów i progi wymagają decyzji przed M7.
-- **Zakres CI:** Android/iOS z ogólnego stosu dopiero w M9. M0 ma CI web: instalacja, lint, format, vitest, build i smoke Playwright. Bez GitHub remote nie można uruchomić ani potwierdzić zdalnego CI.
+- **Zakres CI:** Android/iOS z ogólnego stosu dopiero w M9. M0 ma CI web: instalacja, lint, format, vitest, build i smoke Playwright. Repozytorium GitHub zostało podłączone; CI dla M0 przeszło na Ubuntu / Node 24 (run 44895919210).
 
 ## c) Reguły weryfikacja: true — lista do konsultanta
 
