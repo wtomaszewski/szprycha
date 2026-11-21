@@ -1,0 +1,71 @@
+# Album Znaków — znaki do kolekcjonowania (Detektyw znaków) i do quizu.
+# rzadkosc: zwykly | rzadki | epicki (wpływa na nagrodę za „zeskanowanie”)
+# Grafiki: rysować wg wzorów z rozporządzenia (kształt, kolor, piktogram), pixel-art 16×16 (mapa) i 64×64 (album).
+# Weryfikacja: kody i nazwy sprawdzić z aktualnym rozporządzeniem przed wydaniem.
+znaki:
+  # Ostrzegawcze (żółte trójkąty z czerwoną obwódką)
+  - { kod: A-1,  kategoria: ostrzegawczy, nazwa: "Niebezpieczny zakręt w prawo", znaczenie: "Za chwilę ostry zakręt w prawo — zwolnij.", rzadkosc: zwykly, reguly: [MAN-08] }
+  - { kod: A-2,  kategoria: ostrzegawczy, nazwa: "Niebezpieczny zakręt w lewo", znaczenie: "Za chwilę ostry zakręt w lewo — zwolnij.", rzadkosc: zwykly, reguly: [MAN-08] }
+  - { kod: A-5,  kategoria: ostrzegawczy, nazwa: "Skrzyżowanie dróg", znaczenie: "Skrzyżowanie równorzędne — obowiązuje reguła prawej ręki.", rzadkosc: zwykly, reguly: [PIER-01] }
+  - { kod: A-6a, kategoria: ostrzegawczy, nazwa: "Skrzyżowanie z drogą podporządkowaną", znaczenie: "Jesteś na drodze z pierwszeństwem, z boków są drogi podporządkowane.", rzadkosc: zwykly, reguly: [PIER-02] }
+  - { kod: A-7,  kategoria: ostrzegawczy, nazwa: "Ustąp pierwszeństwa", znaczenie: "Przepuść jadących drogą, na którą wjeżdżasz.", rzadkosc: zwykly, reguly: [ZNAK-A7, PIER-02] }
+  - { kod: A-8,  kategoria: ostrzegawczy, nazwa: "Skrzyżowanie o ruchu okrężnym", znaczenie: "Za chwilę rondo.", rzadkosc: zwykly, reguly: [PIER-08] }
+  - { kod: A-9,  kategoria: ostrzegawczy, nazwa: "Przejazd kolejowy z zaporami", znaczenie: "Przed Tobą przejazd kolejowy z zaporami (szlabanami).", rzadkosc: rzadki, reguly: [MSC-01] }
+  - { kod: A-10, kategoria: ostrzegawczy, nazwa: "Przejazd kolejowy bez zapór", znaczenie: "Przejazd kolejowy bez szlabanów — szczególnie uważaj!", rzadkosc: rzadki, reguly: [MSC-01] }
+  - { kod: A-11a, kategoria: ostrzegawczy, nazwa: "Próg zwalniający", znaczenie: "Przed Tobą próg — zwolnij.", rzadkosc: zwykly, reguly: [MAN-08] }
+  - { kod: A-14, kategoria: ostrzegawczy, nazwa: "Roboty drogowe", znaczenie: "Trwają roboty — uważaj na robotników i zwężenia.", rzadkosc: zwykly, reguly: [MAN-04] }
+  - { kod: A-16, kategoria: ostrzegawczy, nazwa: "Przejście dla pieszych", znaczenie: "Za chwilę przejście dla pieszych — uważaj na pieszych.", rzadkosc: zwykly, reguly: [GDZIE-06] }
+  - { kod: A-17, kategoria: ostrzegawczy, nazwa: "Dzieci", znaczenie: "W pobliżu szkoła lub plac zabaw — dzieci mogą wybiec na drogę.", rzadkosc: zwykly, reguly: [MAN-08] }
+  - { kod: A-21, kategoria: ostrzegawczy, nazwa: "Tramwaj", znaczenie: "Uwaga, tramwaj przecina drogę.", rzadkosc: zwykly, reguly: [PIER-09] }
+  - { kod: A-24, kategoria: ostrzegawczy, nazwa: "Rowerzyści", znaczenie: "Tu rowerzyści wjeżdżają na jezdnię lub ją przecinają.", rzadkosc: zwykly, reguly: [PIER-05] }
+  - { kod: A-29, kategoria: ostrzegawczy, nazwa: "Sygnały świetlne", znaczenie: "Przed Tobą sygnalizacja świetlna.", rzadkosc: zwykly, reguly: [SYG-01] }
+  - { kod: A-30, kategoria: ostrzegawczy, nazwa: "Inne niebezpieczeństwo", znaczenie: "Uwaga — niebezpieczeństwo inne niż na pozostałych znakach (często z tabliczką).", rzadkosc: rzadki, reguly: [MAN-08] }
+
+  # Zakazu (okrągłe, czerwona obwódka)
+  - { kod: B-1,  kategoria: zakazu, nazwa: "Zakaz ruchu w obu kierunkach", znaczenie: "Zakaz ruchu pojazdów — także rowerów.", rzadkosc: zwykly, reguly: [ZNAK-B1] }
+  - { kod: B-2,  kategoria: zakazu, nazwa: "Zakaz wjazdu", znaczenie: "Nie wjeżdżaj — to wyjazd z ulicy jednokierunkowej (chyba że tabliczka zwalnia rowery).", rzadkosc: zwykly, reguly: [ZNAK-B2T22] }
+  - { kod: B-9,  kategoria: zakazu, nazwa: "Zakaz wjazdu rowerów", znaczenie: "Rowerem tu nie wjedziesz.", rzadkosc: zwykly, reguly: [ZNAK-B9, GDZIE-09] }
+  - { kod: B-20, kategoria: zakazu, nazwa: "STOP", znaczenie: "Zatrzymaj się zawsze i ustąp pierwszeństwa.", rzadkosc: zwykly, reguly: [ZNAK-STOP] }
+  - { kod: B-33, kategoria: zakazu, nazwa: "Ograniczenie prędkości", znaczenie: "Nie przekraczaj podanej prędkości — rower też!", rzadkosc: zwykly, reguly: [MAN-08] }
+  - { kod: B-43, kategoria: zakazu, nazwa: "Strefa ograniczonej prędkości", znaczenie: "Od tego miejsca w całej strefie obowiązuje ograniczenie prędkości (np. 30).", rzadkosc: rzadki, reguly: [MAN-08] }
+
+  # Nakazu (niebieskie koła)
+  - { kod: C-2,  kategoria: nakazu, nazwa: "Nakaz jazdy w prawo za znakiem", znaczenie: "Za znakiem możesz jechać tylko w prawo.", rzadkosc: zwykly, reguly: [MAN-02] }
+  - { kod: C-4,  kategoria: nakazu, nazwa: "Nakaz jazdy w lewo za znakiem", znaczenie: "Za znakiem możesz jechać tylko w lewo.", rzadkosc: zwykly, reguly: [MAN-03] }
+  - { kod: C-5,  kategoria: nakazu, nazwa: "Nakaz jazdy prosto", znaczenie: "Możesz jechać tylko prosto.", rzadkosc: zwykly, reguly: [] }
+  - { kod: C-9,  kategoria: nakazu, nazwa: "Nakaz jazdy z prawej strony znaku", znaczenie: "Omiń znak (np. wysepkę) z prawej strony.", rzadkosc: zwykly, reguly: [GDZIE-03] }
+  - { kod: C-12, kategoria: nakazu, nazwa: "Ruch okrężny", znaczenie: "Rondo — jedź dookoła w kierunku strzałek.", rzadkosc: zwykly, reguly: [PIER-08] }
+  - { kod: C-13, kategoria: nakazu, nazwa: "Droga dla rowerów", znaczenie: "Droga dla rowerów — musisz z niej korzystać.", rzadkosc: zwykly, reguly: [ZNAK-C13, GDZIE-01] }
+  - { kod: C-13a, kategoria: nakazu, nazwa: "Koniec drogi dla rowerów", znaczenie: "Tu kończy się droga dla rowerów.", rzadkosc: zwykly, reguly: [GDZIE-01] }
+  - { kod: C-16, kategoria: nakazu, nazwa: "Droga dla pieszych", znaczenie: "Droga tylko dla pieszych — rower prowadzisz.", rzadkosc: zwykly, reguly: [GDZIE-06] }
+  - { kod: C-13/C-16, kategoria: nakazu, nazwa: "Droga dla pieszych i rowerów", znaczenie: "Wspólna droga (symbole jeden nad drugim) — ustępuj pieszym; z podziałem (symbole obok siebie, pionowa kreska) — jedź swoją częścią.", rzadkosc: rzadki, reguly: [GDZIE-11], weryfikacja: true }
+
+  # Informacyjne (niebieskie prostokąty) i D-1
+  - { kod: D-1,  kategoria: informacyjny, nazwa: "Droga z pierwszeństwem", znaczenie: "Jesteś na drodze z pierwszeństwem.", rzadkosc: zwykly, reguly: [ZNAK-D1] }
+  - { kod: D-2,  kategoria: informacyjny, nazwa: "Koniec drogi z pierwszeństwem", znaczenie: "Tu kończy się Twoje pierwszeństwo.", rzadkosc: zwykly, reguly: [ZNAK-D1] }
+  - { kod: D-3,  kategoria: informacyjny, nazwa: "Droga jednokierunkowa", znaczenie: "Ruch odbywa się tylko w jednym kierunku.", rzadkosc: zwykly, reguly: [ZNAK-B2T22] }
+  - { kod: D-6,  kategoria: informacyjny, nazwa: "Przejście dla pieszych", znaczenie: "Tu jest przejście dla pieszych — rower przeprowadzasz.", rzadkosc: zwykly, reguly: [GDZIE-06] }
+  - { kod: D-6a, kategoria: informacyjny, nazwa: "Przejazd dla rowerzystów", znaczenie: "Tu przejedziesz rowerem przez jezdnię.", rzadkosc: zwykly, reguly: [PIER-05] }
+  - { kod: D-6b, kategoria: informacyjny, nazwa: "Przejście dla pieszych i przejazd dla rowerzystów", znaczenie: "Obok siebie przejście (piesi) i przejazd (rowery).", rzadkosc: rzadki, reguly: [GDZIE-06, PIER-05] }
+  - { kod: D-17, kategoria: informacyjny, nazwa: "Przystanek tramwajowy", znaczenie: "Przystanek tramwaju — uważaj na pasażerów.", rzadkosc: zwykly, reguly: [MSC-02] }
+  - { kod: D-40, kategoria: informacyjny, nazwa: "Strefa zamieszkania", znaczenie: "Piesi mają pierwszeństwo, max 20 km/h.", rzadkosc: rzadki, reguly: [GDZIE-07] }
+  - { kod: D-41, kategoria: informacyjny, nazwa: "Koniec strefy zamieszkania", znaczenie: "Wyjeżdżasz ze strefy zamieszkania — włączasz się do ruchu.", rzadkosc: rzadki, reguly: [PIER-06] }
+  - { kod: D-46, kategoria: informacyjny, nazwa: "Droga wewnętrzna", znaczenie: "Droga wewnętrzna (np. osiedlowa) — wyjeżdżając z niej, ustępujesz wszystkim.", rzadkosc: rzadki, reguly: [PIER-06, MSC-03] }
+
+  # Tabliczki i urządzenia
+  - { kod: T-22, kategoria: tabliczka, nazwa: "Nie dotyczy roweru jednośladowego", znaczenie: "Znak nad tabliczką nie dotyczy rowerów (np. kontraruch).", rzadkosc: epicki, reguly: [ZNAK-B2T22] }
+  - { kod: G-1a, kategoria: urzadzenie, nazwa: "Słupek wskaźnikowy przed przejazdem kolejowym", znaczenie: "Przejazd kolejowy jest coraz bliżej (słupki z kreskami).", rzadkosc: rzadki, reguly: [MSC-01] }
+  - { kod: G-3,  kategoria: urzadzenie, nazwa: "Krzyż św. Andrzeja (jednotorowy)", znaczenie: "Tu jest przejazd kolejowy — ustąp pierwszeństwa pociągowi.", rzadkosc: epicki, reguly: [MSC-01] }
+
+  # Poziome
+  - { kod: P-10, kategoria: poziomy, nazwa: "Przejście dla pieszych (zebra)", znaczenie: "Białe pasy — przejście dla pieszych.", rzadkosc: zwykly, reguly: [GDZIE-06] }
+  - { kod: P-11, kategoria: poziomy, nazwa: "Przejazd dla rowerzystów", znaczenie: "Przerywane linie (często czerwona nawierzchnia) — przejazd dla rowerów.", rzadkosc: zwykly, reguly: [PIER-05] }
+  - { kod: P-12, kategoria: poziomy, nazwa: "Linia zatrzymania", znaczenie: "Gruba biała linia — tu się zatrzymujesz (STOP, czerwone światło).", rzadkosc: zwykly, reguly: [ZNAK-STOP, SYG-01] }
+  - { kod: P-13, kategoria: poziomy, nazwa: "Linia warunkowego zatrzymania (trójkąty)", znaczenie: "Ząbki na jezdni — ustąp pierwszeństwa.", rzadkosc: zwykly, reguly: [ZNAK-A7] }
+  - { kod: P-23, kategoria: poziomy, nazwa: "Rower", znaczenie: "Symbol roweru — pas lub miejsce dla rowerzystów.", rzadkosc: zwykly, reguly: [ZNAK-P23, GDZIE-02] }
+
+  # Sygnalizatory
+  - { kod: S-1, kategoria: sygnalizator, nazwa: "Sygnalizator ogólny", znaczenie: "Czerwone, żółte, zielone — dla wszystkich pojazdów.", rzadkosc: zwykly, reguly: [SYG-01] }
+  - { kod: S-2, kategoria: sygnalizator, nazwa: "Sygnalizator z zieloną strzałką", znaczenie: "Strzałka przy czerwonym: zatrzymaj się, przepuść, skręć.", rzadkosc: rzadki, reguly: [ZNAK-S2] }
+  - { kod: S-6, kategoria: sygnalizator, nazwa: "Sygnalizator dla rowerzystów", znaczenie: "Światła z symbolem roweru — dla Ciebie.", rzadkosc: rzadki, reguly: [SYG-02], weryfikacja: true }
+  - { kod: S-7, kategoria: sygnalizator, nazwa: "Sygnalizator dla pieszych i rowerzystów", znaczenie: "Wspólne światła dla pieszych i rowerów.", rzadkosc: rzadki, reguly: [SYG-02], weryfikacja: true }

@@ -1,0 +1,61 @@
+# Wartości balansu — wszystkie liczby z docs/04 w jednym miejscu.
+misja:
+  ukonczenie: 1000
+  dobry_nawyk: 50
+  bonus_czasu_max: 500
+  bonus_plynnosci: 200
+  prog_wstrzasow_plynnosc: 0.30
+  kara_minor: 150
+  kara_major: 300
+  major_do_porazki: 3
+combo:
+  krok_dobrych_nawykow: 3
+  max_mnoznik: 5
+uwaga_drogowki:
+  max: 3
+  spadek_co_s: 60
+  bonus_madra_glowa: 100
+mastery:
+  good: 10
+  good_limit_dzienny: 30
+  quiz_ok: 15
+  quiz_zle: -5
+  minor: -10
+  major: -20
+  waga_bazowa: 10
+  progi_odznak: { braz: 40, srebro: 70, zloto: 90 }
+leitner_odstepy_dni: [0, 1, 3, 7, 14]
+gwiazdki:
+  zetony: [10, 20, 35]
+  dwie_gwiazdki_max_minor: 1
+rangi:
+  - { id: zoltodziob, xp: 0 }
+  - { id: kurier, xp: 2000 }
+  - { id: kurier_pro, xp: 6000 }
+  - { id: pilot_miejski, xp: 12000 }
+  - { id: mistrz_szlaku, xp: 20000 }
+  - { id: legenda, xp: null, wymaga: licencja }
+licencja:
+  mastery_min_modul: 70
+  teoria_pytan: 25
+  teoria_prog: 0.80      # zweryfikować z aktualnym rozporządzeniem
+  plac_prog: 0.90        # zweryfikować z aktualnym rozporządzeniem
+  przejazd_max_minor: 2
+  przejazd_max_major: 0
+silnik:
+  ttc_minor_s: 2.0
+  ttc_major_s: 1.0
+  sygnalizacja_min_przed_s: 1.5
+  obejrzenie_okno_s: 3.0
+  stop_predkosc_ms: 0.1
+  stop_czas_s: 0.3
+  chodnik_predkosc_przy_pieszych_ms: 2.5
+  odstep_od_zaparkowanych_m: 1.0
+  kafel_m: 1.5
+wiek:                    # parametry prawne — do aktualizacji po ewentualnej reformie
+  kask_do_lat: 16
+  karta_od_lat: 10
+  karta_wymagana_do_lat: 18
+  dziecko_jako_pieszy_do_lat: 10
+zdrowe_granie:
+  przypomnienie_po_min: 30

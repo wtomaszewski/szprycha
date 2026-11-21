@@ -1,0 +1,669 @@
+# Kanoniczna lista przepisów (ruleId) — ŹRÓDŁO PRAWDY dla silnika zasad, quizu i mastery.
+# Pola:
+#   modul        — M01..M08 (patrz dydaktyka/)
+#   dla_dziecka  — sformułowanie w grze (proste, ≤ 160 znaków)
+#   podstawa     — wskazówka dla recenzenta (NIE pokazywać dzieciom); do weryfikacji w ISAP
+#   weryfikacja  — true = wymaga potwierdzenia brzmienia/zakresu przez konsultanta przed wydaniem
+#   detektor     — sim (wykrywane w symulacji) | scenka (interaktywna scenka) | garaz | plac | quiz-only
+#   waga_bledu   — minor | major (domyślna; detektor może eskalować przy konflikcie)
+#   dobry_nawyk  — opis zachowania nagradzanego werdyktem `good` (jeśli dotyczy)
+#   feedback     — linia Sierżant Oli po błędzie (≤ 140 znaków); klucz i18n generowany: przepisy.<id>.feedback
+stan_prawny: "2026-11-21"
+
+przepisy:
+  # ───────────── M01 — Rower i kask ─────────────
+  - id: KASK-01
+    modul: M01
+    tytul: Kask zapięty na głowie
+    dla_dziecka: "Do 16. urodzin musisz jeździć rowerem w kasku. Kask ma być zapięty i dobrze dopasowany."
+    podstawa: "PoRD — obowiązek kasku dla osób poniżej 16 lat (od 03.06.2026)"
+    weryfikacja: false
+    detektor: garaz
+    waga_bledu: major
+    dobry_nawyk: "Zapięcie kasku przed wyjazdem z warsztatu"
+    feedback: "Bez kasku nie ruszamy! Zapnij pasek — kask chroni głowę tylko wtedy, gdy jest zapięty."
+  - id: WYP-01
+    modul: M01
+    tytul: Sprawny hamulec
+    dla_dziecka: "Rower musi mieć co najmniej jeden skutecznie działający hamulec."
+    podstawa: "Rozporządzenie o warunkach technicznych pojazdów — wyposażenie roweru"
+    weryfikacja: false
+    detektor: garaz
+    waga_bledu: major
+    feedback: "Hamulec nie działa? Na taki rower nie wsiadamy — najpierw do warsztatu."
+  - id: WYP-02
+    modul: M01
+    tytul: Dzwonek
+    dla_dziecka: "Rower musi mieć dzwonek albo inny sygnał ostrzegawczy o nieprzeraźliwym dźwięku."
+    podstawa: "Rozporządzenie o warunkach technicznych pojazdów"
+    weryfikacja: false
+    detektor: garaz
+    waga_bledu: minor
+    feedback: "Dzwonek to obowiązek. Używaj go, żeby ostrzec — nie żeby przegonić pieszych."
+  - id: WYP-03
+    modul: M01
+    tytul: Czerwony odblask z tyłu
+    dla_dziecka: "Z tyłu roweru musi być czerwone światło odblaskowe w kształcie innym niż trójkąt."
+    podstawa: "Rozporządzenie o warunkach technicznych pojazdów"
+    weryfikacja: false
+    detektor: garaz
+    waga_bledu: minor
+    feedback: "Bez odblasku kierowca zobaczy Cię w nocy za późno. Czerwony, z tyłu, nie trójkąt!"
+  - id: WYP-04
+    modul: M01
+    tytul: Przednie światło
+    dla_dziecka: "Z przodu: światło białe lub żółte selektywne. Musisz je mieć włączone, gdy jest ciemno lub słabo widać."
+    podstawa: "Rozporządzenie o warunkach technicznych pojazdów; PoRD — używanie świateł w warunkach niedostatecznej widoczności"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Włączenie świateł o zmroku, w tunelu, we mgle"
+    feedback: "Robi się ciemno — światła! Masz widzieć drogę, a inni mają widzieć Ciebie."
+  - id: WYP-05
+    modul: M01
+    tytul: Tylne światło
+    dla_dziecka: "Z tyłu: czerwone światło pozycyjne (może migać). Włączone, gdy jest ciemno lub słabo widać."
+    podstawa: "Rozporządzenie o warunkach technicznych pojazdów"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Tył też musi świecić na czerwono. Auto jadące za Tobą musi Cię zobaczyć z daleka."
+  - id: WYP-06
+    modul: M01
+    tytul: Dodatkowe odblaski (zalecane)
+    dla_dziecka: "Odblaski na pedałach, szprychach i kamizelka odblaskowa nie zawsze są obowiązkowe, ale bardzo pomagają po zmroku."
+    podstawa: "Zalecenie bezpieczeństwa"
+    weryfikacja: true
+    detektor: garaz
+    waga_bledu: minor
+    dobry_nawyk: "Założenie kamizelki/odblasków przed nocnym kursem (bonus, nie wymóg)"
+    feedback: "Kamizelka odblaskowa to supermoc widoczności. Nie musisz, ale warto!"
+  - id: KONTROLA-01
+    modul: M01
+    tytul: Przegląd przed jazdą
+    dla_dziecka: "Przed jazdą sprawdź: hamulce, dzwonek, światła, odblask, opony, łańcuch i czy siodełko jest na dobrej wysokości."
+    podstawa: "Dobra praktyka, zakres egzaminu praktycznego (przygotowanie roweru)"
+    weryfikacja: false
+    detektor: garaz
+    waga_bledu: minor
+    dobry_nawyk: "Pełny przegląd w garażu przed misją"
+    feedback: "Minuta przeglądu oszczędza godzinę naprawy. Sprawdźmy rower razem!"
+
+  # ───────────── M02 — Gdzie jechać ─────────────
+  - id: GDZIE-01
+    modul: M02
+    tytul: Droga dla rowerów ma pierwszeństwo wyboru
+    dla_dziecka: "Jeśli jest droga dla rowerów albo pas dla rowerów w Twoim kierunku (lub tam, gdzie skręcasz) — musisz z niej korzystać."
+    podstawa: "PoRD — obowiązek korzystania z drogi dla rowerów / pasa ruchu dla rowerów"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Wybór drogi dla rowerów zamiast jezdni"
+    feedback: "Obok jest droga dla rowerów — to Twoje miejsce. Na jezdni jest wtedy niepotrzebne ryzyko."
+  - id: GDZIE-02
+    modul: M02
+    tytul: Pas ruchu dla rowerów
+    dla_dziecka: "Pas na jezdni z symbolem roweru jest dla rowerzystów. Jedź nim w kierunku ruchu."
+    podstawa: "PoRD; rozporządzenie o znakach (P-23 i linie wydzielające pas)"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Widzisz rower namalowany na jezdni? To pas dla Ciebie — jedź nim, zgodnie z kierunkiem ruchu."
+  - id: GDZIE-03
+    modul: M02
+    tytul: Prawa strona jezdni
+    dla_dziecka: "Na jezdni jedź prawą stroną, jak najbliżej prawej krawędzi."
+    podstawa: "PoRD — ruch prawostronny, zajmowanie miejsca jak najbliżej prawej krawędzi"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Trzymaj się prawej strony — środek jezdni to nie miejsce dla roweru."
+  - id: GDZIE-03b
+    modul: M02
+    tytul: Pobocze przed jezdnią
+    dla_dziecka: "Gdy nie ma drogi ani pasa dla rowerów, a jest pobocze nadające się do jazdy — jedź poboczem. Jeśli nie ma pobocza — jezdnią."
+    podstawa: "PoRD — kolejność: droga/pas dla rowerów → pobocze → jezdnia"
+    weryfikacja: true
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Poza miastem jest pobocze? Jedź nim — dalej od pędzących aut."
+  - id: GDZIE-04
+    modul: M02
+    tytul: Chodnik tylko wyjątkowo
+    dla_dziecka: "Chodnikiem możesz jechać tylko wyjątkowo: gdy opiekujesz się dzieckiem do 10 lat na rowerze, gdy pogoda jest groźna (śnieg, silny wiatr, ulewa, gołoledź, gęsta mgła) albo gdy chodnik ma min. 2 m, auta mogą jechać szybciej niż 50 km/h i nie ma drogi dla rowerów."
+    podstawa: "PoRD — wyjątki od zakazu jazdy rowerem po chodniku"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Chodnik jest dla pieszych. Wjechać możesz tylko w wyjątkowych sytuacjach — teraz do nich nie należy."
+  - id: GDZIE-05
+    modul: M02
+    tytul: Na chodniku piesi są najważniejsi
+    dla_dziecka: "Gdy jedziesz chodnikiem (wyjątkowo), jedź powoli, uważaj i ustępuj pieszym."
+    podstawa: "PoRD — obowiązki rowerzysty na chodniku"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Zwolnienie na chodniku przy pieszych"
+    feedback: "Na chodniku to Ty jesteś gościem. Zwolnij i przepuść pieszych."
+  - id: GDZIE-06
+    modul: M02
+    tytul: Przez przejście dla pieszych — prowadź rower
+    dla_dziecka: "Przez przejście dla pieszych (zebrę) nie wolno przejeżdżać rowerem. Zejdź i przeprowadź rower. Przejazd dla rowerzystów to co innego!"
+    podstawa: "PoRD — zakaz jazdy rowerem po przejściu dla pieszych"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Zejście z roweru i przeprowadzenie go przez przejście"
+    feedback: "Zebra jest dla pieszych. Zejdź z roweru i przeprowadź go — wtedy jesteś pieszym i masz pierwszeństwo."
+  - id: GDZIE-07
+    modul: M02
+    tytul: Strefa zamieszkania
+    dla_dziecka: "W strefie zamieszkania piesi mogą iść całą szerokością drogi i mają pierwszeństwo. Jedź bardzo wolno (max 20 km/h)."
+    podstawa: "PoRD — strefa zamieszkania (D-40/D-41)"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    feedback: "To strefa zamieszkania — tu piesi rządzą. Zwolnij i przepuść ich."
+  - id: GDZIE-08
+    modul: M02
+    tytul: Jazda obok innego rowerzysty
+    dla_dziecka: "Obok innego rowerzysty możesz jechać tylko wtedy, gdy nie utrudniasz ruchu innym i nie stwarzasz zagrożenia. Gdy ktoś chce Cię wyprzedzić — ustaw się jeden za drugim."
+    podstawa: "PoRD — jazda obok innego uczestnika ruchu"
+    weryfikacja: true
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Za Wami jedzie ktoś szybszy — ustawcie się jeden za drugim."
+  - id: GDZIE-09
+    modul: M02
+    tytul: Tu rowerem nie wjedziesz
+    dla_dziecka: "Rowerem nie wolno wjeżdżać na autostradę, drogę ekspresową i tam, gdzie stoi znak zakazu wjazdu rowerów."
+    podstawa: "PoRD; znak B-9"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    feedback: "Stop! Tu rowery nie mają wstępu — auta jadą tu bardzo szybko. Szukamy innej drogi."
+  - id: GDZIE-10
+    modul: M02
+    tytul: Młodsze dziecko na rowerze
+    dla_dziecka: "Dziecko do 10 lat jadące rowerem pod opieką dorosłego traktuje się jak pieszego — jedzie chodnikiem, a opiekun może jechać obok."
+    podstawa: "PoRD — definicja pieszego; wyjątek dla opiekuna dziecka do 10 lat"
+    weryfikacja: true
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Franek ma 7 lat — jedzie chodnikiem z opiekunem. Na jezdnię mu nie wolno."
+  - id: GDZIE-11
+    modul: M02
+    tytul: Wspólna droga dla pieszych i rowerów
+    dla_dziecka: "Na wspólnej drodze dla pieszych i rowerów uważaj i ustępuj pieszym. Gdy droga jest podzielona — jedź swoją częścią."
+    podstawa: "Rozporządzenie o znakach — C-13/C-16 (wariant wspólny i z podziałem)"
+    weryfikacja: true
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Ta ścieżka jest wspólna — piesi też tu są. Zwolnij przy nich."
+
+  # ───────────── M03 — Znaki i sygnały ─────────────
+  - id: SYG-03
+    modul: M03
+    tytul: Kogo słuchać najpierw
+    dla_dziecka: "Najpierw polecenia policjanta, potem sygnały świetlne, potem znaki, a na końcu ogólne przepisy."
+    podstawa: "PoRD — hierarchia: polecenia osób kierujących ruchem > sygnały świetlne > znaki > przepisy"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    feedback: "Policjant kieruje ruchem — jego polecenia są ważniejsze niż światła i znaki."
+  - id: SYG-01
+    modul: M03
+    tytul: Światła na skrzyżowaniu
+    dla_dziecka: "Czerwone — stoisz przed linią. Żółte — nie wjeżdżasz, chyba że nie dasz rady bezpiecznie się zatrzymać. Zielone — jedziesz, ale uważasz."
+    podstawa: "Rozporządzenie o znakach i sygnałach — sygnały świetlne"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Zatrzymanie przed linią na czerwonym/żółtym"
+    feedback: "Czerwone to czerwone — nawet gdy nikt nie jedzie. Zatrzymaj się przed linią."
+  - id: SYG-02
+    modul: M03
+    tytul: Sygnalizator dla rowerzystów
+    dla_dziecka: "Sygnalizator z symbolem roweru dotyczy rowerzystów. Gdy go widzisz — słuchaj właśnie jego."
+    podstawa: "Rozporządzenie o znakach i sygnałach — sygnalizatory S-6, S-7"
+    weryfikacja: true
+    detektor: sim
+    waga_bledu: major
+    feedback: "Ten sygnalizator z rowerkiem jest dla Ciebie. Ma czerwone — stoisz."
+  - id: ZNAK-S2
+    modul: M03
+    tytul: Zielona strzałka
+    dla_dziecka: "Zielona strzałka przy czerwonym świetle: najpierw się zatrzymaj, przepuść pieszych i pojazdy, dopiero potem skręć."
+    podstawa: "Rozporządzenie o znakach i sygnałach — sygnał dodatkowy (zielona strzałka)"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Pełne zatrzymanie przed skrętem na zielonej strzałce"
+    feedback: "Zielona strzałka to nie zielone światło! Najpierw stop, potem przepuść, potem skręt."
+  - id: ZNAK-STOP
+    modul: M03
+    tytul: STOP — zatrzymaj się zawsze
+    dla_dziecka: "Przy znaku STOP zatrzymujesz się zawsze — nawet gdy nic nie jedzie — i przepuszczasz pojazdy na drodze z pierwszeństwem."
+    podstawa: "Rozporządzenie o znakach — B-20"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Pełne zatrzymanie przy B-20"
+    feedback: "STOP znaczy: koła stoją. Zatrzymaj się całkowicie, rozejrzyj, dopiero potem jedź."
+  - id: ZNAK-A7
+    modul: M03
+    tytul: Ustąp pierwszeństwa
+    dla_dziecka: "Trójkąt odwrócony do góry nogami: ustąp pierwszeństwa jadącym drogą, na którą wjeżdżasz."
+    podstawa: "Rozporządzenie o znakach — A-7"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    feedback: "Odwrócony trójkąt mówi: przepuść innych. Oni mają pierwszeństwo."
+  - id: ZNAK-D1
+    modul: M03
+    tytul: Droga z pierwszeństwem
+    dla_dziecka: "Żółty romb: jesteś na drodze z pierwszeństwem — inni z dróg bocznych powinni Cię przepuścić. Ale zawsze patrz, czy to robią!"
+    podstawa: "Rozporządzenie o znakach — D-1, D-2"
+    weryfikacja: false
+    detektor: quiz-only
+    waga_bledu: minor
+    feedback: "Masz pierwszeństwo, ale kierowca może Cię nie zauważyć. Patrz i bądź gotowy hamować."
+  - id: ZNAK-B2T22
+    modul: M03
+    tytul: Kontraruch
+    dla_dziecka: "Zakaz wjazdu z tabliczką „nie dotyczy rowerów” — rowerem wolno tam wjechać pod prąd jednokierunkowej ulicy. Trzymaj się prawej strony!"
+    podstawa: "Rozporządzenie o znakach — B-2 z tabliczką T-22"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    feedback: "Ta tabliczka pozwala rowerom jechać pod prąd. Bez niej — zakaz wjazdu dotyczy też Ciebie!"
+  - id: ZNAK-B9
+    modul: M03
+    tytul: Zakaz wjazdu rowerów
+    dla_dziecka: "Czerwone kółko z rowerem: rowerem tu nie wjedziesz. Możesz przeprowadzić rower jak pieszy, jeśli jest chodnik."
+    podstawa: "Rozporządzenie o znakach — B-9"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Ten znak zakazuje wjazdu rowerom. Zsiądź albo jedź inną drogą."
+  - id: ZNAK-B1
+    modul: M03
+    tytul: Zakaz ruchu w obu kierunkach
+    dla_dziecka: "Białe koło w czerwonej obwódce: zakaz ruchu wszystkich pojazdów — także rowerów (chyba że tabliczka mówi inaczej)."
+    podstawa: "Rozporządzenie o znakach — B-1"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Puste białe koło to zakaz ruchu pojazdów. Rower też jest pojazdem."
+  - id: ZNAK-C13
+    modul: M03
+    tytul: Droga dla rowerów — znak
+    dla_dziecka: "Niebieskie koło z białym rowerem: droga dla rowerów, musisz z niej korzystać."
+    podstawa: "Rozporządzenie o znakach — C-13, C-13a"
+    weryfikacja: false
+    detektor: quiz-only
+    waga_bledu: minor
+    feedback: "Niebieskie koło z rowerem — to nakaz. Jedziesz tą drogą."
+  - id: ZNAK-P23
+    modul: M03
+    tytul: Rower namalowany na jezdni
+    dla_dziecka: "Symbol roweru namalowany na jezdni oznacza pas ruchu dla rowerów albo miejsce dla rowerzystów."
+    podstawa: "Rozporządzenie o znakach — P-23"
+    weryfikacja: true
+    detektor: quiz-only
+    waga_bledu: minor
+    feedback: "Rowerek na asfalcie to podpowiedź: tu jest miejsce dla Ciebie."
+
+  # ───────────── M04 — Pierwszeństwo ─────────────
+  - id: PIER-01
+    modul: M04
+    tytul: Reguła prawej ręki
+    dla_dziecka: "Na skrzyżowaniu bez znaków i świateł ustępujesz temu, kto nadjeżdża z prawej strony."
+    podstawa: "PoRD — skrzyżowanie równorzędne"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Ustąpienie pojazdowi z prawej"
+    feedback: "Auto jechało z prawej — miało pierwszeństwo. Na skrzyżowaniu bez znaków patrz w prawo!"
+  - id: PIER-02
+    modul: M04
+    tytul: Droga główna i podporządkowana
+    dla_dziecka: "Jeśli wyjeżdżasz z drogi podporządkowanej (znak A-7 lub STOP), przepuszczasz wszystkich na drodze z pierwszeństwem."
+    podstawa: "PoRD; znaki A-7, B-20, D-1"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Ustąpienie na wlocie podporządkowanym"
+    feedback: "Jechałeś z drogi podporządkowanej — trzeba było przepuścić auto na głównej."
+  - id: PIER-03
+    modul: M04
+    tytul: Skręt w lewo — przepuść jadących z naprzeciwka
+    dla_dziecka: "Skręcając w lewo, przepuszczasz pojazdy jadące z naprzeciwka prosto i skręcające w prawo."
+    podstawa: "PoRD — skrzyżowania, skręt w lewo"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Przepuszczenie pojazdu z naprzeciwka przed skrętem w lewo"
+    feedback: "Skręcając w lewo, przepuść tych z naprzeciwka. Oni jadą prosto — mają pierwszeństwo."
+  - id: PIER-04
+    modul: M04
+    tytul: Skręcasz? Przepuść pieszych i rowerzystów
+    dla_dziecka: "Gdy skręcasz, przepuść pieszych przechodzących przez drogę, w którą wjeżdżasz, i rowerzystów jadących prosto."
+    podstawa: "PoRD — ustępowanie pieszym i rowerzystom przy skręcie"
+    weryfikacja: true
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Przepuszczenie pieszego przy skręcie"
+    feedback: "Skręcając, przecinasz drogę pieszym. Oni mają pierwszeństwo — poczekaj chwilę."
+  - id: PIER-05
+    modul: M04
+    tytul: Przejazd dla rowerzystów
+    dla_dziecka: "Na przejeździe dla rowerzystów kierowcy muszą uważać i przepuścić rower, który już jest na przejeździe. Ale nie wjeżdżaj tuż przed jadące auto!"
+    podstawa: "PoRD — przejazd dla rowerzystów"
+    weryfikacja: true
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Zwolnienie i sprawdzenie ruchu przed wjazdem na przejazd"
+    feedback: "Przejazd dla rowerów to nie trampolina! Upewnij się, że kierowca Cię widzi i zdąży stanąć."
+  - id: PIER-06
+    modul: M04
+    tytul: Włączanie się do ruchu
+    dla_dziecka: "Gdy ruszasz z miejsca albo wyjeżdżasz z bramy, parkingu czy drogi wewnętrznej, przepuszczasz wszystkich."
+    podstawa: "PoRD — włączanie się do ruchu"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Zatrzymanie i przepuszczenie przy wyjeździe z bramy"
+    feedback: "Wyjeżdżasz z bramy? To Ty przepuszczasz wszystkich — i pieszych na chodniku też."
+  - id: PIER-07
+    modul: M04
+    tytul: Pojazd uprzywilejowany
+    dla_dziecka: "Słyszysz syrenę i widzisz niebieskie światła? Zjedź na prawo i w razie potrzeby się zatrzymaj."
+    podstawa: "PoRD — pojazd uprzywilejowany"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Zjazd na prawo przed karetką/strażą/policją"
+    feedback: "Karetka jedzie do kogoś, kto potrzebuje pomocy. Zjedź na prawo i zrób jej miejsce."
+  - id: PIER-08
+    modul: M04
+    tytul: Rondo
+    dla_dziecka: "Przed rondem zwykle stoi znak „ustąp pierwszeństwa” — przepuszczasz tych, którzy już jadą po rondzie. Na rondzie trzymaj się prawej strony, zjazd sygnalizuj ręką w prawo."
+    podstawa: "PoRD; znaki C-12, A-7"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Przepuszczenie pojazdu na rondzie + zasygnalizowany zjazd"
+    feedback: "Ten, kto jest na rondzie, ma pierwszeństwo (gdy stoi znak ustąp). Poczekaj na lukę."
+  - id: PIER-09
+    modul: M04
+    tytul: Tramwaj
+    dla_dziecka: "Na skrzyżowaniu równorzędnym tramwaj ma pierwszeństwo przed innymi pojazdami, także przed rowerem."
+    podstawa: "PoRD — pierwszeństwo pojazdu szynowego na skrzyżowaniu równorzędnym"
+    weryfikacja: true
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Przepuszczenie tramwaju"
+    feedback: "Tramwaj nie skręci i nie zahamuje jak auto. Na takim skrzyżowaniu ma pierwszeństwo."
+
+  # ───────────── M05 — Manewry ─────────────
+  - id: MAN-01
+    modul: M05
+    tytul: Sygnalizuj ręką
+    dla_dziecka: "Przed skrętem, zmianą pasa czy omijaniem pokaż ręką kierunek: lewa ręka w bok — w lewo, prawa w bok — w prawo. Zrób to wcześniej, nie w ostatniej chwili."
+    podstawa: "PoRD — zmiana kierunku i pasa ruchu, obowiązek sygnalizacji"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Zasygnalizowany manewr ≥ 1,5 s przed"
+    feedback: "Ręka w bok to Twój kierunkowskaz. Bez niej nikt nie wie, że skręcasz."
+  - id: MAN-02
+    modul: M05
+    tytul: Skręt w prawo
+    dla_dziecka: "Skręcając w prawo, trzymaj się blisko prawej krawędzi jezdni i skręcaj łagodnym łukiem."
+    podstawa: "PoRD — skręt w prawo"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    feedback: "W prawo skręcamy blisko krawędzi — nie zajeżdżaj szerokim łukiem na środek."
+  - id: MAN-03
+    modul: M05
+    tytul: Skręt w lewo
+    dla_dziecka: "Przed skrętem w lewo obejrzyj się przez lewe ramię, pokaż lewą ręką i zbliż się do środka jezdni (na jezdni jednokierunkowej — do lewej krawędzi)."
+    podstawa: "PoRD — skręt w lewo"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Obejrzenie się + sygnalizacja + właściwe ustawienie przed skrętem w lewo"
+    feedback: "Skręt w lewo to najtrudniejszy manewr: obejrzyj się, ręka w lewo, ustaw się przy środku."
+  - id: MAN-04
+    modul: M05
+    tytul: Omijanie i wyprzedzanie
+    dla_dziecka: "Zanim ominiesz przeszkodę lub wyprzedzisz, obejrzyj się, zasygnalizuj i zachowaj bezpieczny odstęp. Wracaj na prawo, gdy już bezpiecznie minąłeś."
+    podstawa: "PoRD — omijanie, wyprzedzanie"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Obejrzenie się i sygnalizacja przed omijaniem"
+    feedback: "Wyjeżdżając na lewo, upewnij się, że nikt Cię właśnie nie wyprzedza."
+  - id: MAN-05
+    modul: M05
+    tytul: Wyprzedzanie wolnych pojazdów z prawej
+    dla_dziecka: "Rowerem możesz wyprzedzić wolno jadące pojazdy z prawej strony, ale bardzo ostrożnie — kierowca może Cię nie widzieć."
+    podstawa: "PoRD — wyprzedzanie przez kierującego rowerem z prawej strony"
+    weryfikacja: true
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Z prawej możesz, ale ostrożnie — szczególnie obok ciężarówek i autobusów. Martwe pole!"
+  - id: MAN-06
+    modul: M05
+    tytul: Odstęp od zaparkowanych aut
+    dla_dziecka: "Mijając zaparkowane auta, trzymaj odstęp — ktoś może nagle otworzyć drzwi."
+    podstawa: "Zasada bezpieczeństwa (szczególna ostrożność)"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Odstęp > 1 m od zaparkowanych aut"
+    feedback: "Drzwi auta potrafią otworzyć się w sekundę. Trzymaj metr odstępu."
+  - id: MAN-07
+    modul: M05
+    tytul: Ruszanie i zatrzymywanie
+    dla_dziecka: "Zanim ruszysz z krawędzi, obejrzyj się przez lewe ramię i pokaż lewą ręką. Zatrzymując się, zjedź do prawej krawędzi i pokaż prawą ręką."
+    podstawa: "PoRD — włączanie się do ruchu, zatrzymanie"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Obejrzenie się przed ruszeniem"
+    feedback: "Ruszając, zawsze obejrzyj się przez lewe ramię. Z tyłu mogło coś jechać."
+  - id: MAN-08
+    modul: M05
+    tytul: Bezpieczna prędkość
+    dla_dziecka: "Jedź z prędkością, przy której zdążysz się zatrzymać: wolniej w tłumie, na kocich łbach, w deszczu i przy wyjazdach."
+    podstawa: "PoRD — prędkość bezpieczna"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Za szybko jak na takie warunki. Zwolnij — wtedy zdążysz zareagować."
+  - id: MAN-09
+    modul: M05
+    tytul: Ręce na kierownicy, nogi na pedałach
+    dla_dziecka: "Zawsze trzymaj co najmniej jedną rękę na kierownicy, a nogi na pedałach. Nie czepiaj się innych pojazdów."
+    podstawa: "PoRD — zakazy dla kierującego rowerem"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Bez trzymanki to w cyrku. Na drodze przynajmniej jedna ręka zawsze na kierownicy."
+  - id: MAN-10
+    modul: M05
+    tytul: Bez pasażera
+    dla_dziecka: "Na zwykłym rowerze nie wolno wozić kolegi — ani na bagażniku, ani na ramie. Dziecko do 7 lat może wozić tylko dorosły na specjalnym foteliku."
+    podstawa: "PoRD — przewóz osób rowerem"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    feedback: "Rower jest jednoosobowy. Kolega idzie pieszo albo jedzie swoim rowerem."
+  - id: MAN-11
+    modul: M05
+    tytul: Telefon w kieszeni
+    dla_dziecka: "Podczas jazdy nie wolno trzymać telefonu w ręku. Chcesz odebrać? Zatrzymaj się w bezpiecznym miejscu."
+    podstawa: "PoRD — zakaz korzystania z telefonu trzymanego w ręku podczas jazdy"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Odebranie telefonu dopiero po zatrzymaniu"
+    feedback: "SMS może poczekać. Zatrzymaj się bezpiecznie, wtedy odbierz."
+  - id: MAN-12
+    modul: M05
+    tytul: Gdzie nie wyprzedzamy
+    dla_dziecka: "Nie wyprzedzaj na przejściu dla pieszych, na przejeździe dla rowerzystów i tuż przed nimi, na skrzyżowaniu (bez świateł) i przed przejazdem kolejowym. Nie omijaj auta, które stoi, by przepuścić pieszych."
+    podstawa: "PoRD — zakazy wyprzedzania; zakaz omijania pojazdu stojącego przed przejściem"
+    weryfikacja: true
+    detektor: sim
+    waga_bledu: major
+    feedback: "Auto stanęło przed pasami — pewnie przepuszcza pieszego. Nigdy go nie omijaj!"
+
+  # ───────────── M06 — Szczególne miejsca i warunki ─────────────
+  - id: MSC-01
+    modul: M06
+    tytul: Przejazd kolejowy
+    dla_dziecka: "Przed przejazdem kolejowym zwolnij i rozejrzyj się. Nie wjeżdżaj, gdy migają czerwone światła, dzwoni sygnał albo zapory się opuszczają lub podnoszą. Przejedź sprawnie, bez zatrzymywania na torach."
+    podstawa: "PoRD — przejazd kolejowy; znaki A-9, A-10, G-1, G-3"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Zatrzymanie przed przejazdem przy sygnale"
+    feedback: "Pociąg nie zahamuje dla nikogo. Gdy miga czerwone — stoisz, bez dyskusji."
+  - id: MSC-02
+    modul: M06
+    tytul: Przystanek tramwajowy bez wysepki
+    dla_dziecka: "Gdy tramwaj stoi na przystanku bez wysepki, piesi przechodzą przez jezdnię do tramwaju. Zatrzymaj się i przepuść ich."
+    podstawa: "PoRD — ustępowanie pieszym przy przystanku tramwajowym bez wysepki"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Zatrzymanie przy przystanku i przepuszczenie pasażerów"
+    feedback: "Ludzie wysiadają z tramwaju prosto na jezdnię. Stań i poczekaj, aż przejdą."
+  - id: MSC-03
+    modul: M06
+    tytul: Wyjazd z bramy i podwórka
+    dla_dziecka: "Wyjeżdżając z bramy lub podwórka, zatrzymaj się przed chodnikiem, przepuść pieszych, potem pojazdy."
+    podstawa: "PoRD — włączanie się do ruchu (droga wewnętrzna, nieruchomość)"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Zatrzymanie przed chodnikiem przy wyjeździe z bramy"
+    feedback: "Z bramy wyjeżdżamy powoli — za rogiem może iść pieszy."
+  - id: MSC-04
+    modul: M06
+    tytul: Noc i zła widoczność
+    dla_dziecka: "Po zmroku, we mgle i w deszczu włącz światła. Odblaski i kamizelka sprawią, że kierowcy zobaczą Cię z daleka."
+    podstawa: "PoRD — używanie świateł w warunkach niedostatecznej widoczności"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Włączenie świateł przy pogorszeniu widoczności"
+    feedback: "Kierowca widzi ubranie bez odblasku z kilkudziesięciu metrów. Z odblaskiem — z dużo dalszej odległości."
+  - id: MSC-05
+    modul: M06
+    tytul: Jazda w kolumnie
+    dla_dziecka: "Grupa rowerzystów jedzie jeden za drugim. Jedna kolumna to najwyżej 15 rowerów, a między kolumnami musi być co najmniej 200 m odstępu."
+    podstawa: "PoRD — kolumna rowerów"
+    weryfikacja: true
+    detektor: sim
+    waga_bledu: minor
+    feedback: "Za dużo nas w jednej kolumnie! Dzielimy się na mniejsze grupy z odstępem."
+
+  # ───────────── M07 — Pierwsza pomoc i po zdarzeniu ─────────────
+  - id: PP-01
+    modul: M07
+    tytul: Najpierw bezpieczeństwo
+    dla_dziecka: "Gdy ktoś się przewróci: najpierw zadbaj o swoje bezpieczeństwo, zejdź z drogi, ostrzeż innych."
+    podstawa: "Zasady pierwszej pomocy (ERC, materiały szkolne)"
+    weryfikacja: false
+    detektor: scenka
+    waga_bledu: major
+    feedback: "Ratownik, który sam wpadnie pod auto, nikomu nie pomoże. Najpierw bezpieczne miejsce."
+  - id: PP-02
+    modul: M07
+    tytul: Numer alarmowy 112
+    dla_dziecka: "Dzwoń na 112. Powiedz: gdzie jesteś, co się stało, ile osób potrzebuje pomocy. Odpowiadaj na pytania i nie rozłączaj się pierwszy."
+    podstawa: "Numer alarmowy 112"
+    weryfikacja: false
+    detektor: scenka
+    waga_bledu: major
+    feedback: "Przy 112 najważniejsze jest GDZIE. Rozejrzyj się: nazwa ulicy, budynek, coś charakterystycznego."
+  - id: PP-03
+    modul: M07
+    tytul: Zawołaj dorosłego, sprawdź przytomność
+    dla_dziecka: "Zawołaj dorosłego. Zapytaj poszkodowanego głośno „Czy mnie słyszysz?”. Nie przesuwaj go bez potrzeby."
+    podstawa: "Zasady pierwszej pomocy"
+    weryfikacja: false
+    detektor: scenka
+    waga_bledu: minor
+    feedback: "Mów głośno i wyraźnie. I wołaj dorosłych — pomoc w grupie jest łatwiejsza."
+  - id: PP-04
+    modul: M07
+    tytul: Pozycja bezpieczna i drobne rany
+    dla_dziecka: "Jeśli ktoś nie odpowiada, ale oddycha — z pomocą dorosłego ułóż go w pozycji bezpiecznej. Otarcie przemyj czystą wodą i zabezpiecz opatrunkiem."
+    podstawa: "Zasady pierwszej pomocy (ERC)"
+    weryfikacja: true
+    detektor: scenka
+    waga_bledu: minor
+    feedback: "Pozycja bezpieczna chroni drogi oddechowe. Potem czekamy na pomoc i obserwujemy oddech."
+
+  # ───────────── M08 — Plac manewrowy (część praktyczna) ─────────────
+  - id: PLAC-01
+    modul: M08
+    tytul: Ósemka
+    dla_dziecka: "Przejedź ósemkę między pachołkami bez podpierania się nogą i bez najeżdżania na linie."
+    podstawa: "Zakres egzaminu praktycznego (szkolny)"
+    weryfikacja: true
+    detektor: plac
+    waga_bledu: minor
+    feedback: "Patrz tam, gdzie chcesz jechać, nie na pachołek — rower pojedzie za wzrokiem."
+  - id: PLAC-02
+    modul: M08
+    tytul: Slalom
+    dla_dziecka: "Przejedź slalom między pachołkami, nie potrącając żadnego."
+    podstawa: "Zakres egzaminu praktycznego (szkolny)"
+    weryfikacja: true
+    detektor: plac
+    waga_bledu: minor
+    feedback: "Spokojnie i płynnie — slalom wygrywa ten, kto nie szarpie kierownicą."
+  - id: PLAC-03
+    modul: M08
+    tytul: Wąski tor
+    dla_dziecka: "Przejedź wąskim torem bez wyjeżdżania za linie."
+    podstawa: "Zakres egzaminu praktycznego (szkolny)"
+    weryfikacja: true
+    detektor: plac
+    waga_bledu: minor
+    feedback: "Nie za wolno! Na wąskim torze trochę prędkości pomaga utrzymać równowagę."
+  - id: PLAC-04
+    modul: M08
+    tytul: Zatrzymanie w wyznaczonym miejscu
+    dla_dziecka: "Zatrzymaj się dokładnie w wyznaczonym polu, hamując płynnie."
+    podstawa: "Zakres egzaminu praktycznego (szkolny)"
+    weryfikacja: true
+    detektor: plac
+    waga_bledu: minor
+    feedback: "Hamuj wcześniej i delikatniej — dojedziesz idealnie do linii."
+  - id: PLAC-05
+    modul: M08
+    tytul: Ruszanie z sygnalizacją
+    dla_dziecka: "Ruszając, obejrzyj się przez lewe ramię i pokaż lewą ręką kierunek."
+    podstawa: "Zakres egzaminu praktycznego (szkolny)"
+    weryfikacja: true
+    detektor: plac
+    waga_bledu: minor
+    feedback: "Najpierw spojrzenie przez ramię, potem ręka, potem jazda."
+  - id: PLAC-06
+    modul: M08
+    tytul: Jazda z jedną ręką (sygnalizowanie skrętu)
+    dla_dziecka: "Pokaż ręką skręt i utrzymaj prosty tor jazdy jedną ręką na kierownicy."
+    podstawa: "Zakres egzaminu praktycznego (szkolny)"
+    weryfikacja: true
+    detektor: plac
+    waga_bledu: minor
+    feedback: "Ręka w bok, wzrok przed siebie — rower jedzie prosto, gdy Ty patrzysz prosto."

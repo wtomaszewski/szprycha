@@ -1,0 +1,21 @@
+osiagniecia:
+  - { id: reka_w_gore, nazwa: "Ręka w górę", opis: "Zasygnalizuj 50 manewrów", warunek: { good: MAN-01, ile: 50 }, zetony: 30 }
+  - { id: pan_pierwszenstwo, nazwa: "Pan/Pani Pierwszeństwo", opis: "Poprawnie ustąp pierwszeństwa 100 razy", warunek: { good_modul: M04, ile: 100 }, zetony: 50 }
+  - { id: zebra_friendly, nazwa: "Przyjaciel Zebry", opis: "Przeprowadź rower przez przejście 30 razy", warunek: { good: GDZIE-06, ile: 30 }, zetony: 30 }
+  - { id: stop_znaczy_stop, nazwa: "STOP znaczy STOP", opis: "Zatrzymaj się na 25 znakach STOP", warunek: { good: ZNAK-STOP, ile: 25 }, zetony: 25 }
+  - { id: nocny_marek, nazwa: "Nocny Marek", opis: "10 nocnych kursów bez błędu", warunek: { misje_typ: nocny, bez_bledow: true, ile: 10 }, zetony: 40 }
+  - { id: kolekcjoner, nazwa: "Kolekcjoner Znaków", opis: "Uzupełnij cały Album Znaków", warunek: { album: 100 }, zetony: 100 }
+  - { id: krasnologia, nazwa: "Krasnologia", opis: "Znajdź 100 krasnali we Wrocławiu", warunek: { kolekcja: krasnale, ile: 100 }, zetony: 100 }
+  - { id: syreni_spiew, nazwa: "Syreni Śpiew", opis: "Znajdź 10 syrenek w Warszawie", warunek: { kolekcja: syrenki, ile: 10 }, zetony: 40 }
+  - { id: seria_5, nazwa: "Na pełnej serii", opis: "Osiągnij mnożnik ×5", warunek: { combo: 5 }, zetony: 20 }
+  - { id: seria_100, nazwa: "Sto bez błędu", opis: "100 dobrych nawyków z rzędu", warunek: { seria: 100 }, zetony: 80 }
+  - { id: zloty_plac, nazwa: "Złoty Plac", opis: "Złoto we wszystkich elementach placu manewrowego", warunek: { plac_zloto: all }, zetony: 60 }
+  - { id: mistrz_ronda, nazwa: "Mistrz Ronda", opis: "20 rond bez błędu", warunek: { good: PIER-08, ile: 20 }, zetony: 30 }
+  - { id: tramwajarz, nazwa: "Tramwajowy Spokój", opis: "Przepuść 20 tramwajów i 10 razy pasażerów na przystanku", warunek: { all: [ { good: PIER-09, ile: 20 }, { good: MSC-02, ile: 10 } ] }, zetony: 30 }
+  - { id: pierwsza_pomoc, nazwa: "Ratownik", opis: "Ukończ bezbłędnie scenkę pierwszej pomocy", warunek: { scenka_pp: bezblednie }, zetony: 40 }
+  - { id: turbo_nawrocony, nazwa: "Turbo nawrócony", opis: "Ukończ akt 3 w dowolnym mieście", warunek: { akt: 3 }, zetony: 50 }
+  - { id: madra_glowa, nazwa: "Mądra Głowa", opis: "Odpowiedz poprawnie na 20 pytań Sierżant Oli z rzędu", warunek: { quiz_seria: 20 }, zetony: 40 }
+  - { id: dwa_miasta, nazwa: "Obywatel Dwóch Miast", opis: "Ukończ kampanię Warszawy i Wrocławia", warunek: { kampanie: [warszawa, wroclaw] }, zetony: 100 }
+  - { id: legenda, nazwa: "Legenda Szprychy", opis: "Zdaj egzamin Licencji Szprychy", warunek: { licencja: true }, zetony: 200 }
+  - { id: dobry_sasiad, nazwa: "Dobry Sąsiad", opis: "Zrób 10 kursów dla Pani Haliny", warunek: { zleceniodawca: pani_halina, ile: 10 }, zetony: 30 }
+  - { id: karetka_ma_droge, nazwa: "Droga dla karetki", opis: "Ustąp 5 pojazdom uprzywilejowanym", warunek: { good: PIER-07, ile: 5 }, zetony: 20 }

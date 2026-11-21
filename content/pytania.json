@@ -1,0 +1,999 @@
+{
+ "stan_prawny": "2026-11-21",
+ "uwaga": "Bank pytań startowy. Każde pytanie przed wydaniem do recenzji merytorycznej. Format gotowy na import oficjalnego banku pytań (pole zrodlo).",
+ "pytania": [
+  {
+   "id": "Q001",
+   "modul": "M01",
+   "przepisy": [
+    "KASK-01"
+   ],
+   "poziom": 1,
+   "pytanie": "Do ilu lat kierujący rowerem musi jeździć w kasku?",
+   "odpowiedzi": [
+    "Do 10 lat",
+    "Do 14 lat",
+    "Do ukończenia 16 lat",
+    "Do 18 lat"
+   ],
+   "poprawna": 2,
+   "wyjasnienie": "Od 3 czerwca 2026 r. kask jest obowiązkowy dla wszystkich, którzy nie ukończyli 16 lat.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q002",
+   "modul": "M01",
+   "przepisy": [
+    "KASK-01"
+   ],
+   "poziom": 1,
+   "pytanie": "Jak powinien być założony kask?",
+   "odpowiedzi": [
+    "Zsunięty na tył głowy, żeby nie zasłaniał",
+    "Prosto, nad brwiami, z zapiętym paskiem",
+    "Wystarczy, że jest na głowie — pasek nie ma znaczenia",
+    "Na czapkę z daszkiem"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Kask chroni tylko wtedy, gdy jest zapięty i nie przesuwa się na głowie.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q003",
+   "modul": "M01",
+   "przepisy": [
+    "WYP-02"
+   ],
+   "poziom": 1,
+   "pytanie": "Który element jest obowiązkowym wyposażeniem roweru?",
+   "odpowiedzi": [
+    "Koszyk",
+    "Licznik",
+    "Dzwonek lub inny sygnał ostrzegawczy",
+    "Nóżka"
+   ],
+   "poprawna": 2,
+   "wyjasnienie": "Rower musi mieć dzwonek albo inny sygnał ostrzegawczy o nieprzeraźliwym dźwięku.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q004",
+   "modul": "M01",
+   "przepisy": [
+    "WYP-03"
+   ],
+   "poziom": 2,
+   "pytanie": "Jakie światło odblaskowe musi mieć rower z tyłu?",
+   "odpowiedzi": [
+    "Białe, dowolny kształt",
+    "Czerwone, w kształcie trójkąta",
+    "Czerwone, w kształcie innym niż trójkąt",
+    "Żółte, okrągłe"
+   ],
+   "poprawna": 2,
+   "wyjasnienie": "Z tyłu: czerwone światło odblaskowe o kształcie innym niż trójkąt. Trójkąty odblaskowe mają przyczepy.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q005",
+   "modul": "M01",
+   "przepisy": [
+    "WYP-04"
+   ],
+   "poziom": 2,
+   "pytanie": "Jakiego koloru światło pozycyjne musi mieć rower z przodu?",
+   "odpowiedzi": [
+    "Czerwone",
+    "Białe lub żółte selektywne",
+    "Niebieskie",
+    "Zielone"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Przednie światło roweru jest białe lub żółte selektywne. Czerwone jest zawsze z tyłu.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q006",
+   "modul": "M01",
+   "przepisy": [
+    "WYP-04",
+    "WYP-05",
+    "MSC-04"
+   ],
+   "poziom": 1,
+   "pytanie": "Kiedy musisz mieć włączone światła w rowerze?",
+   "odpowiedzi": [
+    "Tylko zimą",
+    "W warunkach niedostatecznej widoczności, np. po zmroku, we mgle, w tunelu",
+    "Tylko na drodze ekspresowej",
+    "Nigdy, światła są tylko ozdobą"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Światła włączasz zawsze, gdy widoczność jest słaba — po zmroku, we mgle, w tunelu, w ulewie.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q007",
+   "modul": "M01",
+   "przepisy": [
+    "WYP-01"
+   ],
+   "poziom": 1,
+   "pytanie": "Ile co najmniej skutecznie działających hamulców musi mieć rower?",
+   "odpowiedzi": [
+    "Żadnego, można hamować nogą",
+    "Co najmniej jeden",
+    "Dokładnie trzy",
+    "Tylko hamulec ręczny jak w aucie"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Rower musi mieć co najmniej jeden skutecznie działający hamulec.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q008",
+   "modul": "M02",
+   "przepisy": [
+    "GDZIE-01"
+   ],
+   "poziom": 1,
+   "pytanie": "Wzdłuż jezdni biegnie droga dla rowerów w kierunku, w którym jedziesz. Gdzie jedziesz?",
+   "odpowiedzi": [
+    "Jezdnią, bo jest szybciej",
+    "Chodnikiem",
+    "Drogą dla rowerów",
+    "Gdzie chcę"
+   ],
+   "poprawna": 2,
+   "wyjasnienie": "Jeśli jest droga dla rowerów dla Twojego kierunku, masz obowiązek z niej korzystać.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q009",
+   "modul": "M02",
+   "przepisy": [
+    "GDZIE-03b"
+   ],
+   "poziom": 2,
+   "pytanie": "Poza miastem nie ma drogi dla rowerów, ale jest szerokie, równe pobocze. Gdzie jedziesz?",
+   "odpowiedzi": [
+    "Środkiem jezdni",
+    "Poboczem",
+    "Lewą stroną jezdni",
+    "Rowem"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Gdy nie ma drogi ani pasa dla rowerów, a pobocze nadaje się do jazdy — jedziesz poboczem.",
+   "zrodlo": "wlasne",
+   "weryfikacja": true
+  },
+  {
+   "id": "Q010",
+   "modul": "M02",
+   "przepisy": [
+    "GDZIE-04"
+   ],
+   "poziom": 2,
+   "pytanie": "W której sytuacji wolno Ci jechać rowerem po chodniku?",
+   "odpowiedzi": [
+    "Gdy się spieszę",
+    "Gdy na jezdni jest korek",
+    "Gdy pada śnieg lub jest gołoledź i jazda jezdnią jest niebezpieczna",
+    "Gdy chodnik jest pusty"
+   ],
+   "poprawna": 2,
+   "wyjasnienie": "Chodnik tylko wyjątkowo: m.in. przy groźnej pogodzie (śnieg, silny wiatr, ulewa, gołoledź, gęsta mgła).",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q011",
+   "modul": "M02",
+   "przepisy": [
+    "GDZIE-04",
+    "GDZIE-10"
+   ],
+   "poziom": 2,
+   "pytanie": "Jedziesz z 7-letnim bratem, który też jest na rowerze. Gdzie możesz jechać?",
+   "odpowiedzi": [
+    "Tylko jezdnią",
+    "Chodnikiem obok brata, opiekując się nim",
+    "Brat jezdnią, Ty chodnikiem",
+    "Nigdzie, brat nie może jeździć rowerem"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Dziecko do 10 lat jedzie chodnikiem pod opieką, a opiekun może jechać obok niego chodnikiem.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q012",
+   "modul": "M02",
+   "przepisy": [
+    "GDZIE-05"
+   ],
+   "poziom": 1,
+   "pytanie": "Jedziesz wyjątkowo chodnikiem. Jak się zachowujesz?",
+   "odpowiedzi": [
+    "Dzwonię, żeby piesi zeszli mi z drogi",
+    "Jadę powoli, uważam i ustępuję pieszym",
+    "Jadę szybko, żeby jak najkrócej przeszkadzać",
+    "Jadę środkiem chodnika"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Na chodniku piesi mają pierwszeństwo. Jedziesz powoli i ostrożnie.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q013",
+   "modul": "M02",
+   "przepisy": [
+    "GDZIE-06"
+   ],
+   "poziom": 1,
+   "pytanie": "Jak rowerzysta pokonuje przejście dla pieszych (zebrę), gdy obok nie ma przejazdu dla rowerzystów?",
+   "odpowiedzi": [
+    "Przejeżdża szybko",
+    "Przejeżdża powoli",
+    "Schodzi z roweru i go przeprowadza",
+    "Przejeżdża, jeśli nikt nie idzie"
+   ],
+   "poprawna": 2,
+   "wyjasnienie": "Po przejściu dla pieszych nie wolno jechać rowerem. Zejdź i przeprowadź rower.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q014",
+   "modul": "M02",
+   "przepisy": [
+    "GDZIE-07"
+   ],
+   "poziom": 2,
+   "pytanie": "Kto ma pierwszeństwo w strefie zamieszkania?",
+   "odpowiedzi": [
+    "Samochody",
+    "Rowerzyści",
+    "Piesi",
+    "Ten, kto jest szybszy"
+   ],
+   "poprawna": 2,
+   "wyjasnienie": "W strefie zamieszkania piesi mogą iść całą szerokością drogi i mają pierwszeństwo przed pojazdami.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q015",
+   "modul": "M02",
+   "przepisy": [
+    "GDZIE-08"
+   ],
+   "poziom": 2,
+   "pytanie": "Kiedy możesz jechać obok kolegi na rowerze?",
+   "odpowiedzi": [
+    "Zawsze",
+    "Nigdy",
+    "Gdy nie utrudnia to ruchu innym i nie stwarza zagrożenia",
+    "Tylko na autostradzie"
+   ],
+   "poprawna": 2,
+   "wyjasnienie": "Jazda obok siebie jest dozwolona, jeśli nikomu nie utrudniacie ruchu i nie stwarzacie zagrożenia.",
+   "zrodlo": "wlasne",
+   "weryfikacja": true
+  },
+  {
+   "id": "Q016",
+   "modul": "M02",
+   "przepisy": [
+    "GDZIE-09"
+   ],
+   "poziom": 1,
+   "pytanie": "Na którą drogę nie wolno wjeżdżać rowerem?",
+   "odpowiedzi": [
+    "Na drogę osiedlową",
+    "Na autostradę i drogę ekspresową",
+    "Na drogę w strefie zamieszkania",
+    "Na drogę dla rowerów"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Rowerem nie wolno jeździć po autostradzie i drodze ekspresowej.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q017",
+   "modul": "M02",
+   "przepisy": [
+    "GDZIE-11"
+   ],
+   "poziom": 2,
+   "pytanie": "Jedziesz wspólną drogą dla pieszych i rowerów (symbole jeden nad drugim). Przed Tobą idą piesi. Co robisz?",
+   "odpowiedzi": [
+    "Dzwonię i jadę dalej",
+    "Zwalniam i ustępuję pieszym",
+    "Wymuszam pierwszeństwo — to też moja droga",
+    "Zjeżdżam na trawnik z dużą prędkością"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Na wspólnej drodze dla pieszych i rowerów rowerzysta uważa i ustępuje pieszym.",
+   "zrodlo": "wlasne",
+   "weryfikacja": true
+  },
+  {
+   "id": "Q018",
+   "modul": "M03",
+   "przepisy": [
+    "SYG-03"
+   ],
+   "poziom": 2,
+   "pytanie": "Kogo słuchasz najpierw?",
+   "odpowiedzi": [
+    "Znaków drogowych",
+    "Sygnalizacji świetlnej",
+    "Poleceń policjanta kierującego ruchem",
+    "Kolegów"
+   ],
+   "poprawna": 2,
+   "wyjasnienie": "Kolejność: polecenia osoby kierującej ruchem, sygnały świetlne, znaki, przepisy.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q019",
+   "modul": "M03",
+   "przepisy": [
+    "SYG-01"
+   ],
+   "poziom": 1,
+   "pytanie": "Co oznacza żółte światło (bez migania) na sygnalizatorze?",
+   "odpowiedzi": [
+    "Przyspiesz, żeby zdążyć",
+    "Nie wjeżdżaj, chyba że zatrzymanie byłoby niebezpieczne",
+    "Możesz jechać bez ograniczeń",
+    "Sygnalizator jest zepsuty"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Żółte to zakaz wjazdu za sygnalizator — chyba że jesteś już tak blisko, że bezpieczne zatrzymanie nie jest możliwe.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q020",
+   "modul": "M03",
+   "przepisy": [
+    "ZNAK-S2"
+   ],
+   "poziom": 2,
+   "pytanie": "Pali się czerwone światło i obok zielona strzałka w prawo. Chcesz skręcić w prawo. Co robisz?",
+   "odpowiedzi": [
+    "Skręcam bez zatrzymania",
+    "Zatrzymuję się, przepuszczam pieszych i pojazdy, potem skręcam",
+    "Czekam na zielone, strzałka nic nie znaczy",
+    "Jadę prosto"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Zielona strzałka pozwala skręcić dopiero po zatrzymaniu i ustąpieniu pierwszeństwa.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q021",
+   "modul": "M03",
+   "przepisy": [
+    "ZNAK-STOP"
+   ],
+   "poziom": 1,
+   "obrazek": "B-20",
+   "pytanie": "Co musisz zrobić przy znaku STOP?",
+   "odpowiedzi": [
+    "Zwolnić",
+    "Zatrzymać się tylko, gdy coś jedzie",
+    "Zatrzymać się zawsze i ustąpić pierwszeństwa",
+    "Zadzwonić dzwonkiem"
+   ],
+   "poprawna": 2,
+   "wyjasnienie": "Przy STOP zatrzymujesz się zawsze, nawet gdy droga jest pusta.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q022",
+   "modul": "M03",
+   "przepisy": [
+    "ZNAK-A7"
+   ],
+   "poziom": 1,
+   "obrazek": "A-7",
+   "pytanie": "Co oznacza ten znak (odwrócony trójkąt)?",
+   "odpowiedzi": [
+    "Droga z pierwszeństwem",
+    "Ustąp pierwszeństwa",
+    "Zakaz wjazdu",
+    "Rondo"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "A-7 — ustąp pierwszeństwa jadącym drogą, na którą wjeżdżasz.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q023",
+   "modul": "M03",
+   "przepisy": [
+    "ZNAK-D1"
+   ],
+   "poziom": 1,
+   "obrazek": "D-1",
+   "pytanie": "Co oznacza żółty romb w białej obwódce?",
+   "odpowiedzi": [
+    "Koniec drogi z pierwszeństwem",
+    "Drogę z pierwszeństwem",
+    "Strefę zamieszkania",
+    "Przejście dla pieszych"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "D-1 — jesteś na drodze z pierwszeństwem. Mimo to obserwuj, czy inni Cię przepuszczają.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q024",
+   "modul": "M03",
+   "przepisy": [
+    "ZNAK-B2T22"
+   ],
+   "poziom": 3,
+   "obrazek": "B-2+T-22",
+   "pytanie": "Pod znakiem „zakaz wjazdu” jest tabliczka z rowerem i napisem „nie dotyczy”. Co to znaczy?",
+   "odpowiedzi": [
+    "Rowerem też nie wolno wjechać",
+    "Rowerem wolno wjechać pod prąd, trzymając się prawej strony",
+    "Tabliczka dotyczy tylko rowerów elektrycznych",
+    "To znak dla parkingu rowerowego"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Tabliczka T-22 zwalnia rowery z zakazu — to tzw. kontraruch rowerowy.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q025",
+   "modul": "M03",
+   "przepisy": [
+    "ZNAK-C13"
+   ],
+   "poziom": 1,
+   "obrazek": "C-13",
+   "pytanie": "Co oznacza niebieskie koło z białym rowerem?",
+   "odpowiedzi": [
+    "Zakaz wjazdu rowerów",
+    "Wypożyczalnię rowerów",
+    "Drogę dla rowerów",
+    "Parking rowerowy"
+   ],
+   "poprawna": 2,
+   "wyjasnienie": "C-13 — droga dla rowerów. Niebieskie koła to znaki nakazu.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q026",
+   "modul": "M03",
+   "przepisy": [
+    "ZNAK-B9"
+   ],
+   "poziom": 1,
+   "obrazek": "B-9",
+   "pytanie": "Co oznacza rower w czerwonym kółku na białym tle?",
+   "odpowiedzi": [
+    "Drogę dla rowerów",
+    "Zakaz wjazdu rowerów",
+    "Uwaga, rowerzyści",
+    "Sklep rowerowy"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "B-9 — zakaz wjazdu rowerów. Czerwona obwódka to znak zakazu.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q027",
+   "modul": "M03",
+   "przepisy": [
+    "SYG-02"
+   ],
+   "poziom": 2,
+   "pytanie": "Na przejeździe dla rowerzystów stoi sygnalizator z symbolem roweru. Kogo dotyczy?",
+   "odpowiedzi": [
+    "Tylko samochodów",
+    "Rowerzystów",
+    "Tramwajów",
+    "Pieszych z psami"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Sygnalizator z symbolem roweru jest przeznaczony dla rowerzystów.",
+   "zrodlo": "wlasne",
+   "weryfikacja": true
+  },
+  {
+   "id": "Q028",
+   "modul": "M03",
+   "przepisy": [
+    "MAN-08"
+   ],
+   "poziom": 2,
+   "obrazek": "A-17",
+   "pytanie": "Co oznacza trójkątny znak z dwójką dzieci?",
+   "odpowiedzi": [
+    "Plac zabaw dla rowerów",
+    "Uwaga, dzieci — w pobliżu szkoła lub plac zabaw",
+    "Zakaz wejścia dzieci",
+    "Przejście tylko dla dzieci"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "A-17 ostrzega, że dzieci mogą nagle wejść na drogę. Zwolnij.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q029",
+   "modul": "M04",
+   "przepisy": [
+    "PIER-01"
+   ],
+   "poziom": 1,
+   "pytanie": "Skrzyżowanie bez znaków i świateł. Z prawej nadjeżdża samochód. Kto ma pierwszeństwo?",
+   "odpowiedzi": [
+    "Ja, bo jestem na rowerze",
+    "Samochód z prawej",
+    "Ten, kto szybciej jedzie",
+    "Ten, kto pierwszy zadzwoni"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Na skrzyżowaniu równorzędnym ustępujesz temu, kto nadjeżdża z prawej.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q030",
+   "modul": "M04",
+   "przepisy": [
+    "PIER-09"
+   ],
+   "poziom": 2,
+   "pytanie": "Skrzyżowanie równorzędne, z lewej nadjeżdża tramwaj. Kto jedzie pierwszy?",
+   "odpowiedzi": [
+    "Ja, bo tramwaj jest z lewej",
+    "Tramwaj",
+    "Ten, kto pierwszy wjedzie",
+    "Tramwaj musi zawsze czekać na rowery"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Na skrzyżowaniu równorzędnym tramwaj ma pierwszeństwo przed innymi pojazdami, niezależnie od strony.",
+   "zrodlo": "wlasne",
+   "weryfikacja": true
+  },
+  {
+   "id": "Q031",
+   "modul": "M04",
+   "przepisy": [
+    "PIER-03"
+   ],
+   "poziom": 2,
+   "pytanie": "Skręcasz w lewo. Z naprzeciwka jedzie prosto rowerzysta. Co robisz?",
+   "odpowiedzi": [
+    "Skręcam, bo pokazałem rękę",
+    "Przepuszczam go, potem skręcam",
+    "Dzwonię, żeby się zatrzymał",
+    "Skręcam szybciej, żeby zdążyć"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Skręcając w lewo, ustępujesz pojazdom z naprzeciwka jadącym prosto i w prawo.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q032",
+   "modul": "M04",
+   "przepisy": [
+    "PIER-04"
+   ],
+   "poziom": 2,
+   "pytanie": "Skręcasz w prawo, a przez jezdnię, w którą wjeżdżasz, przechodzą piesi. Co robisz?",
+   "odpowiedzi": [
+    "Przejeżdżam między nimi",
+    "Przepuszczam pieszych",
+    "Dzwonię, żeby przyspieszyli",
+    "Skręcam po chodniku"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Skręcając, ustępujesz pieszym przechodzącym przez jezdnię, na którą wjeżdżasz.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q033",
+   "modul": "M04",
+   "przepisy": [
+    "PIER-06",
+    "MSC-03"
+   ],
+   "poziom": 2,
+   "pytanie": "Wyjeżdżasz z bramy kamienicy na ulicę. Komu ustępujesz?",
+   "odpowiedzi": [
+    "Nikomu",
+    "Tylko samochodom z prawej",
+    "Wszystkim: pieszym na chodniku i pojazdom na jezdni",
+    "Tylko tramwajom"
+   ],
+   "poprawna": 2,
+   "wyjasnienie": "Wyjazd z bramy to włączanie się do ruchu — przepuszczasz wszystkich.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q034",
+   "modul": "M04",
+   "przepisy": [
+    "PIER-07"
+   ],
+   "poziom": 1,
+   "pytanie": "Słyszysz syrenę i widzisz karetkę z niebieskimi światłami. Co robisz?",
+   "odpowiedzi": [
+    "Ścigam się z nią",
+    "Zjeżdżam na prawo i w razie potrzeby się zatrzymuję",
+    "Jadę środkiem, żeby mnie widziała",
+    "Zawracam"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Pojazdowi uprzywilejowanemu ustępujesz: zjeżdżasz na prawo, a gdy trzeba — zatrzymujesz się.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q035",
+   "modul": "M04",
+   "przepisy": [
+    "PIER-05"
+   ],
+   "poziom": 3,
+   "pytanie": "Dojeżdżasz do przejazdu dla rowerzystów. Zbliża się samochód. Co jest prawdą?",
+   "odpowiedzi": [
+    "Mogę wjechać tuż przed auto — mam pierwszeństwo",
+    "Kierowca musi przepuścić rower będący na przejeździe, ale ja nie mogę wjechać bezpośrednio przed jadący pojazd",
+    "Przejazd dla rowerzystów jest tylko dla pieszych",
+    "Muszę przeprowadzić rower"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Kierowca ustępuje rowerowi na przejeździe, ale rowerzysta nie może wjeżdżać tuż przed nadjeżdżający pojazd.",
+   "zrodlo": "wlasne",
+   "weryfikacja": true
+  },
+  {
+   "id": "Q036",
+   "modul": "M04",
+   "przepisy": [
+    "PIER-08"
+   ],
+   "poziom": 2,
+   "pytanie": "Przed rondem stoi znak „ustąp pierwszeństwa”. Kto ma pierwszeństwo?",
+   "odpowiedzi": [
+    "Ja, bo wjeżdżam",
+    "Pojazdy, które już jadą po rondzie",
+    "Pojazdy z mojej prawej strony przed rondem",
+    "Nikt"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Znak A-7 przed rondem oznacza, że przepuszczasz tych, którzy już są na rondzie.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q037",
+   "modul": "M06",
+   "przepisy": [
+    "MSC-02"
+   ],
+   "poziom": 2,
+   "pytanie": "Tramwaj zatrzymał się na przystanku bez wysepki, ludzie wysiadają na jezdnię. Co robisz?",
+   "odpowiedzi": [
+    "Omijam ich szybko",
+    "Zatrzymuję się i przepuszczam pieszych",
+    "Dzwonię i jadę dalej",
+    "Jadę po torach"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Przy przystanku tramwajowym bez wysepki ustępujesz pieszym idącym do lub od tramwaju.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q038",
+   "modul": "M05",
+   "przepisy": [
+    "MAN-01"
+   ],
+   "poziom": 1,
+   "pytanie": "Jak sygnalizujesz skręt w lewo?",
+   "odpowiedzi": [
+    "Prawą ręką w górę",
+    "Lewą ręką wyciągniętą w bok",
+    "Dzwonkiem",
+    "Kiwnięciem głowy"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Skręt w lewo: lewa ręka wyciągnięta poziomo w bok. W prawo — prawa ręka.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q039",
+   "modul": "M05",
+   "przepisy": [
+    "MAN-01"
+   ],
+   "poziom": 1,
+   "pytanie": "Kiedy sygnalizujesz zamiar skrętu?",
+   "odpowiedzi": [
+    "Po skręcie",
+    "Zawczasu, przed rozpoczęciem manewru",
+    "Tylko gdy ktoś jedzie za mną",
+    "Nie trzeba sygnalizować na rowerze"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Sygnalizujesz wcześniej, żeby inni zdążyli zrozumieć Twój zamiar. W trakcie skrętu możesz trzymać kierownicę obiema rękami.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q040",
+   "modul": "M05",
+   "przepisy": [
+    "MAN-03"
+   ],
+   "poziom": 2,
+   "pytanie": "Na jezdni dwukierunkowej chcesz skręcić w lewo. Jak się ustawiasz?",
+   "odpowiedzi": [
+    "Przy prawej krawędzi",
+    "Bliżej środka jezdni (osi), po obejrzeniu się i zasygnalizowaniu",
+    "Na lewym pasie pod prąd",
+    "Na chodniku"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Przed skrętem w lewo zbliżasz się do osi jezdni — najpierw oglądasz się i sygnalizujesz.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q041",
+   "modul": "M05",
+   "przepisy": [
+    "MAN-07"
+   ],
+   "poziom": 1,
+   "pytanie": "Co robisz, zanim ruszysz sprzed domu na jezdnię?",
+   "odpowiedzi": [
+    "Ruszam jak najszybciej",
+    "Oglądam się przez lewe ramię i sygnalizuję lewą ręką",
+    "Zamykam oczy i liczę do trzech",
+    "Dzwonię"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Przed ruszeniem upewnij się, że z tyłu nic nie jedzie, i pokaż zamiar ręką.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q042",
+   "modul": "M05",
+   "przepisy": [
+    "MAN-09"
+   ],
+   "poziom": 1,
+   "pytanie": "Co jest zabronione podczas jazdy rowerem?",
+   "odpowiedzi": [
+    "Jazda w kasku",
+    "Jazda bez trzymania kierownicy co najmniej jedną ręką",
+    "Używanie dzwonka",
+    "Jazda drogą dla rowerów"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Musisz trzymać kierownicę co najmniej jedną ręką i mieć nogi na pedałach. Nie wolno też czepiać się pojazdów.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q043",
+   "modul": "M05",
+   "przepisy": [
+    "MAN-10"
+   ],
+   "poziom": 1,
+   "pytanie": "Kolega prosi, żebyś podwiózł go na bagażniku. Co odpowiadasz?",
+   "odpowiedzi": [
+    "Jasne, wskakuj",
+    "Nie wolno — rower jest jednoosobowy",
+    "Tylko po chodniku",
+    "Tylko jeśli ma kask"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Na zwykłym rowerze nie wolno przewozić pasażera. Dziecko do 7 lat może wozić tylko dorosły w specjalnym foteliku.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q044",
+   "modul": "M05",
+   "przepisy": [
+    "MAN-11"
+   ],
+   "poziom": 1,
+   "pytanie": "Dzwoni telefon, gdy jedziesz rowerem. Co robisz?",
+   "odpowiedzi": [
+    "Odbieram i jadę jedną ręką",
+    "Zatrzymuję się w bezpiecznym miejscu i dopiero wtedy odbieram",
+    "Piszę SMS na prostym odcinku",
+    "Odbieram na czerwonym świetle, trzymając telefon"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Podczas jazdy nie wolno korzystać z telefonu trzymanego w ręku.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q045",
+   "modul": "M05",
+   "przepisy": [
+    "MAN-12"
+   ],
+   "poziom": 3,
+   "pytanie": "Przed przejściem dla pieszych zatrzymał się samochód. Co robisz?",
+   "odpowiedzi": [
+    "Omijam go, żeby nie tracić czasu",
+    "Też się zatrzymuję — auto pewnie przepuszcza pieszego",
+    "Wyprzedzam go z lewej",
+    "Dzwonię na kierowcę"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Nie wolno omijać pojazdu, który zatrzymał się, by przepuścić pieszych. Pieszy może wyjść zza auta.",
+   "zrodlo": "wlasne",
+   "weryfikacja": true
+  },
+  {
+   "id": "Q046",
+   "modul": "M05",
+   "przepisy": [
+    "MAN-06"
+   ],
+   "poziom": 2,
+   "pytanie": "Jedziesz wzdłuż zaparkowanych aut. Dlaczego zachowujesz odstęp?",
+   "odpowiedzi": [
+    "Żeby nie porysować aut",
+    "Bo ktoś może nagle otworzyć drzwi",
+    "Bo tak ładniej",
+    "Nie trzeba zachowywać odstępu"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Nagle otwarte drzwi to częsta przyczyna upadków rowerzystów. Trzymaj odstęp.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q047",
+   "modul": "M06",
+   "przepisy": [
+    "MSC-01"
+   ],
+   "poziom": 1,
+   "pytanie": "Na przejeździe kolejowym migają czerwone światła, a zapory zaczynają się opuszczać. Co robisz?",
+   "odpowiedzi": [
+    "Przejeżdżam szybko pod zaporą",
+    "Zatrzymuję się i czekam",
+    "Przeprowadzam rower obok zapory",
+    "Jadę, jeśli nie widzę pociągu"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Gdy migają czerwone światła lub zapory się ruszają — nie wjeżdżasz. Pociąg jedzie szybciej, niż się wydaje.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q048",
+   "modul": "M06",
+   "przepisy": [
+    "MSC-05"
+   ],
+   "poziom": 2,
+   "pytanie": "Ile rowerów może liczyć jedna kolumna rowerzystów?",
+   "odpowiedzi": [
+    "Najwyżej 5",
+    "Najwyżej 15",
+    "Najwyżej 30",
+    "Bez ograniczeń"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Kolumna rowerów to najwyżej 15 rowerów, a między kolumnami musi być co najmniej 200 m odstępu.",
+   "zrodlo": "wlasne",
+   "weryfikacja": true
+  },
+  {
+   "id": "Q049",
+   "modul": "M06",
+   "przepisy": [
+    "MSC-04",
+    "WYP-06"
+   ],
+   "poziom": 1,
+   "pytanie": "Co najbardziej pomaga, żeby kierowcy zobaczyli Cię wieczorem?",
+   "odpowiedzi": [
+    "Ciemne ubranie",
+    "Włączone światła, odblaski i kamizelka odblaskowa",
+    "Głośna muzyka",
+    "Jazda środkiem jezdni"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Światła i odblaski sprawiają, że kierowca zauważy Cię z dużo większej odległości.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q050",
+   "modul": "M07",
+   "przepisy": [
+    "PP-02"
+   ],
+   "poziom": 1,
+   "pytanie": "Jaki jest numer alarmowy, pod który dzwonisz po pomoc?",
+   "odpowiedzi": [
+    "555",
+    "112",
+    "123",
+    "100"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "112 to numer alarmowy w całej Polsce i Unii Europejskiej.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q051",
+   "modul": "M07",
+   "przepisy": [
+    "PP-02"
+   ],
+   "poziom": 2,
+   "pytanie": "Co najważniejsze musisz powiedzieć dyspozytorowi 112?",
+   "odpowiedzi": [
+    "Swój ulubiony kolor",
+    "Gdzie jesteś, co się stało i ile osób potrzebuje pomocy",
+    "Tylko swoje imię",
+    "Nic, od razu się rozłączam"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Podaj miejsce, co się stało i ile osób potrzebuje pomocy. Odpowiadaj na pytania i nie rozłączaj się pierwszy.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q052",
+   "modul": "M07",
+   "przepisy": [
+    "PP-01"
+   ],
+   "poziom": 1,
+   "pytanie": "Kolega przewrócił się na jezdni. Co robisz najpierw?",
+   "odpowiedzi": [
+    "Wbiegam na jezdnię bez patrzenia",
+    "Dbam o swoje bezpieczeństwo, ostrzegam innych, potem pomagam",
+    "Robię zdjęcie",
+    "Odjeżdżam"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Najpierw bezpieczeństwo — Twoje i miejsca zdarzenia. Dopiero potem pomoc.",
+   "zrodlo": "wlasne"
+  },
+  {
+   "id": "Q053",
+   "modul": "M07",
+   "przepisy": [
+    "PP-04"
+   ],
+   "poziom": 3,
+   "pytanie": "Poszkodowany nie odpowiada, ale oddycha. Co robisz z pomocą dorosłego?",
+   "odpowiedzi": [
+    "Sadzamy go na rowerze",
+    "Układamy go w pozycji bezpiecznej i wzywamy pomoc",
+    "Dajemy mu wodę do picia",
+    "Zostawiamy go i odchodzimy"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Osobę nieprzytomną, która oddycha, układa się w pozycji bezpiecznej i wzywa pomoc (112).",
+   "zrodlo": "wlasne",
+   "weryfikacja": true
+  },
+  {
+   "id": "Q054",
+   "modul": "M08",
+   "przepisy": [
+    "PLAC-01"
+   ],
+   "poziom": 1,
+   "pytanie": "Na placu manewrowym jedziesz ósemkę. Co jest błędem?",
+   "odpowiedzi": [
+    "Jazda powoli",
+    "Podparcie się nogą lub najechanie na linię",
+    "Patrzenie przed siebie",
+    "Jazda w kasku"
+   ],
+   "poprawna": 1,
+   "wyjasnienie": "Na egzaminie błędem jest podparcie się nogą, najechanie na linię lub potrącenie pachołka.",
+   "zrodlo": "wlasne"
+  }
+ ]
+}
