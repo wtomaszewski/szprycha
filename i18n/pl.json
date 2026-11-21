@@ -27,13 +27,13 @@
     "lite": "Budynki: uproszczone",
     "reset": "Wróć na start [R]",
     "menu": "Menu",
-    "help": "WASD / strzałki: jazda · Spacja: hamulec · X: prowadź rower · Pad: gałka, B hamulec, A zsiadanie",
-    "prototype": "Plac testowy mechaniki — bez misji i oceniania przepisów.",
+    "help": "WASD / strzałki: jazda · Spacja: hamulec · X: prowadź rower · F3: podgląd zasad · Pad: gałka, B hamulec, A zsiadanie",
+    "prototype": "Jazda próbna bez misji.",
     "joystick": "Joystick kierunku jazdy",
     "brake": "Hamulec",
     "walking": "Prowadzisz rower",
     "riding": "Jedziesz rowerem",
-    "collision": "UPS! Przeszkoda — zatrzymaj się i wybierz inną drogę.",
+    "collision": "UPS, zatrzymaj się przed przeszkodą i wybierz inną drogę.",
     "slowDown": "Zahamuj, zanim wsiądziesz lub zsiądziesz.",
     "blocked": "Odsuń się od ściany, zanim wsiądziesz.",
     "start": "Rozpocznij jazdę próbną",
@@ -46,5 +46,35 @@
     "look": "Obejrzyj się",
     "bell": "Dzwonek",
     "lights": "Światła"
+  },
+  "rules": {
+    "counts": "Werdykty",
+    "good": "Dobre",
+    "minor": "Drobne",
+    "major": "Poważne",
+    "debug": {
+      "title": "F3 · Silnik zasad",
+      "zone": "Strefa",
+      "lane": "Wlot",
+      "intersection": "Skrzyżowanie",
+      "signal": "Fazy świateł",
+      "history": "Ostatnie werdykty (10)",
+      "mastery": "Opanowanie reguł · M5",
+      "priorities": {
+        "equal": "równorzędny",
+        "main": "z pierwszeństwem",
+        "minor": "podporządkowany",
+        "signal": "sterowany",
+        "roundabout_in": "wjazd na rondo",
+        "roundabout_ring": "obwiednia ronda"
+      },
+      "phases": {
+        "off": "wyłączone",
+        "red": "czerwone",
+        "yellow": "żółte",
+        "green": "zielone",
+        "arrow": "strzałka"
+      }
+    }
   }
 }

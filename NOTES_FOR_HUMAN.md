@@ -105,3 +105,20 @@ Niniejszy wpis zastępuje wcześniejsze decyzje o zoomie 0,75, systemowej czcion
 ### Ponowne oddalenie widoku
 
 Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar jest o około 33% szerszy i wyższy. Całkowite skalowanie canvasa i rozszerzanie viewportu pozostają; zoom kamery jest świadomym wyjątkiem od całkowitej skali świata. HUD zachowuje rozmiar.
+
+## M2 — decyzje i zakres do recenzji
+
+Rekomendacje 1–8 są przyjęte. Poniższy wpis aktualizuje wcześniejsze pytania projektowe i zachowuje terminy wdrożenia uzgodnione w [#7](https://github.com/wtomaszewski/szprycha/issues/7).
+
+1. M5 przyznaje bonus czasu tylko przy zerze naruszeń obu wag. Test punktacji ma objąć opłacalność oznaczonych skrótów.
+2. W eskortach Franka obowiązek opiekuna pełni dorosły NPC, a gracz prowadzi grupę. Silnik M2 wymaga jawnej roli dorosłego i dziecka poniżej 10 lat przy wyjątku chodnikowym. Misje i dostosowanie Q011 należą do M4/M7.
+3. Licencja w M7 wymaga łącznie ukończenia kampanii jednego miasta, rangi Mistrz Szlaku i mastery ≥70 każdego modułu.
+4. Wynik placu w M7 jest sumą punktów ułamkowych za elementy, np. 0 / 0,5 / 1. Próg 90% i parametry trafiają do balansu wraz z weryfikacją wymagań egzaminu.
+5. W scenkach M4/M7 poszkodowany siedzi, opiekun lub ratownik podchodzi, mówi „Wszystko będzie dobrze”, po czym obraz gaśnie.
+6. Profil w M4 zbiera lokalnie przedział wieku (<10 / 10–15 / 16+). Silnik używa przedziałów już w M2. Prototyp jazdy ma domyślny przedział 10–15 i zapięty kask, a zmianę wyposażenia sprawdzają scenariusze.
+7. Dymki reguł w trakcie jazdy mają jedno zdanie do 140 znaków. Scenariusze kontrolują treści wszystkich emitowanych naruszeń. Dłuższe `dla_dziecka` należą do Albumu i Notatnika Kuriera.
+8. Kamera zachowuje zoom 0,75. W krótkiej próbie w Chromium przy ok. 6 km/h krawędzie pozostawały czytelne podczas ruchu. RenderTexture pozostaje rozwiązaniem do ponownej oceny, jeśli migotanie będzie widoczne na urządzeniu docelowym.
+
+W symulacji M2 TTC liczymy wzdłuż prekomputowanych tras wlotów, a konflikt oceniamy przy przekroczeniu linii wlotu. Skręty w macierzy to odcinki między wlotem a wyjazdem. Skrypty aut i pieszych służą do ćwiczeń. Pełne ścieżki i zarządzanie ruchem, polecenia osoby kierującej ruchem i detektory konfliktów z pieszymi podczas skrętu należą do kolejnych etapów. Overlay pokazuje aktualną fazę sygnalizacji i najbliższy konflikt. Wyniki opanowania reguł pojawią się w M5.
+
+KASK-01 zgłasza wyłącznie poważne naruszenie obowiązku. GDZIE-01, GDZIE-04 i MAN-01 mają wagę drobną. PIER-01/02 i STOP stosują progi konfliktu z docs/07. WYP-06 jest pozycją bonusową z `waga_bledu: null`; jej flaga `weryfikacja: true` pozostaje. Punkt 9 zgłoszenia #7 i lista reguł do konsultacji z §c są otwarte.

@@ -283,3 +283,36 @@ test('phone portrait shows rotation prompt; landscape keeps controls compact', a
   await page.screenshot({ path: 'test-results/mobile-landscape.png' });
   await context.close();
 });
+
+test('F3 shows live verdicts and the HUD explains the choice of road', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const canvas = page.locator('canvas');
+  await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
+  await page.keyboard.press('Enter');
+  await expect(canvas).toHaveAttribute('data-scene', 'City');
+  const overlay = page.getByLabel(pl.rules.debug.title);
+  const counter = page.getByLabel(pl.rules.counts);
+  await expect(overlay).toBeHidden();
+  await page.keyboard.press('F3');
+  await expect(overlay).toBeVisible();
+  await expect(overlay).toContainText('equal-S');
+  await page.keyboard.down('ArrowUp');
+  await expect(page.locator('.rule-feedback')).toHaveText(
+    'Obok jest droga dla rowerów w Twoim kierunku, więc wybierz ją.',
+  );
+  await page.keyboard.up('ArrowUp');
+  await page.keyboard.down('Space');
+  await expect(canvas).toHaveAttribute('data-speed', '0');
+  await page.keyboard.up('Space');
+  await expect(overlay).toContainText(/GDZIE-01\s+minor/);
+  await expect(overlay).toContainText(/KASK-01\s+good/);
+  await expect(counter).toContainText(/Drobne [1-9]/);
+  await page.screenshot({ path: 'test-results/m2-overlay.png' });
+  await page.keyboard.press('F3');
+  await expect(overlay).toBeHidden();
+  await page.keyboard.press('KeyR');
+  await expect(counter).toContainText('Drobne 0');
+  await expect(page.locator('.rule-feedback')).toBeHidden();
+});
