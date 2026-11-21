@@ -11,6 +11,7 @@ import {
 import type { LaneEdge, Movement } from '../rules/world/LaneGraph';
 import {
   contains,
+  distanceToLine,
   type Crossing,
   type Intersection,
   type Lane,
@@ -310,18 +311,28 @@ export class TrafficSimulation {
     }
     const approaching = this.junctionAgents;
     approaching.length = 0;
-    if (this.playerLane?.intersection === intersection)
+    let playerRequest = false;
+    if (this.playerLane?.intersection === intersection) {
       approaching.push(this.playerAgent);
+      const toLine = distanceToLine(this.playerLane, this.playerAgent.pos);
+      playerRequest = toLine >= -EPSILON && toLine <= REQUEST_RANGE;
+    }
     for (const car of this.cars) {
       if (car.approaching && car.edge.lane?.intersection === intersection)
         approaching.push(car.agent);
     }
     let winner: Car | undefined;
     let tieWinner: Car | undefined;
-    let allStopped = true;
+    let allStopped =
+      !playerRequest || this.playerAgent.speed < this.settings.stop_predkosc_ms;
     for (const car of this.cars) {
       if (car.edge.lane?.intersection !== intersection || !car.request)
         continue;
+      if (
+        !Number.isFinite(car.arrival) ||
+        car.agent.speed >= this.settings.stop_predkosc_ms
+      )
+        allStopped = false;
       const { maneuver } = car.route!;
       const lane = car.edge.lane;
       const movingConflict = this.manager.conflict(
@@ -335,6 +346,14 @@ export class TrafficSimulation {
       if (movingConflict && movingConflict.ttc < this.settings.ttc_minor_s) {
         car.reason = 'yield';
         allStopped = false;
+        continue;
+      }
+      // A right-hand tie may release an AI car only if it owes no priority to the player.
+      if (
+        playerRequest &&
+        this.manager.mustYield(lane, maneuver, this.playerAgent, at, env)
+      ) {
+        car.reason = 'yield';
         continue;
       }
       let blocked = false;
@@ -359,11 +378,6 @@ export class TrafficSimulation {
       }
       if (blocked) car.reason = 'yield';
       else if (!winner || car.arrival < winner.arrival) winner = car;
-      if (
-        !Number.isFinite(car.arrival) ||
-        car.agent.speed >= this.settings.stop_predkosc_ms
-      )
-        allStopped = false;
       if (yieldsOnlyToRight && (!tieWinner || car.arrival < tieWinner.arrival))
         tieWinner = car;
     }

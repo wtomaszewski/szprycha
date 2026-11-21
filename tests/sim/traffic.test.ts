@@ -198,3 +198,109 @@ it('reports protective braking to the rule engine as a priority violation', () =
     }),
   );
 });
+
+function riderAtApproach(laneId: string, distance: number, speed: number) {
+  const { end, forward } = world.getLane(laneId)!;
+  return rider(
+    (end.x - distance * forward.x) / world.metersPerPixel,
+    (end.y - distance * forward.y) / world.metersPerPixel,
+    Math.atan2(forward.y, forward.x),
+    speed,
+  );
+}
+
+it.each([
+  ['equal-N', 'equal-W', 4609, 0],
+  ['equal-N', 'equal-W', 4609, 3],
+  ['yield-N', 'yield-W', 2414, 0],
+] as const)(
+  '%s yields to the rider on %s (seed %i, speed %i m/s)',
+  (carLane, riderLane, seed, speed) => {
+    const traffic = simulate(seed, 1);
+    const car = traffic.agents[0]!;
+    expect([car.laneId, car.maneuver]).toEqual([carLane, 'straight']);
+    const player = riderAtApproach(riderLane, 1, speed);
+
+    for (let tick = 0; tick < 480; tick++) {
+      traffic.step(clear, player);
+      expect(car.junctionProgress).toBeLessThan(0);
+      expect(car.junctionsPassed).toBe(0);
+    }
+    expect(car.speed).toBe(0);
+    expect(car.intent).toBe('yield');
+
+    for (let tick = 0; tick < 240 && car.junctionsPassed === 0; tick++)
+      traffic.step(clear);
+    expect(car.junctionsPassed).toBe(1);
+  },
+);
+
+function queueStraightCars(seed: number, laneIds: string[]) {
+  const traffic = simulate(seed, laneIds.length);
+  const cars = laneIds.map((laneId) =>
+    traffic.agents.find((car) => car.laneId === laneId),
+  );
+  expect(cars.map((car) => car?.maneuver)).toEqual(
+    laneIds.map(() => 'straight'),
+  );
+  const red: EnvState = {
+    ...clear,
+    signalOverrides: Object.fromEntries(laneIds.map((id) => [id, 'red'])),
+  };
+  for (let tick = 0; tick < 480; tick++) traffic.step(red);
+  for (const car of traffic.agents) {
+    expect(car.speed).toBe(0);
+    expect(car.junctionProgress).toBeCloseTo(-0.85);
+  }
+  return traffic;
+}
+
+it.each([
+  ['stop-N', 'stop-W', 13686],
+  ['equal-N', 'equal-W', 4609],
+] as const)(
+  '%s lets the car on %s cross first (seed %i)',
+  (yieldingLane, priorityLane, seed) => {
+    const traffic = queueStraightCars(seed, [yieldingLane, priorityLane]);
+    const yielding = traffic.agents.find((car) => car.laneId === yieldingLane)!;
+    const priority = traffic.agents.find((car) => car.laneId === priorityLane)!;
+    if (yieldingLane === 'stop-N')
+      expect(world.getLane(yieldingLane)?.stopSign?.code).toBe('B-20');
+
+    for (let tick = 0; tick < 240 && priority.junctionsPassed === 0; tick++) {
+      traffic.step(clear);
+      expect(yielding.junctionProgress).toBeLessThan(0);
+    }
+    expect(priority.junctionsPassed).toBe(1);
+    for (let tick = 0; tick < 240 && yielding.junctionsPassed === 0; tick++)
+      traffic.step(clear);
+    expect(yielding.junctionsPassed).toBe(1);
+  },
+);
+
+it('clears a four-car right-hand priority cycle', () => {
+  const traffic = queueStraightCars(809922, [
+    'equal-N',
+    'equal-E',
+    'equal-S',
+    'equal-W',
+  ]);
+  for (let tick = 0; tick < 20 * TICKS_PER_SECOND; tick++) traffic.step(clear);
+  expect(traffic.agents.every((car) => car.junctionsPassed > 0)).toBe(true);
+});
+
+it('breaks a right-hand priority cycle without releasing the car that yields to the rider', () => {
+  const traffic = queueStraightCars(43430, ['equal-N', 'equal-E', 'equal-S']);
+  const yielding = traffic.agents.find((car) => car.laneId === 'equal-N')!;
+  const player = riderAtApproach('equal-W', 1, 0);
+
+  for (let tick = 0; tick < 480; tick++) {
+    traffic.step(clear, player);
+    expect(yielding.junctionProgress).toBeLessThan(0);
+    expect(yielding.junctionsPassed).toBe(0);
+  }
+  expect(yielding.intent).toBe('yield');
+  expect(traffic.agents.some((car) => car.junctionsPassed > 0)).toBe(true);
+  for (let tick = 0; tick < 20 * TICKS_PER_SECOND; tick++) traffic.step(clear);
+  expect(traffic.agents.every((car) => car.junctionsPassed > 0)).toBe(true);
+});
