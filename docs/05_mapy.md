@@ -15,8 +15,8 @@
 | `blocks` | object | budynki jako prostokąty/poligony: `height` (piętra), `roof`, `wall`, `landmarkId` |
 | `props` | object | drzewa, ławki, latarnie, słupki, wiaty, kolumna, fontanny |
 | `zones` | object | `roadway`, `sidewalk`, `bike_path`, `bike_lane`, `shared_path`, `shoulder`, `living_zone`, `pedestrian_zone`, `park_path`, `no_bikes`, `rail` |
-| `lanes` | object (polyline) | pasy ruchu z kierunkiem, prędkością, typem (`car`, `tram`, `bike`) |
-| `intersections` | object | obszar skrzyżowania, `type: equal / priority / signals / roundabout`, wloty z oznaczeniem pierwszeństwa |
+| `lanes` | object (polyline) | skierowane wloty, odcinki między skrzyżowaniami i wyjazdy na granicy mapy |
+| `intersections` | object | obszar skrzyżowania, `kind: equal / priority / signals / roundabout`, wloty z oznaczeniem pierwszeństwa |
 | `crossings` | object | `pedestrian`, `bike`, `combined`, `rail` (+ `barriers: true/false`) |
 | `signs` | object (punkt) | `code` (np. B-20), kierunek (`facing`), obszar działania (`affects` → id strefy/pasa) |
 | `signals` | object | sygnalizatory: typ S-1/S-2/S-3/S-5/S-6/S-7, faza, grupa |
@@ -25,6 +25,13 @@
 | `triggers` | object | wyzwalacze zdarzeń wymuszonych misji |
 | `districts` | object | granice dzielnic + `unlock` |
 | `collectibles` | object | krasnale, syrenki, ukryte naklejki |
+
+### Graf pasów dla aut (M3a)
+
+- Polilinia wlotowa ma nazwę unikatową w `lanes` oraz pola `type: car`, `intersection`, `side` (`N`, `E`, `S`, `W`), `priorityClass`, `width_px`, `speedLimit` (km/h) i `turns` (np. `straight,left,right`). Punkty są skierowane zgodnie z jazdą, a ostatni punkt to linia zatrzymania na wskazanym boku skrzyżowania.
+- Odcinek pomiędzy skrzyżowaniami jest jedną polilinią wlotową. `from` w formacie `<id-skrzyżowania>-<strona>` wskazuje, na którym wylocie poprzedniego skrzyżowania zaczyna się ten pas. Wlot z granicy mapy zaczyna się na jej krawędzi i pomija `from`.
+- Odcinek prowadzący poza mapę ma `role: exit`, `intersection`, `side` i `speedLimit`. Zaczyna się na wylocie wskazanego skrzyżowania, kończy na krawędzi mapy. Liczbę aut ustala właściwość całej mapy `trafficCars`. Miasteczko ma 14 aut.
+- Dozwolone relacje tworzą krawędzie między linią wlotu a początkiem pasa wylotowego. Ładowanie mapy oraz `npm run build` sprawdzają geometrię i kierunek polilinii, połączenia, listy skrętów, zasięg mapy oraz konfigurację S-1/S-2. `npm run map:generate` odtwarza `maps/miasteczko.tmj`.
 
 ---
 

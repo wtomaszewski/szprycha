@@ -1,16 +1,10 @@
 import type { AgentState, EnvState, Maneuver, Vec2 } from '../types';
+import { exitOffset, maneuvers, otherSide } from '../world/LaneGraph';
 import {
   distanceToLine,
   type Lane,
-  type Side,
   type WorldModel,
 } from '../world/WorldModel';
-
-const sides = ['N', 'E', 'S', 'W'] as const;
-const maneuvers = ['straight', 'left', 'right'] as const;
-const otherSide = (side: Side, offset: number) =>
-  sides[(sides.indexOf(side) + offset + 4) % 4];
-const exitOffset = { straight: 2, left: 1, right: -1 } as const;
 
 type PriorityRule =
   'PIER-01' | 'PIER-02' | 'PIER-03' | 'PIER-08' | 'PIER-09' | 'ZNAK-S2';
@@ -66,21 +60,26 @@ export class IntersectionManager {
           const vertical = side === 'N' || side === 'S';
           const midX = intersection.x + intersection.width / 2;
           const midY = intersection.y + intersection.height / 2;
-          const end = vertical
-            ? {
-                x: 2 * midX - (opposite?.end.x ?? midX),
-                y:
-                  side === 'N'
-                    ? intersection.y
-                    : intersection.y + intersection.height,
-              }
-            : {
-                x:
-                  side === 'W'
-                    ? intersection.x
-                    : intersection.x + intersection.width,
-                y: 2 * midY - (opposite?.end.y ?? midY),
-              };
+          const authored = world.laneGraph
+            .approach(lane)
+            ?.movements.find((movement) => movement.maneuver === maneuver);
+          const end =
+            authored?.path.end ??
+            (vertical
+              ? {
+                  x: 2 * midX - (opposite?.end.x ?? midX),
+                  y:
+                    side === 'N'
+                      ? intersection.y
+                      : intersection.y + intersection.height,
+                }
+              : {
+                  x:
+                    side === 'W'
+                      ? intersection.x
+                      : intersection.x + intersection.width,
+                  y: 2 * midY - (opposite?.end.y ?? midY),
+                });
           const length =
             Math.hypot(end.x - lane.end.x, end.y - lane.end.y) || 1;
           return {
@@ -137,7 +136,11 @@ export class IntersectionManager {
     const phase = this.world.phase(lane, at, env);
     const otherPhase = this.world.phase(other, at, env);
     if (phase !== 'off' || otherPhase !== 'off') {
-      if (phase === 'arrow' && otherPhase !== 'red') return 'ZNAK-S2';
+      if (
+        phase === 'arrow' &&
+        (otherPhase === 'green' || otherPhase === 'yellow')
+      )
+        return 'ZNAK-S2';
       if (otherPhase !== 'green' || phase !== 'green') return;
     }
     if (
@@ -173,6 +176,39 @@ export class IntersectionManager {
     if (other.side === otherSide(lane.side, -1)) return 'PIER-01';
   }
 
+  /** Geometry and priority for a stopped contender as well as a moving one. */
+  mustYield(
+    lane: Lane,
+    maneuver: Maneuver,
+    agent: AgentState,
+    at: number,
+    env: EnvState,
+  ) {
+    const path = this.movements.get(lane)?.[maneuver];
+    const other = agent.laneId
+      ? this.world.getLane(agent.laneId)
+      : this.world.approachAt(agent.pos, agent.heading);
+    if (
+      !path ||
+      !other ||
+      other === lane ||
+      other.intersection !== lane.intersection
+    )
+      return undefined;
+    const otherManeuver = agent.maneuver ?? 'straight';
+    const otherPath = this.movements.get(other)![otherManeuver];
+    if (!this.conflictMatrix.get(path)?.has(otherPath)) return undefined;
+    return this.priority(
+      lane,
+      maneuver,
+      other,
+      otherManeuver,
+      agent.kind,
+      at,
+      env,
+    );
+  }
+
   /** Borrowed result, valid until the next call. TTC is measured along the agent's movement. */
   conflict(
     lane: Lane,
@@ -180,6 +216,7 @@ export class IntersectionManager {
     agents: readonly AgentState[],
     at: number,
     env: EnvState,
+    includeProtectiveBraking = true,
   ) {
     const path = this.movements.get(lane)?.[maneuver];
     const conflicts = path && this.conflictMatrix.get(path);
@@ -188,10 +225,9 @@ export class IntersectionManager {
     closest.ttc = Infinity;
     closest.protectiveBrake = false;
     for (const agent of agents) {
-      if (
-        agent.kind === 'pedestrian' ||
-        (agent.speed <= 0 && !agent.protectiveBrake)
-      )
+      const protectiveBrake =
+        includeProtectiveBraking && Boolean(agent.protectiveBrake);
+      if (agent.kind === 'pedestrian' || (agent.speed <= 0 && !protectiveBrake))
         continue;
       const other = agent.laneId
         ? this.world.getLane(agent.laneId)
@@ -216,11 +252,12 @@ export class IntersectionManager {
       const progress =
         (agent.pos.x - other.end.x) * otherPath.direction.x +
         (agent.pos.y - other.end.y) * otherPath.direction.y;
-      const remaining = conflict + (toLine > 0 ? toLine : -progress);
+      const remaining =
+        conflict -
+        (agent.junctionProgress ?? (toLine > 0 ? -toLine : progress));
       if (remaining < -0.5) continue;
       const ttc =
         agent.speed > 0 ? Math.max(0, remaining) / agent.speed : Infinity;
-      const protectiveBrake = Boolean(agent.protectiveBrake);
       if (
         (!protectiveBrake && closest.protectiveBrake) ||
         (protectiveBrake === closest.protectiveBrake && ttc >= closest.ttc)

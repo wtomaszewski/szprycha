@@ -1,18 +1,23 @@
 import { z } from 'zod';
 import type { EnvState, Maneuver, SignalPhase, Vec2 } from '../types';
+import { LaneGraph, type BoundaryExit } from './LaneGraph.ts';
+import { RoadPath } from './RoadPath.ts';
 
 const point = z.object({ x: z.number(), y: z.number() });
+const property = z.object({ name: z.string(), value: z.unknown() });
 const tiledObject = point.extend({
   name: z.string(),
   width: z.number().nonnegative(),
   height: z.number().nonnegative(),
   polyline: z.array(point).optional(),
-  properties: z
-    .array(z.object({ name: z.string(), value: z.unknown() }))
-    .default([]),
+  properties: z.array(property).default([]),
 });
 const tiled = z.object({
+  properties: z.array(property).default([]),
   tilewidth: z.number().positive(),
+  tileheight: z.number().positive(),
+  width: z.number().positive(),
+  height: z.number().positive(),
   layers: z.array(
     z.object({ name: z.string(), objects: z.array(tiledObject).optional() }),
   ),
@@ -47,12 +52,13 @@ const intersectionSchema = z.enum([
   'roundabout',
 ]);
 const laneProperties = z.object({
-  intersection: z.string(),
   side: sideSchema,
   priorityClass: prioritySchema,
   width_px: z.number().positive(),
   type: z.enum(['car', 'tram', 'bike']),
   speedLimit: z.number().positive(),
+  from: z.string().min(1).optional(),
+  turns: z.string().optional(),
   parallelBikeInfra: z.string().optional(),
 });
 const signProperties = z.object({
@@ -109,8 +115,8 @@ export interface Lane extends Omit<
 > {
   id: string;
   intersection: Intersection;
-  points: Vec2[];
-  start: Vec2;
+  points: readonly Vec2[];
+  path: RoadPath;
   end: Vec2;
   forward: Vec2;
   length: number;
@@ -126,21 +132,12 @@ type Signal = Vec2 & { id: string } & z.infer<typeof signalProperties>;
 export type MainSignal = Extract<Signal, { code: 'S-1' }>;
 export type ArrowSignal = Extract<Signal, { code: 'S-2' }>;
 
-const trainingSpawn = z.discriminatedUnion('kind', [
-  z.object({
-    kind: z.literal('car'),
-    laneId: z.string(),
-    speed: z.number().positive(),
-    start_m: z.number().negative(),
-  }),
-  z.object({
-    kind: z.literal('pedestrian'),
-    heading: z.number(),
-    speed: z.number().positive(),
-    length_m: z.number().positive(),
-  }),
-]);
-export type TrainingSpawn = Box & z.infer<typeof trainingSpawn>;
+const pedestrianSpawn = z.object({
+  heading: z.number(),
+  speed: z.number().positive(),
+  length_m: z.number().positive(),
+});
+export type PedestrianSpawn = Box & z.infer<typeof pedestrianSpawn>;
 
 export const sideVector: Record<Side, Vec2> = {
   N: { x: 0, y: -1 },
@@ -162,12 +159,12 @@ export const zoneOrder: Record<Zone['kind'], number> = {
   rail: 5,
 };
 
-export function contains(box: Box, point: Vec2) {
+export function contains(box: Box, point: Vec2, margin = 0) {
   return (
-    point.x >= box.x &&
-    point.x < box.x + box.width &&
-    point.y >= box.y &&
-    point.y < box.y + box.height
+    point.x >= box.x - margin &&
+    point.x < box.x + box.width + margin &&
+    point.y >= box.y - margin &&
+    point.y < box.y + box.height + margin
   );
 }
 
@@ -194,7 +191,9 @@ export class WorldModel {
   readonly lanes: readonly Lane[];
   readonly signs: readonly Sign[];
   readonly signals: readonly Signal[];
-  readonly trainingSpawns: readonly TrainingSpawn[];
+  readonly pedestrianSpawns: readonly PedestrianSpawn[];
+  readonly laneGraph: LaneGraph;
+  readonly trafficCarCount: number;
   private readonly lanesById: ReadonlyMap<string, Lane>;
 
   constructor(data: unknown, metersPerTile: number) {
@@ -202,7 +201,7 @@ export class WorldModel {
     const scale = (this.metersPerPixel = metersPerTile / map.tilewidth);
     const layer = (name: string) =>
       map.layers.find((entry) => entry.name === name)?.objects ?? [];
-    const properties = (object: z.infer<typeof tiledObject>) =>
+    const properties = (object: { properties: z.infer<typeof property>[] }) =>
       Object.fromEntries(
         object.properties.map(({ name, value }) => [name, value]),
       );
@@ -251,54 +250,72 @@ export class WorldModel {
       intersections.map((intersection) => [intersection.id, intersection]),
     );
     this.intersections = intersections;
-    this.lanes = layer('lanes').map((object): Lane => {
-      const {
-        intersection: intersectionId,
-        width_px,
-        ...props
-      } = laneProperties.parse(properties(object));
-      const intersection = intersectionsById.get(intersectionId);
-      const points = object.polyline?.map((p) => ({
-        x: (object.x + p.x) * scale,
-        y: (object.y + p.y) * scale,
-      }));
-      const start = points?.[0];
-      const end = points?.at(-1);
-      if (!start || !end || !points || !intersection)
-        throw new Error(`Invalid lane: ${object.name}`);
-      const length = Math.hypot(end.x - start.x, end.y - start.y);
-      if (length === 0) throw new Error(`Empty lane: ${object.name}`);
+    if (intersectionsById.size !== intersections.length)
+      throw new Error('Duplicate intersection id');
+    const exits: BoundaryExit[] = [];
+    this.lanes = layer('lanes').flatMap((object): Lane[] => {
+      const props = properties(object);
+      const intersection = intersectionsById.get(
+        z.string().parse(props.intersection),
+      );
+      if (!intersection)
+        throw new Error(
+          `Lane ${object.name}: unknown intersection ${props.intersection}`,
+        );
+      const path = new RoadPath(
+        object.name,
+        object.polyline?.map((p) => ({
+          x: (object.x + p.x) * scale,
+          y: (object.y + p.y) * scale,
+        })) ?? [],
+      );
+      if (props.role === 'exit') {
+        exits.push({
+          id: object.name,
+          intersection,
+          path,
+          side: sideSchema.parse(props.side),
+          speedLimit: z.number().positive().parse(props.speedLimit),
+        });
+        return [];
+      }
+      if (props.role !== undefined && props.role !== 'approach')
+        throw new Error(`Lane ${object.name}: unknown role ${props.role}`);
+      const { width_px, ...approach } = laneProperties.parse(props);
       if (
-        props.parallelBikeInfra &&
+        approach.parallelBikeInfra &&
         !this.zones.some(
           ({ id, kind }) =>
-            id === props.parallelBikeInfra &&
+            id === approach.parallelBikeInfra &&
             (kind === 'bike_path' || kind === 'bike_lane'),
         )
       )
         throw new Error(`Unknown parallel bike infrastructure: ${object.name}`);
-      const lane = {
-        ...props,
+      const lane: Lane = {
+        ...approach,
         id: object.name,
         intersection,
-        points,
-        start,
-        end,
-        length,
+        points: path.points,
+        path,
+        end: path.end,
+        length: path.length,
         width: width_px * scale,
-        forward: {
-          x: (end.x - start.x) / length,
-          y: (end.y - start.y) / length,
-        },
+        forward: path.segments.at(-1)!.direction,
       };
       intersection.lanes.push(lane);
-      return lane;
+      return [lane];
     });
     this.lanesById = new Map(this.lanes.map((lane) => [lane.id, lane]));
-    this.trainingSpawns = layer('spawns').flatMap((object) => {
+    if (
+      this.lanesById.size !== this.lanes.length ||
+      exits.some(({ id }) => this.lanesById.has(id))
+    )
+      throw new Error('Duplicate lane id');
+    this.pedestrianSpawns = layer('spawns').flatMap((object) => {
       const props = properties(object);
-      if (props.kind !== 'car' && props.kind !== 'pedestrian') return [];
-      return [{ ...box(object), ...trainingSpawn.parse(props) }];
+      return props.kind === 'pedestrian'
+        ? [{ ...box(object), ...pedestrianSpawn.parse(props) }]
+        : [];
     });
     this.signs = layer('signs').map((object) => ({
       ...box(object),
@@ -316,9 +333,45 @@ export class WorldModel {
     for (const signal of this.signals) {
       const lane = this.lanesById.get(signal.affects);
       if (!lane) throw new Error(`Unknown signal lane: ${signal.affects}`);
-      if (signal.code === 'S-1') lane.mainSignal = signal;
-      else lane.arrow = signal;
+      if (signal.code === 'S-1') {
+        if (
+          lane.mainSignal ||
+          signal.green_s + signal.yellow_s >= signal.cycle_s
+        )
+          throw new Error(`Invalid S-1: ${signal.id}`);
+        lane.mainSignal = signal;
+      } else {
+        if (lane.arrow) throw new Error(`Duplicate S-2: ${signal.id}`);
+        lane.arrow = signal;
+      }
     }
+    for (const lane of this.lanes) {
+      const { mainSignal, arrow } = lane;
+      if (lane.priorityClass === 'signal' && !mainSignal)
+        throw new Error(`Lane ${lane.id}: missing S-1`);
+      if (
+        arrow &&
+        (!mainSignal ||
+          arrow.group !== mainSignal.group ||
+          arrow.from_s < mainSignal.green_s + mainSignal.yellow_s ||
+          arrow.until_s <= arrow.from_s ||
+          arrow.until_s > mainSignal.cycle_s)
+      )
+        throw new Error(`Invalid S-2: ${arrow.id}`);
+    }
+    this.laneGraph = new LaneGraph(
+      this.lanes,
+      exits,
+      map.width * map.tilewidth * scale,
+      map.height * map.tileheight * scale,
+    );
+    this.trafficCarCount = z
+      .number()
+      .int()
+      .nonnegative()
+      .max(this.lanes.filter(({ type }) => type === 'car').length)
+      .default(0)
+      .parse(properties(map).trafficCars);
   }
 
   getLane(id: string) {
@@ -331,14 +384,18 @@ export class WorldModel {
     const dx = Math.cos(heading);
     const dy = Math.sin(heading);
     for (const lane of this.lanes) {
-      if (lane.forward.x * dx + lane.forward.y * dy < Math.SQRT1_2) continue;
-      const distance = distanceToLine(lane, pos);
-      if (
-        distance >= 0 &&
-        distance <= lane.length &&
-        Math.abs(lateralOffset(lane, pos)) <= lane.width / 2
-      )
-        return lane;
+      for (const { start, direction, length } of lane.path.segments) {
+        if (direction.x * dx + direction.y * dy < Math.SQRT1_2) continue;
+        const px = pos.x - start.x;
+        const py = pos.y - start.y;
+        const along = px * direction.x + py * direction.y;
+        if (
+          along >= 0 &&
+          along <= length &&
+          Math.abs(py * direction.x - px * direction.y) <= lane.width / 2
+        )
+          return lane;
+      }
     }
   }
 

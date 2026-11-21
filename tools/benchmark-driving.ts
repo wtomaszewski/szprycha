@@ -1,6 +1,9 @@
 import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
-const browser = await chromium.launch();
+const browser = await chromium.launch({
+  executablePath: process.env.BENCH_CHROMIUM_PATH,
+  args: process.env.BENCH_RENDERER === 'canvas' ? ['--disable-webgl'] : [],
+});
 try {
   const page = await browser.newPage({
     viewport: { width: 1280, height: 720 },
@@ -11,6 +14,11 @@ try {
   await page.locator('canvas[data-scene="MainMenu"]').waitFor();
   await page.keyboard.press('Enter');
   await page.locator('canvas[data-scene="City"]').waitFor();
+  const renderer = await page
+    .locator('canvas[data-scene="City"]')
+    .evaluate((canvas: HTMLCanvasElement) =>
+      canvas.getContext('2d') ? 'Canvas' : 'WebGL',
+    );
   await page.keyboard.down('ArrowUp');
   await page.keyboard.down('ArrowRight');
   // Raw browser source avoids TS runner helper injection into serialized callbacks.
@@ -31,6 +39,7 @@ try {
     date: new Date().toISOString(),
     environment:
       'Chromium headless, 1280x720, CPU 4x; not a physical Android measurement',
+    renderer,
     samples: frames.length,
     meanFps: 1000 / (frames.reduce((a, b) => a + b, 0) / frames.length),
     p95FrameMs: frames[Math.floor(frames.length * 0.95)],
