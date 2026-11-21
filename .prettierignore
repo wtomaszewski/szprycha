@@ -1,0 +1,12 @@
+node_modules
+dist
+public/data
+playwright-report
+test-results
+AGENTS.md
+README.md
+docs
+dydaktyka
+/content/
+assets/fonts
+package-lock.json

@@ -1,0 +1,37 @@
+import Phaser from 'phaser';
+import { Boot } from './scenes/Boot';
+import { Preload } from './scenes/Preload';
+import { MainMenu } from './scenes/MainMenu';
+import { ui } from './core/presentation';
+import './style.css';
+
+document.title = `${ui.title}: ${ui.subtitle}`;
+new Phaser.Game({
+  type: Phaser.AUTO,
+  parent: 'game',
+  width: 640,
+  height: 360,
+  backgroundColor: '#1a1c2c',
+  pixelArt: true,
+  roundPixels: true,
+  scale: { mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.CENTER_BOTH },
+  scene: [Boot, Preload, MainMenu],
+  callbacks: {
+    postBoot(game) {
+      const resize = () => {
+        const zoom = Math.max(
+          1,
+          Math.floor(
+            Math.min(window.innerWidth / 640, window.innerHeight / 360),
+          ),
+        );
+        game.scale.setZoom(zoom);
+      };
+      resize();
+      window.addEventListener('resize', resize);
+      game.events.once(Phaser.Core.Events.DESTROY, () =>
+        window.removeEventListener('resize', resize),
+      );
+    },
+  },
+});

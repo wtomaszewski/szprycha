@@ -1,0 +1,43 @@
+@font-face {
+  font-family: 'Pixelify Sans';
+  src: url('../assets/fonts/PixelifySans.ttf') format('truetype');
+  font-weight: 400 700;
+  font-display: block;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: #10121e;
+  color: #f4f4f4;
+}
+body {
+  min-height: 100dvh;
+  display: grid;
+  place-content: center;
+  font-family: 'Pixelify Sans', monospace;
+}
+#game {
+  width: 100vw;
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+}
+canvas {
+  display: block;
+  image-rendering: pixelated;
+}
+#status {
+  position: fixed;
+  bottom: 10px;
+  left: 10%;
+  width: 80%;
+  text-align: center;
+}
+#status:empty {
+  display: none;
+}

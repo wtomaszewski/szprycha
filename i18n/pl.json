@@ -1,0 +1,16 @@
+{
+  "title": "SZPRYCHA",
+  "subtitle": "Miejscy Kurierzy",
+  "tagline": "Dobra jazda zaczyna się od mądrych decyzji.",
+  "edition": "WARSZAWA / WROCŁAW",
+  "menu": "Menu główne",
+  "campaign": "Kampania",
+  "comingSoon": "W przygotowaniu",
+  "status": "Warsztat otwarty. Miasto już wkrótce!",
+  "pangram": "Zażółć gęślą jaźń",
+  "glyphs": "ą ę ć ł ń ó ś ź ż   Ą Ę Ć Ł Ń Ó Ś Ź Ż",
+  "loading": "Przygotowujemy warsztat…",
+  "loadError": "Nie udało się otworzyć warsztatu. Odśwież stronę i spróbuj ponownie.",
+  "canvasLabel": "SZPRYCHA: Miejscy Kurierzy — menu główne",
+  "footer": "BEZPIECZNIE DO CELU"
+}
