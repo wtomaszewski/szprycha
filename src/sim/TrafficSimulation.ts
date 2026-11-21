@@ -203,6 +203,7 @@ export class TrafficSimulation {
       car.agent.speed = 0;
       car.agent.protectiveBrake = false;
       car.agent.intent = 'driving';
+      car.agent.yieldingAtCrossing = false;
       car.reserved = undefined;
       this.setEdge(
         car,
@@ -348,7 +349,7 @@ export class TrafficSimulation {
     car.approaching = false;
     car.reason = undefined;
     if (!lane || car.committed) return;
-    const phase = this.world.phase(lane, at, env);
+    const phase = this.world.trafficPhase(lane, at, env);
     const toStop = car.edge.path.length - STOP_MARGIN - car.distance;
     const stopped =
       toStop <= 0.06 && car.agent.speed < this.settings.stop_predkosc_ms;
@@ -582,15 +583,16 @@ export class TrafficSimulation {
         )
       : Infinity;
     let pedestrianGap = Infinity;
+    let markedCrossingGap = Infinity;
     for (let index = 0; index < pedestrians.length; index++) {
       const pedestrian = pedestrians[index]!;
       const crossing = this.walkingCrossings[index];
-      pedestrianGap = Math.min(
-        pedestrianGap,
-        crossing
-          ? this.crossingGap(car, crossing.trafficArea ?? crossing)
-          : this.obstacleGap(car, pedestrian.pos, this.radius + 0.55),
-      );
+      const gap = crossing
+        ? this.crossingGap(car, crossing.trafficArea ?? crossing)
+        : this.obstacleGap(car, pedestrian.pos, this.radius + 0.55);
+      pedestrianGap = Math.min(pedestrianGap, gap);
+      if (crossing?.kind === 'pedestrian' || crossing?.kind === 'combined')
+        markedCrossingGap = Math.min(markedCrossingGap, gap);
     }
     for (const {
       area,
@@ -639,6 +641,10 @@ export class TrafficSimulation {
       Math.min(next * STEP, room, playerGap, pedestrianGap),
     );
     car.nextSpeed = car.travel / STEP;
+    car.agent.yieldingAtCrossing =
+      markedCrossingGap <= pedestrianGap &&
+      markedCrossingGap < Math.min(room, 3) &&
+      car.nextSpeed <= this.settings.stop_predkosc_ms;
     car.agent.intent = car.agent.protectiveBrake
       ? 'protective'
       : yieldingToEmergency

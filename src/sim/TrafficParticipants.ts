@@ -403,7 +403,7 @@ export class TrafficParticipants {
     if (emergency) this.activeEmergency.push(agent);
     if (junction && junction.distance - distance < APPROACH_RANGE) {
       const { lane } = junction;
-      const phase = this.world.phase(lane, at, env);
+      const phase = this.world.trafficPhase(lane, at, env);
       const permitted = emergency || phase === 'green' || phase === 'off';
       const stopAt = junction.distance - radius - 0.15;
       const atStopLine = stopAt - distance <= 0.08;

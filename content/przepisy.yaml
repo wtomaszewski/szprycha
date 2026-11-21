@@ -108,7 +108,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: minor
-    feedback: "Widzisz rower namalowany na jezdni? To pas dla Ciebie — jedź nim, zgodnie z kierunkiem ruchu."
+    feedback: "Jedź po pasie rowerowym zgodnie z wyznaczonym kierunkiem."
   - id: GDZIE-03
     modul: M02
     tytul: Prawa strona jezdni
@@ -126,7 +126,7 @@ przepisy:
     weryfikacja: true
     detektor: sim
     waga_bledu: minor
-    feedback: "Poza miastem jest pobocze? Jedź nim — dalej od pędzących aut."
+    feedback: "Skorzystaj z pobocza, jeśli jest przejezdne i możesz jechać nim bezpiecznie."
   - id: GDZIE-04
     modul: M02
     tytul: Chodnik tylko wyjątkowo
@@ -164,7 +164,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: minor
-    feedback: "To strefa zamieszkania — tu piesi rządzą. Zwolnij i przepuść ich."
+    feedback: "W strefie zamieszkania jedź najwyżej 20 km/h i ustępuj pieszym."
   - id: GDZIE-08
     modul: M02
     tytul: Jazda obok innego rowerzysty
@@ -182,14 +182,14 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: major
-    feedback: "Stop! Tu rowery nie mają wstępu — auta jadą tu bardzo szybko. Szukamy innej drogi."
+    feedback: "Na tym odcinku obowiązuje zakaz jazdy rowerem, więc wybierz inną drogę."
   - id: GDZIE-10
     modul: M02
     tytul: Młodsze dziecko na rowerze
     dla_dziecka: "Dziecko do 10 lat jadące rowerem pod opieką dorosłego traktuje się jak pieszego — jedzie chodnikiem, a opiekun może jechać obok."
     podstawa: "PoRD — definicja pieszego; wyjątek dla opiekuna dziecka do 10 lat"
     weryfikacja: true
-    detektor: sim
+    detektor: quiz-only
     waga_bledu: minor
     feedback: "Franek ma 7 lat — jedzie chodnikiem z opiekunem. Na jezdnię mu nie wolno."
   - id: GDZIE-11
@@ -200,7 +200,7 @@ przepisy:
     weryfikacja: true
     detektor: sim
     waga_bledu: minor
-    feedback: "Ta ścieżka jest wspólna — piesi też tu są. Zwolnij przy nich."
+    feedback: "Zwolnij i zostaw miejsce pieszym, a jeśli ścieżka jest podzielona, wybierz część dla rowerów."
 
   # ───────────── M03 — Znaki i sygnały ─────────────
   - id: SYG-03
@@ -230,7 +230,7 @@ przepisy:
     weryfikacja: true
     detektor: sim
     waga_bledu: major
-    feedback: "Ten sygnalizator z rowerkiem jest dla Ciebie. Ma czerwone — stoisz."
+    feedback: "Przy czerwonym świetle z symbolem roweru poczekaj przed przejazdem."
   - id: ZNAK-S2
     modul: M03
     tytul: Zielona strzałka
@@ -259,7 +259,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: major
-    feedback: "Odwrócony trójkąt mówi: przepuść innych. Oni mają pierwszeństwo."
+    feedback: "Przy odwróconym trójkącie przepuść jadących drogą, na którą wjeżdżasz."
   - id: ZNAK-D1
     modul: M03
     tytul: Droga z pierwszeństwem
@@ -277,7 +277,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: major
-    feedback: "Ta tabliczka pozwala rowerom jechać pod prąd. Bez niej — zakaz wjazdu dotyczy też Ciebie!"
+    feedback: "Sprawdź tabliczkę pod zakazem wjazdu i wybierz inną drogę, jeśli zakaz dotyczy Twojego roweru."
   - id: ZNAK-B9
     modul: M03
     tytul: Zakaz wjazdu rowerów
@@ -286,7 +286,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: minor
-    feedback: "Ten znak zakazuje wjazdu rowerom. Zsiądź albo jedź inną drogą."
+    feedback: "Przy zakazie wjazdu rowerów wybierz inną drogę albo przeprowadź rower, jeśli jest chodnik."
   - id: ZNAK-B1
     modul: M03
     tytul: Zakaz ruchu w obu kierunkach
@@ -295,7 +295,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: minor
-    feedback: "Puste białe koło to zakaz ruchu pojazdów. Rower też jest pojazdem."
+    feedback: "Białe koło z czerwoną obwódką oznacza zakaz ruchu także dla rowerów, chyba że tabliczka wskazuje wyjątek."
   - id: ZNAK-C13
     modul: M03
     tytul: Droga dla rowerów — znak
@@ -455,7 +455,7 @@ przepisy:
     weryfikacja: true
     detektor: sim
     waga_bledu: minor
-    feedback: "Z prawej możesz, ale ostrożnie — szczególnie obok ciężarówek i autobusów. Martwe pole!"
+    feedback: "Zwolnij, jeśli obok pojazdu jest mało miejsca albo pojazd zaczyna skręcać."
   - id: MAN-06
     modul: M05
     tytul: Odstęp od zaparkowanych aut
@@ -484,7 +484,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: minor
-    feedback: "Za szybko jak na takie warunki. Zwolnij — wtedy zdążysz zareagować."
+    feedback: "Zwolnij, żeby mieć dość miejsca i czasu na zatrzymanie."
   - id: MAN-09
     modul: M05
     tytul: Ręce na kierownicy, nogi na pedałach
@@ -521,7 +521,7 @@ przepisy:
     weryfikacja: true
     detektor: sim
     waga_bledu: major
-    feedback: "Auto stanęło przed pasami — pewnie przepuszcza pieszego. Nigdy go nie omijaj!"
+    feedback: "Nie wyprzedzaj na przejściu, przejeździe, skrzyżowaniu bez świateł ani przed torami i nie omijaj auta, które stoi, by przepuścić pieszych."
 
   # ───────────── M06 — Szczególne miejsca i warunki ─────────────
   - id: MSC-01

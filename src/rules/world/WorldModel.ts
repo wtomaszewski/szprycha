@@ -85,9 +85,11 @@ const laneProperties = z.object({
   from: z.string().min(1).optional(),
   turns: z.string().optional(),
   parallelBikeInfra: z.string().optional(),
+  parallelShoulder: z.string().optional(),
 });
 const signProperties = z.object({
   code: z.string(),
+  exceptBicycles: z.boolean().default(false),
   affects: z.string(),
   facing: sideSchema,
 });
@@ -115,6 +117,9 @@ const zoneProperties = z.object({
   speedLimit: z.number().positive().optional(),
   direction: sideSchema.optional(),
   parallelBikeInfra: z.string().optional(),
+  shoulderUsable: z.boolean().optional(),
+  sharedSide: z.enum(['pedestrian', 'bike']).optional(),
+  surface: z.enum(['rough']).optional(),
 });
 
 export interface Box extends Vec2 {
@@ -158,6 +163,8 @@ export interface Lane extends Omit<
   length: number;
   width: number;
   stopSign?: Sign;
+  accessSign?: Sign;
+  shoulder?: Zone;
   mainSignal?: MainSignal;
   arrow?: ArrowSignal;
 }
@@ -230,6 +237,7 @@ export class WorldModel {
   readonly intersections: readonly Intersection[];
   readonly lanes: readonly Lane[];
   readonly signs: readonly Sign[];
+  readonly accessByZone = new Map<Zone, Sign>();
   readonly signals: readonly Signal[];
   readonly pedestrianSpawns: readonly PedestrianSpawn[];
   readonly laneGraph: LaneGraph;
@@ -391,7 +399,16 @@ export class WorldModel {
         )
       )
         throw new Error(`Unknown parallel bike infrastructure: ${object.name}`);
+      const shoulder = approach.parallelShoulder
+        ? this.zones.find(
+            ({ id, kind }) =>
+              id === approach.parallelShoulder && kind === 'shoulder',
+          )
+        : undefined;
+      if (approach.parallelShoulder && !shoulder)
+        throw new Error(`Unknown shoulder: ${object.name}`);
       const lane: Lane = {
+        shoulder,
         ...approach,
         id: object.name,
         intersection,
@@ -427,8 +444,21 @@ export class WorldModel {
     }));
     for (const sign of this.signs) {
       const lane = this.lanesById.get(sign.affects);
-      if (!lane) throw new Error(`Unknown sign lane: ${sign.affects}`);
-      if (sign.code === 'B-20' || sign.code === 'A-7') lane.stopSign = sign;
+      if (sign.code === 'B-1' || sign.code === 'B-2' || sign.code === 'B-9') {
+        const zone = this.zones.find(({ id }) => id === sign.affects);
+        if (zone) {
+          if (this.accessByZone.has(zone))
+            throw new Error(`Duplicate access sign for zone: ${zone.id}`);
+          this.accessByZone.set(zone, sign);
+        } else if (lane) {
+          if (lane.accessSign)
+            throw new Error(`Duplicate access sign for lane: ${lane.id}`);
+          lane.accessSign = sign;
+        } else throw new Error(`Unknown access sign segment: ${sign.affects}`);
+      } else {
+        if (!lane) throw new Error(`Unknown sign lane: ${sign.affects}`);
+        if (sign.code === 'B-20' || sign.code === 'A-7') lane.stopSign = sign;
+      }
     }
     for (const signal of this.signals) {
       const lane = this.lanesById.get(signal.affects);
@@ -593,10 +623,27 @@ export class WorldModel {
   }
 
   crossingAllowsEntry(crossing: Crossing, at: number, env: EnvState) {
+    const phase = this.crossingPhase(crossing, at, env);
+    return phase === 'green' || phase === 'off';
+  }
+
+  crossingPhase(crossing: Crossing, at: number, env: EnvState): SignalPhase {
     const forced = env.signalOverrides?.[crossing.id];
-    if (forced !== undefined) return forced === 'green' || forced === 'off';
+    if (forced !== undefined) return forced;
     const signal = crossing.signal;
-    return !signal || (at + signal.offset_s) % signal.cycle_s < signal.green_s;
+    if (!signal) return 'off';
+    return (at + signal.offset_s) % signal.cycle_s < signal.green_s
+      ? 'green'
+      : 'red';
+  }
+
+  trafficPhase(lane: Lane, at: number, env: EnvState): SignalPhase {
+    const order = env.officerOrders?.[lane.id];
+    return order === 'stop'
+      ? 'red'
+      : order === 'go'
+        ? 'green'
+        : this.phase(lane, at, env);
   }
 
   railState(

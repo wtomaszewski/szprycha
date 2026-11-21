@@ -42,4 +42,29 @@ Testy obok scenariuszy sprawdzają tabelę deduplikacji, dane mapy, teksty werdy
 | WYP-04 | Brak przedniej lampki, włączenie przy ograniczonej widoczności, prowadzenie roweru |
 | WYP-05 | Brak tylnej lampki, obie lampki włączone, prowadzenie roweru |
 
-W `m3c.yaml` pole `agents[].inputs` przyjmuje zmiany stanu uczestnika w czasie. Pozycje są interpolowane do kolejnej próbki. `signalOverrides` i `railOverrides` pozwalają wymusić stan wskazanego wlotu lub przejazdu. Test pokrycia sprawdza, czy każdy uruchomiony detektor `sim` ma przynajmniej trzy scenariusze, w tym oczekiwany werdykt i neutralne albo poprawne zachowanie. Lista braków w części 2 jest jawna i sprawdzana w tym samym teście.
+W `m3c.yaml` pole `agents[].inputs` przyjmuje zmiany stanu uczestnika w czasie. Pozycje są interpolowane do kolejnej próbki. `signalOverrides` i `railOverrides` pozwalają wymusić stan wskazanego wlotu lub przejazdu. Test pokrycia sprawdza, czy każdy uruchomiony detektor `sim` ma przynajmniej trzy scenariusze, w tym oczekiwany werdykt i neutralne albo poprawne zachowanie.
+
+### M3c, część 2
+
+W `m3c-part2.yaml` pole `objects` dodaje obiekty do wskazanych warstw Tiled, a `env.officerOrders` ustala polecenia na wlotach. Uczestnik może zgłosić `yieldingAtCrossing`, jeżeli zatrzymał się, aby ustąpić pieszemu. Test pokrycia wymaga co najmniej trzech scenariuszy dla każdej reguły `sim` i dla KASK-01.
+
+| Detektor | Przypadki w YAML |
+| --- | --- |
+| GDZIE-02 | Kierunek zgodny, jazda pod prąd, prowadzenie roweru |
+| GDZIE-03 | Prawa krawędź, jazda lewą stroną, przygotowanie lewego skrętu |
+| GDZIE-03b | Pobocze przejezdne, nieprzejezdne i w przeciwnym kierunku |
+| GDZIE-07 | Granica 20 km/h, przekroczenie limitu, konflikt z pieszym |
+| GDZIE-08 | Para bez konfliktu, hamowanie auta za parą, jazda w rzędzie |
+| GDZIE-09 | Zakaz obszarowy ze znakiem i bez znaku, prowadzenie obok zakazu |
+| GDZIE-11 | Wolna i zbyt szybka jazda obok pieszego, część piesza i rowerowa |
+| SYG-02 | Czerwone i zielone na przejeździe, światło sąsiedniego pasa, kontynuacja rozpoczętego przejazdu |
+| SYG-03 | Polecenia sprzeczne ze światłami jezdni lub rowerowymi oraz ze STOP |
+| ZNAK-A7 | Wymuszenie i ustąpienie przy A-7, jeden werdykt PIER-02 przy drodze głównej |
+| ZNAK-B2T22 | Zakaz, tabliczka z wyjątkiem, przeciwny kierunek znaku |
+| ZNAK-B9 | Zakaz ze znaku, przeciwny kierunek znaku, postój bez wjazdu |
+| ZNAK-B1 | Zakaz z obu stron, tabliczka z wyjątkiem, prowadzenie roweru |
+| MAN-02 | Prawy skręt przy krawędzi, szeroki łuk, jazda prosto |
+| MAN-04 | Spojrzenie i sygnał, brak przygotowania, za mały odstęp, jazda za pojazdem |
+| MAN-05 | Wyprzedzenie z prawej z odstępem i bez, wyprzedzenie z lewej, ominięcie stojącego |
+| MAN-08 | Droga zatrzymania przed pieszym przy różnych prędkościach oraz przy gołoledzi |
+| MAN-12 | Czekanie i ominięcie pojazdu ustępującego pieszemu, powód nieznany, niekierowana zebra i skrzyżowanie |

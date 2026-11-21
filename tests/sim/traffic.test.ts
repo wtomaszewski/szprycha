@@ -111,6 +111,28 @@ it('waits at red and refuses an S-2 arrow for a straight movement', () => {
   }
 });
 
+it('uses the traffic officer’s order instead of the signal for cars', () => {
+  const traffic = simulate(469, 1);
+  const car = traffic.agents[0]!;
+  expect(car.laneId).toBe('lights-S');
+  const hold: EnvState = {
+    ...clear,
+    signalOverrides: { 'lights-S': 'green' },
+    officerOrders: { 'lights-S': 'stop' },
+  };
+  for (let t = 0; t < 480; t++) traffic.step(hold);
+  expect(car.junctionsPassed).toBe(0);
+  expect(car.speed).toBe(0);
+  const release: EnvState = {
+    ...clear,
+    signalOverrides: { 'lights-S': 'red' },
+    officerOrders: { 'lights-S': 'go' },
+  };
+  for (let t = 0; t < 240 && car.junctionsPassed === 0; t++)
+    traffic.step(release);
+  expect(car.junctionsPassed).toBe(1);
+});
+
 it('stops on yellow when there is room and continues when braking would be unsafe', () => {
   const traffic = simulate(469, 1);
   const car = traffic.agents[0]!;
