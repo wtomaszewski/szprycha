@@ -7,3 +7,6 @@
 - Rower i oprawa menu: własne kształty proceduralne w `src/scenes/MainMenu.ts`.
 
 M1: `generated/tiles.png` i `generated/rider.png` są własnymi placeholderami generowanymi przez `tools/gen-placeholders.ts`; bez zewnętrznych grafik. Rozmiary i opisy są w `assets/manifest.json`. Nie są docelową oprawą artystyczną.
+
+M4b: the original dialogue portrait sheets in `generated/portraits/` are drawn by
+`tools/gen-placeholders.ts` using the project's palette.

@@ -1,6 +1,14 @@
 import type { DriveInput, Scheme, RiderState } from '../gameplay/bicycle';
 import { ui } from '../core/presentation';
 import { CAMERA_HEIGHT_PX } from '../render/projection';
+interface OverlayControls {
+  keyboard(event: KeyboardEvent): boolean;
+  gamepad(
+    pressed: (button: number) => boolean,
+    justPressed: (button: number) => boolean,
+  ): boolean;
+}
+
 export class DrivingControls {
   readonly root = document.createElement('section');
   readonly keys = new Set<string>();
@@ -31,8 +39,11 @@ export class DrivingControls {
     menu: () => void,
     setCameraHeight: (height: number) => void,
     setDebugVisible: (visible: boolean) => void,
+    private readonly overlays: OverlayControls,
   ) {
     const signal = this.abort.signal;
+    const pad = navigator.getGamepads?.().find((gamepad) => gamepad?.connected);
+    this.padButtons = pad?.buttons.map((button) => button.pressed) ?? [];
     this.root.className = 'driving-ui';
     this.root.setAttribute('aria-label', ui.driving.controls);
     const bar = document.createElement('div');
@@ -78,6 +89,7 @@ export class DrivingControls {
     this.notice.className = 'drive-notice';
     this.notice.setAttribute('role', 'status');
     this.notice.textContent = ui.driving.prototype;
+    help.append(' · ', ui.phone.controls);
     const touch = document.createElement('div');
     touch.className = 'touch-controls';
     const stick = document.createElement('div');
@@ -190,6 +202,7 @@ export class DrivingControls {
     window.addEventListener(
       'keydown',
       (e) => {
+        if (e.defaultPrevented || this.overlays.keyboard(e)) return;
         if (e.code === 'F3') {
           e.preventDefault();
           if (!e.repeat) {
@@ -251,6 +264,14 @@ export class DrivingControls {
     this.braking = false;
   }
   read(): DriveInput {
+    const pad = navigator.getGamepads?.().find((p) => p?.connected);
+    const pressed = (button: number) => Boolean(pad?.buttons[button]?.pressed);
+    const previous = this.padButtons;
+    this.padButtons = pad?.buttons.map((button) => button.pressed) ?? [];
+    const justPressed = (button: number) =>
+      pressed(button) && !previous[button];
+    if (this.overlays.gamepad(pressed, justPressed))
+      return { x: 0, y: 0, brake: false, scheme: this.scheme };
     const has = (...codes: string[]) => codes.some((c) => this.keys.has(c));
     let x =
       this.x ||
@@ -259,7 +280,6 @@ export class DrivingControls {
       this.y ||
       Number(has('KeyS', 'ArrowDown')) - Number(has('KeyW', 'ArrowUp'));
     let brake = this.braking || has('Space');
-    const pad = navigator.getGamepads?.().find((p) => p?.connected);
     this.actions.signal = has('KeyQ') ? 'left' : has('KeyE') ? 'right' : null;
     this.actions.looking = has('KeyC');
     this.actions.bell = has('KeyF');
@@ -267,18 +287,16 @@ export class DrivingControls {
       if (Math.abs(pad.axes[0] ?? 0) > 0.15) x = pad.axes[0]!;
       if (Math.abs(pad.axes[1] ?? 0) > 0.15) y = pad.axes[1]!;
       brake ||= !!pad.buttons[1]?.pressed || !!pad.buttons[7]?.pressed;
-      if (pad.buttons[0]?.pressed && !this.padButtons[0]) this.toggle();
-      if (pad.buttons[9]?.pressed && !this.padButtons[9]) {
+      if (justPressed(0)) this.toggle();
+      if (justPressed(9)) {
         this.pauseButton.click();
       }
       if (pad.buttons[4]?.pressed) this.actions.signal = 'left';
       if (pad.buttons[5]?.pressed) this.actions.signal = 'right';
       this.actions.looking ||= !!pad.buttons[3]?.pressed;
       this.actions.bell ||= !!pad.buttons[2]?.pressed;
-      if (pad.buttons[12]?.pressed && !this.padButtons[12])
-        this.actions.lights = !this.actions.lights;
-      this.padButtons = pad.buttons.map((b) => b.pressed);
-    } else this.padButtons = [];
+      if (justPressed(12)) this.actions.lights = !this.actions.lights;
+    }
     return { x, y, brake, scheme: this.scheme };
   }
   setWalking(walking: boolean) {

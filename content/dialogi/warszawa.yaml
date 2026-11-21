@@ -1,0 +1,22 @@
+dialogi:
+  - id: dialogi.WAW-T-01.start
+    linie:
+      - postac: pan_kazik
+        emocja: happy
+        tekst: dialogi.WAW-T-01.powitanie
+  - id: dialogi.WAW-T-01.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.WAW-T-01.meta
+      - postac: pan_kazik
+        emocja: happy
+        tekst: dialogi.WAW-T-01.po_mecie
+zapowiedzi:
+  - regula: KASK-01
+    emocja: neutral
+    tekst: dialogi.reguly.KASK-01
+  - regula: ZNAK-STOP
+    emocja: neutral
+    tekst: dialogi.reguly.ZNAK-STOP
+    lektor: dialogi.lektor.ZNAK-STOP

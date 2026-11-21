@@ -23,6 +23,7 @@ export class MissionHud {
   private readonly summary = document.createElement('section');
   private readonly heading = document.createElement('h2');
   private readonly resultText = document.createElement('p');
+  private readonly retryButton = document.createElement('button');
   private displayedResult: MissionSystem['result'];
 
   constructor(
@@ -63,7 +64,8 @@ export class MissionHud {
       [ui.missionUi.retry, retry],
       [ui.driving.menu, menu],
     ] as const) {
-      const button = document.createElement('button');
+      const button =
+        action === retry ? this.retryButton : document.createElement('button');
       button.type = 'button';
       button.textContent = label;
       button.addEventListener('click', action);
@@ -71,6 +73,14 @@ export class MissionHud {
     }
     this.summary.append(this.heading, this.resultText, actions);
     parent.append(panel, this.timer, this.navigation, this.summary);
+  }
+
+  focusEquipment() {
+    if (!this.equip.hidden) this.equip.focus();
+  }
+
+  focusResult() {
+    this.retryButton.focus();
   }
 
   update(

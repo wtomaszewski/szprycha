@@ -15,6 +15,11 @@ import { DrivingControls } from '../ui/DrivingControls';
 import { showError, translate, ui } from '../core/presentation';
 
 import { MissionSystem, type MissionSpawn } from '../gameplay/MissionSystem';
+import {
+  canOpenPhone,
+  missionLines,
+  missionProgress,
+} from '../gameplay/MissionProgress';
 import type { GameContent } from '../content/schemas';
 import { RuleDebugOverlay } from '../render/RuleDebugOverlay';
 import { TrainingRoad } from '../render/TrainingRoad';
@@ -33,6 +38,10 @@ import { emergencyLightPhase } from '../render/emergencyLights';
 import { EmergencySiren } from '../audio/EmergencySiren';
 import { RuleFeedback } from '../ui/RuleFeedback';
 import { MissionHud } from '../ui/MissionHud';
+import { MissionPhone } from '../ui/MissionPhone';
+import { DialogueWindow } from '../ui/DialogueWindow';
+
+const mapId = 'miasteczko';
 
 export class City extends Scene {
   private readonly environment: EnvState = {
@@ -69,6 +78,9 @@ export class City extends Scene {
   private feedback!: RuleFeedback;
   private content!: GameContent;
   private mission?: MissionSystem;
+  private phone!: MissionPhone;
+  private dialogue!: DialogueWindow;
+  private phoneFeedback!: string;
   private missionHud?: MissionHud;
   private missionMarker?: GameObjects.Graphics;
   private displayedTarget?: MissionSystem['target'];
@@ -108,7 +120,12 @@ export class City extends Scene {
       cached.data,
       this.content.balans.silnik.kafel_m,
     );
-    const definition = this.content.misje.find(({ id }) => id === missionId);
+    const definition = this.availableOrders().find(
+      ({ id }) => id === missionId,
+    );
+    this.phoneFeedback = this.content.przepisy.przepisy.find(
+      ({ id }) => id === 'MAN-11',
+    )!.feedback;
     this.mission = definition
       ? new MissionSystem(
           definition,
@@ -259,6 +276,28 @@ export class City extends Scene {
           this.rulesRider.pos,
         );
       },
+      {
+        keyboard: (event) => this.overlayKeyboard(event),
+        gamepad: (pressed, justPressed) =>
+          this.overlayGamepad(pressed, justPressed),
+      },
+    );
+    this.phone = new MissionPhone(
+      this.controls.root,
+      () => this.togglePhone(),
+      (id) => {
+        if (
+          this.phone.open &&
+          canOpenPhone(this.rider.speed) &&
+          (!this.mission || this.mission.result) &&
+          this.availableOrders().some((order) => order.id === id)
+        )
+          this.scene.restart({ missionId: id });
+      },
+    );
+    this.dialogue = new DialogueWindow(
+      this.controls.root,
+      this.content.dialogi,
     );
     if (this.mission) this.controls.notice.textContent = '';
     this.feedback = new RuleFeedback(
@@ -294,6 +333,8 @@ export class City extends Scene {
       this.game.canvas.classList.remove('training-dusk');
       this.siren.destroy();
       this.debug.destroy();
+      this.dialogue.destroy();
+      this.phone.close();
       this.controls.destroy();
       const c = this.game.canvas;
       delete c.dataset.x;
@@ -304,6 +345,100 @@ export class City extends Scene {
     this.events.once('shutdown', onShutdown);
     this.game.canvas.dataset.scene = 'City';
     this.game.canvas.setAttribute('aria-label', ui.driving.title);
+    this.controls.speed.textContent = `0 ${ui.driving.unit}`;
+    this.blocks.update(
+      this.cameras.main,
+      this.controls.lite,
+      this.rider.x,
+      this.rider.y,
+    );
+    this.openMissionDialogue();
+  }
+
+  private availableOrders() {
+    return this.content.misje.filter(
+      (mission) =>
+        (mission.mapa ?? mission.miasto) === mapId &&
+        missionProgress.isAvailable(mission, this.content),
+    );
+  }
+
+  private togglePhone() {
+    if (this.phone.open) {
+      this.phone.close();
+      return;
+    }
+    if (this.dialogue.open) return;
+    if (!canOpenPhone(this.rider.speed)) {
+      this.message(this.phoneFeedback);
+      return;
+    }
+    this.controls.clear();
+    this.controls.notice.textContent = '';
+    this.phone.show(
+      this.availableOrders(),
+      Boolean(this.mission && !this.mission.result),
+    );
+  }
+
+  private overlayKeyboard(event: KeyboardEvent) {
+    if (this.phone.open || this.dialogue.open) return true;
+    if (event.altKey || event.ctrlKey || event.metaKey) return false;
+    const onControl =
+      event.target instanceof Element &&
+      event.target.matches('button,input,select,textarea,a[href]');
+    const toggle =
+      event.code === 'KeyM' ||
+      (event.code === 'Tab' && !event.shiftKey && !onControl);
+    if (!toggle) return false;
+    event.preventDefault();
+    if (!event.repeat) this.togglePhone();
+    return true;
+  }
+
+  private overlayGamepad(
+    pressed: (button: number) => boolean,
+    justPressed: (button: number) => boolean,
+  ) {
+    if (this.dialogue.open) {
+      if (justPressed(1)) this.dialogue.skip();
+      else {
+        if (justPressed(12)) this.dialogue.scroll(-1);
+        if (justPressed(13)) this.dialogue.scroll(1);
+        this.dialogue.gamepad(pressed(0), justPressed(0));
+      }
+      return true;
+    }
+    if (justPressed(8)) {
+      this.togglePhone();
+      return true;
+    }
+    if (!this.phone.open) return false;
+    if (justPressed(1)) this.phone.close();
+    else if (justPressed(0)) this.phone.activate();
+    else if (justPressed(12)) this.phone.focusOrder(-1);
+    else if (justPressed(13)) this.phone.focusOrder(1);
+    return true;
+  }
+
+  private openMissionDialogue() {
+    if (!this.mission) return;
+    const lines = missionProgress.opening(
+      this.mission.definition,
+      this.content.dialogi,
+    );
+    this.dialogue.show(lines, () => this.missionHud?.focusEquipment());
+  }
+
+  private finishMissionDialogue() {
+    if (this.mission?.result?.status !== 'completed') return;
+    this.rider.speed = 0;
+    this.controls.clear();
+    missionProgress.complete(this.mission.definition);
+    this.dialogue.show(
+      missionLines(this.content.dialogi, this.mission.definition.dialog_koniec),
+      () => this.missionHud?.focusResult(),
+    );
   }
   private message(text: string) {
     this.controls.notice.textContent = text;
@@ -359,6 +494,7 @@ export class City extends Scene {
     });
     this.controls.setWalking(false);
     this.cameras.main.centerOn(this.rider.x, this.rider.y);
+    this.openMissionDialogue();
   }
   private resetRules() {
     this.environment.time = 'day';
@@ -484,6 +620,8 @@ export class City extends Scene {
     const input = this.controls.read();
     if (
       this.controls.paused ||
+      this.phone.open ||
+      this.dialogue.open ||
       this.missionInterrupted ||
       this.mission?.result ||
       matchMedia('(pointer: coarse) and (orientation: portrait)').matches
@@ -508,6 +646,7 @@ export class City extends Scene {
       this.accumulator -= FIXED_STEP;
       if (this.missionInterrupted || this.mission?.result) {
         this.accumulator = 0;
+        this.finishMissionDialogue();
         break;
       }
     }

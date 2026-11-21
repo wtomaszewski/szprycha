@@ -3,6 +3,9 @@
   mapa: miasteczko
   akt: 0
   tytul: misje.WAW-T-01.tytul
+  opis: misje.WAW-T-01.opis
+  dialog_start: dialogi.WAW-T-01.start
+  dialog_koniec: dialogi.WAW-T-01.koniec
   zleceniodawca: sierzant_ola
   typ: samouczek
   start: { poi: tutorial_start, kask_zapiety: false }

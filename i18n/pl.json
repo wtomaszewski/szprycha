@@ -132,10 +132,59 @@
   "misje": {
     "WAW-T-01": {
       "tytul": "Witaj w Szprysze",
+      "opis": "Próba w miasteczku ruchu: zapnij kask, jedź za strzałką i zatrzymaj się przed znakiem STOP.",
       "jazda": "Rusz i jedź za strzałką.",
       "podejscie": "Zwolnij przed skrzyżowaniem.",
       "powrot_stop": "Wróć i zatrzymaj się całkowicie przed linią STOP.",
       "stop": "Zatrzymaj się całkowicie przed linią STOP, przepuść jadących drogą z pierwszeństwem i dopiero rusz do mety."
+    }
+  },
+  "phone": {
+    "title": "SzprychaApp",
+    "orders": "Dostępne zlecenia",
+    "open": "Otwórz SzprychaApp",
+    "close": "Zamknij telefon",
+    "start": "Rozpocznij misję",
+    "empty": "Brak zleceń na tej mapie.",
+    "active": "Najpierw zakończ trwającą misję.",
+    "controls": "Tab / M · Select"
+  },
+  "dialogueUi": {
+    "title": "Rozmowa",
+    "next": "Dalej",
+    "skip": "Pomiń dialog",
+    "voice": "Lektor",
+    "controls": "Enter / A: dalej · Przytrzymaj, aby pominąć",
+    "readMore": "Przewiń tekst"
+  },
+  "dialogi": {
+    "postacie": {
+      "gracz": "Kurier Szprychy",
+      "pan_kazik": "Pan Kazik",
+      "sierzant_ola": "Sierżant Ola",
+      "turbo": "Turbo",
+      "dj_dzwonek": "DJ Dzwonek",
+      "lena_mapa": "Lena „Mapa”",
+      "maly_franek": "Mały Franek",
+      "pani_halina": "Pani Halina",
+      "profesor_kwant": "Profesor Kwant",
+      "inzynier_zawila": "Inżynier Zawiła",
+      "krasnal_dzwoneczek": "Krasnal Dzwoneczek",
+      "pan_latarnik": "Pan Latarnik",
+      "pani_doktor": "Pani Doktor z Zoo",
+      "gang_bez_hamulcow": "Gang Bez Hamulców"
+    },
+    "WAW-T-01": {
+      "powitanie": "Witaj w Szprysze! Zanim ruszymy z dostawami, zróbmy próbę w miasteczku.",
+      "meta": "Pełne zatrzymanie przed STOP zaliczone!",
+      "po_mecie": "Tak trzymać, Szprycho!"
+    },
+    "reguly": {
+      "KASK-01": "Zanim ruszysz, zapnij kask, żeby chronił głowę.",
+      "ZNAK-STOP": "Przed linią STOP zatrzymaj się całkowicie i ustąp pierwszeństwa."
+    },
+    "lektor": {
+      "ZNAK-STOP": "Przed linią stop zatrzymaj się całkowicie i ustąp pierwszeństwa."
     }
   }
 }

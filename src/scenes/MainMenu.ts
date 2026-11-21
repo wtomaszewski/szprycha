@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import type { GameContent } from '../content/schemas';
+import { missionProgress } from '../gameplay/MissionProgress';
 import { FONT, translate, ui } from '../core/presentation';
 export class MainMenu extends Scene {
   constructor() {
@@ -9,7 +10,11 @@ export class MainMenu extends Scene {
     // Data has passed the same schema at build time and at the loading boundary.
     if (content?.przepisy) this.registry.set('content', content);
     const gameContent = this.registry.get('content') as GameContent;
-    const tutorial = gameContent.misje.find(({ id }) => id === 'WAW-T-01');
+    const tutorial = gameContent.misje.find(
+      (mission) =>
+        mission.id === 'WAW-T-01' &&
+        missionProgress.isAvailable(mission, gameContent),
+    );
     const missionButton = document.createElement('button');
     if (tutorial) {
       missionButton.type = 'button';

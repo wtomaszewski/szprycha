@@ -404,3 +404,154 @@ button[aria-pressed='true'] {
     top: 112px;
   }
 }
+
+.phone-trigger {
+  position: absolute;
+  bottom: max(8px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  border-color: #73eff7;
+  color: #73eff7;
+  pointer-events: auto;
+}
+.phone-icon {
+  width: 13px;
+  height: 19px;
+  border: 2px solid currentColor;
+  display: grid;
+  place-items: end center;
+}
+.phone-icon::after {
+  content: '';
+  width: 3px;
+  height: 2px;
+  background: currentColor;
+  margin-bottom: 1px;
+}
+.drive-notice {
+  bottom: max(52px, calc(env(safe-area-inset-bottom) + 48px));
+}
+@media (max-height: 500px) {
+  .drive-notice:not(:empty) {
+    display: block;
+    max-width: 48%;
+  }
+}
+.game-dialog {
+  position: fixed;
+  inset: auto 0 max(8px, env(safe-area-inset-bottom));
+  margin: 0 auto;
+  max-width: calc(100% - 32px);
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  border: 2px solid #ffcd75;
+  padding: 14px;
+  background: #1a1c2c;
+  color: #f4f4f4;
+  pointer-events: auto;
+}
+.game-dialog::backdrop {
+  background: #1a1c2caa;
+}
+.game-dialog button:focus-visible {
+  outline-offset: 2px;
+}
+.mission-phone {
+  width: 440px;
+  border: 4px solid #73eff7;
+  border-radius: 16px 16px 6px 6px;
+}
+.mission-phone[open] {
+  animation: phone-slide-in 180ms ease-out;
+}
+@keyframes phone-slide-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mission-phone[open] {
+    animation: none;
+  }
+}
+.mission-phone header,
+.dialogue-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mission-phone h2,
+.mission-phone h3,
+.mission-phone h4,
+.mission-phone p {
+  margin: 0;
+}
+.mission-phone h2 {
+  color: #73eff7;
+}
+.mission-phone h3 {
+  margin-top: 12px;
+}
+.mission-phone ul {
+  padding: 0;
+  margin: 8px 0 0;
+  list-style: none;
+}
+.mission-phone li {
+  padding: 12px;
+  background: #333c57;
+}
+.mission-phone li + li {
+  margin-top: 8px;
+}
+.mission-phone p {
+  margin: 4px 0 10px;
+}
+.mission-phone button:disabled {
+  color: #c0cbdc;
+  cursor: default;
+}
+.dialogue-window {
+  width: 600px;
+}
+.dialogue-line {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 12px;
+}
+.dialogue-portrait {
+  width: 64px;
+  height: 64px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+.dialogue-speech strong {
+  color: #ffcd75;
+  font-size: 18px;
+}
+.dialogue-text {
+  margin: 4px 0 0;
+  font-size: 19px;
+  line-height: 1.25;
+  max-height: 2lh;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  touch-action: pan-y;
+}
+.dialogue-actions {
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+@media (pointer: coarse) {
+  .game-dialog button,
+  .phone-trigger {
+    min-height: 56px;
+    min-width: 56px;
+  }
+}

@@ -19,6 +19,160 @@
       "frames": 1,
       "directions": 1,
       "description": "Tymczasowy rowerzysta z kaskiem. Obrót w runtime; docelowo 16 kierunków i animacje."
+    },
+    {
+      "id": "portrait-gracz",
+      "file": "generated/portraits/gracz.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-pan_kazik",
+      "file": "generated/portraits/pan_kazik.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-sierzant_ola",
+      "file": "generated/portraits/sierzant_ola.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-turbo",
+      "file": "generated/portraits/turbo.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-dj_dzwonek",
+      "file": "generated/portraits/dj_dzwonek.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-lena_mapa",
+      "file": "generated/portraits/lena_mapa.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-maly_franek",
+      "file": "generated/portraits/maly_franek.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-pani_halina",
+      "file": "generated/portraits/pani_halina.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-profesor_kwant",
+      "file": "generated/portraits/profesor_kwant.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-inzynier_zawila",
+      "file": "generated/portraits/inzynier_zawila.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-krasnal_dzwoneczek",
+      "file": "generated/portraits/krasnal_dzwoneczek.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-pan_latarnik",
+      "file": "generated/portraits/pan_latarnik.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-pani_doktor",
+      "file": "generated/portraits/pani_doktor.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "portrait-gang_bez_hamulcow",
+      "file": "generated/portraits/gang_bez_hamulcow.png",
+      "width": 320,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 5,
+      "directions": 1,
+      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
     }
   ]
 }
