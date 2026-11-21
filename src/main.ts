@@ -12,36 +12,69 @@ orientation.textContent = ui.driving.rotate;
 orientation.setAttribute('role', 'status');
 document.body.append(orientation);
 document.title = `${ui.title}: ${ui.subtitle}`;
-new Phaser.Game({
-  type: Phaser.AUTO,
-  parent: 'game',
-  width: 640,
-  height: 360,
-  backgroundColor: '#1a1c2c',
-  pixelArt: true,
-  roundPixels: true,
-  scale: { mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.NO_CENTER },
-  scene: [Boot, Preload, MainMenu, City],
-  callbacks: {
-    postBoot(game) {
-      const resize = () => {
-        const zoom = Math.max(
-          1,
-          Math.floor(
-            Math.min(window.innerWidth / 640, window.innerHeight / 360),
-          ),
-        );
-        game.scale.resize(
-          Math.floor(window.innerWidth / zoom),
-          Math.floor(window.innerHeight / zoom),
-        );
-        game.scale.setZoom(zoom);
-      };
-      resize();
-      window.addEventListener('resize', resize);
-      game.events.once(Phaser.Core.Events.DESTROY, () =>
-        window.removeEventListener('resize', resize),
-      );
+const parent = document.querySelector<HTMLElement>('#game')!;
+const baseWidth = 640;
+const baseHeight = 360;
+let game: Phaser.Game | undefined;
+let booted = false;
+
+function resizeGame(game: Phaser.Game) {
+  const { clientWidth: width, clientHeight: height } = parent;
+  if (width < 1 || height < 1) {
+    game.pause();
+    return;
+  }
+
+  const zoom = Math.max(
+    1,
+    Math.floor(Math.min(width / baseWidth, height / baseHeight)),
+  );
+  const gameWidth = Math.floor(width / zoom);
+  const gameHeight = Math.floor(height / zoom);
+  if (game.scale.width !== gameWidth || game.scale.height !== gameHeight) {
+    game.scale.resize(gameWidth, gameHeight);
+    game.scale.setZoom(zoom);
+  } else if (game.scale.zoom !== zoom) {
+    game.scale.setZoom(zoom);
+  }
+  game.resume();
+}
+
+function syncViewport() {
+  if (game) {
+    if (booted) resizeGame(game);
+    return;
+  }
+
+  if (parent.clientWidth < 1 || parent.clientHeight < 1) return;
+
+  game = new Phaser.Game({
+    type: Phaser.AUTO,
+    parent,
+    width: baseWidth,
+    height: baseHeight,
+    backgroundColor: '#1a1c2c',
+    pixelArt: true,
+    roundPixels: true,
+    scale: { mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.NO_CENTER },
+    scene: [Boot, Preload, MainMenu, City],
+    callbacks: {
+      postBoot(game) {
+        booted = true;
+        resizeGame(game);
+        game.events.once(Phaser.Core.Events.DESTROY, () => {
+          observer.disconnect();
+          window.removeEventListener('resize', syncViewport);
+          document.removeEventListener('visibilitychange', syncViewport);
+        });
+      },
     },
-  },
-});
+  });
+}
+
+// A hidden container can change size without dispatching a window resize.
+const observer = new ResizeObserver(syncViewport);
+observer.observe(parent);
+window.addEventListener('resize', syncViewport);
+document.addEventListener('visibilitychange', syncViewport);
+syncViewport();
