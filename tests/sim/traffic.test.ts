@@ -11,7 +11,8 @@ import { WorldModel } from '../../src/rules/world/WorldModel';
 import { TrafficSimulation } from '../../src/sim/TrafficSimulation';
 import { readContent } from '../../tools/content';
 
-const balance = (await readContent()).balans;
+const content = await readContent();
+const balance = content.balans;
 const world = new WorldModel(
   JSON.parse(readFileSync('maps/miasteczko.tmj', 'utf8')),
   balance.silnik.kafel_m,
@@ -186,7 +187,7 @@ it('fully stops at S-2 and yields to green traffic before turning right', () => 
 it('reports protective braking to the rule engine as a priority violation', () => {
   const manager = new IntersectionManager(world);
   const traffic = simulate(9, 1, manager);
-  const rules = new RuleEngine(world, balance, manager);
+  const rules = new RuleEngine(world, content, manager);
   const car = traffic.agents[0]!;
   const player = rider(1264, 511, Math.PI / 2, 3.5);
   // Bring a main-road car close to its actual conflict with the rider.

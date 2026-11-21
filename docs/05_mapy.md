@@ -69,6 +69,20 @@
 - **POI:** warsztat Pana Kazika (warszawski), blok Pani Haliny, kiosk z zapiekankami.
 - **Reguły:** PIER-01, PIER-02, PIER-06, MSC-03, ZNAK-STOP, ZNAK-A7, ZNAK-D1, MAN-01, MAN-07.
 
+**Fragment grywalny (M4d, część 1).** `npm run map:generate:warsaw` odtwarza `maps/warszawa.tmj` wspólnym generatorem Tiled dla Warszawy i Miasteczka. Praga jest kolażem w skali 70 × 48 kafli. Do M6 można dołączyć kolejne kwartały przy wlotach granicznych grafu pasów.
+
+| Miejsce | Praktyka |
+| --- | --- |
+| Róg kamienic, osiedle i fabryka | Skrzyżowania równorzędne. W WAW-A1-01 nadjeżdża samochód z prawej. |
+| Główna ulica i bazar | Wloty z D-1, A-7 i B-20, zebra, zatoki parkingowe, budki oraz kiosk. W WAW-A1-03 na drodze z pierwszeństwem pojawia się samochód. |
+| Warsztat i podwórka | Wyjazdy przez chodnik, w tym droga wewnętrzna z D-46/D-47. W WAW-A1-02 przez wyjazd przechodzi pieszy. |
+| Małe rondo | Jednokierunkowy pierścień, cztery wloty A-7 + C-12 i wyspa z kolizją. |
+| Osiedle przy szkole | A-17 oraz próg oznaczony A-11a. |
+
+SzprychaApp odblokowuje zadania w kolejności WAW-T-01 → WAW-T-02 → WAW-A1-01 → WAW-A1-02 → WAW-A1-03. Przegląd i próbna jazda odbywają się w Miasteczku. Zlecenia na Pradze używają wymuszonych uczestników ruchu, a wolna jazda uruchamia ruch po całym grafie. W WAW-A1-03 za skrzyżowaniem ze STOP-em jest skrót oznaczony B-1. Jazda rowerem przez pasaż wywołuje werdykt ZNAK-B1.
+
+Pomiar fragmentu w Chromium z ograniczeniem CPU 4× można powtórzyć podczas działania Vite poleceniem `BENCH_MAP=warszawa npm run benchmark:driving`. Wynik zapisuje się w `test-results/performance-praga.json`.
+
 ### 5. Łazienki i Mokotów — „Park i przedmieścia”
 - **Landmarki:** Pałac na Wodzie (biały pałac nad stawem, kolumny), pawie, wiewiórki, pomnik w parku (własny, bez kopiowania pomnika Chopina — „pianista pod wierzbą”, uproszczony), domki jednorodzinne, stacja kolejki podmiejskiej.
 - **Układ drogowy:** alejki parkowe z zakazem wjazdu rowerów (B-9) i alejki dozwolone, ciąg pieszo-rowerowy, **przejazd kolejowy z zaporami i bez zapór** (A-9, A-10, G-1, G-3), droga osiedlowa bez chodnika, droga z poboczem.

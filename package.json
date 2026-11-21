@@ -19,7 +19,8 @@
     "validate:content": "tsx tools/build-content.ts",
     "assets:generate": "tsx tools/gen-placeholders.ts",
     "map:generate": "tsx tools/gen-training-map.ts",
-    "benchmark:driving": "tsx tools/benchmark-driving.ts"
+    "benchmark:driving": "tsx tools/benchmark-driving.ts",
+    "map:generate:warsaw": "tsx tools/gen-warsaw-map.ts"
   },
   "dependencies": {
     "phaser": "3.90.0",

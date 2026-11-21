@@ -208,10 +208,12 @@ export class TrafficParticipants {
 
   private isEventRoute(route: TrafficRoute) {
     return (
-      this.mode !== 'ambient' &&
-      (route.kind === 'emergency' ||
-        (route.kind === 'tram' && route.stops.length > 0) ||
-        (route.kind === 'pedestrian' && route.crossings.length > 0))
+      route.event_only ||
+      route.kind === 'car' ||
+      (this.mode !== 'ambient' &&
+        (route.kind === 'emergency' ||
+          (route.kind === 'tram' && route.stops.length > 0) ||
+          (route.kind === 'pedestrian' && route.crossings.length > 0)))
     );
   }
 
@@ -282,7 +284,11 @@ export class TrafficParticipants {
       )
         this.activate(actor);
       if (!actor.agent.active || actor.route.kind === 'passenger') continue;
-      if (actor.agent.kind === 'tram' || actor.agent.kind === 'emergency')
+      if (
+        actor.agent.kind === 'tram' ||
+        actor.agent.kind === 'emergency' ||
+        actor.agent.kind === 'car'
+      )
         continue;
       this.walkOrCycle(actor, at, env, player);
       if (actor.agent.active) this.footAndBike.push(actor.agent);
@@ -297,7 +303,11 @@ export class TrafficParticipants {
     }
     for (const actor of this.actors) {
       if (!actor.agent.active) continue;
-      if (actor.route.kind === 'tram' || actor.route.kind === 'emergency')
+      if (
+        actor.route.kind === 'tram' ||
+        actor.route.kind === 'emergency' ||
+        actor.route.kind === 'car'
+      )
         this.driveSpecial(actor, at, env, player);
     }
     this.road.step(env, player, this.footAndBike, this.conditions);
@@ -528,11 +538,11 @@ export class TrafficParticipants {
         ),
       );
     }
-    if (emergency) {
+    if (emergency || route.kind === 'car') {
       for (const car of this.road.agents) {
         if (Math.cos(car.heading - agent.heading) < 0.98) continue;
         const clearance =
-          (actorRadiusPx[car.kind] + actorRadiusPx.emergency + 3) *
+          (actorRadiusPx[car.kind] + actorRadiusPx[agent.kind] + 3) *
           this.world.metersPerPixel;
         room = Math.min(
           room,

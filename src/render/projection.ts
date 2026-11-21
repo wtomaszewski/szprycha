@@ -5,6 +5,7 @@ export interface Block {
   height: number;
   floors: number;
   landmarkId?: string;
+  tint?: number;
 }
 
 export const FLOOR_PX = 12;

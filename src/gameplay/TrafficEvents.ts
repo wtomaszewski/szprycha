@@ -18,6 +18,9 @@ import type { TrafficRoute } from '../rules/world/TrafficRoutes';
 
 export const eventRules = {
   cwiczenie_stop: ['ZNAK-STOP'],
+  kontrola_swiatel: ['WYP-04', 'WYP-05'],
+  pojazd_na_skrzyzowaniu: ['PIER-01', 'PIER-02'],
+  pieszy_przy_bramie: ['PIER-06', 'MSC-03'],
   pojazd_uprzywilejowany: ['PIER-07'],
   pieszy_na_pasach: ['PIER-04', 'MAN-08'],
   pilka_na_jezdni: ['MAN-08'],
@@ -29,7 +32,12 @@ export const eventRules = {
 } as const;
 
 export type TrafficEventId = keyof typeof eventRules;
-export const forcedOnly = 'cwiczenie_stop';
+const forcedOnly = new Set<TrafficEventId>([
+  'cwiczenie_stop',
+  'kontrola_swiatel',
+  'pojazd_na_skrzyzowaniu',
+  'pieszy_przy_bramie',
+]);
 export const eventIds = Object.keys(eventRules) as TrafficEventId[];
 export const propIds = [
   'pilka_na_jezdni',
@@ -76,6 +84,26 @@ function routeSite(
   let closest = 12;
   let site: Site | undefined;
   for (const route of world.trafficRoutes) {
+    if (id === 'pojazd_na_skrzyzowaniu' && route.kind === 'car') {
+      for (const { lane } of route.junctions) {
+        const gap = distanceTo(lane.intersection, pos);
+        if (gap >= closest) continue;
+        closest = gap;
+        site = { type: 'route', route, distance: 0 };
+      }
+    }
+    if (
+      id === 'pieszy_przy_bramie' &&
+      route.kind === 'pedestrian' &&
+      route.event_only
+    ) {
+      const start = route.path.start;
+      const gap = Math.hypot(start.x - pos.x, start.y - pos.y);
+      if (gap < closest) {
+        closest = gap;
+        site = { type: 'route', route, distance: 0 };
+      }
+    }
     if (id === 'pojazd_uprzywilejowany' && route.kind === 'emergency') {
       for (const { start, direction, length, offset } of route.path.segments) {
         const along = Math.max(
@@ -133,6 +161,8 @@ function eventSite(
   { pos, heading }: Location,
 ): Site | undefined {
   switch (id) {
+    case 'pojazd_na_skrzyzowaniu':
+    case 'pieszy_przy_bramie':
     case 'pojazd_uprzywilejowany':
     case 'pieszy_na_pasach':
     case 'tramwaj_bez_wysepki':
@@ -376,7 +406,7 @@ export class TrafficEvents {
     const candidates = [];
     let total = 0;
     for (const id of eventIds) {
-      if (id === forcedOnly) continue;
+      if (forcedOnly.has(id)) continue;
       const site = eventSite(id, this.world, player);
       const weight = site ? this.weight(eventRules[id], id) : 0;
       if (site && Number.isFinite(weight) && weight > 0) {

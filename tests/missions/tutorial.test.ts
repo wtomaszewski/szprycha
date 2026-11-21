@@ -73,7 +73,7 @@ async function runTutorial(
     signal: 'none',
     helmet: { worn: true, fastened: definition.start.kask_zapiety ?? true },
   };
-  let rules = new RuleEngine(world, content.balans);
+  let rules = new RuleEngine(world, content);
   const tickVerdicts: Verdict[] = [];
   const respawns: { x: number; y: number }[] = [];
   const events: string[] = [];

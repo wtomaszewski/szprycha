@@ -28,7 +28,7 @@ export class Blocks {
           walls: scene.add.graphics().setDepth(100 + i * 2),
           roof: scene.add
             .tileSprite(block.x, block.y, block.width, block.height, 'roof')
-            .setTint(block.landmarkId ? 0xe8c39e : 0xffffff)
+            .setTint(block.tint ?? (block.landmarkId ? 0xe8c39e : 0xffffff))
             .setOrigin(0)
             .setDepth(101 + i * 2),
           dx: NaN,
@@ -106,7 +106,7 @@ export class Blocks {
           h + Math.max(0, dy),
         );
       if (dx !== 0) {
-        g.fillStyle(b.landmarkId ? 0xe8c39e : 0xc2c3c7);
+        g.fillStyle(b.landmarkId ? 0xe8c39e : (b.tint ?? 0xc2c3c7));
         const edge = dx > 0 ? x : x + w;
         g.fillPoints(
           [

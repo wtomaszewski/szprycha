@@ -1,5 +1,8 @@
 import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
+import pl from '../i18n/pl.json' with { type: 'json' };
+
+const praga = process.env.BENCH_MAP === 'warszawa';
 const browser = await chromium.launch({
   executablePath: process.env.BENCH_CHROMIUM_PATH,
   args: process.env.BENCH_RENDERER === 'canvas' ? ['--disable-webgl'] : [],
@@ -12,15 +15,36 @@ try {
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
   await page.goto(process.env.BENCH_URL ?? 'http://127.0.0.1:5173/');
   await page.locator('canvas[data-scene="MainMenu"]').waitFor();
-  await page.keyboard.press('Enter');
+  if (praga) await page.getByRole('button', { name: pl.driving.praga }).click();
+  else await page.keyboard.press('Enter');
   await page.locator('canvas[data-scene="City"]').waitFor();
   const renderer = await page
     .locator('canvas[data-scene="City"]')
     .evaluate((canvas: HTMLCanvasElement) =>
       canvas.getContext('2d') ? 'Canvas' : 'WebGL',
     );
-  await page.keyboard.down('ArrowUp');
-  await page.keyboard.down('ArrowRight');
+  const position = page.locator('canvas[data-x]');
+  await position.waitFor();
+  const startX = praga ? Number(await position.getAttribute('data-x')) : 0;
+  if (praga) {
+    await page
+      .getByRole('button', { name: pl.driving.classic, exact: true })
+      .click();
+    // Stick slightly off-centre for a continuous ride below the random event speed.
+    const stick = await page.getByLabel(pl.driving.joystick).boundingBox();
+    if (!stick) throw new Error('Missing steering control');
+    await page.mouse.move(
+      stick.x + stick.width * 0.565,
+      stick.y + stick.height / 2,
+    );
+    await page.mouse.down();
+    await page.waitForFunction(
+      () => Number(document.querySelector('canvas')?.dataset.speed) > 0,
+    );
+  } else {
+    await page.keyboard.down('ArrowUp');
+    await page.keyboard.down('ArrowRight');
+  }
   // Raw browser source avoids TS runner helper injection into serialized callbacks.
   const frames = await page.evaluate<number[]>(`new Promise(resolve => {
     const times = []; let last = 0; let start = 0;
@@ -32,14 +56,25 @@ try {
     }
     requestAnimationFrame(frame);
   })`);
-  await page.keyboard.up('ArrowUp');
-  await page.keyboard.up('ArrowRight');
+  let travelledPx: number | undefined;
+  if (praga) {
+    await page.mouse.up();
+    const endX = Number(await page.locator('canvas').getAttribute('data-x'));
+    travelledPx = endX - startX;
+    if (travelledPx < 200 || (await page.locator('dialog[open]').count()))
+      throw new Error(`Praga benchmark interrupted at x=${endX}`);
+  } else {
+    await page.keyboard.up('ArrowUp');
+    await page.keyboard.up('ArrowRight');
+  }
   frames.sort((a, b) => a - b);
   const report = {
     date: new Date().toISOString(),
     environment:
       'Chromium headless, 1280x720, CPU 4x; not a physical Android measurement',
     renderer,
+    map: praga ? 'warszawa' : 'miasteczko',
+    travelledPx,
     samples: frames.length,
     meanFps: 1000 / (frames.reduce((a, b) => a + b, 0) / frames.length),
     p95FrameMs: frames[Math.floor(frames.length * 0.95)],
@@ -47,7 +82,9 @@ try {
   };
   await mkdir('test-results', { recursive: true });
   await writeFile(
-    'test-results/performance.json',
+    praga
+      ? 'test-results/performance-praga.json'
+      : 'test-results/performance.json',
     JSON.stringify(report, null, 2),
   );
   console.log(report);

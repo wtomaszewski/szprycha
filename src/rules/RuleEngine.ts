@@ -36,7 +36,7 @@ import {
   type RiderState,
   type Verdict,
 } from './types';
-import { contains, type WorldModel } from './world/WorldModel';
+import { sideVector, type WorldModel } from './world/WorldModel';
 import { ZoneTracker } from './world/ZoneTracker';
 
 const EXIT_TICKS = 0.25 * TICKS_PER_SECOND;
@@ -65,6 +65,7 @@ export class RuleEngine {
   private readonly emitStartingVerdict = (verdict?: Verdict) =>
     this.emit(verdict);
   private readonly road: RoadVisit;
+  private readonly settings: GameContent['balans'];
   private readonly passing: PassingMonitor;
   private readonly rightTurn = new RightTurnDetector();
   private readonly onPass = (
@@ -101,10 +102,14 @@ export class RuleEngine {
 
   constructor(
     private readonly world: WorldModel,
-    private readonly settings: GameContent['balans'],
+    private readonly content: Pick<GameContent, 'balans' | 'przepisy'>,
     private readonly manager = new IntersectionManager(world),
   ) {
-    this.road = new RoadVisit(world, settings.silnik);
+    const { balans: settings, przepisy } = content;
+    this.settings = settings;
+    const noVehiclesWeight =
+      przepisy.przepisy.find(({ id }) => id === 'ZNAK-B1')?.waga_bledu ?? null;
+    this.road = new RoadVisit(world, settings.silnik, noVehiclesWeight);
     this.passing = new PassingMonitor(world);
     this.railway = new RailwayDetector(world);
     this.zones = new ZoneTracker(world);
@@ -124,7 +129,7 @@ export class RuleEngine {
 
   /** Keep the simulation clock and recorded feedback, clear in-progress observations. */
   afterCheckpoint() {
-    const engine = new RuleEngine(this.world, this.settings, this.manager);
+    const engine = new RuleEngine(this.world, this.content, this.manager);
     engine.tick = this.tick;
     Object.assign(engine.counts, this.counts);
     engine.recent.push(...this.recent);
@@ -275,9 +280,7 @@ export class RuleEngine {
         rules.ttc_minor_s,
       ),
     );
-    const lane = driveways.some((box) => contains(box, rider.pos))
-      ? undefined
-      : this.zones.lane;
+    const lane = this.zones.driveway ? undefined : this.zones.lane;
     this.starting.evaluate(
       rider,
       agents,
@@ -310,7 +313,8 @@ export class RuleEngine {
       zone?.kind !== 'sidewalk' ||
       rider.mode !== 'riding' ||
       rider.speed <= 0 ||
-      this.zones.crossing
+      this.zones.crossing ||
+      this.crossesSidewalkAtDriveway(rider)
     )
       return;
     this.sidewalkId ??= zone.id;
@@ -341,6 +345,16 @@ export class RuleEngine {
       this.sidewalkPenalized = true;
       this.emit(this.pedestrianCandidate);
     }
+  }
+
+  private crossesSidewalkAtDriveway(rider: RiderState) {
+    const driveway = this.zones.driveway;
+    if (!driveway) return false;
+    const { x, y } = sideVector[driveway.direction];
+    return (
+      Math.abs(x * Math.cos(rider.heading) + y * Math.sin(rider.heading)) >
+      Math.SQRT1_2
+    );
   }
 
   private closeSidewalk() {

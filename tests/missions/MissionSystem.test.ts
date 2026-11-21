@@ -67,7 +67,7 @@ function driveToCheckpoint(mission: MissionSystem) {
 }
 
 describe('MissionSystem', () => {
-  it('completes goals in order and returns only the data needed for scoring', () => {
+  it('completes goals in order and records the mission result', () => {
     const mission = new MissionSystem(definition, world);
     expect(mission.start).toEqual({ x: 1, y: 1, heading: 0 });
     mission.step(destination, []);
@@ -85,6 +85,7 @@ describe('MissionSystem', () => {
       par_s: 25,
       goodHabits: 1,
       verdicts: [good],
+      illegalShortcut: false,
       timeBonusEligible: true,
     });
     mission.step(destination, [major]);

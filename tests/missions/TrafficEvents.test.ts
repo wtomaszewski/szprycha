@@ -44,7 +44,7 @@ const setup = (
     'mission-only',
   );
   const events = new TrafficEvents(world, traffic, seed, weight, random);
-  const rules = new RuleEngine(world, content.balans, manager);
+  const rules = new RuleEngine(world, content, manager);
   return { traffic, events, rules };
 };
 function force(events: TrafficEvents, id: TrafficEventId, player: RiderState) {

@@ -44,6 +44,7 @@ export class RoadVisit {
   constructor(
     private readonly world: WorldModel,
     private readonly settings: Balance,
+    private readonly noVehiclesWeight: Exclude<Verdict['kind'], 'good'> | null,
   ) {}
 
   evaluate(
@@ -191,7 +192,8 @@ export class RoadVisit {
   }
 
   private accessVerdict(sign: Sign, rider: RiderState, at: number) {
-    if (sign.code === 'B-1') return noVehicles(sign, rider, at);
+    if (sign.code === 'B-1')
+      return noVehicles(sign, rider, at, this.noVehiclesWeight);
     if (sign.code === 'B-9') return noBicycles(sign, rider, at);
     return noEntry(sign, rider, at);
   }

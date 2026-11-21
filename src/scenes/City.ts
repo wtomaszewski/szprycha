@@ -1,5 +1,6 @@
 import { Scene, GameObjects } from 'phaser';
-import mapUrl from '../../maps/miasteczko.tmj?url';
+import trainingUrl from '../../maps/miasteczko.tmj?url';
+import warsawUrl from '../../maps/warszawa.tmj?url';
 import tilesUrl from '../../assets/generated/tiles.png?url';
 import riderUrl from '../../assets/generated/rider.png?url';
 import {
@@ -11,6 +12,7 @@ import {
   type Rider,
 } from '../gameplay/bicycle';
 import { Blocks, type Block } from '../render/Blocks';
+import { drawMapGround } from '../render/MapGround';
 import { DrivingControls } from '../ui/DrivingControls';
 import { showError, translate, ui } from '../core/presentation';
 
@@ -52,7 +54,7 @@ import type { Box } from '../rules/world/WorldModel';
 const drivingZoom = 0.75;
 const reviewIntroMs = 300;
 
-const mapId = 'miasteczko';
+const defaultMap = 'miasteczko';
 
 export class City extends Scene {
   private readonly environment: EnvState = {
@@ -71,7 +73,7 @@ export class City extends Scene {
   private accumulator = 0;
   private worldWidth = 0;
   private worldHeight = 0;
-  private spawn = { x: 512, y: 1024 };
+  private spawn = { x: 512, y: 1024, heading: -Math.PI / 2 };
   private hudAt = 0;
   private messageUntil = 0;
   private world!: WorldModel;
@@ -113,6 +115,9 @@ export class City extends Scene {
     playback?: number;
     shown: boolean;
   };
+  private readonly portraitTouch = matchMedia(
+    '(pointer: coarse) and (orientation: portrait)',
+  );
   private readonly reducedMotion = matchMedia(
     '(prefers-reduced-motion: reduce)',
   );
@@ -136,24 +141,33 @@ export class City extends Scene {
     super('City');
   }
   preload() {
-    this.load.tilemapTiledJSON('training-map', mapUrl);
-    this.load.image('training', tilesUrl);
-    this.load.image('rider', riderUrl);
-    this.load.once('loaderror', showError);
+    for (const [id, url] of [
+      [defaultMap, trainingUrl],
+      ['warszawa', warsawUrl],
+    ] as const) {
+      if (!this.cache.tilemap.exists(id)) this.load.tilemapTiledJSON(id, url);
+    }
+    if (!this.textures.exists('training'))
+      this.load.image('training', tilesUrl);
+    if (!this.textures.exists('rider')) this.load.image('rider', riderUrl);
+    this.load.on('loaderror', showError);
+    this.load.once('complete', () => this.load.off('loaderror', showError));
   }
-  create({ missionId }: { missionId?: string } = {}) {
+
+  create({ missionId, map }: { missionId?: string; map?: string } = {}) {
     this.obstacles = [];
     this.accumulator = 0;
     this.hudAt = 0;
     this.messageUntil = 0;
     this.content = this.registry.get('content') as GameContent;
-    const cached = this.cache.tilemap.get('training-map') as { data: unknown };
+    const definition = this.availableOrders().find(
+      ({ id }) => id === missionId,
+    );
+    const mapId = definition?.mapa ?? definition?.miasto ?? map ?? defaultMap;
+    const cached = this.cache.tilemap.get(mapId) as { data: unknown };
     this.world = new WorldModel(
       cached.data,
       this.content.balans.silnik.kafel_m,
-    );
-    const definition = this.availableOrders().find(
-      ({ id }) => id === missionId,
     );
     this.phoneFeedback = this.content.przepisy.przepisy.find(
       ({ id }) => id === 'MAN-11',
@@ -192,19 +206,29 @@ export class City extends Scene {
       this.traffic.road.agents,
     );
     this.siren = new EmergencySiren();
-    const map = this.make.tilemap({ key: 'training-map' });
-    const tiles = map.addTilesetImage('training', 'training');
+    const tilemap = this.make.tilemap({ key: mapId });
+    const tiles = tilemap.addTilesetImage('training', 'training');
     if (!tiles) throw new Error('Missing training tiles');
-    map.createLayer('ground', tiles);
-    map.createLayer('markings', tiles)?.setDepth(1);
-    this.worldWidth = map.widthInPixels;
-    this.worldHeight = map.heightInPixels;
-    const spawn = map
+    if (mapId === 'warszawa') drawMapGround(this, tilemap, tiles, mapId);
+    else {
+      tilemap.createLayer('ground', tiles);
+      tilemap.createLayer('markings', tiles)?.setDepth(1);
+    }
+    this.worldWidth = tilemap.widthInPixels;
+    this.worldHeight = tilemap.heightInPixels;
+    const spawn = tilemap
       .getObjectLayer('spawns')
       ?.objects.find((o) => o.name === 'player');
-    this.spawn = { x: spawn?.x ?? 512, y: spawn?.y ?? 1024 };
+    const heading = spawn?.properties?.find(
+      (p: { name: string; value: unknown }) => p.name === 'heading',
+    )?.value;
+    this.spawn = {
+      x: spawn?.x ?? 512,
+      y: spawn?.y ?? 1024,
+      heading: typeof heading === 'number' ? heading : -Math.PI / 2,
+    };
     const buildings: Block[] = [];
-    for (const obj of map.getObjectLayer('blocks')?.objects ?? []) {
+    for (const obj of tilemap.getObjectLayer('blocks')?.objects ?? []) {
       const b = {
         x: obj.x ?? 0,
         y: obj.y ?? 0,
@@ -223,20 +247,39 @@ export class City extends Scene {
       buildings.push({
         ...b,
         floors,
+        tint: properties?.find((p) => p.name === 'tint')?.value as
+          number | undefined,
         landmarkId: typeof landmarkId === 'string' ? landmarkId : undefined,
       });
     }
     const curbArt = this.add.graphics().setDepth(2).fillStyle(0xc0cbdc);
-    for (const o of map.getObjectLayer('collisions')?.objects ?? []) {
+    for (const o of tilemap.getObjectLayer('collisions')?.objects ?? []) {
       const curb: Obstacle = {
         x: o.x ?? 0,
         y: o.y ?? 0,
         width: o.width ?? 0,
         height: o.height ?? 0,
-        kind: 'curb',
+        kind: o.properties?.some(
+          (p: { name: string; value: unknown }) =>
+            p.name === 'kind' && p.value === 'wall',
+        )
+          ? 'wall'
+          : 'curb',
       };
       this.obstacles.push(curb);
-      curbArt.fillRect(curb.x, curb.y, curb.width, curb.height);
+      if (curb.kind === 'curb')
+        curbArt.fillRect(curb.x, curb.y, curb.width, curb.height);
+    }
+    for (const {
+      x = 0,
+      y = 0,
+      width = 0,
+      height = 0,
+    } of tilemap.getObjectLayer('traffic_islands')?.objects ?? []) {
+      this.add
+        .ellipse(x + width / 2, y + height / 2, width, height, 0x346856)
+        .setStrokeStyle(5, 0xc0cbdc)
+        .setDepth(2);
     }
     for (const car of this.world.parkedCars) {
       const scale = 1 / this.world.metersPerPixel;
@@ -284,7 +327,6 @@ export class City extends Scene {
     this.syncActorObstacles();
     this.rider = {
       ...this.spawn,
-      heading: -Math.PI / 2,
       speed: 0,
       walking: false,
     };
@@ -302,7 +344,10 @@ export class City extends Scene {
       .setZoom(drivingZoom)
       .setBounds(0, 0, this.worldWidth, this.worldHeight)
       .centerOn(this.rider.x, this.rider.y);
+    const areaTitle =
+      mapId === 'warszawa' ? ui.driving.pragaTitle : ui.driving.title;
     this.controls = new DrivingControls(
+      areaTitle,
       () => this.toggleMode(),
       () => this.reset(),
       () => this.scene.start('MainMenu'),
@@ -371,6 +416,10 @@ export class City extends Scene {
           this.updateMissionHud();
         },
         () => {
+          this.controls.setLights(true);
+          this.updateMissionHud();
+        },
+        () => {
           this.missionInterrupted = false;
           this.checkpointHint = undefined;
           this.controls.clear();
@@ -390,6 +439,7 @@ export class City extends Scene {
       this.stopListeningForVerdicts?.();
       this.stopListeningForVerdicts = undefined;
       this.game.canvas.classList.remove('training-dusk');
+      this.renderEnvironment.time = 'day';
       this.siren.destroy();
       this.debug.destroy();
       this.replayDialog.close();
@@ -398,6 +448,8 @@ export class City extends Scene {
       this.phone.close();
       this.controls.destroy();
       const c = this.game.canvas;
+      delete c.dataset.map;
+      delete c.dataset.mission;
       delete c.dataset.x;
       delete c.dataset.y;
       delete c.dataset.speed;
@@ -405,7 +457,9 @@ export class City extends Scene {
     };
     this.events.once('shutdown', onShutdown);
     this.game.canvas.dataset.scene = 'City';
-    this.game.canvas.setAttribute('aria-label', ui.driving.title);
+    this.game.canvas.dataset.map = mapId;
+    if (definition) this.game.canvas.dataset.mission = definition.id;
+    this.game.canvas.setAttribute('aria-label', areaTitle);
     this.controls.speed.textContent = `0 ${ui.driving.unit}`;
     this.blocks.update(
       this.cameras.main,
@@ -419,7 +473,7 @@ export class City extends Scene {
   private availableOrders() {
     return this.content.misje.filter(
       (mission) =>
-        (mission.mapa ?? mission.miasto) === mapId &&
+        this.cache.tilemap.exists(mission.mapa ?? mission.miasto) &&
         missionProgress.isAvailable(mission, this.content),
     );
   }
@@ -544,7 +598,6 @@ export class City extends Scene {
   private reset() {
     Object.assign(this.rider, this.spawn, {
       speed: 0,
-      heading: -Math.PI / 2,
       walking: false,
     });
     if (this.mission) {
@@ -574,8 +627,8 @@ export class City extends Scene {
       signal: null,
       looking: false,
       bell: false,
-      lights: false,
     });
+    this.controls.setLights(false);
     this.controls.setWalking(false);
     this.cameras.main.centerOn(this.rider.x, this.rider.y);
     this.replay.clear();
@@ -589,7 +642,7 @@ export class City extends Scene {
     this.stopListeningForVerdicts?.();
     this.rules = new RuleEngine(
       this.world,
-      this.content.balans,
+      this.content,
       this.intersectionManager,
     );
     this.feedback.reset(this.rules.counts);
@@ -653,6 +706,7 @@ export class City extends Scene {
       this.mission,
       { x: this.rider.x * scale, y: this.rider.y * scale },
       this.rulesRider.helmet.fastened,
+      this.controls.actions.lights,
       this.missionInterrupted,
       this.checkpointHint,
     );
@@ -716,7 +770,10 @@ export class City extends Scene {
     rider.lights!.front = rider.lights!.rear = this.controls.actions.lights;
     rider.handsOnBar = rider.signal === 'none' ? 2 : 1;
     this.environment.time =
-      this.rules.at + FIXED_STEP >= this.world.duskAt ? 'dusk' : 'day';
+      this.mission?.definition.start.zmrok === true ||
+      this.rules.at + FIXED_STEP >= this.world.duskAt
+        ? 'dusk'
+        : 'day';
     this.trafficEvents.step(rider);
     const cyclist = this.trafficEvents.wrongWayCyclist;
     this.traffic.step(this.environment, rider, cyclist);
@@ -742,6 +799,12 @@ export class City extends Scene {
       this.tickVerdicts,
       this.startForced,
       this.forcedPending,
+      this.mission.preparingBike
+        ? {
+            helmet: rider.helmet.worn && rider.helmet.fastened,
+            lights: rider.lights!.front && rider.lights!.rear,
+          }
+        : undefined,
     );
     this.syncActorObstacles();
     this.recordFrame();
@@ -787,7 +850,6 @@ export class City extends Scene {
     else
       Object.assign(this.rider, this.spawn, {
         speed: 0,
-        heading: -Math.PI / 2,
         walking: false,
       });
     this.controls.clear();
@@ -881,7 +943,7 @@ export class City extends Scene {
       this.dialogue.open ||
       this.missionInterrupted ||
       this.mission?.result ||
-      matchMedia('(pointer: coarse) and (orientation: portrait)').matches
+      this.portraitTouch.matches
     ) {
       this.accumulator = 0;
       this.siren.update(0, this.rules.at);
@@ -890,6 +952,7 @@ export class City extends Scene {
     this.accumulator += Math.min(delta / 1000, 0.1);
     while (this.accumulator >= FIXED_STEP) {
       if (
+        !this.mission?.preparingBike &&
         stepRider(
           this.rider,
           input,
@@ -935,28 +998,39 @@ export class City extends Scene {
         this.rulesRider.pos,
       );
       this.updateDrivingHud(this.rider, this.controls.actions);
-      if (time > this.messageUntil)
-        this.controls.notice.textContent =
+      if (time > this.messageUntil) {
+        const notice =
           sirenVolume > 0
             ? ui.rules.emergencyApproaching
             : this.mission
               ? ''
               : ui.driving.prototype;
+        if (this.controls.notice.textContent !== notice)
+          this.controls.notice.textContent = notice;
+      }
     }
   }
 
   private updateDrivingHud(r: Rider, actions: typeof this.controls.actions) {
-    this.controls.speed.textContent = `${Math.round(r.speed * METERS_PER_PIXEL * 3.6)} ${ui.driving.unit}`;
+    const speed = `${Math.round(r.speed * METERS_PER_PIXEL * 3.6)} ${ui.driving.unit}`;
+    if (this.controls.speed.textContent !== speed)
+      this.controls.speed.textContent = speed;
     const canvas = this.game.canvas;
-    canvas.dataset.x = String(Math.round(r.x));
-    canvas.dataset.y = String(Math.round(r.y));
-    canvas.dataset.speed = String(r.speed);
+    const x = String(Math.round(r.x));
+    const y = String(Math.round(r.y));
+    const pxPerSecond = String(r.speed);
+    if (canvas.dataset.x !== x) canvas.dataset.x = x;
+    if (canvas.dataset.y !== y) canvas.dataset.y = y;
+    if (canvas.dataset.speed !== pxPerSecond)
+      canvas.dataset.speed = pxPerSecond;
     const signal = this.rules.signal;
-    canvas.dataset.actions = JSON.stringify({
+    const inputs = JSON.stringify({
       ...actions,
       signal: signal === 'none' ? null : signal,
     });
-    canvas.dataset.walking = String(r.walking);
+    const walking = String(r.walking);
+    if (canvas.dataset.actions !== inputs) canvas.dataset.actions = inputs;
+    if (canvas.dataset.walking !== walking) canvas.dataset.walking = walking;
   }
 
   private renderFrame(frame: ReplayFrame, delta: number, reviewing = false) {
@@ -1050,9 +1124,12 @@ export class City extends Scene {
         );
     }
     this.eventArt.draw(frame.props, scale);
-    this.game.canvas.classList.toggle('training-dusk', dusk);
     const lighting = this.renderEnvironment;
-    lighting.time = dusk ? 'dusk' : 'day';
+    const time = dusk ? 'dusk' : 'day';
+    if (lighting.time !== time) {
+      lighting.time = time;
+      this.game.canvas.classList.toggle('training-dusk', dusk);
+    }
     this.road.updateLights(Math.max(0, at), lighting);
     return sirenVolume;
   }

@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { tiledMap } from './tiled-map.ts';
 const columns = [12, 38, 64];
 const rows = [16, 40];
 const width = 80,
@@ -14,7 +14,10 @@ for (let y = 0; y < height; y++)
       [15, 22, 39, 46].includes(y) ||
       (y === 47 && x >= 46 && x < 62);
     const cycleway = x === 19 && y >= 22 && y < 40;
-    ground.push(vertical || horizontal ? 2 : cycleway ? 2 : sidewalk ? 3 : 1);
+    const workshopYard = x >= 55 && x < 61 && y >= 27 && y < 34;
+    ground.push(
+      vertical || horizontal || cycleway ? 2 : sidewalk || workshopYard ? 3 : 1,
+    );
     markings.push(
       vertical && !horizontal && [14, 40, 66].includes(x)
         ? 7
@@ -23,35 +26,12 @@ for (let y = 0; y < height; y++)
           : 0,
     );
   }
-let id = 1;
-const rect = (
-  name: string,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  properties: Record<string, string | number | boolean> = {},
-) => ({
-  id: id++,
-  name,
-  type: '',
-  x,
-  y,
-  width: w,
-  height: h,
-  rotation: 0,
-  visible: true,
-  properties: Object.entries(properties).map(([name, value]) => ({
-    name,
-    type:
-      typeof value === 'number'
-        ? 'float'
-        : typeof value === 'boolean'
-          ? 'bool'
-          : 'string',
-    value,
-  })),
-});
+const { rect, polyline, objectLayer, write } = tiledMap(
+  width,
+  height,
+  ground,
+  markings,
+);
 const blocks = [
   rect('workshop', 640, 768, 160, 96, {
     height: 2,
@@ -131,44 +111,6 @@ for (const y of [512, 704, 1280, 1472])
     [2352, 2528],
   ])
     curbs.push(rect('curb', a!, y - 3, b! - a!, 6, { kind: 'curb' }));
-const layers: unknown[] = [
-  {
-    id: 1,
-    name: 'ground',
-    type: 'tilelayer',
-    width,
-    height,
-    x: 0,
-    y: 0,
-    opacity: 1,
-    visible: true,
-    data: ground,
-  },
-  {
-    id: 2,
-    name: 'markings',
-    type: 'tilelayer',
-    width,
-    height,
-    x: 0,
-    y: 0,
-    opacity: 1,
-    visible: true,
-    data: markings,
-  },
-];
-function objectLayer(name: string, objects: unknown[]) {
-  layers.push({
-    id: layers.length + 1,
-    name,
-    type: 'objectgroup',
-    opacity: 1,
-    visible: true,
-    x: 0,
-    y: 0,
-    objects,
-  });
-}
 objectLayer('blocks', blocks);
 objectLayer('collisions', curbs);
 objectLayer('spawns', [
@@ -409,17 +351,6 @@ const crossings = [
   }),
   ...bikeLaneCrossings,
 ];
-const polyline = (
-  name: string,
-  points: readonly (readonly [number, number])[],
-  props: Record<string, string | number>,
-) => {
-  const [x, y] = points[0]!;
-  return {
-    ...rect(name, x, y, 0, 0, props),
-    polyline: points.map(([px, py]) => ({ x: px - x, y: py - y })),
-  };
-};
 const tramPoints: [number, number][] = [
   [0, 608],
   [384, 608],
@@ -593,45 +524,12 @@ pois.push(
   rect('tutorial_przed_stop', 409, 1184, 30, 30, { heading: Math.PI / 2 }),
   rect('tutorial_meta', 409, 1510, 30, 30),
 );
-await mkdir('maps', { recursive: true });
-await writeFile(
-  'maps/miasteczko.tmj',
-  JSON.stringify(
-    {
-      type: 'map',
-      version: '1.10',
-      tiledversion: '1.11.2',
-      orientation: 'orthogonal',
-      renderorder: 'right-down',
-      infinite: false,
-      width,
-      height,
-      tilewidth: 32,
-      tileheight: 32,
-      properties: [
-        { name: 'trafficCars', type: 'int', value: 14 },
-        { name: 'dusk_at_s', type: 'float', value: 90 },
-      ],
-      nextlayerid: layers.length + 1,
-      nextobjectid: id,
-      layers,
-      tilesets: [
-        {
-          firstgid: 1,
-          name: 'training',
-          tilewidth: 32,
-          tileheight: 32,
-          tilecount: 8,
-          columns: 8,
-          image: '../assets/generated/tiles.png',
-          imagewidth: 256,
-          imageheight: 32,
-          margin: 0,
-          spacing: 0,
-        },
-      ],
-    },
-    null,
-    2,
-  ) + '\n',
+pois.push(
+  rect('garaz_start', 1790, 956, 0, 0, { heading: Math.PI / 2 }),
+  rect('garaz_objazd', 1763, 1030, 62, 55),
+  rect('garaz_meta', 1883, 1023, 56, 63),
 );
+blocks.push(
+  rect('garaz-kazika', 1760, 768, 192, 96, { height: 2, tint: 0x8dc6ad }),
+);
+await write('miasteczko', 14, 90);

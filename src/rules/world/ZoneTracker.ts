@@ -5,6 +5,7 @@ import {
   sideVector,
   type WorldModel,
   type Crossing,
+  type Driveway,
   type Intersection,
   type Lane,
   type Zone,
@@ -15,6 +16,7 @@ export class ZoneTracker {
   roadway?: Zone;
   cycleSignal?: Crossing;
   crossing?: Crossing;
+  driveway?: Driveway;
   intersection?: Intersection;
   lane?: Lane;
   parallelBikeInfra?: string;
@@ -32,6 +34,7 @@ export class ZoneTracker {
     }
     const dx = Math.cos(heading);
     const dy = Math.sin(heading);
+    this.driveway = this.world.driveways.find((area) => contains(area, pos));
     this.crossing = undefined;
     for (const crossing of this.world.crossings) {
       if (

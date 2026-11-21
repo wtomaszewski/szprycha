@@ -485,7 +485,14 @@ export class WorldModel {
           lane.accessSign = sign;
         } else throw new Error(`Unknown access sign segment: ${sign.affects}`);
       } else {
-        if (!lane) throw new Error(`Unknown sign lane: ${sign.affects}`);
+        if (!lane) {
+          if (
+            (sign.code === 'D-46' || sign.code === 'D-47') &&
+            this.driveways.some(({ id }) => sign.affects === id)
+          )
+            continue;
+          throw new Error(`Unknown sign lane: ${sign.affects}`);
+        }
         if (sign.code === 'B-20' || sign.code === 'A-7') lane.stopSign = sign;
       }
     }
@@ -539,6 +546,7 @@ export class WorldModel {
               kind: 'pedestrian' as const,
               speed,
               start_s: 0,
+              event_only: false,
               path: new RoadPath(id, [
                 { x, y },
                 {

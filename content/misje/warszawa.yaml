@@ -27,3 +27,105 @@
   par_s: 30
   min_dobre_nawyki: 1
   nagrody: { zetony: 0, xp: 0 }
+
+- id: WAW-T-02
+  miasto: warszawa
+  mapa: miasteczko
+  akt: 0
+  tytul: misje.WAW-T-02.tytul
+  opis: misje.WAW-T-02.opis
+  zleceniodawca: pan_kazik
+  typ: przeglad
+  wymagania: { misje_ukonczone: [WAW-T-01] }
+  start: { poi: garaz_start, kask_zapiety: false, zmrok: true }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.WAW-T-02.cel1 }
+    - { typ: dojedz, poi: garaz_objazd, opis: misje.WAW-T-02.cel2 }
+    - { typ: dojedz, poi: garaz_meta, opis: misje.WAW-T-02.cel3 }
+  reguly_cwiczone: [KASK-01, WYP-04, WYP-05]
+  zdarzenia_wymuszone:
+    - { typ: kontrola_swiatel, przy: garaz_start, regula: WYP-04 }
+  par_s: 20
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 0, xp: 50 }
+  dialog_start: dialogi.WAW-T-02.start
+  dialog_koniec: dialogi.WAW-T-02.koniec
+
+- id: WAW-A1-01
+  miasto: warszawa
+  akt: 1
+  tytul: misje.WAW-A1-01.tytul
+  opis: misje.WAW-A1-01.opis
+  zleceniodawca: pan_kazik
+  typ: dostawa
+  wymagania: { ranga_min: zoltodziob, misje_ukonczone: [WAW-T-02] }
+  start: { poi: warsztat_praga }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, przedmiot: klucze, opis: misje.WAW-A1-01.cel1 }
+    - { typ: dojedz, poi: wyjazd_warsztat, opis: misje.WAW-A1-01.cel2 }
+    - { typ: oddaj, poi: sasiad_praga, przedmiot: klucze, opis: misje.WAW-A1-01.cel3 }
+  checkpointy: [prawa_reka]
+  warunki_porazki: [major_x3]
+  reguly_cwiczone: [PIER-01, MSC-03]
+  zdarzenia_wymuszone:
+    - { typ: pojazd_na_skrzyzowaniu, przy: prawa_reka, regula: PIER-01 }
+  par_s: 28
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 15, xp: 150 }
+  dialog_start: dialogi.WAW-A1-01.start
+  dialog_koniec: dialogi.WAW-A1-01.koniec
+
+- id: WAW-A1-02
+  miasto: warszawa
+  akt: 1
+  tytul: misje.WAW-A1-02.tytul
+  opis: misje.WAW-A1-02.opis
+  zleceniodawca: lena_mapa
+  typ: dostawa
+  wymagania: { ranga_min: zoltodziob, misje_ukonczone: [WAW-A1-01] }
+  start: { poi: podworko_praga }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, przedmiot: zamowienie, opis: misje.WAW-A1-02.cel1 }
+    - { typ: dojedz, poi: za_brama, opis: misje.WAW-A1-02.cel2 }
+    - { typ: oddaj, poi: odbiorca_bazar, przedmiot: zamowienie, opis: misje.WAW-A1-02.cel3 }
+  checkpointy: [cp_bramy]
+  warunki_porazki: [major_x3]
+  reguly_cwiczone: [PIER-06, MAN-01, MAN-07]
+  zdarzenia_wymuszone:
+    - { typ: pieszy_przy_bramie, przy: przed_brama, regula: PIER-06 }
+  par_s: 25
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 20, xp: 200 }
+  dialog_start: dialogi.WAW-A1-02.start
+  dialog_koniec: dialogi.WAW-A1-02.koniec
+
+- id: WAW-A1-03
+  miasto: warszawa
+  akt: 1
+  tytul: misje.WAW-A1-03.tytul
+  opis: misje.WAW-A1-03.opis
+  zleceniodawca: pani_halina
+  typ: dostawa_na_czas
+  wymagania: { ranga_min: zoltodziob, misje_ukonczone: [WAW-A1-02] }
+  start: { poi: bazar_praga }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: cp_bazar, przedmiot: pierogi, opis: misje.WAW-A1-03.cel1 }
+    - { typ: dojedz, poi: podejscie_do_stop, opis: misje.WAW-A1-03.cel2 }
+    - { typ: dojedz, poi: przez_stop, opis: misje.WAW-A1-03.stop, wymagany_nawyk: ZNAK-STOP, wskazowka_powrotu: misje.WAW-A1-03.powrot }
+    - { typ: oddaj, poi: blok_haliny, przedmiot: pierogi, opis: misje.WAW-A1-03.cel4 }
+  limit_s: 75
+  warunki_porazki: [czas_minal, major_x3]
+  checkpointy: [cp_bazar, podejscie_do_stop]
+  reguly_cwiczone: [PIER-01, PIER-02, MAN-01]
+  zdarzenia_wymuszone:
+    - { typ: pojazd_na_skrzyzowaniu, przy: podejscie_do_stop, regula: PIER-02 }
+  skrot: { odcinek: pasaz_pierogi }
+  par_s: 24
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 30, xp: 400, odblokuj: [naklejka_pierogi] }
+  dialog_start: dialogi.WAW-A1-03.start
+  dialog_koniec: dialogi.WAW-A1-03.koniec

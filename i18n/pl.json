@@ -46,7 +46,10 @@
     "signalRight": "Ręka →",
     "look": "Obejrzyj się",
     "bell": "Dzwonek",
-    "lights": "Światła"
+    "lights": "Światła",
+    "praga": "Wolna jazda po Pradze",
+    "pragaTitle": "Warszawa · Praga",
+    "internalRoadSign": "Droga wewnętrzna"
   },
   "rules": {
     "counts": "Werdykty",
@@ -128,7 +131,10 @@
     "decline": "Odmów (G / Y)",
     "phonePutAway": "Telefon odłożony.",
     "accepted": "Połączenie odebrane po zatrzymaniu.",
-    "declined": "Jedziesz dalej bez pasażera."
+    "declined": "Jedziesz dalej bez pasażera.",
+    "kontrola_swiatel": "Próba o zmroku. Sprawdź, czy świecą obie lampy.",
+    "pojazd_na_skrzyzowaniu": "Samochód zbliża się do skrzyżowania.",
+    "pieszy_przy_bramie": "Pieszy nadchodzi w stronę bramy."
   },
   "missionUi": {
     "timer": "Czas misji",
@@ -150,8 +156,11 @@
     "goals": {
       "dojedz": "Jedź do zaznaczonego miejsca.",
       "odbierz": "Odbierz przesyłkę w zaznaczonym miejscu.",
-      "oddaj": "Oddaj przesyłkę w zaznaczonym miejscu."
-    }
+      "oddaj": "Oddaj przesyłkę w zaznaczonym miejscu.",
+      "przygotuj_rower": "Załóż kask i włącz światła."
+    },
+    "turnOnLights": "Włącz przednie i tylne światła",
+    "illegalShortcut": "Jazda rowerem tym skrótem była niezgodna z przepisami."
   },
   "misje": {
     "WAW-T-01": {
@@ -161,6 +170,36 @@
       "podejscie": "Zwolnij przed skrzyżowaniem.",
       "powrot_stop": "Wróć i zatrzymaj się całkowicie przed linią STOP.",
       "stop": "Zatrzymaj się całkowicie przed linią STOP, przepuść jadących drogą z pierwszeństwem i dopiero rusz do mety."
+    },
+    "WAW-T-02": {
+      "tytul": "Przegląd u Kazika",
+      "opis": "Załóż kask, włącz światła i sprawdź rower podczas próbnej jazdy.",
+      "cel1": "Przygotuj rower do jazdy o zmroku. Załóż i zapnij kask oraz włącz oba światła.",
+      "cel2": "Jedź prosto do pierwszego znacznika na placu.",
+      "cel3": "Skręć w lewo i wróć do Kazika przez plac."
+    },
+    "WAW-A1-01": {
+      "tytul": "Pierwszy kurs: klucze dla sąsiada",
+      "opis": "Odbierz klucze od Kazika i zawieź je sąsiadowi po drugiej stronie skrzyżowania.",
+      "cel1": "Odbierz klucze u Kazika.",
+      "cel2": "Zatrzymaj się przed chodnikiem, a po wyjeździe z bramy skręć w prawo.",
+      "cel3": "Na skrzyżowaniu przepuść pojazd z prawej i dowieź klucze sąsiadowi."
+    },
+    "WAW-A1-02": {
+      "tytul": "Bazar i bramy",
+      "opis": "Wyjedź z praskiego podwórka i zawieź zamówienie na bazar.",
+      "cel1": "Odbierz zamówienie na podwórku.",
+      "cel2": "Przepuść pieszego przed bramą, rozejrzyj się i zasygnalizuj skręt w lewo.",
+      "cel3": "Jedź drogą z pierwszeństwem i oddaj zamówienie przy bazarze."
+    },
+    "WAW-A1-03": {
+      "tytul": "Pierogi dla Pani Haliny",
+      "opis": "Odbierz pierogi z bazaru i dostarcz je na czas. Po drodze czeka STOP.",
+      "cel1": "Odbierz pierogi przy bazarze.",
+      "cel2": "Jedź prosto do znaku STOP.",
+      "cel4": "Za STOP-em jedź prosto do wjazdu pod blok. Zasygnalizuj skręt w prawo i dowieź pierogi.",
+      "stop": "Zatrzymaj się przed linią i przepuść samochód na drodze z pierwszeństwem.",
+      "powrot": "Wróć przed linię i zatrzymaj się całkowicie przed znakiem STOP."
     }
   },
   "phone": {
@@ -205,10 +244,34 @@
     },
     "reguly": {
       "KASK-01": "Zanim ruszysz, zapnij kask, żeby chronił głowę.",
-      "ZNAK-STOP": "Przed linią STOP zatrzymaj się całkowicie i ustąp pierwszeństwa."
+      "ZNAK-STOP": "Przed linią STOP zatrzymaj się całkowicie i ustąp pierwszeństwa.",
+      "WYP-04": "Po zmroku włącz przednie światło.",
+      "WYP-05": "Tylne czerwone światło pomaga innym zobaczyć cię od tyłu.",
+      "PIER-01": "Na skrzyżowaniu równorzędnym ustąp pojazdowi nadjeżdżającemu z prawej.",
+      "MSC-03": "Przed przecięciem chodnika przy wyjeździe z bramy zatrzymaj się i przepuść pieszych.",
+      "PIER-06": "Gdy włączasz się do ruchu, ustąp pierwszeństwa wszystkim uczestnikom ruchu.",
+      "PIER-02": "Z drogi podporządkowanej ustąp pojazdom na drodze z pierwszeństwem.",
+      "MAN-01": "Zamiar skrętu pokaż ręką odpowiednio wcześnie.",
+      "MAN-07": "Przed ruszeniem od krawędzi jezdni obejrzyj się za siebie."
     },
     "lektor": {
       "ZNAK-STOP": "Przed linią stop zatrzymaj się całkowicie i ustąp pierwszeństwa."
+    },
+    "WAW-T-02": {
+      "start_tekst": "Już się ściemnia. Zapnij kask, włącz światła i zrób próbne kółko po placu.",
+      "koniec_tekst": "Rower gotowy! Mam dla ciebie pierwszy kurs po Pradze."
+    },
+    "WAW-A1-01": {
+      "start_tekst": "Sąsiad zostawił u mnie klucze. Podrzucisz mu je? Na rogu kamienic pilnuj prawej strony.",
+      "koniec_tekst": "Klucze dotarły. Lena ma dla ciebie kurs na bazar."
+    },
+    "WAW-A1-02": {
+      "start_tekst": "To zamówienie na bazar. W praskich bramach piesi pojawiają się znienacka.",
+      "koniec_tekst": "Dostawa odebrana! Pani Halina czeka na pierogi."
+    },
+    "WAW-A1-03": {
+      "start_tekst": "Dowieź pierogi, póki są ciepłe. Przy STOP-ie zatrzymaj się, choćby pachniały na całą Pragę.",
+      "koniec_tekst": "Jeszcze parują! Dobrze, że przy tym skrzyżowaniu dajesz sobie czas na rozejrzenie."
     }
   }
 }

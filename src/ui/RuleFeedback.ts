@@ -73,6 +73,6 @@ export class RuleFeedback {
         this.until = at + 3;
       }
     }
-    if (at >= this.until) this.bubble.hidden = true;
+    if (!this.bubble.hidden && at >= this.until) this.bubble.hidden = true;
   }
 }

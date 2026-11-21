@@ -298,6 +298,9 @@ button[aria-pressed='true'] {
   font-size: calc(16px * var(--menu-zoom, 1));
   text-align: left;
 }
+.menu-praga {
+  left: calc(50% + 5px * var(--menu-zoom, 1));
+}
 .menu-mission:hover,
 .menu-mission:focus-visible {
   border-color: #1a1c2c;

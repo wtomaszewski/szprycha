@@ -16,6 +16,7 @@ export interface MissionSpawn extends Vec2 {
 }
 
 type Failure = MissionDefinition['warunki_porazki'][number];
+type Equipment = { helmet: boolean; lights: boolean };
 type Outcome = { status: 'completed' } | { status: 'failed'; reason: Failure };
 
 export type MissionResult = Outcome & {
@@ -25,6 +26,7 @@ export type MissionResult = Outcome & {
   goodHabits: number;
   verdicts: readonly Verdict[];
   timeBonusEligible: boolean;
+  illegalShortcut: boolean;
 };
 
 interface TickEffects {
@@ -71,6 +73,7 @@ export class MissionSystem {
   }[];
   private readonly goalTicks: number[];
   private readonly verdicts: Verdict[] = [];
+  private readonly shortcutSigns: ReadonlySet<string>;
   private readonly failureConditions: ReadonlySet<Failure>;
   private checkpoint: Checkpoint;
   private nextCheckpoint = 0;
@@ -83,7 +86,8 @@ export class MissionSystem {
 
   constructor(
     readonly definition: MissionDefinition,
-    world: Pick<WorldModel, 'pois' | 'zones' | 'triggers'>,
+    world: Pick<WorldModel, 'pois' | 'zones' | 'triggers'> &
+      Partial<Pick<WorldModel, 'signs'>>,
     private readonly majorLimit = 3,
   ) {
     const poi = (id: string) => {
@@ -96,7 +100,7 @@ export class MissionSystem {
     this.start = spawnAt(area);
     this.checkpoint = { spawn: this.start, goalIndex: 0 };
     this.goals = definition.cele.map((goal) => {
-      if (goal.poi) area = poi(goal.poi);
+      if ('poi' in goal && goal.poi) area = poi(goal.poi);
       return { goal, area, position: center(area) };
     });
     this.goalTicks = this.goals.map(() => 0);
@@ -113,6 +117,25 @@ export class MissionSystem {
       return { event, area, fired: false, position: center(area) };
     });
     this.failureConditions = new Set(definition.warunki_porazki);
+    const shortcut = definition.skrot?.odcinek;
+    this.shortcutSigns = new Set(
+      shortcut
+        ? world.signs
+            ?.filter(
+              ({ affects, code, exceptBicycles }) =>
+                affects === shortcut && code === 'B-1' && !exceptBicycles,
+            )
+            .map(({ id }) => id)
+        : [],
+    );
+    if (
+      shortcut &&
+      (!this.shortcutSigns.size ||
+        !world.zones.some(({ id }) => id === shortcut))
+    )
+      throw new Error(
+        `Mission ${definition.id}: shortcut ${shortcut} needs a B-1 zone`,
+      );
   }
 
   private get goalTarget() {
@@ -132,6 +155,10 @@ export class MissionSystem {
         eventWaypoint: true,
       };
     return this.forcedWaypoint;
+  }
+
+  get preparingBike() {
+    return this.goalTarget?.goal.typ === 'przygotuj_rower';
   }
 
   get elapsedSeconds() {
@@ -163,6 +190,7 @@ export class MissionSystem {
     verdicts: readonly Verdict[],
     startEvent?: (event: ForcedMissionEvent, area: Box) => void,
     forcedPending?: () => boolean,
+    equipment?: Equipment,
   ): TickEffects | undefined {
     const target = this.goalTarget;
     if (!target) return;
@@ -197,7 +225,9 @@ export class MissionSystem {
       this.finish({ status: 'failed', reason: 'czas_minal' });
       return;
     }
-    const atTarget = reached(target.area, position);
+    const atTarget = this.preparingBike
+      ? Boolean(equipment?.helmet && equipment.lights)
+      : reached(target.area, position);
     const missingHabit =
       atTarget && target.goal.wymagany_nawyk && !this.requiredHabitSeen;
     let effects: TickEffects | undefined;
@@ -262,6 +292,13 @@ export class MissionSystem {
       par_s: this.definition.par_s,
       goodHabits: this.goodHabits,
       verdicts: this.verdicts,
+      illegalShortcut: this.verdicts.some(
+        ({ kind, ruleId, highlight }) =>
+          kind !== 'good' &&
+          ruleId === 'ZNAK-B1' &&
+          highlight?.signId !== undefined &&
+          this.shortcutSigns.has(highlight.signId),
+      ),
       timeBonusEligible:
         outcome.status === 'completed' && this.majorCount === 0,
     };
