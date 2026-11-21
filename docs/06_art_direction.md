@@ -49,10 +49,10 @@ Noc: nakładka multiply w odcieniu `#29366f` + addytywne źródła światła (la
 ## 4. Efekt 2.5D bloków (klucz do „wyglądu GTA2”)
 GTA2 renderowało budynki jako bryły widziane z góry z perspektywą względem środka ekranu. Implementacja:
 1. Każdy budynek w warstwie `blocks` = podstawa (prostokąt/poligon) + `height` (w piętrach, 1 piętro = 12 px wysokości wizualnej) + tekstury: `roof` (kafel dachu), `wall` (tekstura ściany 32×12 na piętro), opcjonalnie `landmarkId`.
-2. Renderer rysuje **ściany boczne** jako czworokąty od krawędzi podstawy do krawędzi dachu, gdzie dach jest przesunięty o wektor `(pozycja_dachu − środek_kamery) × k × height` (k ≈ 0,015 na piętro; strojone). Widoczne są tylko ściany odwrócone od środka ekranu — jak w GTA2.
+2. Renderer rysuje **ściany boczne** jako czworokąty od krawędzi podstawy do krawędzi dachu, gdzie dach jest przesunięty o wektor `(środek_bloku − środek_kamery) × min(0.35, height × 12 px / wysokość_kamery)`. Domyślna wysokość kamery to 1100 px. Suwak F3 pozwala ją stroić w trakcie jazdy. Widoczne są tylko ściany odwrócone od środka ekranu — jak w GTA2.
 3. Dach rysowany na samej górze, z cieniem rzucanym w stronę dolnego-prawego rogu (stały kierunek słońca).
 4. Tekstura ściany mapowana pasami pięter; przy niskiej wydajności fallback: dach + jedna „zmiękczona” ściana od strony kamery + cień (tryb `blocks:lite`).
-5. **Landmarki** (PKiN, wieże) składają się z kilku warstw-bloków o rosnącej wysokości (podstawa → kondygnacje → wieża → iglica), każda warstwa z własnym przesunięciem paralaksy — daje to wrażenie wysokiego budynku „pochylającego się” przy przejeździe obok.
+5. **Landmarki** (PKiN, wieże) składają się z kilku warstw-bloków o rosnącej wysokości (podstawa → kondygnacje → wieża → iglica), wysokość każdej warstwy liczy się od gruntu, a jej ściany zaczynają się na przesuniętym dachu warstwy poniżej.
 6. Kafelki muszą idealnie pasować do siatki pikseli: przesunięcia zaokrąglane do pełnych pikseli logicznych, brak migotania przy ruchu kamery (testuj przy wolnym przesuwaniu).
 
 ## 5. Postacie i pojazdy
