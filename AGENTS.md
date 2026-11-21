@@ -134,7 +134,7 @@ Nie jesteś grafikiem, więc:
 ---
 
 ## 7. Jakość i sposób pracy
-- Małe, opisane commity (Conventional Commits), jeden kamień milowy = jedna gałąź/PR.
+- Małe, opisane commity (Conventional Commits), jeden kamień milowy = jedna osobna gałąź i pull request do `main`. Nie commituj bezpośrednio do `main`; nowe gałęzie kamieni milowych twórz z aktualnego `main`.
 - Każdy detektor reguły: plik + testy scenariuszowe + wpis w `tests/rules/README.md`.
 - Wydajność: budżet 16 ms/klatkę na telefonie średniej klasy; pooling obiektów; brak alokacji w pętli silnika zasad.
 - Po każdym kamieniu milowym zaktualizuj `PROGRESS.md` (co zrobione, co odroczone, znane błędy) i `NOTES_FOR_HUMAN.md` (pytania merytoryczne, decyzje do podjęcia, reguły do weryfikacji).
