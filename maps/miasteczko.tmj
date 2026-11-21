@@ -14,10 +14,15 @@
       "name": "trafficCars",
       "type": "int",
       "value": 14
+    },
+    {
+      "name": "dusk_at_s",
+      "type": "float",
+      "value": 90
     }
   ],
-  "nextlayerid": 20,
-  "nextobjectid": 154,
+  "nextlayerid": 22,
+  "nextobjectid": 157,
   "layers": [
     {
       "id": 1,
@@ -14874,6 +14879,49 @@
               "value": "x"
             }
           ]
+        },
+        {
+          "id": 154,
+          "name": "rail-crossing",
+          "type": "",
+          "x": 2048,
+          "y": 1664,
+          "width": 192,
+          "height": 48,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "rail"
+            },
+            {
+              "name": "axis",
+              "type": "string",
+              "value": "y"
+            },
+            {
+              "name": "open_s",
+              "type": "float",
+              "value": 12
+            },
+            {
+              "name": "lowering_s",
+              "type": "float",
+              "value": 2
+            },
+            {
+              "name": "closed_s",
+              "type": "float",
+              "value": 5
+            },
+            {
+              "name": "raising_s",
+              "type": "float",
+              "value": 2
+            }
+          ]
         }
       ]
     },
@@ -14916,6 +14964,58 @@
       "x": 0,
       "y": 0,
       "objects": []
+    },
+    {
+      "id": 20,
+      "name": "driveways",
+      "type": "objectgroup",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 155,
+          "name": "training-driveway",
+          "type": "",
+          "x": 1112,
+          "y": 1450,
+          "width": 44,
+          "height": 82,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "N"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "name": "parked_cars",
+      "type": "objectgroup",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 156,
+          "name": "parked-training",
+          "type": "",
+          "x": 940,
+          "y": 1284,
+          "width": 56,
+          "height": 24,
+          "rotation": 0,
+          "visible": true,
+          "properties": []
+        }
+      ]
     }
   ],
   "tilesets": [

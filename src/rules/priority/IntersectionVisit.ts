@@ -3,6 +3,9 @@ import type { GameContent } from '../../content/schemas';
 import { preferVerdict } from '../deduplication';
 import { rightHand } from '../detectors/PIER-01';
 import { subordinateRoad } from '../detectors/PIER-02';
+import { oncomingPriority } from '../detectors/PIER-03';
+import { roundaboutPriority } from '../detectors/PIER-08';
+import { tramPriority } from '../detectors/PIER-09';
 import { trafficLight } from '../detectors/SYG-01';
 import { conditionalArrow } from '../detectors/ZNAK-S2';
 import { stopSign } from '../detectors/ZNAK-STOP';
@@ -43,6 +46,8 @@ export class IntersectionVisit {
   private yellowCanStop = false;
   private bestApproachSpeed = 0;
   private waited?: PriorityConflict;
+  private waitedForLeft?: PriorityConflict;
+  private pendingLeft?: { verdict: Verdict; lane: Lane };
   private arrowEntry?: { verdict: Verdict; invalid: Verdict; lane: Lane };
 
   debugLane?: Lane;
@@ -66,6 +71,7 @@ export class IntersectionVisit {
     this.yellowCanStop = false;
     this.bestApproachSpeed = 0;
     this.waited = undefined;
+    this.waitedForLeft = undefined;
   }
 
   evaluate(
@@ -98,8 +104,29 @@ export class IntersectionVisit {
       return correctExit ? pendingArrow.verdict : pendingArrow.invalid;
     }
     if (rider.mode !== 'riding') {
+      this.pendingLeft = undefined;
       this.start();
       return;
+    }
+    const pending = this.pendingLeft;
+    if (pending) {
+      const { lane, verdict } = pending;
+      const forward =
+        Math.cos(rider.heading) * lane.forward.x +
+        Math.sin(rider.heading) * lane.forward.y;
+      if (
+        zones.intersection === lane.intersection &&
+        lateralOffset(lane, rider.pos) < -0.5 &&
+        forward < Math.SQRT1_2 &&
+        lane.forward.x * Math.sin(rider.heading) -
+          lane.forward.y * Math.cos(rider.heading) <
+          0
+      ) {
+        this.pendingLeft = undefined;
+        return verdict;
+      }
+      if (zones.intersection !== lane.intersection)
+        this.pendingLeft = undefined;
     }
     if (
       this.crossed &&
@@ -137,15 +164,16 @@ export class IntersectionVisit {
         : signal === 'none'
           ? 'straight'
           : signal);
-    const conflict = (this.debugConflict = this.manager.conflict(
-      lane,
-      maneuver,
-      agents,
-      at,
-      env,
-    ));
-    if (this.crossed) return;
-
+    if (this.crossed) {
+      this.debugConflict = this.manager.conflict(
+        lane,
+        maneuver,
+        agents,
+        at,
+        env,
+      );
+      return;
+    }
     if (phase === 'yellow' && this.phase !== 'yellow') {
       // Kinematics at the onset of yellow, with the bicycle's service brake.
       this.yellowCanStop =
@@ -179,28 +207,52 @@ export class IntersectionVisit {
       }
     }
 
-    const dangerous =
-      conflict &&
-      (conflict.ttc + EPSILON < this.settings.ttc_minor_s ||
-        conflict.protectiveBrake);
-    if (distance >= 0 && distance <= STOP_RANGE) {
+    const nearingLine = distance >= 0 && distance <= STOP_RANGE;
+    if (nearingLine)
       this.bestApproachSpeed = Math.max(this.bestApproachSpeed, rider.speed);
-      if (
-        dangerous &&
-        (rider.speed < this.settings.stop_predkosc_ms ||
-          rider.speed < this.bestApproachSpeed - 0.25)
-      ) {
-        if (this.waited) Object.assign(this.waited, conflict);
-        else this.waited = { ...conflict };
+    const slowing =
+      rider.speed < this.settings.stop_predkosc_ms ||
+      rider.speed < this.bestApproachSpeed - 0.25;
+    const entering =
+      previous &&
+      distance < 0 &&
+      distanceToLine(lane, previous) >= 0 &&
+      zones.intersection === lane.intersection;
+    if (
+      !rider.maneuver &&
+      (phase === 'off' || phase === 'green') &&
+      (entering || (nearingLine && slowing))
+    ) {
+      // The turn signal is an intention. Confirm the left turn with the observed trajectory.
+      const left = this.dangerous(
+        this.manager.conflict(lane, 'left', agents, at, env, true, 'PIER-03'),
+      );
+      if (nearingLine && left) {
+        if (this.waitedForLeft) Object.assign(this.waitedForLeft, left);
+        else this.waitedForLeft = { ...left };
+      }
+      if (entering) {
+        const opportunity = left ?? this.waitedForLeft;
+        if (opportunity)
+          this.pendingLeft = {
+            lane,
+            verdict: oncomingPriority(
+              left ? this.severity(left) : 'good',
+              rider,
+              at,
+              lane,
+              opportunity,
+            ),
+          };
       }
     }
-    if (
-      !previous ||
-      distance >= 0 ||
-      distanceToLine(lane, previous) < 0 ||
-      !zones.intersection ||
-      zones.intersection !== lane.intersection
-    ) {
+    this.debugConflict = this.manager.conflict(lane, maneuver, agents, at, env);
+    const dangerous = this.dangerous(this.debugConflict);
+    if (nearingLine && slowing && dangerous) {
+      if (this.waited) Object.assign(this.waited, dangerous);
+      else this.waited = { ...dangerous };
+    }
+    if (!entering) {
       if (lightChangedToGreen && this.stoppedForLight) {
         this.stoppedForLight = false;
         return trafficLight(lane, rider, at, phase, true, false);
@@ -215,11 +267,11 @@ export class IntersectionVisit {
         if (dangerous)
           candidate = {
             ...candidate,
-            kind: this.severity(conflict),
+            kind: this.severity(dangerous),
             evidence: {
               ...candidate.evidence,
-              conflictWith: conflict.agentId,
-              ttc: conflict.ttc,
+              conflictWith: dangerous.agentId,
+              ttc: dangerous.ttc,
             },
           };
         if (rider.maneuver) return candidate;
@@ -230,6 +282,25 @@ export class IntersectionVisit {
         };
         return;
       }
+      if (
+        phase === 'green' &&
+        rider.maneuver &&
+        dangerous?.ruleId === 'PIER-03'
+      )
+        return oncomingPriority(
+          this.severity(dangerous),
+          rider,
+          at,
+          lane,
+          dangerous,
+        );
+      if (
+        phase === 'green' &&
+        rider.maneuver &&
+        this.waited?.ruleId === 'PIER-03' &&
+        !dangerous
+      )
+        return oncomingPriority('good', rider, at, lane, this.waited);
       return trafficLight(
         lane,
         rider,
@@ -240,7 +311,7 @@ export class IntersectionVisit {
       );
     }
     let stop = stopSign(lane, this.stopped, rider, at);
-    const opportunity = dangerous ? conflict : this.waited;
+    const opportunity = dangerous ?? this.waited;
     let priority: Verdict | undefined;
     if (opportunity) {
       const kind = dangerous ? this.severity(opportunity) : 'good';
@@ -248,7 +319,13 @@ export class IntersectionVisit {
         priority = rightHand(kind, rider, at, lane, opportunity);
       if (opportunity.ruleId === 'PIER-02')
         priority = subordinateRoad(kind, rider, at, lane, opportunity);
-      if (dangerous && stop?.kind === 'minor') {
+      if (opportunity.ruleId === 'PIER-03' && rider.maneuver)
+        priority = oncomingPriority(kind, rider, at, lane, opportunity);
+      if (opportunity.ruleId === 'PIER-08')
+        priority = roundaboutPriority(kind, rider, at, lane, opportunity);
+      if (opportunity.ruleId === 'PIER-09')
+        priority = tramPriority(kind, rider, at, lane, opportunity);
+      if (priority && dangerous && stop?.kind === 'minor') {
         stop = {
           ...stop,
           kind,
@@ -263,6 +340,14 @@ export class IntersectionVisit {
       }
     }
     return preferVerdict(stop, priority);
+  }
+
+  private dangerous(conflict: PriorityConflict | undefined) {
+    return conflict &&
+      (conflict.protectiveBrake ||
+        conflict.ttc + EPSILON < this.settings.ttc_minor_s)
+      ? conflict
+      : undefined;
   }
 
   private severity(conflict: PriorityConflict): 'minor' | 'major' {

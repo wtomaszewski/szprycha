@@ -58,7 +58,7 @@ przepisy:
     detektor: sim
     waga_bledu: minor
     dobry_nawyk: "Włączenie świateł o zmroku, w tunelu, we mgle"
-    feedback: "Robi się ciemno — światła! Masz widzieć drogę, a inni mają widzieć Ciebie."
+    feedback: "Gdy robi się ciemno, włącz przednią lampkę, żeby oświetlić drogę."
   - id: WYP-05
     modul: M01
     tytul: Tylne światło
@@ -67,7 +67,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: minor
-    feedback: "Tył też musi świecić na czerwono. Auto jadące za Tobą musi Cię zobaczyć z daleka."
+    feedback: "Gdy słabo widać, włącz tylną czerwoną lampkę, żeby kierowcy widzieli Cię z daleka."
   - id: WYP-06
     modul: M01
     tytul: Dodatkowe odblaski (zalecane)
@@ -345,7 +345,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Przepuszczenie pojazdu z naprzeciwka przed skrętem w lewo"
-    feedback: "Skręcając w lewo, przepuść tych z naprzeciwka. Oni jadą prosto — mają pierwszeństwo."
+    feedback: "Przed skrętem w lewo przepuść jadących z naprzeciwka prosto i skręcających w prawo."
   - id: PIER-04
     modul: M04
     tytul: Skręcasz? Przepuść pieszych i rowerzystów
@@ -355,7 +355,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Przepuszczenie pieszego przy skręcie"
-    feedback: "Skręcając, przecinasz drogę pieszym. Oni mają pierwszeństwo — poczekaj chwilę."
+    feedback: "Przy skręcie uważaj na pieszych i rowerzystów przecinających Twój tor jazdy."
   - id: PIER-05
     modul: M04
     tytul: Przejazd dla rowerzystów
@@ -365,7 +365,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Zwolnienie i sprawdzenie ruchu przed wjazdem na przejazd"
-    feedback: "Przejazd dla rowerów to nie trampolina! Upewnij się, że kierowca Cię widzi i zdąży stanąć."
+    feedback: "Przed wjazdem na przejazd zwolnij i sprawdź, czy zbliża się samochód."
   - id: PIER-06
     modul: M04
     tytul: Włączanie się do ruchu
@@ -375,7 +375,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Zatrzymanie i przepuszczenie przy wyjeździe z bramy"
-    feedback: "Wyjeżdżasz z bramy? To Ty przepuszczasz wszystkich — i pieszych na chodniku też."
+    feedback: "Gdy włączasz się do ruchu, przepuść pojazdy i pieszych przecinających Twój tor."
   - id: PIER-07
     modul: M04
     tytul: Pojazd uprzywilejowany
@@ -385,7 +385,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Zjazd na prawo przed karetką/strażą/policją"
-    feedback: "Karetka jedzie do kogoś, kto potrzebuje pomocy. Zjedź na prawo i zrób jej miejsce."
+    feedback: "Zjedź bezpiecznie na prawo i zostaw miejsce dla pojazdu z syreną i niebieskimi światłami."
   - id: PIER-08
     modul: M04
     tytul: Rondo
@@ -395,7 +395,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Przepuszczenie pojazdu na rondzie + zasygnalizowany zjazd"
-    feedback: "Ten, kto jest na rondzie, ma pierwszeństwo (gdy stoi znak ustąp). Poczekaj na lukę."
+    feedback: "Przy znaku ustąp pierwszeństwa poczekaj na wolne miejsce na rondzie."
   - id: PIER-09
     modul: M04
     tytul: Tramwaj
@@ -405,7 +405,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Przepuszczenie tramwaju"
-    feedback: "Tramwaj nie skręci i nie zahamuje jak auto. Na takim skrzyżowaniu ma pierwszeństwo."
+    feedback: "Gdy tory przecinają Twój tor jazdy, zwolnij i obserwuj tramwaj, znaki oraz światła."
 
   # ───────────── M05 — Manewry ─────────────
   - id: MAN-01
@@ -465,7 +465,7 @@ przepisy:
     detektor: sim
     waga_bledu: minor
     dobry_nawyk: "Odstęp > 1 m od zaparkowanych aut"
-    feedback: "Drzwi auta potrafią otworzyć się w sekundę. Trzymaj metr odstępu."
+    feedback: "Zostaw ponad metr odstępu od zaparkowanego auta na wypadek otwarcia drzwi."
   - id: MAN-07
     modul: M05
     tytul: Ruszanie i zatrzymywanie
@@ -475,7 +475,7 @@ przepisy:
     detektor: sim
     waga_bledu: minor
     dobry_nawyk: "Obejrzenie się przed ruszeniem"
-    feedback: "Ruszając, zawsze obejrzyj się przez lewe ramię. Z tyłu mogło coś jechać."
+    feedback: "Przed ruszeniem obejrzyj się przez lewe ramię, bo z tyłu może nadjeżdżać pojazd."
   - id: MAN-08
     modul: M05
     tytul: Bezpieczna prędkość
@@ -493,7 +493,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: minor
-    feedback: "Bez trzymanki to w cyrku. Na drodze przynajmniej jedna ręka zawsze na kierownicy."
+    feedback: "Podczas jazdy trzymaj co najmniej jedną rękę na kierownicy, a nogi na pedałach."
   - id: MAN-10
     modul: M05
     tytul: Bez pasażera
@@ -502,7 +502,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: major
-    feedback: "Rower jest jednoosobowy. Kolega idzie pieszo albo jedzie swoim rowerem."
+    feedback: "Jednoosobowym rowerem jedź sam, a kolega może iść pieszo albo jechać swoim."
   - id: MAN-11
     modul: M05
     tytul: Telefon w kieszeni
@@ -512,7 +512,7 @@ przepisy:
     detektor: sim
     waga_bledu: minor
     dobry_nawyk: "Odebranie telefonu dopiero po zatrzymaniu"
-    feedback: "SMS może poczekać. Zatrzymaj się bezpiecznie, wtedy odbierz."
+    feedback: "Zatrzymaj się w bezpiecznym miejscu, zanim sięgniesz po telefon."
   - id: MAN-12
     modul: M05
     tytul: Gdzie nie wyprzedzamy
@@ -533,7 +533,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Zatrzymanie przed przejazdem przy sygnale"
-    feedback: "Pociąg nie zahamuje dla nikogo. Gdy miga czerwone — stoisz, bez dyskusji."
+    feedback: "Przed torami sprawdź światła i zapory, a po otwarciu przejedź bez zatrzymywania."
   - id: MSC-02
     modul: M06
     tytul: Przystanek tramwajowy bez wysepki
@@ -543,7 +543,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Zatrzymanie przy przystanku i przepuszczenie pasażerów"
-    feedback: "Ludzie wysiadają z tramwaju prosto na jezdnię. Stań i poczekaj, aż przejdą."
+    feedback: "Przed przystankiem bez wysepki stań i poczekaj, aż pasażerowie zejdą z jezdni."
   - id: MSC-03
     modul: M06
     tytul: Wyjazd z bramy i podwórka
@@ -563,14 +563,14 @@ przepisy:
     detektor: sim
     waga_bledu: minor
     dobry_nawyk: "Włączenie świateł przy pogorszeniu widoczności"
-    feedback: "Kierowca widzi ubranie bez odblasku z kilkudziesięciu metrów. Z odblaskiem — z dużo dalszej odległości."
+    feedback: "Gdy robi się ciemno lub słabo widać, włącz obie lampki."
   - id: MSC-05
     modul: M06
     tytul: Jazda w kolumnie
     dla_dziecka: "Grupa rowerzystów jedzie jeden za drugim. Jedna kolumna to najwyżej 15 rowerów, a między kolumnami musi być co najmniej 200 m odstępu."
     podstawa: "PoRD — kolumna rowerów"
     weryfikacja: true
-    detektor: sim
+    detektor: quiz-only
     waga_bledu: minor
     feedback: "Za dużo nas w jednej kolumnie! Dzielimy się na mniejsze grupy z odstępem."
 

@@ -569,9 +569,23 @@ objectLayer('lanes', lanes);
 objectLayer('intersections', intersections);
 objectLayer('signs', signs);
 objectLayer('signals', signals);
+crossings.push(
+  rect('rail-crossing', 2048, 1664, 192, 48, {
+    kind: 'rail',
+    axis: 'y',
+    open_s: 12,
+    lowering_s: 2,
+    closed_s: 5,
+    raising_s: 2,
+  }),
+);
 objectLayer('crossings', crossings);
 for (const name of ['props', 'triggers', 'districts', 'collectibles'])
   objectLayer(name, []);
+objectLayer('driveways', [
+  rect('training-driveway', 1112, 1450, 44, 82, { direction: 'N' }),
+]);
+objectLayer('parked_cars', [rect('parked-training', 940, 1284, 56, 24)]);
 await mkdir('maps', { recursive: true });
 await writeFile(
   'maps/miasteczko.tmj',
@@ -587,7 +601,10 @@ await writeFile(
       height,
       tilewidth: 32,
       tileheight: 32,
-      properties: [{ name: 'trafficCars', type: 'int', value: 14 }],
+      properties: [
+        { name: 'trafficCars', type: 'int', value: 14 },
+        { name: 'dusk_at_s', type: 'float', value: 90 },
+      ],
       nextlayerid: layers.length + 1,
       nextobjectid: id,
       layers,

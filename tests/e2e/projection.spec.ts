@@ -29,13 +29,17 @@ async function openCity(
     };
     const spawns = map.layers.find((layer) => layer.name === 'spawns')!;
     const spawn = spawns.objects.find((object) => object.name === 'player')!;
-    // Keep traffic and changing signal phases out of projection comparisons.
+    // Keep traffic and map exercises out of projection comparisons.
     spawns.objects = [spawn];
     for (const layer of map.layers)
       if (
-        ['traffic_routes', 'traffic_controls', 'crossing_signals'].includes(
-          layer.name,
-        )
+        [
+          'traffic_routes',
+          'traffic_controls',
+          'crossing_signals',
+          'driveways',
+          'parked_cars',
+        ].includes(layer.name)
       )
         layer.objects = [];
     const zones = map.layers.find(({ name }) => name === 'zones')!;

@@ -1,7 +1,7 @@
 import type { GameObjects, Scene } from 'phaser';
 import { FONT } from '../core/presentation';
 import type { EnvState, SignalPhase } from '../rules/types';
-import type { WorldModel } from '../rules/world/WorldModel';
+import type { Box, WorldModel } from '../rules/world/WorldModel';
 
 const lightColor: Record<SignalPhase, number> = {
   red: 0xe43b44,
@@ -72,6 +72,17 @@ export class TrainingRoad {
         marks.fillStyle(0x29366f).fillRect(x - 3, y - 4, 6, 3);
       }
     }
+    for (const car of world.parkedCars) this.drawParkedCar(marks, car, scale);
+    for (const drive of world.driveways) {
+      marks
+        .fillStyle(0x566c86, 0.7)
+        .fillRect(
+          drive.x * scale,
+          drive.y * scale,
+          drive.width * scale,
+          drive.height * scale,
+        );
+    }
     for (const crossing of world.crossings) {
       const x = crossing.x * scale;
       const y = crossing.y * scale;
@@ -86,6 +97,12 @@ export class TrainingRoad {
             marks.fillRect(x, y + i, width, Math.min(9, length - i));
           else marks.fillRect(x + i, y, Math.min(9, length - i), height);
         }
+      } else if (crossing.kind === 'rail') {
+        marks.fillStyle(0x333c57).fillRect(x, y, width, height);
+        for (let i = 0; i < width; i += 12)
+          marks.fillStyle(0x566c86).fillRect(x + i, y + 8, 5, height - 16);
+        for (const offset of [14, height - 14])
+          marks.fillStyle(0x8895a8).fillRect(x, y + offset, width, 3);
       } else if (crossing.kind === 'bike') {
         marks.fillStyle(0x3b5dc9, 0.65).fillRect(x, y, width, height);
         const vertical = crossing.axis === 'y';
@@ -180,6 +197,15 @@ export class TrainingRoad {
     const scale = 1 / this.world.metersPerPixel;
     this.lights.clear();
     for (const crossing of this.world.crossings) {
+      const rail = this.world.railState(crossing, at, environment);
+      if (rail)
+        this.drawRailSignals(
+          crossing,
+          rail.flashing,
+          rail.barrier === 'closed',
+          scale,
+          at,
+        );
       const { signal } = crossing;
       if (!signal) continue;
       const open = this.world.crossingAllowsEntry(crossing, at, environment);
@@ -222,6 +248,61 @@ export class TrainingRoad {
           .lineBetween(x + 5 * d, y, x, y - 5)
           .lineBetween(x + 5 * d, y, x, y + 5);
       }
+    }
+  }
+
+  private drawParkedCar(marks: GameObjects.Graphics, car: Box, scale: number) {
+    const x = car.x * scale;
+    const y = car.y * scale;
+    const width = car.width * scale;
+    const height = car.height * scale;
+    marks.fillStyle(0x1a1c2c).fillRoundedRect(x, y, width, height, 6);
+    marks
+      .fillStyle(0x41a6f6)
+      .fillRoundedRect(x + 2, y + 2, width - 4, height - 4, 4);
+    marks
+      .fillStyle(0x29366f)
+      .fillRect(x + width * 0.35, y + 4, width * 0.32, height - 8);
+  }
+
+  private drawRailSignals(
+    box: Box,
+    flashing: boolean,
+    closed: boolean,
+    scale: number,
+    at: number,
+  ) {
+    const x = box.x * scale;
+    const y = box.y * scale;
+    const width = box.width * scale;
+    const height = box.height * scale;
+    for (const south of [false, true]) {
+      const postX = south ? x + width : x;
+      const postY = south ? y + height + 8 : y - 8;
+      const direction = south ? -1 : 1;
+      if (closed) {
+        this.lights
+          .lineStyle(5, 0xf4f4f4)
+          .lineBetween(postX, postY, postX + direction * width * 0.48, postY);
+        this.lights.lineStyle(5, 0xe43b44);
+        for (let i = 10; i < width * 0.44; i += 20)
+          this.lights.lineBetween(
+            postX + direction * i,
+            postY,
+            postX + direction * (i + 10),
+            postY,
+          );
+      }
+      this.lights
+        .fillStyle(0x1a1c2c)
+        .fillRoundedRect(postX - 12, postY - 7, 24, 14, 3);
+      const phase = Math.floor(at * 2) % 2;
+      this.lights
+        .fillStyle(lightColor[flashing && phase === 0 ? 'red' : 'off'])
+        .fillCircle(postX - 5, postY, 3);
+      this.lights
+        .fillStyle(lightColor[flashing && phase === 1 ? 'red' : 'off'])
+        .fillCircle(postX + 5, postY, 3);
     }
   }
 

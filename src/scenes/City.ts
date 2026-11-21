@@ -32,13 +32,12 @@ import { emergencyLightPhase } from '../render/emergencyLights';
 import { EmergencySiren } from '../audio/EmergencySiren';
 import { RuleFeedback } from '../ui/RuleFeedback';
 
-const environment: EnvState = {
-  time: 'day',
-  weather: 'clear',
-  visibilityLow: false,
-};
-
 export class City extends Scene {
+  private readonly environment: EnvState = {
+    time: 'day',
+    weather: 'clear',
+    visibilityLow: false,
+  };
   private rider!: Rider;
   private sprite!: GameObjects.Image;
   private actionArt!: GameObjects.Graphics;
@@ -75,6 +74,8 @@ export class City extends Scene {
     ageBand: '10to15',
     signal: 'none',
     helmet: { worn: true, fastened: true },
+    shoulderCheck: { lastLeftAt: -Infinity },
+    lights: { front: false, rear: false },
   };
   constructor() {
     super('City');
@@ -150,6 +151,16 @@ export class City extends Scene {
       this.obstacles.push(curb);
       curbArt.fillRect(curb.x, curb.y, curb.width, curb.height);
     }
+    for (const car of this.world.parkedCars) {
+      const scale = 1 / this.world.metersPerPixel;
+      this.obstacles.push({
+        x: car.x * scale,
+        y: car.y * scale,
+        width: car.width * scale,
+        height: car.height * scale,
+        kind: 'wall',
+      });
+    }
     // Extract one roof tile so artists can replace the tilesheet without renderer changes.
     if (!this.textures.exists('roof')) {
       const roof = this.textures.createCanvas('roof', 32, 32);
@@ -214,7 +225,7 @@ export class City extends Scene {
         this.debug.update(
           this.rules,
           this.world,
-          environment,
+          this.environment,
           this.traffic,
           this.rulesRider.pos,
         );
@@ -229,6 +240,7 @@ export class City extends Scene {
     this.actionArt = this.add.graphics().setDepth(22);
     this.controls.setWalking(false);
     const onShutdown = () => {
+      this.game.canvas.classList.remove('training-dusk');
       this.siren.destroy();
       this.debug.destroy();
       this.controls.destroy();
@@ -283,6 +295,8 @@ export class City extends Scene {
     this.cameras.main.centerOn(this.rider.x, this.rider.y);
   }
   private resetRules() {
+    this.environment.time = 'day';
+    this.rulesRider.shoulderCheck!.lastLeftAt = -Infinity;
     const engine = (this.rules = new RuleEngine(
       this.world,
       this.content.balans,
@@ -318,12 +332,18 @@ export class City extends Scene {
     rider.heading = source.heading;
     rider.mode = source.walking ? 'walking_bike' : 'riding';
     rider.signal = this.controls.actions.signal ?? 'none';
-    this.traffic.step(environment, rider);
+    if (this.controls.actions.looking)
+      rider.shoulderCheck!.lastLeftAt = this.rules.at;
+    rider.lights!.front = rider.lights!.rear = this.controls.actions.lights;
+    rider.handsOnBar = rider.signal === 'none' ? 2 : 1;
+    this.environment.time =
+      this.rules.at + FIXED_STEP >= this.world.duskAt ? 'dusk' : 'day';
+    this.traffic.step(this.environment, rider);
     this.syncActorObstacles();
     this.activeAgents.length = 0;
     for (const agent of this.agents)
       if (!('active' in agent) || agent.active) this.activeAgents.push(agent);
-    this.rules.step(rider, this.activeAgents, environment);
+    this.rules.step(rider, this.activeAgents, this.environment);
   }
   update(time: number, delta: number) {
     if (!this.controls) return;
@@ -445,14 +465,16 @@ export class City extends Scene {
           y + dx * 5,
         );
     }
-    this.road.updateLights(this.rules.at, environment);
+    const dusk = this.environment.time === 'dusk';
+    this.game.canvas.classList.toggle('training-dusk', dusk);
+    this.road.updateLights(this.rules.at, this.environment);
     this.feedback.update(this.rules.at);
     if (time - this.hudAt > 100) {
       this.hudAt = time;
       this.debug.update(
         this.rules,
         this.world,
-        environment,
+        this.environment,
         this.traffic,
         this.rulesRider.pos,
       );

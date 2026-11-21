@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
 import { buildContent } from '../../tools/content';
@@ -31,6 +31,12 @@ interface Agent extends Omit<AgentState, 'pos' | 'heading' | 'speed'> {
   heading?: number;
   speed?: number;
   leaveAt?: number;
+  inputs?: (Partial<Omit<AgentState, 'pos' | 'heading'>> & {
+    t: number;
+    x?: number;
+    y?: number;
+    heading?: number;
+  })[];
 }
 interface Scenario {
   name: string;
@@ -44,13 +50,17 @@ interface Scenario {
   expect: Record<string, Verdict['kind'][]>;
   evidence?: Record<string, Verdict['evidence']>;
 }
-const { map, scenarios } = parse(
-  readFileSync('tests/rules/m2.yaml', 'utf8'),
-) as {
-  map: string;
-  scenarios: Scenario[];
-};
-const mapText = readFileSync(map, 'utf8');
+const files = readdirSync('tests/rules')
+  .filter((name) => name.endsWith('.yaml'))
+  .map((name) => ({
+    name,
+    ...(parse(readFileSync(`tests/rules/${name}`, 'utf8')) as {
+      map: string;
+      scenarios: Scenario[];
+    }),
+  }));
+const mapText = readFileSync(files[0]!.map, 'utf8');
+const scenarios = files.flatMap(({ scenarios }) => scenarios);
 const content = await buildContent();
 const engineOptions = content.balans;
 const goodHabitRules = new Set(
@@ -58,6 +68,33 @@ const goodHabitRules = new Set(
     .filter((rule) => rule.dobry_nawyk)
     .map((rule) => rule.id),
 );
+// Allowed habits from docs/07 §6.
+const simGood = new Set([
+  'MAN-01',
+  'MAN-03',
+  'MAN-06',
+  'MAN-07',
+  'MAN-11',
+  'PIER-01',
+  'PIER-02',
+  'PIER-03',
+  'PIER-04',
+  'PIER-05',
+  'PIER-06',
+  'PIER-07',
+  'PIER-08',
+  'PIER-09',
+  'ZNAK-STOP',
+  'ZNAK-S2',
+  'SYG-01',
+  'GDZIE-01',
+  'GDZIE-05',
+  'GDZIE-06',
+  'MSC-02',
+  'MSC-03',
+  'MSC-04',
+  'WYP-04',
+]);
 const envDefaults: EnvState = {
   time: 'day',
   weather: 'clear',
@@ -92,14 +129,12 @@ function run(scenario: Scenario) {
   const engine = new RuleEngine(world, engineOptions);
   const received: Verdict[] = [];
   engine.onVerdict((verdict) => received.push(verdict));
-  const agents = (scenario.agents ?? []).map(
-    ({ x, y, heading = 0, speed = 0, ...rest }) => ({
-      ...rest,
-      pos: { x: x * world.metersPerPixel, y: y * world.metersPerPixel },
-      heading: (heading * Math.PI) / 180,
-      speed,
-    }),
-  );
+  const agents = (scenario.agents ?? []).map(({ inputs, leaveAt, ...base }) => {
+    const frames = [{ t: 0, ...base }];
+    for (const input of inputs ?? [])
+      frames.push({ ...frames.at(-1)!, ...input });
+    return { leaveAt, frames };
+  });
   const frames = [{ t: 0, ...scenario.player }];
   for (const input of scenario.inputs ?? [])
     frames.push({ ...frames.at(-1), ...input });
@@ -137,17 +172,45 @@ function run(scenario: Scenario) {
           fastened: current.helmet !== 'absent' && current.helmet !== 'loose',
         },
         maneuver: current.maneuver,
-        extraReflectors: current.extraReflectors,
+        shoulderCheck: current.shoulderCheck,
+        lights: current.lights,
+        handsOnBar: current.handsOnBar,
+        feetOnPedals: current.feetOnPedals,
+        holdingVehicle: current.holdingVehicle,
+        passenger: current.passenger,
+        phoneInHand: current.phoneInHand,
         adultSupervisor: current.adultSupervisor,
         supervisedChildId: current.supervisedChildId,
       },
-      agents.filter(
-        (agent) => agent.leaveAt === undefined || t < agent.leaveAt,
-      ),
+      agents.flatMap(({ leaveAt, frames }) => {
+        if (leaveAt !== undefined && t >= leaveAt) return [];
+        const nextIndex = frames.findIndex((frame) => frame.t > t);
+        const next = frames[nextIndex];
+        const current =
+          frames[nextIndex === -1 ? frames.length - 1 : nextIndex - 1]!;
+        const mix = next ? (t - current.t) / (next.t - current.t) : 0;
+        return [
+          {
+            ...current,
+            pos: {
+              x:
+                (current.x + ((next?.x ?? current.x) - current.x) * mix) *
+                world.metersPerPixel,
+              y:
+                (current.y + ((next?.y ?? current.y) - current.y) * mix) *
+                world.metersPerPixel,
+            },
+            speed: current.speed ?? 0,
+            heading: ((current.heading ?? 0) * Math.PI) / 180,
+          },
+        ];
+      }),
       {
         ...envDefaults,
         ...scenario.env,
-        signalOverrides: phase ? { 'lights-S': phase } : undefined,
+        signalOverrides: phase
+          ? { ...scenario.env?.signalOverrides, 'lights-S': phase }
+          : scenario.env?.signalOverrides,
       },
     );
   }
@@ -155,27 +218,34 @@ function run(scenario: Scenario) {
   return received;
 }
 
-describe('M2 – scenariusze YAML', () => {
-  for (const scenario of scenarios) {
-    it(scenario.name, () => {
-      const verdicts = run(scenario);
-      for (const verdict of verdicts) {
-        if (verdict.kind === 'good')
-          expect(goodHabitRules.has(verdict.ruleId), verdict.ruleId).toBe(true);
-      }
-      for (const [rule, kinds] of Object.entries(scenario.expect)) {
-        expect(
-          verdicts.filter((v) => v.ruleId === rule).map((v) => v.kind),
-        ).toEqual(kinds);
-      }
-      for (const [rule, evidence] of Object.entries(scenario.evidence ?? {})) {
-        expect(verdicts.find((v) => v.ruleId === rule)?.evidence).toMatchObject(
-          evidence,
-        );
-      }
-    });
-  }
-});
+for (const file of files)
+  describe(file.name, () => {
+    for (const scenario of file.scenarios) {
+      it(scenario.name, () => {
+        const verdicts = run(scenario);
+        for (const verdict of verdicts) {
+          if (verdict.kind === 'good') {
+            expect(goodHabitRules.has(verdict.ruleId), verdict.ruleId).toBe(
+              true,
+            );
+            expect(simGood.has(verdict.ruleId), verdict.ruleId).toBe(true);
+          }
+        }
+        for (const [rule, kinds] of Object.entries(scenario.expect)) {
+          expect(
+            verdicts.filter((v) => v.ruleId === rule).map((v) => v.kind),
+          ).toEqual(kinds);
+        }
+        for (const [rule, evidence] of Object.entries(
+          scenario.evidence ?? {},
+        )) {
+          expect(
+            verdicts.find((v) => v.ruleId === rule)?.evidence,
+          ).toMatchObject(evidence);
+        }
+      });
+    }
+  });
 
 it('replays identical simulation input logs with identical verdicts and evidence', () => {
   for (const scenario of scenarios)
@@ -299,7 +369,9 @@ it('keeps emitted feedback to one sentence and bonus-only rules without a penalt
       expect(rule).toBeDefined();
       if (verdict.kind === 'good') continue;
       expect(rule!.waga_bledu).not.toBeNull();
-      expect(rule!.feedback).toMatch(/^[^.!?]+[.!?]$/u);
+      expect(rule!.feedback.replace(/(?<=\d)[.,](?=\d)/gu, '')).toMatch(
+        /^[^.!?]+[.!?]$/u,
+      );
       expect(rule!.feedback.length).toBeLessThanOrEqual(140);
     }
   }
