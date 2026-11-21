@@ -1,0 +1,517 @@
+map: maps/miasteczko.tmj
+scenarios:
+  - name: KASK-01 zapięty kask, jedna pochwała
+    duration: 2
+    player: { helmet: fastened, speed: 2 }
+    expect: { KASK-01: [good] }
+
+  - name: KASK-01 jazda bez kasku
+    player: { helmet: absent, speed: 2 }
+    expect: { KASK-01: [major] }
+
+  - name: KASK-01 niezapięty kask poniżej 10 lat
+    player: { ageBand: under10, helmet: loose, speed: 2 }
+    expect: { KASK-01: [major] }
+
+  - name: KASK-01 granica przedziału 16+
+    player: { ageBand: 16plus, helmet: absent, speed: 2 }
+    expect: { KASK-01: [] }
+
+  - name: KASK-01 prowadzenie roweru bez kasku
+    player: { helmet: absent, mode: walking_bike, speed: 1 }
+    expect: { KASK-01: [] }
+
+  - name: WYP-06 dodatkowe odblaski są bonusem
+    player: { extraReflectors: true, speed: 2 }
+    expect: { WYP-06: [good] }
+
+  - name: WYP-06 brak wyposażenia opcjonalnego
+    player: { extraReflectors: false, speed: 2 }
+    expect: { WYP-06: [] }
+
+  - name: GDZIE-01 wybór DDR
+    player: { x: 624, y: 1000, heading: -90, speed: 3 }
+    expect: { GDZIE-01: [good] }
+
+  - name: GDZIE-01 po 3 s na jezdni następuje jeden minor
+    duration: 7
+    player: { x: 528, y: 1100, heading: -90, speed: 3 }
+    expect: { GDZIE-01: [minor] }
+
+  - name: GDZIE-01 dokładnie 3 s
+    duration: 3
+    player: { x: 528, y: 1100, heading: -90, speed: 3 }
+    expect: { GDZIE-01: [] }
+
+  - name: GDZIE-01 DDR w innym kierunku
+    duration: 5
+    player: { x: 432, y: 1000, heading: 90, speed: 3 }
+    expect: { GDZIE-01: [] }
+
+  - name: GDZIE-01 krótki powrót po granicy podtrzymuje epizod
+    duration: 8
+    interpolate: false
+    player: { x: 528, y: 1000, heading: -90, speed: 3 }
+    inputs:
+      - { t: 3.2, x: 583 }
+      - { t: 3.35, x: 528 }
+    expect: { GDZIE-01: [minor] }
+
+  - name: GDZIE-04 szerokość dokładnie 2 m i limit ponad 50
+    properties: { sidewalk-wide: { width_m: 2 } }
+    player: { x: 1600, y: 1500, heading: 0, speed: 2 }
+    expect: { GDZIE-04: [good] }
+
+  - name: GDZIE-04 przy limicie równym 50 nie ma wyjątku
+    properties: { sidewalk-wide: { speedLimit: 50 } }
+    player: { x: 1600, y: 1500, heading: 0, speed: 2 }
+    expect: { GDZIE-04: [minor] }
+
+  - name: GDZIE-04 szeroki chodnik z DDR
+    properties: { sidewalk-wide: { parallelBikeInfra: ddr-west } }
+    player: { x: 1600, y: 1500, heading: 0, speed: 2 }
+    expect: { GDZIE-04: [minor] }
+
+  - name: GDZIE-04 wąski chodnik w pogodny dzień
+    player: { x: 368, y: 900, heading: -90, speed: 2 }
+    expect: { GDZIE-04: [minor] }
+
+  - name: GDZIE-04 ulewa dopuszcza wąski chodnik
+    env: { weather: rain_heavy }
+    player: { x: 368, y: 900, heading: -90, speed: 2 }
+    expect: { GDZIE-04: [good] }
+
+  - name: GDZIE-04 dorosły opiekuje się jadącym dzieckiem
+    player:
+      {
+        x: 368,
+        y: 900,
+        heading: -90,
+        speed: 2,
+        adultSupervisor: true,
+        supervisedChildId: franek,
+      }
+    agents:
+      - { id: franek, kind: cyclist, x: 368, y: 850, ageBand: under10 }
+    expect: { GDZIE-04: [good] }
+
+  - name: GDZIE-04 młody kurier nie spełnia wyjątku opiekuna
+    player:
+      { x: 368, y: 900, heading: -90, speed: 2, supervisedChildId: franek }
+    agents:
+      - { id: franek, kind: cyclist, x: 368, y: 850, ageBand: under10 }
+    expect: { GDZIE-04: [minor] }
+
+  - name: GDZIE-05 dokładnie 2,5 m/s przy pieszym
+    player: { x: 1600, y: 1500, heading: 0, speed: 2.5 }
+    agents:
+      - { id: pedestrian, kind: pedestrian, x: 1600, y: 1540 }
+    expect: { GDZIE-05: [good] }
+
+  - name: GDZIE-05 szybka jazda obok pieszego, bez konfliktu
+    player: { x: 1600, y: 1500, heading: 0, speed: 3 }
+    agents:
+      - { id: pedestrian, kind: pedestrian, x: 1600, y: 1540 }
+    expect: { GDZIE-05: [minor], GDZIE-04: [] }
+
+  - name: GDZIE-05 wąski chodnik w gołoledzi nie znosi obowiązku ustąpienia
+    env: { weather: ice }
+    player: { x: 368, y: 900, heading: -90, speed: 2.5 }
+    agents:
+      - {
+          id: pedestrian,
+          kind: pedestrian,
+          x: 368,
+          y: 865,
+          protectiveBrake: true,
+        }
+    expect: { GDZIE-05: [major] }
+
+  - name: GDZIE-05 pieszy poza promieniem 3 m
+    player: { x: 1600, y: 1500, heading: 0, speed: 3 }
+    agents:
+      - { id: pedestrian, kind: pedestrian, x: 1600, y: 1565 }
+    expect: { GDZIE-05: [] }
+
+  - name: GDZIE-05 nie dubluje zakazu jazdy po chodniku
+    player: { x: 368, y: 900, heading: -90, speed: 3 }
+    agents:
+      - { id: pedestrian, kind: pedestrian, x: 368, y: 870 }
+    expect: { GDZIE-04: [minor], GDZIE-05: [] }
+
+  - name: GDZIE-06 prowadzenie roweru przez zebrę jest dobre
+    player: { x: 656, y: 710, heading: -90, mode: walking_bike, speed: 1 }
+    inputs: [{ t: 0.5, y: 694 }]
+    expect: { GDZIE-06: [good] }
+
+  - name: GDZIE-06 jazda po pustej zebrze
+    player: { x: 656, y: 710, heading: -90, speed: 2 }
+    inputs: [{ t: 0.5, y: 694 }]
+    expect: { GDZIE-06: [minor] }
+
+  - name: GDZIE-06 pieszy na zebrze w promieniu 4 m
+    player: { x: 656, y: 710, heading: -90, speed: 2 }
+    inputs: [{ t: 0.5, y: 694 }]
+    agents:
+      - { id: pedestrian, kind: pedestrian, x: 656, y: 634 }
+    expect: { GDZIE-06: [major] }
+
+  - name: GDZIE-06 przejazd rowerowy nie jest zebrą
+    player: { x: 624, y: 710, heading: -90, speed: 2 }
+    inputs: [{ t: 0.5, y: 694 }]
+    expect: { GDZIE-06: [] }
+
+  - name: GDZIE-06 przecięcie zebry zgodnie z ruchem jezdni
+    player: { x: 634, y: 650, heading: 0, speed: 2 }
+    inputs: [{ t: 0.5, x: 675 }]
+    expect: { GDZIE-06: [] }
+
+  - name: ZNAK-STOP pełny postój przez dokładnie 0,3 s
+    player: { x: 432, y: 1250, heading: 90, speed: 0 }
+    inputs: [{ t: 0.3, speed: 2 }, { t: 0.6, y: 1295 }]
+    expect: { ZNAK-STOP: [good] }
+
+  - name: ZNAK-STOP przejazd bez postoju
+    player: { x: 432, y: 1250, heading: 90, speed: 2 }
+    inputs: [{ t: 0.5, y: 1295 }]
+    expect: { ZNAK-STOP: [minor] }
+
+  - name: ZNAK-STOP prędkość równa 0,1 m/s nie oznacza postoju
+    player: { x: 432, y: 1250, heading: 90, speed: 0.1 }
+    inputs: [{ t: 0.5, y: 1295, speed: 2 }]
+    expect: { ZNAK-STOP: [minor] }
+
+  - name: ZNAK-STOP zatrzymanie ponad 3 m przed kreską nie wystarcza
+    player: { x: 432, y: 1200, heading: 90, speed: 0 }
+    inputs: [{ t: 0.5, y: 1220, speed: 2 }, { t: 1, y: 1295 }]
+    expect: { ZNAK-STOP: [minor] }
+
+  - name: ZNAK-STOP i PIER-02, brak postoju oraz niebezpieczny konflikt
+    player: { x: 432, y: 1250, heading: 90, speed: 4 }
+    inputs: [{ t: 0.5, y: 1295 }]
+    agents:
+      - {
+          id: car,
+          kind: car,
+          x: 400,
+          y: 1424,
+          heading: 0,
+          speed: 4,
+          laneId: stop-W,
+        }
+    expect: { ZNAK-STOP: [major], PIER-02: [], ZNAK-A7: [] }
+    evidence: { ZNAK-STOP: { conflictWith: car } }
+
+  - name: ZNAK-STOP postój bez ustąpienia to PIER-02
+    player: { x: 432, y: 1250, heading: 90, speed: 0 }
+    inputs: [{ t: 0.3, speed: 2 }, { t: 0.6, y: 1295 }]
+    agents:
+      - {
+          id: car,
+          kind: car,
+          x: 400,
+          y: 1424,
+          heading: 0,
+          speed: 4,
+          laneId: stop-W,
+        }
+    expect: { ZNAK-STOP: [], PIER-02: [major] }
+
+  - name: SYG-01 postój na czerwonym, przejazd po zmianie
+    player: { x: 2192, y: 736, heading: -90, speed: 0 }
+    env: { phase: red }
+    inputs: [{ t: 0.5, phase: green, speed: 2 }, { t: 1, y: 695 }]
+    expect: { SYG-01: [good] }
+
+  - name: SYG-01 wjazd na czerwonym nawet bez ruchu
+    player: { x: 2192, y: 736, heading: -90, speed: 3 }
+    env: { phase: red }
+    inputs: [{ t: 0.5, y: 695 }]
+    expect: { SYG-01: [major] }
+
+  - name: SYG-01 postój nie usprawiedliwia wjazdu na czerwonym
+    player: { x: 2192, y: 736, heading: -90, speed: 0 }
+    env: { phase: red }
+    inputs: [{ t: 0.5, speed: 2 }, { t: 1, y: 695 }]
+    expect: { SYG-01: [major] }
+
+  - name: SYG-01 żółte z miejscem na hamowanie
+    player: { x: 2192, y: 754, heading: -90, speed: 3 }
+    env: { phase: green }
+    inputs: [{ t: 0.25, phase: yellow }, { t: 0.75, y: 695 }]
+    expect: { SYG-01: [minor] }
+
+  - name: SYG-01 żółte za blisko na bezpieczne hamowanie
+    player: { x: 2192, y: 708, heading: -90, speed: 4 }
+    env: { phase: green }
+    inputs: [{ t: 0.25, phase: yellow }, { t: 0.5, y: 695 }]
+    expect: { SYG-01: [] }
+
+  - name: S-2 skręt zgodny ze strzałką po postoju
+    player: { x: 2192, y: 736, heading: -90, maneuver: right, speed: 0 }
+    env: { phase: arrow }
+    inputs: [{ t: 0.3, speed: 2 }, { t: 0.6, y: 695 }]
+    expect: { ZNAK-S2: [good], SYG-01: [] }
+
+  - name: S-2 brak postoju przy skręcie warunkowym
+    player: { x: 2192, y: 736, heading: -90, maneuver: right, speed: 2 }
+    env: { phase: arrow }
+    inputs: [{ t: 0.6, y: 695 }]
+    expect: { ZNAK-S2: [minor], SYG-01: [] }
+
+  - name: S-2 nie zezwala na wjazd prosto
+    player: { x: 2192, y: 736, heading: -90, maneuver: straight, speed: 2 }
+    env: { phase: arrow }
+    inputs: [{ t: 0.6, y: 695 }]
+    expect: { ZNAK-S2: [], SYG-01: [major] }
+
+  - name: PIER-01 zwolnienie i przepuszczenie auta z prawej
+    player: { x: 528, y: 723, heading: -90, speed: 2 }
+    agents:
+      - {
+          id: car,
+          kind: car,
+          x: 602,
+          y: 560,
+          heading: 180,
+          speed: 4,
+          laneId: equal-E,
+          leaveAt: 0.6,
+        }
+    inputs: [{ t: 0.25, speed: 0 }, { t: 0.7, speed: 2 }, { t: 1, y: 695 }]
+    expect: { PIER-01: [good] }
+
+  - name: PIER-01 auto z prawej, TTC między 1 i 2 s
+    player: { x: 528, y: 723, heading: -90, speed: 4 }
+    agents:
+      - {
+          id: car,
+          kind: car,
+          x: 656,
+          y: 560,
+          heading: 180,
+          speed: 4,
+          laneId: equal-E,
+        }
+    inputs: [{ t: 0.5, y: 695 }]
+    expect: { PIER-01: [minor] }
+
+  - name: PIER-01 auto z prawej, TTC poniżej 1 s
+    player: { x: 528, y: 723, heading: -90, speed: 4 }
+    agents:
+      - {
+          id: car,
+          kind: car,
+          x: 590,
+          y: 560,
+          heading: 180,
+          speed: 4,
+          laneId: equal-E,
+        }
+    inputs: [{ t: 0.5, y: 695 }]
+    expect: { PIER-01: [major] }
+
+  - name: PIER-01 dokładnie 2 s do konfliktu
+    player: { x: 528, y: 723, heading: -90, speed: 4 }
+    agents:
+      - {
+          id: car,
+          kind: car,
+          x: 656,
+          y: 560,
+          heading: 180,
+          speed: 3,
+          laneId: equal-E,
+        }
+    inputs: [{ t: 0.5, y: 695 }]
+    expect: { PIER-01: [] }
+
+  - name: PIER-01 pojazd z lewej nie ma pierwszeństwa z prawej
+    player: { x: 528, y: 723, heading: -90, speed: 4 }
+    agents:
+      - {
+          id: car,
+          kind: car,
+          x: 476,
+          y: 656,
+          heading: 0,
+          speed: 4,
+          laneId: equal-W,
+        }
+    inputs: [{ t: 0.5, y: 695 }]
+    expect: { PIER-01: [] }
+
+  - name: PIER-01 trasy bez wspólnego punktu
+    player: { x: 528, y: 723, heading: -90, maneuver: right, speed: 4 }
+    agents:
+      - {
+          id: car,
+          kind: car,
+          x: 590,
+          y: 560,
+          heading: 180,
+          speed: 4,
+          laneId: equal-E,
+        }
+    inputs: [{ t: 0.5, y: 695 }]
+    expect: { PIER-01: [] }
+
+  - name: PIER-02 ustąpienie na A-7 także pojazdowi z lewej
+    player: { x: 1360, y: 730, heading: -90, speed: 2 }
+    agents:
+      - {
+          id: car,
+          kind: car,
+          x: 1260,
+          y: 656,
+          heading: 0,
+          speed: 4,
+          laneId: yield-W,
+          leaveAt: 0.6,
+        }
+    inputs: [{ t: 0.3, speed: 0 }, { t: 0.7, speed: 2 }, { t: 1, y: 695 }]
+    expect: { PIER-02: [good], PIER-01: [], ZNAK-A7: [] }
+
+  - name: PIER-02 dokładnie 1 s do konfliktu daje minor
+    player: { x: 1360, y: 730, heading: -90, speed: 4 }
+    agents:
+      - {
+          id: car,
+          kind: car,
+          x: 1296,
+          y: 656,
+          heading: 0,
+          speed: 3,
+          laneId: yield-W,
+        }
+    inputs: [{ t: 0.5, y: 695 }]
+    expect: { PIER-02: [minor], PIER-01: [], ZNAK-A7: [] }
+
+  - name: PIER-02 hamowanie ochronne podwyższa wagę
+    player: { x: 1360, y: 730, heading: -90, speed: 4 }
+    agents:
+      - {
+          id: car,
+          kind: car,
+          x: 1260,
+          y: 656,
+          heading: 0,
+          speed: 4,
+          laneId: yield-W,
+          protectiveBrake: true,
+        }
+    inputs: [{ t: 0.5, y: 695 }]
+    expect: { PIER-02: [major], PIER-01: [], ZNAK-A7: [] }
+
+  - name: PIER-02 po wycofaniu przed linię kolejny wjazd ma nowy epizod
+    duration: 3
+    player: { x: 1360, y: 730, heading: -90, speed: 4 }
+    agents:
+      - {
+          id: car,
+          kind: car,
+          x: 1328,
+          y: 656,
+          heading: 0,
+          speed: 4,
+          laneId: yield-W,
+        }
+    inputs:
+      - { t: 0.5, y: 695 }
+      - { t: 0.8, y: 800, heading: 90 }
+      - { t: 1.5, y: 740, heading: -90 }
+      - { t: 2, y: 695 }
+    expect: { PIER-02: [major, major] }
+
+  - name: MAN-01 kierunek zgodny przez dokładnie 1,5 s przed skrętem
+    duration: 3
+    player: { x: 528, y: 750, heading: -90, speed: 3, signal: right }
+    inputs:
+      - { t: 1.5, y: 695 }
+      - { t: 1.6, signal: none }
+      - { t: 2, x: 550, y: 660, heading: 0 }
+    interpolate: false
+    expect: { MAN-01: [good] }
+
+  - name: MAN-01 sygnał spóźniony
+    duration: 3
+    player: { x: 528, y: 750, heading: -90, speed: 3 }
+    inputs: [{ t: 1, signal: right }, { t: 1.5, y: 695 }, { t: 2, heading: 0 }]
+    interpolate: false
+    expect: { MAN-01: [minor] }
+
+  - name: MAN-01 sygnał w przeciwną stronę
+    duration: 3
+    player: { x: 528, y: 750, heading: -90, speed: 3, signal: left }
+    inputs: [{ t: 1.5, y: 695 }, { t: 2, heading: 0 }]
+    interpolate: false
+    expect: { MAN-01: [minor] }
+
+  - name: MAN-01 dokładnie 45 stopni nie jest skrętem
+    player: { x: 528, y: 750, heading: -90, speed: 3 }
+    inputs: [{ t: 0.4, y: 695 }, { t: 0.7, heading: -45 }]
+    expect: { MAN-01: [] }
+
+  - name: MAN-01 zmiana pasa o ponad metr
+    duration: 2
+    player: { x: 528, y: 1000, heading: -90, speed: 3 }
+    inputs: [{ t: 1, x: 494, y: 970 }]
+    expect: { MAN-01: [minor] }
+
+  - name: GDZIE-01 długie opuszczenie jezdni pozwala zacząć nowy epizod
+    duration: 8
+    interpolate: false
+    player: { x: 528, y: 1000, heading: -90, speed: 3 }
+    inputs: [{ t: 3.2, x: 583 }, { t: 3.6, x: 528 }]
+    expect: { GDZIE-01: [minor, minor] }
+
+  - name: GDZIE-06 wsiadanie na rower na zebrze nie daje pochwały
+    duration: 2
+    player: { x: 656, y: 710, heading: -90, mode: walking_bike, speed: 1 }
+    inputs: [{ t: 0.5, y: 694 }, { t: 1, y: 650, mode: riding }]
+    expect: { GDZIE-06: [minor] }
+
+  - name: ZNAK-STOP wahanie na krawędzi nie dubluje werdyktu
+    interpolate: false
+    player: { x: 432, y: 1270, heading: 90, speed: 2 }
+    inputs: [{ t: 0.2, y: 1282 }, { t: 0.3, y: 1279 }, { t: 0.4, y: 1282 }]
+    expect: { ZNAK-STOP: [minor] }
+
+  - name: SYG-01 przeczekanie czerwonego bez wjazdu daje pochwałę
+    player: { x: 2192, y: 736, heading: -90, speed: 0 }
+    env: { phase: red }
+    inputs: [{ t: 0.5, phase: green }]
+    expect: { SYG-01: [good] }
+
+  - name: S-2 jazda prosto po zasygnalizowaniu skrętu nie uprawnia do wjazdu
+    duration: 3
+    player: { x: 2192, y: 736, heading: -90, signal: right, speed: 2 }
+    env: { phase: arrow }
+    inputs: [{ t: 0.5, y: 695 }, { t: 2, y: 500 }]
+    expect: { ZNAK-S2: [], SYG-01: [major] }
+
+  - name: S-2 faktyczny skręt w prawo po postoju bez pokazywania ręką
+    duration: 3
+    player: { x: 2192, y: 736, heading: -90, speed: 0 }
+    env: { phase: arrow }
+    inputs:
+      [
+        { t: 0.3, speed: 2 },
+        { t: 0.6, y: 690 },
+        { t: 1, heading: 0 },
+        { t: 2, x: 2250, y: 656 },
+      ]
+    expect: { ZNAK-S2: [good], SYG-01: [], MAN-01: [minor] }
+
+  - name: MAN-01 ręka pokazana już w trakcie zmiany pasa nie wystarcza
+    duration: 4
+    player: { x: 528, y: 1000, heading: -90, speed: 3 }
+    inputs: [{ t: 1, x: 522, signal: left }, { t: 3, x: 495 }]
+    expect: { MAN-01: [minor] }
+
+  - name: MAN-01 sygnał wygasa po sześciu sekundach
+    duration: 8
+    interpolate: false
+    player: { x: 528, y: 750, heading: -90, speed: 2, signal: right }
+    inputs: [{ t: 6, y: 695 }, { t: 6.5, heading: 0 }]
+    expect: { MAN-01: [minor] }

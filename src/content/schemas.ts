@@ -29,7 +29,7 @@ export const rulesSchema = z.strictObject({
         podstawa: text,
         weryfikacja: z.boolean(),
         detektor: z.enum(['sim', 'scenka', 'garaz', 'plac', 'quiz-only']),
-        waga_bledu: z.enum(['minor', 'major']),
+        waga_bledu: z.enum(['minor', 'major']).nullable(),
         dobry_nawyk: text.optional(),
         feedback: text.max(140),
       }),

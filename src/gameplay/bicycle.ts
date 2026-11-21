@@ -28,6 +28,7 @@ export interface DriveInput {
 }
 export const METERS_PER_PIXEL = 1.5 / 32;
 export const FIXED_STEP = 1 / 60;
+export const BRAKE_DECELERATION = 250;
 export const RIDER_RADIUS = 9;
 const approach = (value: number, target: number, amount: number) =>
   value < target
@@ -73,7 +74,7 @@ export function stepRider(
   r.speed = approach(
     r.speed,
     brake ? 0 : target,
-    (brake ? 250 : target > r.speed ? 70 : 40) * dt,
+    (brake ? BRAKE_DECELERATION : target > r.speed ? 70 : 40) * dt,
   );
   const onCurb =
     !r.walking &&
