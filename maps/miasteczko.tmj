@@ -16,8 +16,8 @@
       "value": 14
     }
   ],
-  "nextlayerid": 17,
-  "nextobjectid": 124,
+  "nextlayerid": 20,
+  "nextobjectid": 154,
   "layers": [
     {
       "id": 1,
@@ -10441,9 +10441,9 @@
           "id": 35,
           "name": "curb",
           "type": "",
-          "x": 2304,
+          "x": 2352,
           "y": 509,
-          "width": 224,
+          "width": 176,
           "height": 6,
           "rotation": 0,
           "visible": true,
@@ -10513,9 +10513,9 @@
           "id": 39,
           "name": "curb",
           "type": "",
-          "x": 2304,
+          "x": 2352,
           "y": 701,
-          "width": 224,
+          "width": 176,
           "height": 6,
           "rotation": 0,
           "visible": true,
@@ -10585,9 +10585,9 @@
           "id": 43,
           "name": "curb",
           "type": "",
-          "x": 2304,
+          "x": 2352,
           "y": 1277,
-          "width": 224,
+          "width": 176,
           "height": 6,
           "rotation": 0,
           "visible": true,
@@ -10657,9 +10657,9 @@
           "id": 47,
           "name": "curb",
           "type": "",
-          "x": 2304,
+          "x": 2352,
           "y": 1469,
-          "width": 224,
+          "width": 176,
           "height": 6,
           "rotation": 0,
           "visible": true,
@@ -10696,10 +10696,10 @@
         },
         {
           "id": 49,
-          "name": "pedestrian-zebra",
+          "name": "cyclist-roadway",
           "type": "",
-          "x": 656,
-          "y": 721,
+          "x": 432,
+          "y": 0,
           "width": 0,
           "height": 0,
           "rotation": 0,
@@ -10708,55 +10708,12 @@
             {
               "name": "kind",
               "type": "string",
-              "value": "pedestrian"
+              "value": "roadway_cyclist"
             },
             {
-              "name": "heading",
-              "type": "float",
-              "value": -90
-            },
-            {
-              "name": "speed",
-              "type": "float",
-              "value": 1.2
-            },
-            {
-              "name": "length_m",
-              "type": "float",
-              "value": 10.5
-            }
-          ]
-        },
-        {
-          "id": 50,
-          "name": "pedestrian-sidewalk",
-          "type": "",
-          "x": 1540,
-          "y": 1516,
-          "width": 0,
-          "height": 0,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
+              "name": "lane",
               "type": "string",
-              "value": "pedestrian"
-            },
-            {
-              "name": "heading",
-              "type": "float",
-              "value": 0
-            },
-            {
-              "name": "speed",
-              "type": "float",
-              "value": 1.1
-            },
-            {
-              "name": "length_m",
-              "type": "float",
-              "value": 17
+              "value": "equal-N"
             }
           ]
         }
@@ -10772,7 +10729,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 51,
+          "id": 50,
           "name": "workshop",
           "type": "",
           "x": 688,
@@ -10787,6 +10744,697 @@
     },
     {
       "id": 7,
+      "name": "traffic_routes",
+      "type": "objectgroup",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 137,
+          "name": "pedestrian-zebra",
+          "type": "",
+          "x": 656,
+          "y": 721,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pedestrian"
+            },
+            {
+              "name": "speed",
+              "type": "float",
+              "value": 1.45
+            }
+          ],
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": -227
+            }
+          ]
+        },
+        {
+          "id": 138,
+          "name": "pedestrian-lights",
+          "type": "",
+          "x": 2320,
+          "y": 721,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pedestrian"
+            },
+            {
+              "name": "speed",
+              "type": "float",
+              "value": 1.5
+            }
+          ],
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": -226
+            }
+          ]
+        },
+        {
+          "id": 139,
+          "name": "pedestrian-sidewalk",
+          "type": "",
+          "x": 1540,
+          "y": 1516,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pedestrian"
+            },
+            {
+              "name": "speed",
+              "type": "float",
+              "value": 1.1
+            }
+          ],
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 360,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "id": 140,
+          "name": "cyclist-ddr",
+          "type": "",
+          "x": 624,
+          "y": 1920,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "cyclist"
+            },
+            {
+              "name": "speed",
+              "type": "float",
+              "value": 4.5
+            }
+          ],
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": -1920
+            }
+          ]
+        },
+        {
+          "id": 141,
+          "name": "cyclist-bike-lane",
+          "type": "",
+          "x": 2560,
+          "y": 531,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "cyclist"
+            },
+            {
+              "name": "speed",
+              "type": "float",
+              "value": 4.2
+            }
+          ],
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -2560,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "id": 142,
+          "name": "tram-1",
+          "type": "",
+          "x": 0,
+          "y": 608,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "tram"
+            },
+            {
+              "name": "speed",
+              "type": "float",
+              "value": 7
+            },
+            {
+              "name": "repeat_s",
+              "type": "float",
+              "value": 6
+            }
+          ],
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 384,
+              "y": 0
+            },
+            {
+              "x": 576,
+              "y": 0
+            },
+            {
+              "x": 1120,
+              "y": 0
+            },
+            {
+              "x": 1216,
+              "y": 0
+            },
+            {
+              "x": 1408,
+              "y": 0
+            },
+            {
+              "x": 2048,
+              "y": 0
+            },
+            {
+              "x": 2240,
+              "y": 0
+            },
+            {
+              "x": 2560,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "id": 143,
+          "name": "tram-passenger",
+          "type": "",
+          "x": 1120,
+          "y": 628,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "passenger"
+            },
+            {
+              "name": "speed",
+              "type": "float",
+              "value": 1.5
+            }
+          ],
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": 92
+            }
+          ]
+        },
+        {
+          "id": 144,
+          "name": "emergency-1",
+          "type": "",
+          "x": 0,
+          "y": 1396,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "emergency"
+            },
+            {
+              "name": "speed",
+              "type": "float",
+              "value": 9
+            },
+            {
+              "name": "start_s",
+              "type": "float",
+              "value": 4
+            },
+            {
+              "name": "repeat_s",
+              "type": "float",
+              "value": 42
+            }
+          ],
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 384,
+              "y": 0
+            },
+            {
+              "x": 576,
+              "y": 0
+            },
+            {
+              "x": 1216,
+              "y": 0
+            },
+            {
+              "x": 1408,
+              "y": 0
+            },
+            {
+              "x": 2048,
+              "y": 0
+            },
+            {
+              "x": 2240,
+              "y": 0
+            },
+            {
+              "x": 2560,
+              "y": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "traffic_controls",
+      "type": "objectgroup",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 145,
+          "name": "tram-control-0",
+          "type": "",
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "junction"
+            },
+            {
+              "name": "route",
+              "type": "string",
+              "value": "tram-1"
+            },
+            {
+              "name": "vertex",
+              "type": "float",
+              "value": 1
+            },
+            {
+              "name": "exit",
+              "type": "float",
+              "value": 2
+            },
+            {
+              "name": "lane",
+              "type": "string",
+              "value": "tram-equal-W"
+            }
+          ]
+        },
+        {
+          "id": 146,
+          "name": "tram-control-1",
+          "type": "",
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "junction"
+            },
+            {
+              "name": "route",
+              "type": "string",
+              "value": "tram-1"
+            },
+            {
+              "name": "vertex",
+              "type": "float",
+              "value": 4
+            },
+            {
+              "name": "exit",
+              "type": "float",
+              "value": 5
+            },
+            {
+              "name": "lane",
+              "type": "string",
+              "value": "tram-yield-W"
+            }
+          ]
+        },
+        {
+          "id": 147,
+          "name": "tram-control-2",
+          "type": "",
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "junction"
+            },
+            {
+              "name": "route",
+              "type": "string",
+              "value": "tram-1"
+            },
+            {
+              "name": "vertex",
+              "type": "float",
+              "value": 6
+            },
+            {
+              "name": "exit",
+              "type": "float",
+              "value": 7
+            },
+            {
+              "name": "lane",
+              "type": "string",
+              "value": "tram-lights-W"
+            }
+          ]
+        },
+        {
+          "id": 148,
+          "name": "emergency-control-0",
+          "type": "",
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "junction"
+            },
+            {
+              "name": "route",
+              "type": "string",
+              "value": "emergency-1"
+            },
+            {
+              "name": "vertex",
+              "type": "float",
+              "value": 1
+            },
+            {
+              "name": "exit",
+              "type": "float",
+              "value": 2
+            },
+            {
+              "name": "lane",
+              "type": "string",
+              "value": "stop-W"
+            }
+          ]
+        },
+        {
+          "id": 149,
+          "name": "emergency-control-1",
+          "type": "",
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "junction"
+            },
+            {
+              "name": "route",
+              "type": "string",
+              "value": "emergency-1"
+            },
+            {
+              "name": "vertex",
+              "type": "float",
+              "value": 3
+            },
+            {
+              "name": "exit",
+              "type": "float",
+              "value": 4
+            },
+            {
+              "name": "lane",
+              "type": "string",
+              "value": "south-central-W"
+            }
+          ]
+        },
+        {
+          "id": 150,
+          "name": "emergency-control-2",
+          "type": "",
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "junction"
+            },
+            {
+              "name": "route",
+              "type": "string",
+              "value": "emergency-1"
+            },
+            {
+              "name": "vertex",
+              "type": "float",
+              "value": 5
+            },
+            {
+              "name": "exit",
+              "type": "float",
+              "value": 6
+            },
+            {
+              "name": "lane",
+              "type": "string",
+              "value": "south-east-W"
+            }
+          ]
+        },
+        {
+          "id": 151,
+          "name": "stop-without-island",
+          "type": "",
+          "x": 1096,
+          "y": 620,
+          "width": 48,
+          "height": 84,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "stop"
+            },
+            {
+              "name": "route",
+              "type": "string",
+              "value": "tram-1"
+            },
+            {
+              "name": "vertex",
+              "type": "float",
+              "value": 3
+            },
+            {
+              "name": "passenger",
+              "type": "string",
+              "value": "tram-passenger"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "crossing_signals",
+      "type": "objectgroup",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 152,
+          "name": "pedestrian-signal",
+          "type": "",
+          "x": 2338,
+          "y": 719,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "crossing",
+              "type": "string",
+              "value": "zebra-lights"
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 18
+            },
+            {
+              "name": "cycle_s",
+              "type": "float",
+              "value": 20
+            },
+            {
+              "name": "green_s",
+              "type": "float",
+              "value": 3.5
+            }
+          ]
+        },
+        {
+          "id": 153,
+          "name": "bike-signal",
+          "type": "",
+          "x": 2244,
+          "y": 514,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "crossing",
+              "type": "string",
+              "value": "cycle-lane-lights"
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 10
+            },
+            {
+              "name": "cycle_s",
+              "type": "float",
+              "value": 20
+            },
+            {
+              "name": "green_s",
+              "type": "float",
+              "value": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
       "name": "zones",
       "type": "objectgroup",
       "opacity": 1,
@@ -10795,7 +11443,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 52,
+          "id": 51,
           "name": "road-ns-12",
           "type": "",
           "x": 384,
@@ -10813,7 +11461,7 @@
           ]
         },
         {
-          "id": 53,
+          "id": 52,
           "name": "road-ns-38",
           "type": "",
           "x": 1216,
@@ -10831,7 +11479,7 @@
           ]
         },
         {
-          "id": 54,
+          "id": 53,
           "name": "road-ns-64",
           "type": "",
           "x": 2048,
@@ -10849,7 +11497,7 @@
           ]
         },
         {
-          "id": 55,
+          "id": 54,
           "name": "road-ew-16",
           "type": "",
           "x": 0,
@@ -10867,7 +11515,7 @@
           ]
         },
         {
-          "id": 56,
+          "id": 55,
           "name": "road-ew-40",
           "type": "",
           "x": 0,
@@ -10885,7 +11533,7 @@
           ]
         },
         {
-          "id": 57,
+          "id": 56,
           "name": "sidewalk-ns-11",
           "type": "",
           "x": 352,
@@ -10913,7 +11561,7 @@
           ]
         },
         {
-          "id": 58,
+          "id": 57,
           "name": "sidewalk-ns-18",
           "type": "",
           "x": 576,
@@ -10941,7 +11589,7 @@
           ]
         },
         {
-          "id": 59,
+          "id": 58,
           "name": "sidewalk-ns-37",
           "type": "",
           "x": 1184,
@@ -10969,7 +11617,7 @@
           ]
         },
         {
-          "id": 60,
+          "id": 59,
           "name": "sidewalk-ns-44",
           "type": "",
           "x": 1408,
@@ -10997,7 +11645,7 @@
           ]
         },
         {
-          "id": 61,
+          "id": 60,
           "name": "sidewalk-ns-63",
           "type": "",
           "x": 2016,
@@ -11025,7 +11673,7 @@
           ]
         },
         {
-          "id": 62,
+          "id": 61,
           "name": "sidewalk-ns-70",
           "type": "",
           "x": 2240,
@@ -11053,7 +11701,7 @@
           ]
         },
         {
-          "id": 63,
+          "id": 62,
           "name": "sidewalk-ew-15",
           "type": "",
           "x": 0,
@@ -11081,7 +11729,7 @@
           ]
         },
         {
-          "id": 64,
+          "id": 63,
           "name": "sidewalk-ew-22",
           "type": "",
           "x": 0,
@@ -11109,7 +11757,7 @@
           ]
         },
         {
-          "id": 65,
+          "id": 64,
           "name": "sidewalk-ew-39",
           "type": "",
           "x": 0,
@@ -11137,7 +11785,7 @@
           ]
         },
         {
-          "id": 66,
+          "id": 65,
           "name": "sidewalk-ew-46",
           "type": "",
           "x": 0,
@@ -11165,7 +11813,7 @@
           ]
         },
         {
-          "id": 67,
+          "id": 66,
           "name": "sidewalk-wide",
           "type": "",
           "x": 1472,
@@ -11193,7 +11841,76 @@
           ]
         },
         {
+          "id": 67,
+          "name": "ddr-west-north",
+          "type": "",
+          "x": 608,
+          "y": 0,
+          "width": 32,
+          "height": 512,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bike_path"
+            },
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "N"
+            }
+          ]
+        },
+        {
           "id": 68,
+          "name": "ddr-west-south",
+          "type": "",
+          "x": 608,
+          "y": 1472,
+          "width": 32,
+          "height": 448,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bike_path"
+            },
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "N"
+            }
+          ]
+        },
+        {
+          "id": 69,
+          "name": "bike-lane-top",
+          "type": "",
+          "x": 0,
+          "y": 520,
+          "width": 2560,
+          "height": 22,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bike_lane"
+            },
+            {
+              "name": "direction",
+              "type": "string",
+              "value": "W"
+            }
+          ]
+        },
+        {
+          "id": 70,
           "name": "ddr-west",
           "type": "",
           "x": 608,
@@ -11218,7 +11935,7 @@
       ]
     },
     {
-      "id": 8,
+      "id": 11,
       "name": "lanes",
       "type": "objectgroup",
       "opacity": 1,
@@ -11227,7 +11944,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 70,
+          "id": 72,
           "name": "equal-N",
           "type": "",
           "x": 432,
@@ -11285,7 +12002,7 @@
           ]
         },
         {
-          "id": 71,
+          "id": 73,
           "name": "equal-N-out",
           "type": "",
           "x": 528,
@@ -11328,7 +12045,7 @@
           ]
         },
         {
-          "id": 72,
+          "id": 74,
           "name": "equal-E",
           "type": "",
           "x": 1216,
@@ -11391,7 +12108,7 @@
           ]
         },
         {
-          "id": 73,
+          "id": 75,
           "name": "equal-S",
           "type": "",
           "x": 528,
@@ -11459,7 +12176,7 @@
           ]
         },
         {
-          "id": 74,
+          "id": 76,
           "name": "equal-W",
           "type": "",
           "x": 0,
@@ -11517,7 +12234,7 @@
           ]
         },
         {
-          "id": 75,
+          "id": 77,
           "name": "equal-W-out",
           "type": "",
           "x": 384,
@@ -11560,7 +12277,7 @@
           ]
         },
         {
-          "id": 77,
+          "id": 79,
           "name": "yield-N",
           "type": "",
           "x": 1264,
@@ -11618,7 +12335,7 @@
           ]
         },
         {
-          "id": 78,
+          "id": 80,
           "name": "yield-N-out",
           "type": "",
           "x": 1360,
@@ -11661,7 +12378,7 @@
           ]
         },
         {
-          "id": 80,
+          "id": 82,
           "name": "yield-E",
           "type": "",
           "x": 2048,
@@ -11724,7 +12441,7 @@
           ]
         },
         {
-          "id": 82,
+          "id": 84,
           "name": "yield-S",
           "type": "",
           "x": 1360,
@@ -11787,7 +12504,7 @@
           ]
         },
         {
-          "id": 84,
+          "id": 86,
           "name": "yield-W",
           "type": "",
           "x": 576,
@@ -11850,7 +12567,7 @@
           ]
         },
         {
-          "id": 87,
+          "id": 89,
           "name": "lights-N",
           "type": "",
           "x": 2096,
@@ -11908,7 +12625,7 @@
           ]
         },
         {
-          "id": 88,
+          "id": 90,
           "name": "lights-N-out",
           "type": "",
           "x": 2192,
@@ -11951,7 +12668,7 @@
           ]
         },
         {
-          "id": 90,
+          "id": 92,
           "name": "lights-E",
           "type": "",
           "x": 2560,
@@ -12009,7 +12726,7 @@
           ]
         },
         {
-          "id": 91,
+          "id": 93,
           "name": "lights-E-out",
           "type": "",
           "x": 2240,
@@ -12052,7 +12769,7 @@
           ]
         },
         {
-          "id": 93,
+          "id": 95,
           "name": "lights-S",
           "type": "",
           "x": 2192,
@@ -12115,7 +12832,7 @@
           ]
         },
         {
-          "id": 96,
+          "id": 98,
           "name": "lights-W",
           "type": "",
           "x": 1408,
@@ -12178,7 +12895,7 @@
           ]
         },
         {
-          "id": 99,
+          "id": 101,
           "name": "stop-N",
           "type": "",
           "x": 432,
@@ -12241,7 +12958,7 @@
           ]
         },
         {
-          "id": 101,
+          "id": 103,
           "name": "stop-E",
           "type": "",
           "x": 1216,
@@ -12304,7 +13021,7 @@
           ]
         },
         {
-          "id": 103,
+          "id": 105,
           "name": "stop-S",
           "type": "",
           "x": 528,
@@ -12362,7 +13079,7 @@
           ]
         },
         {
-          "id": 104,
+          "id": 106,
           "name": "stop-S-out",
           "type": "",
           "x": 432,
@@ -12405,7 +13122,7 @@
           ]
         },
         {
-          "id": 106,
+          "id": 108,
           "name": "stop-W",
           "type": "",
           "x": 0,
@@ -12463,7 +13180,7 @@
           ]
         },
         {
-          "id": 107,
+          "id": 109,
           "name": "stop-W-out",
           "type": "",
           "x": 384,
@@ -12506,7 +13223,7 @@
           ]
         },
         {
-          "id": 110,
+          "id": 112,
           "name": "south-central-N",
           "type": "",
           "x": 1264,
@@ -12569,7 +13286,7 @@
           ]
         },
         {
-          "id": 111,
+          "id": 113,
           "name": "south-central-E",
           "type": "",
           "x": 2048,
@@ -12632,7 +13349,7 @@
           ]
         },
         {
-          "id": 112,
+          "id": 114,
           "name": "south-central-S",
           "type": "",
           "x": 1360,
@@ -12690,7 +13407,7 @@
           ]
         },
         {
-          "id": 113,
+          "id": 115,
           "name": "south-central-S-out",
           "type": "",
           "x": 1264,
@@ -12733,7 +13450,7 @@
           ]
         },
         {
-          "id": 114,
+          "id": 116,
           "name": "south-central-W",
           "type": "",
           "x": 576,
@@ -12796,7 +13513,7 @@
           ]
         },
         {
-          "id": 116,
+          "id": 118,
           "name": "south-east-N",
           "type": "",
           "x": 2096,
@@ -12859,7 +13576,7 @@
           ]
         },
         {
-          "id": 117,
+          "id": 119,
           "name": "south-east-E",
           "type": "",
           "x": 2560,
@@ -12917,7 +13634,7 @@
           ]
         },
         {
-          "id": 118,
+          "id": 120,
           "name": "south-east-E-out",
           "type": "",
           "x": 2240,
@@ -12960,7 +13677,7 @@
           ]
         },
         {
-          "id": 119,
+          "id": 121,
           "name": "south-east-S",
           "type": "",
           "x": 2192,
@@ -13018,7 +13735,7 @@
           ]
         },
         {
-          "id": 120,
+          "id": 122,
           "name": "south-east-S-out",
           "type": "",
           "x": 2096,
@@ -13061,7 +13778,7 @@
           ]
         },
         {
-          "id": 121,
+          "id": 123,
           "name": "south-east-W",
           "type": "",
           "x": 1408,
@@ -13122,11 +13839,170 @@
               "y": 0
             }
           ]
+        },
+        {
+          "id": 133,
+          "name": "tram-equal-W",
+          "type": "",
+          "x": 0,
+          "y": 608,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "intersection",
+              "type": "string",
+              "value": "equal"
+            },
+            {
+              "name": "side",
+              "type": "string",
+              "value": "W"
+            },
+            {
+              "name": "type",
+              "type": "string",
+              "value": "tram"
+            },
+            {
+              "name": "width_px",
+              "type": "float",
+              "value": 28
+            },
+            {
+              "name": "speedLimit",
+              "type": "float",
+              "value": 35
+            },
+            {
+              "name": "priorityClass",
+              "type": "string",
+              "value": "equal"
+            }
+          ],
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 384,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "id": 134,
+          "name": "tram-yield-W",
+          "type": "",
+          "x": 1120,
+          "y": 608,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "intersection",
+              "type": "string",
+              "value": "yield"
+            },
+            {
+              "name": "side",
+              "type": "string",
+              "value": "W"
+            },
+            {
+              "name": "type",
+              "type": "string",
+              "value": "tram"
+            },
+            {
+              "name": "width_px",
+              "type": "float",
+              "value": 28
+            },
+            {
+              "name": "speedLimit",
+              "type": "float",
+              "value": 35
+            },
+            {
+              "name": "priorityClass",
+              "type": "string",
+              "value": "main"
+            }
+          ],
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 96,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "id": 135,
+          "name": "tram-lights-W",
+          "type": "",
+          "x": 1408,
+          "y": 608,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "intersection",
+              "type": "string",
+              "value": "lights"
+            },
+            {
+              "name": "side",
+              "type": "string",
+              "value": "W"
+            },
+            {
+              "name": "type",
+              "type": "string",
+              "value": "tram"
+            },
+            {
+              "name": "width_px",
+              "type": "float",
+              "value": 28
+            },
+            {
+              "name": "speedLimit",
+              "type": "float",
+              "value": 35
+            },
+            {
+              "name": "priorityClass",
+              "type": "string",
+              "value": "signal"
+            }
+          ],
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 640,
+              "y": 0
+            }
+          ]
         }
       ]
     },
     {
-      "id": 9,
+      "id": 12,
       "name": "intersections",
       "type": "objectgroup",
       "opacity": 1,
@@ -13135,7 +14011,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 69,
+          "id": 71,
           "name": "equal",
           "type": "",
           "x": 384,
@@ -13153,7 +14029,7 @@
           ]
         },
         {
-          "id": 76,
+          "id": 78,
           "name": "yield",
           "type": "",
           "x": 1216,
@@ -13171,7 +14047,7 @@
           ]
         },
         {
-          "id": 86,
+          "id": 88,
           "name": "lights",
           "type": "",
           "x": 2048,
@@ -13189,7 +14065,7 @@
           ]
         },
         {
-          "id": 98,
+          "id": 100,
           "name": "stop",
           "type": "",
           "x": 384,
@@ -13207,7 +14083,7 @@
           ]
         },
         {
-          "id": 109,
+          "id": 111,
           "name": "south-central",
           "type": "",
           "x": 1216,
@@ -13225,7 +14101,7 @@
           ]
         },
         {
-          "id": 115,
+          "id": 117,
           "name": "south-east",
           "type": "",
           "x": 2048,
@@ -13245,7 +14121,7 @@
       ]
     },
     {
-      "id": 10,
+      "id": 13,
       "name": "signs",
       "type": "objectgroup",
       "opacity": 1,
@@ -13254,7 +14130,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 79,
+          "id": 81,
           "name": "yield-N-A-7",
           "type": "",
           "x": 1204,
@@ -13282,7 +14158,7 @@
           ]
         },
         {
-          "id": 81,
+          "id": 83,
           "name": "yield-E-D-1",
           "type": "",
           "x": 1428,
@@ -13310,7 +14186,7 @@
           ]
         },
         {
-          "id": 83,
+          "id": 85,
           "name": "yield-S-A-7",
           "type": "",
           "x": 1420,
@@ -13338,7 +14214,7 @@
           ]
         },
         {
-          "id": 85,
+          "id": 87,
           "name": "yield-W-D-1",
           "type": "",
           "x": 1196,
@@ -13366,7 +14242,7 @@
           ]
         },
         {
-          "id": 100,
+          "id": 102,
           "name": "stop-N-B-20",
           "type": "",
           "x": 372,
@@ -13394,7 +14270,7 @@
           ]
         },
         {
-          "id": 102,
+          "id": 104,
           "name": "stop-E-D-1",
           "type": "",
           "x": 596,
@@ -13422,7 +14298,7 @@
           ]
         },
         {
-          "id": 105,
+          "id": 107,
           "name": "stop-S-B-20",
           "type": "",
           "x": 588,
@@ -13450,7 +14326,7 @@
           ]
         },
         {
-          "id": 108,
+          "id": 110,
           "name": "stop-W-D-1",
           "type": "",
           "x": 364,
@@ -13480,7 +14356,7 @@
       ]
     },
     {
-      "id": 11,
+      "id": 14,
       "name": "signals",
       "type": "objectgroup",
       "opacity": 1,
@@ -13489,7 +14365,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 89,
+          "id": 91,
           "name": "lights-N-S-1",
           "type": "",
           "x": 2036,
@@ -13537,7 +14413,7 @@
           ]
         },
         {
-          "id": 92,
+          "id": 94,
           "name": "lights-E-S-1",
           "type": "",
           "x": 2260,
@@ -13585,7 +14461,7 @@
           ]
         },
         {
-          "id": 94,
+          "id": 96,
           "name": "lights-S-S-1",
           "type": "",
           "x": 2252,
@@ -13633,7 +14509,7 @@
           ]
         },
         {
-          "id": 95,
+          "id": 97,
           "name": "lights-S-S-2",
           "type": "",
           "x": 2272,
@@ -13676,7 +14552,7 @@
           ]
         },
         {
-          "id": 97,
+          "id": 99,
           "name": "lights-W-S-1",
           "type": "",
           "x": 2028,
@@ -13722,11 +14598,59 @@
               "value": 2
             }
           ]
+        },
+        {
+          "id": 136,
+          "name": "tram-signal",
+          "type": "",
+          "x": 2028,
+          "y": 608,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "code",
+              "type": "string",
+              "value": "S-1"
+            },
+            {
+              "name": "affects",
+              "type": "string",
+              "value": "tram-lights-W"
+            },
+            {
+              "name": "group",
+              "type": "string",
+              "value": "EW"
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 10
+            },
+            {
+              "name": "cycle_s",
+              "type": "float",
+              "value": 20
+            },
+            {
+              "name": "green_s",
+              "type": "float",
+              "value": 7
+            },
+            {
+              "name": "yellow_s",
+              "type": "float",
+              "value": 2
+            }
+          ]
         }
       ]
     },
     {
-      "id": 12,
+      "id": 15,
       "name": "crossings",
       "type": "objectgroup",
       "opacity": 1,
@@ -13735,10 +14659,38 @@
       "y": 0,
       "objects": [
         {
-          "id": 122,
+          "id": 127,
           "name": "zebra-west",
           "type": "",
           "x": 640,
+          "y": 512,
+          "width": 32,
+          "height": 192,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pedestrian"
+            },
+            {
+              "name": "axis",
+              "type": "string",
+              "value": "y"
+            },
+            {
+              "name": "trafficGroup",
+              "type": "string",
+              "value": "crossings-west"
+            }
+          ]
+        },
+        {
+          "id": 128,
+          "name": "zebra-lights",
+          "type": "",
+          "x": 2304,
           "y": 512,
           "width": 32,
           "height": 192,
@@ -13758,7 +14710,7 @@
           ]
         },
         {
-          "id": 123,
+          "id": 129,
           "name": "ddr-crossing",
           "type": "",
           "x": 608,
@@ -13777,13 +14729,156 @@
               "name": "axis",
               "type": "string",
               "value": "y"
+            },
+            {
+              "name": "trafficGroup",
+              "type": "string",
+              "value": "crossings-west"
+            }
+          ]
+        },
+        {
+          "id": 130,
+          "name": "ddr-crossing-south",
+          "type": "",
+          "x": 608,
+          "y": 1280,
+          "width": 32,
+          "height": 192,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bike"
+            },
+            {
+              "name": "axis",
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "id": 131,
+          "name": "cycle-lane-zebra",
+          "type": "",
+          "x": 608,
+          "y": 520,
+          "width": 64,
+          "height": 22,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bike"
+            },
+            {
+              "name": "axis",
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "id": 132,
+          "name": "cycle-lane-lights-zebra",
+          "type": "",
+          "x": 2304,
+          "y": 520,
+          "width": 32,
+          "height": 22,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bike"
+            },
+            {
+              "name": "axis",
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "id": 124,
+          "name": "cycle-lane-equal",
+          "type": "",
+          "x": 384,
+          "y": 520,
+          "width": 192,
+          "height": 22,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bike"
+            },
+            {
+              "name": "axis",
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "id": 125,
+          "name": "cycle-lane-yield",
+          "type": "",
+          "x": 1216,
+          "y": 520,
+          "width": 192,
+          "height": 22,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bike"
+            },
+            {
+              "name": "axis",
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "id": 126,
+          "name": "cycle-lane-lights",
+          "type": "",
+          "x": 2048,
+          "y": 520,
+          "width": 192,
+          "height": 22,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bike"
+            },
+            {
+              "name": "axis",
+              "type": "string",
+              "value": "x"
             }
           ]
         }
       ]
     },
     {
-      "id": 13,
+      "id": 16,
       "name": "props",
       "type": "objectgroup",
       "opacity": 1,
@@ -13793,7 +14888,7 @@
       "objects": []
     },
     {
-      "id": 14,
+      "id": 17,
       "name": "triggers",
       "type": "objectgroup",
       "opacity": 1,
@@ -13803,7 +14898,7 @@
       "objects": []
     },
     {
-      "id": 15,
+      "id": 18,
       "name": "districts",
       "type": "objectgroup",
       "opacity": 1,
@@ -13813,7 +14908,7 @@
       "objects": []
     },
     {
-      "id": 16,
+      "id": 19,
       "name": "collectibles",
       "type": "objectgroup",
       "opacity": 1,

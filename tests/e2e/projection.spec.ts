@@ -31,6 +31,22 @@ async function openCity(
     const spawn = spawns.objects.find((object) => object.name === 'player')!;
     // Keep traffic and changing signal phases out of projection comparisons.
     spawns.objects = [spawn];
+    for (const layer of map.layers)
+      if (
+        ['traffic_routes', 'traffic_controls', 'crossing_signals'].includes(
+          layer.name,
+        )
+      )
+        layer.objects = [];
+    const zones = map.layers.find(({ name }) => name === 'zones')!;
+    zones.objects = zones.objects.filter(
+      ({ name }) =>
+        !['ddr-west-north', 'ddr-west-south', 'bike-lane-top'].includes(name),
+    );
+    const crossings = map.layers.find(({ name }) => name === 'crossings')!;
+    crossings.objects = crossings.objects.filter(({ name }) =>
+      ['zebra-west', 'ddr-crossing'].includes(name),
+    );
     map.properties.find(({ name }) => name === 'trafficCars')!.value = 0;
     map.layers.find((layer) => layer.name === 'signals')!.objects = [];
     for (const lane of map.layers.find((layer) => layer.name === 'lanes')!

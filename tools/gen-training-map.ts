@@ -128,7 +128,7 @@ for (const y of [512, 704, 1280, 1472])
     [32, 320],
     [640, 1152],
     [1472, 1984],
-    [2304, 2528],
+    [2352, 2528],
   ])
     curbs.push(rect('curb', a!, y - 3, b! - a!, 6, { kind: 'curb' }));
 const layers: unknown[] = [
@@ -173,17 +173,9 @@ objectLayer('blocks', blocks);
 objectLayer('collisions', curbs);
 objectLayer('spawns', [
   rect('player', 512, 1024, 0, 0),
-  rect('pedestrian-zebra', 656, 721, 0, 0, {
-    kind: 'pedestrian',
-    heading: -90,
-    speed: 1.2,
-    length_m: 10.5,
-  }),
-  rect('pedestrian-sidewalk', 1540, 1516, 0, 0, {
-    kind: 'pedestrian',
-    heading: 0,
-    speed: 1.1,
-    length_m: 17,
+  rect('cyclist-roadway', 432, 0, 0, 0, {
+    kind: 'roadway_cyclist',
+    lane: 'equal-N',
   }),
 ]);
 objectLayer('pois', [rect('workshop', 688, 896, 0, 0)]);
@@ -216,6 +208,18 @@ const zones = [
     kind: 'sidewalk',
     width_m: 3,
     speedLimit: 60,
+  }),
+  rect('ddr-west-north', 608, 0, 32, 512, {
+    kind: 'bike_path',
+    direction: 'N',
+  }),
+  rect('ddr-west-south', 608, 1472, 32, 448, {
+    kind: 'bike_path',
+    direction: 'N',
+  }),
+  rect('bike-lane-top', 0, 520, 2560, 22, {
+    kind: 'bike_lane',
+    direction: 'W',
   }),
   rect('ddr-west', 608, 704, 32, 576, { kind: 'bike_path', direction: 'N' }),
 ];
@@ -378,10 +382,188 @@ for (const [row, rowTile] of rows.entries()) {
     }
   }
 }
+const bikeLaneCrossings = columns.map((column, index) =>
+  rect(`cycle-lane-${names[0]![index]}`, column * 32, 520, 192, 22, {
+    kind: 'bike',
+    axis: 'x',
+  }),
+);
 const crossings = [
-  rect('zebra-west', 640, 512, 32, 192, { kind: 'pedestrian', axis: 'y' }),
-  rect('ddr-crossing', 608, 512, 32, 192, { kind: 'bike', axis: 'y' }),
+  rect('zebra-west', 640, 512, 32, 192, {
+    kind: 'pedestrian',
+    axis: 'y',
+    trafficGroup: 'crossings-west',
+  }),
+  rect('zebra-lights', 2304, 512, 32, 192, { kind: 'pedestrian', axis: 'y' }),
+  rect('ddr-crossing', 608, 512, 32, 192, {
+    kind: 'bike',
+    axis: 'y',
+    trafficGroup: 'crossings-west',
+  }),
+  rect('ddr-crossing-south', 608, 1280, 32, 192, { kind: 'bike', axis: 'y' }),
+  rect('cycle-lane-zebra', 608, 520, 64, 22, { kind: 'bike', axis: 'x' }),
+  rect('cycle-lane-lights-zebra', 2304, 520, 32, 22, {
+    kind: 'bike',
+    axis: 'x',
+  }),
+  ...bikeLaneCrossings,
 ];
+const polyline = (
+  name: string,
+  points: readonly (readonly [number, number])[],
+  props: Record<string, string | number>,
+) => {
+  const [x, y] = points[0]!;
+  return {
+    ...rect(name, x, y, 0, 0, props),
+    polyline: points.map(([px, py]) => ({ x: px - x, y: py - y })),
+  };
+};
+const tramPoints: [number, number][] = [
+  [0, 608],
+  [384, 608],
+  [576, 608],
+  [1120, 608],
+  [1216, 608],
+  [1408, 608],
+  [2048, 608],
+  [2240, 608],
+  [2560, 608],
+];
+const emergencyPoints: [number, number][] = [
+  [0, 1396],
+  [384, 1396],
+  [576, 1396],
+  [1216, 1396],
+  [1408, 1396],
+  [2048, 1396],
+  [2240, 1396],
+  [2560, 1396],
+];
+for (const [index, vertex] of [1, 4, 6].entries()) {
+  const name = names[0]![index]!;
+  const lane = `tram-${name}-W`;
+  lanes.push(
+    polyline(lane, [tramPoints[vertex - 1]!, tramPoints[vertex]!], {
+      intersection: name,
+      side: 'W',
+      type: 'tram',
+      width_px: 28,
+      speedLimit: 35,
+      priorityClass: ['equal', 'main', 'signal'][index]!,
+    }),
+  );
+  if (name === 'lights') {
+    signals.push(
+      rect('tram-signal', 2028, 608, 0, 0, {
+        code: 'S-1',
+        affects: lane,
+        group: 'EW',
+        offset_s: 10,
+        cycle_s: 20,
+        green_s: 7,
+        yellow_s: 2,
+      }),
+    );
+  }
+}
+objectLayer('traffic_routes', [
+  polyline(
+    'pedestrian-zebra',
+    [
+      [656, 721],
+      [656, 494],
+    ],
+    { kind: 'pedestrian', speed: 1.45 },
+  ),
+  polyline(
+    'pedestrian-lights',
+    [
+      [2320, 721],
+      [2320, 495],
+    ],
+    { kind: 'pedestrian', speed: 1.5 },
+  ),
+  polyline(
+    'pedestrian-sidewalk',
+    [
+      [1540, 1516],
+      [1900, 1516],
+    ],
+    { kind: 'pedestrian', speed: 1.1 },
+  ),
+  polyline(
+    'cyclist-ddr',
+    [
+      [624, 1920],
+      [624, 0],
+    ],
+    { kind: 'cyclist', speed: 4.5 },
+  ),
+  polyline(
+    'cyclist-bike-lane',
+    [
+      [2560, 531],
+      [0, 531],
+    ],
+    { kind: 'cyclist', speed: 4.2 },
+  ),
+  polyline('tram-1', tramPoints, { kind: 'tram', speed: 7, repeat_s: 6 }),
+  polyline(
+    'tram-passenger',
+    [
+      [1120, 628],
+      [1120, 720],
+    ],
+    { kind: 'passenger', speed: 1.5 },
+  ),
+  polyline('emergency-1', emergencyPoints, {
+    kind: 'emergency',
+    speed: 9,
+    start_s: 4,
+    repeat_s: 42,
+  }),
+]);
+objectLayer('traffic_controls', [
+  ...[1, 4, 6].map((vertex, index) =>
+    rect(`tram-control-${index}`, 0, 0, 0, 0, {
+      kind: 'junction',
+      route: 'tram-1',
+      vertex,
+      exit: vertex + 1,
+      lane: `tram-${names[0]![index]}-W`,
+    }),
+  ),
+  ...[1, 3, 5].map((vertex, index) =>
+    rect(`emergency-control-${index}`, 0, 0, 0, 0, {
+      kind: 'junction',
+      route: 'emergency-1',
+      vertex,
+      exit: vertex + 1,
+      lane: `${names[1]![index]}-W`,
+    }),
+  ),
+  rect('stop-without-island', 1096, 620, 48, 84, {
+    kind: 'stop',
+    route: 'tram-1',
+    vertex: 3,
+    passenger: 'tram-passenger',
+  }),
+]);
+objectLayer('crossing_signals', [
+  rect('pedestrian-signal', 2338, 719, 0, 0, {
+    crossing: 'zebra-lights',
+    offset_s: 18,
+    cycle_s: 20,
+    green_s: 3.5,
+  }),
+  rect('bike-signal', 2244, 514, 0, 0, {
+    crossing: 'cycle-lane-lights',
+    offset_s: 10,
+    cycle_s: 20,
+    green_s: 5,
+  }),
+]);
 objectLayer('zones', zones);
 objectLayer('lanes', lanes);
 objectLayer('intersections', intersections);

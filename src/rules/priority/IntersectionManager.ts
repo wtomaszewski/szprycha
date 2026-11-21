@@ -63,7 +63,20 @@ export class IntersectionManager {
           const authored = world.laneGraph
             .approach(lane)
             ?.movements.find((movement) => movement.maneuver === maneuver);
+          const railExit =
+            lane.type === 'tram' && maneuver === 'straight'
+              ? world.trafficRoutes.flatMap(({ path, junctions }) =>
+                  junctions
+                    .filter((control) => control.lane === lane)
+                    .map(
+                      ({ exit }) =>
+                        path.segments.find(({ offset }) => offset === exit)!
+                          .start,
+                    ),
+                )[0]
+              : undefined;
           const end =
+            railExit ??
             authored?.path.end ??
             (vertical
               ? {
@@ -165,8 +178,14 @@ export class IntersectionManager {
       other.priorityClass === 'roundabout_in'
     )
       return;
-    if (phase === 'off' && lane.priorityClass === 'equal' && kind === 'tram')
-      return 'PIER-09';
+    if (
+      phase === 'off' &&
+      lane.priorityClass === 'equal' &&
+      other.priorityClass === 'equal'
+    ) {
+      if (lane.type !== 'tram' && kind === 'tram') return 'PIER-09';
+      if (lane.type === 'tram' && kind !== 'tram') return;
+    }
     if (
       other.side === otherSide(lane.side, 2) &&
       maneuver === 'left' &&
@@ -174,6 +193,12 @@ export class IntersectionManager {
     )
       return 'PIER-03';
     if (other.side === otherSide(lane.side, -1)) return 'PIER-01';
+  }
+
+  private approach(agent: AgentState) {
+    if (agent.laneId) return this.world.getLane(agent.laneId);
+    if (agent.kind === 'tram' || agent.bikeInfrastructure) return undefined;
+    return this.world.approachAt(agent.pos, agent.heading);
   }
 
   /** Geometry and priority for a stopped contender as well as a moving one. */
@@ -185,9 +210,7 @@ export class IntersectionManager {
     env: EnvState,
   ) {
     const path = this.movements.get(lane)?.[maneuver];
-    const other = agent.laneId
-      ? this.world.getLane(agent.laneId)
-      : this.world.approachAt(agent.pos, agent.heading);
+    const other = this.approach(agent);
     if (
       !path ||
       !other ||
@@ -227,11 +250,13 @@ export class IntersectionManager {
     for (const agent of agents) {
       const protectiveBrake =
         includeProtectiveBraking && Boolean(agent.protectiveBrake);
-      if (agent.kind === 'pedestrian' || (agent.speed <= 0 && !protectiveBrake))
+      if (
+        agent.kind === 'pedestrian' ||
+        agent.kind === 'emergency' ||
+        (agent.speed <= 0 && !protectiveBrake)
+      )
         continue;
-      const other = agent.laneId
-        ? this.world.getLane(agent.laneId)
-        : this.world.approachAt(agent.pos, agent.heading);
+      const other = this.approach(agent);
       if (!other || other === lane || other.intersection !== lane.intersection)
         continue;
       const otherManeuver = agent.maneuver ?? 'straight';

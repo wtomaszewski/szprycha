@@ -302,6 +302,9 @@ test('F3 toggles both debug tools and the HUD explains the choice of road', asyn
   await expect(slider).toBeVisible();
   await expect(overlay).toContainText('equal-S');
   await expect(overlay).toContainText(pl.rules.debug.traffic);
+  await expect(overlay).toContainText(pl.rules.debug.participants);
+  await expect(overlay).toContainText(pl.rules.debug.kinds.tram);
+  await expect(overlay).toContainText(pl.rules.debug.emergency);
   await expect(overlay).toContainText(/car-\d+ · (prosto|w lewo|w prawo) ·/);
   await page.keyboard.down('ArrowUp');
   await expect(page.locator('.rule-feedback')).toHaveText(

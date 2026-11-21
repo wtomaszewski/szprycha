@@ -73,7 +73,10 @@
         "stop": "zatrzymuje się",
         "yield": "ustępuje",
         "junction": "skrzyżowanie",
-        "protective": "hamuje ochronnie"
+        "protective": "hamuje ochronnie",
+        "emergency": "zjeżdża na prawo i czeka",
+        "boarding": "stoi na przystanku",
+        "walking": "idzie"
       },
       "history": "Ostatnie werdykty (10)",
       "mastery": "Opanowanie reguł · M5",
@@ -91,7 +94,17 @@
         "yellow": "żółte",
         "green": "zielone",
         "arrow": "strzałka"
+      },
+      "participants": "Uczestnicy ruchu",
+      "emergency": "Pojazd uprzywilejowany",
+      "emergencyOn": "niebieskie światła i syrena",
+      "boarding": "wysiadanie pasażerów",
+      "kinds": {
+        "pedestrian": "pieszy",
+        "cyclist": "rowerzysta",
+        "tram": "tramwaj"
       }
-    }
+    },
+    "emergencyApproaching": "Pojazd uprzywilejowany · zjedź na prawo"
   }
 }
