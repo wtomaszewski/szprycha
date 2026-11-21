@@ -169,11 +169,15 @@ export class IntersectionManager {
     )
       return;
     if (
+      phase === 'off' &&
+      lane.stopSign?.code === 'A-7' &&
       lane.priorityClass === 'roundabout_in' &&
       other.priorityClass === 'roundabout_ring'
     )
       return 'PIER-08';
     if (
+      otherPhase === 'off' &&
+      other.stopSign?.code === 'A-7' &&
       lane.priorityClass === 'roundabout_ring' &&
       other.priorityClass === 'roundabout_in'
     )
@@ -240,11 +244,13 @@ export class IntersectionManager {
     at: number,
     env: EnvState,
     includeProtectiveBraking = true,
+    onlyRule?: PriorityRule,
   ) {
     const path = this.movements.get(lane)?.[maneuver];
     const conflicts = path && this.conflictMatrix.get(path);
     if (!conflicts) return undefined;
     const closest = this.closest;
+    closest.agentId = '';
     closest.ttc = Infinity;
     closest.protectiveBrake = false;
     for (const agent of agents) {
@@ -272,7 +278,7 @@ export class IntersectionManager {
         at,
         env,
       );
-      if (!ruleId) continue;
+      if (!ruleId || (onlyRule && ruleId !== onlyRule)) continue;
       const toLine = distanceToLine(other, agent.pos);
       const progress =
         (agent.pos.x - other.end.x) * otherPath.direction.x +
@@ -285,7 +291,9 @@ export class IntersectionManager {
         agent.speed > 0 ? Math.max(0, remaining) / agent.speed : Infinity;
       if (
         (!protectiveBrake && closest.protectiveBrake) ||
-        (protectiveBrake === closest.protectiveBrake && ttc >= closest.ttc)
+        (closest.agentId &&
+          protectiveBrake === closest.protectiveBrake &&
+          ttc >= closest.ttc)
       )
         continue;
       closest.agentId = agent.id;

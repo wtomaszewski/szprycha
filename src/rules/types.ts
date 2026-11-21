@@ -19,7 +19,13 @@ export interface RiderState {
   maneuver?: Maneuver;
   adultSupervisor?: boolean;
   supervisedChildId?: string;
-  extraReflectors?: boolean;
+  shoulderCheck?: { lastLeftAt: number };
+  lights?: { front: boolean; rear: boolean };
+  handsOnBar?: 0 | 1 | 2;
+  feetOnPedals?: boolean;
+  holdingVehicle?: boolean;
+  passenger?: boolean; // Passenger on the player's single-seat bicycle.
+  phoneInHand?: boolean;
 }
 
 export interface AgentState {
@@ -33,6 +39,8 @@ export interface AgentState {
   ageBand?: AgeBand;
   protectiveBrake?: boolean;
   crossingId?: string;
+  stopId?: string;
+  signalActive?: boolean;
   bikeInfrastructure?: boolean;
   junctionProgress?: number; // signed distance along the movement from the stop line
 }
@@ -41,7 +49,13 @@ export interface EnvState {
   time: 'day' | 'dusk' | 'night';
   weather: 'clear' | 'rain_heavy' | 'snow' | 'wind_strong' | 'fog' | 'ice';
   visibilityLow: boolean;
+  railOverrides?: Readonly<Record<string, RailState>>;
   signalOverrides?: Readonly<Record<string, SignalPhase>>;
+}
+
+export interface RailState {
+  barrier: 'open' | 'lowering' | 'closed' | 'raising';
+  flashing: boolean;
 }
 
 export interface Verdict {

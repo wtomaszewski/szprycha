@@ -18,6 +18,8 @@ export class ManeuverDetector {
   private intersection?: Intersection;
   private lane?: Lane;
   private heading = 0;
+  junctionEntryHeading?: number;
+  turnedLeft = false;
   private offset = 0;
   private lateralDirection = 0;
   private lastOffset = 0;
@@ -42,6 +44,8 @@ export class ManeuverDetector {
   }
 
   evaluate(rider: RiderState, zones: ZoneTracker, tick: number) {
+    this.junctionEntryHeading = undefined;
+    this.turnedLeft = false;
     if (rider.mode !== 'riding') {
       this.intersection = undefined;
       this.lane = undefined;
@@ -57,6 +61,7 @@ export class ManeuverDetector {
         this.heading = forward
           ? Math.atan2(forward.y, forward.x)
           : rider.heading;
+        this.junctionEntryHeading = this.heading;
         this.maneuverSignal = currentSignal;
         this.heldBefore = timeHeld;
         this.marked = false;
@@ -64,6 +69,7 @@ export class ManeuverDetector {
       const turn = headingDifference(rider.heading, this.heading);
       if (rider.speed > 0 && !this.marked && Math.abs(turn) > minTurn + 1e-9) {
         this.marked = true;
+        this.turnedLeft = turn < 0;
         return this.result(
           rider,
           tick,

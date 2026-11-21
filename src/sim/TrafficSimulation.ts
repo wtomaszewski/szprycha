@@ -113,6 +113,8 @@ export class TrafficSimulation {
   private tick = 0;
   private randomState = 0;
 
+  private readonly closedRail: Box[] = [];
+
   constructor(
     private readonly world: WorldModel,
     private readonly manager: IntersectionManager,
@@ -242,6 +244,13 @@ export class TrafficSimulation {
             crossing.kind === 'pedestrian' &&
             contains(crossing, pos),
       );
+    }
+    this.closedRail.length = 0;
+    for (const crossing of this.world.crossings) {
+      if (crossing.kind !== 'rail') continue;
+      const rail = this.world.railState(crossing, at, env);
+      if (rail && (rail.flashing || rail.barrier !== 'open'))
+        this.closedRail.push(crossing);
     }
     for (const car of this.cars)
       this.plan(car, player, pedestrians, conditions);
@@ -544,6 +553,9 @@ export class TrafficSimulation {
         : Infinity;
     const following = car.gap - SPACING;
     let room = Math.min(toStop, following);
+    for (const crossing of this.closedRail)
+      if (!contains(crossing, car.agent.pos))
+        room = Math.min(room, this.crossingGap(car, crossing));
     if (!car.crossing) {
       // Leave crossings clear even when the next signal has queued traffic.
       for (const { entry, exit } of this.crossingIntervals.get(car.edge)!) {

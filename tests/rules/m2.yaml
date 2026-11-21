@@ -1,9 +1,9 @@
 map: maps/miasteczko.tmj
 scenarios:
-  - name: KASK-01 zapięty kask, jedna pochwała
+  - name: KASK-01 jazda w zapiętym kasku
     duration: 2
     player: { helmet: fastened, speed: 2 }
-    expect: { KASK-01: [good] }
+    expect: { KASK-01: [] }
 
   - name: KASK-01 jazda bez kasku
     player: { helmet: absent, speed: 2 }
@@ -20,14 +20,6 @@ scenarios:
   - name: KASK-01 prowadzenie roweru bez kasku
     player: { helmet: absent, mode: walking_bike, speed: 1 }
     expect: { KASK-01: [] }
-
-  - name: WYP-06 dodatkowe odblaski są bonusem
-    player: { extraReflectors: true, speed: 2 }
-    expect: { WYP-06: [good] }
-
-  - name: WYP-06 brak wyposażenia opcjonalnego
-    player: { extraReflectors: false, speed: 2 }
-    expect: { WYP-06: [] }
 
   - name: GDZIE-01 wybór DDR
     player: { x: 624, y: 1000, heading: -90, speed: 3 }

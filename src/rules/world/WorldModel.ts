@@ -1,5 +1,11 @@
 import { z } from 'zod';
-import type { EnvState, Maneuver, SignalPhase, Vec2 } from '../types';
+import type {
+  EnvState,
+  Maneuver,
+  RailState,
+  SignalPhase,
+  Vec2,
+} from '../types';
 import { LaneGraph, type BoundaryExit, type LaneEdge } from './LaneGraph.ts';
 import { RoadPath } from './RoadPath.ts';
 import {
@@ -50,6 +56,19 @@ const zoneSchema = z.enum([
   'no_bikes',
   'rail',
 ]);
+const railSchedule = z.object({
+  open_s: z.number().positive(),
+  lowering_s: z.number().positive(),
+  closed_s: z.number().positive(),
+  raising_s: z.number().positive(),
+  offset_s: z.number().nonnegative().default(0),
+});
+const railStates = {
+  open: { barrier: 'open', flashing: false },
+  lowering: { barrier: 'lowering', flashing: true },
+  closed: { barrier: 'closed', flashing: true },
+  raising: { barrier: 'raising', flashing: true },
+} as const satisfies Record<RailState['barrier'], RailState>;
 const crossingSchema = z.enum(['pedestrian', 'bike', 'combined', 'rail']);
 const intersectionSchema = z.enum([
   'equal',
@@ -110,12 +129,16 @@ export interface Crossing extends Box {
   kind: z.infer<typeof crossingSchema>;
   axis: 'x' | 'y';
   signal?: CrossingSignal;
+  rail?: z.infer<typeof railSchedule>;
   trafficArea?: Box;
 }
 interface CrossingSignal extends Vec2 {
   offset_s: number;
   cycle_s: number;
   green_s: number;
+}
+export interface Driveway extends Box {
+  direction: Side;
 }
 export interface Intersection extends Box {
   kind: z.infer<typeof intersectionSchema>;
@@ -200,6 +223,10 @@ export class WorldModel {
   readonly metersPerPixel: number;
   readonly zones: readonly Zone[];
   readonly crossings: readonly Crossing[];
+  readonly driveways: readonly Driveway[];
+  readonly parkedCars: readonly Box[];
+  readonly duskAt: number;
+  readonly tramStops: readonly Box[];
   readonly intersections: readonly Intersection[];
   readonly lanes: readonly Lane[];
   readonly signs: readonly Sign[];
@@ -246,6 +273,14 @@ export class WorldModel {
           zoneOrder[a.kind] - zoneOrder[b.kind] ||
           (b.width_m ?? 0) - (a.width_m ?? 0),
       );
+    this.duskAt =
+      z.number().nonnegative().optional().parse(properties(map).dusk_at_s) ??
+      Infinity;
+    this.driveways = layer('driveways').map((object) => ({
+      ...box(object),
+      direction: sideSchema.parse(properties(object).direction),
+    }));
+    this.parkedCars = layer('parked_cars').map(box);
     const crossingLights = new Map(
       layer('crossing_signals').map((object) => {
         const props = z
@@ -271,6 +306,10 @@ export class WorldModel {
         kind: crossingSchema.parse(props.kind),
         axis: z.enum(['x', 'y']).parse(props.axis),
         signal: crossingLights.get(object.name),
+        rail:
+          props.kind === 'rail' && props.open_s !== undefined
+            ? railSchedule.parse(props)
+            : undefined,
       };
       if (typeof props.trafficGroup === 'string') {
         const group = crossingGroups.get(props.trafficGroup) ?? [];
@@ -462,6 +501,7 @@ export class WorldModel {
       map.width * map.tilewidth * scale,
       map.height * map.tileheight * scale,
     );
+    this.tramStops = this.trafficRoutes.flatMap(({ stops }) => stops);
     this.roadwayCyclistLanes = layer('spawns').flatMap((object) => {
       const props = properties(object);
       if (props.kind !== 'roadway_cyclist') return [];
@@ -557,6 +597,25 @@ export class WorldModel {
     if (forced !== undefined) return forced === 'green' || forced === 'off';
     const signal = crossing.signal;
     return !signal || (at + signal.offset_s) % signal.cycle_s < signal.green_s;
+  }
+
+  railState(
+    crossing: Crossing,
+    at: number,
+    env: EnvState,
+  ): RailState | undefined {
+    const forced = env.railOverrides?.[crossing.id];
+    if (forced) return forced;
+    const rail = crossing.rail;
+    if (!rail) return undefined;
+    const cycle =
+      (at + rail.offset_s) %
+      (rail.open_s + rail.lowering_s + rail.closed_s + rail.raising_s);
+    if (cycle < rail.open_s) return railStates.open;
+    if (cycle < rail.open_s + rail.lowering_s) return railStates.lowering;
+    if (cycle < rail.open_s + rail.lowering_s + rail.closed_s)
+      return railStates.closed;
+    return railStates.raising;
   }
 
   arrowMatches(lane: Lane, maneuver: Maneuver) {

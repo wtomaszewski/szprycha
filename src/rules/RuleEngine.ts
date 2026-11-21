@@ -5,7 +5,19 @@ import { sidewalkPedestrian } from './detectors/GDZIE-05';
 import { pedestrianCrossing } from './detectors/GDZIE-06';
 import { HelmetDetector } from './detectors/KASK-01';
 import { ManeuverDetector } from './detectors/MAN-01';
-import { ReflectorsDetector } from './detectors/WYP-06';
+import { shoulderCheck } from './detectors/MAN-03';
+import { ParkedClearanceDetector } from './detectors/MAN-06';
+import { StartingDetector } from './detectors/MAN-07';
+import { RidingPositionDetector } from './detectors/MAN-09';
+import { PassengerDetector } from './detectors/MAN-10';
+import { PhoneDetector } from './detectors/MAN-11';
+import { RailwayDetector } from './detectors/MSC-01';
+import { TramStopDetector } from './detectors/MSC-02';
+import { DrivewayDetector } from './detectors/MSC-03';
+import { VisibilityDetector } from './detectors/MSC-04';
+import { TurningCrossingDetector } from './detectors/PIER-04';
+import { BikeCrossingDetector } from './detectors/PIER-05';
+import { EmergencyYieldDetector } from './detectors/PIER-07';
 import { IntersectionManager } from './priority/IntersectionManager';
 import { IntersectionVisit } from './priority/IntersectionVisit';
 import {
@@ -15,7 +27,7 @@ import {
   type RiderState,
   type Verdict,
 } from './types';
-import type { WorldModel } from './world/WorldModel';
+import { contains, type WorldModel } from './world/WorldModel';
 import { ZoneTracker } from './world/ZoneTracker';
 
 const EXIT_TICKS = 0.25 * TICKS_PER_SECOND;
@@ -27,11 +39,25 @@ export class RuleEngine {
   readonly recent: Verdict[] = [];
   readonly counts = { good: 0, minor: 0, major: 0 };
   private readonly helmet = new HelmetDetector();
-  private readonly reflectors = new ReflectorsDetector();
+  private readonly parked = new ParkedClearanceDetector();
+  private readonly starting = new StartingDetector();
+  private readonly ridingPosition = new RidingPositionDetector();
+  private readonly passenger = new PassengerDetector();
+  private readonly phone = new PhoneDetector();
+  private readonly railway: RailwayDetector;
+  private readonly tramStop = new TramStopDetector();
+  private readonly driveway = new DrivewayDetector();
+  private readonly visibility = new VisibilityDetector();
+  private readonly turningCrossing = new TurningCrossingDetector();
+  private readonly bikeCrossing = new BikeCrossingDetector();
+  private readonly emergency = new EmergencyYieldDetector();
+  private readonly emitStartingVerdict = (verdict?: Verdict) =>
+    this.emit(verdict);
   private readonly bikeInfra = new BikeInfrastructureDetector();
   private readonly maneuver: ManeuverDetector;
   private readonly listeners = new Set<Listener>();
   private tick = 0;
+  private shoulderBeforeTurn?: Verdict;
   private previous = { x: 0, y: 0 };
   private sidewalkId?: string;
   private sidewalkLast = -Infinity;
@@ -43,10 +69,11 @@ export class RuleEngine {
   private crossingPenalized = false;
 
   constructor(
-    world: WorldModel,
+    private readonly world: WorldModel,
     private readonly settings: GameContent['balans'],
     manager = new IntersectionManager(world),
   ) {
+    this.railway = new RailwayDetector(world);
     this.zones = new ZoneTracker(world);
     this.junction = new IntersectionVisit(world, settings.silnik, manager);
     this.maneuver = new ManeuverDetector(
@@ -72,7 +99,21 @@ export class RuleEngine {
     this.zones.update(rider);
     this.maneuver.updateSignal(rider, this.tick);
     this.emit(this.helmet.evaluate(rider, at));
-    this.emit(this.reflectors.evaluate(rider, at));
+    this.evaluateTraffic(rider, agents, env, at);
+    this.emit(this.visibility.evaluate(rider, at, env));
+    this.emit(this.ridingPosition.evaluate(rider, at));
+    this.emit(this.passenger.evaluate(rider, at));
+    this.emit(
+      this.phone.evaluate(
+        rider,
+        at,
+        !this.zones.crossing &&
+          !this.zones.intersection &&
+          this.zones.zone?.kind !== 'roadway' &&
+          this.zones.zone?.kind !== 'bike_lane' &&
+          this.zones.zone?.kind !== 'bike_path',
+      ),
+    );
     this.emit(this.bikeInfra.evaluate(rider, this.zones, this.tick));
     this.evaluateSidewalk(rider, agents, env, at);
     this.evaluateCrossing(rider, agents, at);
@@ -87,7 +128,20 @@ export class RuleEngine {
         this.signal,
       ),
     );
-    this.emit(this.maneuver.evaluate(rider, this.zones, this.tick));
+    const maneuver = this.maneuver.evaluate(rider, this.zones, this.tick);
+    this.emit(maneuver);
+    const entryHeading = this.maneuver.junctionEntryHeading;
+    if (entryHeading !== undefined)
+      this.shoulderBeforeTurn = shoulderCheck(
+        'MAN-03',
+        rider,
+        agents,
+        at,
+        this.settings.silnik.obejrzenie_okno_s,
+        entryHeading,
+        rider.pos,
+      );
+    if (this.maneuver.turnedLeft) this.emit(this.shoulderBeforeTurn);
     this.previous.x = rider.pos.x;
     this.previous.y = rider.pos.y;
     this.tick++;
@@ -97,6 +151,70 @@ export class RuleEngine {
   finish() {
     this.closeSidewalk();
     this.closeCrossing();
+    this.emit(this.driveway.finish());
+  }
+
+  private evaluateTraffic(
+    rider: RiderState,
+    agents: readonly AgentState[],
+    env: EnvState,
+    at: number,
+  ) {
+    const rules = this.settings.silnik;
+    const { crossings, driveways, parkedCars, tramStops } = this.world;
+    this.emit(
+      this.turningCrossing.evaluate(
+        rider,
+        agents,
+        at,
+        this.zones.intersection,
+        crossings,
+      ),
+    );
+    this.emit(
+      this.bikeCrossing.evaluate(
+        rider,
+        agents,
+        at,
+        crossings,
+        rules.ttc_minor_s,
+        rules.ttc_major_s,
+      ),
+    );
+    this.emit(this.emergency.evaluate(rider, agents, at));
+    this.emit(this.railway.evaluate(rider, agents, at, env));
+    this.emit(this.tramStop.evaluate(rider, agents, at, tramStops));
+    this.emit(
+      this.parked.evaluate(
+        rider,
+        at,
+        parkedCars,
+        rules.odstep_od_zaparkowanych_m,
+      ),
+    );
+    this.emit(
+      this.driveway.evaluate(
+        rider,
+        agents,
+        this.tick,
+        driveways,
+        this.zones.zone?.kind === 'roadway',
+        this.zones.zone?.kind === 'sidewalk',
+        rules.ttc_minor_s,
+      ),
+    );
+    const lane = driveways.some((box) => contains(box, rider.pos))
+      ? undefined
+      : this.zones.lane;
+    this.starting.evaluate(
+      rider,
+      agents,
+      this.tick,
+      lane,
+      rules.obejrzenie_okno_s,
+      rules.ttc_minor_s,
+      this.emitStartingVerdict,
+    );
   }
 
   private emit(verdict?: Verdict) {

@@ -316,7 +316,7 @@ test('F3 toggles both debug tools and the HUD explains the choice of road', asyn
   await expect(canvas).toHaveAttribute('data-speed', '0');
   await page.keyboard.up('Space');
   await expect(overlay).toContainText(/GDZIE-01\s+minor/);
-  await expect(overlay).toContainText(/KASK-01\s+good/);
+  await expect(overlay).not.toContainText(/KASK-01\s+good/);
   await expect(counter).toContainText(/Drobne [1-9]/);
   await page.screenshot({ path: 'test-results/m3a-overlay.png' });
   await page.keyboard.press('F3');

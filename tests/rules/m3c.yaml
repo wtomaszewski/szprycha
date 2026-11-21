@@ -1,0 +1,645 @@
+map: maps/miasteczko.tmj
+scenarios:
+  - name: PIER-03 przepuszczenie auta z naprzeciwka przed lewym skrętem
+    player: { x: 528, y: 725, heading: -90, speed: 0, maneuver: left }
+    agents:
+      [
+        {
+          id: car,
+          kind: car,
+          x: 432,
+          y: 515,
+          heading: 90,
+          speed: 7,
+          laneId: equal-N,
+          leaveAt: 0.5,
+        },
+      ]
+    inputs: [{ t: 0.6, speed: 3 }, { t: 0.9, y: 686 }]
+    expect: { PIER-03: [good] }
+
+  - name: PIER-03 nieoznaczony lewy skręt przed jadącym prosto
+    player: { x: 528, y: 726, heading: -90, speed: 4 }
+    agents:
+      [
+        {
+          id: car,
+          kind: car,
+          x: 432,
+          y: 555,
+          heading: 90,
+          speed: 7,
+          laneId: equal-N,
+        },
+      ]
+    inputs: [{ t: 0.4, y: 680 }, { t: 0.8, x: 490, y: 634, heading: 180 }]
+    expect: { PIER-03: [major] }
+
+  - name: PIER-03 sygnał w lewo bez wykonania skrętu
+    player: { x: 528, y: 726, heading: -90, speed: 4, signal: left }
+    agents:
+      [
+        {
+          id: car,
+          kind: car,
+          x: 432,
+          y: 555,
+          heading: 90,
+          speed: 7,
+          laneId: equal-N,
+        },
+      ]
+    inputs: [{ t: 0.4, y: 680 }, { t: 0.8, y: 496 }]
+    expect: { PIER-03: [] }
+
+  - name: PIER-03 oczekiwanie przy zielonym na skręcającego w prawo z naprzeciwka
+    env: { signalOverrides: { lights-N: green, lights-S: green } }
+    player: { x: 2192, y: 725, heading: -90, speed: 0, maneuver: left }
+    agents:
+      [
+        {
+          id: car,
+          kind: car,
+          x: 2096,
+          y: 490,
+          heading: 90,
+          maneuver: right,
+          speed: 7,
+          laneId: lights-N,
+          leaveAt: 0.5,
+        },
+      ]
+    inputs: [{ t: 0.6, speed: 3 }, { t: 0.9, y: 686 }]
+    expect: { PIER-03: [good] }
+
+  - name: PIER-04 poczekaj na pieszego na drodze wyjazdowej
+    duration: 1.2
+    player: { x: 528, y: 729, heading: -90, speed: 4 }
+    agents:
+      [
+        {
+          id: pedestrian,
+          kind: pedestrian,
+          x: 655,
+          y: 657,
+          crossingId: zebra-west,
+          leaveAt: 0.75,
+        },
+      ]
+    inputs:
+      [
+        { t: 0.26, y: 655 },
+        { t: 0.5, x: 620, heading: 0, speed: 0 },
+        { t: 0.8, speed: 3 },
+        { t: 1.1, x: 667 },
+      ]
+    expect: { PIER-04: [good] }
+
+  - name: PIER-04 wjazd po skręcie przed pieszym
+    player: { x: 535, y: 726, heading: -90, speed: 4 }
+    agents:
+      [
+        {
+          id: pedestrian,
+          kind: pedestrian,
+          x: 655,
+          y: 657,
+          crossingId: zebra-west,
+        },
+      ]
+    inputs:
+      [{ t: 0.25, y: 655 }, { t: 0.5, x: 611, heading: 0 }, { t: 0.85, x: 664 }]
+    expect: { PIER-04: [major] }
+
+  - name: PIER-04 wjazd po skręcie przed rowerzystą na przejeździe
+    player: { x: 528, y: 726, heading: -90, speed: 4 }
+    agents:
+      [
+        {
+          id: cyclist,
+          kind: cyclist,
+          x: 622,
+          y: 666,
+          heading: -90,
+          speed: 3,
+          crossingId: ddr-crossing,
+        },
+      ]
+    inputs:
+      [{ t: 0.25, y: 655 }, { t: 0.4, x: 570, heading: 0 }, { t: 0.9, x: 633 }]
+    expect: { PIER-04: [major] }
+
+  - name: PIER-04 jazda prosto obok skrzyżowania nie jest skrętem
+    player: { x: 368, y: 655, heading: 0, speed: 4 }
+    agents:
+      [
+        {
+          id: pedestrian,
+          kind: pedestrian,
+          x: 655,
+          y: 657,
+          crossingId: zebra-west,
+        },
+      ]
+    inputs: [{ t: 0.9, x: 671 }]
+    expect: { PIER-04: [] }
+
+  - name: PIER-05 zaczekanie przed przejazdem na rzeczywiście nadjeżdżające auto
+    player: { x: 624, y: 721, heading: -90, speed: 0 }
+    agents:
+      [
+        {
+          id: car,
+          kind: car,
+          x: 560,
+          y: 672,
+          heading: 0,
+          speed: 3,
+          leaveAt: 0.55,
+        },
+      ]
+    inputs: [{ t: 0.6, speed: 3 }, { t: 0.9, y: 680 }]
+    expect: { PIER-05: [good] }
+
+  - name: PIER-05 wjazd tuż przed pojazdem na przecinającym się kursie
+    player: { x: 624, y: 727, heading: -90, speed: 4 }
+    agents: [{ id: car, kind: car, x: 587, y: 677, heading: 0, speed: 4 }]
+    inputs: [{ t: 0.5, y: 686 }]
+    expect: { PIER-05: [major] }
+
+  - name: PIER-05 pojazd nadjeżdża dopiero po rozpoczęciu przejazdu
+    player: { x: 624, y: 726, heading: -90, speed: 4 }
+    agents:
+      - id: car
+        kind: car
+        x: 450
+        y: 650
+        heading: 0
+        speed: 4
+        inputs: [{ t: 0.7, x: 596, protectiveBrake: true }]
+    inputs: [{ t: 0.3, y: 690 }, { t: 0.85, y: 648 }]
+    expect: { PIER-05: [] }
+
+  - name: PIER-06 bezkolizyjne włączenie się po sprawdzeniu ruchu
+    player: { x: 1134, y: 1520, heading: -90, speed: 0 }
+    inputs: [{ t: 0.35, speed: 2 }, { t: 0.9, y: 1460 }]
+    expect: { PIER-06: [], MSC-03: [] }
+
+  - name: PIER-06 ruszenie po przepuszczeniu pojazdu
+    player: { x: 553, y: 925, heading: -90, speed: 0 }
+    agents:
+      [
+        {
+          id: bike,
+          kind: cyclist,
+          x: 548,
+          y: 955,
+          heading: -90,
+          speed: 5,
+          leaveAt: 0.45,
+        },
+      ]
+    inputs: [{ t: 0.55, speed: 2 }]
+    expect: { PIER-06: [good] }
+
+  - name: PIER-06 ruszenie z krawędzi bez miejsca przed rowerzystą
+    player: { x: 553, y: 925, heading: -90, speed: 0 }
+    agents:
+      [{ id: bike, kind: cyclist, x: 548, y: 955, heading: -90, speed: 5 }]
+    inputs: [{ t: 0.5, speed: 1 }]
+    expect: { PIER-06: [major] }
+
+  - name: PIER-06 pełny lub wymuszony postój w pasie ruchu nie oznacza włączania się
+    player: { x: 528, y: 925, heading: -90, speed: 0 }
+    agents:
+      [{ id: bike, kind: cyclist, x: 528, y: 955, heading: -90, speed: 5 }]
+    inputs: [{ t: 0.5, speed: 1 }]
+    expect: { PIER-06: [] }
+
+  - name: PIER-07 zjazd na prawo przy aktywnych sygnałach i przepuszczenie pojazdu
+    player: { x: 800, y: 1424, heading: 0, speed: 0 }
+    agents:
+      - id: emergency
+        kind: emergency
+        x: 581
+        y: 1424
+        heading: 0
+        speed: 9
+        signalActive: true
+        inputs: [{ t: 1.5, x: 875 }]
+    duration: 1.5
+    inputs: [{ t: 0.55, y: 1460 }]
+    expect: { PIER-07: [good] }
+
+  - name: PIER-07 blokowanie przejazdu powoduje hamowanie ochronne
+    player: { x: 800, y: 1424, heading: 0, speed: 2 }
+    agents:
+      [
+        {
+          id: emergency,
+          kind: emergency,
+          x: 765,
+          y: 1424,
+          heading: 0,
+          speed: 0,
+          signalActive: true,
+          protectiveBrake: true,
+        },
+      ]
+    expect: { PIER-07: [major] }
+
+  - name: PIER-07 pojazd bez aktywnych sygnałów nie otwiera epizodu
+    player: { x: 800, y: 1424, heading: 0, speed: 2 }
+    agents:
+      [
+        {
+          id: emergency,
+          kind: emergency,
+          x: 765,
+          y: 1424,
+          heading: 0,
+          speed: 0,
+          signalActive: false,
+          protectiveBrake: true,
+        },
+      ]
+    expect: { PIER-07: [] }
+
+  - name: PIER-08 wpuszczenie pojazdu na rondzie z oznakowaniem A-7
+    properties: &roundabout
+      yield: { kind: roundabout }
+      yield-S: { priorityClass: roundabout_in }
+      yield-W: { priorityClass: roundabout_ring }
+    player: { x: 1360, y: 723, heading: -90, speed: 0 }
+    agents:
+      [
+        {
+          id: car,
+          kind: car,
+          x: 1195,
+          y: 656,
+          heading: 0,
+          speed: 5,
+          laneId: yield-W,
+          leaveAt: 0.55,
+        },
+      ]
+    inputs: [{ t: 0.65, speed: 3 }, { t: 0.9, y: 690 }]
+    expect: { PIER-08: [good] }
+
+  - name: PIER-08 wymuszenie na pojeździe na rondzie
+    properties: *roundabout
+    player: { x: 1360, y: 723, heading: -90, speed: 4 }
+    agents:
+      [
+        {
+          id: car,
+          kind: car,
+          x: 1210,
+          y: 656,
+          heading: 0,
+          speed: 8,
+          laneId: yield-W,
+        },
+      ]
+    inputs: [{ t: 0.5, y: 690 }]
+    expect: { PIER-08: [major] }
+
+  - name: PIER-08 samo oznaczenie ronda bez A-7 nie daje pierwszeństwa
+    properties:
+      yield: { kind: roundabout }
+      yield-S: { priorityClass: roundabout_in }
+      yield-W: { priorityClass: roundabout_ring }
+      yield-S-A-7: { code: D-1 }
+    player: { x: 1360, y: 723, heading: -90, speed: 4 }
+    agents:
+      [
+        {
+          id: car,
+          kind: car,
+          x: 1210,
+          y: 656,
+          heading: 0,
+          speed: 8,
+          laneId: yield-W,
+        },
+      ]
+    inputs: [{ t: 0.5, y: 690 }]
+    expect: { PIER-08: [] }
+
+  - name: PIER-09 zatrzymanie przed tramwajem na równorzędnym
+    player: { x: 528, y: 723, heading: -90, speed: 0 }
+    agents:
+      [
+        {
+          id: tram,
+          kind: tram,
+          x: 379,
+          y: 608,
+          heading: 0,
+          speed: 6,
+          laneId: tram-equal-W,
+          leaveAt: 0.58,
+        },
+      ]
+    inputs: [{ t: 0.65, speed: 4 }, { t: 0.9, y: 690 }]
+    expect: { PIER-09: [good] }
+
+  - name: PIER-09 wymuszenie na tramwaju hamującym ochronnie
+    player: { x: 528, y: 723, heading: -90, speed: 4 }
+    agents:
+      [
+        {
+          id: tram,
+          kind: tram,
+          x: 510,
+          y: 608,
+          heading: 0,
+          speed: 0,
+          protectiveBrake: true,
+          laneId: tram-equal-W,
+        },
+      ]
+    inputs: [{ t: 0.5, y: 691 }]
+    expect: { PIER-09: [major] }
+
+  - name: PIER-09 tramwaj ma czerwone
+    env: { signalOverrides: { tram-equal-W: red, equal-S: green } }
+    player: { x: 528, y: 723, heading: -90, speed: 4 }
+    agents:
+      [
+        {
+          id: tram,
+          kind: tram,
+          x: 378,
+          y: 608,
+          heading: 0,
+          speed: 6,
+          laneId: tram-equal-W,
+        },
+      ]
+    inputs: [{ t: 0.5, y: 691 }]
+    expect: { PIER-09: [] }
+
+  - name: MAN-03 spojrzenie dokładnie 3 s przed początkiem skrętu
+    player:
+      {
+        x: 528,
+        y: 728,
+        heading: -90,
+        speed: 2,
+        shoulderCheck: { lastLeftAt: 0 },
+      }
+    duration: 4
+    interpolate: false
+    inputs: [{ t: 3, y: 680 }, { t: 3.6, x: 485, heading: 180 }]
+    expect: { MAN-03: [good] }
+
+  - name: MAN-03 brak obejrzenia z rowerzystą w martwym polu
+    player: { x: 528, y: 728, heading: -90, speed: 3 }
+    agents:
+      [{ id: rear, kind: cyclist, x: 500, y: 736, heading: -90, speed: 3 }]
+    inputs: [{ t: 0.35, y: 668 }, { t: 0.75, x: 490, heading: 180 }]
+    expect: { MAN-03: [minor] }
+    evidence: { MAN-03: { conflictWith: rear } }
+
+  - name: MAN-03 bez spojrzenia i bez ruchu w martwym polu
+    player: { x: 528, y: 728, heading: -90, speed: 3 }
+    agents:
+      [{ id: rear, kind: cyclist, x: 550, y: 736, heading: -90, speed: 3 }]
+    inputs: [{ t: 0.35, y: 668 }, { t: 0.75, x: 490, heading: 180 }]
+    expect: { MAN-03: [] }
+
+  - name: MAN-06 minięcie auta z odstępem ponad metr
+    player: { x: 875, y: 1338, heading: 0, speed: 4 }
+    inputs: [{ t: 1, x: 1060 }]
+    expect: { MAN-06: [good] }
+
+  - name: MAN-06 odstęp dokładnie metr nie daje pochwały
+    player: { x: 880, y: 1329.3333333333333, heading: 0, speed: 4 }
+    inputs: [{ t: 1, x: 1060 }]
+    expect: { MAN-06: [minor] }
+
+  - name: MAN-06 postój przed samochodem nie oznacza jego minięcia
+    player: { x: 911, y: 1338, heading: 0, speed: 0 }
+    expect: { MAN-06: [] }
+
+  - name: MAN-07 spojrzenie przed ruszeniem od krawędzi
+    player:
+      {
+        x: 553,
+        y: 920,
+        heading: -90,
+        speed: 0,
+        shoulderCheck: { lastLeftAt: 0.3 },
+      }
+    inputs: [{ t: 0.4, speed: 1 }, { t: 0.6, y: 913 }]
+    expect: { MAN-07: [good] }
+
+  - name: MAN-07 ruszenie z krawędzi bez sprawdzenia martwego pola
+    player: { x: 554, y: 920, heading: -90, speed: 0 }
+    agents:
+      [{ id: rear, kind: cyclist, x: 528, y: 955, heading: -90, speed: 3 }]
+    inputs: [{ t: 0.4, speed: 1 }]
+    expect: { MAN-07: [minor] }
+
+  - name: MAN-07 bardzo krótki postój nie otwiera epizodu ruszania
+    player:
+      {
+        x: 553,
+        y: 920,
+        heading: -90,
+        speed: 0,
+        shoulderCheck: { lastLeftAt: 0 },
+      }
+    inputs: [{ t: 0.28, speed: 1 }]
+    expect: { MAN-07: [] }
+
+  - name: MAN-09 jedna ręka na kierownicy przy sygnalizowaniu
+    player: { speed: 4, handsOnBar: 1, feetOnPedals: true, signal: left }
+    expect: { MAN-09: [] }
+
+  - name: MAN-09 brak obu rąk na kierownicy i tylko jeden werdykt
+    player: { speed: 4, handsOnBar: 0, feetOnPedals: true }
+    expect: { MAN-09: [minor] }
+
+  - name: MAN-09 prowadzenie roweru bez nóg na pedałach jest prawidłowe
+    player: { mode: walking_bike, speed: 1, handsOnBar: 1, feetOnPedals: false }
+    expect: { MAN-09: [] }
+
+  - name: MAN-09 nogi poza pedałami podczas jazdy
+    player: { speed: 2, handsOnBar: 2, feetOnPedals: false }
+    expect: { MAN-09: [minor] }
+
+  - name: MAN-10 jazda samemu jest poprawna
+    player: { speed: 4, passenger: false }
+    expect: { MAN-10: [] }
+
+  - name: MAN-10 przewożenie pasażera na jednoosobowym rowerze
+    player: { speed: 4, passenger: true }
+    expect: { MAN-10: [major] }
+
+  - name: MAN-10 podczas postoju pasażer schodzi przed ruszeniem
+    player: { speed: 0, passenger: true }
+    inputs: [{ t: 0.4, passenger: false }, { t: 0.6, speed: 3 }]
+    expect: { MAN-10: [] }
+
+  - name: MAN-11 odebranie telefonu po bezpiecznym zatrzymaniu
+    player: { x: 680, y: 1000, speed: 0, phoneInHand: false }
+    inputs: [{ t: 0.35, phoneInHand: true }]
+    expect: { MAN-11: [good] }
+
+  - name: MAN-11 telefon w ręku podczas jazdy
+    player: { speed: 4, phoneInHand: true }
+    expect: { MAN-11: [minor] }
+
+  - name: MAN-11 postój na jezdni w ruchu nie daje bonusu
+    player: { x: 528, y: 926, speed: 0, phoneInHand: true }
+    expect: { MAN-11: [] }
+
+  - name: MSC-01 otwarta zapora i wyłączony sygnał
+    player: { x: 2190, y: 1734, heading: -90, speed: 3 }
+    inputs: [{ t: 1, y: 1652 }]
+    expect: { MSC-01: [] }
+
+  - name: MSC-01 zapora jeszcze otwarta przy czerwonym migającym sygnale
+    env: { railOverrides: { rail-crossing: { barrier: open, flashing: true } } }
+    player: { x: 2190, y: 1734, heading: -90, speed: 3 }
+    inputs: [{ t: 1, y: 1652 }]
+    expect: { MSC-01: [major] }
+
+  - name: MSC-01 podnosząca się zapora nadal zakazuje wjazdu
+    env:
+      {
+        railOverrides: { rail-crossing: { barrier: raising, flashing: false } },
+      }
+    player: { x: 2190, y: 1734, heading: -90, speed: 3 }
+    inputs: [{ t: 1, y: 1652 }]
+    expect: { MSC-01: [major] }
+
+  - name: MSC-01 wyprzedzenie jadącego roweru przed przejazdem
+    player: { x: 2190, y: 1835, heading: -90, speed: 4 }
+    agents:
+      [{ id: cyclist, kind: cyclist, x: 2208, y: 1797, heading: -90, speed: 1 }]
+    inputs: [{ t: 0.9, y: 1769 }]
+    expect: { MSC-01: [minor] }
+
+  - name: MSC-01 zatrzymanie na torach po wjeździe przy otwartym przejeździe
+    player: { x: 2190, y: 1734, heading: -90, speed: 3 }
+    duration: 1.6
+    inputs: [{ t: 0.5, y: 1697, speed: 0 }]
+    expect: { MSC-01: [major] }
+    evidence: { MSC-01: { stoppedOnTracks: true } }
+
+  - name: MSC-02 postój przed przystankiem do zakończenia wysiadania
+    player: { x: 1070, y: 656, heading: 0, speed: 0 }
+    agents:
+      [
+        {
+          id: tram,
+          kind: tram,
+          x: 1120,
+          y: 608,
+          stopId: stop-without-island,
+          leaveAt: 0.6,
+        },
+      ]
+    inputs: [{ t: 0.65, speed: 3 }, { t: 0.95, x: 1150 }]
+    expect: { MSC-02: [good] }
+
+  - name: MSC-02 wjazd w strefę podczas wysiadania
+    player: { x: 1069, y: 656, heading: 0, speed: 4 }
+    agents:
+      [{ id: tram, kind: tram, x: 1120, y: 608, stopId: stop-without-island }]
+    inputs: [{ t: 0.8, x: 1150 }]
+    expect: { MSC-02: [major] }
+
+  - name: MSC-02 przejeżdżający tramwaj nie aktywuje przystanku
+    player: { x: 1070, y: 656, heading: 0, speed: 4 }
+    agents: [{ id: tram, kind: tram, x: 1120, y: 608, heading: 0, speed: 5 }]
+    inputs: [{ t: 0.8, x: 1150 }]
+    expect: { MSC-02: [] }
+
+  - name: MSC-03 postój przed chodnikiem i przepuszczenie pieszego
+    player: { x: 1134, y: 1520, heading: -90, speed: 0 }
+    agents:
+      [
+        {
+          id: pedestrian,
+          kind: pedestrian,
+          x: 1134,
+          y: 1488,
+          speed: 1,
+          leaveAt: 0.45,
+        },
+      ]
+    inputs: [{ t: 0.5, speed: 2 }, { t: 0.95, y: 1464 }]
+    expect: { MSC-03: [good], PIER-06: [] }
+
+  - name: MSC-03 wyjazd z posesji bez postoju
+    player: { x: 1134, y: 1520, heading: -90, speed: 3 }
+    inputs: [{ t: 0.7, y: 1452 }]
+    expect: { MSC-03: [minor], PIER-06: [] }
+
+  - name: MSC-03 wymuszenie przy bramie daje jeden werdykt
+    player: { x: 1134, y: 1520, heading: -90, speed: 3 }
+    agents: [{ id: pedestrian, kind: pedestrian, x: 1134, y: 1490, speed: 0 }]
+    inputs: [{ t: 0.68, y: 1455 }]
+    expect: { MSC-03: [major], PIER-06: [] }
+
+  - name: MSC-03 jazda wzdłuż jezdni obok wyjazdu jest neutralna
+    player: { x: 1080, y: 1458, heading: 0, speed: 3 }
+    inputs: [{ t: 1, x: 1180 }]
+    expect: { MSC-03: [], PIER-06: [] }
+
+  - name: MSC-04 włączenie obu świateł daje raz dobry nawyk
+    env: { time: dusk }
+    player: { speed: 3, lights: { front: false, rear: false } }
+    inputs:
+      - { t: 0.2, lights: { front: true, rear: true } }
+      - { t: 0.4, lights: { front: false, rear: false } }
+      - { t: 0.8, lights: { front: true, rear: true } }
+    expect: { MSC-04: [minor, good, minor], WYP-04: [], WYP-05: [] }
+
+  - name: MSC-04 brak obu lamp we mgle daje jeden werdykt
+    env: { weather: fog }
+    player: { speed: 3, lights: { front: false, rear: false } }
+    expect: { MSC-04: [minor], WYP-04: [], WYP-05: [] }
+
+  - name: MSC-04 jazda w pogodny dzień bez włączania lamp
+    player: { speed: 3, lights: { front: false, rear: false } }
+    expect: { MSC-04: [], WYP-04: [], WYP-05: [] }
+
+  - name: WYP-04 tylko przednia lampa jest wyłączona w nocy
+    env: { time: night }
+    player: { speed: 3, lights: { front: false, rear: true } }
+    expect: { WYP-04: [minor], MSC-04: [] }
+
+  - name: WYP-04 brak przedniego światła po zmroku i naprawienie sytuacji
+    env: { time: dusk }
+    player: { speed: 3, lights: { front: false, rear: true } }
+    inputs: [{ t: 0.5, lights: { front: true, rear: true } }]
+    expect: { WYP-04: [minor, good], MSC-04: [] }
+
+  - name: WYP-04 i WYP-05 prowadzenie roweru z wyłączonymi lampami
+    env: { time: night }
+    player:
+      { speed: 1, mode: walking_bike, lights: { front: false, rear: false } }
+    expect: { WYP-04: [], WYP-05: [], MSC-04: [] }
+
+  - name: WYP-05 brak tylnego światła w nocy
+    env: { time: night }
+    player: { speed: 3, lights: { front: true, rear: false } }
+    expect: { WYP-05: [minor], MSC-04: [] }
+
+  - name: WYP-05 tylne światło włączone przez całą jazdę w deszczu
+    env: { weather: rain_heavy }
+    player: { speed: 3, lights: { front: true, rear: true } }
+    expect: { WYP-05: [], MSC-04: [] }
+
+  - name: MSC-04 włączenie lamp przed ruszeniem też zasługuje na jeden bonus
+    env: { time: dusk }
+    player: { speed: 0, lights: { front: false, rear: false } }
+    inputs:
+      [{ t: 0.2, lights: { front: true, rear: true } }, { t: 0.4, speed: 2 }]
+    expect: { MSC-04: [good], WYP-04: [], WYP-05: [] }

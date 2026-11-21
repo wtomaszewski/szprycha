@@ -277,3 +277,7 @@ button[aria-pressed='true'] {
 .projection-debug input {
   grid-column: 1;
 }
+
+.training-dusk {
+  filter: brightness(0.78) saturate(0.8);
+}
