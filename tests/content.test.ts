@@ -14,13 +14,14 @@ import { buildContent, readContent, contentFiles } from '../tools/content';
 import { contentSchema } from '../src/content/schemas';
 
 describe('canonical content', () => {
-  it('loads all five files and validates every rule reference', async () => {
+  it('loads the canonical files and mission data', async () => {
     const content = await readContent();
     expect(contentFiles).toHaveLength(5);
     expect(content.przepisy.przepisy.length).toBeGreaterThan(0);
     expect(content.znaki.znaki.length).toBeGreaterThanOrEqual(40);
     expect(content.pytania.pytania.length).toBeGreaterThanOrEqual(50);
     expect(content.osiagniecia.osiagniecia.length).toBeGreaterThan(0);
+    expect(content.misje.some(({ id }) => id === 'WAW-T-01')).toBe(true);
   });
   it.each(['sign', 'question', 'achievement', 'nested achievement'])(
     'rejects unknown rule in %s',
@@ -49,45 +50,72 @@ describe('canonical content', () => {
     expect(contentSchema.safeParse(c).success).toBe(false);
     expect(contentSchema.safeParse({ ...c, typo: true }).success).toBe(false);
   });
-  it('npm run build fails for invalid content, even with a stale generated JSON', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'szprycha-invalid-'));
-    try {
-      for (const file of [
-        'content',
-        'src',
-        'tools',
-        'i18n',
-        'assets',
-        'maps',
-        'index.html',
-        'package.json',
-        'tsconfig.json',
-        'vite.config.ts',
-      ]) {
-        await cp(file, join(root, file), { recursive: true });
+  it.each([
+    {
+      file: 'znaki.yaml',
+      from: '[MAN-08]',
+      to: '[MISSING-01]',
+      message: 'Unknown rule ID: MISSING-01',
+    },
+    {
+      file: 'misje/warszawa.yaml',
+      from: 'limit_s: 90',
+      to: 'limit_s: -1',
+      message: 'Invalid mission content in warszawa.yaml',
+    },
+    {
+      file: 'misje/warszawa.yaml',
+      from: 'poi: tutorial_start',
+      to: 'poi: missing_start',
+      message: 'Mission WAW-T-01: unknown POI missing_start',
+    },
+    {
+      file: 'misje/warszawa.yaml',
+      from: 'misje.WAW-T-01.jazda',
+      to: 'misje.WAW-T-01.missing',
+      message: 'Mission WAW-T-01: missing translation misje.WAW-T-01.missing',
+    },
+  ])(
+    'build rejects $to even with stale generated JSON',
+    async ({ file, from, to, message }) => {
+      const root = await mkdtemp(join(tmpdir(), 'szprycha-invalid-'));
+      try {
+        for (const entry of [
+          'content',
+          'src',
+          'tools',
+          'i18n',
+          'assets',
+          'maps',
+          'index.html',
+          'package.json',
+          'tsconfig.json',
+          'vite.config.ts',
+        ]) {
+          await cp(entry, join(root, entry), { recursive: true });
+        }
+        await symlink(
+          join(process.cwd(), 'node_modules'),
+          join(root, 'node_modules'),
+          'dir',
+        );
+        await buildContent(root);
+        const source = join(root, 'content', file);
+        await writeFile(
+          source,
+          (await readFile(source, 'utf8')).replace(from, to),
+        );
+        const result = spawnSync('npm', ['run', 'build'], {
+          cwd: root,
+          encoding: 'utf8',
+          timeout: 25000,
+        });
+        expect(result.status).not.toBe(0);
+        expect(result.stdout + result.stderr).toContain(message);
+      } finally {
+        await rm(root, { recursive: true, force: true });
       }
-      await symlink(
-        join(process.cwd(), 'node_modules'),
-        join(root, 'node_modules'),
-        'dir',
-      );
-      await buildContent(root);
-      const file = join(root, 'content/znaki.yaml');
-      await writeFile(
-        file,
-        (await readFile(file, 'utf8')).replace('[MAN-08]', '[MISSING-01]'),
-      );
-      const result = spawnSync('npm', ['run', 'build'], {
-        cwd: root,
-        encoding: 'utf8',
-        timeout: 25000,
-      });
-      expect(result.status).not.toBe(0);
-      expect(result.stdout + result.stderr).toContain(
-        'Unknown rule ID: MISSING-01',
-      );
-    } finally {
-      await rm(root, { recursive: true, force: true });
-    }
-  }, 30000);
+    },
+    30000,
+  );
 });

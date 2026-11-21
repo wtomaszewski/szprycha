@@ -40,7 +40,7 @@
     "start": "Rozpocznij jazdę próbną",
     "unit": "km/h",
     "walkingHint": "Prowadzisz rower.",
-    "startHint": "Dotknij tutaj lub Enter — jazda",
+    "startHint": "Jazda próbna · Enter",
     "rotate": "Obróć urządzenie",
     "signalLeft": "← Ręka",
     "signalRight": "Ręka →",
@@ -106,5 +106,36 @@
       }
     },
     "emergencyApproaching": "Pojazd uprzywilejowany · zjedź na prawo"
+  },
+  "missionUi": {
+    "timer": "Czas misji",
+    "direction": "Kierunek i odległość do celu",
+    "distanceUnit": "m",
+    "equip": "Zapnij kask",
+    "helmetHint": "Zapnij kask, zanim ruszysz.",
+    "checkpointHint": "Wróć i wykonaj instrukcję bieżącego celu.",
+    "continue": "Jedź dalej od punktu kontrolnego",
+    "result": "Wynik misji",
+    "completed": "Misja ukończona",
+    "failed": "Spróbuj jeszcze raz",
+    "retry": "Powtórz misję",
+    "timeExpired": "Czas minął.",
+    "threeMajor": "Trzy poważne błędy zakończyły przejazd.",
+    "goodHabits": "Dobre nawyki",
+    "noTimeBonus": "Przejazd z poważnym błędem nie kwalifikuje się do premii za czas.",
+    "goals": {
+      "dojedz": "Jedź do zaznaczonego miejsca.",
+      "odbierz": "Odbierz przesyłkę w zaznaczonym miejscu.",
+      "oddaj": "Oddaj przesyłkę w zaznaczonym miejscu."
+    }
+  },
+  "misje": {
+    "WAW-T-01": {
+      "tytul": "Witaj w Szprysze",
+      "jazda": "Rusz i jedź za strzałką.",
+      "podejscie": "Zwolnij przed skrzyżowaniem.",
+      "powrot_stop": "Wróć i zatrzymaj się całkowicie przed linią STOP.",
+      "stop": "Zatrzymaj się całkowicie przed linią STOP, przepuść jadących drogą z pierwszeństwem i dopiero rusz do mety."
+    }
   }
 }

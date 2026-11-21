@@ -1,7 +1,6 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { buildContent } from './tools/content.ts';
-import { validateMaps } from './tools/maps.ts';
 
 export default defineConfig({
   base: './',
@@ -9,11 +8,10 @@ export default defineConfig({
     {
       name: 'validated-game-content',
       async buildStart() {
-        const content = await buildContent();
-        await validateMaps(content.balans.silnik.kafel_m);
+        await buildContent();
       },
       configureServer(server) {
-        const watched = [resolve('content'), resolve('maps')];
+        const watched = [resolve('content'), resolve('maps'), resolve('i18n')];
         server.watcher.add(watched);
         server.watcher.on('all', (event, file) => {
           if (

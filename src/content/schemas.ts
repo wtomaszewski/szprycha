@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { missionsSchema } from './missions.ts';
 
 const text = z.string().trim().min(1);
 const id = text.regex(/^[A-Za-z0-9_-]+$/);
@@ -222,6 +223,7 @@ export const contentSchema = z
     pytania: questionsSchema,
     balans: balanceSchema,
     osiagniecia: achievementsSchema,
+    misje: missionsSchema,
   })
   .superRefine((data, ctx) => {
     function unique(values: string[], path: string[]) {
@@ -256,6 +258,10 @@ export const contentSchema = z
       data.balans.rangi.map((r) => r.id),
       ['balans', 'rangi'],
     );
+    unique(
+      data.misje.map((mission) => mission.id),
+      ['misje'],
+    );
     const rules = new Set(data.przepisy.przepisy.map((r) => r.id));
     function reference(value: string, path: (string | number)[]) {
       if (!rules.has(value))
@@ -283,6 +289,38 @@ export const contentSchema = z
     data.osiagniecia.osiagniecia.forEach((a, i) =>
       condition(a.warunek, ['osiagniecia', 'osiagniecia', i, 'warunek']),
     );
+    const missions = new Set(data.misje.map(({ id }) => id));
+    const ranks = new Set(data.balans.rangi.map(({ id }) => id));
+    data.misje.forEach((mission, i) => {
+      const path = ['misje', i];
+      mission.reguly_cwiczone.forEach((rule, j) =>
+        reference(rule, [...path, 'reguly_cwiczone', j]),
+      );
+      mission.cele.forEach(({ wymagany_nawyk }, j) => {
+        if (wymagany_nawyk)
+          reference(wymagany_nawyk, [...path, 'cele', j, 'wymagany_nawyk']);
+      });
+      mission.zdarzenia_wymuszone.forEach(({ regula }, j) =>
+        reference(regula, [...path, 'zdarzenia_wymuszone', j, 'regula']),
+      );
+      unique(mission.checkpointy, ['misje', String(i), 'checkpointy']);
+      unique(mission.warunki_porazki, ['misje', String(i), 'warunki_porazki']);
+      const rank = mission.wymagania?.ranga_min;
+      if (rank && !ranks.has(rank))
+        ctx.addIssue({
+          code: 'custom',
+          path: [...path, 'wymagania', 'ranga_min'],
+          message: `Unknown rank: ${rank}`,
+        });
+      mission.wymagania?.misje_ukonczone?.forEach((required, j) => {
+        if (required === mission.id || !missions.has(required))
+          ctx.addIssue({
+            code: 'custom',
+            path: [...path, 'wymagania', 'misje_ukonczone', j],
+            message: `Invalid mission prerequisite: ${required}`,
+          });
+      });
+    });
     if (data.przepisy.stan_prawny !== data.pytania.stan_prawny)
       ctx.addIssue({
         code: 'custom',

@@ -86,6 +86,7 @@ export class RuleEngine {
   private readonly listeners = new Set<Listener>();
   private tick = 0;
   private shoulderBeforeTurn?: Verdict;
+  private hasPrevious = false;
   private previous = { x: 0, y: 0 };
   private sidewalkId?: string;
   private sidewalkLast = -Infinity;
@@ -99,7 +100,7 @@ export class RuleEngine {
   constructor(
     private readonly world: WorldModel,
     private readonly settings: GameContent['balans'],
-    manager = new IntersectionManager(world),
+    private readonly manager = new IntersectionManager(world),
   ) {
     this.road = new RoadVisit(world, settings.silnik);
     this.passing = new PassingMonitor(world);
@@ -117,6 +118,15 @@ export class RuleEngine {
 
   get signal() {
     return this.maneuver.activeSignal;
+  }
+
+  /** Keep the simulation clock and recorded feedback, clear in-progress observations. */
+  afterCheckpoint() {
+    const engine = new RuleEngine(this.world, this.settings, this.manager);
+    engine.tick = this.tick;
+    Object.assign(engine.counts, this.counts);
+    engine.recent.push(...this.recent);
+    return engine;
   }
 
   onVerdict(listener: Listener) {
@@ -150,7 +160,7 @@ export class RuleEngine {
     this.emit(
       this.junction.evaluate(
         rider,
-        this.tick === 0 ? undefined : this.previous,
+        this.hasPrevious ? this.previous : undefined,
         agents,
         env,
         this.zones,
@@ -173,7 +183,7 @@ export class RuleEngine {
       env,
       this.tick,
       this.zones,
-      this.tick > 0 ? this.previous : undefined,
+      this.hasPrevious ? this.previous : undefined,
       this.junction.debugLane,
       this.passing.active,
       this.signal,
@@ -194,6 +204,7 @@ export class RuleEngine {
         rider.pos,
       );
     if (this.maneuver.turnedLeft) this.emit(this.shoulderBeforeTurn);
+    this.hasPrevious = true;
     this.previous.x = rider.pos.x;
     this.previous.y = rider.pos.y;
     this.tick++;

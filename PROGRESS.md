@@ -1,14 +1,14 @@
 # Postęp projektu
 
-Stan: 21.11.2026. Gałąź: `feat/15-m3b-uczestnicy`.
+Stan: 21.11.2026. Gałąź: `feat/22-m4a-system-misji`.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | M0     | Szkielet, menu, treści, narzędzia i CI web  | Ukończony — kontrole lokalne i GitHub Actions zielone                                        |
 | M1     | Jazda, testowa mapa, kamera, bloki 2.5D     | Grywalny prototyp; lokalne kontrole zielone, test fizycznego Androida pozostaje do wykonania |
 | M2     | Silnik zasad v1                             | Scalony w `main` w PR #13                                                                    |
-| M3     | Ruch drogowy AI i pozostałe detektory       | Zakończone w PR domykającym #16, gotowe do recenzji.                                         |
-| M4     | Misje i fabuła                              | Nierozpoczęty                                                                                |
+| M3     | Ruch drogowy AI i pozostałe detektory       | Scalony w `main`. Ostatni PR to #21.                                                         |
+| M4     | Misje i fabuła                              | M4a gotowy do recenzji. M4b–M4d w kolejce.                                                   |
 | M5     | Punktacja, progresja, zapis                 | Nierozpoczęty                                                                                |
 | M6     | Mapy Warszawy i Wrocławia                   | Nierozpoczęty                                                                                |
 | M7     | Plac, quiz, egzamin                         | Nierozpoczęty                                                                                |
@@ -132,3 +132,10 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Każda reguła ma jawny tryb oceny. GDZIE-10 i MSC-05 są w quizie, a warianty praktyczne wymagają misji z nadzorowaną eskortą lub pełną kolumną.
 - Testy ruchu AI sprawdzają po 10 minut symulacji wszystkich uczestników dla dwóch ziaren. Kontrolują postęp, kolizje, wysiadanie i ustępowanie pojazdowi uprzywilejowanemu.
 - Miasteczko dostarcza m.in. jezdnie, pas, przejazd z sygnalizacją rowerową i wloty A-7. Scenariusze uzupełniają je o warianty oznakowania, pobocza, strefę zamieszkania i polecenia kierującego ruchem. Oznakowanie dzielnic i zdarzenia misji, w tym prezentacja poleceń, należą do M4 i M6. Flagi merytoryczne pozostają do konsultacji.
+
+## M4a — system misji (#22)
+
+- Zod waliduje pliki `content/misje/<miasto>.yaml` i odwołania do tłumaczeń, reguł, map i POI podczas przygotowania buildu. `MissionSystem` pracuje w tym samym kroku 1/60 s co jazda i silnik zasad.
+- Cele jazdy, odbioru i dostawy, limity misji i etapu, checkpointy, porażka po czasie lub po trzech werdyktach `major`. Powrót zachowuje czas i werdykty. Surowy wynik zawiera czas, `par_s`, dobre nawyki, werdykty i kwalifikację do premii za czas.
+- WAW-T-01 dostępny z menu w Miasteczku. Ćwiczenie prowadzi od zapięcia kasku przez dojazd do skrzyżowania aż do mety po poprawnym zatrzymaniu na STOP. HUD pokazuje cel, kierunek, odległość i pozostały czas.
+- Wyzwalacze zdarzeń działają na nazwanych strefach i POI. Dialogi, powtórka, biblioteka zdarzeń i trasy kampanii pozostają w M4b–M4d. Naliczanie punktów i gwiazdek należy do M5.
