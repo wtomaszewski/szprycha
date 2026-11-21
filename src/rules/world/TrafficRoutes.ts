@@ -10,8 +10,16 @@ import {
 } from './WorldModel.ts';
 
 export const routeProperties = z.object({
-  kind: z.enum(['pedestrian', 'cyclist', 'tram', 'passenger', 'emergency']),
+  kind: z.enum([
+    'pedestrian',
+    'cyclist',
+    'tram',
+    'passenger',
+    'emergency',
+    'car',
+  ]),
   speed: z.number().positive(),
+  event_only: z.boolean().default(false),
   start_s: z.number().nonnegative().default(0),
   repeat_s: z.number().positive().optional(),
 });
@@ -82,7 +90,7 @@ export function buildTrafficRoutes(
       ({ kind }) =>
         kind === 'combined' || kind === (foot ? 'pedestrian' : 'bike'),
     );
-    if (foot || bike) {
+    if (foot || bike || kind === 'car') {
       const sample: Vec2 = { x: 0, y: 0 };
       const count = Math.ceil(path.length / 0.15);
       for (let i = 0; i <= count; i++) {
@@ -94,22 +102,26 @@ export function buildTrafficRoutes(
           sample,
         );
         const legal =
-          allowed.some((box) => contains(box, sample)) ||
-          (foot ? walkZones : bikeZones).some((zone) => {
-            if (!contains(zone, sample)) return false;
-            if (!bike)
-              return !zones.some(
-                (road) => road.kind === 'roadway' && contains(road, sample),
-              );
-            if (!zone.direction) return true;
-            const degrees = {
-              E: 0,
-              S: Math.PI / 2,
-              W: Math.PI,
-              N: -Math.PI / 2,
-            };
-            return Math.cos(heading - degrees[zone.direction]) > 0.99;
-          });
+          kind === 'car'
+            ? zones.some(
+                (zone) => zone.kind === 'roadway' && contains(zone, sample),
+              )
+            : allowed.some((box) => contains(box, sample)) ||
+              (foot ? walkZones : bikeZones).some((zone) => {
+                if (!contains(zone, sample)) return false;
+                if (!bike)
+                  return !zones.some(
+                    (road) => road.kind === 'roadway' && contains(road, sample),
+                  );
+                if (!zone.direction) return true;
+                const degrees = {
+                  E: 0,
+                  S: Math.PI / 2,
+                  W: Math.PI,
+                  N: -Math.PI / 2,
+                };
+                return Math.cos(heading - degrees[zone.direction]) > 0.99;
+              });
         if (!legal)
           throw new Error(`Traffic route leaves its infrastructure: ${id}`);
       }
@@ -123,6 +135,8 @@ export function buildTrafficRoutes(
       throw new Error(
         `Repeating traffic route needs boundary endpoints and repeat_s: ${id}`,
       );
+    if (kind === 'car' && input.repeat_s)
+      throw new Error(`Forced car route cannot repeat: ${id}`);
     if (bike && (!onBoundary(path.start) || !onBoundary(path.end)))
       throw new Error(`Cycle route needs boundary endpoints: ${id}`);
     byId.set(id, {
@@ -157,9 +171,11 @@ export function buildTrafficRoutes(
         !lane ||
         !exit ||
         exit.offset <= distance ||
-        (route.kind !== 'tram' && route.kind !== 'emergency') ||
-        (route.kind === 'tram' &&
-          (lane.type !== 'tram' ||
+        (route.kind !== 'tram' &&
+          route.kind !== 'emergency' &&
+          route.kind !== 'car') ||
+        ((route.kind === 'tram' || route.kind === 'car') &&
+          (lane.type !== route.kind ||
             Math.hypot(
               lane.end.x - segment.start.x,
               lane.end.y - segment.start.y,
@@ -204,6 +220,8 @@ export function buildTrafficRoutes(
     }
   }
   for (const route of byId.values()) {
+    if (route.kind === 'car' && !route.junctions.length)
+      throw new Error(`Forced car route needs a junction: ${route.id}`);
     if (route.kind === 'passenger' && !passengers.has(route))
       throw new Error(`Passenger route without stop: ${route.id}`);
     route.junctions.sort((a, b) => a.distance - b.distance);

@@ -13,6 +13,7 @@ const goalFields = {
   wskazowka_powrotu: key.optional(),
 };
 const missionGoal = z.discriminatedUnion('typ', [
+  z.strictObject({ ...goalFields, typ: z.literal('przygotuj_rower') }),
   z.strictObject({ ...goalFields, typ: z.literal('dojedz'), poi: id }),
   z.strictObject({
     ...goalFields,
@@ -44,7 +45,11 @@ export const missionSchema = z
         misje_ukonczone: z.array(id).optional(),
       })
       .optional(),
-    start: z.strictObject({ poi: id, kask_zapiety: z.boolean().optional() }),
+    start: z.strictObject({
+      poi: id,
+      kask_zapiety: z.boolean().optional(),
+      zmrok: z.boolean().optional(),
+    }),
     cele: z.array(missionGoal).min(1),
     limit_s: seconds.optional(),
     przesylka: z.strictObject({ delikatna: z.boolean() }).optional(),
@@ -64,6 +69,7 @@ export const missionSchema = z
     dialog_start: dialogueId.optional(),
     dialog_koniec: dialogueId.optional(),
     ruch_ai: z.boolean().optional(),
+    skrot: z.strictObject({ odcinek: id }).optional(),
   })
   .superRefine((mission, ctx) => {
     const act = mission.akt === 0 ? 'T' : `A${mission.akt}`;
@@ -85,9 +91,21 @@ export const missionSchema = z
         message: 'Time limits and czas_minal must be configured together',
       });
 
+    if (
+      mission.cele.some(
+        ({ typ }, i) =>
+          typ === 'przygotuj_rower' && (i !== 0 || mission.cele.length < 2),
+      )
+    )
+      ctx.addIssue({
+        code: 'custom',
+        path: ['cele'],
+        message: 'Bike preparation must precede a riding goal',
+      });
+
     const cargo = new Set<string>();
     mission.cele.forEach((goal, index) => {
-      if (goal.typ === 'dojedz') return;
+      if (goal.typ === 'dojedz' || goal.typ === 'przygotuj_rower') return;
       const { przedmiot } = goal;
       const valid =
         goal.typ === 'odbierz'

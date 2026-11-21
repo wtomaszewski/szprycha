@@ -32,8 +32,10 @@ export class DrivingControls {
   readonly mode = document.createElement('span');
   readonly notice = document.createElement('p');
   private pauseButton!: HTMLButtonElement;
+  private readonly lightButton: HTMLButtonElement;
   private toggleLabel!: HTMLButtonElement;
   constructor(
+    areaTitle: string,
     private toggle: () => void,
     reset: () => void,
     menu: () => void,
@@ -49,7 +51,7 @@ export class DrivingControls {
     const bar = document.createElement('div');
     bar.className = 'drive-bar';
     const title = document.createElement('strong');
-    title.textContent = ui.driving.title;
+    title.textContent = areaTitle;
     this.speed.setAttribute('aria-label', ui.driving.speed);
     const button = (
       text: string,
@@ -153,14 +155,12 @@ export class DrivingControls {
     hold(ui.driving.signalRight, 'KeyE');
     hold(ui.driving.look, 'KeyC');
     hold(ui.driving.bell, 'KeyF');
-    const lights = button(
+    const lights = (this.lightButton = button(
       ui.driving.lights,
-      () => {
-        this.actions.lights = !this.actions.lights;
-        lights.setAttribute('aria-pressed', String(this.actions.lights));
-      },
+      () => this.setLights(!this.actions.lights),
       actions,
-    );
+    ));
+    this.setLights(false);
     this.toggleLabel = button(ui.driving.dismount, () => toggle(), actions);
     const brake = button(ui.driving.brake, () => {}, actions);
     brake.className = 'brake';
@@ -257,6 +257,11 @@ export class DrivingControls {
       { signal },
     );
   }
+  setLights(on: boolean) {
+    this.actions.lights = on;
+    this.lightButton.setAttribute('aria-pressed', String(on));
+  }
+
   clear() {
     this.keys.clear();
     this.x = 0;
@@ -295,7 +300,7 @@ export class DrivingControls {
       if (pad.buttons[5]?.pressed) this.actions.signal = 'right';
       this.actions.looking ||= !!pad.buttons[3]?.pressed;
       this.actions.bell ||= !!pad.buttons[2]?.pressed;
-      if (justPressed(12)) this.actions.lights = !this.actions.lights;
+      if (justPressed(12)) this.setLights(!this.actions.lights);
     }
     return { x, y, brake, scheme: this.scheme };
   }

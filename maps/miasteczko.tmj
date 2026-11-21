@@ -22,7 +22,7 @@
     }
   ],
   "nextlayerid": 22,
-  "nextobjectid": 161,
+  "nextobjectid": 167,
   "layers": [
     {
       "id": 1,
@@ -2250,12 +2250,12 @@
         1,
         1,
         1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
         1,
         1,
         3,
@@ -2330,12 +2330,12 @@
         1,
         1,
         1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
         1,
         1,
         3,
@@ -2410,12 +2410,12 @@
         1,
         1,
         1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
         1,
         1,
         3,
@@ -2490,12 +2490,12 @@
         1,
         1,
         1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
         1,
         1,
         3,
@@ -2570,12 +2570,12 @@
         1,
         1,
         1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
         1,
         1,
         3,
@@ -2650,12 +2650,12 @@
         1,
         1,
         1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
         1,
         1,
         3,
@@ -2730,12 +2730,12 @@
         1,
         1,
         1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
         1,
         1,
         3,
@@ -10052,6 +10052,29 @@
               "value": "palace-test"
             }
           ]
+        },
+        {
+          "id": 166,
+          "name": "garaz-kazika",
+          "type": "",
+          "x": 1760,
+          "y": 768,
+          "width": 192,
+          "height": 96,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "height",
+              "type": "float",
+              "value": 2
+            },
+            {
+              "name": "tint",
+              "type": "float",
+              "value": 9291437
+            }
+          ]
         }
       ]
     },
@@ -10801,6 +10824,48 @@
           "y": 1510,
           "width": 30,
           "height": 30,
+          "rotation": 0,
+          "visible": true,
+          "properties": []
+        },
+        {
+          "id": 161,
+          "name": "garaz_start",
+          "type": "",
+          "x": 1790,
+          "y": 956,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "heading",
+              "type": "float",
+              "value": 1.5707963267948966
+            }
+          ]
+        },
+        {
+          "id": 162,
+          "name": "garaz_objazd",
+          "type": "",
+          "x": 1763,
+          "y": 1030,
+          "width": 62,
+          "height": 55,
+          "rotation": 0,
+          "visible": true,
+          "properties": []
+        },
+        {
+          "id": 163,
+          "name": "garaz_meta",
+          "type": "",
+          "x": 1883,
+          "y": 1023,
+          "width": 56,
+          "height": 63,
           "rotation": 0,
           "visible": true,
           "properties": []
@@ -11994,6 +12059,24 @@
               "name": "direction",
               "type": "string",
               "value": "N"
+            }
+          ]
+        },
+        {
+          "id": 165,
+          "name": "garaz-przejscie",
+          "type": "",
+          "x": 1872,
+          "y": 930,
+          "width": 64,
+          "height": 54,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "park_path"
             }
           ]
         }
@@ -14410,6 +14493,34 @@
               "name": "affects",
               "type": "string",
               "value": "stop-W"
+            },
+            {
+              "name": "facing",
+              "type": "string",
+              "value": "W"
+            }
+          ]
+        },
+        {
+          "id": 164,
+          "name": "garaz-przejscie-B-1",
+          "type": "",
+          "x": 1865,
+          "y": 968,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "code",
+              "type": "string",
+              "value": "B-1"
+            },
+            {
+              "name": "affects",
+              "type": "string",
+              "value": "garaz-przejscie"
             },
             {
               "name": "facing",

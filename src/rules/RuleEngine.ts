@@ -36,7 +36,7 @@ import {
   type RiderState,
   type Verdict,
 } from './types';
-import { contains, type WorldModel } from './world/WorldModel';
+import { sideVector, type WorldModel } from './world/WorldModel';
 import { ZoneTracker } from './world/ZoneTracker';
 
 const EXIT_TICKS = 0.25 * TICKS_PER_SECOND;
@@ -275,9 +275,7 @@ export class RuleEngine {
         rules.ttc_minor_s,
       ),
     );
-    const lane = driveways.some((box) => contains(box, rider.pos))
-      ? undefined
-      : this.zones.lane;
+    const lane = this.zones.driveway ? undefined : this.zones.lane;
     this.starting.evaluate(
       rider,
       agents,
@@ -310,7 +308,8 @@ export class RuleEngine {
       zone?.kind !== 'sidewalk' ||
       rider.mode !== 'riding' ||
       rider.speed <= 0 ||
-      this.zones.crossing
+      this.zones.crossing ||
+      this.crossesSidewalkAtDriveway(rider)
     )
       return;
     this.sidewalkId ??= zone.id;
@@ -341,6 +340,16 @@ export class RuleEngine {
       this.sidewalkPenalized = true;
       this.emit(this.pedestrianCandidate);
     }
+  }
+
+  private crossesSidewalkAtDriveway(rider: RiderState) {
+    const driveway = this.zones.driveway;
+    if (!driveway) return false;
+    const { x, y } = sideVector[driveway.direction];
+    return (
+      Math.abs(x * Math.cos(rider.heading) + y * Math.sin(rider.heading)) >
+      Math.SQRT1_2
+    );
   }
 
   private closeSidewalk() {

@@ -1,6 +1,8 @@
 import { TICKS_PER_SECOND, verdict, type RiderState } from '../types';
 import {
   lateralOffset,
+  sideVector,
+  type Driveway,
   type Intersection,
   type Lane,
 } from '../world/WorldModel';
@@ -17,6 +19,9 @@ export class ManeuverDetector {
   private signalSince = 0;
   private intersection?: Intersection;
   private lane?: Lane;
+  private driveway?: Driveway;
+  private drivewayMarked = false;
+  private drivewayEntry?: { signal: RiderState['signal']; held: number };
   private heading = 0;
   junctionEntryHeading?: number;
   turnedLeft = false;
@@ -56,11 +61,44 @@ export class ManeuverDetector {
     if (rider.mode !== 'riding') {
       this.intersection = undefined;
       this.lane = undefined;
+      this.driveway = undefined;
+      this.drivewayEntry = undefined;
       return;
     }
 
     const timeHeld = (tick - this.signalSince) / TICKS_PER_SECOND;
     const currentSignal = this.activeSignal;
+    if (zones.driveway !== this.driveway) {
+      this.driveway = zones.driveway;
+      this.drivewayEntry = undefined;
+      this.drivewayMarked = false;
+    }
+    if (this.driveway && !zones.intersection) {
+      const direction = sideVector[this.driveway.direction];
+      const turn = headingDifference(
+        rider.heading,
+        Math.atan2(direction.y, direction.x),
+      );
+      if (zones.zone?.kind === 'sidewalk' && Math.abs(turn) < minTurn)
+        this.drivewayEntry ??= { signal: currentSignal, held: timeHeld };
+      if (
+        this.drivewayEntry &&
+        zones.zone?.kind === 'roadway' &&
+        rider.speed > 0 &&
+        !this.drivewayMarked &&
+        Math.abs(turn) > minTurn
+      ) {
+        this.drivewayMarked = true;
+        return this.result(
+          rider,
+          tick,
+          turn,
+          this.drivewayEntry.signal,
+          this.drivewayEntry.held,
+          this.driveway.id,
+        );
+      }
+    }
     if (zones.intersection) {
       if (zones.intersection !== this.intersection) {
         this.intersection = zones.intersection;

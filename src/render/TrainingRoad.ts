@@ -1,5 +1,5 @@
 import type { GameObjects, Scene } from 'phaser';
-import { FONT } from '../core/presentation';
+import { FONT, ui } from '../core/presentation';
 import type { EnvState, SignalPhase } from '../rules/types';
 import type { Box, WorldModel } from '../rules/world/WorldModel';
 
@@ -122,7 +122,7 @@ export class TrainingRoad {
       if (!lane.stopSign && !lane.mainSignal) continue;
       const x = lane.end.x * scale;
       const y = lane.end.y * scale;
-      const halfWidth = lane.type === 'tram' ? 13 : 45;
+      const halfWidth = Math.min(45, (lane.width * scale) / 2 - 3);
       const halfX = -lane.forward.y * halfWidth;
       const halfY = lane.forward.x * halfWidth;
       marks.lineStyle(lane.stopSign?.code === 'A-7' ? 2 : 4, 0xf4f4f4);
@@ -167,6 +167,68 @@ export class TrainingRoad {
           .text(x, y, 'STOP', { fontFamily: FONT, fontSize: '12px' })
           .setOrigin(0.5)
           .setDepth(7);
+      } else if (sign.code === 'B-1') {
+        signs
+          .fillStyle(0xe43b44)
+          .fillCircle(x, y, 14)
+          .fillStyle(0xf4f4f4)
+          .fillCircle(x, y, 10);
+      } else if (sign.code === 'C-12') {
+        signs
+          .fillStyle(0xf4f4f4)
+          .fillCircle(x, y, 14)
+          .fillStyle(0x3b5dc9)
+          .fillCircle(x, y, 12)
+          .lineStyle(2, 0xf4f4f4)
+          .strokeCircle(x, y, 6);
+        for (let i = 0; i < 3; i++) {
+          const theta = (i * 2 * Math.PI) / 3;
+          const at = (dx: number, dy: number) =>
+            [
+              x + dx * Math.cos(theta) - dy * Math.sin(theta),
+              y + dx * Math.sin(theta) + dy * Math.cos(theta),
+            ] as const;
+          signs
+            .fillStyle(0xf4f4f4)
+            .fillTriangle(...at(7, -4), ...at(4, 1), ...at(9, 1));
+        }
+      } else if (sign.code === 'D-46' || sign.code === 'D-47') {
+        signs.fillStyle(0xf4f4f4).fillRect(x - 26, y - 8, 52, 16);
+        signs.lineStyle(1, 0x333c57).strokeRect(x - 25, y - 7, 50, 14);
+        const label = scene.add
+          .text(x, y, ui.driving.internalRoadSign, {
+            fontFamily: FONT,
+            fontSize: '7px',
+            color: '#1a1c2c',
+          })
+          .setOrigin(0.5)
+          .setDepth(6);
+        label.setScale(Math.min(1, 46 / label.width), 1);
+        if (sign.code === 'D-47')
+          scene.add
+            .graphics()
+            .setDepth(7)
+            .lineStyle(2, 0xe43b44)
+            .lineBetween(x - 24, y + 7, x + 24, y - 7);
+      } else if (sign.code === 'A-11a' || sign.code === 'A-17') {
+        signs
+          .fillStyle(0xe43b44)
+          .fillTriangle(x, y - 14, x - 17, y + 12, x + 17, y + 12);
+        signs
+          .fillStyle(0xfeae34)
+          .fillTriangle(x, y - 9, x - 12, y + 9, x + 12, y + 9);
+        if (sign.code === 'A-11a')
+          signs.fillStyle(0x1a1c2c).fillEllipse(x, y + 5, 15, 5);
+        else {
+          signs
+            .fillStyle(0x1a1c2c)
+            .fillCircle(x - 3, y - 2, 2)
+            .fillCircle(x + 4, y + 1, 2);
+          signs
+            .lineStyle(2, 0x1a1c2c)
+            .lineBetween(x - 3, y, x - 3, y + 7)
+            .lineBetween(x + 4, y + 3, x + 4, y + 8);
+        }
       } else if (sign.code === 'D-1') {
         signs.fillStyle(0xf4f4f4).fillPoints(
           [

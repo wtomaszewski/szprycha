@@ -25,6 +25,14 @@ export class MainMenu extends Scene {
       );
       document.body.append(missionButton);
     }
+    const pragaButton = document.createElement('button');
+    pragaButton.type = 'button';
+    pragaButton.className = 'menu-mission menu-praga';
+    pragaButton.textContent = ui.driving.praga;
+    pragaButton.addEventListener('click', () =>
+      this.scene.start('City', { map: 'warszawa' }),
+    );
+    document.body.append(pragaButton);
     const g = this.add.graphics();
     g.fillStyle(0x1a1c2c).fillRect(0, 0, 640, 360);
     g.fillStyle(0x257179).fillRect(0, 0, 8, 360);
@@ -52,6 +60,7 @@ export class MainMenu extends Scene {
     g.fillStyle(0x333c57).fillRect(44, 199, 272, 39);
     label(57, 207, ui.driving.startHint, 16);
     if (tutorial) g.fillStyle(0xffcd75).fillRect(44, 242, 272, 39);
+    g.fillStyle(0xffcd75).fillRect(325, 242, 272, 39);
 
     label(46, 282, ui.pangram, 16);
     // Small, original bicycle emblem; decorative menu art, no world renderer.
@@ -73,18 +82,21 @@ export class MainMenu extends Scene {
         -Math.floor((this.scale.width - 640) / 2),
         -Math.floor((this.scale.height - 360) / 2),
       );
-      missionButton.style.setProperty('--menu-zoom', String(this.scale.zoom));
+      for (const button of [missionButton, pragaButton])
+        button.style.setProperty('--menu-zoom', String(this.scale.zoom));
     };
     center();
     this.scale.on('resize', center);
     const startDrive = (event: KeyboardEvent) => {
-      if (event.target !== missionButton) this.scene.start('City');
+      if (event.target !== missionButton && event.target !== pragaButton)
+        this.scene.start('City');
     };
     this.input.keyboard?.on('keydown-ENTER', startDrive);
     this.events.once('shutdown', () => {
       this.scale.off('resize', center);
       this.input.keyboard?.off('keydown-ENTER', startDrive);
       missionButton.remove();
+      pragaButton.remove();
     });
     const canvas = this.game.canvas;
     canvas.setAttribute(

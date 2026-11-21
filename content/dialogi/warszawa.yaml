@@ -12,6 +12,46 @@ dialogi:
       - postac: pan_kazik
         emocja: happy
         tekst: dialogi.WAW-T-01.po_mecie
+  - id: dialogi.WAW-T-02.start
+    linie:
+      - postac: pan_kazik
+        emocja: neutral
+        tekst: dialogi.WAW-T-02.start_tekst
+  - id: dialogi.WAW-T-02.koniec
+    linie:
+      - postac: pan_kazik
+        emocja: happy
+        tekst: dialogi.WAW-T-02.koniec_tekst
+  - id: dialogi.WAW-A1-01.start
+    linie:
+      - postac: pan_kazik
+        emocja: neutral
+        tekst: dialogi.WAW-A1-01.start_tekst
+  - id: dialogi.WAW-A1-01.koniec
+    linie:
+      - postac: pan_kazik
+        emocja: happy
+        tekst: dialogi.WAW-A1-01.koniec_tekst
+  - id: dialogi.WAW-A1-02.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.WAW-A1-02.start_tekst
+  - id: dialogi.WAW-A1-02.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: happy
+        tekst: dialogi.WAW-A1-02.koniec_tekst
+  - id: dialogi.WAW-A1-03.start
+    linie:
+      - postac: pani_halina
+        emocja: neutral
+        tekst: dialogi.WAW-A1-03.start_tekst
+  - id: dialogi.WAW-A1-03.koniec
+    linie:
+      - postac: pani_halina
+        emocja: happy
+        tekst: dialogi.WAW-A1-03.koniec_tekst
 zapowiedzi:
   - regula: KASK-01
     emocja: neutral
@@ -20,3 +60,27 @@ zapowiedzi:
     emocja: neutral
     tekst: dialogi.reguly.ZNAK-STOP
     lektor: dialogi.lektor.ZNAK-STOP
+  - regula: WYP-04
+    emocja: neutral
+    tekst: dialogi.reguly.WYP-04
+  - regula: WYP-05
+    emocja: neutral
+    tekst: dialogi.reguly.WYP-05
+  - regula: PIER-01
+    emocja: neutral
+    tekst: dialogi.reguly.PIER-01
+  - regula: MSC-03
+    emocja: neutral
+    tekst: dialogi.reguly.MSC-03
+  - regula: PIER-06
+    emocja: neutral
+    tekst: dialogi.reguly.PIER-06
+  - regula: PIER-02
+    emocja: neutral
+    tekst: dialogi.reguly.PIER-02
+  - regula: MAN-01
+    emocja: neutral
+    tekst: dialogi.reguly.MAN-01
+  - regula: MAN-07
+    emocja: neutral
+    tekst: dialogi.reguly.MAN-07

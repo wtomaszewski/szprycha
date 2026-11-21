@@ -19,6 +19,7 @@ export class MissionHud {
   private readonly bearing = document.createElement('span');
   private readonly distance = document.createElement('span');
   private readonly equip = document.createElement('button');
+  private readonly lights = document.createElement('button');
   private readonly resume = document.createElement('button');
   private readonly summary = document.createElement('section');
   private readonly heading = document.createElement('h2');
@@ -29,6 +30,7 @@ export class MissionHud {
   constructor(
     parent: HTMLElement,
     equipHelmet: () => void,
+    turnOnLights: () => void,
     resumeFromCheckpoint: () => void,
     retry: () => void,
     menu: () => void,
@@ -36,7 +38,13 @@ export class MissionHud {
     const panel = document.createElement('section');
     panel.className = 'mission-panel';
     this.instruction.setAttribute('role', 'status');
-    panel.append(this.title, this.instruction, this.equip, this.resume);
+    panel.append(
+      this.title,
+      this.instruction,
+      this.equip,
+      this.lights,
+      this.resume,
+    );
 
     this.timer.className = 'mission-timer';
     this.timer.setAttribute('aria-label', ui.missionUi.timer);
@@ -50,7 +58,9 @@ export class MissionHud {
     this.arrow.append(this.bearing, this.distance);
     this.navigation.append(this.arrow);
 
-    this.equip.type = this.resume.type = 'button';
+    this.equip.type = this.lights.type = this.resume.type = 'button';
+    this.lights.textContent = ui.missionUi.turnOnLights;
+    this.lights.addEventListener('click', turnOnLights);
     this.equip.textContent = ui.missionUi.equip;
     this.resume.textContent = ui.missionUi.continue;
     this.equip.addEventListener('click', equipHelmet);
@@ -77,6 +87,7 @@ export class MissionHud {
 
   focusEquipment() {
     if (!this.equip.hidden) this.equip.focus();
+    else if (!this.lights.hidden) this.lights.focus();
   }
 
   focusResult() {
@@ -87,6 +98,7 @@ export class MissionHud {
     mission: MissionSystem,
     position: Vec2,
     helmetFastened: boolean,
+    lightsOn: boolean,
     interrupted: boolean,
     checkpointHint?: string,
   ) {
@@ -94,8 +106,10 @@ export class MissionHud {
     setText(this.title, translate(mission.definition.tytul));
     this.instruction.hidden = !target;
     this.equip.hidden = !!result || helmetFastened;
+    this.lights.hidden = !mission.preparingBike || lightsOn;
     this.resume.hidden = !!result || !interrupted;
-    this.timer.hidden = this.navigation.hidden = !!result;
+    this.timer.hidden = !!result;
+    this.navigation.hidden = !!result || mission.preparingBike;
     this.summary.hidden = !result;
 
     if (result && this.displayedResult !== result) {
@@ -112,7 +126,9 @@ export class MissionHud {
         details.push(
           result.reason === 'czas_minal'
             ? ui.missionUi.timeExpired
-            : ui.missionUi.threeMajor,
+            : result.reason === 'skrot'
+              ? ui.missionUi.shortcutFailed
+              : ui.missionUi.threeMajor,
         );
       else if (!result.timeBonusEligible)
         details.push(ui.missionUi.noTimeBonus);
@@ -124,7 +140,7 @@ export class MissionHud {
     setText(
       this.instruction,
       checkpointHint ??
-        (helmetFastened
+        (helmetFastened || mission.preparingBike
           ? target.eventWaypoint
             ? ui.missionUi.eventWaypoint
             : target.goal.opis
