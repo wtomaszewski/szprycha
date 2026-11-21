@@ -1,5 +1,6 @@
 import type { DriveInput, Scheme, RiderState } from '../gameplay/bicycle';
 import { ui } from '../core/presentation';
+import { CAMERA_HEIGHT_PX } from '../render/projection';
 export class DrivingControls {
   readonly root = document.createElement('section');
   readonly keys = new Set<string>();
@@ -28,6 +29,7 @@ export class DrivingControls {
     private toggle: () => void,
     reset: () => void,
     menu: () => void,
+    setCameraHeight: (height: number) => void,
   ) {
     const signal = this.abort.signal;
     this.root.className = 'driving-ui';
@@ -165,11 +167,33 @@ export class DrivingControls {
         },
         { signal },
       );
-    this.root.append(bar, help, this.notice, touch);
+    const projection = document.createElement('label');
+    projection.className = 'projection-debug';
+    projection.hidden = true;
+    const cameraHeight = document.createElement('input');
+    cameraHeight.type = 'range';
+    cameraHeight.min = '400';
+    cameraHeight.max = '2400';
+    cameraHeight.step = '10';
+    cameraHeight.value = String(CAMERA_HEIGHT_PX);
+    const heightValue = document.createElement('span');
+    const updateCameraHeight = () => {
+      heightValue.textContent = `${cameraHeight.value} px`;
+      setCameraHeight(cameraHeight.valueAsNumber);
+    };
+    heightValue.textContent = `${cameraHeight.value} px`;
+    cameraHeight.addEventListener('input', updateCameraHeight, { signal });
+    projection.append(ui.driving.cameraHeight, cameraHeight, heightValue);
+    this.root.append(bar, help, this.notice, touch, projection);
     document.body.append(this.root);
     window.addEventListener(
       'keydown',
       (e) => {
+        if (e.code === 'F3') {
+          e.preventDefault();
+          if (!e.repeat) projection.hidden = !projection.hidden;
+          return;
+        }
         if (e.target instanceof Element && e.target.matches('select,input'))
           return;
         if (
