@@ -1,4 +1,4 @@
-import type { DriveInput, Scheme } from '../gameplay/bicycle';
+import type { DriveInput, Scheme, RiderState } from '../gameplay/bicycle';
 import { ui } from '../core/presentation';
 export class DrivingControls {
   readonly root = document.createElement('section');
@@ -6,6 +6,12 @@ export class DrivingControls {
   scheme: Scheme = matchMedia('(pointer: coarse)').matches
     ? 'simple'
     : 'classic';
+  readonly actions: RiderState = {
+    signal: null,
+    looking: false,
+    bell: false,
+    lights: false,
+  };
   lite = false;
   paused = false;
   private x = 0;
@@ -44,7 +50,7 @@ export class DrivingControls {
       return b;
     };
     bar.append(title, this.speed, this.mode);
-    this.toggleLabel = button(ui.driving.dismount, () => toggle());
+
     const scheme = button(ui.driving.classic, () => {
       this.scheme = this.scheme === 'simple' ? 'classic' : 'simple';
       scheme.textContent = ui.driving[this.scheme];
@@ -112,7 +118,36 @@ export class DrivingControls {
     stick.addEventListener('pointerup', release, { signal });
     stick.addEventListener('pointercancel', release, { signal });
     touch.append(stick);
-    const brake = button(ui.driving.brake, () => {}, touch);
+    const actions = document.createElement('div');
+    actions.className = 'touch-actions';
+    touch.append(actions);
+    const hold = (label: string, code: string) => {
+      const b = button(label, () => {}, actions);
+      b.addEventListener(
+        'pointerdown',
+        (e) => {
+          b.setPointerCapture(e.pointerId);
+          this.keys.add(code);
+        },
+        { signal },
+      );
+      for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'])
+        b.addEventListener(event, () => this.keys.delete(code), { signal });
+    };
+    hold(ui.driving.signalLeft, 'KeyQ');
+    hold(ui.driving.signalRight, 'KeyE');
+    hold(ui.driving.look, 'KeyC');
+    hold(ui.driving.bell, 'KeyF');
+    const lights = button(
+      ui.driving.lights,
+      () => {
+        this.actions.lights = !this.actions.lights;
+        lights.setAttribute('aria-pressed', String(this.actions.lights));
+      },
+      actions,
+    );
+    this.toggleLabel = button(ui.driving.dismount, () => toggle(), actions);
+    const brake = button(ui.driving.brake, () => {}, actions);
     brake.className = 'brake';
     brake.addEventListener(
       'pointerdown',
@@ -135,8 +170,13 @@ export class DrivingControls {
     window.addEventListener(
       'keydown',
       (e) => {
-        if ((e.target as HTMLElement).matches('select,input')) return;
-        if ((e.target as HTMLElement).matches('button') && e.code === 'Enter')
+        if (e.target instanceof Element && e.target.matches('select,input'))
+          return;
+        if (
+          e.target instanceof Element &&
+          e.target.matches('button') &&
+          e.code === 'Enter'
+        )
           return;
         if (
           ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(
@@ -146,6 +186,7 @@ export class DrivingControls {
           e.preventDefault();
         this.keys.add(e.code);
         if (e.repeat) return;
+        if (e.code === 'KeyL') lights.click();
         if (e.code === 'KeyX') toggle();
         if (e.code === 'Escape') pause.click();
         if (e.code === 'KeyR') reset();
@@ -190,6 +231,9 @@ export class DrivingControls {
       Number(has('KeyS', 'ArrowDown')) - Number(has('KeyW', 'ArrowUp'));
     let brake = this.braking || has('Space');
     const pad = navigator.getGamepads?.().find((p) => p?.connected);
+    this.actions.signal = has('KeyQ') ? 'left' : has('KeyE') ? 'right' : null;
+    this.actions.looking = has('KeyC');
+    this.actions.bell = has('KeyF');
     if (pad) {
       if (Math.abs(pad.axes[0] ?? 0) > 0.15) x = pad.axes[0]!;
       if (Math.abs(pad.axes[1] ?? 0) > 0.15) y = pad.axes[1]!;
@@ -198,6 +242,12 @@ export class DrivingControls {
       if (pad.buttons[9]?.pressed && !this.padButtons[9]) {
         this.pauseButton.click();
       }
+      if (pad.buttons[4]?.pressed) this.actions.signal = 'left';
+      if (pad.buttons[5]?.pressed) this.actions.signal = 'right';
+      this.actions.looking ||= !!pad.buttons[3]?.pressed;
+      this.actions.bell ||= !!pad.buttons[2]?.pressed;
+      if (pad.buttons[12]?.pressed && !this.padButtons[12])
+        this.actions.lights = !this.actions.lights;
       this.padButtons = pad.buttons.map((b) => b.pressed);
     } else this.padButtons = [];
     return { x, y, brake, scheme: this.scheme };

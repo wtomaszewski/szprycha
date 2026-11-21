@@ -4,9 +4,10 @@ export interface Block {
   width: number;
   height: number;
   floors: number;
+  landmark?: boolean;
 }
 export function roofOffset(block: Block, cx: number, cy: number, lite = false) {
-  const factor = 0.015 * block.floors;
+  const factor = 0.03 * block.floors;
   return {
     x: lite ? 0 : Math.round((block.x + block.width / 2 - cx) * factor),
     y: lite

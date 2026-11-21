@@ -10,7 +10,7 @@
   "tilewidth": 32,
   "tileheight": 32,
   "nextlayerid": 17,
-  "nextobjectid": 46,
+  "nextobjectid": 51,
   "layers": [
     {
       "id": 1,
@@ -9875,6 +9875,171 @@
               "value": "wall"
             }
           ]
+        },
+        {
+          "id": 9,
+          "name": "palace-tier-4",
+          "type": "",
+          "x": 832,
+          "y": 928,
+          "width": 192,
+          "height": 192,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "height",
+              "type": "float",
+              "value": 4
+            },
+            {
+              "name": "roof",
+              "type": "string",
+              "value": "roof"
+            },
+            {
+              "name": "wall",
+              "type": "string",
+              "value": "wall"
+            },
+            {
+              "name": "landmarkId",
+              "type": "string",
+              "value": "palace-test"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "name": "palace-tier-10",
+          "type": "",
+          "x": 864,
+          "y": 960,
+          "width": 128,
+          "height": 128,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "height",
+              "type": "float",
+              "value": 10
+            },
+            {
+              "name": "roof",
+              "type": "string",
+              "value": "roof"
+            },
+            {
+              "name": "wall",
+              "type": "string",
+              "value": "wall"
+            },
+            {
+              "name": "landmarkId",
+              "type": "string",
+              "value": "palace-test"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "name": "palace-tier-18",
+          "type": "",
+          "x": 888,
+          "y": 984,
+          "width": 80,
+          "height": 80,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "height",
+              "type": "float",
+              "value": 18
+            },
+            {
+              "name": "roof",
+              "type": "string",
+              "value": "roof"
+            },
+            {
+              "name": "wall",
+              "type": "string",
+              "value": "wall"
+            },
+            {
+              "name": "landmarkId",
+              "type": "string",
+              "value": "palace-test"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "name": "palace-tier-26",
+          "type": "",
+          "x": 908,
+          "y": 1004,
+          "width": 40,
+          "height": 40,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "height",
+              "type": "float",
+              "value": 26
+            },
+            {
+              "name": "roof",
+              "type": "string",
+              "value": "roof"
+            },
+            {
+              "name": "wall",
+              "type": "string",
+              "value": "wall"
+            },
+            {
+              "name": "landmarkId",
+              "type": "string",
+              "value": "palace-test"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "name": "palace-tier-32",
+          "type": "",
+          "x": 924,
+          "y": 1020,
+          "width": 8,
+          "height": 8,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "height",
+              "type": "float",
+              "value": 32
+            },
+            {
+              "name": "roof",
+              "type": "string",
+              "value": "roof"
+            },
+            {
+              "name": "wall",
+              "type": "string",
+              "value": "wall"
+            },
+            {
+              "name": "landmarkId",
+              "type": "string",
+              "value": "palace-test"
+            }
+          ]
         }
       ]
     },
@@ -9888,103 +10053,13 @@
       "y": 0,
       "objects": [
         {
-          "id": 9,
-          "name": "curb",
-          "type": "",
-          "x": 381,
-          "y": 32,
-          "width": 6,
-          "height": 416,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "curb"
-            }
-          ]
-        },
-        {
-          "id": 10,
-          "name": "curb",
-          "type": "",
-          "x": 381,
-          "y": 768,
-          "width": 6,
-          "height": 416,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "curb"
-            }
-          ]
-        },
-        {
-          "id": 11,
-          "name": "curb",
-          "type": "",
-          "x": 381,
-          "y": 1568,
-          "width": 6,
-          "height": 320,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "curb"
-            }
-          ]
-        },
-        {
-          "id": 12,
-          "name": "curb",
-          "type": "",
-          "x": 573,
-          "y": 32,
-          "width": 6,
-          "height": 416,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "curb"
-            }
-          ]
-        },
-        {
-          "id": 13,
-          "name": "curb",
-          "type": "",
-          "x": 573,
-          "y": 768,
-          "width": 6,
-          "height": 416,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "curb"
-            }
-          ]
-        },
-        {
           "id": 14,
           "name": "curb",
           "type": "",
-          "x": 573,
-          "y": 1568,
+          "x": 381,
+          "y": 32,
           "width": 6,
-          "height": 320,
+          "height": 416,
           "rotation": 0,
           "visible": true,
           "properties": [
@@ -9999,8 +10074,8 @@
           "id": 15,
           "name": "curb",
           "type": "",
-          "x": 1213,
-          "y": 32,
+          "x": 381,
+          "y": 768,
           "width": 6,
           "height": 416,
           "rotation": 0,
@@ -10017,25 +10092,7 @@
           "id": 16,
           "name": "curb",
           "type": "",
-          "x": 1213,
-          "y": 768,
-          "width": 6,
-          "height": 416,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "curb"
-            }
-          ]
-        },
-        {
-          "id": 17,
-          "name": "curb",
-          "type": "",
-          "x": 1213,
+          "x": 381,
           "y": 1568,
           "width": 6,
           "height": 320,
@@ -10050,11 +10107,29 @@
           ]
         },
         {
+          "id": 17,
+          "name": "curb",
+          "type": "",
+          "x": 573,
+          "y": 32,
+          "width": 6,
+          "height": 416,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "curb"
+            }
+          ]
+        },
+        {
           "id": 18,
           "name": "curb",
           "type": "",
-          "x": 1405,
-          "y": 32,
+          "x": 573,
+          "y": 768,
           "width": 6,
           "height": 416,
           "rotation": 0,
@@ -10071,25 +10146,7 @@
           "id": 19,
           "name": "curb",
           "type": "",
-          "x": 1405,
-          "y": 768,
-          "width": 6,
-          "height": 416,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "curb"
-            }
-          ]
-        },
-        {
-          "id": 20,
-          "name": "curb",
-          "type": "",
-          "x": 1405,
+          "x": 573,
           "y": 1568,
           "width": 6,
           "height": 320,
@@ -10104,11 +10161,29 @@
           ]
         },
         {
+          "id": 20,
+          "name": "curb",
+          "type": "",
+          "x": 1213,
+          "y": 32,
+          "width": 6,
+          "height": 416,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "curb"
+            }
+          ]
+        },
+        {
           "id": 21,
           "name": "curb",
           "type": "",
-          "x": 2045,
-          "y": 32,
+          "x": 1213,
+          "y": 768,
           "width": 6,
           "height": 416,
           "rotation": 0,
@@ -10125,6 +10200,96 @@
           "id": 22,
           "name": "curb",
           "type": "",
+          "x": 1213,
+          "y": 1568,
+          "width": 6,
+          "height": 320,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "curb"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "name": "curb",
+          "type": "",
+          "x": 1405,
+          "y": 32,
+          "width": 6,
+          "height": 416,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "curb"
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "name": "curb",
+          "type": "",
+          "x": 1405,
+          "y": 768,
+          "width": 6,
+          "height": 416,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "curb"
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "name": "curb",
+          "type": "",
+          "x": 1405,
+          "y": 1568,
+          "width": 6,
+          "height": 320,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "curb"
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "name": "curb",
+          "type": "",
+          "x": 2045,
+          "y": 32,
+          "width": 6,
+          "height": 416,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "curb"
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "name": "curb",
+          "type": "",
           "x": 2045,
           "y": 768,
           "width": 6,
@@ -10140,7 +10305,7 @@
           ]
         },
         {
-          "id": 23,
+          "id": 28,
           "name": "curb",
           "type": "",
           "x": 2045,
@@ -10158,7 +10323,7 @@
           ]
         },
         {
-          "id": 24,
+          "id": 29,
           "name": "curb",
           "type": "",
           "x": 2237,
@@ -10176,7 +10341,7 @@
           ]
         },
         {
-          "id": 25,
+          "id": 30,
           "name": "curb",
           "type": "",
           "x": 2237,
@@ -10194,7 +10359,7 @@
           ]
         },
         {
-          "id": 26,
+          "id": 31,
           "name": "curb",
           "type": "",
           "x": 2237,
@@ -10212,102 +10377,12 @@
           ]
         },
         {
-          "id": 27,
-          "name": "curb",
-          "type": "",
-          "x": 32,
-          "y": 509,
-          "width": 288,
-          "height": 6,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "curb"
-            }
-          ]
-        },
-        {
-          "id": 28,
-          "name": "curb",
-          "type": "",
-          "x": 640,
-          "y": 509,
-          "width": 512,
-          "height": 6,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "curb"
-            }
-          ]
-        },
-        {
-          "id": 29,
-          "name": "curb",
-          "type": "",
-          "x": 1472,
-          "y": 509,
-          "width": 512,
-          "height": 6,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "curb"
-            }
-          ]
-        },
-        {
-          "id": 30,
-          "name": "curb",
-          "type": "",
-          "x": 2304,
-          "y": 509,
-          "width": 224,
-          "height": 6,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "curb"
-            }
-          ]
-        },
-        {
-          "id": 31,
-          "name": "curb",
-          "type": "",
-          "x": 32,
-          "y": 701,
-          "width": 288,
-          "height": 6,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "curb"
-            }
-          ]
-        },
-        {
           "id": 32,
           "name": "curb",
           "type": "",
-          "x": 640,
-          "y": 701,
-          "width": 512,
+          "x": 32,
+          "y": 509,
+          "width": 288,
           "height": 6,
           "rotation": 0,
           "visible": true,
@@ -10323,8 +10398,8 @@
           "id": 33,
           "name": "curb",
           "type": "",
-          "x": 1472,
-          "y": 701,
+          "x": 640,
+          "y": 509,
           "width": 512,
           "height": 6,
           "rotation": 0,
@@ -10341,9 +10416,9 @@
           "id": 34,
           "name": "curb",
           "type": "",
-          "x": 2304,
-          "y": 701,
-          "width": 224,
+          "x": 1472,
+          "y": 509,
+          "width": 512,
           "height": 6,
           "rotation": 0,
           "visible": true,
@@ -10359,9 +10434,9 @@
           "id": 35,
           "name": "curb",
           "type": "",
-          "x": 32,
-          "y": 1277,
-          "width": 288,
+          "x": 2304,
+          "y": 509,
+          "width": 224,
           "height": 6,
           "rotation": 0,
           "visible": true,
@@ -10377,9 +10452,9 @@
           "id": 36,
           "name": "curb",
           "type": "",
-          "x": 640,
-          "y": 1277,
-          "width": 512,
+          "x": 32,
+          "y": 701,
+          "width": 288,
           "height": 6,
           "rotation": 0,
           "visible": true,
@@ -10395,8 +10470,8 @@
           "id": 37,
           "name": "curb",
           "type": "",
-          "x": 1472,
-          "y": 1277,
+          "x": 640,
+          "y": 701,
           "width": 512,
           "height": 6,
           "rotation": 0,
@@ -10413,6 +10488,96 @@
           "id": 38,
           "name": "curb",
           "type": "",
+          "x": 1472,
+          "y": 701,
+          "width": 512,
+          "height": 6,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "curb"
+            }
+          ]
+        },
+        {
+          "id": 39,
+          "name": "curb",
+          "type": "",
+          "x": 2304,
+          "y": 701,
+          "width": 224,
+          "height": 6,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "curb"
+            }
+          ]
+        },
+        {
+          "id": 40,
+          "name": "curb",
+          "type": "",
+          "x": 32,
+          "y": 1277,
+          "width": 288,
+          "height": 6,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "curb"
+            }
+          ]
+        },
+        {
+          "id": 41,
+          "name": "curb",
+          "type": "",
+          "x": 640,
+          "y": 1277,
+          "width": 512,
+          "height": 6,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "curb"
+            }
+          ]
+        },
+        {
+          "id": 42,
+          "name": "curb",
+          "type": "",
+          "x": 1472,
+          "y": 1277,
+          "width": 512,
+          "height": 6,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "curb"
+            }
+          ]
+        },
+        {
+          "id": 43,
+          "name": "curb",
+          "type": "",
           "x": 2304,
           "y": 1277,
           "width": 224,
@@ -10428,7 +10593,7 @@
           ]
         },
         {
-          "id": 39,
+          "id": 44,
           "name": "curb",
           "type": "",
           "x": 32,
@@ -10446,7 +10611,7 @@
           ]
         },
         {
-          "id": 40,
+          "id": 45,
           "name": "curb",
           "type": "",
           "x": 640,
@@ -10464,7 +10629,7 @@
           ]
         },
         {
-          "id": 41,
+          "id": 46,
           "name": "curb",
           "type": "",
           "x": 1472,
@@ -10482,7 +10647,7 @@
           ]
         },
         {
-          "id": 42,
+          "id": 47,
           "name": "curb",
           "type": "",
           "x": 2304,
@@ -10511,7 +10676,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 43,
+          "id": 48,
           "name": "player",
           "type": "",
           "x": 512,
@@ -10534,7 +10699,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 44,
+          "id": 49,
           "name": "workshop",
           "type": "",
           "x": 688,
@@ -10557,7 +10722,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 45,
+          "id": 50,
           "name": "training",
           "type": "",
           "x": 0,

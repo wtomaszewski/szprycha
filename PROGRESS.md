@@ -70,7 +70,7 @@ npm run test:e2e
 - Na oknach mniejszych niż 640×360 zachowujemy skalę 1:1 i przewijanie. Docelowe układy tabletów/telefonów są do realizacji w kolejnych etapach.
 - Pięć opisów dla_dziecka przekracza deklarowane 160 znaków; zachowano treść, zgłoszono w notatkach, limit ten nie jest obecnie egzekwowany. Feedback ≤140 jest walidowany.
 
-## M1 — grywalny szkielet mechaniki
+## M1 — grywalny szkielet mechaniki (pierwszy build; korekty poniżej)
 
 Na prośbę użytkownika rozpoczęto następny etap, z priorytetem mechaniki. Obecna grafika nie została zaakceptowana; nie jest docelową oprawą gry.
 
@@ -86,6 +86,17 @@ Na prośbę użytkownika rozpoczęto następny etap, z priorytetem mechaniki. Ob
 - Reprodukcja: uruchom npm run dev, następnie npm run benchmark:driving. Raport trafia do test-results/performance.json. Generatory: npm run assets:generate i npm run map:generate (nadpisuje mapę treningową).
 - M2 i dalszych etapów nie rozpoczęto. Brak AI, oceny przepisów, misji i punktów; plac nie nagradza łamania zasad. Docelowa grafika, animacje 16 kierunków, budynki wielowarstwowe/poligonalne i układy mobilne wymagają dalszego dopracowania.
 
-### Korekta widoku M1
+### Korekta widoku M1 (historyczna; zastąpiona przeglądem poniżej)
 
 Świat pomniejszony o 25% przez zoom 0,75, rower powiększony dla czytelności (na ekranie 1,5× względem poprzedniej wersji). Widoczny obszar jest szerszy i wyższy o około 33%. Poprawiono culling bloków dla oddalonej kamery.
+
+## Przegląd M0/M1 — poprawki przed M2
+
+- Canvas centruje wyłącznie CSS. Największa mieszcząca się skala całkowita dla bazy 640×360; rozmiar logiczny rozszerza się do okna (np. 1280×960 → 640×480 przy ×2). Reszta maks. 2 pikseli przy ×3 wynika z zaokrąglenia. Brak scrolla i dodatkowego przycisku pod canvasem; start przez dotknięcie pola w menu lub Enter.
+- Kamera ma zoom 1, zastępujący wcześniejsze 0,75. Rower pozostaje powiększony ×2. Dla ekranu poniżej bazy logicznej używany jest mniejszy viewport przy ×1, bez obcinania canvasa.
+- Telefon w pionie: „Obróć urządzenie” i zatrzymanie symulacji. HUD DOM używa Pixelify Sans i palety gry. Test telefonu 844×390 sprawdza sumę powierzchni panelu, joysticka i grupy przycisków ≤21%.
+- Q/E, C, F, L i odpowiedniki pada/dotyku aktualizują RiderState: sygnalizacja ręką, oglądanie się, wizualny dzwonek, światła. Zsiadanie działa jak dotąd; krótkie akcje trwają podczas przytrzymania, światła są przełącznikiem. Dźwięk dzwonka pozostaje do M8.
+- Bezpieczna obsługa KeyboardEvent kierowanego do window (target nie musi być Elementem). Test trzyma W 1 s i sprawdza wzrost prędkości.
+- Krawężniki ograniczają prędkość jazdy do 40 px/s, ale przepuszczają rower; pieszo bez dodatkowego ograniczenia. Obniżenia nie spowalniają. Tylko ściany blokują ruch/wsiadanie. Chodnik jest przejezdny; detektor GDZIE-04 nadal do M2.
+- Parametr wysokości k zwiększony z 0,015 do 0,03. Na wschód od startu (środek 928,1024) stoi testowy pałac: pięć zwężających się warstw 4/10/18/26/32, ostatnia jako iglica, piaskowcowe ściany. To uproszczona bryła do oceny paralaksy.
+- Walidacja: 16 testów vitest, 12 Playwright, lint, format i build. M2 nie rozpoczęto; sprzętowy test Androida i finalna grafika pozostają otwarte.

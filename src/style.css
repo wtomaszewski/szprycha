@@ -10,14 +10,14 @@
 html,
 body {
   margin: 0;
-  min-height: 100%;
-  background: #10121e;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #1a1c2c;
   color: #f4f4f4;
 }
-body {
-  min-height: 100dvh;
-  display: grid;
-  place-content: center;
+body,
+button {
   font-family: 'Pixelify Sans', monospace;
 }
 #game {
@@ -25,7 +25,7 @@ body {
   height: 100dvh;
   display: grid;
   place-items: center;
-  overflow: auto;
+  overflow: hidden;
 }
 canvas {
   display: block;
@@ -41,90 +41,78 @@ canvas {
 #status:empty {
   display: none;
 }
-button,
-.driving-ui {
-  font-family: Arial, sans-serif;
-}
 button {
   cursor: pointer;
-  border: 1px solid #566c86;
-  border-radius: 4px;
-  background: #242c40;
-  color: #fff;
-  padding: 10px 14px;
-  font-size: 14px;
+  border: 2px solid #566c86;
+  border-radius: 0;
+  background: #1a1c2c;
+  color: #f4f4f4;
+  padding: 6px 10px;
+  font-size: 16px;
   min-height: 44px;
+  touch-action: none;
 }
 button:hover,
-button:focus-visible {
-  background: #3b4c69;
-  outline: 2px solid #ffcd75;
-}
-.start-driving {
-  position: fixed;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ffcd75;
-  color: #1a1c2c;
-  font-weight: bold;
-  padding: 14px 26px;
+button:focus-visible,
+button[aria-pressed='true'] {
+  border-color: #ffcd75;
+  outline: 1px solid #ffcd75;
+  color: #ffcd75;
 }
 .driving-ui {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  color: #fff;
-  font-size: 14px;
+  font-size: 16px;
 }
 .drive-bar {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
-  flex-wrap: wrap;
-  padding: 8px 12px;
-  background: #10121ef2;
+  padding: 4px max(8px, env(safe-area-inset-right)) 4px
+    max(8px, env(safe-area-inset-left));
   pointer-events: auto;
+  background: #1a1c2ce6;
+  border-bottom: 2px solid #ffcd75;
 }
 .drive-bar strong {
   margin-right: auto;
 }
 .drive-bar output {
   font-variant-numeric: tabular-nums;
-  min-width: 65px;
+  min-width: 68px;
   color: #ffcd75;
-  font-weight: bold;
 }
 .drive-help,
 .drive-notice {
-  margin: 8px 12px;
-  padding: 8px 12px;
-  background: #10121ee6;
+  margin: 8px;
+  padding: 4px 8px;
+  background: #1a1c2ce6;
   width: fit-content;
-  max-width: calc(100% - 24px);
-  line-height: 1.4;
+  max-width: calc(100% - 16px);
 }
 .drive-help {
-  font-size: 12px;
+  font-size: 14px;
 }
 .drive-notice {
   position: absolute;
-  bottom: 4px;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
+  font-size: 12px;
 }
 .touch-controls {
   position: absolute;
-  bottom: 65px;
-  left: 20px;
-  right: 20px;
+  bottom: max(36px, env(safe-area-inset-bottom));
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
   display: flex;
   justify-content: space-between;
   align-items: end;
 }
 .joystick,
-.brake {
+.touch-actions {
   pointer-events: auto;
   touch-action: none;
   user-select: none;
@@ -132,39 +120,81 @@ button:focus-visible {
 .joystick {
   display: grid;
   place-items: center;
-  width: 112px;
-  height: 112px;
+  width: 96px;
+  height: 96px;
   border: 2px solid #ffcd75;
   border-radius: 50%;
   background: #1a1c2cbb;
   font-size: 36px;
 }
+.touch-actions {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 4px;
+}
 .brake {
-  min-width: 90px;
-  min-height: 64px;
-  background: #1a1c2cdd;
+  color: #ffcd75;
+}
+.orientation-warning {
+  display: none;
 }
 @media (pointer: fine) {
   .touch-controls {
-    opacity: 0.45;
+    opacity: 0.65;
   }
   .touch-controls:hover {
     opacity: 1;
   }
 }
 @media (max-height: 500px) {
-  .drive-help {
+  .drive-help,
+  .drive-notice,
+  .drive-bar strong,
+  .drive-bar > span {
     display: none;
   }
   .drive-bar {
     gap: 4px;
-    padding: 4px;
+    padding-top: 0;
+    padding-bottom: 0;
+    width: fit-content;
   }
   .drive-bar button {
-    padding: 6px;
-    font-size: 12px;
+    padding: 2px 6px;
+    font-size: 13px;
   }
-  .drive-bar strong {
-    display: none;
+  .touch-controls {
+    bottom: max(6px, env(safe-area-inset-bottom));
+  }
+  .joystick {
+    width: 72px;
+    height: 72px;
+  }
+  .touch-actions button {
+    font-size: 13px;
+    padding: 2px 6px;
+    min-width: 56px;
+  }
+}
+@media (pointer: coarse) and (min-height: 600px) {
+  .touch-actions button {
+    min-width: 56px;
+    min-height: 56px;
+  }
+}
+@media (pointer: coarse) and (orientation: portrait) {
+  .orientation-warning {
+    display: grid;
+    place-items: center;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: #1a1c2c;
+    color: #ffcd75;
+    font-size: 32px;
+    text-align: center;
+  }
+  .driving-ui {
+    visibility: hidden;
   }
 }

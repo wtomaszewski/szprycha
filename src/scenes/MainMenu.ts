@@ -47,14 +47,20 @@ export class MainMenu extends Scene {
       .lineBetween(541, 183, 537, 170)
       .lineBetween(537, 170, 550, 170);
     label(433, 275, ui.footer, 12, '#c0cbdc');
-    const start = document.createElement('button');
-    start.className = 'start-driving';
-    start.textContent = ui.driving.start;
-    start.addEventListener('click', () => this.scene.start('City'));
-    document.body.append(start);
+    this.add
+      .zone(180, 219, 272, 39)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.scene.start('City'));
+    const center = () =>
+      this.cameras.main.setScroll(
+        -Math.floor((this.scale.width - 640) / 2),
+        -Math.floor((this.scale.height - 360) / 2),
+      );
+    center();
+    this.scale.on('resize', center);
     this.input.keyboard?.once('keydown-ENTER', () => this.scene.start('City'));
     this.events.once('shutdown', () => {
-      start.remove();
+      this.scale.off('resize', center);
       this.input.keyboard?.removeAllListeners();
     });
     const canvas = this.game.canvas;

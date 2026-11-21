@@ -35,10 +35,16 @@
     "riding": "Jedziesz rowerem",
     "collision": "UPS! Przeszkoda — zatrzymaj się i wybierz inną drogę.",
     "slowDown": "Zahamuj, zanim wsiądziesz lub zsiądziesz.",
-    "blocked": "Odsuń się od krawężnika, zanim wsiądziesz.",
+    "blocked": "Odsuń się od ściany, zanim wsiądziesz.",
     "start": "Rozpocznij jazdę próbną",
     "unit": "km/h",
-    "walkingHint": "Możesz przeprowadzić rower przez krawężnik.",
-    "startHint": "Enter lub przycisk — jazda próbna"
+    "walkingHint": "Prowadzisz rower.",
+    "startHint": "Dotknij tutaj lub Enter — jazda",
+    "rotate": "Obróć urządzenie",
+    "signalLeft": "← Ręka",
+    "signalRight": "Ręka →",
+    "look": "Obejrzyj się",
+    "bell": "Dzwonek",
+    "lights": "Światła"
   }
 }

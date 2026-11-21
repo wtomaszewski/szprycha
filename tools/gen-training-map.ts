@@ -86,7 +86,30 @@ const blocks = [
     wall: 'wall',
   }),
 ];
-// Curbs leave wide lowered sections at each crossing. Walking can cross curbs.
+for (const [size, floors] of [
+  [192, 4],
+  [128, 10],
+  [80, 18],
+  [40, 26],
+  [8, 32],
+]) {
+  blocks.push(
+    rect(
+      'palace-tier-' + floors,
+      928 - size! / 2,
+      1024 - size! / 2,
+      size!,
+      size!,
+      {
+        height: floors!,
+        roof: 'roof',
+        wall: 'wall',
+        landmarkId: 'palace-test',
+      },
+    ),
+  );
+}
+// Curbs leave wide lowered sections at each crossing. Raised curbs slow riding; lowered sections have no resistance.
 const curbs = [];
 for (const x of [384, 576, 1216, 1408, 2048, 2240])
   for (const [a, b] of [

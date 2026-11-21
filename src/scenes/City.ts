@@ -17,6 +17,7 @@ import { ui, showError } from '../core/presentation';
 export class City extends Scene {
   private rider!: Rider;
   private sprite!: GameObjects.Image;
+  private actionArt!: GameObjects.Graphics;
   private pedestrian!: GameObjects.Arc;
   private controls!: DrivingControls;
   private blocks!: Blocks;
@@ -66,7 +67,13 @@ export class City extends Scene {
       const floors = Number(
         properties?.find((p) => p.name === 'height')?.value ?? 1,
       );
-      buildings.push({ ...b, floors });
+      buildings.push({
+        ...b,
+        floors,
+        landmark: properties?.some(
+          (p) => p.name === 'landmarkId' && p.value === 'palace-test',
+        ),
+      });
     }
     const curbArt = this.add.graphics().setDepth(2).fillStyle(0xc0cbdc);
     for (const o of map.getObjectLayer('collisions')?.objects ?? []) {
@@ -113,7 +120,7 @@ export class City extends Scene {
       .setDepth(21)
       .setVisible(false);
     this.cameras.main
-      .setZoom(0.75)
+      .setZoom(1)
       .setBounds(0, 0, this.worldWidth, this.worldHeight)
       .centerOn(this.rider.x, this.rider.y);
     this.controls = new DrivingControls(
@@ -121,6 +128,7 @@ export class City extends Scene {
       () => this.reset(),
       () => this.scene.start('MainMenu'),
     );
+    this.actionArt = this.add.graphics().setDepth(22);
     this.controls.setWalking(false);
     const onShutdown = () => {
       this.controls.destroy();
@@ -160,13 +168,22 @@ export class City extends Scene {
       walking: false,
     });
     this.controls.clear();
+    Object.assign(this.controls.actions, {
+      signal: null,
+      looking: false,
+      bell: false,
+      lights: false,
+    });
     this.controls.setWalking(false);
     this.cameras.main.centerOn(this.rider.x, this.rider.y);
   }
   update(time: number, delta: number) {
     if (!this.controls) return;
     const input = this.controls.read();
-    if (this.controls.paused) {
+    if (
+      this.controls.paused ||
+      matchMedia('(pointer: coarse) and (orientation: portrait)').matches
+    ) {
       this.accumulator = 0;
       return;
     }
@@ -185,6 +202,25 @@ export class City extends Scene {
       this.accumulator -= FIXED_STEP;
     }
     const r = this.rider;
+    r.actions = this.controls.actions;
+    const a = r.actions;
+    const art = this.actionArt
+      .clear()
+      .setPosition(Math.round(r.x), Math.round(r.y))
+      .setRotation(r.heading);
+    if (a.signal)
+      art
+        .lineStyle(5, 0xffcd75)
+        .lineBetween(0, 0, 0, a.signal === 'left' ? -30 : 30);
+    if (a.looking) art.fillStyle(0x73eff7).fillCircle(-12, -8, 5);
+    if (a.bell)
+      art
+        .lineStyle(2, 0xffcd75)
+        .strokeCircle(0, 0, 28 + (Math.floor(time / 100) % 6));
+    if (a.lights) {
+      art.fillStyle(0xffcd75, 0.3).fillTriangle(16, 0, 65, -20, 65, 20);
+      art.fillStyle(0xe43b44).fillRect(-23, -3, 5, 6);
+    }
     this.sprite
       .setPosition(Math.round(r.x), Math.round(r.y))
       .setRotation(r.heading + Math.PI / 2);
@@ -211,6 +247,7 @@ export class City extends Scene {
       canvas.dataset.x = String(Math.round(r.x));
       canvas.dataset.y = String(Math.round(r.y));
       canvas.dataset.speed = String(r.speed);
+      canvas.dataset.actions = JSON.stringify(r.actions);
       canvas.dataset.walking = String(r.walking);
       if (time > this.messageUntil)
         this.controls.notice.textContent = ui.driving.prototype;

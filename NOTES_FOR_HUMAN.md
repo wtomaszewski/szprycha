@@ -90,3 +90,14 @@ Wydajność: pomiar 4× CPU w Chromium dał średnio 60,00 FPS i p95 16,8 ms. Te
 ### Korekta skali po obejrzeniu M1
 
 Na prośbę użytkownika zmniejszono skalę świata do 75% (zoom kamery 0,75). Widać około 33% więcej terenu w każdym wymiarze. Rower ma skalę sprite'a 2×, więc po oddaleniu jest na ekranie o 50% większy niż wcześniej. To celowe, umowne proporcje dla czytelności. Fizyka i rozmiar kolizji pozostają takie same. Culling budynków uwzględnia rozszerzony widok. Użytkownik zaakceptował odejście od realistycznych proporcji; zoom 0,75 jest również świadomym odstępstwem od zasady wyłącznie całkowitego skalowania w pierwotnej dokumentacji.
+
+## Decyzje po przeglądzie M0/M1
+
+Niniejszy wpis zastępuje wcześniejsze decyzje o zoomie 0,75, systemowej czcionce HUD i blokowaniu roweru na krawężniku.
+
+1. Zachowujemy bazę 640×360 i wybieramy największy całkowity mnożnik mieszczący tę bazę w oknie. Dodatkowe piksele rozszerzają widok świata w obu osiach. Na małych ekranach poniżej bazy viewport zmniejsza się przy ×1. Kamera nie stosuje już ułamkowego zoomu; powiększenie roweru ×2 zostaje.
+2. Na telefonie w pionie symulacja czeka na obrót. Mobilny HUD jest DOM-em w lokalnym foncie pikselowym i palecie docs/06; pole gry nie jest formularzem. Test mierzy łączną powierzchnię panelu i sterowania na 844×390, limit 21% (około 20%). Testy emulują urządzenie, nie zastępują kontroli fizycznego telefonu.
+3. Stan akcji przy rowerze jest fundamentem dla M2, bez oceniania: lewa/prawa ręka, obejrzenie się, dzwonek, światła. Ręka i pozostałe oznaczenia są grafiką zastępczą; dzwonek na razie ma tylko wizualny impuls. Docelowe animacje/sound design pozostają otwarte.
+4. Krawężnik to opór, nie ściana: przy jeździe limit 40 px/s podczas kontaktu; chodnik dostępny. Przejazd przez przerwy-obniżenia płynny. To parametr zręcznościowy, nie interpretacja prawna dopuszczająca jazdę po chodniku. W M2 GDZIE-04 będzie korzystać z semantyki stref.
+5. Strojenie projekcji: k=0,03 zamiast 0,015. Testowy pałac na wschód od startu ma warstwy 4/10/18/26/32 i piaskowcową kolorystykę. Nie jest finalnym modelem PKiN (brak docelowych zegarów, attyk i tekstur). Pozostaje do oceny wizualnej; wielowarstwowe ściany są nadal uproszczonymi ekstruzjami.
+6. Sprawdzone automatycznie: klawisz W przez 1 sekundę, event target=window, przyciski akcji, krawężnik kontra obniżenie i ściana, cztery proporcje/rozmiary ekranu, pion/poziom, warstwy wieży. Oryginalne dokumenty i dane przepisów bez zmian.

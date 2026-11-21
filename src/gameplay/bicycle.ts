@@ -6,7 +6,14 @@ export interface Obstacle {
   height: number;
   kind: 'wall' | 'curb';
 }
+export interface RiderState {
+  signal: 'left' | 'right' | null;
+  looking: boolean;
+  bell: boolean;
+  lights: boolean;
+}
 export interface Rider {
+  actions?: RiderState;
   x: number;
   y: number;
   heading: number;
@@ -32,7 +39,9 @@ export function overlaps(x: number, y: number, radius: number, o: Obstacle) {
   return dx * dx + dy * dy < radius * radius;
 }
 export function canRide(r: Rider, obstacles: readonly Obstacle[]) {
-  return !obstacles.some((o) => overlaps(r.x, r.y, RIDER_RADIUS, o));
+  return !obstacles.some(
+    (o) => o.kind === 'wall' && overlaps(r.x, r.y, RIDER_RADIUS, o),
+  );
 }
 /** Fixed-step kinematics, independent of Phaser. Speed in px/s; heading clockwise from +X. */
 export function stepRider(
@@ -66,8 +75,14 @@ export function stepRider(
     brake ? 0 : target,
     (brake ? 250 : target > r.speed ? 70 : 40) * dt,
   );
+  const onCurb =
+    !r.walking &&
+    obstacles.some(
+      (o) => o.kind === 'curb' && overlaps(r.x, r.y, RIDER_RADIUS, o),
+    );
+  if (onCurb) r.speed = Math.min(r.speed, 40);
   const travel = r.speed * dt;
-  // Sweep in <=2 px increments to avoid tunnelling through thin curbs.
+  // Sweep in <=2 px increments to avoid tunnelling through thin walls.
   const steps = Math.max(1, Math.ceil(travel / 2));
   const dx = (Math.cos(r.heading) * travel) / steps,
     dy = (Math.sin(r.heading) * travel) / steps;
@@ -80,8 +95,7 @@ export function stepRider(
       x > width - RIDER_RADIUS ||
       y > height - RIDER_RADIUS ||
       obstacles.some(
-        (o) =>
-          (o.kind === 'wall' || !r.walking) && overlaps(x, y, RIDER_RADIUS, o),
+        (o) => o.kind === 'wall' && overlaps(x, y, RIDER_RADIUS, o),
       )
     ) {
       r.speed = 0;
