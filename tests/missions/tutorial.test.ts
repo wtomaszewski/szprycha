@@ -20,7 +20,12 @@ interface TrainingMap {
 }
 
 async function runTutorial(
-  script: { ticks: number; y: number; helmet: boolean }[],
+  script: {
+    ticks: number;
+    y: number;
+    helmet: boolean;
+    untilRespawn?: boolean;
+  }[],
 ) {
   const content = await readContent();
   const map = JSON.parse(
@@ -72,6 +77,7 @@ async function runTutorial(
   const tickVerdicts: Verdict[] = [];
   const respawns: { x: number; y: number }[] = [];
   const events: string[] = [];
+  const hints: string[] = [];
   const listen = () => rules.onVerdict((v) => tickVerdicts.push(v));
   const place = ({ x, y, heading }: typeof mission.start) =>
     Object.assign(rider, {
@@ -80,9 +86,9 @@ async function runTutorial(
       heading,
       speed: 0,
     });
-  listen();
+  let unsubscribe = listen();
   place(mission.start);
-  for (const { ticks, y, helmet } of script) {
+  for (const { ticks, y, helmet, untilRespawn } of script) {
     state.helmet.fastened = helmet;
     for (let i = 0; i < ticks && !mission.result; i++) {
       expect(
@@ -105,12 +111,17 @@ async function runTutorial(
       if (effects?.respawn) {
         place(effects.respawn);
         respawns.push(effects.respawn);
+        if (effects.missingHabit?.hintKey)
+          hints.push(effects.missingHabit.hintKey);
+        unsubscribe();
         rules = rules.afterCheckpoint();
-        listen();
+        unsubscribe = listen();
+        if (untilRespawn) break;
       }
     }
   }
-  return { mission, rules, respawns, events };
+  unsubscribe();
+  return { mission, respawns, events, hints, world };
 }
 
 // Accelerate towards B-20, brake to a full stop before P-12, then ride through.
@@ -148,13 +159,28 @@ it('records KASK-01, restarts at the checkpoint and denies the time bonus', asyn
   });
 });
 
-it('cannot finish after rolling through B-20', async () => {
-  const { mission, rules } = await runTutorial([
-    { ticks: 380, y: -1, helmet: true },
+it('returns to tutorial_przed_stop after rolling through B-20 and completes after a full stop', async () => {
+  const { mission, world, respawns, hints } = await runTutorial([
+    { ticks: 380, y: -1, helmet: true, untilRespawn: true },
+    { ticks: 50, y: -1, helmet: true },
+    { ticks: 75, y: 1, helmet: true },
+    { ticks: 270, y: -1, helmet: true },
   ]);
-  expect(mission.result).toBeUndefined();
-  expect(mission.target?.goal.poi).toBe('tutorial_meta');
-  expect(rules.recent).toContainEqual(
-    expect.objectContaining({ ruleId: 'ZNAK-STOP', kind: 'minor' }),
-  );
+  const checkpoint = world.pois.get('tutorial_przed_stop')!;
+  expect(respawns).toEqual([
+    {
+      x: checkpoint.x + checkpoint.width / 2,
+      y: checkpoint.y + checkpoint.height / 2,
+      heading: checkpoint.heading,
+    },
+  ]);
+  expect(hints).toEqual(['misje.WAW-T-01.powrot_stop']);
+  expect(mission.result).toMatchObject({
+    status: 'completed',
+    timeBonusEligible: true,
+    verdicts: [
+      expect.objectContaining({ ruleId: 'ZNAK-STOP', kind: 'minor' }),
+      expect.objectContaining({ ruleId: 'ZNAK-STOP', kind: 'good' }),
+    ],
+  });
 });

@@ -113,6 +113,7 @@
     "distanceUnit": "m",
     "equip": "Zapnij kask",
     "helmetHint": "Zapnij kask, zanim ruszysz.",
+    "checkpointHint": "Wróć i wykonaj instrukcję bieżącego celu.",
     "continue": "Jedź dalej od punktu kontrolnego",
     "result": "Wynik misji",
     "completed": "Misja ukończona",
@@ -133,6 +134,7 @@
       "tytul": "Witaj w Szprysze",
       "jazda": "Rusz i jedź za strzałką.",
       "podejscie": "Zwolnij przed skrzyżowaniem.",
+      "powrot_stop": "Wróć i zatrzymaj się całkowicie przed linią STOP.",
       "stop": "Zatrzymaj się całkowicie przed linią STOP, przepuść jadących drogą z pierwszeństwem i dopiero rusz do mety."
     }
   }

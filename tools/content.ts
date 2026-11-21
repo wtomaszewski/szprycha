@@ -58,7 +58,10 @@ export async function readContent(root = process.cwd()) {
       mission.tytul,
       mission.dialog_start,
       mission.dialog_koniec,
-      ...mission.cele.map(({ opis }) => opis),
+      ...mission.cele.flatMap(({ opis, wskazowka_powrotu }) => [
+        opis,
+        wskazowka_powrotu,
+      ]),
     ];
     for (const key of keys) {
       if (key && !textAt(translations, key))

@@ -10,7 +10,11 @@
   cele:
     - { typ: dojedz, poi: tutorial_jazda, opis: misje.WAW-T-01.jazda }
     - { typ: dojedz, poi: tutorial_przed_stop, opis: misje.WAW-T-01.podejscie }
-    - { typ: dojedz, poi: tutorial_meta, opis: misje.WAW-T-01.stop, wymagany_nawyk: ZNAK-STOP }
+    - typ: dojedz
+      poi: tutorial_meta
+      opis: misje.WAW-T-01.stop
+      wymagany_nawyk: ZNAK-STOP
+      wskazowka_powrotu: misje.WAW-T-01.powrot_stop
   limit_s: 90
   warunki_porazki: [ czas_minal, major_x3 ]
   checkpointy: [ tutorial_przed_stop ]

@@ -12,7 +12,7 @@ import {
 } from '../gameplay/bicycle';
 import { Blocks, type Block } from '../render/Blocks';
 import { DrivingControls } from '../ui/DrivingControls';
-import { ui, showError } from '../core/presentation';
+import { showError, translate, ui } from '../core/presentation';
 
 import { MissionSystem, type MissionSpawn } from '../gameplay/MissionSystem';
 import type { GameContent } from '../content/schemas';
@@ -55,6 +55,7 @@ export class City extends Scene {
   private messageUntil = 0;
   private world!: WorldModel;
   private rules!: RuleEngine;
+  private stopListeningForVerdicts?: () => void;
   private intersectionManager!: IntersectionManager;
   private traffic!: TrafficParticipants;
   private siren!: EmergencySiren;
@@ -72,6 +73,7 @@ export class City extends Scene {
   private missionMarker?: GameObjects.Graphics;
   private displayedTarget?: MissionSystem['target'];
   private missionInterrupted = false;
+  private checkpointHint?: string;
   private useTraffic = true;
   private readonly tickVerdicts: Verdict[] = [];
   private readonly rulesRider: RiderState = {
@@ -116,6 +118,7 @@ export class City extends Scene {
       : undefined;
     this.useTraffic = this.mission?.definition.ruch_ai !== false;
     this.missionInterrupted = false;
+    this.checkpointHint = undefined;
     this.missionHud = undefined;
     this.missionMarker = undefined;
     this.displayedTarget = undefined;
@@ -272,6 +275,7 @@ export class City extends Scene {
         },
         () => {
           this.missionInterrupted = false;
+          this.checkpointHint = undefined;
           this.controls.clear();
           this.updateMissionHud();
         },
@@ -285,6 +289,8 @@ export class City extends Scene {
     this.actionArt = this.add.graphics().setDepth(22);
     this.controls.setWalking(false);
     const onShutdown = () => {
+      this.stopListeningForVerdicts?.();
+      this.stopListeningForVerdicts = undefined;
       this.game.canvas.classList.remove('training-dusk');
       this.siren.destroy();
       this.debug.destroy();
@@ -332,6 +338,7 @@ export class City extends Scene {
         this.content.balans.misja.major_do_porazki,
       );
       this.missionInterrupted = false;
+      this.checkpointHint = undefined;
       this.controls.notice.textContent = '';
       this.rulesRider.helmet.fastened =
         this.mission.definition.start.kask_zapiety ?? true;
@@ -356,6 +363,7 @@ export class City extends Scene {
   private resetRules() {
     this.environment.time = 'day';
     this.rulesRider.shoulderCheck!.lastLeftAt = -Infinity;
+    this.stopListeningForVerdicts?.();
     this.rules = new RuleEngine(
       this.world,
       this.content.balans,
@@ -367,7 +375,7 @@ export class City extends Scene {
 
   private listenForVerdicts() {
     const engine = this.rules;
-    engine.onVerdict((verdict) => {
+    this.stopListeningForVerdicts = engine.onVerdict((verdict) => {
       this.feedback.receive(verdict, engine.counts);
       if (this.mission) this.tickVerdicts.push(verdict);
     });
@@ -406,6 +414,7 @@ export class City extends Scene {
       { x: this.rider.x * scale, y: this.rider.y * scale },
       this.rulesRider.helmet.fastened,
       this.missionInterrupted,
+      this.checkpointHint,
     );
   }
 
@@ -457,9 +466,16 @@ export class City extends Scene {
       this.controls.clear();
       this.controls.setWalking(false);
       this.rulesRider.shoulderCheck!.lastLeftAt = -Infinity;
+      this.stopListeningForVerdicts?.();
       this.rules = this.rules.afterCheckpoint();
       this.listenForVerdicts();
       this.cameras.main.centerOn(this.rider.x, this.rider.y);
+      const hint = effects.missingHabit;
+      this.checkpointHint = hint
+        ? hint.hintKey
+          ? translate(hint.hintKey)
+          : ui.missionUi.checkpointHint
+        : undefined;
       this.missionInterrupted = true;
     }
   }

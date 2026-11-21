@@ -9,6 +9,7 @@ const goalFields = {
   opis: key.optional(),
   limit_s: seconds.optional(),
   wymagany_nawyk: id.optional(),
+  wskazowka_powrotu: key.optional(),
 };
 const missionGoal = z.discriminatedUnion('typ', [
   z.strictObject({ ...goalFields, typ: z.literal('dojedz'), poi: id }),

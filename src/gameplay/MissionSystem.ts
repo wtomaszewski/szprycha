@@ -30,6 +30,7 @@ export type MissionResult = Outcome & {
 interface TickEffects {
   respawn?: MissionSpawn;
   events?: ForcedMissionEvent[];
+  missingHabit?: { hintKey?: string };
 }
 
 interface Checkpoint {
@@ -163,10 +164,18 @@ export class MissionSystem {
       this.finish({ status: 'failed', reason: 'czas_minal' });
       return;
     }
-    if (major) {
+    const atTarget = reached(target.area, position);
+    const missingHabit =
+      atTarget && target.goal.wymagany_nawyk && !this.requiredHabitSeen;
+    if (major || missingHabit) {
       this.goalIndex = this.checkpoint.goalIndex;
       this.requiredHabitSeen = false;
-      return { respawn: this.checkpoint.spawn };
+      return {
+        respawn: this.checkpoint.spawn,
+        ...(missingHabit && {
+          missingHabit: { hintKey: target.goal.wskazowka_powrotu },
+        }),
+      };
     }
 
     let effects: TickEffects | undefined;
@@ -176,10 +185,7 @@ export class MissionSystem {
       effects ??= {};
       (effects.events ??= []).push(forced.event);
     }
-    if (
-      reached(target.area, position) &&
-      (!target.goal.wymagany_nawyk || this.requiredHabitSeen)
-    ) {
+    if (atTarget) {
       this.goalIndex++;
       this.requiredHabitSeen = false;
       if (this.goalIndex === this.goals.length)

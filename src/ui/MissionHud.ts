@@ -78,6 +78,7 @@ export class MissionHud {
     position: Vec2,
     helmetFastened: boolean,
     interrupted: boolean,
+    checkpointHint?: string,
   ) {
     const { target, result, remainingSeconds, elapsedSeconds } = mission;
     setText(this.title, translate(mission.definition.tytul));
@@ -112,11 +113,12 @@ export class MissionHud {
 
     setText(
       this.instruction,
-      helmetFastened
-        ? target.goal.opis
-          ? translate(target.goal.opis)
-          : ui.missionUi.goals[target.goal.typ]
-        : ui.missionUi.helmetHint,
+      checkpointHint ??
+        (helmetFastened
+          ? target.goal.opis
+            ? translate(target.goal.opis)
+            : ui.missionUi.goals[target.goal.typ]
+          : ui.missionUi.helmetHint),
     );
     setText(
       this.timer,
