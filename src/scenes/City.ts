@@ -28,6 +28,7 @@ import {
 } from '../sim/TrafficParticipants';
 import type { RoadTrafficAgent } from '../sim/TrafficSimulation';
 import { trafficSprite, trafficTextures } from '../render/TrafficArt';
+import { emergencyLightPhase } from '../render/emergencyLights';
 import { EmergencySiren } from '../audio/EmergencySiren';
 import { RuleFeedback } from '../ui/RuleFeedback';
 
@@ -396,7 +397,7 @@ export class City extends Scene {
     const halfHeight =
       camera.height / (2 * camera.zoom) + actorRadiusPx.tram + 2;
     const sirenArt = this.sirenArt.clear();
-    const flash = Math.floor(this.rules.at * 7) % 2;
+    const flash = emergencyLightPhase(this.rules.at);
     let sirenVolume = 0;
     let bearing = 0;
     for (let index = 0; index < this.agents.length; index++) {
