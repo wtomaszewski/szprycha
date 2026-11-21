@@ -521,7 +521,7 @@ przepisy:
     weryfikacja: true
     detektor: sim
     waga_bledu: major
-    feedback: "Zwolnij i zaczekaj za pojazdem, żeby mieć czas dostrzec innych uczestników ruchu."
+    feedback: "Nie wyprzedzaj na przejściu, przejeździe, skrzyżowaniu bez świateł ani przed torami i nie omijaj auta, które stoi, by przepuścić pieszych."
 
   # ───────────── M06 — Szczególne miejsca i warunki ─────────────
   - id: MSC-01

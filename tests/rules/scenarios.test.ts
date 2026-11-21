@@ -406,6 +406,13 @@ it('tells the rider when to wait before the railway crossing', () => {
   );
 });
 
+it('states both MAN-12 prohibitions in the rider feedback', () => {
+  const rule = content.przepisy.przepisy.find(({ id }) => id === 'MAN-12');
+  expect(rule?.feedback).toBe(
+    'Nie wyprzedzaj na przejściu, przejeździe, skrzyżowaniu bez świateł ani przed torami i nie omijaj auta, które stoi, by przepuścić pieszych.',
+  );
+});
+
 it('keeps emitted feedback to one sentence and bonus-only rules without a penalty', () => {
   const rules = new Map(
     content.przepisy.przepisy.map((rule) => [rule.id, rule]),
