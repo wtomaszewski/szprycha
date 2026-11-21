@@ -1,0 +1,153 @@
+import { translate, ui } from '../core/presentation';
+import type { MissionSystem } from '../gameplay/MissionSystem';
+import type { Vec2 } from '../rules/types';
+
+function clock(seconds: number): string {
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+}
+
+function setText(element: HTMLElement, text: string) {
+  if (element.textContent !== text) element.textContent = text;
+}
+
+export class MissionHud {
+  private readonly title = document.createElement('strong');
+  private readonly instruction = document.createElement('p');
+  private readonly timer = document.createElement('output');
+  private readonly navigation = document.createElement('div');
+  private readonly arrow = document.createElement('div');
+  private readonly bearing = document.createElement('span');
+  private readonly distance = document.createElement('span');
+  private readonly equip = document.createElement('button');
+  private readonly resume = document.createElement('button');
+  private readonly summary = document.createElement('section');
+  private readonly heading = document.createElement('h2');
+  private readonly resultText = document.createElement('p');
+  private displayedResult: MissionSystem['result'];
+
+  constructor(
+    parent: HTMLElement,
+    equipHelmet: () => void,
+    resumeFromCheckpoint: () => void,
+    retry: () => void,
+    menu: () => void,
+  ) {
+    const panel = document.createElement('section');
+    panel.className = 'mission-panel';
+    this.instruction.setAttribute('role', 'status');
+    panel.append(this.title, this.instruction, this.equip, this.resume);
+
+    this.timer.className = 'mission-timer';
+    this.timer.setAttribute('aria-label', ui.missionUi.timer);
+    this.timer.setAttribute('aria-live', 'off');
+
+    this.navigation.className = 'mission-navigation';
+    this.arrow.className = 'mission-arrow';
+    this.arrow.setAttribute('role', 'img');
+    this.bearing.className = 'mission-bearing';
+    this.distance.className = 'mission-distance';
+    this.arrow.append(this.bearing, this.distance);
+    this.navigation.append(this.arrow);
+
+    this.equip.type = this.resume.type = 'button';
+    this.equip.textContent = ui.missionUi.equip;
+    this.resume.textContent = ui.missionUi.continue;
+    this.equip.addEventListener('click', equipHelmet);
+    this.resume.addEventListener('click', resumeFromCheckpoint);
+
+    this.summary.className = 'mission-summary';
+    this.summary.setAttribute('aria-label', ui.missionUi.result);
+    this.heading.setAttribute('role', 'status');
+    const actions = document.createElement('div');
+    for (const [label, action] of [
+      [ui.missionUi.retry, retry],
+      [ui.driving.menu, menu],
+    ] as const) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = label;
+      button.addEventListener('click', action);
+      actions.append(button);
+    }
+    this.summary.append(this.heading, this.resultText, actions);
+    parent.append(panel, this.timer, this.navigation, this.summary);
+  }
+
+  update(
+    mission: MissionSystem,
+    position: Vec2,
+    helmetFastened: boolean,
+    interrupted: boolean,
+  ) {
+    const { target, result, remainingSeconds, elapsedSeconds } = mission;
+    setText(this.title, translate(mission.definition.tytul));
+    this.instruction.hidden = !target;
+    this.equip.hidden = !!result || helmetFastened;
+    this.resume.hidden = !!result || !interrupted;
+    this.timer.hidden = this.navigation.hidden = !!result;
+    this.summary.hidden = !result;
+
+    if (result && this.displayedResult !== result) {
+      const label =
+        result.status === 'completed'
+          ? ui.missionUi.completed
+          : ui.missionUi.failed;
+      setText(this.heading, label);
+      const details = [
+        `${ui.missionUi.timer} ${clock(Math.floor(result.elapsedSeconds))}`,
+        `${ui.missionUi.goodHabits} ${result.goodHabits}`,
+      ];
+      if (result.status === 'failed')
+        details.push(
+          result.reason === 'czas_minal'
+            ? ui.missionUi.timeExpired
+            : ui.missionUi.threeMajor,
+        );
+      else if (!result.timeBonusEligible)
+        details.push(ui.missionUi.noTimeBonus);
+      setText(this.resultText, details.join(' · '));
+      this.displayedResult = result;
+    }
+    if (!target) return;
+
+    setText(
+      this.instruction,
+      helmetFastened
+        ? target.goal.opis
+          ? translate(target.goal.opis)
+          : ui.missionUi.goals[target.goal.typ]
+        : ui.missionUi.helmetHint,
+    );
+    setText(
+      this.timer,
+      clock(
+        remainingSeconds === undefined
+          ? Math.floor(elapsedSeconds)
+          : Math.ceil(remainingSeconds),
+      ),
+    );
+    this.drawArrow(
+      target.position.x - position.x,
+      target.position.y - position.y,
+    );
+  }
+
+  private drawArrow(dx: number, dy: number) {
+    const { clientWidth: width, clientHeight: height } = this.navigation;
+    if (width === 0 || height === 0) return;
+    const magnitude = Math.max(Math.abs(dx) / width, Math.abs(dy) / height);
+    const x = magnitude === 0 ? 100 : 50 + (50 * dx) / (width * magnitude);
+    const y = magnitude === 0 ? 50 : 50 + (50 * dy) / (height * magnitude);
+    this.arrow.style.left = `${x}%`;
+    this.arrow.style.top = `${y}%`;
+    this.bearing.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+    const distance = `${Math.round(Math.hypot(dx, dy))} ${ui.missionUi.distanceUnit}`;
+    if (this.distance.textContent !== distance) {
+      setText(this.distance, distance);
+      this.arrow.setAttribute(
+        'aria-label',
+        `${ui.missionUi.direction} · ${distance}`,
+      );
+    }
+  }
+}

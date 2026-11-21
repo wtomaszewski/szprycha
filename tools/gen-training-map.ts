@@ -178,7 +178,8 @@ objectLayer('spawns', [
     lane: 'equal-N',
   }),
 ]);
-objectLayer('pois', [rect('workshop', 688, 896, 0, 0)]);
+const pois = [rect('workshop', 688, 896, 0, 0)];
+objectLayer('pois', pois);
 const zones = [
   ...columns.map((x) =>
     rect(`road-ns-${x}`, x * 32, 0, 192, 1920, { kind: 'roadway' }),
@@ -586,6 +587,12 @@ objectLayer('driveways', [
   rect('training-driveway', 1112, 1450, 44, 82, { direction: 'N' }),
 ]);
 objectLayer('parked_cars', [rect('parked-training', 940, 1284, 56, 24)]);
+pois.push(
+  rect('tutorial_start', 424, 928, 0, 0, { heading: Math.PI / 2 }),
+  rect('tutorial_jazda', 409, 1050, 30, 30),
+  rect('tutorial_przed_stop', 409, 1184, 30, 30, { heading: Math.PI / 2 }),
+  rect('tutorial_meta', 409, 1510, 30, 30),
+);
 await mkdir('maps', { recursive: true });
 await writeFile(
   'maps/miasteczko.tmj',

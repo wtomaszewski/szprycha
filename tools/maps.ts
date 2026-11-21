@@ -1,18 +1,28 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import type { GameContent } from '../src/content/schemas.ts';
+import { MissionSystem } from '../src/gameplay/MissionSystem.ts';
 import { WorldModel } from '../src/rules/world/WorldModel.ts';
 
-export async function validateMaps(metersPerTile: number) {
-  const maps = resolve('maps');
-  for (const file of await readdir(maps)) {
+export async function validateMaps(root: string, content: GameContent) {
+  const directory = resolve(root, 'maps');
+  const worlds = new Map<string, WorldModel>();
+  for (const file of await readdir(directory)) {
     if (!file.endsWith('.tmj')) continue;
     try {
-      new WorldModel(
-        JSON.parse(await readFile(resolve(maps, file), 'utf8')),
-        metersPerTile,
+      const world = new WorldModel(
+        JSON.parse(await readFile(resolve(directory, file), 'utf8')),
+        content.balans.silnik.kafel_m,
       );
+      worlds.set(file.slice(0, -4), world);
     } catch (cause) {
       throw new Error(`Invalid Tiled map: ${file}`, { cause });
     }
+  }
+  for (const mission of content.misje) {
+    const map = mission.mapa ?? mission.miasto;
+    const world = worlds.get(map);
+    if (!world) throw new Error(`Mission ${mission.id}: unknown map ${map}`);
+    new MissionSystem(mission, world, content.balans.misja.major_do_porazki);
   }
 }

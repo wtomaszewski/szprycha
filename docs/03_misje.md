@@ -54,6 +54,14 @@ Każde zdarzenie ma `ruleIds`. System **podaje częściej zdarzenia związane z 
 
 `zdarzenia_wymuszone` gwarantują, że każde dziecko w misji spotka sytuację uczącą daną regułę (nie zostawiamy tego losowi).
 
+### Uruchamianie misji w M4a
+
+- `mapa` wskazuje plik Tiled bez rozszerzenia (domyślnie wartość z `miasto`). Samouczki używają `akt: 0`. `start.kask_zapiety` określa stan kasku przed ruszeniem, a `ruch_ai: false` pozwala przećwiczyć manewr bez ruchu AI.
+- Cele są wykonywane kolejno, po osiągnięciu obszaru POI. `odbierz` i `oddaj` bez własnego `poi` korzystają z ostatniego wskazanego POI. `wymagany_nawyk` wymaga werdyktu `good` dla wskazanej reguły w trakcie danego celu.
+- `checkpointy` to kolejność POI zapisujących pozycję oraz liczbę ukończonych celów. POI prostokątny używa środka do odrodzenia, a punktowy jest osiągnięty w promieniu 1,5 m. Opcjonalne `heading` w Tiled określa kierunek po odrodzeniu w radianach zgodnie z ruchem wskazówek zegara od osi +X.
+- `limit_s` można podać dla całej misji lub dla etapu. Liczniki korzystają z czasu symulacji. Próba powtórzona od checkpointu zachowuje zużyty czas obu limitów i wszystkie wcześniejsze werdykty.
+- `zdarzenia_wymuszone[].przy` wskazuje obiekt w `pois`, `triggers` lub `zones`. Każdy wpis wyzwala się raz na próbę misji. Biblioteka zachowań zdarzeń jest zakresem M4c.
+
 ---
 
 ## Lista misji MVP — WARSZAWA

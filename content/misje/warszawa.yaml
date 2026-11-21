@@ -1,0 +1,22 @@
+- id: WAW-T-01
+  miasto: warszawa
+  mapa: miasteczko
+  akt: 0
+  tytul: misje.WAW-T-01.tytul
+  zleceniodawca: sierzant_ola
+  typ: samouczek
+  start: { poi: tutorial_start, kask_zapiety: false }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: tutorial_jazda, opis: misje.WAW-T-01.jazda }
+    - { typ: dojedz, poi: tutorial_przed_stop, opis: misje.WAW-T-01.podejscie }
+    - { typ: dojedz, poi: tutorial_meta, opis: misje.WAW-T-01.stop, wymagany_nawyk: ZNAK-STOP }
+  limit_s: 90
+  warunki_porazki: [ czas_minal, major_x3 ]
+  checkpointy: [ tutorial_przed_stop ]
+  reguly_cwiczone: [ KASK-01, ZNAK-STOP ]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_stop, przy: tutorial_przed_stop, regula: ZNAK-STOP }
+  par_s: 30
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 0, xp: 0 }

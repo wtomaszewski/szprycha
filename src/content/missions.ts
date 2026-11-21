@@ -1,0 +1,107 @@
+import { z } from 'zod';
+
+const id = z.string().regex(/^[A-Za-z0-9_-]+$/);
+const city = z.enum(['warszawa', 'wroclaw']);
+const key = z.string().regex(/^(misje|dialogi)(\.[A-Za-z0-9_-]+)+$/);
+const seconds = z.number().positive();
+const count = z.number().int().nonnegative();
+const goalFields = {
+  opis: key.optional(),
+  limit_s: seconds.optional(),
+  wymagany_nawyk: id.optional(),
+};
+const missionGoal = z.discriminatedUnion('typ', [
+  z.strictObject({ ...goalFields, typ: z.literal('dojedz'), poi: id }),
+  z.strictObject({
+    ...goalFields,
+    typ: z.literal('odbierz'),
+    poi: id.optional(),
+    przedmiot: id,
+  }),
+  z.strictObject({
+    ...goalFields,
+    typ: z.literal('oddaj'),
+    poi: id.optional(),
+    przedmiot: id,
+  }),
+]);
+
+export const missionSchema = z
+  .strictObject({
+    id: z.string().regex(/^(WAW|WRO)-(T|A[1-3])-\d{2}$/),
+    miasto: city,
+    mapa: id.optional(),
+    akt: count.max(3),
+    tytul: key,
+    zleceniodawca: id,
+    typ: id,
+    wymagania: z
+      .strictObject({
+        ranga_min: id.optional(),
+        misje_ukonczone: z.array(id).optional(),
+      })
+      .optional(),
+    start: z.strictObject({ poi: id, kask_zapiety: z.boolean().optional() }),
+    cele: z.array(missionGoal).min(1),
+    limit_s: seconds.optional(),
+    przesylka: z.strictObject({ delikatna: z.boolean() }).optional(),
+    warunki_porazki: z.array(z.enum(['czas_minal', 'major_x3'])).default([]),
+    checkpointy: z.array(id).default([]),
+    reguly_cwiczone: z.array(id).min(1),
+    zdarzenia_wymuszone: z
+      .array(z.strictObject({ typ: id, przy: id, regula: id }))
+      .default([]),
+    par_s: seconds,
+    min_dobre_nawyki: count,
+    nagrody: z.strictObject({
+      zetony: count,
+      xp: count,
+      odblokuj: z.array(id).optional(),
+    }),
+    dialog_start: key.optional(),
+    dialog_koniec: key.optional(),
+    ruch_ai: z.boolean().optional(),
+  })
+  .superRefine((mission, ctx) => {
+    const act = mission.akt === 0 ? 'T' : `A${mission.akt}`;
+    const prefix = mission.miasto === 'warszawa' ? 'WAW' : 'WRO';
+    if (!mission.id.startsWith(`${prefix}-${act}-`))
+      ctx.addIssue({
+        code: 'custom',
+        path: ['id'],
+        message: 'Mission ID must match its city and act',
+      });
+
+    const timed =
+      mission.limit_s !== undefined ||
+      mission.cele.some(({ limit_s }) => limit_s !== undefined);
+    if (timed !== mission.warunki_porazki.includes('czas_minal'))
+      ctx.addIssue({
+        code: 'custom',
+        path: ['warunki_porazki'],
+        message: 'Time limits and czas_minal must be configured together',
+      });
+
+    const cargo = new Set<string>();
+    mission.cele.forEach((goal, index) => {
+      if (goal.typ === 'dojedz') return;
+      const { przedmiot } = goal;
+      const valid =
+        goal.typ === 'odbierz'
+          ? !cargo.has(przedmiot)
+          : cargo.delete(przedmiot);
+      if (!valid)
+        ctx.addIssue({
+          code: 'custom',
+          path: ['cele', index, 'przedmiot'],
+          message: `Invalid pickup or delivery order for ${przedmiot}`,
+        });
+      if (goal.typ === 'odbierz') cargo.add(przedmiot);
+    });
+  });
+
+export const missionsSchema = z.array(missionSchema).min(1);
+export type MissionDefinition = z.infer<typeof missionSchema>;
+export type MissionGoal = z.infer<typeof missionGoal>;
+export type ForcedMissionEvent =
+  MissionDefinition['zdarzenia_wymuszone'][number];

@@ -22,7 +22,7 @@
     }
   ],
   "nextlayerid": 22,
-  "nextobjectid": 157,
+  "nextobjectid": 161,
   "layers": [
     {
       "id": 1,
@@ -10741,6 +10741,66 @@
           "y": 896,
           "width": 0,
           "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": []
+        },
+        {
+          "id": 157,
+          "name": "tutorial_start",
+          "type": "",
+          "x": 424,
+          "y": 928,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "heading",
+              "type": "float",
+              "value": 1.5707963267948966
+            }
+          ]
+        },
+        {
+          "id": 158,
+          "name": "tutorial_jazda",
+          "type": "",
+          "x": 409,
+          "y": 1050,
+          "width": 30,
+          "height": 30,
+          "rotation": 0,
+          "visible": true,
+          "properties": []
+        },
+        {
+          "id": 159,
+          "name": "tutorial_przed_stop",
+          "type": "",
+          "x": 409,
+          "y": 1184,
+          "width": 30,
+          "height": 30,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "heading",
+              "type": "float",
+              "value": 1.5707963267948966
+            }
+          ]
+        },
+        {
+          "id": 160,
+          "name": "tutorial_meta",
+          "type": "",
+          "x": 409,
+          "y": 1510,
+          "width": 30,
+          "height": 30,
           "rotation": 0,
           "visible": true,
           "properties": []

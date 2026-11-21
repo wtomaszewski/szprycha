@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import type { GameContent } from '../content/schemas';
-import { FONT, ui } from '../core/presentation';
+import { FONT, translate, ui } from '../core/presentation';
 export class MainMenu extends Scene {
   constructor() {
     super('MainMenu');
@@ -8,6 +8,18 @@ export class MainMenu extends Scene {
   create(content: GameContent) {
     // Data has passed the same schema at build time and at the loading boundary.
     if (content?.przepisy) this.registry.set('content', content);
+    const gameContent = this.registry.get('content') as GameContent;
+    const tutorial = gameContent.misje.find(({ id }) => id === 'WAW-T-01');
+    const missionButton = document.createElement('button');
+    if (tutorial) {
+      missionButton.type = 'button';
+      missionButton.className = 'menu-mission';
+      missionButton.textContent = translate(tutorial.tytul);
+      missionButton.addEventListener('click', () =>
+        this.scene.start('City', { missionId: tutorial.id }),
+      );
+      document.body.append(missionButton);
+    }
     const g = this.add.graphics();
     g.fillStyle(0x1a1c2c).fillRect(0, 0, 640, 360);
     g.fillStyle(0x257179).fillRect(0, 0, 8, 360);
@@ -34,9 +46,9 @@ export class MainMenu extends Scene {
     label(47, 166, ui.tagline, 14, '#c0cbdc');
     g.fillStyle(0x333c57).fillRect(44, 199, 272, 39);
     label(57, 207, ui.driving.startHint, 16);
+    if (tutorial) g.fillStyle(0xffcd75).fillRect(44, 242, 272, 39);
 
-    label(46, 247, ui.status, 14, '#ffcd75');
-    label(46, 275, ui.pangram, 18);
+    label(46, 282, ui.pangram, 16);
     // Small, original bicycle emblem; decorative menu art, no world renderer.
     g.lineStyle(4, 0xffcd75);
     g.strokeCircle(471, 226, 25).strokeCircle(555, 226, 25);
@@ -46,22 +58,28 @@ export class MainMenu extends Scene {
     g.lineBetween(484, 180, 505, 180)
       .lineBetween(541, 183, 537, 170)
       .lineBetween(537, 170, 550, 170);
-    label(433, 275, ui.footer, 12, '#c0cbdc');
+    label(433, 284, ui.footer, 12, '#c0cbdc');
     this.add
       .zone(180, 219, 272, 39)
       .setInteractive({ useHandCursor: true })
       .on('pointerdown', () => this.scene.start('City'));
-    const center = () =>
+    const center = () => {
       this.cameras.main.setScroll(
         -Math.floor((this.scale.width - 640) / 2),
         -Math.floor((this.scale.height - 360) / 2),
       );
+      missionButton.style.setProperty('--menu-zoom', String(this.scale.zoom));
+    };
     center();
     this.scale.on('resize', center);
-    this.input.keyboard?.once('keydown-ENTER', () => this.scene.start('City'));
+    const startDrive = (event: KeyboardEvent) => {
+      if (event.target !== missionButton) this.scene.start('City');
+    };
+    this.input.keyboard?.on('keydown-ENTER', startDrive);
     this.events.once('shutdown', () => {
       this.scale.off('resize', center);
-      this.input.keyboard?.removeAllListeners();
+      this.input.keyboard?.off('keydown-ENTER', startDrive);
+      missionButton.remove();
     });
     const canvas = this.game.canvas;
     canvas.setAttribute(

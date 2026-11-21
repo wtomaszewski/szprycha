@@ -127,6 +127,9 @@ export interface Box extends Vec2 {
   width: number;
   height: number;
 }
+export interface PointOfInterest extends Box {
+  heading: number;
+}
 export interface Zone extends Box, z.infer<typeof zoneProperties> {
   kind: z.infer<typeof zoneSchema>;
 }
@@ -229,6 +232,8 @@ export function lateralOffset(lane: Lane, pos: Vec2) {
 export class WorldModel {
   readonly metersPerPixel: number;
   readonly zones: readonly Zone[];
+  readonly pois: ReadonlyMap<string, PointOfInterest>;
+  readonly triggers: ReadonlyMap<string, Box>;
   readonly crossings: readonly Crossing[];
   readonly driveways: readonly Driveway[];
   readonly parkedCars: readonly Box[];
@@ -262,6 +267,30 @@ export class WorldModel {
       width: object.width * scale,
       height: object.height * scale,
     });
+    const namedAreas = <T extends Box>(
+      name: string,
+      toArea: (object: z.infer<typeof tiledObject>) => T,
+    ) => {
+      const areas = new Map<string, T>();
+      for (const object of layer(name)) {
+        if (!object.name || areas.has(object.name))
+          throw new Error(`Missing or duplicate ID in ${name}: ${object.name}`);
+        if (object.polyline || (object.width === 0) !== (object.height === 0))
+          throw new Error(
+            `Expected a point or rectangle in ${name}: ${object.name}`,
+          );
+        areas.set(object.name, toArea(object));
+      }
+      return areas;
+    };
+    this.pois = namedAreas('pois', (object) => ({
+      ...box(object),
+      heading: z
+        .number()
+        .default(-Math.PI / 2)
+        .parse(properties(object).heading),
+    }));
+    this.triggers = namedAreas('triggers', box);
     this.zones = layer('zones')
       .flatMap((object) => {
         const props = properties(object);

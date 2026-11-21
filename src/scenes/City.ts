@@ -14,12 +14,13 @@ import { Blocks, type Block } from '../render/Blocks';
 import { DrivingControls } from '../ui/DrivingControls';
 import { ui, showError } from '../core/presentation';
 
+import { MissionSystem, type MissionSpawn } from '../gameplay/MissionSystem';
 import type { GameContent } from '../content/schemas';
 import { RuleDebugOverlay } from '../render/RuleDebugOverlay';
 import { TrainingRoad } from '../render/TrainingRoad';
 import { IntersectionManager } from '../rules/priority/IntersectionManager';
 import { RuleEngine } from '../rules/RuleEngine';
-import type { AgentState, EnvState, RiderState } from '../rules/types';
+import type { AgentState, EnvState, RiderState, Verdict } from '../rules/types';
 import { WorldModel } from '../rules/world/WorldModel';
 import {
   actorRadiusPx,
@@ -31,6 +32,7 @@ import { trafficSprite, trafficTextures } from '../render/TrafficArt';
 import { emergencyLightPhase } from '../render/emergencyLights';
 import { EmergencySiren } from '../audio/EmergencySiren';
 import { RuleFeedback } from '../ui/RuleFeedback';
+import { MissionHud } from '../ui/MissionHud';
 
 export class City extends Scene {
   private readonly environment: EnvState = {
@@ -65,6 +67,13 @@ export class City extends Scene {
   private debug!: RuleDebugOverlay;
   private feedback!: RuleFeedback;
   private content!: GameContent;
+  private mission?: MissionSystem;
+  private missionHud?: MissionHud;
+  private missionMarker?: GameObjects.Graphics;
+  private displayedTarget?: MissionSystem['target'];
+  private missionInterrupted = false;
+  private useTraffic = true;
+  private readonly tickVerdicts: Verdict[] = [];
   private readonly rulesRider: RiderState = {
     id: 'player',
     pos: { x: 0, y: 0 },
@@ -86,7 +95,7 @@ export class City extends Scene {
     this.load.image('rider', riderUrl);
     this.load.once('loaderror', showError);
   }
-  create() {
+  create({ missionId }: { missionId?: string } = {}) {
     this.obstacles = [];
     this.accumulator = 0;
     this.hudAt = 0;
@@ -97,6 +106,20 @@ export class City extends Scene {
       cached.data,
       this.content.balans.silnik.kafel_m,
     );
+    const definition = this.content.misje.find(({ id }) => id === missionId);
+    this.mission = definition
+      ? new MissionSystem(
+          definition,
+          this.world,
+          this.content.balans.misja.major_do_porazki,
+        )
+      : undefined;
+    this.useTraffic = this.mission?.definition.ruch_ai !== false;
+    this.missionInterrupted = false;
+    this.missionHud = undefined;
+    this.missionMarker = undefined;
+    this.displayedTarget = undefined;
+    this.rulesRider.helmet.fastened = definition?.start.kask_zapiety ?? true;
     this.road = new TrainingRoad(this, this.world);
     this.intersectionManager = new IntersectionManager(this.world);
     this.traffic = new TrafficParticipants(
@@ -178,7 +201,9 @@ export class City extends Scene {
       roof?.refresh();
     }
     this.blocks = new Blocks(this, buildings);
-    this.agents = [...this.traffic.road.agents, ...this.traffic.routed];
+    this.agents = this.useTraffic
+      ? [...this.traffic.road.agents, ...this.traffic.routed]
+      : [];
     this.actorObstacles = this.agents.map(({ kind }) => {
       const diameter = actorRadiusPx[kind] * 2;
       return { x: 0, y: 0, width: diameter, height: diameter, kind: 'wall' };
@@ -194,6 +219,7 @@ export class City extends Scene {
       speed: 0,
       walking: false,
     };
+    if (this.mission) this.placeRider(this.mission.start);
     this.sprite = this.add
       .image(this.rider.x, this.rider.y, 'rider')
       .setScale(2)
@@ -231,10 +257,29 @@ export class City extends Scene {
         );
       },
     );
+    if (this.mission) this.controls.notice.textContent = '';
     this.feedback = new RuleFeedback(
       this.controls.root,
       this.content.przepisy.przepisy,
     );
+    if (this.mission) {
+      this.missionMarker = this.add.graphics().setDepth(8);
+      this.missionHud = new MissionHud(
+        this.controls.root,
+        () => {
+          this.rulesRider.helmet.fastened = true;
+          this.updateMissionHud();
+        },
+        () => {
+          this.missionInterrupted = false;
+          this.controls.clear();
+          this.updateMissionHud();
+        },
+        () => this.reset(),
+        () => this.scene.start('MainMenu'),
+      );
+      this.updateMissionHud();
+    }
     this.resetRules();
     this.debug = new RuleDebugOverlay(this, this.world, this.controls.root);
     this.actionArt = this.add.graphics().setDepth(22);
@@ -259,7 +304,8 @@ export class City extends Scene {
     this.messageUntil = this.time.now + 2600;
   }
   private toggleMode() {
-    if (this.controls.paused) return;
+    if (this.controls.paused || this.mission?.result || this.missionInterrupted)
+      return;
     if (this.rider.speed > 5) {
       this.message(ui.driving.slowDown);
       return;
@@ -279,6 +325,19 @@ export class City extends Scene {
       heading: -Math.PI / 2,
       walking: false,
     });
+    if (this.mission) {
+      this.mission = new MissionSystem(
+        this.mission.definition,
+        this.world,
+        this.content.balans.misja.major_do_porazki,
+      );
+      this.missionInterrupted = false;
+      this.controls.notice.textContent = '';
+      this.rulesRider.helmet.fastened =
+        this.mission.definition.start.kask_zapiety ?? true;
+      this.placeRider(this.mission.start);
+      this.updateMissionHud();
+    }
     this.traffic.reset();
     this.siren.update(0, 0);
     this.syncActorObstacles();
@@ -297,16 +356,59 @@ export class City extends Scene {
   private resetRules() {
     this.environment.time = 'day';
     this.rulesRider.shoulderCheck!.lastLeftAt = -Infinity;
-    const engine = (this.rules = new RuleEngine(
+    this.rules = new RuleEngine(
       this.world,
       this.content.balans,
       this.intersectionManager,
-    ));
-    this.feedback.reset(engine.counts);
-    engine.onVerdict((verdict) =>
-      this.feedback.receive(verdict, engine.counts),
+    );
+    this.feedback.reset(this.rules.counts);
+    this.listenForVerdicts();
+  }
+
+  private listenForVerdicts() {
+    const engine = this.rules;
+    engine.onVerdict((verdict) => {
+      this.feedback.receive(verdict, engine.counts);
+      if (this.mission) this.tickVerdicts.push(verdict);
+    });
+  }
+
+  private placeRider(spawn: MissionSpawn) {
+    const scale = this.world.metersPerPixel;
+    Object.assign(this.rider, {
+      x: spawn.x / scale,
+      y: spawn.y / scale,
+      heading: spawn.heading,
+      speed: 0,
+      walking: false,
+    });
+  }
+
+  private updateMissionHud() {
+    if (!this.mission) return;
+    const scale = this.world.metersPerPixel;
+    const target = this.mission.target;
+    if (target !== this.displayedTarget) {
+      this.displayedTarget = target;
+      const marker = this.missionMarker!.clear();
+      if (target) {
+        const x = target.position.x / scale;
+        const y = target.position.y / scale;
+        marker
+          .lineStyle(5, 0x1a1c2c)
+          .strokeRect(x - 16, y - 16, 32, 32)
+          .lineStyle(2, 0xffcd75)
+          .strokeRect(x - 16, y - 16, 32, 32);
+      }
+    }
+    this.missionHud?.update(
+      this.mission,
+      { x: this.rider.x * scale, y: this.rider.y * scale },
+      this.rulesRider.helmet.fastened,
+      this.missionInterrupted,
     );
   }
+
   private syncActorObstacles() {
     const scale = 1 / this.world.metersPerPixel;
     for (let i = 0; i < this.agents.length; i++) {
@@ -338,18 +440,36 @@ export class City extends Scene {
     rider.handsOnBar = rider.signal === 'none' ? 2 : 1;
     this.environment.time =
       this.rules.at + FIXED_STEP >= this.world.duskAt ? 'dusk' : 'day';
-    this.traffic.step(this.environment, rider);
+    if (this.useTraffic) this.traffic.step(this.environment, rider);
     this.syncActorObstacles();
     this.activeAgents.length = 0;
     for (const agent of this.agents)
       if (!('active' in agent) || agent.active) this.activeAgents.push(agent);
+    this.tickVerdicts.length = 0;
     this.rules.step(rider, this.activeAgents, this.environment);
+    const effects = this.mission?.step(rider.pos, this.tickVerdicts);
+    if (effects?.events) {
+      for (const event of effects.events)
+        this.events.emit('mission:forced-event', event);
+    }
+    if (effects?.respawn) {
+      this.placeRider(effects.respawn);
+      this.controls.clear();
+      this.controls.setWalking(false);
+      this.rulesRider.shoulderCheck!.lastLeftAt = -Infinity;
+      this.rules = this.rules.afterCheckpoint();
+      this.listenForVerdicts();
+      this.cameras.main.centerOn(this.rider.x, this.rider.y);
+      this.missionInterrupted = true;
+    }
   }
   update(time: number, delta: number) {
     if (!this.controls) return;
     const input = this.controls.read();
     if (
       this.controls.paused ||
+      this.missionInterrupted ||
+      this.mission?.result ||
       matchMedia('(pointer: coarse) and (orientation: portrait)').matches
     ) {
       this.accumulator = 0;
@@ -370,6 +490,10 @@ export class City extends Scene {
         this.message(ui.driving.collision);
       this.stepWorld();
       this.accumulator -= FIXED_STEP;
+      if (this.missionInterrupted || this.mission?.result) {
+        this.accumulator = 0;
+        break;
+      }
     }
     const r = this.rider;
     const a = this.controls.actions;
@@ -469,7 +593,12 @@ export class City extends Scene {
     this.game.canvas.classList.toggle('training-dusk', dusk);
     this.road.updateLights(this.rules.at, this.environment);
     this.feedback.update(this.rules.at);
-    if (time - this.hudAt > 100) {
+    this.updateMissionHud();
+    if (
+      time - this.hudAt > 100 ||
+      this.missionInterrupted ||
+      this.mission?.result
+    ) {
       this.hudAt = time;
       this.debug.update(
         this.rules,
@@ -492,7 +621,9 @@ export class City extends Scene {
         this.controls.notice.textContent =
           sirenVolume > 0
             ? ui.rules.emergencyApproaching
-            : ui.driving.prototype;
+            : this.mission
+              ? ''
+              : ui.driving.prototype;
     }
   }
 }
