@@ -39,6 +39,8 @@ export const pragaRoutes = {
     shortcut: [
       { x: 1130, y: 548, wait: 5 },
       { x: 1130, y: 352 },
+      // Aim inside pasaz_pierogi so the turn toward the finish cannot skirt B-1.
+      { x: 1200, y: 316, signal: 'right' },
       { x: 1298, y: 245, signal: 'right' },
     ],
   },

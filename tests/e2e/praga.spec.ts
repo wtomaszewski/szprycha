@@ -136,36 +136,24 @@ test('unlocks the first four follow-up orders and explains the illegal shortcut'
     }
     if (id === 'WAW-A1-02')
       await page.screenshot({ path: 'test-results/m4d-praga.png' });
+    await page
+      .getByRole('button', { name: pl.driving.classic, exact: true })
+      .click();
     if (id === 'WAW-A1-03') {
       await expect(canvas(page)).toHaveAttribute('data-y', '878');
-      await page.keyboard.down('ArrowUp');
+      await routeWithGamepad(page, pragaRoutes[id].shortcut);
       await expect
-        .poll(() => riderY(page), {
-          intervals: [30, 50, 70],
-        })
-        .toBeLessThanOrEqual(578);
-      await page.keyboard.up('ArrowUp');
-      await page.keyboard.down('Space');
+        .poll(() => riderY(page), { timeout: 10_000 })
+        .toBeLessThan(576);
       await expect(canvas(page)).toHaveAttribute('data-speed', '0');
       const stoppedY = await riderY(page);
       expect(stoppedY).toBeGreaterThan(512);
       expect(stoppedY).toBeLessThan(576);
-      await page.waitForTimeout(4400);
-      await page.keyboard.up('Space');
-      await page.keyboard.down('ArrowUp');
-      await expect
-        .poll(() => riderY(page), {
-          intervals: [30, 50, 70],
-        })
-        .toBeLessThanOrEqual(352);
-      await page.keyboard.up('ArrowUp');
-      await page.keyboard.down('Space');
-      await expect(canvas(page)).toHaveAttribute('data-speed', '0');
-      await page.keyboard.up('Space');
-      await page
-        .getByRole('button', { name: pl.driving.classic, exact: true })
-        .click();
-      await routeWithGamepad(page, [pragaRoutes[id].shortcut.at(-1)!]);
+      await expect(
+        page.getByText(pl.misje[id].cel4, { exact: true }),
+      ).toBeVisible({
+        timeout: 20_000,
+      });
       const lesson = page.getByRole('dialog', { name: pl.replay.title });
       await expect(lesson.locator('#replay-feedback')).toContainText(
         'Białe koło z czerwoną obwódką oznacza zakaz ruchu także dla rowerów',
@@ -173,15 +161,11 @@ test('unlocks the first four follow-up orders and explains the illegal shortcut'
       await page.screenshot({ path: 'test-results/m4d-skrot-stop-klatka.png' });
       await lesson.getByRole('button', { name: pl.replay.resume }).click();
       await expect(dialogue(page)).toBeVisible({ timeout: 12_000 });
-      await routeWithGamepad(page, []);
     } else {
-      await page
-        .getByRole('button', { name: pl.driving.classic, exact: true })
-        .click();
       await routeWithGamepad(page, pragaRoutes[id].legal);
       await expect(dialogue(page)).toBeVisible({ timeout: 34_000 });
-      await routeWithGamepad(page, []);
     }
+    await routeWithGamepad(page, []);
     await skip(page);
     if (id === 'WAW-A1-02')
       await page.screenshot({ path: 'test-results/m4d-bazar.png' });
