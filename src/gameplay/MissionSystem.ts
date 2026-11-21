@@ -17,8 +17,7 @@ export interface MissionSpawn extends Vec2 {
 
 type Failure = MissionDefinition['warunki_porazki'][number];
 type Equipment = { helmet: boolean; lights: boolean };
-type Outcome =
-  { status: 'completed' } | { status: 'failed'; reason: Failure | 'skrot' };
+type Outcome = { status: 'completed' } | { status: 'failed'; reason: Failure };
 
 export type MissionResult = Outcome & {
   missionId: string;
@@ -27,6 +26,7 @@ export type MissionResult = Outcome & {
   goodHabits: number;
   verdicts: readonly Verdict[];
   timeBonusEligible: boolean;
+  illegalShortcut: boolean;
 };
 
 interface TickEffects {
@@ -119,12 +119,14 @@ export class MissionSystem {
     this.failureConditions = new Set(definition.warunki_porazki);
     const shortcut = definition.skrot?.odcinek;
     this.shortcutSigns = new Set(
-      world.signs
-        ?.filter(
-          ({ affects, code, exceptBicycles }) =>
-            affects === shortcut && code === 'B-1' && !exceptBicycles,
-        )
-        .map(({ id }) => id),
+      shortcut
+        ? world.signs
+            ?.filter(
+              ({ affects, code, exceptBicycles }) =>
+                affects === shortcut && code === 'B-1' && !exceptBicycles,
+            )
+            .map(({ id }) => id)
+        : [],
     );
     if (
       shortcut &&
@@ -209,19 +211,6 @@ export class MissionSystem {
       }
     }
 
-    // A ride through the restricted connector forfeits this delivery regardless of time.
-    if (
-      verdicts.some(
-        ({ kind, ruleId, highlight }) =>
-          kind !== 'good' &&
-          ruleId === 'ZNAK-B1' &&
-          highlight?.signId !== undefined &&
-          this.shortcutSigns.has(highlight.signId),
-      )
-    ) {
-      this.finish({ status: 'failed', reason: 'skrot' });
-      return;
-    }
     if (
       this.failureConditions.has('major_x3') &&
       this.majorCount >= this.majorLimit
@@ -303,6 +292,13 @@ export class MissionSystem {
       par_s: this.definition.par_s,
       goodHabits: this.goodHabits,
       verdicts: this.verdicts,
+      illegalShortcut: this.verdicts.some(
+        ({ kind, ruleId, highlight }) =>
+          kind !== 'good' &&
+          ruleId === 'ZNAK-B1' &&
+          highlight?.signId !== undefined &&
+          this.shortcutSigns.has(highlight.signId),
+      ),
       timeBonusEligible:
         outcome.status === 'completed' && this.majorCount === 0,
     };

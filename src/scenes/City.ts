@@ -642,7 +642,7 @@ export class City extends Scene {
     this.stopListeningForVerdicts?.();
     this.rules = new RuleEngine(
       this.world,
-      this.content.balans,
+      this.content,
       this.intersectionManager,
     );
     this.feedback.reset(this.rules.counts);

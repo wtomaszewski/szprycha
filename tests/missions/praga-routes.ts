@@ -12,7 +12,6 @@ export const pragaRoutes = {
       { x: 1790, y: 1057 },
       { x: 1914, y: 1057 },
     ],
-    shortcut: [{ x: 1912, y: 956 }],
   },
   'WAW-A1-01': {
     legal: [
@@ -21,7 +20,6 @@ export const pragaRoutes = {
       { x: 552, y: 405, wait: 5, signal: 'right' },
       { x: 235, y: 405 },
     ],
-    shortcut: [{ x: 704, y: 224 }],
   },
   'WAW-A1-02': {
     legal: [
@@ -31,7 +29,6 @@ export const pragaRoutes = {
       { x: 970, y: 1144, wait: 0.5, signal: 'left', look: true },
       { x: 1446, y: 1132, look: true },
     ],
-    shortcut: [{ x: 977, y: 883 }],
   },
   'WAW-A1-03': {
     legal: [
@@ -40,11 +37,12 @@ export const pragaRoutes = {
       { x: 1298, y: 245, signal: 'right' },
     ],
     shortcut: [
-      { x: 1130, y: 802 },
-      { x: 1284, y: 802 },
+      { x: 1130, y: 548, wait: 5 },
+      { x: 1130, y: 352 },
+      { x: 1298, y: 245, signal: 'right' },
     ],
   },
-} satisfies Record<string, { legal: Waypoint[]; shortcut: Waypoint[] }>;
+} satisfies Record<string, { legal: Waypoint[]; shortcut?: Waypoint[] }>;
 
 export type PragaMissionId = keyof typeof pragaRoutes;
 

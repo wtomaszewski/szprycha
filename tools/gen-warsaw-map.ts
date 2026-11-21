@@ -53,9 +53,7 @@ const zones = [
   rect('gate-walk-south', 512, 992, 512, 32, { kind: 'sidewalk' }),
   rect('bazar-walk-north', 1152, 992, 480, 32, { kind: 'sidewalk' }),
   rect('bazar-walk-south', 1152, 1152, 480, 32, { kind: 'sidewalk' }),
-  rect('arkady', 544, 192, 224, 64, { kind: 'park_path' }),
-  rect('przejscie_targowe', 928, 864, 96, 64, { kind: 'park_path' }),
-  rect('pasaz_pierogi', 1248, 544, 64, 288, { kind: 'park_path' }),
+  rect('pasaz_pierogi', 1152, 280, 128, 72, { kind: 'park_path' }),
 ];
 const hasTile = (
   x: number,
@@ -69,11 +67,10 @@ const hasTile = (
 const streetTiles = zones.filter(({ name }) => name.startsWith('road-'));
 const hump = zones[0]!;
 const paved = [
-  ...zones.filter(
-    ({ name }) =>
-      name.includes('-walk-') ||
-      ['arkady', 'przejscie_targowe', 'pasaz_pierogi'].includes(name),
-  ),
+  ...zones.filter(({ name }) => name.includes('-walk-')),
+  { x: 544, y: 192, width: 224, height: 64 },
+  { x: 928, y: 864, width: 96, height: 64 },
+  { x: 1248, y: 544, width: 64, height: 288 },
   { x: 768, y: 192, width: 64, height: 192 },
   { x: 832, y: 864, width: 96, height: 160 },
   { x: 544, y: 256, width: 64, height: 128 },
@@ -278,16 +275,12 @@ for (const [i, radial] of sides.entries()) {
   );
 }
 
-for (const [id, x, y, facing] of [
-  ['arkady', 752, 216, 'E'],
-  ['przejscie_targowe', 928, 882, 'W'],
-  ['pasaz_pierogi', 1274, 824, 'S'],
-] as const)
-  signs.push(
-    rect(`${id}-B-1`, x, y, 0, 0, { code: 'B-1', affects: id, facing }),
-  );
-
 signs.push(
+  rect('pasaz_pierogi-B-1', 1152, 322, 0, 0, {
+    code: 'B-1',
+    affects: 'pasaz_pierogi',
+    facing: 'W',
+  }),
   rect('droga-wewnetrzna', 820, 1018, 0, 0, {
     code: 'D-46',
     affects: 'brama-podworko',
@@ -338,7 +331,6 @@ objectLayer('pois', [
   rect('cp_bazar', 1102, 782, 54, 42, { heading: -Math.PI / 2 }),
   rect('podejscie_do_stop', 1100, 546, 52, 55, { heading: -Math.PI / 2 }),
   rect('przez_stop', 1101, 322, 51, 56),
-  rect('podjazd_haliny', 1103, 222, 54, 54),
   rect('blok_haliny', 1268, 217, 64, 62),
   rect('kiosk_zapiekanki', 1490, 943, 0, 0),
 ]);

@@ -28,7 +28,7 @@ async function routeWithGamepad(page: Page, points: Waypoint[]) {
   }, points);
 }
 
-test('unlocks the first four follow-up orders in sequence and plays them in SzprychaApp', async ({
+test('unlocks the first four follow-up orders and explains the illegal shortcut', async ({
   page,
 }) => {
   test.setTimeout(105_000);
@@ -157,7 +157,7 @@ test('unlocks the first four follow-up orders in sequence and plays them in Szpr
         .poll(() => riderY(page), {
           intervals: [30, 50, 70],
         })
-        .toBeLessThanOrEqual(273);
+        .toBeLessThanOrEqual(352);
       await page.keyboard.up('ArrowUp');
       await page.keyboard.down('Space');
       await expect(canvas(page)).toHaveAttribute('data-speed', '0');
@@ -165,7 +165,13 @@ test('unlocks the first four follow-up orders in sequence and plays them in Szpr
       await page
         .getByRole('button', { name: pl.driving.classic, exact: true })
         .click();
-      await routeWithGamepad(page, [pragaRoutes[id].legal.at(-1)!]);
+      await routeWithGamepad(page, [pragaRoutes[id].shortcut.at(-1)!]);
+      const lesson = page.getByRole('dialog', { name: pl.replay.title });
+      await expect(lesson.locator('#replay-feedback')).toContainText(
+        'Białe koło z czerwoną obwódką oznacza zakaz ruchu także dla rowerów',
+      );
+      await page.screenshot({ path: 'test-results/m4d-skrot-stop-klatka.png' });
+      await lesson.getByRole('button', { name: pl.replay.resume }).click();
       await expect(dialogue(page)).toBeVisible({ timeout: 12_000 });
       await routeWithGamepad(page, []);
     } else {
@@ -179,6 +185,10 @@ test('unlocks the first four follow-up orders in sequence and plays them in Szpr
     await skip(page);
     if (id === 'WAW-A1-02')
       await page.screenshot({ path: 'test-results/m4d-bazar.png' });
+    if (id === 'WAW-A1-03') {
+      await expect(page.getByText(pl.missionUi.illegalShortcut)).toBeVisible();
+      await page.screenshot({ path: 'test-results/m4d-skrot-wynik.png' });
+    }
     await expect(
       page.getByText(pl.missionUi.completed, { exact: true }),
     ).toBeVisible();

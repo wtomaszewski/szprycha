@@ -160,7 +160,7 @@
       "przygotuj_rower": "Załóż kask i włącz światła."
     },
     "turnOnLights": "Włącz przednie i tylne światła",
-    "shortcutFailed": "Przejazd przez zakaz przerwał zlecenie."
+    "illegalShortcut": "Jazda rowerem tym skrótem była niezgodna z przepisami."
   },
   "misje": {
     "WAW-T-01": {
@@ -197,8 +197,7 @@
       "opis": "Odbierz pierogi z bazaru i dostarcz je na czas. Po drodze czeka STOP.",
       "cel1": "Odbierz pierogi przy bazarze.",
       "cel2": "Jedź prosto do znaku STOP.",
-      "cel3": "Za skrzyżowaniem podjedź do wjazdu pod blok.",
-      "cel4": "Zasygnalizuj skręt w prawo i dostarcz pierogi Pani Halinie.",
+      "cel4": "Za STOP-em jedź prosto do wjazdu pod blok. Zasygnalizuj skręt w prawo i dowieź pierogi.",
       "stop": "Zatrzymaj się przed linią i przepuść samochód na drodze z pierwszeństwem.",
       "powrot": "Wróć przed linię i zatrzymaj się całkowicie przed znakiem STOP."
     }

@@ -126,12 +126,11 @@ export class MissionHud {
         details.push(
           result.reason === 'czas_minal'
             ? ui.missionUi.timeExpired
-            : result.reason === 'skrot'
-              ? ui.missionUi.shortcutFailed
-              : ui.missionUi.threeMajor,
+            : ui.missionUi.threeMajor,
         );
       else if (!result.timeBonusEligible)
         details.push(ui.missionUi.noTimeBonus);
+      if (result.illegalShortcut) details.push(ui.missionUi.illegalShortcut);
       setText(this.resultText, details.join(' · '));
       this.displayedResult = result;
     }

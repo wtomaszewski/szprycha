@@ -529,14 +529,6 @@ pois.push(
   rect('garaz_objazd', 1763, 1030, 62, 55),
   rect('garaz_meta', 1883, 1023, 56, 63),
 );
-signs.push(
-  rect('garaz-przejscie-B-1', 1865, 968, 0, 0, {
-    code: 'B-1',
-    affects: 'garaz-przejscie',
-    facing: 'W',
-  }),
-);
-zones.push(rect('garaz-przejscie', 1872, 930, 64, 54, { kind: 'park_path' }));
 blocks.push(
   rect('garaz-kazika', 1760, 768, 192, 96, { height: 2, tint: 0x8dc6ad }),
 );

@@ -73,7 +73,6 @@ const files = readdirSync('tests/rules')
 const mapText = readFileSync(files[0]!.map, 'utf8');
 const scenarios = files.flatMap(({ scenarios }) => scenarios);
 const content = await buildContent();
-const engineOptions = content.balans;
 const goodHabitRules = new Set(
   content.przepisy.przepisy
     .filter((rule) => rule.dobry_nawyk)
@@ -156,17 +155,17 @@ function makeWorld(
       }
     }
   }
-  return new WorldModel(data, engineOptions.silnik.kafel_m);
+  return new WorldModel(data, content.balans.silnik.kafel_m);
 }
 
 const baseWorld = makeWorld();
 
-function run(scenario: Scenario) {
+function run(scenario: Scenario, ruleContent = content) {
   const world =
     scenario.properties || scenario.objects
       ? makeWorld(scenario.properties, scenario.objects)
       : baseWorld;
-  const engine = new RuleEngine(world, engineOptions);
+  const engine = new RuleEngine(world, ruleContent);
   const received: Verdict[] = [];
   engine.onVerdict((verdict) => received.push(verdict));
   const agents = (scenario.agents ?? []).map(({ inputs, leaveAt, ...base }) => {
@@ -287,12 +286,33 @@ for (const file of files)
     }
   });
 
+it('takes the weight of ZNAK-B1 from the rules content', () => {
+  const scenario = scenarios.find(({ name }) =>
+    name.startsWith('ZNAK-B1 zakaz dotyczy roweru'),
+  )!;
+  const modifiedContent = {
+    ...content,
+    przepisy: {
+      ...content.przepisy,
+      przepisy: content.przepisy.przepisy.map((rule) =>
+        rule.id === 'ZNAK-B1'
+          ? { ...rule, waga_bledu: 'major' as const }
+          : rule,
+      ),
+    },
+  };
+  const kinds = run(scenario, modifiedContent)
+    .filter(({ ruleId }) => ruleId === 'ZNAK-B1')
+    .map(({ kind }) => kind);
+  expect(kinds).toEqual(['major']);
+});
+
 it('replays identical simulation input logs with identical verdicts and evidence', () => {
   for (const scenario of scenarios)
     expect(run(scenario)).toEqual(run(scenario));
   const world = makeWorld();
   const replay = () => {
-    const engine = new RuleEngine(world, engineOptions);
+    const engine = new RuleEngine(world, content);
     const rider: Rider = {
       x: 528,
       y: 1120,

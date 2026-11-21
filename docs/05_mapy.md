@@ -79,7 +79,7 @@
 | Małe rondo | Jednokierunkowy pierścień, cztery wloty A-7 + C-12 i wyspa z kolizją. |
 | Osiedle przy szkole | A-17 oraz próg oznaczony A-11a. |
 
-SzprychaApp odblokowuje zadania w kolejności WAW-T-01 → WAW-T-02 → WAW-A1-01 → WAW-A1-02 → WAW-A1-03. Przegląd i próbna jazda odbywają się w Miasteczku. Zlecenia na Pradze używają wymuszonych uczestników ruchu, a wolna jazda uruchamia ruch po całym grafie. Przejazd rowerem przez oznaczony łącznik B-1 kończy przypisane zlecenie porażką.
+SzprychaApp odblokowuje zadania w kolejności WAW-T-01 → WAW-T-02 → WAW-A1-01 → WAW-A1-02 → WAW-A1-03. Przegląd i próbna jazda odbywają się w Miasteczku. Zlecenia na Pradze używają wymuszonych uczestników ruchu, a wolna jazda uruchamia ruch po całym grafie. W WAW-A1-03 za skrzyżowaniem ze STOP-em jest skrót oznaczony B-1. Jazda rowerem przez pasaż wywołuje werdykt ZNAK-B1.
 
 Pomiar fragmentu w Chromium z ograniczeniem CPU 4× można powtórzyć podczas działania Vite poleceniem `BENCH_MAP=warszawa npm run benchmark:driving`. Wynik zapisuje się w `test-results/performance-praga.json`.
 

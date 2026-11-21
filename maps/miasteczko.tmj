@@ -22,7 +22,7 @@
     }
   ],
   "nextlayerid": 22,
-  "nextobjectid": 167,
+  "nextobjectid": 165,
   "layers": [
     {
       "id": 1,
@@ -10054,7 +10054,7 @@
           ]
         },
         {
-          "id": 166,
+          "id": 164,
           "name": "garaz-kazika",
           "type": "",
           "x": 1760,
@@ -12059,24 +12059,6 @@
               "name": "direction",
               "type": "string",
               "value": "N"
-            }
-          ]
-        },
-        {
-          "id": 165,
-          "name": "garaz-przejscie",
-          "type": "",
-          "x": 1872,
-          "y": 930,
-          "width": 64,
-          "height": 54,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "park_path"
             }
           ]
         }
@@ -14493,34 +14475,6 @@
               "name": "affects",
               "type": "string",
               "value": "stop-W"
-            },
-            {
-              "name": "facing",
-              "type": "string",
-              "value": "W"
-            }
-          ]
-        },
-        {
-          "id": 164,
-          "name": "garaz-przejscie-B-1",
-          "type": "",
-          "x": 1865,
-          "y": 968,
-          "width": 0,
-          "height": 0,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "code",
-              "type": "string",
-              "value": "B-1"
-            },
-            {
-              "name": "affects",
-              "type": "string",
-              "value": "garaz-przejscie"
             },
             {
               "name": "facing",

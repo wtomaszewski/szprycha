@@ -46,7 +46,6 @@
   reguly_cwiczone: [KASK-01, WYP-04, WYP-05]
   zdarzenia_wymuszone:
     - { typ: kontrola_swiatel, przy: garaz_start, regula: WYP-04 }
-  skrot: { odcinek: garaz-przejscie }
   par_s: 20
   min_dobre_nawyki: 1
   nagrody: { zetony: 0, xp: 50 }
@@ -72,7 +71,6 @@
   reguly_cwiczone: [PIER-01, MSC-03]
   zdarzenia_wymuszone:
     - { typ: pojazd_na_skrzyzowaniu, przy: prawa_reka, regula: PIER-01 }
-  skrot: { odcinek: arkady }
   par_s: 28
   min_dobre_nawyki: 1
   nagrody: { zetony: 15, xp: 150 }
@@ -98,7 +96,6 @@
   reguly_cwiczone: [PIER-06, MAN-01, MAN-07]
   zdarzenia_wymuszone:
     - { typ: pieszy_przy_bramie, przy: przed_brama, regula: PIER-06 }
-  skrot: { odcinek: przejscie_targowe }
   par_s: 25
   min_dobre_nawyki: 1
   nagrody: { zetony: 20, xp: 200 }
@@ -119,7 +116,6 @@
     - { typ: odbierz, poi: cp_bazar, przedmiot: pierogi, opis: misje.WAW-A1-03.cel1 }
     - { typ: dojedz, poi: podejscie_do_stop, opis: misje.WAW-A1-03.cel2 }
     - { typ: dojedz, poi: przez_stop, opis: misje.WAW-A1-03.stop, wymagany_nawyk: ZNAK-STOP, wskazowka_powrotu: misje.WAW-A1-03.powrot }
-    - { typ: dojedz, poi: podjazd_haliny, opis: misje.WAW-A1-03.cel3 }
     - { typ: oddaj, poi: blok_haliny, przedmiot: pierogi, opis: misje.WAW-A1-03.cel4 }
   limit_s: 75
   warunki_porazki: [czas_minal, major_x3]

@@ -72,4 +72,4 @@ W `m3c-part2.yaml` pole `objects` dodaje obiekty do wskazanych warstw Tiled, a `
 
 ### M4d, część 1
 
-`tests/missions/praga.test.ts` przejeżdża rzeczywistą mapę Pragi i plac Kazika z silnikiem zasad. Oczekuje m.in. MAN-01 i MAN-07 po wyjeździe z bramy, MSC-03 przy przecięciu chodnika, PIER-01 z wymuszonym samochodem, ZNAK-STOP i ZNAK-B1 na skrótach. `tests/sim/praga.test.ts` sprawdza relację pierwszeństwa PIER-08 na geometrii wygenerowanego ronda.
+`tests/missions/praga.test.ts` przejeżdża rzeczywistą mapę Pragi i plac Kazika z silnikiem zasad. Oczekuje m.in. MAN-01 i MAN-07 po wyjeździe z bramy, MSC-03 przy przecięciu chodnika, PIER-01 z wymuszonym samochodem oraz ZNAK-STOP. `tests/progression/shortcuts.test.ts` sprawdza werdykt ZNAK-B1 na skrócie i porównuje premię za czas z legalnym przejazdem. `tests/sim/praga.test.ts` sprawdza relację pierwszeństwa PIER-08 na geometrii wygenerowanego ronda.

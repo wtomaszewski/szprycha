@@ -17,7 +17,7 @@
     }
   ],
   "nextlayerid": 18,
-  "nextobjectid": 143,
+  "nextobjectid": 138,
   "layers": [
     {
       "id": 1,
@@ -6979,48 +6979,12 @@
         },
         {
           "id": 12,
-          "name": "arkady",
-          "type": "",
-          "x": 544,
-          "y": 192,
-          "width": 224,
-          "height": 64,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "park_path"
-            }
-          ]
-        },
-        {
-          "id": 13,
-          "name": "przejscie_targowe",
-          "type": "",
-          "x": 928,
-          "y": 864,
-          "width": 96,
-          "height": 64,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "park_path"
-            }
-          ]
-        },
-        {
-          "id": 14,
           "name": "pasaz_pierogi",
           "type": "",
-          "x": 1248,
-          "y": 544,
-          "width": 64,
-          "height": 288,
+          "x": 1152,
+          "y": 280,
+          "width": 128,
+          "height": 72,
           "rotation": 0,
           "visible": true,
           "properties": [
@@ -7043,7 +7007,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 76,
+          "id": 72,
           "name": "kamienice",
           "type": "",
           "x": 384,
@@ -7061,7 +7025,7 @@
           ]
         },
         {
-          "id": 77,
+          "id": 73,
           "name": "stop",
           "type": "",
           "x": 1024,
@@ -7079,7 +7043,7 @@
           ]
         },
         {
-          "id": 78,
+          "id": 74,
           "name": "fabryka",
           "type": "",
           "x": 1792,
@@ -7097,7 +7061,7 @@
           ]
         },
         {
-          "id": 79,
+          "id": 75,
           "name": "osiedle",
           "type": "",
           "x": 384,
@@ -7115,7 +7079,7 @@
           ]
         },
         {
-          "id": 80,
+          "id": 76,
           "name": "bazar",
           "type": "",
           "x": 1024,
@@ -7133,7 +7097,7 @@
           ]
         },
         {
-          "id": 81,
+          "id": 77,
           "name": "rondo-N",
           "type": "",
           "x": 1792,
@@ -7151,7 +7115,7 @@
           ]
         },
         {
-          "id": 82,
+          "id": 78,
           "name": "rondo-E",
           "type": "",
           "x": 1936,
@@ -7169,7 +7133,7 @@
           ]
         },
         {
-          "id": 83,
+          "id": 79,
           "name": "rondo-S",
           "type": "",
           "x": 1792,
@@ -7187,7 +7151,7 @@
           ]
         },
         {
-          "id": 84,
+          "id": 80,
           "name": "rondo-W",
           "type": "",
           "x": 1648,
@@ -7216,7 +7180,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 15,
+          "id": 13,
           "name": "kamienice-N",
           "type": "",
           "x": 416,
@@ -7274,7 +7238,7 @@
           ]
         },
         {
-          "id": 16,
+          "id": 14,
           "name": "kamienice-N-out",
           "type": "",
           "x": 480,
@@ -7317,7 +7281,7 @@
           ]
         },
         {
-          "id": 17,
+          "id": 15,
           "name": "kamienice-E",
           "type": "",
           "x": 1024,
@@ -7380,7 +7344,7 @@
           ]
         },
         {
-          "id": 18,
+          "id": 16,
           "name": "kamienice-S",
           "type": "",
           "x": 480,
@@ -7443,7 +7407,7 @@
           ]
         },
         {
-          "id": 19,
+          "id": 17,
           "name": "kamienice-W",
           "type": "",
           "x": 0,
@@ -7501,7 +7465,7 @@
           ]
         },
         {
-          "id": 20,
+          "id": 18,
           "name": "kamienice-W-out",
           "type": "",
           "x": 384,
@@ -7544,7 +7508,7 @@
           ]
         },
         {
-          "id": 21,
+          "id": 19,
           "name": "stop-N",
           "type": "",
           "x": 1056,
@@ -7602,7 +7566,7 @@
           ]
         },
         {
-          "id": 22,
+          "id": 20,
           "name": "stop-N-out",
           "type": "",
           "x": 1120,
@@ -7645,7 +7609,7 @@
           ]
         },
         {
-          "id": 24,
+          "id": 22,
           "name": "stop-E",
           "type": "",
           "x": 1792,
@@ -7708,7 +7672,7 @@
           ]
         },
         {
-          "id": 26,
+          "id": 24,
           "name": "stop-S",
           "type": "",
           "x": 1120,
@@ -7771,7 +7735,7 @@
           ]
         },
         {
-          "id": 28,
+          "id": 26,
           "name": "stop-W",
           "type": "",
           "x": 512,
@@ -7834,7 +7798,7 @@
           ]
         },
         {
-          "id": 30,
+          "id": 28,
           "name": "fabryka-N",
           "type": "",
           "x": 1824,
@@ -7892,7 +7856,7 @@
           ]
         },
         {
-          "id": 31,
+          "id": 29,
           "name": "fabryka-N-out",
           "type": "",
           "x": 1888,
@@ -7935,7 +7899,7 @@
           ]
         },
         {
-          "id": 32,
+          "id": 30,
           "name": "fabryka-E",
           "type": "",
           "x": 2240,
@@ -7993,7 +7957,7 @@
           ]
         },
         {
-          "id": 33,
+          "id": 31,
           "name": "fabryka-E-out",
           "type": "",
           "x": 1920,
@@ -8036,7 +8000,7 @@
           ]
         },
         {
-          "id": 34,
+          "id": 32,
           "name": "fabryka-S",
           "type": "",
           "x": 1888,
@@ -8099,7 +8063,7 @@
           ]
         },
         {
-          "id": 35,
+          "id": 33,
           "name": "fabryka-W",
           "type": "",
           "x": 1152,
@@ -8162,7 +8126,7 @@
           ]
         },
         {
-          "id": 36,
+          "id": 34,
           "name": "osiedle-N",
           "type": "",
           "x": 416,
@@ -8225,7 +8189,7 @@
           ]
         },
         {
-          "id": 37,
+          "id": 35,
           "name": "osiedle-E",
           "type": "",
           "x": 1024,
@@ -8288,7 +8252,7 @@
           ]
         },
         {
-          "id": 38,
+          "id": 36,
           "name": "osiedle-S",
           "type": "",
           "x": 480,
@@ -8346,7 +8310,7 @@
           ]
         },
         {
-          "id": 39,
+          "id": 37,
           "name": "osiedle-S-out",
           "type": "",
           "x": 416,
@@ -8389,7 +8353,7 @@
           ]
         },
         {
-          "id": 40,
+          "id": 38,
           "name": "osiedle-W",
           "type": "",
           "x": 0,
@@ -8447,7 +8411,7 @@
           ]
         },
         {
-          "id": 41,
+          "id": 39,
           "name": "osiedle-W-out",
           "type": "",
           "x": 384,
@@ -8490,7 +8454,7 @@
           ]
         },
         {
-          "id": 42,
+          "id": 40,
           "name": "bazar-N",
           "type": "",
           "x": 1056,
@@ -8553,7 +8517,7 @@
           ]
         },
         {
-          "id": 44,
+          "id": 42,
           "name": "bazar-E",
           "type": "",
           "x": 1648,
@@ -8616,7 +8580,7 @@
           ]
         },
         {
-          "id": 46,
+          "id": 44,
           "name": "bazar-S",
           "type": "",
           "x": 1120,
@@ -8674,7 +8638,7 @@
           ]
         },
         {
-          "id": 47,
+          "id": 45,
           "name": "bazar-S-out",
           "type": "",
           "x": 1056,
@@ -8717,7 +8681,7 @@
           ]
         },
         {
-          "id": 49,
+          "id": 47,
           "name": "bazar-W",
           "type": "",
           "x": 512,
@@ -8780,7 +8744,7 @@
           ]
         },
         {
-          "id": 51,
+          "id": 49,
           "name": "rondo-N-N",
           "type": "",
           "x": 1824,
@@ -8843,7 +8807,7 @@
           ]
         },
         {
-          "id": 54,
+          "id": 52,
           "name": "rondo-N-E",
           "type": "",
           "x": 2032,
@@ -8914,7 +8878,7 @@
           ]
         },
         {
-          "id": 55,
+          "id": 53,
           "name": "rondo-E-E",
           "type": "",
           "x": 2240,
@@ -8972,7 +8936,7 @@
           ]
         },
         {
-          "id": 56,
+          "id": 54,
           "name": "rondo-E-E-out",
           "type": "",
           "x": 2064,
@@ -9015,7 +8979,7 @@
           ]
         },
         {
-          "id": 59,
+          "id": 57,
           "name": "rondo-E-S",
           "type": "",
           "x": 1920,
@@ -9086,7 +9050,7 @@
           ]
         },
         {
-          "id": 60,
+          "id": 58,
           "name": "rondo-S-S",
           "type": "",
           "x": 1888,
@@ -9144,7 +9108,7 @@
           ]
         },
         {
-          "id": 61,
+          "id": 59,
           "name": "rondo-S-S-out",
           "type": "",
           "x": 1824,
@@ -9187,7 +9151,7 @@
           ]
         },
         {
-          "id": 64,
+          "id": 62,
           "name": "rondo-S-W",
           "type": "",
           "x": 1680,
@@ -9258,7 +9222,7 @@
           ]
         },
         {
-          "id": 65,
+          "id": 63,
           "name": "rondo-W-W",
           "type": "",
           "x": 1152,
@@ -9321,7 +9285,7 @@
           ]
         },
         {
-          "id": 68,
+          "id": 66,
           "name": "rondo-W-N",
           "type": "",
           "x": 1792,
@@ -9403,7 +9367,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 23,
+          "id": 21,
           "name": "stop-N-A-7",
           "type": "",
           "x": 1013,
@@ -9431,7 +9395,7 @@
           ]
         },
         {
-          "id": 25,
+          "id": 23,
           "name": "stop-E-D-1",
           "type": "",
           "x": 1169,
@@ -9459,7 +9423,7 @@
           ]
         },
         {
-          "id": 27,
+          "id": 25,
           "name": "stop-S-B-20",
           "type": "",
           "x": 1163,
@@ -9487,7 +9451,7 @@
           ]
         },
         {
-          "id": 29,
+          "id": 27,
           "name": "stop-W-D-1",
           "type": "",
           "x": 1007,
@@ -9515,7 +9479,7 @@
           ]
         },
         {
-          "id": 43,
+          "id": 41,
           "name": "bazar-N-A-7",
           "type": "",
           "x": 1013,
@@ -9543,7 +9507,7 @@
           ]
         },
         {
-          "id": 45,
+          "id": 43,
           "name": "bazar-E-D-1",
           "type": "",
           "x": 1169,
@@ -9571,7 +9535,7 @@
           ]
         },
         {
-          "id": 48,
+          "id": 46,
           "name": "bazar-S-A-7",
           "type": "",
           "x": 1163,
@@ -9599,7 +9563,7 @@
           ]
         },
         {
-          "id": 50,
+          "id": 48,
           "name": "bazar-W-D-1",
           "type": "",
           "x": 1007,
@@ -9627,7 +9591,7 @@
           ]
         },
         {
-          "id": 52,
+          "id": 50,
           "name": "rondo-N-N-A-7",
           "type": "",
           "x": 1781,
@@ -9655,7 +9619,7 @@
           ]
         },
         {
-          "id": 53,
+          "id": 51,
           "name": "rondo-N-N-C-12",
           "type": "",
           "x": 1781,
@@ -9683,7 +9647,7 @@
           ]
         },
         {
-          "id": 57,
+          "id": 55,
           "name": "rondo-E-E-A-7",
           "type": "",
           "x": 2081,
@@ -9711,7 +9675,7 @@
           ]
         },
         {
-          "id": 58,
+          "id": 56,
           "name": "rondo-E-E-C-12",
           "type": "",
           "x": 2118,
@@ -9739,7 +9703,7 @@
           ]
         },
         {
-          "id": 62,
+          "id": 60,
           "name": "rondo-S-S-A-7",
           "type": "",
           "x": 1931,
@@ -9767,7 +9731,7 @@
           ]
         },
         {
-          "id": 63,
+          "id": 61,
           "name": "rondo-S-S-C-12",
           "type": "",
           "x": 1931,
@@ -9795,7 +9759,7 @@
           ]
         },
         {
-          "id": 66,
+          "id": 64,
           "name": "rondo-W-W-A-7",
           "type": "",
           "x": 1631,
@@ -9823,7 +9787,7 @@
           ]
         },
         {
-          "id": 67,
+          "id": 65,
           "name": "rondo-W-W-C-12",
           "type": "",
           "x": 1594,
@@ -9851,67 +9815,11 @@
           ]
         },
         {
-          "id": 69,
-          "name": "arkady-B-1",
-          "type": "",
-          "x": 752,
-          "y": 216,
-          "width": 0,
-          "height": 0,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "code",
-              "type": "string",
-              "value": "B-1"
-            },
-            {
-              "name": "affects",
-              "type": "string",
-              "value": "arkady"
-            },
-            {
-              "name": "facing",
-              "type": "string",
-              "value": "E"
-            }
-          ]
-        },
-        {
-          "id": 70,
-          "name": "przejscie_targowe-B-1",
-          "type": "",
-          "x": 928,
-          "y": 882,
-          "width": 0,
-          "height": 0,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "code",
-              "type": "string",
-              "value": "B-1"
-            },
-            {
-              "name": "affects",
-              "type": "string",
-              "value": "przejscie_targowe"
-            },
-            {
-              "name": "facing",
-              "type": "string",
-              "value": "W"
-            }
-          ]
-        },
-        {
-          "id": 71,
+          "id": 67,
           "name": "pasaz_pierogi-B-1",
           "type": "",
-          "x": 1274,
-          "y": 824,
+          "x": 1152,
+          "y": 322,
           "width": 0,
           "height": 0,
           "rotation": 0,
@@ -9930,12 +9838,12 @@
             {
               "name": "facing",
               "type": "string",
-              "value": "S"
+              "value": "W"
             }
           ]
         },
         {
-          "id": 72,
+          "id": 68,
           "name": "droga-wewnetrzna",
           "type": "",
           "x": 820,
@@ -9963,7 +9871,7 @@
           ]
         },
         {
-          "id": 73,
+          "id": 69,
           "name": "koniec-drogi-wewnetrznej",
           "type": "",
           "x": 916,
@@ -9991,7 +9899,7 @@
           ]
         },
         {
-          "id": 74,
+          "id": 70,
           "name": "prog-znak",
           "type": "",
           "x": 525,
@@ -10019,7 +9927,7 @@
           ]
         },
         {
-          "id": 75,
+          "id": 71,
           "name": "szkola-znak",
           "type": "",
           "x": 525,
@@ -10058,7 +9966,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 85,
+          "id": 81,
           "name": "player",
           "type": "",
           "x": 550,
@@ -10087,7 +9995,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 86,
+          "id": 82,
           "name": "brama-kamienicy",
           "type": "",
           "x": 762,
@@ -10105,7 +10013,7 @@
           ]
         },
         {
-          "id": 87,
+          "id": 83,
           "name": "brama-podworko",
           "type": "",
           "x": 832,
@@ -10123,7 +10031,7 @@
           ]
         },
         {
-          "id": 88,
+          "id": 84,
           "name": "brama-targowa",
           "type": "",
           "x": 1344,
@@ -10152,7 +10060,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 89,
+          "id": 85,
           "name": "warsztat_praga",
           "type": "",
           "x": 800,
@@ -10170,7 +10078,7 @@
           ]
         },
         {
-          "id": 90,
+          "id": 86,
           "name": "wyjazd_warsztat",
           "type": "",
           "x": 779,
@@ -10182,7 +10090,7 @@
           "properties": []
         },
         {
-          "id": 91,
+          "id": 87,
           "name": "prawa_reka",
           "type": "",
           "x": 531,
@@ -10200,7 +10108,7 @@
           ]
         },
         {
-          "id": 92,
+          "id": 88,
           "name": "sasiad_praga",
           "type": "",
           "x": 205,
@@ -10212,7 +10120,7 @@
           "properties": []
         },
         {
-          "id": 93,
+          "id": 89,
           "name": "podworko_praga",
           "type": "",
           "x": 870,
@@ -10230,7 +10138,7 @@
           ]
         },
         {
-          "id": 94,
+          "id": 90,
           "name": "przed_brama",
           "type": "",
           "x": 840,
@@ -10242,7 +10150,7 @@
           "properties": []
         },
         {
-          "id": 95,
+          "id": 91,
           "name": "za_brama",
           "type": "",
           "x": 923,
@@ -10254,7 +10162,7 @@
           "properties": []
         },
         {
-          "id": 96,
+          "id": 92,
           "name": "cp_bramy",
           "type": "",
           "x": 951,
@@ -10272,7 +10180,7 @@
           ]
         },
         {
-          "id": 97,
+          "id": 93,
           "name": "odbiorca_bazar",
           "type": "",
           "x": 1416,
@@ -10284,7 +10192,7 @@
           "properties": []
         },
         {
-          "id": 98,
+          "id": 94,
           "name": "bazar_praga",
           "type": "",
           "x": 1130,
@@ -10302,7 +10210,7 @@
           ]
         },
         {
-          "id": 99,
+          "id": 95,
           "name": "cp_bazar",
           "type": "",
           "x": 1102,
@@ -10320,7 +10228,7 @@
           ]
         },
         {
-          "id": 100,
+          "id": 96,
           "name": "podejscie_do_stop",
           "type": "",
           "x": 1100,
@@ -10338,7 +10246,7 @@
           ]
         },
         {
-          "id": 101,
+          "id": 97,
           "name": "przez_stop",
           "type": "",
           "x": 1101,
@@ -10350,19 +10258,7 @@
           "properties": []
         },
         {
-          "id": 102,
-          "name": "podjazd_haliny",
-          "type": "",
-          "x": 1103,
-          "y": 222,
-          "width": 54,
-          "height": 54,
-          "rotation": 0,
-          "visible": true,
-          "properties": []
-        },
-        {
-          "id": 103,
+          "id": 98,
           "name": "blok_haliny",
           "type": "",
           "x": 1268,
@@ -10374,7 +10270,7 @@
           "properties": []
         },
         {
-          "id": 104,
+          "id": 99,
           "name": "kiosk_zapiekanki",
           "type": "",
           "x": 1490,
@@ -10397,7 +10293,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 105,
+          "id": 100,
           "name": "auto-z-prawej",
           "type": "",
           "x": 416,
@@ -10438,7 +10334,7 @@
           ]
         },
         {
-          "id": 106,
+          "id": 101,
           "name": "auto-na-glownej",
           "type": "",
           "x": 963,
@@ -10479,7 +10375,7 @@
           ]
         },
         {
-          "id": 107,
+          "id": 102,
           "name": "pieszy-brama",
           "type": "",
           "x": 797,
@@ -10517,7 +10413,7 @@
           ]
         },
         {
-          "id": 108,
+          "id": 103,
           "name": "pieszy-bazar",
           "type": "",
           "x": 1542,
@@ -10561,7 +10457,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 109,
+          "id": 104,
           "name": "auto-kamienice",
           "type": "",
           "x": 0,
@@ -10599,7 +10495,7 @@
           ]
         },
         {
-          "id": 110,
+          "id": 105,
           "name": "auto-droga-glowna",
           "type": "",
           "x": 0,
@@ -10648,7 +10544,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 111,
+          "id": 106,
           "name": "zebra-pasaz",
           "type": "",
           "x": 1259,
@@ -10671,7 +10567,7 @@
           ]
         },
         {
-          "id": 112,
+          "id": 107,
           "name": "zebra-bazar",
           "type": "",
           "x": 1520,
@@ -10705,7 +10601,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 113,
+          "id": 108,
           "name": "parking-bazar",
           "type": "",
           "x": 1404,
@@ -10717,7 +10613,7 @@
           "properties": []
         },
         {
-          "id": 114,
+          "id": 109,
           "name": "parking-osiedle",
           "type": "",
           "x": 606,
@@ -10740,7 +10636,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 115,
+          "id": 110,
           "name": "sasiad",
           "type": "",
           "x": 180,
@@ -10763,7 +10659,7 @@
           ]
         },
         {
-          "id": 116,
+          "id": 111,
           "name": "kamienica-lewa",
           "type": "",
           "x": 627,
@@ -10786,7 +10682,7 @@
           ]
         },
         {
-          "id": 117,
+          "id": 112,
           "name": "kamienica-prawa",
           "type": "",
           "x": 844,
@@ -10809,7 +10705,7 @@
           ]
         },
         {
-          "id": 118,
+          "id": 113,
           "name": "warsztat",
           "type": "",
           "x": 860,
@@ -10832,7 +10728,7 @@
           ]
         },
         {
-          "id": 119,
+          "id": 114,
           "name": "oficyna",
           "type": "",
           "x": 562,
@@ -10855,7 +10751,7 @@
           ]
         },
         {
-          "id": 120,
+          "id": 115,
           "name": "brama-lewa",
           "type": "",
           "x": 667,
@@ -10878,7 +10774,7 @@
           ]
         },
         {
-          "id": 121,
+          "id": 116,
           "name": "brama-prawa",
           "type": "",
           "x": 932,
@@ -10901,7 +10797,7 @@
           ]
         },
         {
-          "id": 122,
+          "id": 117,
           "name": "halina",
           "type": "",
           "x": 1344,
@@ -10924,7 +10820,7 @@
           ]
         },
         {
-          "id": 123,
+          "id": 118,
           "name": "szkola",
           "type": "",
           "x": 617,
@@ -10947,7 +10843,7 @@
           ]
         },
         {
-          "id": 124,
+          "id": 119,
           "name": "fabryka",
           "type": "",
           "x": 1527,
@@ -10970,7 +10866,7 @@
           ]
         },
         {
-          "id": 125,
+          "id": 120,
           "name": "fabryka-wieza",
           "type": "",
           "x": 1678,
@@ -10993,7 +10889,7 @@
           ]
         },
         {
-          "id": 126,
+          "id": 121,
           "name": "bazar-warzywa",
           "type": "",
           "x": 1321,
@@ -11016,7 +10912,7 @@
           ]
         },
         {
-          "id": 127,
+          "id": 122,
           "name": "bazar-kwiaty",
           "type": "",
           "x": 1391,
@@ -11039,7 +10935,7 @@
           ]
         },
         {
-          "id": 128,
+          "id": 123,
           "name": "bazar-pierogi",
           "type": "",
           "x": 1461,
@@ -11062,7 +10958,7 @@
           ]
         },
         {
-          "id": 129,
+          "id": 124,
           "name": "kiosk",
           "type": "",
           "x": 1532,
@@ -11096,7 +10992,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 130,
+          "id": 125,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1820,
@@ -11114,7 +11010,7 @@
           ]
         },
         {
-          "id": 131,
+          "id": 126,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1796,
@@ -11132,7 +11028,7 @@
           ]
         },
         {
-          "id": 132,
+          "id": 127,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1783,
@@ -11150,7 +11046,7 @@
           ]
         },
         {
-          "id": 133,
+          "id": 128,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1775,
@@ -11168,7 +11064,7 @@
           ]
         },
         {
-          "id": 134,
+          "id": 129,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1770,
@@ -11186,7 +11082,7 @@
           ]
         },
         {
-          "id": 135,
+          "id": 130,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1768,
@@ -11204,7 +11100,7 @@
           ]
         },
         {
-          "id": 136,
+          "id": 131,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1770,
@@ -11222,7 +11118,7 @@
           ]
         },
         {
-          "id": 137,
+          "id": 132,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1775,
@@ -11240,7 +11136,7 @@
           ]
         },
         {
-          "id": 138,
+          "id": 133,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1783,
@@ -11258,7 +11154,7 @@
           ]
         },
         {
-          "id": 139,
+          "id": 134,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1796,
@@ -11276,7 +11172,7 @@
           ]
         },
         {
-          "id": 140,
+          "id": 135,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1820,
@@ -11305,7 +11201,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 141,
+          "id": 136,
           "name": "wyspa-ronda",
           "type": "",
           "x": 1763,
@@ -11328,7 +11224,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 142,
+          "id": 137,
           "name": "praga",
           "type": "",
           "x": 0,
