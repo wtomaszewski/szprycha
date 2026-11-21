@@ -7,7 +7,7 @@ export class MainMenu extends Scene {
   }
   create(content: GameContent) {
     // Data has passed the same schema at build time and at the loading boundary.
-    this.registry.set('content', content);
+    if (content?.przepisy) this.registry.set('content', content);
     const g = this.add.graphics();
     g.fillStyle(0x1a1c2c).fillRect(0, 0, 640, 360);
     g.fillStyle(0x257179).fillRect(0, 0, 8, 360);
@@ -33,8 +33,8 @@ export class MainMenu extends Scene {
     label(47, 127, ui.subtitle, 26);
     label(47, 166, ui.tagline, 14, '#c0cbdc');
     g.fillStyle(0x333c57).fillRect(44, 199, 272, 39);
-    label(57, 207, ui.campaign, 20);
-    label(185, 212, ui.comingSoon, 12, '#c0cbdc');
+    label(57, 207, ui.driving.startHint, 16);
+
     label(46, 247, ui.status, 14, '#ffcd75');
     label(46, 275, ui.pangram, 18);
     // Small, original bicycle emblem; decorative menu art, no world renderer.
@@ -47,6 +47,16 @@ export class MainMenu extends Scene {
       .lineBetween(541, 183, 537, 170)
       .lineBetween(537, 170, 550, 170);
     label(433, 275, ui.footer, 12, '#c0cbdc');
+    const start = document.createElement('button');
+    start.className = 'start-driving';
+    start.textContent = ui.driving.start;
+    start.addEventListener('click', () => this.scene.start('City'));
+    document.body.append(start);
+    this.input.keyboard?.once('keydown-ENTER', () => this.scene.start('City'));
+    this.events.once('shutdown', () => {
+      start.remove();
+      this.input.keyboard?.removeAllListeners();
+    });
     const canvas = this.game.canvas;
     canvas.setAttribute(
       'aria-label',

@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { Boot } from './scenes/Boot';
 import { Preload } from './scenes/Preload';
 import { MainMenu } from './scenes/MainMenu';
+import { City } from './scenes/City';
 import { ui } from './core/presentation';
 import './style.css';
 
@@ -15,7 +16,7 @@ new Phaser.Game({
   pixelArt: true,
   roundPixels: true,
   scale: { mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.CENTER_BOTH },
-  scene: [Boot, Preload, MainMenu],
+  scene: [Boot, Preload, MainMenu, City],
   callbacks: {
     postBoot(game) {
       const resize = () => {

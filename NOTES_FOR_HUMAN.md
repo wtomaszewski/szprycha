@@ -74,3 +74,15 @@ Poniżej pełna lista 20 pozycji z content/przepisy.yaml. Nie zmieniano flag. Pr
 Node 24 (plik .nvmrc), npm ci, następnie npm run dev. Testy: npm test, npm run lint, npm run format:check, npm run build. Smoke: npx playwright install chromium oraz npm run test:e2e. Walidacja samych treści: npm run validate:content. Wygenerowane public/data/ jest ignorowane przez Git i odtwarzane przez Vite zarówno w dev, jak i podczas builda.
 
 Phaser 3.90.0 to najwyższa stabilna wersja 3.x zwrócona przez rejestr npm podczas implementacji. Użyto cyklu scen opisanego w [dokumentacji Phasera](https://docs.phaser.io/phaser/concepts/scenes) i konfiguracji [Vite](https://vite.dev/guide/). Nie wdrożono PWA, profili, jazdy, map, quizu ani silnika zasad. Kampania jest oznaczona jako w przygotowaniu.
+
+## Aktualizacja po decyzji użytkownika — M1
+
+Użytkownik potwierdził działanie M0 i polecił rozwijać mechanikę. Grafika M0 jest nieczytelna i nie odpowiada oczekiwanemu klimatowi GTA2; traktujemy ją jako odrzucony kierunek docelowy. Na razie rozwijamy funkcjonalny prototyp. Interfejs jazdy używa systemowego sans-serif dla czytelności, a Pixelify Sans pozostaje w menu z testem polskich glifów. To świadome odstępstwo od jednolitego fontu pikselowego na podstawie uwagi użytkownika.
+
+M1 dodaje osobną scenę jazdy i dane testowej mapy. Nie przenosi fabuły ani prawa do kodu. Brak werdyktów, punktów i misji jest celowy: są przedmiotem M2–M5. Mapa ma puste warstwy przyszłych pasów, znaków i skrzyżowań, które trzeba uzupełnić przed pracą nad silnikiem zasad.
+
+Model jazdy używa px/s, a przelicznik 1,5 m/32 px służy wyświetlaniu prędkości. Wsiadanie/zsiadanie tylko przy niemal zerowej prędkości. Krawężnik można przekroczyć podczas prowadzenia, ścian nie. Klasyczne sterowanie umożliwia powolne obrócenie się na postoju, żeby rower nie zakleszczał się przy ścianie. Nie są to nowe reguły prawne.
+
+W rendererze usunięto niejednoznaczność wzoru: przesunięcie dachu liczymy od środka podstawy względem środka kamery, z mnożnikiem 0,015 × liczba pięter. Aktualny zakres to prostokąty, płaski dach, geometryczne pasy pięter i uproszczony cień. Brak jeszcze tekstur ścian, poligonów i wielowarstwowych landmarków; mapa testowa ich nie wymaga. Nie oceniamy tego jako finalnej grafiki.
+
+Wydajność: pomiar 4× CPU w Chromium dał średnio 60,00 FPS i p95 16,8 ms. Test na fizycznym średnim Androidzie i fizycznym gamepadzie pozostaje do wykonania; Gamepad API przetestowano automatycznie przez symulację przycisków i osi. Pełna responsywność tabletów i telefonów nadal wymaga pracy. M1 jest grywalnym prototypem, nie finalnym wydaniem.

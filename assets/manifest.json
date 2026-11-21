@@ -1,0 +1,24 @@
+{
+  "assets": [
+    {
+      "id": "training",
+      "file": "generated/tiles.png",
+      "width": 256,
+      "height": 32,
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "frames": 8,
+      "directions": 1,
+      "description": "Tymczasowe kafle: trawa, asfalt, chodnik, DDR, dach, woda, linie pionowe i poziome."
+    },
+    {
+      "id": "rider",
+      "file": "generated/rider.png",
+      "width": 24,
+      "height": 24,
+      "frames": 1,
+      "directions": 1,
+      "description": "Tymczasowy rowerzysta z kaskiem. Obrót w runtime; docelowo 16 kierunków i animacje."
+    }
+  ]
+}

@@ -58,6 +58,7 @@ describe('canonical content', () => {
         'tools',
         'i18n',
         'assets',
+        'maps',
         'index.html',
         'package.json',
         'tsconfig.json',

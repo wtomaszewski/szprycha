@@ -16,7 +16,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "validate:content": "tsx tools/build-content.ts"
+    "validate:content": "tsx tools/build-content.ts",
+    "assets:generate": "tsx tools/gen-placeholders.ts",
+    "map:generate": "tsx tools/gen-training-map.ts",
+    "benchmark:driving": "tsx tools/benchmark-driving.ts"
   },
   "dependencies": {
     "phaser": "3.90.0",
@@ -28,10 +31,12 @@
     "@playwright/test": "1.65.1",
     "@types/node": "26.6.6",
     "@types/opentype.js": "1.3.10",
+    "@types/pngjs": "6.0.5",
     "eslint": "10.15.0",
     "eslint-config-prettier": "10.1.8",
     "globals": "17.14.0",
     "opentype.js": "2.0.0",
+    "pngjs": "7.0.0",
     "prettier": "3.10.1",
     "tsx": "4.23.15",
     "typescript": "6.0.3",
