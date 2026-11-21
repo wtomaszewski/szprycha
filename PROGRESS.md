@@ -100,3 +100,7 @@ Na prośbę użytkownika rozpoczęto następny etap, z priorytetem mechaniki. Ob
 - Krawężniki ograniczają prędkość jazdy do 40 px/s, ale przepuszczają rower; pieszo bez dodatkowego ograniczenia. Obniżenia nie spowalniają. Tylko ściany blokują ruch/wsiadanie. Chodnik jest przejezdny; detektor GDZIE-04 nadal do M2.
 - Parametr wysokości k zwiększony z 0,015 do 0,03. Na wschód od startu (środek 928,1024) stoi testowy pałac: pięć zwężających się warstw 4/10/18/26/32, ostatnia jako iglica, piaskowcowe ściany. To uproszczona bryła do oceny paralaksy.
 - Walidacja: 16 testów vitest, 12 Playwright, lint, format i build. M2 nie rozpoczęto; sprzętowy test Androida i finalna grafika pozostają otwarte.
+
+### Ponowne oddalenie widoku
+
+Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar jest o około 33% szerszy i wyższy. Całkowite skalowanie canvasa i rozszerzanie viewportu pozostają; zoom kamery jest świadomym wyjątkiem od całkowitej skali świata. HUD zachowuje rozmiar.

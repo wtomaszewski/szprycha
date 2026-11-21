@@ -120,7 +120,7 @@ export class City extends Scene {
       .setDepth(21)
       .setVisible(false);
     this.cameras.main
-      .setZoom(1)
+      .setZoom(0.75)
       .setBounds(0, 0, this.worldWidth, this.worldHeight)
       .centerOn(this.rider.x, this.rider.y);
     this.controls = new DrivingControls(

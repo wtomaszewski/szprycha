@@ -101,3 +101,7 @@ Niniejszy wpis zastępuje wcześniejsze decyzje o zoomie 0,75, systemowej czcion
 4. Krawężnik to opór, nie ściana: przy jeździe limit 40 px/s podczas kontaktu; chodnik dostępny. Przejazd przez przerwy-obniżenia płynny. To parametr zręcznościowy, nie interpretacja prawna dopuszczająca jazdę po chodniku. W M2 GDZIE-04 będzie korzystać z semantyki stref.
 5. Strojenie projekcji: k=0,03 zamiast 0,015. Testowy pałac na wschód od startu ma warstwy 4/10/18/26/32 i piaskowcową kolorystykę. Nie jest finalnym modelem PKiN (brak docelowych zegarów, attyk i tekstur). Pozostaje do oceny wizualnej; wielowarstwowe ściany są nadal uproszczonymi ekstruzjami.
 6. Sprawdzone automatycznie: klawisz W przez 1 sekundę, event target=window, przyciski akcji, krawężnik kontra obniżenie i ściana, cztery proporcje/rozmiary ekranu, pion/poziom, warstwy wieży. Oryginalne dokumenty i dane przepisów bez zmian.
+
+### Ponowne oddalenie widoku
+
+Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar jest o około 33% szerszy i wyższy. Całkowite skalowanie canvasa i rozszerzanie viewportu pozostają; zoom kamery jest świadomym wyjątkiem od całkowitej skali świata. HUD zachowuje rozmiar.
