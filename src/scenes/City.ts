@@ -21,11 +21,14 @@ import { IntersectionManager } from '../rules/priority/IntersectionManager';
 import { RuleEngine } from '../rules/RuleEngine';
 import type { AgentState, EnvState, RiderState } from '../rules/types';
 import { WorldModel } from '../rules/world/WorldModel';
-import { CAR_RADIUS_PX, TrafficSimulation } from '../sim/TrafficSimulation';
 import {
-  PEDESTRIAN_RADIUS_PX,
-  TrainingPedestrians,
-} from '../sim/TrainingPedestrians';
+  actorRadiusPx,
+  TrafficParticipants,
+  type RoutedAgent,
+} from '../sim/TrafficParticipants';
+import type { RoadTrafficAgent } from '../sim/TrafficSimulation';
+import { trafficSprite, trafficTextures } from '../render/TrafficArt';
+import { EmergencySiren } from '../audio/EmergencySiren';
 import { RuleFeedback } from '../ui/RuleFeedback';
 
 const environment: EnvState = {
@@ -51,11 +54,13 @@ export class City extends Scene {
   private world!: WorldModel;
   private rules!: RuleEngine;
   private intersectionManager!: IntersectionManager;
-  private traffic!: TrafficSimulation;
-  private pedestrians!: TrainingPedestrians;
-  private agents!: readonly AgentState[];
+  private traffic!: TrafficParticipants;
+  private siren!: EmergencySiren;
+  private sirenArt!: GameObjects.Graphics;
+  private readonly activeAgents: AgentState[] = [];
+  private agents!: readonly (RoadTrafficAgent | RoutedAgent)[];
   private actorObstacles!: Obstacle[];
-  private actors!: (GameObjects.Arc | GameObjects.Image)[];
+  private actors!: GameObjects.Image[];
   private road!: TrainingRoad;
   private debug!: RuleDebugOverlay;
   private feedback!: RuleFeedback;
@@ -92,12 +97,12 @@ export class City extends Scene {
     );
     this.road = new TrainingRoad(this, this.world);
     this.intersectionManager = new IntersectionManager(this.world);
-    this.traffic = new TrafficSimulation(
+    this.traffic = new TrafficParticipants(
       this.world,
       this.intersectionManager,
       this.content.balans.silnik,
     );
-    this.pedestrians = new TrainingPedestrians(this.world);
+    this.siren = new EmergencySiren();
     const map = this.make.tilemap({ key: 'training-map' });
     const tiles = map.addTilesetImage('training', 'training');
     if (!tiles) throw new Error('Missing training tiles');
@@ -161,32 +166,15 @@ export class City extends Scene {
       roof?.refresh();
     }
     this.blocks = new Blocks(this, buildings);
-    this.agents = [...this.traffic.agents, ...this.pedestrians.agents];
+    this.agents = [...this.traffic.road.agents, ...this.traffic.routed];
     this.actorObstacles = this.agents.map(({ kind }) => {
-      const diameter =
-        (kind === 'car' ? CAR_RADIUS_PX : PEDESTRIAN_RADIUS_PX) * 2;
+      const diameter = actorRadiusPx[kind] * 2;
       return { x: 0, y: 0, width: diameter, height: diameter, kind: 'wall' };
     });
     this.obstacles.push(...this.actorObstacles);
-    if (!this.textures.exists('traffic-car')) {
-      const car = this.make.graphics({});
-      car.fillStyle(0x1a1c2c).fillRoundedRect(0, 0, 26, 16, 3);
-      car.fillStyle(0x41a6f6).fillRoundedRect(1, 2, 24, 12, 3);
-      car.fillStyle(0x29366f).fillRect(8, 4, 10, 8);
-      car.fillStyle(0x73eff7).fillRect(16, 4, 2, 8);
-      car.fillStyle(0xffcd75).fillRect(23, 3, 2, 3).fillRect(23, 10, 2, 3);
-      car.fillStyle(0xe43b44).fillRect(1, 3, 2, 3).fillRect(1, 10, 2, 3);
-      car.generateTexture('traffic-car', 26, 16);
-      car.destroy();
-    }
-    this.actors = this.agents.map(({ kind }) =>
-      (kind === 'car'
-        ? this.add.image(0, 0, 'traffic-car')
-        : this.add
-            .circle(0, 0, PEDESTRIAN_RADIUS_PX, 0xffcd75)
-            .setStrokeStyle(2, 0x1a1c2c)
-      ).setDepth(17),
-    );
+    trafficTextures(this);
+    this.actors = this.agents.map(({ kind }) => trafficSprite(this, kind));
+    this.sirenArt = this.add.graphics().setDepth(23);
     this.syncActorObstacles();
     this.rider = {
       ...this.spawn,
@@ -226,7 +214,7 @@ export class City extends Scene {
           this.rules,
           this.world,
           environment,
-          this.traffic.agents,
+          this.traffic,
           this.rulesRider.pos,
         );
       },
@@ -240,6 +228,7 @@ export class City extends Scene {
     this.actionArt = this.add.graphics().setDepth(22);
     this.controls.setWalking(false);
     const onShutdown = () => {
+      this.siren.destroy();
       this.debug.destroy();
       this.controls.destroy();
       const c = this.game.canvas;
@@ -278,7 +267,7 @@ export class City extends Scene {
       walking: false,
     });
     this.traffic.reset();
-    this.pedestrians.reset();
+    this.siren.update(0, 0);
     this.syncActorObstacles();
     this.resetRules();
     this.accumulator = 0;
@@ -306,8 +295,13 @@ export class City extends Scene {
   private syncActorObstacles() {
     const scale = 1 / this.world.metersPerPixel;
     for (let i = 0; i < this.agents.length; i++) {
-      const { pos } = this.agents[i]!;
+      const agent = this.agents[i]!;
+      const { pos } = agent;
       const obstacle = this.actorObstacles[i]!;
+      if ('active' in agent && !agent.active) {
+        obstacle.x = obstacle.y = -1000;
+        continue;
+      }
       obstacle.x = pos.x * scale - obstacle.width / 2;
       obstacle.y = pos.y * scale - obstacle.height / 2;
     }
@@ -323,10 +317,12 @@ export class City extends Scene {
     rider.heading = source.heading;
     rider.mode = source.walking ? 'walking_bike' : 'riding';
     rider.signal = this.controls.actions.signal ?? 'none';
-    this.traffic.step(environment, rider, this.pedestrians.agents);
-    this.pedestrians.step(rider.pos, this.traffic.agents);
+    this.traffic.step(environment, rider);
     this.syncActorObstacles();
-    this.rules.step(rider, this.agents, environment);
+    this.activeAgents.length = 0;
+    for (const agent of this.agents)
+      if (!('active' in agent) || agent.active) this.activeAgents.push(agent);
+    this.rules.step(rider, this.activeAgents, environment);
   }
   update(time: number, delta: number) {
     if (!this.controls) return;
@@ -336,6 +332,7 @@ export class City extends Scene {
       matchMedia('(pointer: coarse) and (orientation: portrait)').matches
     ) {
       this.accumulator = 0;
+      this.siren.update(0, this.rules.at);
       return;
     }
     this.accumulator += Math.min(delta / 1000, 0.1);
@@ -395,17 +392,57 @@ export class City extends Scene {
     const scale = 1 / this.world.metersPerPixel;
     const centerX = camera.scrollX + camera.width / 2;
     const centerY = camera.scrollY + camera.height / 2;
-    const halfWidth = camera.width / (2 * camera.zoom) + CAR_RADIUS_PX + 2;
-    const halfHeight = camera.height / (2 * camera.zoom) + CAR_RADIUS_PX + 2;
+    const halfWidth = camera.width / (2 * camera.zoom) + actorRadiusPx.tram + 2;
+    const halfHeight =
+      camera.height / (2 * camera.zoom) + actorRadiusPx.tram + 2;
+    const sirenArt = this.sirenArt.clear();
+    const flash = Math.floor(this.rules.at * 7) % 2;
+    let sirenVolume = 0;
+    let bearing = 0;
     for (let index = 0; index < this.agents.length; index++) {
       const agent = this.agents[index]!;
       const x = Math.round(agent.pos.x * scale);
       const y = Math.round(agent.pos.y * scale);
+      const active = !('active' in agent) || agent.active;
       const visible =
+        active &&
         Math.abs(x - centerX) <= halfWidth &&
         Math.abs(y - centerY) <= halfHeight;
       const actor = this.actors[index]!.setVisible(visible);
       if (visible) actor.setPosition(x, y).setRotation(agent.heading);
+      if (
+        agent.kind === 'emergency' &&
+        'signalActive' in agent &&
+        agent.signalActive
+      ) {
+        if (visible)
+          sirenArt
+            .fillStyle(flash ? 0x41a6f6 : 0x73eff7)
+            .fillCircle(x - 1, y, 4)
+            .fillCircle(x - 1, y + (flash ? -7 : 7), 3);
+        const volume = Math.max(0, 1 - Math.hypot(x - r.x, y - r.y) / 560);
+        if (volume > sirenVolume) {
+          sirenVolume = volume;
+          bearing = Math.atan2(y - r.y, x - r.x);
+        }
+      }
+    }
+    this.siren.update(sirenVolume, this.rules.at);
+    if (sirenVolume > 0) {
+      const dx = Math.cos(bearing);
+      const dy = Math.sin(bearing);
+      const x = r.x + dx * 38;
+      const y = r.y + dy * 38;
+      sirenArt
+        .fillStyle(0x73eff7)
+        .fillTriangle(
+          x + dx * 9,
+          y + dy * 9,
+          x + dy * 5,
+          y - dx * 5,
+          x - dy * 5,
+          y + dx * 5,
+        );
     }
     this.road.updateLights(this.rules.at, environment);
     this.feedback.update(this.rules.at);
@@ -415,7 +452,7 @@ export class City extends Scene {
         this.rules,
         this.world,
         environment,
-        this.traffic.agents,
+        this.traffic,
         this.rulesRider.pos,
       );
       this.controls.speed.textContent = `${Math.round(r.speed * METERS_PER_PIXEL * 3.6)} ${ui.driving.unit}`;
@@ -429,7 +466,10 @@ export class City extends Scene {
       });
       canvas.dataset.walking = String(r.walking);
       if (time > this.messageUntil)
-        this.controls.notice.textContent = ui.driving.prototype;
+        this.controls.notice.textContent =
+          sirenVolume > 0
+            ? ui.rules.emergencyApproaching
+            : ui.driving.prototype;
     }
   }
 }

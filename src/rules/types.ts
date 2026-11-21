@@ -24,7 +24,7 @@ export interface RiderState {
 
 export interface AgentState {
   id: string;
-  kind: 'pedestrian' | 'cyclist' | 'car' | 'tram';
+  kind: 'pedestrian' | 'cyclist' | 'car' | 'tram' | 'emergency';
   pos: Vec2;
   heading: number;
   speed: number;
@@ -32,6 +32,8 @@ export interface AgentState {
   maneuver?: Maneuver;
   ageBand?: AgeBand;
   protectiveBrake?: boolean;
+  crossingId?: string;
+  bikeInfrastructure?: boolean;
   junctionProgress?: number; // signed distance along the movement from the stop line
 }
 

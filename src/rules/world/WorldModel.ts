@@ -1,7 +1,13 @@
 import { z } from 'zod';
 import type { EnvState, Maneuver, SignalPhase, Vec2 } from '../types';
-import { LaneGraph, type BoundaryExit } from './LaneGraph.ts';
+import { LaneGraph, type BoundaryExit, type LaneEdge } from './LaneGraph.ts';
 import { RoadPath } from './RoadPath.ts';
+import {
+  buildTrafficRoutes,
+  routeControlProperties,
+  routeProperties,
+  type TrafficRoute,
+} from './TrafficRoutes.ts';
 
 const point = z.object({ x: z.number(), y: z.number() });
 const property = z.object({ name: z.string(), value: z.unknown() });
@@ -103,6 +109,13 @@ export interface Zone extends Box, z.infer<typeof zoneProperties> {
 export interface Crossing extends Box {
   kind: z.infer<typeof crossingSchema>;
   axis: 'x' | 'y';
+  signal?: CrossingSignal;
+  trafficArea?: Box;
+}
+interface CrossingSignal extends Vec2 {
+  offset_s: number;
+  cycle_s: number;
+  green_s: number;
 }
 export interface Intersection extends Box {
   kind: z.infer<typeof intersectionSchema>;
@@ -193,6 +206,8 @@ export class WorldModel {
   readonly signals: readonly Signal[];
   readonly pedestrianSpawns: readonly PedestrianSpawn[];
   readonly laneGraph: LaneGraph;
+  readonly trafficRoutes: readonly TrafficRoute[];
+  readonly roadwayCyclistLanes: readonly Lane[];
   readonly trafficCarCount: number;
   private readonly lanesById: ReadonlyMap<string, Lane>;
 
@@ -231,14 +246,49 @@ export class WorldModel {
           zoneOrder[a.kind] - zoneOrder[b.kind] ||
           (b.width_m ?? 0) - (a.width_m ?? 0),
       );
+    const crossingLights = new Map(
+      layer('crossing_signals').map((object) => {
+        const props = z
+          .object({
+            crossing: z.string(),
+            offset_s: z.number().nonnegative(),
+            cycle_s: z.number().positive(),
+            green_s: z.number().positive(),
+          })
+          .parse(properties(object));
+        if (props.green_s >= props.cycle_s)
+          throw new Error(`Invalid crossing signal: ${object.name}`);
+        return [props.crossing, { ...box(object), ...props }];
+      }),
+    );
+    if (crossingLights.size !== layer('crossing_signals').length)
+      throw new Error('Duplicate crossing signal');
+    const crossingGroups = new Map<string, Crossing[]>();
     this.crossings = layer('crossings').map((object) => {
       const props = properties(object);
-      return {
+      const crossing: Crossing = {
         ...box(object),
         kind: crossingSchema.parse(props.kind),
         axis: z.enum(['x', 'y']).parse(props.axis),
+        signal: crossingLights.get(object.name),
       };
+      if (typeof props.trafficGroup === 'string') {
+        const group = crossingGroups.get(props.trafficGroup) ?? [];
+        group.push(crossing);
+        crossingGroups.set(props.trafficGroup, group);
+      }
+      return crossing;
     });
+    for (const [id, group] of crossingGroups) {
+      const x = Math.min(...group.map((crossing) => crossing.x));
+      const y = Math.min(...group.map((crossing) => crossing.y));
+      const width =
+        Math.max(...group.map((crossing) => crossing.x + crossing.width)) - x;
+      const height =
+        Math.max(...group.map((crossing) => crossing.y + crossing.height)) - y;
+      const area = { id, x, y, width, height };
+      for (const crossing of group) crossing.trafficArea = area;
+    }
     const intersections = layer('intersections').map(
       (object): Intersection => ({
         ...box(object),
@@ -249,9 +299,26 @@ export class WorldModel {
     const intersectionsById = new Map(
       intersections.map((intersection) => [intersection.id, intersection]),
     );
+    if (
+      [...crossingLights.keys()].some(
+        (id) =>
+          !this.crossings.some(
+            (crossing) => crossing.id === id && crossing.kind !== 'rail',
+          ),
+      )
+    )
+      throw new Error('Unknown crossing for signal');
     this.intersections = intersections;
     if (intersectionsById.size !== intersections.length)
       throw new Error('Duplicate intersection id');
+    const polyline = (object: z.infer<typeof tiledObject>) =>
+      new RoadPath(
+        object.name,
+        object.polyline?.map((p) => ({
+          x: (object.x + p.x) * scale,
+          y: (object.y + p.y) * scale,
+        })) ?? [],
+      );
     const exits: BoundaryExit[] = [];
     this.lanes = layer('lanes').flatMap((object): Lane[] => {
       const props = properties(object);
@@ -262,13 +329,7 @@ export class WorldModel {
         throw new Error(
           `Lane ${object.name}: unknown intersection ${props.intersection}`,
         );
-      const path = new RoadPath(
-        object.name,
-        object.polyline?.map((p) => ({
-          x: (object.x + p.x) * scale,
-          y: (object.y + p.y) * scale,
-        })) ?? [],
-      );
+      const path = polyline(object);
       if (props.role === 'exit') {
         exits.push({
           id: object.name,
@@ -365,6 +426,84 @@ export class WorldModel {
       map.width * map.tilewidth * scale,
       map.height * map.tileheight * scale,
     );
+    this.trafficRoutes = buildTrafficRoutes(
+      [
+        ...layer('traffic_routes').map((object) => ({
+          id: object.name,
+          path: polyline(object),
+          ...routeProperties.parse(properties(object)),
+        })),
+        ...this.pedestrianSpawns.map(
+          ({ id, x, y, heading, length_m, speed }) => {
+            const angle = (heading * Math.PI) / 180;
+            return {
+              id,
+              kind: 'pedestrian' as const,
+              speed,
+              start_s: 0,
+              path: new RoadPath(id, [
+                { x, y },
+                {
+                  x: x + length_m * Math.cos(angle),
+                  y: y + length_m * Math.sin(angle),
+                },
+              ]),
+            };
+          },
+        ),
+      ],
+      layer('traffic_controls').map((object) => ({
+        ...box(object),
+        ...routeControlProperties.parse(properties(object)),
+      })),
+      this.crossings,
+      this.lanes,
+      this.zones,
+      map.width * map.tilewidth * scale,
+      map.height * map.tileheight * scale,
+    );
+    this.roadwayCyclistLanes = layer('spawns').flatMap((object) => {
+      const props = properties(object);
+      if (props.kind !== 'roadway_cyclist') return [];
+      const lane = this.getLane(z.string().parse(props.lane));
+      const edge = lane && this.laneGraph.approach(lane);
+      if (!edge || !this.laneGraph.entries.includes(edge))
+        throw new Error(`Invalid roadway cyclist entry: ${object.name}`);
+      let current: LaneEdge = edge;
+      const visited = new Set<LaneEdge>();
+      while (current.lane) {
+        if (visited.has(current))
+          throw new Error(`Cyclic roadway cyclist route: ${current.id}`);
+        visited.add(current);
+        const { lane } = current;
+        if (
+          lane.parallelBikeInfra ||
+          this.signs.some(
+            ({ affects, code }) =>
+              affects === lane.id && ['B-9', 'B-1'].includes(code),
+          ) ||
+          this.zones.some(
+            (zone) =>
+              zone.kind === 'no_bikes' &&
+              lane.path.boxAhead(0, zone, 0) < Infinity,
+          )
+        )
+          throw new Error(`Illegal roadway cyclist route: ${lane.id}`);
+        const next: LaneEdge | undefined = current.movements.find(
+          ({ maneuver }) => maneuver === 'straight',
+        )?.to;
+        if (!next)
+          throw new Error(
+            `Missing straight roadway cyclist movement: ${lane.id}`,
+          );
+        current = next;
+      }
+      return [lane!];
+    });
+    if (
+      new Set(this.roadwayCyclistLanes).size !== this.roadwayCyclistLanes.length
+    )
+      throw new Error('Duplicate roadway cyclist entry');
     this.trafficCarCount = z
       .number()
       .int()
@@ -384,6 +523,7 @@ export class WorldModel {
     const dx = Math.cos(heading);
     const dy = Math.sin(heading);
     for (const lane of this.lanes) {
+      if (lane.type === 'tram') continue;
       for (const { start, direction, length } of lane.path.segments) {
         if (direction.x * dx + direction.y * dy < Math.SQRT1_2) continue;
         const px = pos.x - start.x;
@@ -410,6 +550,13 @@ export class WorldModel {
     if (lane.arrow && cycle >= lane.arrow.from_s && cycle < lane.arrow.until_s)
       return 'arrow';
     return 'red';
+  }
+
+  crossingAllowsEntry(crossing: Crossing, at: number, env: EnvState) {
+    const forced = env.signalOverrides?.[crossing.id];
+    if (forced !== undefined) return forced === 'green' || forced === 'off';
+    const signal = crossing.signal;
+    return !signal || (at + signal.offset_s) % signal.cycle_s < signal.green_s;
   }
 
   arrowMatches(lane: Lane, maneuver: Maneuver) {

@@ -9,9 +9,11 @@ import {
   type Vec2,
 } from '../rules/types';
 import type { LaneEdge, Movement } from '../rules/world/LaneGraph';
+import { RoadPath } from '../rules/world/RoadPath';
 import {
   contains,
   distanceToLine,
+  type Box,
   type Crossing,
   type Intersection,
   type Lane,
@@ -39,20 +41,23 @@ export type TrafficIntent =
   | 'stop'
   | 'yield'
   | 'junction'
-  | 'protective';
+  | 'protective'
+  | 'emergency';
 
-export interface TrafficCar extends AgentState {
-  kind: 'car';
+export interface RoadTrafficAgent extends AgentState {
+  kind: 'car' | 'cyclist';
   intent: TrafficIntent;
   destination?: string;
   junctionsPassed: number;
 }
 
 interface Car {
-  agent: TrafficCar;
+  agent: RoadTrafficAgent;
   edge: LaneEdge;
   distance: number;
   cruiseFactor: number;
+  entry?: LaneEdge;
+  pullOver: number;
   route?: Movement;
   crossing: boolean;
   committed: boolean;
@@ -69,14 +74,31 @@ interface Car {
   travel: number;
 }
 
+export interface ClearingArea {
+  area: Box;
+  occupiedMargin: number;
+  stopMargin: number;
+}
+
+export interface TrafficConditions {
+  priorityAgents: readonly AgentState[];
+  occupiedJunctions: ReadonlySet<Intersection>;
+  clearingAreas: readonly ClearingArea[];
+  emergency: readonly AgentState[];
+}
+
 type Settings = GameContent['balans']['silnik'];
 
 export class TrafficSimulation {
-  readonly agents: readonly TrafficCar[];
+  readonly agents: readonly RoadTrafficAgent[];
   readonly radius: number;
   private readonly cars: Car[];
   private readonly junctions = new Map<Intersection, Car>();
   private readonly approaches: LaneEdge[];
+  private readonly crossingIntervals = new Map<
+    LaneEdge,
+    { entry: number; exit: number }[]
+  >();
   private readonly playerAgent: AgentState = {
     id: 'player',
     kind: 'cyclist',
@@ -97,38 +119,70 @@ export class TrafficSimulation {
     private readonly settings: Settings,
     private readonly seed = DEFAULT_SEED,
     count = world.trafficCarCount,
+    roadwayCyclists = false,
   ) {
     this.radius = CAR_RADIUS_PX * world.metersPerPixel;
     this.approaches = world.laneGraph.edges.filter(({ lane }) => lane);
+    const areas = new Set<Box>(
+      world.crossings.map((crossing) => crossing.trafficArea ?? crossing),
+    );
+    for (const route of world.trafficRoutes)
+      for (const stop of route.stops) areas.add(stop);
+    for (const edge of world.laneGraph.edges) {
+      const path = edge.path;
+      const reverse = new RoadPath(edge.id, [...path.points].reverse());
+      const intervals = [];
+      for (const area of areas) {
+        const entry = path.boxAhead(0, area, this.radius + 0.02);
+        const exit =
+          path.length - reverse.boxAhead(0, area, this.radius - 0.05);
+        if (entry > 0 && entry < exit && exit < path.length)
+          intervals.push({ entry, exit });
+      }
+      this.crossingIntervals.set(edge, intervals);
+    }
     if (!Number.isInteger(count) || count < 0 || count > this.approaches.length)
       throw new RangeError(
         `Expected 0–${this.approaches.length} cars, got ${count}`,
       );
-    this.cars = Array.from({ length: count }, (_, index) => ({
-      agent: {
-        id: `car-${index + 1}`,
-        kind: 'car',
-        pos: { x: 0, y: 0 },
-        heading: 0,
-        speed: 0,
-        intent: 'driving',
-        junctionsPassed: 0,
+    const cycleEntries = roadwayCyclists
+      ? world.roadwayCyclistLanes.map((lane) => world.laneGraph.approach(lane)!)
+      : [];
+    this.cars = Array.from(
+      { length: count + cycleEntries.length },
+      (_, index) => {
+        const entry = cycleEntries[index - count];
+        return {
+          agent: {
+            id: entry
+              ? `cyclist-roadway-${index - count + 1}`
+              : `car-${index + 1}`,
+            kind: entry ? 'cyclist' : 'car',
+            pos: { x: 0, y: 0 },
+            heading: 0,
+            speed: 0,
+            intent: 'driving',
+            junctionsPassed: 0,
+          },
+          edge: entry ?? this.approaches[index]!,
+          entry,
+          distance: 0,
+          cruiseFactor: 1,
+          pullOver: 0,
+          crossing: false,
+          committed: false,
+          phase: 'off',
+          stopOnYellow: true,
+          stopTicks: 0,
+          arrival: Infinity,
+          request: false,
+          approaching: false,
+          gap: Infinity,
+          nextSpeed: 0,
+          travel: 0,
+        };
       },
-      edge: this.approaches[index]!,
-      distance: 0,
-      cruiseFactor: 1,
-      crossing: false,
-      committed: false,
-      phase: 'off',
-      stopOnYellow: true,
-      stopTicks: 0,
-      arrival: Infinity,
-      request: false,
-      approaching: false,
-      gap: Infinity,
-      nextSpeed: 0,
-      travel: 0,
-    }));
+    );
     this.agents = this.cars.map(({ agent }) => agent);
     this.reset();
   }
@@ -140,15 +194,19 @@ export class TrafficSimulation {
     this.junctions.clear();
     const lanes = [...this.approaches];
     for (const car of this.cars) {
-      const index = this.draw(lanes.length);
-      const edge = lanes.splice(index, 1)[0]!;
+      const edge = car.entry ?? lanes.splice(this.draw(lanes.length), 1)[0]!;
       car.cruiseFactor = 0.8 + this.draw(21) / 100;
+      car.pullOver = 0;
       car.agent.junctionsPassed = 0;
       car.agent.speed = 0;
       car.agent.protectiveBrake = false;
       car.agent.intent = 'driving';
       car.reserved = undefined;
-      this.setEdge(car, edge, edge.path.length * (0.16 + this.draw(13) / 100));
+      this.setEdge(
+        car,
+        edge,
+        car.entry ? 0 : edge.path.length * (0.16 + this.draw(13) / 100),
+      );
       this.place(car);
     }
   }
@@ -157,6 +215,7 @@ export class TrafficSimulation {
     env: EnvState,
     player?: RiderState,
     pedestrians: readonly AgentState[] = [],
+    conditions?: TrafficConditions,
   ) {
     const at = this.tick / TICKS_PER_SECOND;
     this.trackPlayer(player);
@@ -173,20 +232,33 @@ export class TrafficSimulation {
       this.prepare(car, at, env);
     }
     for (const intersection of this.world.intersections)
-      this.reserve(intersection, at, env);
+      this.reserve(intersection, at, env, conditions);
     for (let index = 0; index < pedestrians.length; index++) {
-      const { pos } = pedestrians[index]!;
-      this.walkingCrossings[index] = this.world.crossings.find(
-        (crossing) => crossing.kind === 'pedestrian' && contains(crossing, pos),
+      const { crossingId, kind, pos } = pedestrians[index]!;
+      this.walkingCrossings[index] = this.world.crossings.find((crossing) =>
+        crossingId
+          ? crossing.id === crossingId
+          : kind === 'pedestrian' &&
+            crossing.kind === 'pedestrian' &&
+            contains(crossing, pos),
       );
     }
-    for (const car of this.cars) this.plan(car, player, pedestrians);
+    for (const car of this.cars)
+      this.plan(car, player, pedestrians, conditions);
     for (const car of this.cars) this.advance(car);
     for (const car of this.cars) {
       if (!car.edge.lane && car.distance >= car.edge.path.length)
         this.reenter(car, player);
     }
     this.tick++;
+  }
+
+  junctionOccupied(intersection: Intersection) {
+    const owner = this.junctions.get(intersection);
+    return (
+      owner?.committed ||
+      Boolean(owner?.reserved && owner.edge.lane?.intersection !== intersection)
+    );
   }
 
   private draw(n: number) {
@@ -204,9 +276,11 @@ export class TrafficSimulation {
     car.stopOnYellow = true;
     car.stopTicks = 0;
     car.arrival = Infinity;
-    car.route = edge.movements.length
-      ? edge.movements[this.draw(edge.movements.length)]
-      : undefined;
+    car.route = car.entry
+      ? edge.movements.find(({ maneuver }) => maneuver === 'straight')
+      : edge.movements.length
+        ? edge.movements[this.draw(edge.movements.length)]
+        : undefined;
     car.agent.maneuver = car.route?.maneuver;
     car.agent.destination = car.route?.to.id;
     car.agent.laneId = edge.lane?.id;
@@ -301,7 +375,12 @@ export class TrafficSimulation {
     } else if (toStop <= REQUEST_RANGE) car.reason = 'junction';
   }
 
-  private reserve(intersection: Intersection, at: number, env: EnvState) {
+  private reserve(
+    intersection: Intersection,
+    at: number,
+    env: EnvState,
+    conditions?: TrafficConditions,
+  ) {
     const current = this.junctions.get(intersection);
     if (current) {
       if (current.committed || current.edge.lane?.intersection !== intersection)
@@ -309,8 +388,11 @@ export class TrafficSimulation {
       current.reserved = undefined;
       this.junctions.delete(intersection);
     }
+    if (conditions?.occupiedJunctions.has(intersection)) return;
+    const transit = conditions?.priorityAgents ?? [];
     const approaching = this.junctionAgents;
     approaching.length = 0;
+    for (const agent of transit) approaching.push(agent);
     let playerRequest = false;
     if (this.playerLane?.intersection === intersection) {
       approaching.push(this.playerAgent);
@@ -352,6 +434,14 @@ export class TrafficSimulation {
       if (
         playerRequest &&
         this.manager.mustYield(lane, maneuver, this.playerAgent, at, env)
+      ) {
+        car.reason = 'yield';
+        continue;
+      }
+      if (
+        transit.some((agent) =>
+          this.manager.mustYield(lane, maneuver, agent, at, env),
+        )
       ) {
         car.reason = 'yield';
         continue;
@@ -409,10 +499,22 @@ export class TrafficSimulation {
     );
   }
 
-  private crossingGap(car: Car, crossing: Crossing) {
+  private crossingGap(car: Car, crossing: Box, margin = this.radius + 0.55) {
+    const { pos, heading } = car.agent;
+    const dx =
+      pos.x -
+      Math.max(crossing.x, Math.min(pos.x, crossing.x + crossing.width));
+    const dy =
+      pos.y -
+      Math.max(crossing.y, Math.min(pos.y, crossing.y + crossing.height));
+    // The car's rear may still touch the safety margin after clearing a crossing.
+    if (
+      Math.hypot(dx, dy) <= margin + EPSILON &&
+      dx * Math.cos(heading) + dy * Math.sin(heading) > EPSILON
+    )
+      return Infinity;
     const path = car.crossing ? car.route!.path : car.edge.path;
     const next = car.crossing ? car.route!.to.path : car.route?.path;
-    const margin = this.radius + 0.55;
     return Math.min(
       path.boxAhead(car.distance, crossing, margin),
       next
@@ -425,10 +527,11 @@ export class TrafficSimulation {
     car: Car,
     player: RiderState | undefined,
     pedestrians: readonly AgentState[],
+    conditions?: TrafficConditions,
   ) {
     const speed = car.agent.speed;
     const speedLimit = Math.min(
-      CRUISE_SPEED * car.cruiseFactor,
+      (car.entry ? 4.2 : CRUISE_SPEED) * car.cruiseFactor,
       car.edge.speedLimit / 3.6,
     );
     const hasRightOfEntry =
@@ -440,10 +543,17 @@ export class TrafficSimulation {
         ? car.edge.path.length - STOP_MARGIN - car.distance
         : Infinity;
     const following = car.gap - SPACING;
-    const room = Math.min(toStop, following);
+    let room = Math.min(toStop, following);
+    if (!car.crossing) {
+      // Leave crossings clear even when the next signal has queued traffic.
+      for (const { entry, exit } of this.crossingIntervals.get(car.edge)!) {
+        if (car.distance <= entry + EPSILON && car.distance + room < exit)
+          room = Math.min(room, entry - car.distance);
+      }
+    }
     let target = Math.min(
       speedLimit,
-      this.brakingSpeed(toStop),
+      this.brakingSpeed(room),
       this.brakingSpeed(following - speed * HEADWAY),
     );
     if (
@@ -466,10 +576,43 @@ export class TrafficSimulation {
       pedestrianGap = Math.min(
         pedestrianGap,
         crossing
-          ? this.crossingGap(car, crossing)
+          ? this.crossingGap(car, crossing.trafficArea ?? crossing)
           : this.obstacleGap(car, pedestrian.pos, this.radius + 0.55),
       );
     }
+    for (const {
+      area,
+      occupiedMargin,
+      stopMargin,
+    } of conditions?.clearingAreas ?? []) {
+      // Vehicles already there keep moving until the crossing is empty.
+      if (!contains(area, car.agent.pos, occupiedMargin))
+        pedestrianGap = Math.min(
+          pedestrianGap,
+          this.crossingGap(car, area, stopMargin),
+        );
+    }
+    const yieldingToEmergency =
+      !car.committed &&
+      !car.crossing &&
+      (car.edge.from.kind === 'boundary' || car.distance > SPACING * 2) &&
+      conditions?.emergency.some((agent) =>
+        this.emergencyApproaching(car, agent),
+      );
+    const offset = yieldingToEmergency ? 22 * this.world.metersPerPixel : 0;
+    const shift = Math.max(-STEP, Math.min(STEP, offset - car.pullOver));
+    const shiftX = -Math.sin(car.agent.heading) * shift;
+    const shiftY = Math.cos(car.agent.heading) * shift;
+    if (
+      !player ||
+      Math.hypot(
+        player.pos.x - car.agent.pos.x - shiftX,
+        player.pos.y - car.agent.pos.y - shiftY,
+      ) >=
+        this.radius + 0.85
+    )
+      car.pullOver += shift;
+    if (yieldingToEmergency) target = 0;
     const playerTarget = this.brakingSpeed(playerGap);
     car.agent.protectiveBrake =
       playerTarget + EPSILON <
@@ -486,15 +629,32 @@ export class TrafficSimulation {
     car.nextSpeed = car.travel / STEP;
     car.agent.intent = car.agent.protectiveBrake
       ? 'protective'
-      : pedestrianGap < Math.min(room, 3)
-        ? 'yield'
-        : following < toStop && target < speedLimit - EPSILON
-          ? 'following'
-          : car.crossing
-            ? 'junction'
-            : toStop < REQUEST_RANGE
-              ? (car.reason ?? 'junction')
-              : 'driving';
+      : yieldingToEmergency
+        ? 'emergency'
+        : pedestrianGap < Math.min(room, 3)
+          ? 'yield'
+          : following < toStop && target < speedLimit - EPSILON
+            ? 'following'
+            : car.crossing
+              ? 'junction'
+              : toStop < REQUEST_RANGE
+                ? (car.reason ?? 'junction')
+                : 'driving';
+  }
+
+  private emergencyApproaching(car: Car, emergency: AgentState) {
+    const dx = car.agent.pos.x - emergency.pos.x;
+    const dy = car.agent.pos.y - emergency.pos.y;
+    const h = emergency.heading;
+    const ahead = dx * Math.cos(h) + dy * Math.sin(h);
+    const side = dy * Math.cos(h) - dx * Math.sin(h);
+    return (
+      Math.cos(car.agent.heading - h) > 0.98 &&
+      ahead > -2 &&
+      ahead < 16 &&
+      side >= 0 &&
+      side < 54 * this.world.metersPerPixel
+    );
   }
 
   private brakingSpeed(room: number) {
@@ -526,7 +686,7 @@ export class TrafficSimulation {
     if (
       car.reserved &&
       car.edge.lane?.intersection !== car.reserved &&
-      car.distance >= SPACING
+      car.distance >= this.radius + 0.05
     ) {
       this.junctions.delete(car.reserved);
       car.reserved = undefined;
@@ -536,14 +696,21 @@ export class TrafficSimulation {
 
   private place(car: Car) {
     const path = car.crossing ? car.route!.path : car.edge.path;
-    car.agent.heading = path.place(car.distance, car.agent.pos);
+    const heading = (car.agent.heading = path.place(
+      car.distance,
+      car.agent.pos,
+    ));
+    const offset =
+      car.pullOver + (car.entry ? 24 * this.world.metersPerPixel : 0);
+    car.agent.pos.x -= Math.sin(heading) * offset;
+    car.agent.pos.y += Math.cos(heading) * offset;
     car.agent.junctionProgress = car.crossing
       ? car.distance
       : car.distance - path.length;
   }
 
   private reenter(car: Car, player?: RiderState) {
-    const entries = this.world.laneGraph.entries;
+    const entries = car.entry ? [car.entry] : this.world.laneGraph.entries;
     const first = this.draw(entries.length);
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[(first + i) % entries.length]!;

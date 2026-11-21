@@ -9,7 +9,6 @@ import {
 } from '../../src/rules/types';
 import { WorldModel } from '../../src/rules/world/WorldModel';
 import { TrafficSimulation } from '../../src/sim/TrafficSimulation';
-import { TrainingPedestrians } from '../../src/sim/TrainingPedestrians';
 import { readContent } from '../../tools/content';
 
 const balance = (await readContent()).balans;
@@ -49,16 +48,13 @@ it.each([1403, 17])(
   'moves 14 cars for ten minutes without overlaps or deadlocks (seed %i)',
   (seed) => {
     const traffic = simulate(seed);
-    const pedestrians = new TrainingPedestrians(world);
-    const playerOffMap = { x: -10, y: -10 };
     const { agents } = traffic;
     expect(agents).toHaveLength(14);
     const lastPass = agents.map(() => ({ tick: 0, count: 0 }));
     const duration = 600 * TICKS_PER_SECOND;
     const diameterSquared = (2 * traffic.radius) ** 2;
     for (let tick = 0; tick < duration; tick++) {
-      traffic.step(clear, undefined, pedestrians.agents);
-      pedestrians.step(playerOffMap, agents);
+      traffic.step(clear);
       for (let i = 0; i < agents.length; i++) {
         const a = agents[i]!;
         const previous = lastPass[i]!;

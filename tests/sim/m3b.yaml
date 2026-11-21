@@ -1,0 +1,47 @@
+# Rzeczywista symulacja, pozycje gracza w pikselach Tiled i kurs w stopniach.
+scenarios:
+  - name: gracz przepuszcza tramwaj na równorzędnym (PIER-09)
+    actor: tram-1
+    stages:
+      - seconds: 8
+        player: { x: 432, y: 476, heading: 90 }
+        expect: { xAbove: 576, protective: false }
+  - name: tramwaj hamuje, gdy gracz blokuje tor, i rusza po jego zwolnieniu
+    actor: tram-1
+    stages:
+      - seconds: 10
+        player: { x: 616, y: 608, heading: 90 }
+        expect: { xBelow: 616, stopped: true, protective: true }
+      - seconds: 12
+        player: { x: 616, y: 685, heading: 90 }
+        expect: { xAbove: 675, protective: false }
+  - name: tramwaj czeka na czerwonym i rusza po zmianie fazy
+    actor: tram-1
+    stages:
+      - seconds: 40
+        signalOverrides: { tram-lights-W: red }
+        expect: { xAbove: 1980, xBelow: 2048, stopped: true, intent: signal }
+      - seconds: 7
+        signalOverrides: { tram-lights-W: green }
+        expect: { xAbove: 2240 }
+  - name: gracz ustępuje pojazdowi uprzywilejowanemu zjeżdżając na prawo (PIER-07)
+    actor: emergency-1
+    stages:
+      - seconds: 3
+        player: { x: 235, y: 1396, heading: 0 }
+        expect: { active: false, signals: false }
+      - seconds: 7
+        player: { x: 235, y: 1396, heading: 0 }
+        expect:
+          {
+            xBelow: 235,
+            active: true,
+            signals: true,
+            stopped: true,
+            protective: true,
+          }
+      - seconds: 7
+        player: { x: 450, y: 1454, heading: 0 }
+        expect: { xAbove: 576, active: true, signals: true, protective: false }
+      - seconds: 20
+        expect: { active: false, signals: false, trips: 1 }

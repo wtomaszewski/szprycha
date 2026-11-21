@@ -3,7 +3,7 @@ import { FONT, ui } from '../core/presentation';
 import type { RuleEngine } from '../rules/RuleEngine';
 import type { EnvState, Vec2 } from '../rules/types';
 import type { WorldModel } from '../rules/world/WorldModel';
-import type { TrafficCar } from '../sim/TrafficSimulation';
+import type { TrafficParticipants } from '../sim/TrafficParticipants';
 
 const palette = {
   roadway: 0x41a6f6,
@@ -164,7 +164,7 @@ export class RuleDebugOverlay {
     engine: RuleEngine,
     world: WorldModel,
     env: EnvState,
-    cars: readonly TrafficCar[],
+    participants: TrafficParticipants,
     player: Vec2,
   ) {
     if (this.panel.hidden) return;
@@ -183,18 +183,25 @@ export class RuleDebugOverlay {
       .filter((lane) => lane.mainSignal)
       .map(
         (other) =>
-          `${other.side} ${label.phases[world.phase(other, engine.at, env)]}`,
+          `${other.type === 'tram' ? label.kinds.tram : other.side} ${label.phases[world.phase(other, engine.at, env)]}`,
       )
       .join(' · ');
     this.traffic.clear();
     const scale = 1 / world.metersPerPixel;
-    for (const car of cars) {
+    const routed = participants.routed.filter(({ active }) => active);
+    for (const car of [...participants.road.agents, ...routed]) {
       const color =
         car.intent === 'protective'
           ? 0xff77a8
-          : car.speed < 0.1
-            ? 0xffcd75
-            : 0xa7f070;
+          : car.kind === 'emergency'
+            ? 0x73eff7
+            : car.kind === 'tram'
+              ? 0xfeae34
+              : car.kind === 'pedestrian'
+                ? 0xff77a8
+                : car.speed < 0.1
+                  ? 0xffcd75
+                  : 0xa7f070;
       const angle =
         car.heading +
         (car.maneuver === 'left' ? -0.65 : car.maneuver === 'right' ? 0.65 : 0);
@@ -207,7 +214,8 @@ export class RuleDebugOverlay {
         .lineBetween(x, y, x + dx * 42, y + dy * 42);
       arrow(this.traffic, x + dx * 42, y + dy * 42, dx, dy, 10);
     }
-    const closest = [...cars]
+    const closest = participants.road.agents
+      .filter(({ kind }) => kind === 'car')
       .sort(
         (a, b) =>
           Math.hypot(a.pos.x - player.x, a.pos.y - player.y) -
@@ -228,6 +236,24 @@ export class RuleDebugOverlay {
         ({ id, intent, maneuver, destination }) =>
           `  ${id} · ${maneuver ? label.maneuvers[maneuver] : label.exit} · ${label.intents[intent]}${destination ? ` → ${destination}` : ''}`,
       ),
+      label.participants,
+      ...(['pedestrian', 'cyclist', 'tram'] as const).map((kind) => {
+        const candidates = routed.filter((agent) => agent.kind === kind);
+        const count =
+          candidates.length +
+          (kind === 'cyclist'
+            ? participants.road.agents.filter((agent) => agent.kind === kind)
+                .length
+            : 0);
+        if (kind === 'pedestrian')
+          candidates.sort(
+            (a, b) =>
+              Number(Boolean(b.crossingId)) - Number(Boolean(a.crossingId)),
+          );
+        const agent = candidates[0];
+        return `  ${label.kinds[kind]} ×${count} · ${agent ? label.intents[agent.intent] : '—'}${agent?.stopId ? ` · ${label.boarding}` : ''}`;
+      }),
+      `  ${label.emergency} · ${participants.emergencyEvents.some(({ signalActive }) => signalActive) ? label.emergencyOn : '—'}`,
       '',
       label.history,
       ...engine.recent
