@@ -10,7 +10,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
-import { readContent, contentFiles } from '../tools/content';
+import { buildContent, readContent, contentFiles } from '../tools/content';
 import { contentSchema } from '../src/content/schemas';
 
 describe('canonical content', () => {
@@ -58,7 +58,6 @@ describe('canonical content', () => {
         'tools',
         'i18n',
         'assets',
-        'public',
         'index.html',
         'package.json',
         'tsconfig.json',
@@ -71,6 +70,7 @@ describe('canonical content', () => {
         join(root, 'node_modules'),
         'dir',
       );
+      await buildContent(root);
       const file = join(root, 'content/znaki.yaml');
       await writeFile(
         file,
