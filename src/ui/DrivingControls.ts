@@ -30,6 +30,7 @@ export class DrivingControls {
     reset: () => void,
     menu: () => void,
     setCameraHeight: (height: number) => void,
+    setDebugVisible: (visible: boolean) => void,
   ) {
     const signal = this.abort.signal;
     this.root.className = 'driving-ui';
@@ -191,7 +192,11 @@ export class DrivingControls {
       (e) => {
         if (e.code === 'F3') {
           e.preventDefault();
-          if (!e.repeat) projection.hidden = !projection.hidden;
+          if (!e.repeat) {
+            const visible = projection.hasAttribute('hidden');
+            projection.hidden = !visible;
+            setDebugVisible(visible);
+          }
           return;
         }
         if (e.target instanceof Element && e.target.matches('select,input'))

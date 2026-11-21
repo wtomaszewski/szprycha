@@ -1,12 +1,12 @@
 # Postęp projektu
 
-Stan: 21.11.2026. Gałąź: `feat/m1-jazda`.
+Stan: 21.11.2026. Gałąź: `feat/6-m2-silnik-zasad`.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | M0     | Szkielet, menu, treści, narzędzia i CI web  | Ukończony — kontrole lokalne i GitHub Actions zielone                                        |
 | M1     | Jazda, testowa mapa, kamera, bloki 2.5D     | Grywalny prototyp; lokalne kontrole zielone, test fizycznego Androida pozostaje do wykonania |
-| M2     | Silnik zasad v1                             | Nierozpoczęty                                                                                |
+| M2     | Silnik zasad v1                             | Implementacja gotowa do recenzji                                                             |
 | M3     | Ruch drogowy AI i pozostałe detektory       | Nierozpoczęty                                                                                |
 | M4     | Misje i fabuła                              | Nierozpoczęty                                                                                |
 | M5     | Punktacja, progresja, zapis                 | Nierozpoczęty                                                                                |
@@ -104,3 +104,11 @@ Na prośbę użytkownika rozpoczęto następny etap, z priorytetem mechaniki. Ob
 ### Ponowne oddalenie widoku
 
 Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar jest o około 33% szerszy i wyższy. Całkowite skalowanie canvasa i rozszerzanie viewportu pozostają; zoom kamery jest świadomym wyjątkiem od całkowitej skali świata. HUD zachowuje rozmiar.
+
+## M2 — silnik zasad v1
+
+- Testowe miasteczko ma kierunkowe pasy, DDR i osobny przejazd rowerowy, zebrę, dwa typy chodników, wloty równorzędne, A-7 i B-20 oraz cykl S-1/S-2. Generator odtwarza plik Tiled.
+- Czysty TypeScript przelicza pozycje mapy na metry i ocenia dziesięć reguł M2 przy 60 tickach na sekundę. Warunkowy skręt S-2 ma własny werdykt. WYP-06 emituje wyłącznie pochwałę za dodatkowe odblaski. Epizody i tabela z docs/07 ograniczają powielone werdykty.
+- F3 pokazuje geometrię stref, kierunki i klasy wlotów, fazy świateł, TTC i do dziesięciu ostatnich werdyktów. Jazda próbna pokazuje liczniki i jednozdaniowy dymek z treści reguły. Powrót na start rozpoczyna nową próbę z wyzerowanymi licznikami.
+- W jeździe próbnej poruszają się auta i piesi na krótkich trasach treningowych. Ruch po sieci drogowej, pozostałe detektory i pełne zachowania uczestników należą do M3. Stop-klatka, powtórki i misje należą do M4, a punktacja i opanowanie reguł do M5.
+- Kontrole lokalne obejmują 66 scenariuszy YAML, dodatkowe testy silnika, odtworzenie logu sterowania, lint, format, build i Playwright. Próba wolnej jazdy z zoomem 0,75 została wykonana w Chromium. Otwarte pozostają test na fizycznym Androidzie i konsultacja merytoryczna. Szczegóły w [NOTES_FOR_HUMAN.md](NOTES_FOR_HUMAN.md).

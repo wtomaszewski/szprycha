@@ -5,7 +5,7 @@
 #   podstawa     — wskazówka dla recenzenta (NIE pokazywać dzieciom); do weryfikacji w ISAP
 #   weryfikacja  — true = wymaga potwierdzenia brzmienia/zakresu przez konsultanta przed wydaniem
 #   detektor     — sim (wykrywane w symulacji) | scenka (interaktywna scenka) | garaz | plac | quiz-only
-#   waga_bledu   — minor | major (domyślna; detektor może eskalować przy konflikcie)
+#   waga_bledu   — minor | major (domyślna; detektor może eskalować przy konflikcie), null (tylko dobry nawyk)
 #   dobry_nawyk  — opis zachowania nagradzanego werdyktem `good` (jeśli dotyczy)
 #   feedback     — linia Sierżant Oli po błędzie (≤ 140 znaków); klucz i18n generowany: przepisy.<id>.feedback
 stan_prawny: "2026-11-21"
@@ -21,7 +21,7 @@ przepisy:
     detektor: garaz
     waga_bledu: major
     dobry_nawyk: "Zapięcie kasku przed wyjazdem z warsztatu"
-    feedback: "Bez kasku nie ruszamy! Zapnij pasek — kask chroni głowę tylko wtedy, gdy jest zapięty."
+    feedback: "Zapnij pasek kasku, zanim ruszysz rowerem."
   - id: WYP-01
     modul: M01
     tytul: Sprawny hamulec
@@ -75,7 +75,7 @@ przepisy:
     podstawa: "Zalecenie bezpieczeństwa"
     weryfikacja: true
     detektor: garaz
-    waga_bledu: minor
+    waga_bledu: null
     dobry_nawyk: "Założenie kamizelki/odblasków przed nocnym kursem (bonus, nie wymóg)"
     feedback: "Kamizelka odblaskowa to supermoc widoczności. Nie musisz, ale warto!"
   - id: KONTROLA-01
@@ -99,7 +99,7 @@ przepisy:
     detektor: sim
     waga_bledu: minor
     dobry_nawyk: "Wybór drogi dla rowerów zamiast jezdni"
-    feedback: "Obok jest droga dla rowerów — to Twoje miejsce. Na jezdni jest wtedy niepotrzebne ryzyko."
+    feedback: "Obok jest droga dla rowerów w Twoim kierunku, więc wybierz ją."
   - id: GDZIE-02
     modul: M02
     tytul: Pas ruchu dla rowerów
@@ -135,7 +135,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: minor
-    feedback: "Chodnik jest dla pieszych. Wjechać możesz tylko w wyjątkowych sytuacjach — teraz do nich nie należy."
+    feedback: "Jedź po chodniku tylko wtedy, gdy przepis na to pozwala."
   - id: GDZIE-05
     modul: M02
     tytul: Na chodniku piesi są najważniejsi
@@ -145,7 +145,7 @@ przepisy:
     detektor: sim
     waga_bledu: minor
     dobry_nawyk: "Zwolnienie na chodniku przy pieszych"
-    feedback: "Na chodniku to Ty jesteś gościem. Zwolnij i przepuść pieszych."
+    feedback: "Zwolnij na chodniku i ustąp pieszym."
   - id: GDZIE-06
     modul: M02
     tytul: Przez przejście dla pieszych — prowadź rower
@@ -155,7 +155,7 @@ przepisy:
     detektor: sim
     waga_bledu: minor
     dobry_nawyk: "Zejście z roweru i przeprowadzenie go przez przejście"
-    feedback: "Zebra jest dla pieszych. Zejdź z roweru i przeprowadź go — wtedy jesteś pieszym i masz pierwszeństwo."
+    feedback: "Przez zebrę przeprowadź rower pieszo."
   - id: GDZIE-07
     modul: M02
     tytul: Strefa zamieszkania
@@ -221,7 +221,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Zatrzymanie przed linią na czerwonym/żółtym"
-    feedback: "Czerwone to czerwone — nawet gdy nikt nie jedzie. Zatrzymaj się przed linią."
+    feedback: "Zatrzymaj się na czerwonym, a na żółtym zahamuj, jeśli możesz to zrobić bezpiecznie."
   - id: SYG-02
     modul: M03
     tytul: Sygnalizator dla rowerzystów
@@ -240,7 +240,7 @@ przepisy:
     detektor: sim
     waga_bledu: minor
     dobry_nawyk: "Pełne zatrzymanie przed skrętem na zielonej strzałce"
-    feedback: "Zielona strzałka to nie zielone światło! Najpierw stop, potem przepuść, potem skręt."
+    feedback: "Przy zielonej strzałce zatrzymaj się i ustąp, zanim skręcisz."
   - id: ZNAK-STOP
     modul: M03
     tytul: STOP — zatrzymaj się zawsze
@@ -250,7 +250,7 @@ przepisy:
     detektor: sim
     waga_bledu: minor
     dobry_nawyk: "Pełne zatrzymanie przy B-20"
-    feedback: "STOP znaczy: koła stoją. Zatrzymaj się całkowicie, rozejrzyj, dopiero potem jedź."
+    feedback: "Przy znaku STOP zatrzymaj się całkowicie i przepuść jadących drogą z pierwszeństwem."
   - id: ZNAK-A7
     modul: M03
     tytul: Ustąp pierwszeństwa
@@ -325,7 +325,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Ustąpienie pojazdowi z prawej"
-    feedback: "Auto jechało z prawej — miało pierwszeństwo. Na skrzyżowaniu bez znaków patrz w prawo!"
+    feedback: "Na skrzyżowaniu równorzędnym ustąp pojazdowi nadjeżdżającemu z prawej."
   - id: PIER-02
     modul: M04
     tytul: Droga główna i podporządkowana
@@ -335,7 +335,7 @@ przepisy:
     detektor: sim
     waga_bledu: major
     dobry_nawyk: "Ustąpienie na wlocie podporządkowanym"
-    feedback: "Jechałeś z drogi podporządkowanej — trzeba było przepuścić auto na głównej."
+    feedback: "Z drogi podporządkowanej wjedź dopiero po przepuszczeniu pojazdu na drodze głównej."
   - id: PIER-03
     modul: M04
     tytul: Skręt w lewo — przepuść jadących z naprzeciwka
@@ -417,7 +417,7 @@ przepisy:
     detektor: sim
     waga_bledu: minor
     dobry_nawyk: "Zasygnalizowany manewr ≥ 1,5 s przed"
-    feedback: "Ręka w bok to Twój kierunkowskaz. Bez niej nikt nie wie, że skręcasz."
+    feedback: "Przed zmianą kierunku albo pasa pokaż ręką, dokąd jedziesz."
   - id: MAN-02
     modul: M05
     tytul: Skręt w prawo

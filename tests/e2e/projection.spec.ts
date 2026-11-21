@@ -26,9 +26,11 @@ async function openCity(
     const map = (await response.json()) as {
       layers: { name: string; objects: MapObject[] }[];
     };
-    const spawn = map.layers
-      .find((layer) => layer.name === 'spawns')!
-      .objects.find((object) => object.name === 'player')!;
+    const spawns = map.layers.find((layer) => layer.name === 'spawns')!;
+    const spawn = spawns.objects.find((object) => object.name === 'player')!;
+    // Keep traffic and changing signal phases out of projection comparisons.
+    spawns.objects = [spawn];
+    map.layers.find((layer) => layer.name === 'signals')!.objects = [];
     spawn.x = 928 + position.x;
     spawn.y = 1024 + position.y;
     if (floors !== undefined) {

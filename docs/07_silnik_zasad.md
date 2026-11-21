@@ -32,8 +32,8 @@ interface RiderState {
   equipment: { brake: boolean; bell: boolean; rearReflector: boolean; frontLamp: boolean; rearLamp: boolean };
   passenger: boolean;                           // zdarzenie „podwózka na bagażniku”
   phoneInHand: boolean;
-  age: number;                                  // wiek z profilu (domyślnie 10); wpływa na KASK-01, GDZIE-10
-  supervising?: string;                         // id dziecka <10 lat pod opieką (misje z Frankiem)
+  ageBand: 'under10' | '10to15' | '16plus';     // lokalny przedział, domyślnie 10–15
+  supervisedChildId?: string;                  // jawna rola dorosłego opiekuna w scenariuszu
 }
 ```
 
@@ -77,7 +77,7 @@ Ważność (`kind`) domyślnie z `przepisy.yaml` (`waga_bledu`), detektor może 
 
 **Gdzie jechać (GDZIE-*):**
 - ZoneTracker zna strefę pod kołami. Reguła GDZIE-01: jeśli gracz jedzie `roadway` równolegle do istniejącego `bike_path` lub `bike_lane` przypisanego do tego kierunku (atrybut `parallelBikeInfra` pasa w Tiled) przez > 3 s → `minor`.
-- GDZIE-04 (chodnik): `sidewalk` + `mode='riding'` → sprawdź wyjątki: `supervising` dziecka <10 lat; `weather` ∈ {rain_heavy, snow, wind_strong, fog, ice}; atrybuty chodnika `width_m ≥ 2` i sąsiednia jezdnia `speedLimit > 50` i brak DDR/pasa. Brak wyjątku → `minor`. Z wyjątkiem → sprawdzaj GDZIE-05 (prędkość ≤ 2,5 m/s przy pieszych w promieniu 3 m, ustępowanie pieszym).
+- GDZIE-04 (chodnik): `sidewalk` + `mode='riding'` → sprawdź wyjątki: jawna opieka dorosłego nad jadącym dzieckiem <10 lat; `weather` ∈ {rain_heavy, snow, wind_strong, fog, ice}; atrybuty chodnika `width_m ≥ 2` i sąsiednia jezdnia `speedLimit > 50` i brak DDR/pasa. Brak wyjątku → `minor`. Z wyjątkiem → sprawdzaj GDZIE-05 (prędkość ≤ 2,5 m/s przy pieszych w promieniu 3 m, ustępowanie pieszym).
 - GDZIE-06: wjazd na `crossing.pedestrian` w trybie `riding` → `minor`; jeśli pieszy na przejściu w promieniu 4 m → `major`. Przejście w trybie `walking_bike` → `good`.
 
 **Sygnalizacja świetlna (SYG-01):** przekroczenie linii zatrzymania (P-12 / linia z danych) przy czerwonym → `major`; przy żółtym, gdy gracz miał dość miejsca na bezpieczne zatrzymanie (droga hamowania < odległość do linii) → `minor`. Zatrzymanie przed linią na czerwonym → `good`.
@@ -97,27 +97,51 @@ Przy `major` (oraz pierwszym wystąpieniu `minor` danej reguły w sesji):
 4. Przyciski: **Powtórka** (replay ostatnich 5 s z bufora — zapisuj stany wszystkich agentów co tick), **Jeszcze raz** (checkpoint), **Rozumiem** (kontynuuj — tylko przy `minor`).
 5. Wpis do „Notatnika Kuriera” (lista przepisów, które się pojawiły, z wyjaśnieniem i znakiem).
 
+
 ## 8. Testy scenariuszowe (`tests/rules/*.yaml`)
+
 ```yaml
-name: prawa ręka — auto z prawej, gracz nie ustępuje
-map: fixtures/equal_x.tmj
-env: { time: day, weather: clear }
-agents:
-  - { id: car1, type: car, path: [E_in, W_out], speed: 8, spawnAt: 0 }
-player:
-  start: S_in
-  inputs:                        # sekwencja wejść w czasie
-    - { t: 0,   throttle: 1 }
-    - { t: 2.0, steer: 0 }       # prosto przez skrzyżowanie
-expect:
-  - { ruleId: PIER-01, kind: major }
-expectNot:
-  - { ruleId: MAN-01 }
+map: maps/miasteczko.tmj
+scenarios:
+  - name: prawa ręka — gracz nie ustępuje autu z prawej
+    player: { x: 528, y: 723, heading: -90, speed: 4 }
+    agents:
+      - { id: car, kind: car, x: 590, y: 560, heading: 180, speed: 4, laneId: equal-E }
+    inputs: [{ t: 0.5, y: 695 }]
+    expect: { PIER-01: [major], MAN-01: [] }
 ```
-Minimum: dla każdej reguły z detektorem — 1 przypadek `good`, 1 `minor` (jeśli możliwy), 1 `major` (jeśli możliwy), 1 przypadek graniczny (np. wyjątek GDZIE-04). Testy uruchamiane w CI, symulacja headless z krokiem stałym 1/60 s.
+
+W M2 scenariusz podaje próbki wejściowe silnika. Pozycje w YAML odnoszą się do pikseli Tiled, prędkości są w m/s, a kurs podajemy w stopniach zgodnie z osiami ekranu. Runner interpoluje pozycje z krokiem 1/60 s, a pozostałe pola utrzymuje do następnej próbki. Tablica przy identyfikatorze określa wszystkie oczekiwane wagi w kolejności emisji. Pusta tablica wymaga braku werdyktu tej reguły. Osobny test powtarza również log sterowania modelem jazdy.
+
+Dla każdej reguły testujemy `good`, `minor` i `major` tam, gdzie dana waga istnieje, oraz warunek graniczny. Przypadki i uruchomienie opisuje [README testów](../tests/rules/README.md).
 
 ## 9. Debug overlay (F3)
-Strefy (kolory), pasy (strzałki), klasy pierwszeństwa wlotów, aktualna faza świateł, TTC do najbliższych konfliktów, ostatnie 10 werdyktów, mastery reguł gracza.
+Strefy (kolory), pasy (strzałki), klasy pierwszeństwa wlotów, aktualna faza świateł, TTC do najbliższych konfliktów, ostatnie 10 werdyktów oraz informacja o opanowaniu reguł (wyniki opanowania od M5).
 
 ## 10. Reguły `quiz-only`
 Niektóre przepisy trudno sprawdzić w symulacji (np. dokładna treść rozmowy z dyspozytorem 112, kolumna > 15 rowerów poza misją). W `przepisy.yaml` mają `detektor: quiz-only` albo `detektor: scenka` (interaktywna scenka z wyborami, np. pierwsza pomoc). Nie udawaj wykrywania, którego nie ma.
+
+## 11. Priorytety werdyktów i deduplikacja
+
+Epizod wiąże kandydatów opisujących jedno zdarzenie. Wygrywa najpierw waga (`major` > `minor` > `good`), potem kolejność w tabeli. Osobne zdarzenia, np. brak kasku i niezasygnalizowany skręt, mają osobne werdykty.
+
+| Zdarzenie | Przy równej wadze (od najwyższego priorytetu) | Klucz epizodu |
+| --- | --- | --- |
+| Wjazd na odcinek z zakazem B-9 | GDZIE-09 → ZNAK-B9 | Gracz + odcinek zakazu |
+| Wymuszenie przy wyjeździe z posesji | MSC-03 → PIER-06 | Gracz + wyjazd |
+| Jazda bez wymaganych świateł | MSC-04 → WYP-04 → WYP-05 | Gracz + ciągła jazda w warunkach ograniczonej widoczności |
+| Wjazd z wlotu podporządkowanego | ZNAK-STOP → PIER-02 → ZNAK-A7 | Gracz + wlot + pojedynczy przejazd |
+| Wjazd przy aktywnej sygnalizacji | SYG-01; przy warunkowym skręcie ZNAK-S2 | Gracz + wlot + pojedynczy przejazd |
+
+STOP bez konfliktu daje `minor` za pominięcie zatrzymania albo `good` po postoju. Gdy gracz zatrzymał się prawidłowo i następnie wymusił pierwszeństwo, werdykt PIER-02 zastępuje pochwałę za STOP. Gdy pominął postój i jednocześnie wymusił pierwszeństwo, STOP przejmuje wagę i dowód konfliktu. W M2 detektory z pierwszych trzech wierszy należą do kolejnych etapów. WYP-06 ma wyłącznie werdykt `good` za wyposażenie w dodatkowe odblaski.
+
+Ocena wjazdu odbywa się przy przekroczeniu skierowanej linii wlotu. W epizodach strefowych tolerancja wyjścia wynosi 0,25 s. Krótki powrót do tej samej strefy podtrzymuje stan epizodu, a czas poza strefą nie liczy się do progu naruszenia. Po wjeździe na skrzyżowanie epizod wygasa po 0,25 s poza obszarem albo po wycofaniu ponad 3 m przed linię. Bezpośredni przejazd po jezdni przez zebrę wzdłuż ruchu pojazdów nie jest użyciem przejścia.
+
+### Wagi i progi M2
+
+- KASK-01 daje `major` przy jeździe bez zapiętego kasku w przedziale poniżej 16 lat. Kask zapięty w czasie jazdy kwalifikuje się do pochwały raz na sesję. Prowadzenie roweru i jazda bez kasku w przedziale 16+ nie emitują naruszenia.
+- GDZIE-01 i GDZIE-04 mają wyłącznie wagę błędu `minor`. Próg jezdni równoległej to ściśle więcej niż 3 s, tylko w przypisanym kierunku. Legalny wyjątek jest neutralny dla GDZIE-04 i nie emituje werdyktu. Zachowanie wobec pieszych nadal ocenia GDZIE-05. Werdykt `good` jest zarezerwowany dla reguł z `dobry_nawyk`.
+- GDZIE-05 przy pieszym w promieniu 3 m daje `minor` za przekroczenie 2,5 m/s lub utrudnienie przejścia. Zagrożenie przy TTC < 1 s lub hamowanie ochronne daje `major`; sam wysoki odczyt prędkości bez konfliktu nie eskaluje.
+- Dla GDZIE-06 sprawdzamy obecność pieszego przy wjeździe podczas korzystania z zebry. Przejazd rowerowy należy do osobnej kategorii.
+- PIER-01/02 wykorzystują progi 2 s i 1 s z balansu. Równość z progiem nie zwiększa wagi. `good` wymaga przepuszczenia rzeczywistego konfliktowego uczestnika po zwolnieniu lub postoju. Trasy bez wspólnego punktu konfliktu nie powodują werdyktu.
+- SYG-01 ocenia możliwość bezpiecznego postoju przy początku żółtego, a nie tuż przy linii. S-2 jest odrębnym sygnałem warunkowym wymagającym postoju i ustąpienia. MAN-01 ma wyłącznie wagę błędu `minor`; dokładnie 1,5 s zgodnego sygnału wystarcza.
