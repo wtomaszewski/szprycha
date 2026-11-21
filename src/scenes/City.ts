@@ -105,13 +105,15 @@ export class City extends Scene {
     };
     this.sprite = this.add
       .image(this.rider.x, this.rider.y, 'rider')
+      .setScale(2)
       .setDepth(20);
     this.pedestrian = this.add
-      .circle(0, 0, 4, 0xffcd75)
+      .circle(0, 0, 8, 0xffcd75)
       .setStrokeStyle(2, 0x1a1c2c)
       .setDepth(21)
       .setVisible(false);
     this.cameras.main
+      .setZoom(0.75)
       .setBounds(0, 0, this.worldWidth, this.worldHeight)
       .centerOn(this.rider.x, this.rider.y);
     this.controls = new DrivingControls(
@@ -189,8 +191,8 @@ export class City extends Scene {
     this.pedestrian
       .setVisible(r.walking)
       .setPosition(
-        Math.round(r.x + Math.cos(r.heading + Math.PI / 2) * 12),
-        Math.round(r.y + Math.sin(r.heading + Math.PI / 2) * 12),
+        Math.round(r.x + Math.cos(r.heading + Math.PI / 2) * 24),
+        Math.round(r.y + Math.sin(r.heading + Math.PI / 2) * 24),
       );
     const camera = this.cameras.main,
       look = r.speed * 0.5;

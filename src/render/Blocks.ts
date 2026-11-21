@@ -31,15 +31,21 @@ export class Blocks {
   ) {
     const cx = camera.scrollX + camera.width / 2,
       cy = camera.scrollY + camera.height / 2;
+    const halfWidth = camera.width / (2 * camera.zoom);
+    const halfHeight = camera.height / (2 * camera.zoom);
+    const left = cx - halfWidth,
+      right = cx + halfWidth;
+    const top = cy - halfHeight,
+      bottom = cy + halfHeight;
     for (const item of this.items) {
       const b = item.block,
         offset = roofOffset(b, cx, cy, lite);
       const margin = Math.max(Math.abs(offset.x), Math.abs(offset.y)) + 32;
       const visible =
-        b.x + b.width + margin > camera.scrollX &&
-        b.x - margin < camera.scrollX + camera.width &&
-        b.y + b.height + margin > camera.scrollY &&
-        b.y - margin < camera.scrollY + camera.height;
+        b.x + b.width + margin > left &&
+        b.x - margin < right &&
+        b.y + b.height + margin > top &&
+        b.y - margin < bottom;
       item.walls.setVisible(visible);
       item.roof.setVisible(visible);
       if (!visible) continue;

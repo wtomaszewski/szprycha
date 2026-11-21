@@ -85,3 +85,7 @@ Na prośbę użytkownika rozpoczęto następny etap, z priorytetem mechaniki. Ob
 - Pomiar Chromium headless 1280×720, CPU 4×: 661 próbek, średnio 60,00 FPS, p95 16,8 ms, maksimum 16,8 ms. To pomiar krótkiej jazdy po mapie testowej na komputerze, nie dowód 60 FPS na fizycznym Androidzie. Pełny sprzętowy DoD M1 pozostaje otwarty.
 - Reprodukcja: uruchom npm run dev, następnie npm run benchmark:driving. Raport trafia do test-results/performance.json. Generatory: npm run assets:generate i npm run map:generate (nadpisuje mapę treningową).
 - M2 i dalszych etapów nie rozpoczęto. Brak AI, oceny przepisów, misji i punktów; plac nie nagradza łamania zasad. Docelowa grafika, animacje 16 kierunków, budynki wielowarstwowe/poligonalne i układy mobilne wymagają dalszego dopracowania.
+
+### Korekta widoku M1
+
+Świat pomniejszony o 25% przez zoom 0,75, rower powiększony dla czytelności (na ekranie 1,5× względem poprzedniej wersji). Widoczny obszar jest szerszy i wyższy o około 33%. Poprawiono culling bloków dla oddalonej kamery.

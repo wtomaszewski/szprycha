@@ -86,3 +86,7 @@ Model jazdy używa px/s, a przelicznik 1,5 m/32 px służy wyświetlaniu prędko
 W rendererze usunięto niejednoznaczność wzoru: przesunięcie dachu liczymy od środka podstawy względem środka kamery, z mnożnikiem 0,015 × liczba pięter. Aktualny zakres to prostokąty, płaski dach, geometryczne pasy pięter i uproszczony cień. Brak jeszcze tekstur ścian, poligonów i wielowarstwowych landmarków; mapa testowa ich nie wymaga. Nie oceniamy tego jako finalnej grafiki.
 
 Wydajność: pomiar 4× CPU w Chromium dał średnio 60,00 FPS i p95 16,8 ms. Test na fizycznym średnim Androidzie i fizycznym gamepadzie pozostaje do wykonania; Gamepad API przetestowano automatycznie przez symulację przycisków i osi. Pełna responsywność tabletów i telefonów nadal wymaga pracy. M1 jest grywalnym prototypem, nie finalnym wydaniem.
+
+### Korekta skali po obejrzeniu M1
+
+Na prośbę użytkownika zmniejszono skalę świata do 75% (zoom kamery 0,75). Widać około 33% więcej terenu w każdym wymiarze. Rower ma skalę sprite'a 2×, więc po oddaleniu jest na ekranie o 50% większy niż wcześniej. To celowe, umowne proporcje dla czytelności. Fizyka i rozmiar kolizji pozostają takie same. Culling budynków uwzględnia rozszerzony widok. Użytkownik zaakceptował odejście od realistycznych proporcji; zoom 0,75 jest również świadomym odstępstwem od zasady wyłącznie całkowitego skalowania w pierwotnej dokumentacji.
