@@ -146,3 +146,16 @@ Nie jesteś grafikiem, więc:
 - Nie odwzorowuj prawdziwego układu ulic — miasta to **kolaże charakterystycznych miejsc** w skali mikro.
 - Nie pokazuj obrażeń, karetki z poszkodowanym dzieckiem, policji jako zagrożenia. Sierżant Ola jest mentorką.
 - Nie wymagaj połączenia z internetem do gry (poza rankingami).
+
+## 9. Protokół współpracy Codex ↔ recenzent (Claude)
+Projektem zarządza recenzent (Claude) w imieniu właściciela. Działa automatycznie co godzinę: czyta zgłoszenia i PR, weryfikuje, scala, zleca kolejne zadania komentarzem `@codex`.
+
+**Twój cykl pracy (Codex):**
+1. Zadanie przychodzi jako komentarz `@codex` w zgłoszeniu (issue) lub w PR. Zakres = treść zgłoszenia + komentarz.
+2. Pracujesz na gałęzi `<typ>/<nr-zgłoszenia>-<krótki-opis>` z aktualnego `main` (np. `fix/3-zerowy-viewport`). Jedno zgłoszenie = jeden PR.
+3. PR do `main`: tytuł w Conventional Commits, w opisie `Closes #<nr>`, lista zmian, sposób weryfikacji, zrzut ekranu przy zmianach wizualnych, odstępstwa od zgłoszenia.
+4. **Sygnał zakończenia (obowiązkowy):** gdy skończysz, PR ma być „Ready for review” (nie draft), a ostatni komentarz w PR zaczyna się od linii `STATUS: GOTOWE` (albo `STATUS: ZABLOKOWANE — <powód>`, jeśli nie możesz dokończyć). Recenzent szuka właśnie tego znacznika.
+5. Uwagi z recenzji (`@codex` w PR, review „Request changes”) poprawiasz w tym samym PR i znów kończysz `STATUS: GOTOWE`.
+6. Nie scalasz PR samodzielnie — scala recenzent po zielonym CI i pozytywnej recenzji.
+7. `PROGRESS.md` i `NOTES_FOR_HUMAN.md` aktualizujesz tylko w PR zamykających kamień milowy (unikamy konfliktów); w małych PR zapisz notatki w opisie PR.
+8. Pytania merytoryczne zadawaj w komentarzu PR z prefiksem `PYTANIE:` — nie zgaduj przepisów.
