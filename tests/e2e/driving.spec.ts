@@ -13,13 +13,12 @@ test('ride, brake, walk, pause and return to menu', async ({ page }) => {
   const initial = Number(await canvas.getAttribute('data-y'));
   await page.locator('canvas').click({ position: { x: 320, y: 220 } });
   await page.keyboard.down('ArrowUp');
-  await page.waitForTimeout(1200);
+  await expect
+    .poll(async () => Number(await canvas.getAttribute('data-y')))
+    .toBeLessThan(initial - 20);
   await page.keyboard.up('ArrowUp');
-  expect(Number(await canvas.getAttribute('data-y'))).toBeLessThan(
-    initial - 20,
-  );
   await page.keyboard.down('Space');
-  await page.waitForTimeout(600);
+  await expect(canvas).toHaveAttribute('data-speed', '0');
   await page.keyboard.up('Space');
   await page.keyboard.press('KeyX');
   await expect(canvas).toHaveAttribute('data-walking', 'true');
@@ -64,13 +63,11 @@ test('touch joystick moves in simple mode and releases cleanly', async ({
   const box = (await stick.boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + 8);
   await page.mouse.down();
-  await page.waitForTimeout(1200);
+  await expect
+    .poll(async () => Number(await canvas.getAttribute('data-y')))
+    .toBeLessThan(initial - 20);
   await page.mouse.up();
-  expect(Number(await canvas.getAttribute('data-y'))).toBeLessThan(
-    initial - 20,
-  );
-  await page.waitForTimeout(2400);
-  expect(Number(await canvas.getAttribute('data-speed'))).toBe(0);
+  await expect(canvas).toHaveAttribute('data-speed', '0');
 });
 
 test('gamepad axes, dismount edge and pause are connected to gameplay', async ({
@@ -95,10 +92,9 @@ test('gamepad axes, dismount edge and pause are connected to gameplay', async ({
       ],
     }),
   );
-  await page.waitForTimeout(1000);
-  expect(Number(await canvas.getAttribute('data-y'))).toBeLessThan(
-    initial - 15,
-  );
+  await expect
+    .poll(async () => Number(await canvas.getAttribute('data-y')))
+    .toBeLessThan(initial - 15);
   await page.evaluate(() =>
     Object.defineProperty(navigator, 'getGamepads', {
       configurable: true,
@@ -111,7 +107,7 @@ test('gamepad axes, dismount edge and pause are connected to gameplay', async ({
       ],
     }),
   );
-  await page.waitForTimeout(700);
+  await expect(canvas).toHaveAttribute('data-speed', '0');
   await page.evaluate(() =>
     Object.defineProperty(navigator, 'getGamepads', {
       configurable: true,
