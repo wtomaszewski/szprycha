@@ -140,7 +140,7 @@ Ocena wjazdu odbywa się przy przekroczeniu skierowanej linii wlotu. W epizodach
 ### Wagi i progi M2
 
 - KASK-01 daje `major` przy jeździe bez zapiętego kasku w przedziale poniżej 16 lat. Kask zapięty w czasie jazdy kwalifikuje się do pochwały raz na sesję. Prowadzenie roweru i jazda bez kasku w przedziale 16+ nie emitują naruszenia.
-- GDZIE-01 i GDZIE-04 mają wyłącznie wagę błędu `minor`. Próg jezdni równoległej to ściśle więcej niż 3 s, tylko w przypisanym kierunku. Na dozwolonym chodniku GDZIE-04 może dać pochwałę, o ile w tym samym epizodzie GDZIE-05 nie zgłosił błędu.
+- GDZIE-01 i GDZIE-04 mają wyłącznie wagę błędu `minor`. Próg jezdni równoległej to ściśle więcej niż 3 s, tylko w przypisanym kierunku. Legalny wyjątek jest neutralny dla GDZIE-04 i nie emituje werdyktu. Zachowanie wobec pieszych nadal ocenia GDZIE-05. Werdykt `good` jest zarezerwowany dla reguł z `dobry_nawyk`.
 - GDZIE-05 przy pieszym w promieniu 3 m daje `minor` za przekroczenie 2,5 m/s lub utrudnienie przejścia. Zagrożenie przy TTC < 1 s lub hamowanie ochronne daje `major`; sam wysoki odczyt prędkości bez konfliktu nie eskaluje.
 - Dla GDZIE-06 sprawdzamy obecność pieszego przy wjeździe podczas korzystania z zebry. Przejazd rowerowy należy do osobnej kategorii.
 - PIER-01/02 wykorzystują progi 2 s i 1 s z balansu. Równość z progiem nie zwiększa wagi. `good` wymaga przepuszczenia rzeczywistego konfliktowego uczestnika po zwolnieniu lub postoju. Trasy bez wspólnego punktu konfliktu nie powodują werdyktu.

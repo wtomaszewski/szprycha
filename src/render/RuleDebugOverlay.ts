@@ -24,15 +24,8 @@ export class RuleDebugOverlay {
   private readonly shapes: GameObjects.Graphics;
   private readonly labels: GameObjects.Text[] = [];
   private readonly panel = document.createElement('pre');
-  private readonly input = new AbortController();
 
-  constructor(
-    scene: Scene,
-    world: WorldModel,
-    parent: HTMLElement,
-    engine: () => RuleEngine,
-    env: EnvState,
-  ) {
+  constructor(scene: Scene, world: WorldModel, parent: HTMLElement) {
     this.panel.className = 'rules-debug';
     this.panel.setAttribute('aria-label', label.title);
     this.panel.hidden = true;
@@ -131,19 +124,12 @@ export class RuleDebugOverlay {
           .setVisible(false),
       );
     }
-    window.addEventListener(
-      'keydown',
-      (event) => {
-        if (event.code !== 'F3') return;
-        event.preventDefault();
-        if (event.repeat) return;
-        this.panel.hidden = !this.panel.hidden;
-        this.shapes.setVisible(!this.panel.hidden);
-        this.update(engine(), world, env);
-        for (const text of this.labels) text.setVisible(!this.panel.hidden);
-      },
-      { signal: this.input.signal },
-    );
+  }
+
+  setVisible(visible: boolean) {
+    this.panel.hidden = !visible;
+    this.shapes.setVisible(visible);
+    for (const text of this.labels) text.setVisible(visible);
   }
 
   update(engine: RuleEngine, world: WorldModel, env: EnvState) {
@@ -190,7 +176,6 @@ export class RuleDebugOverlay {
   }
 
   destroy() {
-    this.input.abort();
     this.panel.remove();
   }
 }

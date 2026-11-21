@@ -14,6 +14,7 @@
   "canvasLabel": "SZPRYCHA: Miejscy Kurierzy — menu główne",
   "footer": "BEZPIECZNIE DO CELU",
   "driving": {
+    "cameraHeight": "Wysokość kamery 2.5D",
     "title": "Miasteczko ruchu",
     "controls": "Sterowanie jazdą",
     "speed": "Prędkość",
@@ -27,7 +28,7 @@
     "lite": "Budynki: uproszczone",
     "reset": "Wróć na start [R]",
     "menu": "Menu",
-    "help": "WASD / strzałki: jazda · Spacja: hamulec · X: prowadź rower · F3: podgląd zasad · Pad: gałka, B hamulec, A zsiadanie",
+    "help": "WASD / strzałki: jazda · Spacja: hamulec · X: prowadź rower · F3: podgląd zasad i ustawienie kamery · Pad: gałka, B hamulec, A zsiadanie",
     "prototype": "Jazda próbna bez misji.",
     "joystick": "Joystick kierunku jazdy",
     "brake": "Hamulec",

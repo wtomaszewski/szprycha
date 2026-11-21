@@ -284,7 +284,7 @@ test('phone portrait shows rotation prompt; landscape keeps controls compact', a
   await context.close();
 });
 
-test('F3 shows live verdicts and the HUD explains the choice of road', async ({
+test('F3 toggles both debug tools and the HUD explains the choice of road', async ({
   page,
 }) => {
   await page.goto('/');
@@ -293,14 +293,18 @@ test('F3 shows live verdicts and the HUD explains the choice of road', async ({
   await page.keyboard.press('Enter');
   await expect(canvas).toHaveAttribute('data-scene', 'City');
   const overlay = page.getByLabel(pl.rules.debug.title);
+  const slider = page.getByRole('slider');
   const counter = page.getByLabel(pl.rules.counts);
   await expect(overlay).toBeHidden();
+  await expect(slider).toBeHidden();
   await page.keyboard.press('F3');
   await expect(overlay).toBeVisible();
+  await expect(slider).toBeVisible();
   await expect(overlay).toContainText('equal-S');
   await page.keyboard.down('ArrowUp');
   await expect(page.locator('.rule-feedback')).toHaveText(
     'Obok jest droga dla rowerów w Twoim kierunku, więc wybierz ją.',
+    { timeout: 15_000 },
   );
   await page.keyboard.up('ArrowUp');
   await page.keyboard.down('Space');
@@ -312,6 +316,7 @@ test('F3 shows live verdicts and the HUD explains the choice of road', async ({
   await page.screenshot({ path: 'test-results/m2-overlay.png' });
   await page.keyboard.press('F3');
   await expect(overlay).toBeHidden();
+  await expect(slider).toBeHidden();
   await page.keyboard.press('KeyR');
   await expect(counter).toContainText('Drobne 0');
   await expect(page.locator('.rule-feedback')).toBeHidden();

@@ -1,28 +1,42 @@
 import { GameObjects, Scene, Cameras } from 'phaser';
-import { roofOffset, type Block } from './projection';
+import { CAMERA_HEIGHT_PX, roofOffset, type Block } from './projection';
 export type { Block } from './projection';
 export class Blocks {
+  cameraHeight = CAMERA_HEIGHT_PX;
   private items: {
     block: Block;
+    support?: Block;
     walls: GameObjects.Graphics;
     roof: GameObjects.TileSprite;
     dx: number;
     dy: number;
+    baseX: number;
+    baseY: number;
   }[];
   constructor(scene: Scene, blocks: Block[]) {
-    this.items = blocks
+    const landmarkTiers = new Map<string, Block>();
+    this.items = [...blocks]
       .sort((a, b) => a.floors - b.floors)
-      .map((block, i) => ({
-        block,
-        walls: scene.add.graphics().setDepth(100 + i * 2),
-        roof: scene.add
-          .tileSprite(block.x, block.y, block.width, block.height, 'roof')
-          .setTint(block.landmark ? 0xe8c39e : 0xffffff)
-          .setOrigin(0)
-          .setDepth(101 + i * 2),
-        dx: NaN,
-        dy: NaN,
-      }));
+      .map((block, i) => {
+        const support = block.landmarkId
+          ? landmarkTiers.get(block.landmarkId)
+          : undefined;
+        if (block.landmarkId) landmarkTiers.set(block.landmarkId, block);
+        return {
+          block,
+          support,
+          walls: scene.add.graphics().setDepth(100 + i * 2),
+          roof: scene.add
+            .tileSprite(block.x, block.y, block.width, block.height, 'roof')
+            .setTint(block.landmarkId ? 0xe8c39e : 0xffffff)
+            .setOrigin(0)
+            .setDepth(101 + i * 2),
+          dx: NaN,
+          dy: NaN,
+          baseX: NaN,
+          baseY: NaN,
+        };
+      });
   }
   update(
     camera: Cameras.Scene2D.Camera,
@@ -40,8 +54,17 @@ export class Blocks {
       bottom = cy + halfHeight;
     for (const item of this.items) {
       const b = item.block,
-        offset = roofOffset(b, cx, cy, lite);
-      const margin = Math.max(Math.abs(offset.x), Math.abs(offset.y)) + 32;
+        offset = roofOffset(b, cx, cy, lite, this.cameraHeight);
+      const base = item.support
+        ? roofOffset(item.support, cx, cy, lite, this.cameraHeight)
+        : { x: 0, y: 0 };
+      const margin =
+        Math.max(
+          Math.abs(offset.x),
+          Math.abs(offset.y),
+          Math.abs(base.x),
+          Math.abs(base.y),
+        ) + 32;
       const visible =
         b.x + b.width + margin > left &&
         b.x - margin < right &&
@@ -57,24 +80,33 @@ export class Blocks {
         playerY < b.y + b.height + offset.y + 16;
       item.walls.setAlpha(hidden ? 0.35 : 1);
       item.roof.setAlpha(hidden ? 0.35 : 1);
-      if (item.dx === offset.x && item.dy === offset.y) continue;
+      if (
+        item.dx === offset.x &&
+        item.dy === offset.y &&
+        item.baseX === base.x &&
+        item.baseY === base.y
+      )
+        continue;
       item.dx = offset.x;
       item.dy = offset.y;
+      item.baseX = base.x;
+      item.baseY = base.y;
       const g = item.walls.clear(),
-        dx = offset.x,
-        dy = offset.y,
-        x = b.x,
-        y = b.y,
+        dx = offset.x - base.x,
+        dy = offset.y - base.y,
+        x = b.x + base.x,
+        y = b.y + base.y,
         w = b.width,
         h = b.height;
-      g.fillStyle(0x10121e, 0.25).fillRect(
-        x + 12,
-        y + 12,
-        w + Math.max(0, dx),
-        h + Math.max(0, dy),
-      );
-      g.fillStyle(b.landmark ? 0xd98a5a : 0x8b6d5c);
+      if (!item.support)
+        g.fillStyle(0x10121e, 0.25).fillRect(
+          x + 12,
+          y + 12,
+          w + Math.max(0, dx),
+          h + Math.max(0, dy),
+        );
       if (dx !== 0) {
+        g.fillStyle(b.landmarkId ? 0xe8c39e : 0xc2c3c7);
         const edge = dx > 0 ? x : x + w;
         g.fillPoints(
           [
@@ -86,8 +118,8 @@ export class Blocks {
           true,
         );
       }
-      g.fillStyle(b.landmark ? 0xe8c39e : 0xc2c3c7);
       if (dy !== 0) {
+        g.fillStyle(b.landmarkId ? 0xad7655 : 0x8b6d5c);
         const edge = dy > 0 ? y : y + h;
         g.fillPoints(
           [
@@ -100,8 +132,9 @@ export class Blocks {
         );
       }
       g.lineStyle(1, 0x566c86);
-      for (let f = 1; f < b.floors; f++) {
-        const t = f / b.floors;
+      const floors = b.floors - (item.support?.floors ?? 0);
+      for (let f = 1; f < floors; f++) {
+        const t = f / floors;
         if (dy !== 0) {
           const edge = dy > 0 ? y : y + h;
           g.lineBetween(

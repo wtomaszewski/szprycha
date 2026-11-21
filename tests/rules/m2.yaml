@@ -60,7 +60,7 @@ scenarios:
   - name: GDZIE-04 szerokość dokładnie 2 m i limit ponad 50
     properties: { sidewalk-wide: { width_m: 2 } }
     player: { x: 1600, y: 1500, heading: 0, speed: 2 }
-    expect: { GDZIE-04: [good] }
+    expect: { GDZIE-04: [] }
 
   - name: GDZIE-04 przy limicie równym 50 nie ma wyjątku
     properties: { sidewalk-wide: { speedLimit: 50 } }
@@ -79,7 +79,7 @@ scenarios:
   - name: GDZIE-04 ulewa dopuszcza wąski chodnik
     env: { weather: rain_heavy }
     player: { x: 368, y: 900, heading: -90, speed: 2 }
-    expect: { GDZIE-04: [good] }
+    expect: { GDZIE-04: [] }
 
   - name: GDZIE-04 dorosły opiekuje się jadącym dzieckiem
     player:
@@ -93,7 +93,7 @@ scenarios:
       }
     agents:
       - { id: franek, kind: cyclist, x: 368, y: 850, ageBand: under10 }
-    expect: { GDZIE-04: [good] }
+    expect: { GDZIE-04: [] }
 
   - name: GDZIE-04 młody kurier nie spełnia wyjątku opiekuna
     player:

@@ -34,7 +34,6 @@ export class RuleEngine {
   private previous = { x: 0, y: 0 };
   private sidewalkId?: string;
   private sidewalkLast = -Infinity;
-  private sidewalkCandidate?: Verdict;
   private pedestrianCandidate?: Verdict;
   private sidewalkPenalized = false;
   private crossingId?: string;
@@ -125,8 +124,7 @@ export class RuleEngine {
     this.sidewalkId ??= zone.id;
     this.sidewalkLast = this.tick;
     if (this.sidewalkPenalized) return;
-    const exception = sidewalkException(zone, rider, agents, env);
-    if (!exception) {
+    if (!sidewalkException(zone, rider, agents, env)) {
       this.sidewalkPenalized = true;
       this.emit(
         this.pedestrianCandidate?.kind === 'major'
@@ -135,7 +133,6 @@ export class RuleEngine {
       );
       return;
     }
-    this.sidewalkCandidate ??= sidewalkVerdict(zone, rider, at, exception);
     const { chodnik_predkosc_przy_pieszych_ms, ttc_minor_s, ttc_major_s } =
       this.settings.silnik;
     this.pedestrianCandidate = sidewalkPedestrian(
@@ -155,10 +152,8 @@ export class RuleEngine {
   }
 
   private closeSidewalk() {
-    if (!this.sidewalkPenalized)
-      this.emit(this.pedestrianCandidate ?? this.sidewalkCandidate);
+    if (!this.sidewalkPenalized) this.emit(this.pedestrianCandidate);
     this.sidewalkId = undefined;
-    this.sidewalkCandidate = undefined;
     this.pedestrianCandidate = undefined;
     this.sidewalkPenalized = false;
   }

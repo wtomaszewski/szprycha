@@ -108,12 +108,13 @@ export class City extends Scene {
       const floors = Number(
         properties?.find((p) => p.name === 'height')?.value ?? 1,
       );
+      const landmarkId = properties?.find(
+        (p) => p.name === 'landmarkId',
+      )?.value;
       buildings.push({
         ...b,
         floors,
-        landmark: properties?.some(
-          (p) => p.name === 'landmarkId' && p.value === 'palace-test',
-        ),
+        landmarkId: typeof landmarkId === 'string' ? landmarkId : undefined,
       });
     }
     const curbArt = this.add.graphics().setDepth(2).fillStyle(0xc0cbdc);
@@ -180,19 +181,26 @@ export class City extends Scene {
       () => this.toggleMode(),
       () => this.reset(),
       () => this.scene.start('MainMenu'),
+      (height) => {
+        this.blocks.cameraHeight = height;
+        this.blocks.update(
+          this.cameras.main,
+          this.controls.lite,
+          this.rider.x,
+          this.rider.y,
+        );
+      },
+      (visible) => {
+        this.debug.setVisible(visible);
+        this.debug.update(this.rules, this.world, environment);
+      },
     );
     this.feedback = new RuleFeedback(
       this.controls.root,
       this.content.przepisy.przepisy,
     );
     this.resetRules();
-    this.debug = new RuleDebugOverlay(
-      this,
-      this.world,
-      this.controls.root,
-      () => this.rules,
-      environment,
-    );
+    this.debug = new RuleDebugOverlay(this, this.world, this.controls.root);
     this.actionArt = this.add.graphics().setDepth(22);
     this.controls.setWalking(false);
     const onShutdown = () => {

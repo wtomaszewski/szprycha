@@ -260,3 +260,20 @@ button[aria-pressed='true'] {
     bottom: max(112px, env(safe-area-inset-bottom));
   }
 }
+
+.projection-debug:not([hidden]) {
+  position: fixed;
+  top: 5.75rem;
+  right: max(8px, env(safe-area-inset-right));
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #1a1c2c;
+  color: #f4f4f4;
+  pointer-events: auto;
+}
+.projection-debug input {
+  grid-column: 1;
+}

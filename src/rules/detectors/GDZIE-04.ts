@@ -32,18 +32,13 @@ export function sidewalkException(
     return 'supervision';
 }
 
-export function sidewalkVerdict(
-  zone: Zone,
-  rider: RiderState,
-  at: number,
-  exception?: string,
-) {
+export function sidewalkVerdict(zone: Zone, rider: RiderState, at: number) {
   return verdict(
     'GDZIE-04',
-    exception ? 'good' : 'minor',
+    'minor',
     at,
     rider,
-    { width: zone.width_m, speedLimit: zone.speedLimit, exception },
+    { width: zone.width_m, speedLimit: zone.speedLimit },
     { zoneId: zone.id },
   );
 }

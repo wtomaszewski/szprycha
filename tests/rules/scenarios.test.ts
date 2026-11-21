@@ -53,6 +53,11 @@ const { map, scenarios } = parse(
 const mapText = readFileSync(map, 'utf8');
 const content = await buildContent();
 const engineOptions = content.balans;
+const goodHabitRules = new Set(
+  content.przepisy.przepisy
+    .filter((rule) => rule.dobry_nawyk)
+    .map((rule) => rule.id),
+);
 const envDefaults: EnvState = {
   time: 'day',
   weather: 'clear',
@@ -154,6 +159,10 @@ describe('M2 – scenariusze YAML', () => {
   for (const scenario of scenarios) {
     it(scenario.name, () => {
       const verdicts = run(scenario);
+      for (const verdict of verdicts) {
+        if (verdict.kind === 'good')
+          expect(goodHabitRules.has(verdict.ruleId), verdict.ruleId).toBe(true);
+      }
       for (const [rule, kinds] of Object.entries(scenario.expect)) {
         expect(
           verdicts.filter((v) => v.ruleId === rule).map((v) => v.kind),
