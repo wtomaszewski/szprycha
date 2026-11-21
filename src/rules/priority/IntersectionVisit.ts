@@ -33,7 +33,6 @@ const STOP_RANGE = 3;
 const EPSILON = 1e-9;
 
 export class IntersectionVisit {
-  private readonly manager: IntersectionManager;
   private lane?: Lane;
   private crossed = false;
   private outsideSince?: number;
@@ -53,9 +52,8 @@ export class IntersectionVisit {
   constructor(
     private readonly world: WorldModel,
     private readonly settings: Balance,
-  ) {
-    this.manager = new IntersectionManager(world);
-  }
+    private readonly manager: IntersectionManager,
+  ) {}
 
   private start(lane?: Lane) {
     this.lane = lane;

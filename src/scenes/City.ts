@@ -15,12 +15,17 @@ import { DrivingControls } from '../ui/DrivingControls';
 import { ui, showError } from '../core/presentation';
 
 import type { GameContent } from '../content/schemas';
-import { TrainingTraffic } from '../gameplay/TrainingTraffic';
 import { RuleDebugOverlay } from '../render/RuleDebugOverlay';
 import { TrainingRoad } from '../render/TrainingRoad';
+import { IntersectionManager } from '../rules/priority/IntersectionManager';
 import { RuleEngine } from '../rules/RuleEngine';
-import type { EnvState, RiderState } from '../rules/types';
+import type { AgentState, EnvState, RiderState } from '../rules/types';
 import { WorldModel } from '../rules/world/WorldModel';
+import { CAR_RADIUS_PX, TrafficSimulation } from '../sim/TrafficSimulation';
+import {
+  PEDESTRIAN_RADIUS_PX,
+  TrainingPedestrians,
+} from '../sim/TrainingPedestrians';
 import { RuleFeedback } from '../ui/RuleFeedback';
 
 const environment: EnvState = {
@@ -45,8 +50,12 @@ export class City extends Scene {
   private messageUntil = 0;
   private world!: WorldModel;
   private rules!: RuleEngine;
-  private traffic!: TrainingTraffic;
-  private actors!: GameObjects.Arc[];
+  private intersectionManager!: IntersectionManager;
+  private traffic!: TrafficSimulation;
+  private pedestrians!: TrainingPedestrians;
+  private agents!: readonly AgentState[];
+  private actorObstacles!: Obstacle[];
+  private actors!: (GameObjects.Arc | GameObjects.Image)[];
   private road!: TrainingRoad;
   private debug!: RuleDebugOverlay;
   private feedback!: RuleFeedback;
@@ -82,7 +91,13 @@ export class City extends Scene {
       this.content.balans.silnik.kafel_m,
     );
     this.road = new TrainingRoad(this, this.world);
-    this.traffic = new TrainingTraffic(this.world);
+    this.intersectionManager = new IntersectionManager(this.world);
+    this.traffic = new TrafficSimulation(
+      this.world,
+      this.intersectionManager,
+      this.content.balans.silnik,
+    );
+    this.pedestrians = new TrainingPedestrians(this.world);
     const map = this.make.tilemap({ key: 'training-map' });
     const tiles = map.addTilesetImage('training', 'training');
     if (!tiles) throw new Error('Missing training tiles');
@@ -146,18 +161,33 @@ export class City extends Scene {
       roof?.refresh();
     }
     this.blocks = new Blocks(this, buildings);
-    this.obstacles.push(...this.traffic.obstacles);
-    this.actors = this.traffic.agents.map((agent) =>
-      this.add
-        .circle(
-          0,
-          0,
-          agent.kind === 'car' ? 14 : 7,
-          agent.kind === 'car' ? 0x41a6f6 : 0xffcd75,
-        )
-        .setStrokeStyle(2, 0x1a1c2c)
-        .setDepth(17),
+    this.agents = [...this.traffic.agents, ...this.pedestrians.agents];
+    this.actorObstacles = this.agents.map(({ kind }) => {
+      const diameter =
+        (kind === 'car' ? CAR_RADIUS_PX : PEDESTRIAN_RADIUS_PX) * 2;
+      return { x: 0, y: 0, width: diameter, height: diameter, kind: 'wall' };
+    });
+    this.obstacles.push(...this.actorObstacles);
+    if (!this.textures.exists('traffic-car')) {
+      const car = this.make.graphics({});
+      car.fillStyle(0x1a1c2c).fillRoundedRect(0, 0, 26, 16, 3);
+      car.fillStyle(0x41a6f6).fillRoundedRect(1, 2, 24, 12, 3);
+      car.fillStyle(0x29366f).fillRect(8, 4, 10, 8);
+      car.fillStyle(0x73eff7).fillRect(16, 4, 2, 8);
+      car.fillStyle(0xffcd75).fillRect(23, 3, 2, 3).fillRect(23, 10, 2, 3);
+      car.fillStyle(0xe43b44).fillRect(1, 3, 2, 3).fillRect(1, 10, 2, 3);
+      car.generateTexture('traffic-car', 26, 16);
+      car.destroy();
+    }
+    this.actors = this.agents.map(({ kind }) =>
+      (kind === 'car'
+        ? this.add.image(0, 0, 'traffic-car')
+        : this.add
+            .circle(0, 0, PEDESTRIAN_RADIUS_PX, 0xffcd75)
+            .setStrokeStyle(2, 0x1a1c2c)
+      ).setDepth(17),
     );
+    this.syncActorObstacles();
     this.rider = {
       ...this.spawn,
       heading: -Math.PI / 2,
@@ -192,7 +222,13 @@ export class City extends Scene {
       },
       (visible) => {
         this.debug.setVisible(visible);
-        this.debug.update(this.rules, this.world, environment);
+        this.debug.update(
+          this.rules,
+          this.world,
+          environment,
+          this.traffic.agents,
+          this.rulesRider.pos,
+        );
       },
     );
     this.feedback = new RuleFeedback(
@@ -242,6 +278,8 @@ export class City extends Scene {
       walking: false,
     });
     this.traffic.reset();
+    this.pedestrians.reset();
+    this.syncActorObstacles();
     this.resetRules();
     this.accumulator = 0;
     this.controls.clear();
@@ -258,13 +296,24 @@ export class City extends Scene {
     const engine = (this.rules = new RuleEngine(
       this.world,
       this.content.balans,
+      this.intersectionManager,
     ));
     this.feedback.reset(engine.counts);
     engine.onVerdict((verdict) =>
       this.feedback.receive(verdict, engine.counts),
     );
   }
-  private stepRules() {
+  private syncActorObstacles() {
+    const scale = 1 / this.world.metersPerPixel;
+    for (let i = 0; i < this.agents.length; i++) {
+      const { pos } = this.agents[i]!;
+      const obstacle = this.actorObstacles[i]!;
+      obstacle.x = pos.x * scale - obstacle.width / 2;
+      obstacle.y = pos.y * scale - obstacle.height / 2;
+    }
+  }
+
+  private stepWorld() {
     const source = this.rider;
     const rider = this.rulesRider;
     const scale = this.world.metersPerPixel;
@@ -274,7 +323,10 @@ export class City extends Scene {
     rider.heading = source.heading;
     rider.mode = source.walking ? 'walking_bike' : 'riding';
     rider.signal = this.controls.actions.signal ?? 'none';
-    this.rules.step(rider, this.traffic.agents, environment);
+    this.traffic.step(environment, rider, this.pedestrians.agents);
+    this.pedestrians.step(rider.pos, this.traffic.agents);
+    this.syncActorObstacles();
+    this.rules.step(rider, this.agents, environment);
   }
   update(time: number, delta: number) {
     if (!this.controls) return;
@@ -288,7 +340,6 @@ export class City extends Scene {
     }
     this.accumulator += Math.min(delta / 1000, 0.1);
     while (this.accumulator >= FIXED_STEP) {
-      this.traffic.step(this.rider);
       if (
         stepRider(
           this.rider,
@@ -299,7 +350,7 @@ export class City extends Scene {
         )
       )
         this.message(ui.driving.collision);
-      this.stepRules();
+      this.stepWorld();
       this.accumulator -= FIXED_STEP;
     }
     const r = this.rider;
@@ -342,17 +393,31 @@ export class City extends Scene {
     );
     this.blocks.update(camera, this.controls.lite, r.x, r.y);
     const scale = 1 / this.world.metersPerPixel;
-    for (const [index, agent] of this.traffic.agents.entries()) {
-      this.actors[index]!.setPosition(
-        Math.round(agent.pos.x * scale),
-        Math.round(agent.pos.y * scale),
-      );
+    const centerX = camera.scrollX + camera.width / 2;
+    const centerY = camera.scrollY + camera.height / 2;
+    const halfWidth = camera.width / (2 * camera.zoom) + CAR_RADIUS_PX + 2;
+    const halfHeight = camera.height / (2 * camera.zoom) + CAR_RADIUS_PX + 2;
+    for (let index = 0; index < this.agents.length; index++) {
+      const agent = this.agents[index]!;
+      const x = Math.round(agent.pos.x * scale);
+      const y = Math.round(agent.pos.y * scale);
+      const visible =
+        Math.abs(x - centerX) <= halfWidth &&
+        Math.abs(y - centerY) <= halfHeight;
+      const actor = this.actors[index]!.setVisible(visible);
+      if (visible) actor.setPosition(x, y).setRotation(agent.heading);
     }
     this.road.updateLights(this.rules.at, environment);
     this.feedback.update(this.rules.at);
     if (time - this.hudAt > 100) {
       this.hudAt = time;
-      this.debug.update(this.rules, this.world, environment);
+      this.debug.update(
+        this.rules,
+        this.world,
+        environment,
+        this.traffic.agents,
+        this.rulesRider.pos,
+      );
       this.controls.speed.textContent = `${Math.round(r.speed * METERS_PER_PIXEL * 3.6)} ${ui.driving.unit}`;
       const canvas = this.game.canvas;
       canvas.dataset.x = String(Math.round(r.x));

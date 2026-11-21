@@ -4,9 +4,11 @@ To najważniejszy i najbardziej krytyczny moduł. Musi być **czystym TypeScript
 
 ## 1. Przepływ danych
 ```
-Tiled (.tmj) ──► WorldModel (statyczny: strefy, pasy, skrzyżowania, znaki, sygnalizatory)
+Tiled (.tmj) ──► WorldModel (strefy, LaneGraph, skrzyżowania, znaki, sygnalizatory)
                          │
-Gra (Phaser) ──► AgentState[] co tick (gracz + AI: pozycja, kurs, prędkość, stan)
+                  TrafficSimulation ──► AgentState[] (auta, trasy i hamowanie ochronne)
+                                              │
+Gra (Phaser) ──► RiderState ──────────────────┘ co tick
                          │
                  ZoneTracker ──► zdarzenia: enterZone/exitZone/approach/enterConflict/exitIntersection
                          │
@@ -16,6 +18,8 @@ Gra (Phaser) ──► AgentState[] co tick (gracz + AI: pozycja, kurs, prędko�
                          │
                  EventBus ──► ScoreSystem, MasterySystem, FeedbackUI, MissionSystem, Achievements, Replay
 ```
+
+`TrafficSimulation` i silnik zasad pracują w TypeScripcie przy kroku 1/60 s i współdzielą jedną instancję `IntersectionManager` w scenie miasta. Symulacja wybiera początkowe odcinki i dozwolone skręty z ustalonego ziarna. Po wyjeździe za krawędź mapy ponownie wprowadza samochód tylko na wolny wlot graniczny. Scenariusze YAML nadal mogą podawać własne pozycje i manewry uczestników.
 
 ## 2. Model gracza (`RiderState`)
 ```ts
@@ -68,6 +72,8 @@ Ważność (`kind`) domyślnie z `przepisy.yaml` (`waga_bledu`), detektor może 
 4. Naruszenie pierwszeństwa = gracz wjeżdża w obszar konfliktu, gdy agent z pierwszeństwem ma `TTC < 2,0 s` (strojone w `balans.yaml`). `TTC < 1,0 s` lub hamowanie awaryjne AI → `major`.
 5. Poprawne ustąpienie (gracz zwolnił/zatrzymał się przed obszarem konfliktu i przepuścił) → `good`.
 
+**Samochody w M3a.** Macierz konfliktów korzysta z łączników grafu. Przed linią auto ocenia fazę S-1, możliwość zatrzymania przy zmianie na żółte, pełny postój na B-20 lub S-2 oraz kierunek strzałki. `IntersectionManager` sprawdza przecinające się manewry, pierwszeństwo i TTC. Auto wjeżdża, gdy jest miejsce na wyjeździe i skrzyżowanie jest wolne. Przy cyklu prawej ręki stojące auta kolejno przepuszczają najdłużej czekające auto, które ustępuje wyłącznie z tej reguły. Ruch respektuje zajętą zebrę oraz odstęp od poprzednika. Hamowanie ochronne uwzględnia pozycję i krótki przewidywany ruch gracza, a flaga `protectiveBrake` pozwala ocenić wagę wymuszenia.
+
 **Sygnalizowanie zmiany kierunku (MAN-01):**
 - Manewr = zmiana kursu > 45° na skrzyżowaniu, zjazd z drogi, zmiana pasa, omijanie z przesunięciem bocznym > 1 m.
 - `good`: `signal` zgodny z kierunkiem aktywny ≥ 1,5 s przed wjazdem w obszar manewru (dozwolone opuszczenie ręki w trakcie samego skrętu).
@@ -116,7 +122,9 @@ W M2 scenariusz podaje próbki wejściowe silnika. Pozycje w YAML odnoszą się 
 Dla każdej reguły testujemy `good`, `minor` i `major` tam, gdzie dana waga istnieje, oraz warunek graniczny. Przypadki i uruchomienie opisuje [README testów](../tests/rules/README.md).
 
 ## 9. Debug overlay (F3)
-Strefy (kolory), pasy (strzałki), klasy pierwszeństwa wlotów, aktualna faza świateł, TTC do najbliższych konfliktów, ostatnie 10 werdyktów oraz informacja o opanowaniu reguł (wyniki opanowania od M5).
+Nakładka pokazuje strefy, skierowane polilinie, węzły i dozwolone relacje skrętu. Strzałki nad autami pokazują zamiar jazdy, a panel opisuje manewr, docelowy pas i stan najbliższych aut. Nadal widać klasy pierwszeństwa wlotów, fazy świateł, TTC i 10 ostatnich werdyktów. Wyniki opanowania reguł są planowane od M5.
+
+![Nakładka F3 z grafem pasów i hamowaniem ochronnym auta](images/m3a-overlay.png)
 
 ## 10. Reguły `quiz-only`
 Niektóre przepisy trudno sprawdzić w symulacji (np. dokładna treść rozmowy z dyspozytorem 112, kolumna > 15 rowerów poza misją). W `przepisy.yaml` mają `detektor: quiz-only` albo `detektor: scenka` (interaktywna scenka z wyborami, np. pierwsza pomoc). Nie udawaj wykrywania, którego nie ma.

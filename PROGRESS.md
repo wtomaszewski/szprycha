@@ -6,8 +6,8 @@ Stan: 21.11.2026. Gałąź: `feat/6-m2-silnik-zasad`.
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | M0     | Szkielet, menu, treści, narzędzia i CI web  | Ukończony — kontrole lokalne i GitHub Actions zielone                                        |
 | M1     | Jazda, testowa mapa, kamera, bloki 2.5D     | Grywalny prototyp; lokalne kontrole zielone, test fizycznego Androida pozostaje do wykonania |
-| M2     | Silnik zasad v1                             | Implementacja gotowa do recenzji                                                             |
-| M3     | Ruch drogowy AI i pozostałe detektory       | Nierozpoczęty                                                                                |
+| M2     | Silnik zasad v1                             | Scalony w `main` w PR #13                                                                    |
+| M3     | Ruch drogowy AI i pozostałe detektory       | M3a gotowe do recenzji. Kolejne części M3 pozostają otwarte.                                 |
 | M4     | Misje i fabuła                              | Nierozpoczęty                                                                                |
 | M5     | Punktacja, progresja, zapis                 | Nierozpoczęty                                                                                |
 | M6     | Mapy Warszawy i Wrocławia                   | Nierozpoczęty                                                                                |
@@ -112,3 +112,10 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - F3 pokazuje geometrię stref, kierunki i klasy wlotów, fazy świateł, TTC i do dziesięciu ostatnich werdyktów. Jazda próbna pokazuje liczniki i jednozdaniowy dymek z treści reguły. Powrót na start rozpoczyna nową próbę z wyzerowanymi licznikami.
 - W jeździe próbnej poruszają się auta i piesi na krótkich trasach treningowych. Ruch po sieci drogowej, pozostałe detektory i pełne zachowania uczestników należą do M3. Stop-klatka, powtórki i misje należą do M4, a punktacja i opanowanie reguł do M5.
 - Kontrole lokalne obejmują 66 scenariuszy YAML, dodatkowe testy silnika, odtworzenie logu sterowania, lint, format, build i Playwright. Próba wolnej jazdy z zoomem 0,75 została wykonana w Chromium. Otwarte pozostają test na fizycznym Androidzie i konsultacja merytoryczna. Szczegóły w [NOTES_FOR_HUMAN.md](NOTES_FOR_HUMAN.md).
+
+## M3a — graf pasów i auta AI
+
+- W miasteczku jeździ 14 samochodów po grafie skierowanych polilinii Tiled. Graf waliduje odcinki, wloty, wyloty i skręty w czasie ładowania mapy i w buildzie.
+- Samochody uwzględniają odstęp, B-20, S-1 i warunkowe S-2 oraz korzystają z tego samego `IntersectionManager` co gracz. Hamują przed rowerzystą i zajętą zebrą. F3 pokazuje graf, manewry i powody oczekiwania.
+- Vitest sprawdza deterministyczność, walidację mapy, sygnały, hamowanie przed graczem i dziesięć minut ruchu 14 aut z kontrolą kolizji oraz postępu każdego pojazdu. Dotychczasowe scenariusze YAML zachowują własne dane uczestników.
+- Trasy pieszych w miasteczku pozostają skryptowe. Symulacja pozostałych typów uczestników ruchu oraz reszta detektorów należą do kolejnych części M3.

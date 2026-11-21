@@ -301,6 +301,8 @@ test('F3 toggles both debug tools and the HUD explains the choice of road', asyn
   await expect(overlay).toBeVisible();
   await expect(slider).toBeVisible();
   await expect(overlay).toContainText('equal-S');
+  await expect(overlay).toContainText(pl.rules.debug.traffic);
+  await expect(overlay).toContainText(/car-\d+ · (prosto|w lewo|w prawo) ·/);
   await page.keyboard.down('ArrowUp');
   await expect(page.locator('.rule-feedback')).toHaveText(
     'Obok jest droga dla rowerów w Twoim kierunku, więc wybierz ją.',
@@ -313,7 +315,7 @@ test('F3 toggles both debug tools and the HUD explains the choice of road', asyn
   await expect(overlay).toContainText(/GDZIE-01\s+minor/);
   await expect(overlay).toContainText(/KASK-01\s+good/);
   await expect(counter).toContainText(/Drobne [1-9]/);
-  await page.screenshot({ path: 'test-results/m2-overlay.png' });
+  await page.screenshot({ path: 'test-results/m3a-overlay.png' });
   await page.keyboard.press('F3');
   await expect(overlay).toBeHidden();
   await expect(slider).toBeHidden();

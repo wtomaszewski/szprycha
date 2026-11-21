@@ -32,6 +32,7 @@ export interface AgentState {
   maneuver?: Maneuver;
   ageBand?: AgeBand;
   protectiveBrake?: boolean;
+  junctionProgress?: number; // signed distance along the movement from the stop line
 }
 
 export interface EnvState {

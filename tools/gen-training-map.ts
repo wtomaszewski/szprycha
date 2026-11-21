@@ -173,24 +173,6 @@ objectLayer('blocks', blocks);
 objectLayer('collisions', curbs);
 objectLayer('spawns', [
   rect('player', 512, 1024, 0, 0),
-  rect('car-equal', 939, 560, 0, 0, {
-    kind: 'car',
-    laneId: 'equal-E',
-    speed: 4,
-    start_m: -17,
-  }),
-  rect('car-yield', 960, 656, 0, 0, {
-    kind: 'car',
-    laneId: 'yield-W',
-    speed: 4,
-    start_m: -12,
-  }),
-  rect('car-stop', 213, 1424, 0, 0, {
-    kind: 'car',
-    laneId: 'stop-W',
-    speed: 4,
-    start_m: -8,
-  }),
   rect('pedestrian-zebra', 656, 721, 0, 0, {
     kind: 'pedestrian',
     heading: -90,
@@ -241,14 +223,15 @@ const intersections = [];
 const lanes = [];
 const signs = [];
 const signals = [];
+const names = [
+  ['equal', 'yield', 'lights'],
+  ['stop', 'south-central', 'south-east'],
+];
 for (const [row, rowTile] of rows.entries()) {
   for (const [column, columnTile] of columns.entries()) {
     const x = columnTile * 32;
     const y = rowTile * 32;
-    const name =
-      row === 0
-        ? ['equal', 'yield', 'lights'][column]!
-        : ['stop', 'south-central', 'south-east'][column]!;
+    const name = names[row]![column]!;
     const controlled = name === 'yield' || name === 'stop';
     const kind = controlled
       ? 'priority'
@@ -258,15 +241,32 @@ for (const [row, rowTile] of rows.entries()) {
     intersections.push(rect(name, x, y, 192, 192, { kind }));
     // Oriented centre lines end at the stop line of the right-hand traffic lane.
     const approaches = [
-      { side: 'N', x: x + 48, y, dx: 0, dy: 1, length: row === 0 ? 512 : 576 },
-      { side: 'E', x: x + 192, y: y + 48, dx: -1, dy: 0, length: 320 },
+      {
+        side: 'N',
+        x: x + 48,
+        y,
+        dx: 0,
+        dy: 1,
+        length: row === 0 ? y : 576,
+        upstream: names[row - 1]?.[column],
+      },
+      {
+        side: 'E',
+        x: x + 192,
+        y: y + 48,
+        dx: -1,
+        dy: 0,
+        length: columns[column + 1] === undefined ? width * 32 - x - 192 : 640,
+        upstream: names[row]?.[column + 1],
+      },
       {
         side: 'S',
         x: x + 144,
         y: y + 192,
         dx: 0,
         dy: -1,
-        length: row === 1 ? 448 : 576,
+        length: row === 1 ? height * 32 - y - 192 : 576,
+        upstream: names[row + 1]?.[column],
       },
       {
         side: 'W',
@@ -274,10 +274,19 @@ for (const [row, rowTile] of rows.entries()) {
         y: y + 144,
         dx: 1,
         dy: 0,
-        length: column === 0 ? 384 : 320,
+        length: column === 0 ? x : 640,
+        upstream: names[row]?.[column - 1],
       },
-    ];
-    for (const { side, x: endX, y: endY, dx, dy, length } of approaches) {
+    ] as const;
+    for (const {
+      side,
+      x: endX,
+      y: endY,
+      dx,
+      dy,
+      length,
+      upstream,
+    } of approaches) {
       const id = `${name}-${side}`;
       const vertical = dx === 0;
       const priorityClass = controlled
@@ -293,6 +302,12 @@ for (const [row, rowTile] of rows.entries()) {
           side,
           priorityClass,
           type: 'car',
+          turns: 'straight,left,right',
+          ...(upstream
+            ? {
+                from: `${upstream}-${{ N: 'S', E: 'W', S: 'N', W: 'E' }[side]}`,
+              }
+            : {}),
           width_px: 96,
           speedLimit:
             row === 1 && side === 'E' && name === 'south-central' ? 60 : 50,
@@ -305,6 +320,23 @@ for (const [row, rowTile] of rows.entries()) {
           { x: dx * length, y: dy * length },
         ],
       });
+      if (!upstream) {
+        // Outgoing lanes at the map boundary have no next approach.
+        const exitX = dx === 0 ? 2 * (x + 96) - endX : endX;
+        const exitY = dy === 0 ? 2 * (y + 96) - endY : endY;
+        lanes.push({
+          ...rect(`${id}-out`, exitX, exitY, 0, 0, {
+            role: 'exit',
+            intersection: name,
+            side,
+            speedLimit: 50,
+          }),
+          polyline: [
+            { x: 0, y: 0 },
+            { x: -dx * length, y: -dy * length },
+          ],
+        });
+      }
       const signX = endX - 60 * dy - 20 * dx;
       const signY = endY + 60 * dx - 20 * dy;
       if (controlled) {
@@ -373,6 +405,7 @@ await writeFile(
       height,
       tilewidth: 32,
       tileheight: 32,
+      properties: [{ name: 'trafficCars', type: 'int', value: 14 }],
       nextlayerid: layers.length + 1,
       nextobjectid: id,
       layers,

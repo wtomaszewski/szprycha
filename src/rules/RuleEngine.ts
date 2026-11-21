@@ -6,6 +6,7 @@ import { pedestrianCrossing } from './detectors/GDZIE-06';
 import { HelmetDetector } from './detectors/KASK-01';
 import { ManeuverDetector } from './detectors/MAN-01';
 import { ReflectorsDetector } from './detectors/WYP-06';
+import { IntersectionManager } from './priority/IntersectionManager';
 import { IntersectionVisit } from './priority/IntersectionVisit';
 import {
   TICKS_PER_SECOND,
@@ -44,9 +45,10 @@ export class RuleEngine {
   constructor(
     world: WorldModel,
     private readonly settings: GameContent['balans'],
+    manager = new IntersectionManager(world),
   ) {
     this.zones = new ZoneTracker(world);
-    this.junction = new IntersectionVisit(world, settings.silnik);
+    this.junction = new IntersectionVisit(world, settings.silnik, manager);
     this.maneuver = new ManeuverDetector(
       settings.silnik.sygnalizacja_min_przed_s,
     );

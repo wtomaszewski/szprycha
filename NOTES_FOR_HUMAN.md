@@ -122,3 +122,7 @@ Rekomendacje 1–8 są przyjęte. Poniższy wpis aktualizuje wcześniejsze pytan
 W symulacji M2 TTC liczymy wzdłuż prekomputowanych tras wlotów, a konflikt oceniamy przy przekroczeniu linii wlotu. Skręty w macierzy to odcinki między wlotem a wyjazdem. Skrypty aut i pieszych służą do ćwiczeń. Pełne ścieżki i zarządzanie ruchem, polecenia osoby kierującej ruchem i detektory konfliktów z pieszymi podczas skrętu należą do kolejnych etapów. Overlay pokazuje aktualną fazę sygnalizacji i najbliższy konflikt. Wyniki opanowania reguł pojawią się w M5.
 
 KASK-01 zgłasza wyłącznie poważne naruszenie obowiązku. GDZIE-01, GDZIE-04 i MAN-01 mają wagę drobną. PIER-01/02 i STOP stosują progi konfliktu z docs/07. WYP-06 jest pozycją bonusową z `waga_bledu: null`; jej flaga `weryfikacja: true` pozostaje. Punkt 9 zgłoszenia #7 i lista reguł do konsultacji z §c są otwarte.
+
+## M3a — wydajność ruchu AI
+
+Pomiar WebGL w Chromium przy spowolnieniu CPU 4× dał 51,66 FPS dla M3a i 35,44 FPS dla `main` w tym samym środowisku. Cel 60 FPS dla M3a pozostaje do potwierdzenia przez Wojtka na sprzęcie docelowym z podglądem Cloudflare Pages.

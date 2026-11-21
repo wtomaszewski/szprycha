@@ -59,6 +59,22 @@
       "lane": "Wlot",
       "intersection": "Skrzyżowanie",
       "signal": "Fazy świateł",
+      "traffic": "Zamiary najbliższych aut",
+      "exit": "wyjazd",
+      "maneuvers": {
+        "straight": "prosto",
+        "left": "w lewo",
+        "right": "w prawo"
+      },
+      "intents": {
+        "driving": "jedzie",
+        "following": "trzyma odstęp",
+        "signal": "czeka na sygnał",
+        "stop": "zatrzymuje się",
+        "yield": "ustępuje",
+        "junction": "skrzyżowanie",
+        "protective": "hamuje ochronnie"
+      },
       "history": "Ostatnie werdykty (10)",
       "mastery": "Opanowanie reguł · M5",
       "priorities": {
