@@ -136,24 +136,44 @@ test('unlocks the first four follow-up orders and explains the illegal shortcut'
     }
     if (id === 'WAW-A1-02')
       await page.screenshot({ path: 'test-results/m4d-praga.png' });
-    await page
-      .getByRole('button', { name: pl.driving.classic, exact: true })
-      .click();
     if (id === 'WAW-A1-03') {
       await expect(canvas(page)).toHaveAttribute('data-y', '878');
-      await routeWithGamepad(page, pragaRoutes[id].shortcut);
+      await page.keyboard.down('ArrowUp');
       await expect
-        .poll(() => riderY(page), { timeout: 10_000 })
-        .toBeLessThan(576);
+        .poll(() => riderY(page), { intervals: [30, 50, 70] })
+        .toBeLessThanOrEqual(590);
+      await page.keyboard.up('ArrowUp');
+      await page.keyboard.down('Space');
       await expect(canvas(page)).toHaveAttribute('data-speed', '0');
       const stoppedY = await riderY(page);
       expect(stoppedY).toBeGreaterThan(512);
       expect(stoppedY).toBeLessThan(576);
+      const crossingTraffic = page.getByText(
+        pl.trafficEvents.pojazd_na_skrzyzowaniu,
+        { exact: true },
+      );
+      await expect(crossingTraffic).toBeVisible();
+      await expect(crossingTraffic).toBeHidden({ timeout: 12_000 });
+      await page.keyboard.up('Space');
+
+      await page.keyboard.down('ArrowUp');
+      await expect
+        .poll(() => riderY(page), { intervals: [30, 50, 70] })
+        .toBeLessThanOrEqual(378);
+      await page.keyboard.up('ArrowUp');
+      await page.keyboard.down('Space');
+      await expect(canvas(page)).toHaveAttribute('data-speed', '0');
+      await page.keyboard.up('Space');
       await expect(
         page.getByText(pl.misje[id].cel4, { exact: true }),
-      ).toBeVisible({
-        timeout: 20_000,
-      });
+      ).toBeVisible();
+    }
+    await page
+      .getByRole('button', { name: pl.driving.classic, exact: true })
+      .click();
+    if (id === 'WAW-A1-03') {
+      // The keyboard has already cleared STOP. Now enter the passage and deliver.
+      await routeWithGamepad(page, pragaRoutes[id].shortcut.slice(-2));
       const lesson = page.getByRole('dialog', { name: pl.replay.title });
       await expect(lesson.locator('#replay-feedback')).toContainText(
         'Białe koło z czerwoną obwódką oznacza zakaz ruchu także dla rowerów',
