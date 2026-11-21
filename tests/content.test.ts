@@ -58,6 +58,12 @@ describe('canonical content', () => {
       message: 'Unknown rule ID: MISSING-01',
     },
     {
+      file: 'dialogi/warszawa.yaml',
+      from: 'dialogi.WAW-T-01.powitanie',
+      to: 'dialogi.WAW-T-01.missing',
+      message: 'Dialogue: missing translation dialogi.WAW-T-01.missing',
+    },
+    {
       file: 'misje/warszawa.yaml',
       from: 'limit_s: 90',
       to: 'limit_s: -1',

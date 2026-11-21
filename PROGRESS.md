@@ -139,3 +139,9 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Cele jazdy, odbioru i dostawy, limity misji i etapu, checkpointy, porażka po czasie lub po trzech werdyktach `major`. Powrót zachowuje czas i werdykty. Surowy wynik zawiera czas, `par_s`, dobre nawyki, werdykty i kwalifikację do premii za czas.
 - WAW-T-01 dostępny z menu w Miasteczku. Ćwiczenie prowadzi od zapięcia kasku przez dojazd do skrzyżowania aż do mety po poprawnym zatrzymaniu na STOP. HUD pokazuje cel, kierunek, odległość i pozostały czas.
 - Wyzwalacze zdarzeń działają na nazwanych strefach i POI. Dialogi, powtórka, biblioteka zdarzeń i trasy kampanii pozostają w M4b–M4d. Naliczanie punktów i gwiazdek należy do M5.
+
+## M4b — dialogi i SzprychaApp (#23)
+
+- Dialogi i postacie są danymi z `content/dialogi/`. Zod waliduje strukturę oraz powiązania z misjami, regułami i postaciami. Przy buildzie sprawdzane są też tłumaczenia oraz arkusze portretów 64×64 z pięcioma emocjami.
+- WAW-T-01 ma dialog otwierający i końcowy po udanym przejeździe. Sierżant Ola zapowiada nowe reguły przed jazdą, po jednym zdaniu na regułę. Gra zapamiętuje zapowiedzi i zaliczone zlecenia lokalnie. Dialog obsługuje klawiaturę, pada i dotyk.
+- SzprychaApp w HUD-zie pokazuje odblokowane zlecenia na bieżącej mapie. Otwarcie wymaga pełnego zatrzymania, a próba w ruchu wyświetla wskazówkę MAN-11. Pełny system progresji należy do M5.

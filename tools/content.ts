@@ -2,6 +2,10 @@ import { readFile, readdir, mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { parse } from 'yaml';
 import { contentSchema } from '../src/content/schemas.ts';
+import {
+  dialogueFileSchema,
+  portraitEmotions,
+} from '../src/content/dialogues.ts';
 import { missionsSchema } from '../src/content/missions.ts';
 import { textAt } from '../src/content/translation.ts';
 import { validateMaps } from './maps.ts';
@@ -46,9 +50,34 @@ export async function readContent(root = process.cwd()) {
       }
     }),
   );
+  const dialogueDirectory = resolve(root, 'content/dialogi');
+  const dialogueFiles = (await readdir(dialogueDirectory))
+    .filter((file) => file.endsWith('.yaml'))
+    .sort();
+  const dialogueGroups = await Promise.all(
+    dialogueFiles.map(async (file) => {
+      try {
+        return dialogueFileSchema.parse(
+          parse(await readFile(resolve(dialogueDirectory, file), 'utf8')),
+        );
+      } catch (error) {
+        throw new Error(
+          `Invalid dialogue content in ${file}: ${String(error)}`,
+          {
+            cause: error,
+          },
+        );
+      }
+    }),
+  );
   const content = contentSchema.parse({
     ...Object.fromEntries(entries),
     misje: groups.flat(),
+    dialogi: {
+      postacie: dialogueGroups.flatMap(({ postacie }) => postacie),
+      dialogi: dialogueGroups.flatMap(({ dialogi }) => dialogi),
+      zapowiedzi: dialogueGroups.flatMap(({ zapowiedzi }) => zapowiedzi),
+    },
   });
   const translations: unknown = JSON.parse(
     await readFile(resolve(root, 'i18n/pl.json'), 'utf8'),
@@ -56,8 +85,7 @@ export async function readContent(root = process.cwd()) {
   for (const mission of content.misje) {
     const keys = [
       mission.tytul,
-      mission.dialog_start,
-      mission.dialog_koniec,
+      mission.opis,
       ...mission.cele.flatMap(({ opis, wskazowka_powrotu }) => [
         opis,
         wskazowka_powrotu,
@@ -66,6 +94,38 @@ export async function readContent(root = process.cwd()) {
     for (const key of keys) {
       if (key && !textAt(translations, key))
         throw new Error(`Mission ${mission.id}: missing translation ${key}`);
+    }
+  }
+  const translation = (key: string) => {
+    const text = textAt(translations, key);
+    if (!text) throw new Error(`Dialogue: missing translation ${key}`);
+    return text;
+  };
+  for (const character of content.dialogi.postacie) {
+    translation(character.nazwa);
+    const image = await readFile(
+      resolve(root, `assets/generated/portraits/${character.id}.png`),
+    );
+    if (
+      image.readUInt32BE(16) !== 64 * portraitEmotions.length ||
+      image.readUInt32BE(20) !== 64
+    )
+      throw new Error(`Invalid portrait sheet dimensions: ${character.id}`);
+  }
+  for (const { linie } of content.dialogi.dialogi)
+    for (const { tekst, lektor } of linie) {
+      translation(tekst);
+      if (lektor) translation(lektor);
+    }
+  const sentences = new Intl.Segmenter('pl', { granularity: 'sentence' });
+  for (const { tekst, lektor } of content.dialogi.zapowiedzi) {
+    for (const key of [tekst, lektor]) {
+      if (!key) continue;
+      const text = translation(key).trim();
+      if (text.length > 140 || [...sentences.segment(text)].length !== 1)
+        throw new Error(
+          `Rule introduction must have one sentence of at most 140 characters: ${key}`,
+        );
     }
   }
   return content;

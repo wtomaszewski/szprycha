@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { missionsSchema } from './missions.ts';
+import { dialogueFileSchema } from './dialogues.ts';
 
 const text = z.string().trim().min(1);
 const id = text.regex(/^[A-Za-z0-9_-]+$/);
@@ -224,6 +225,7 @@ export const contentSchema = z
     balans: balanceSchema,
     osiagniecia: achievementsSchema,
     misje: missionsSchema,
+    dialogi: dialogueFileSchema,
   })
   .superRefine((data, ctx) => {
     function unique(values: string[], path: string[]) {
@@ -289,13 +291,77 @@ export const contentSchema = z
     data.osiagniecia.osiagniecia.forEach((a, i) =>
       condition(a.warunek, ['osiagniecia', 'osiagniecia', i, 'warunek']),
     );
+    const { postacie, dialogi, zapowiedzi } = data.dialogi;
+    unique(
+      postacie.map(({ id }) => id),
+      ['dialogi', 'postacie'],
+    );
+    unique(
+      dialogi.map(({ id }) => id),
+      ['dialogi', 'dialogi'],
+    );
+    unique(
+      zapowiedzi.map(({ regula }) => regula),
+      ['dialogi', 'zapowiedzi'],
+    );
+    const characters = new Set(postacie.map(({ id }) => id));
+    const dialogueIds = new Map(
+      dialogi.map((dialogue) => [dialogue.id, dialogue]),
+    );
+    const introducedRules = new Set(zapowiedzi.map(({ regula }) => regula));
+    for (const [i, dialogue] of dialogi.entries()) {
+      dialogue.linie.forEach(({ postac }, j) => {
+        if (!characters.has(postac))
+          ctx.addIssue({
+            code: 'custom',
+            path: ['dialogi', 'dialogi', i, 'linie', j, 'postac'],
+            message: `Unknown character: ${postac}`,
+          });
+      });
+    }
+    zapowiedzi.forEach(({ regula }, i) =>
+      reference(regula, ['dialogi', 'zapowiedzi', i, 'regula']),
+    );
+    if (zapowiedzi.length && !characters.has('sierzant_ola'))
+      ctx.addIssue({
+        code: 'custom',
+        path: ['dialogi', 'postacie'],
+        message: 'Missing character sierzant_ola for rule introductions',
+      });
+
     const missions = new Set(data.misje.map(({ id }) => id));
     const ranks = new Set(data.balans.rangi.map(({ id }) => id));
     data.misje.forEach((mission, i) => {
       const path = ['misje', i];
-      mission.reguly_cwiczone.forEach((rule, j) =>
-        reference(rule, [...path, 'reguly_cwiczone', j]),
-      );
+      const practiced = new Set(mission.reguly_cwiczone);
+      mission.reguly_cwiczone.forEach((rule, j) => {
+        const rulePath = [...path, 'reguly_cwiczone', j];
+        reference(rule, rulePath);
+        if (rules.has(rule) && !introducedRules.has(rule))
+          ctx.addIssue({
+            code: 'custom',
+            path: rulePath,
+            message: `Missing rule introduction: ${rule}`,
+          });
+      });
+      for (const field of ['dialog_start', 'dialog_koniec'] as const) {
+        const id = mission[field];
+        if (id && !dialogueIds.has(id))
+          ctx.addIssue({
+            code: 'custom',
+            path: [...path, field],
+            message: `Unknown dialogue: ${id}`,
+          });
+      }
+      const startLines =
+        dialogueIds.get(mission.dialog_start ?? '')?.linie.length ?? 0;
+      if (startLines + practiced.size > 4)
+        ctx.addIssue({
+          code: 'custom',
+          path: [...path, 'dialog_start'],
+          message:
+            'Mission opening including introductions can have at most four lines',
+        });
       mission.cele.forEach(({ wymagany_nawyk }, j) => {
         if (wymagany_nawyk)
           reference(wymagany_nawyk, [...path, 'cele', j, 'wymagany_nawyk']);

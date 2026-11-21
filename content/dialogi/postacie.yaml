@@ -1,0 +1,15 @@
+postacie:
+  - { id: gracz, nazwa: dialogi.postacie.gracz }
+  - { id: pan_kazik, nazwa: dialogi.postacie.pan_kazik }
+  - { id: sierzant_ola, nazwa: dialogi.postacie.sierzant_ola }
+  - { id: turbo, nazwa: dialogi.postacie.turbo }
+  - { id: dj_dzwonek, nazwa: dialogi.postacie.dj_dzwonek }
+  - { id: lena_mapa, nazwa: dialogi.postacie.lena_mapa }
+  - { id: maly_franek, nazwa: dialogi.postacie.maly_franek }
+  - { id: pani_halina, nazwa: dialogi.postacie.pani_halina }
+  - { id: profesor_kwant, nazwa: dialogi.postacie.profesor_kwant }
+  - { id: inzynier_zawila, nazwa: dialogi.postacie.inzynier_zawila }
+  - { id: krasnal_dzwoneczek, nazwa: dialogi.postacie.krasnal_dzwoneczek }
+  - { id: pan_latarnik, nazwa: dialogi.postacie.pan_latarnik }
+  - { id: pani_doktor, nazwa: dialogi.postacie.pani_doktor }
+  - { id: gang_bez_hamulcow, nazwa: dialogi.postacie.gang_bez_hamulcow }

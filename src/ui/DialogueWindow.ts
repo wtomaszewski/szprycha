@@ -1,0 +1,254 @@
+import {
+  portraitEmotions,
+  type DialogueLine,
+  type Dialogues,
+} from '../content/dialogues';
+import { translate, ui } from '../core/presentation';
+
+const portraits = import.meta.glob<string>(
+  '../../assets/generated/portraits/*.png',
+  {
+    eager: true,
+    query: '?url',
+    import: 'default',
+  },
+);
+const holdMs = 550;
+
+export class DialogueWindow {
+  private readonly panel = document.createElement('dialog');
+  private readonly portrait = document.createElement('span');
+  private readonly speaker = document.createElement('strong');
+  private readonly text = document.createElement('p');
+  private readonly nextButton = document.createElement('button');
+  private readonly voiceButton = document.createElement('button');
+  private readonly scrollButton = document.createElement('button');
+  private readonly names: Map<string, string>;
+  private readonly lifetime = new AbortController();
+  private readonly resize = new ResizeObserver(() => this.updateScrollButton());
+  private lines: readonly DialogueLine[] = [];
+  private index = 0;
+  private done?: () => void;
+  private hold?: number;
+  private pointerHeld = false;
+  private keyHeld = false;
+  private padHeld = false;
+  private speaking = false;
+
+  constructor(parent: HTMLElement, content: Dialogues) {
+    this.names = new Map(
+      content.postacie.map(({ id, nazwa }) => [id, translate(nazwa)]),
+    );
+    this.panel.className = 'game-dialog dialogue-window';
+    this.panel.setAttribute('aria-label', ui.dialogueUi.title);
+    const line = document.createElement('div');
+    line.className = 'dialogue-line';
+    line.setAttribute('aria-live', 'polite');
+    line.setAttribute('aria-atomic', 'true');
+    const speech = document.createElement('div');
+    speech.className = 'dialogue-speech';
+    this.portrait.className = 'dialogue-portrait';
+    this.portrait.setAttribute('aria-hidden', 'true');
+    this.text.className = 'dialogue-text';
+    speech.append(this.speaker, this.text);
+    line.append(this.portrait, speech);
+
+    const actions = document.createElement('div');
+    actions.className = 'dialogue-actions';
+    const skip = document.createElement('button');
+    this.nextButton.type =
+      skip.type =
+      this.voiceButton.type =
+      this.scrollButton.type =
+        'button';
+    this.nextButton.textContent = ui.dialogueUi.next;
+    this.nextButton.title = ui.dialogueUi.controls;
+    skip.textContent = ui.dialogueUi.skip;
+    this.voiceButton.textContent = ui.dialogueUi.voice;
+    this.voiceButton.setAttribute('aria-pressed', 'false');
+    this.voiceButton.hidden = true;
+    if ('speechSynthesis' in window) {
+      const updateVoiceButton = () => {
+        this.voiceButton.hidden = !this.polishVoice();
+      };
+      window.speechSynthesis.addEventListener(
+        'voiceschanged',
+        updateVoiceButton,
+        { signal: this.lifetime.signal },
+      );
+      updateVoiceButton();
+    }
+    this.scrollButton.textContent = ui.dialogueUi.readMore;
+    this.scrollButton.addEventListener('click', () => {
+      const { scrollTop, scrollHeight, clientHeight } = this.text;
+      this.text.scrollTop =
+        scrollTop >= scrollHeight - clientHeight ? 0 : scrollTop + clientHeight;
+    });
+    this.nextButton.addEventListener('click', () => this.advance());
+    skip.addEventListener('click', () => this.finish());
+    this.voiceButton.addEventListener('click', () => {
+      this.speaking = !this.speaking;
+      this.voiceButton.setAttribute('aria-pressed', String(this.speaking));
+      this.speak();
+    });
+    actions.append(this.voiceButton, this.scrollButton, skip, this.nextButton);
+    this.panel.append(line, actions);
+    this.panel.addEventListener('cancel', (event) => {
+      event.preventDefault();
+      this.finish();
+    });
+
+    this.nextButton.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0 || !event.isPrimary) return;
+      this.pointerHeld = true;
+      this.nextButton.setPointerCapture(event.pointerId);
+      this.startHold();
+    });
+    for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'])
+      this.nextButton.addEventListener(event, () => {
+        if (!this.pointerHeld) return;
+        this.pointerHeld = false;
+        this.clearHold();
+      });
+    this.panel.addEventListener('keydown', (event) => {
+      if (event.target !== this.nextButton) return;
+      if (event.code === 'ArrowDown' || event.code === 'ArrowUp') {
+        event.preventDefault();
+        this.text.scrollTop += event.code === 'ArrowDown' ? 24 : -24;
+      }
+      if (event.code !== 'Enter' && event.code !== 'Space') return;
+      event.preventDefault();
+      if (!event.repeat && !this.keyHeld) {
+        this.keyHeld = true;
+        this.startHold();
+      }
+    });
+    this.panel.addEventListener('keyup', (event) => {
+      if ((event.code !== 'Enter' && event.code !== 'Space') || !this.keyHeld)
+        return;
+      event.preventDefault();
+      this.keyHeld = false;
+      this.clearHold();
+      this.advance();
+    });
+    this.nextButton.addEventListener('blur', () => {
+      if (!this.keyHeld) return;
+      this.keyHeld = false;
+      this.clearHold();
+    });
+    this.resize.observe(this.text);
+    this.panel.addEventListener('close', () => this.clearHold());
+    parent.append(this.panel);
+  }
+
+  get open() {
+    return this.panel.open;
+  }
+
+  show(lines: readonly DialogueLine[], done: () => void) {
+    if (!lines.length) {
+      done();
+      return;
+    }
+    this.lines = lines;
+    this.index = 0;
+    this.done = done;
+    this.panel.showModal();
+    this.nextButton.focus();
+    this.render();
+  }
+
+  gamepad(pressed: boolean, justPressed: boolean) {
+    if (justPressed) {
+      this.padHeld = true;
+      this.startHold();
+    } else if (this.padHeld && !pressed) {
+      this.padHeld = false;
+      this.clearHold();
+      this.advance();
+    }
+  }
+
+  scroll(direction: number) {
+    this.text.scrollTop += direction * this.text.clientHeight;
+  }
+
+  skip() {
+    this.finish();
+  }
+
+  destroy() {
+    this.lifetime.abort();
+    this.resize.disconnect();
+    this.clearHold();
+    if (this.open && this.speaking) window.speechSynthesis?.cancel();
+    this.panel.close();
+  }
+
+  private startHold() {
+    this.clearHold();
+    this.hold = window.setTimeout(() => this.finish(), holdMs);
+  }
+
+  private clearHold() {
+    window.clearTimeout(this.hold);
+    this.hold = undefined;
+  }
+
+  private advance() {
+    if (!this.open) return;
+    this.index++;
+    if (this.index === this.lines.length) this.finish();
+    else this.render();
+  }
+
+  private finish() {
+    if (!this.open) return;
+    this.clearHold();
+    this.pointerHeld = this.keyHeld = this.padHeld = false;
+    if (this.speaking) window.speechSynthesis?.cancel();
+    this.panel.close();
+    const done = this.done;
+    this.done = undefined;
+    done?.();
+  }
+
+  private render() {
+    const { postac, emocja, tekst } = this.lines[this.index]!;
+    const image = portraits[`../../assets/generated/portraits/${postac}.png`];
+    this.portrait.style.backgroundImage = `url("${image}")`;
+    this.portrait.style.backgroundPositionX = `${-64 * portraitEmotions.indexOf(emocja)}px`;
+    this.portrait.dataset.emotion = emocja;
+    this.speaker.textContent = this.names.get(postac) ?? '';
+    this.text.textContent = translate(tekst);
+    this.text.scrollTop = 0;
+    this.updateScrollButton();
+    this.speak();
+  }
+
+  private updateScrollButton() {
+    this.scrollButton.hidden = this.text.scrollHeight <= this.text.clientHeight;
+  }
+
+  private polishVoice() {
+    return window.speechSynthesis
+      .getVoices()
+      .find(
+        ({ localService, lang }) => localService && /^pl(?:-|$)/i.test(lang),
+      );
+  }
+
+  private speak() {
+    if (this.voiceButton.hidden) return;
+    const synthesis = window.speechSynthesis;
+    synthesis.cancel();
+    if (!this.speaking) return;
+    const voice = this.polishVoice();
+    if (!voice) return;
+    const { tekst, lektor } = this.lines[this.index]!;
+    const line = new SpeechSynthesisUtterance(translate(lektor ?? tekst));
+    line.lang = 'pl-PL';
+    line.voice = voice;
+    synthesis.speak(line);
+  }
+}

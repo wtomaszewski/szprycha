@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { dialogueId } from './dialogues.ts';
 
 const id = z.string().regex(/^[A-Za-z0-9_-]+$/);
 const city = z.enum(['warszawa', 'wroclaw']);
@@ -34,6 +35,7 @@ export const missionSchema = z
     mapa: id.optional(),
     akt: count.max(3),
     tytul: key,
+    opis: key.optional(),
     zleceniodawca: id,
     typ: id,
     wymagania: z
@@ -59,8 +61,8 @@ export const missionSchema = z
       xp: count,
       odblokuj: z.array(id).optional(),
     }),
-    dialog_start: key.optional(),
-    dialog_koniec: key.optional(),
+    dialog_start: dialogueId.optional(),
+    dialog_koniec: dialogueId.optional(),
     ruch_ai: z.boolean().optional(),
   })
   .superRefine((mission, ctx) => {
