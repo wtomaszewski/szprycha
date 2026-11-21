@@ -40,6 +40,8 @@ import { contains, type WorldModel } from './world/WorldModel';
 import { ZoneTracker } from './world/ZoneTracker';
 
 const EXIT_TICKS = 0.25 * TICKS_PER_SECOND;
+import { encounterSpeed, type RoadHazard } from './detectors/MAN-08';
+
 type Listener = (verdict: Verdict) => void;
 
 export class RuleEngine {
@@ -134,12 +136,19 @@ export class RuleEngine {
     return () => this.listeners.delete(listener);
   }
 
-  step(rider: RiderState, agents: readonly AgentState[], env: EnvState) {
+  step(
+    rider: RiderState,
+    agents: readonly AgentState[],
+    env: EnvState,
+    hazards?: readonly RoadHazard[],
+  ) {
     const at = this.tick / TICKS_PER_SECOND;
     this.zones.update(rider);
     this.maneuver.updateSignal(rider, this.tick);
     this.emit(this.helmet.evaluate(rider, at));
     this.evaluateTraffic(rider, agents, env, at);
+    if (hazards?.length)
+      this.emit(encounterSpeed(this.world, rider, hazards, at, env));
     this.emit(this.visibility.evaluate(rider, at, env));
     this.emit(this.ridingPosition.evaluate(rider, at));
     this.emit(this.passenger.evaluate(rider, at));

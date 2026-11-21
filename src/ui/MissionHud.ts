@@ -125,9 +125,11 @@ export class MissionHud {
       this.instruction,
       checkpointHint ??
         (helmetFastened
-          ? target.goal.opis
-            ? translate(target.goal.opis)
-            : ui.missionUi.goals[target.goal.typ]
+          ? target.eventWaypoint
+            ? ui.missionUi.eventWaypoint
+            : target.goal.opis
+              ? translate(target.goal.opis)
+              : ui.missionUi.goals[target.goal.typ]
           : ui.missionUi.helmetHint),
     );
     setText(

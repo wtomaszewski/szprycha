@@ -36,22 +36,42 @@ test('starts WAW-T-01 from the menu with a visible goal arrow and timer', async 
 test('recovers from a helmet mistake and finishes after stopping at B-20', async ({
   page,
 }) => {
+  test.setTimeout(45_000);
   await page.goto('/');
   await page.getByRole('button', { name: pl.misje['WAW-T-01'].tytul }).click();
   const canvas = page.locator('canvas');
   await expect(canvas).toHaveAttribute('data-scene', 'City');
   await skipDialogue(page);
+  const timer = page.getByLabel(pl.missionUi.timer);
+  await expect(timer).toHaveText('1:24', { timeout: 12_000 });
   await page.keyboard.down('ArrowUp');
-  const resume = page.getByRole('button', { name: pl.missionUi.continue });
-  await expect(resume).toBeVisible();
+  const lesson = page.getByRole('dialog', { name: pl.replay.title });
+  await expect(lesson).toBeVisible();
   await page.keyboard.up('ArrowUp');
-  await expect(canvas).toHaveAttribute('data-speed', '0');
-  await expect(page.locator('.rule-feedback')).toHaveAttribute(
-    'data-kind',
-    'major',
+  const feedback = lesson.locator('#replay-feedback');
+  const content = await (await page.request.get('/data/content.json')).json();
+  const helmet = content.przepisy.przepisy.find(
+    (rule: { id: string }) => rule.id === 'KASK-01',
   );
+  await expect(feedback).toHaveText(helmet.feedback);
+  await expect(
+    lesson.getByRole('button', { name: pl.replay.resume }),
+  ).toBeHidden();
+  const beforeReplay = await timer.textContent();
+  await page.screenshot({ path: 'test-results/m4c-ups.png' });
+  await lesson.getByRole('button', { name: pl.replay.play }).click();
+  await expect(
+    lesson.getByRole('button', { name: pl.replay.stop }),
+  ).toBeVisible();
+  await expect(
+    lesson.getByRole('button', { name: pl.replay.play }),
+  ).toBeVisible({ timeout: 8_000 });
+  await expect(timer).toHaveText(beforeReplay!);
+  await lesson.getByRole('button', { name: pl.replay.retry }).click();
+  await expect(lesson).toBeHidden();
+  await expect(canvas).toHaveAttribute('data-y', '928');
+  await expect(canvas).toHaveAttribute('data-speed', '0');
   await page.getByRole('button', { name: pl.missionUi.equip }).click();
-  await resume.click();
 
   await page.keyboard.down('ArrowUp');
   await expect
@@ -62,6 +82,9 @@ test('recovers from a helmet mistake and finishes after stopping at B-20', async
   await page.keyboard.up('ArrowUp');
   await page.keyboard.down('Space');
   await expect(canvas).toHaveAttribute('data-speed', '0');
+  await expect(
+    page.getByText(pl.trafficEvents.cwiczenie_stop, { exact: true }),
+  ).toBeVisible();
   await page.waitForTimeout(450);
   await page.keyboard.up('Space');
   await page.keyboard.down('ArrowUp');
@@ -93,6 +116,13 @@ test('shows the STOP retry hint and completes the tutorial after a full stop', a
 
   const canvas = page.locator('canvas');
   const resume = page.getByRole('button', { name: pl.missionUi.continue });
+  await page.keyboard.down('ArrowUp');
+  const lesson = page.getByRole('dialog', { name: pl.replay.title });
+  await expect(lesson).toBeVisible({ timeout: 10_000 });
+  await page.keyboard.up('ArrowUp');
+  await expect(lesson).toContainText(/STOP/);
+  await page.screenshot({ path: 'test-results/m4c-stop-highlight.png' });
+  await lesson.getByRole('button', { name: pl.replay.resume }).click();
   await page.keyboard.down('ArrowUp');
   await expect(resume).toBeVisible({ timeout: 10_000 });
   await page.keyboard.up('ArrowUp');

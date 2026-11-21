@@ -123,13 +123,14 @@ MAN-04 daje pochwałę za odpowiednio wczesne obejrzenie się i zasygnalizowanie
 Przepuszczenie tramwaju, przepuszczenie pasażera oraz ułatwienie przejazdu pojazdowi uprzywilejowanemu są w M3b zachowaniami symulacji. Detektory PIER-07, PIER-09 i MSC-02 wykorzystują te same stany uczestników w M3c.
 
 ## 7. Stop-klatka i feedback
-Przy `major` (oraz pierwszym wystąpieniu `minor` danej reguły w sesji):
-1. Zwolnienie czasu (0,3 s), zamrożenie, zoom ×1,5 na miejsce.
-2. Podświetlenie: znak/strefa/agent z `highlight`, strzałka „tu był pieszy / auto miało pierwszeństwo”.
-3. Dymek Sierżant Oli (`feedbackKey`, ≤140 znaków) + opcjonalnie lektor.
-4. Przyciski: **Powtórka** (replay ostatnich 5 s z bufora — zapisuj stany wszystkich agentów co tick), **Jeszcze raz** (checkpoint), **Rozumiem** (kontynuuj — tylko przy `minor`).
-5. Wpis do „Notatnika Kuriera” (lista przepisów, które się pojawiły, z wyjaśnieniem i znakiem).
 
+Przy werdykcie `major` lub pierwszym pokazanym `minor` danej reguły w sesji gra wstrzymuje jazdę, ruch AI, zdarzenia i zegar misji. Przez 0,3 s pokazuje spowolnioną końcówkę zdarzenia, po czym zatrzymuje obraz i zwiększa zoom do ×1,5 względem jazdy. Podświetlenie wskazuje znak, strefę lub uczestnika z `highlight` werdyktu. Obrys pulsuje płynnie z częstotliwością 2 Hz. Przy ustawieniu systemowym ograniczającym ruch gra pomija spowolnienie i zoom, a obrys jest stały.
+
+Sierżant Ola wyświetla jedno zdanie `feedback` z `content/przepisy.yaml` wskazane kluczem `feedbackKey`. Dymek mieści najwyżej 140 znaków. „Powtórka” odtwarza historię w zwykłym tempie i ponownie zatrzymuje się na zdarzeniu. „Jeszcze raz” przenosi do checkpointu misji lub startu w wolnej jeździe. Po powrocie misja zachowuje zegar, werdykty i wyzwolone zdarzenia. „Rozumiem” jest dostępne przy drobnym błędzie i wznawia jazdę. Wynik misji ma pierwszeństwo po osiągnięciu limitu błędów. Brak nawyku wymaganego do zaliczenia celu zachowuje wskazówkę powrotu do checkpointu.
+
+`ReplayBuffer` jest niezależny od Phasera. Wstępnie przydziela 301 próbek na 300 odstępów po 1/60 s. Zapisuje pozycję, kierunek i prędkość gracza i agentów oraz stan potrzebny do prezentacji, w tym aktywność agentów, światła, akcje gracza i obiekty zdarzeń. Renderer czyta próbki w kolejności czasu i podczas powtórki pomija krok symulacji. Historia krótsza niż 5 s odtwarza dostępny odcinek. Przeniesienie roweru zaczyna nową historię w miejscu odrodzenia.
+
+Powtórkę można uruchomić z klawiatury lub dotykiem. Na padzie A uruchamia lub zatrzymuje powtórkę, B kontynuuje po drobnym błędzie lub wraca do checkpointu po poważnym, a X wraca do checkpointu. Lektor i Notatnik Kuriera pozostają rozszerzeniami stop-klatki.
 
 ## 8. Testy scenariuszowe (`tests/rules/*.yaml`)
 

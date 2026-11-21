@@ -555,3 +555,62 @@ button[aria-pressed='true'] {
     min-width: 56px;
   }
 }
+
+.replay-dialog {
+  width: 440px;
+  border-color: #ffcd75;
+}
+.replay-dialog::backdrop {
+  background: linear-gradient(transparent 55%, #1a1c2c88);
+}
+.replay-dialog h2 {
+  color: #ffcd75;
+  margin: 0 0 6px;
+}
+.replay-dialog p {
+  margin: 3px 0 10px;
+}
+.replay-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.replay-actions button {
+  min-height: 44px;
+  padding-inline: 12px;
+}
+.replay-playing strong,
+.replay-playing p {
+  display: none;
+}
+.traffic-event {
+  position: fixed;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(45vw, 400px);
+  pointer-events: none;
+  background: #1a1c2c;
+  color: #f4f4f4;
+  border: 2px solid #ffcd75;
+  padding: 7px 10px;
+}
+.traffic-event p {
+  margin: 0;
+}
+.traffic-event button {
+  pointer-events: auto;
+  min-height: 44px;
+  margin-top: 5px;
+}
+
+@media (max-height: 500px) {
+  .traffic-event {
+    top: 54px;
+    left: auto;
+    right: max(90px, calc(env(safe-area-inset-right) + 80px));
+    transform: none;
+    max-width: 34vw;
+  }
+}

@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan: 21.11.2026. Gałąź: `feat/22-m4a-system-misji`.
+Stan: 21.11.2026. Gałąź: `feat/24-m4c-stopklatka-zdarzenia`.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -8,7 +8,7 @@ Stan: 21.11.2026. Gałąź: `feat/22-m4a-system-misji`.
 | M1     | Jazda, testowa mapa, kamera, bloki 2.5D     | Grywalny prototyp; lokalne kontrole zielone, test fizycznego Androida pozostaje do wykonania |
 | M2     | Silnik zasad v1                             | Scalony w `main` w PR #13                                                                    |
 | M3     | Ruch drogowy AI i pozostałe detektory       | Scalony w `main`. Ostatni PR to #21.                                                         |
-| M4     | Misje i fabuła                              | M4a gotowy do recenzji. M4b–M4d w kolejce.                                                   |
+| M4     | Misje i fabuła                              | M4a i M4b w `main`. M4c gotowy do recenzji. M4d w kolejce.                                   |
 | M5     | Punktacja, progresja, zapis                 | Nierozpoczęty                                                                                |
 | M6     | Mapy Warszawy i Wrocławia                   | Nierozpoczęty                                                                                |
 | M7     | Plac, quiz, egzamin                         | Nierozpoczęty                                                                                |
@@ -145,3 +145,10 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Dialogi i postacie są danymi z `content/dialogi/`. Zod waliduje strukturę oraz powiązania z misjami, regułami i postaciami. Przy buildzie sprawdzane są też tłumaczenia oraz arkusze portretów 64×64 z pięcioma emocjami.
 - WAW-T-01 ma dialog otwierający i końcowy po udanym przejeździe. Sierżant Ola zapowiada nowe reguły przed jazdą, po jednym zdaniu na regułę. Gra zapamiętuje zapowiedzi i zaliczone zlecenia lokalnie. Dialog obsługuje klawiaturę, pada i dotyk.
 - SzprychaApp w HUD-zie pokazuje odblokowane zlecenia na bieżącej mapie. Otwarcie wymaga pełnego zatrzymania, a próba w ruchu wyświetla wskazówkę MAN-11. Pełny system progresji należy do M5.
+
+## M4c — stop-klatka i zdarzenia (#24)
+
+- „UPS!” pokazuje ostatnie 5 s ruchu gracza i agentów z bufora próbek przy 60 Hz. Stop-klatka wskazuje uczestnika, strefę lub znak, podaje jedno zdanie z bazy przepisów i pozwala wrócić do checkpointu. Podświetlenie pulsuje przy 2 Hz i respektuje ustawienie ograniczonego ruchu.
+- Osiem zdarzeń drogowych i wymuszane ćwiczenie STOP w WAW-T-01. Losowanie jest deterministyczne i ma interfejs wag dla M5. Wymuszone zdarzenia działają także w misjach z wyłączonym ruchem tła.
+- Testy pokrywają zawijanie i odtwarzanie historii, wszystkie zdarzenia headless, walidację powiązań z regułami, obsługę kolejki wymuszonej oraz przejazd WAW-T-01 w Chromium.
+- Pomiar jak w M3a w Chromium headless (WebGL, 1280×720, CPU 4×, trzy przejazdy na wariant). Mediany średniej liczby klatek wyniosły 39,49 FPS na `main`, 39,12 FPS z historią 5 s i 38,79 FPS z pojedynczą próbką w tej samej implementacji. 95. percentyl czasu klatki wyniósł 33,4 ms dla wszystkich wariantów. Pomiar obejmował jazdę z pominięciem pauzy na lekcję i nie wykazał spadku FPS od zapisu historii. Wynik dotyczy środowiska headless.
