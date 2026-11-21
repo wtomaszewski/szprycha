@@ -35,6 +35,12 @@
 
 ---
 
+## Ruch AI w Miasteczku
+
+- `traffic_routes` zawiera kierunkowe polilinie z `kind` i prędkością `speed` w m/s. Pieszy zawraca na końcu chodnika, a tramwaj i pojazd uprzywilejowany ponownie wjeżdżają na granicy mapy z opóźnieniem `repeat_s`. Rowerzysta na jezdni startuje z wlotu wskazanego przez `lane` w obiekcie `roadway_cyclist` warstwy `spawns`.
+- `traffic_controls` wiąże wjazd i wyjazd tramwaju lub pojazdu uprzywilejowanego ze skrzyżowaniem przez `route`, indeksy wierzchołków `vertex` i `exit` liczone od zera oraz `lane`. Obiekt przystanku bez wysepki podaje `route`, wierzchołek zatrzymania `vertex`, obszar przejścia przez jezdnię i polilinię `passenger` do chodnika.
+- `crossing_signals` przypisuje sygnał do przejścia albo przejazdu przez identyfikator `crossing`. Jeśli zebra i przejazd przylegają do siebie, wspólne `trafficGroup` pozwala zatrzymać pojazdy przed oboma. Fazy sygnałów należy dobrać do ruchu na wlotach i czasu zejścia z przejścia.
+
 ## WARSZAWA
 
 **Motywy wizualne:** Wisła przecinająca mapę z północy na południe (Śródmieście/Stare Miasto na zachodzie, Praga/Stadion na wschodzie), czerwone tramwaje, szare i kolorowe bloki, szkło wieżowców w Centrum, zieleń Łazienek.

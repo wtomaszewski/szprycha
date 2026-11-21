@@ -1,13 +1,13 @@
 # Postęp projektu
 
-Stan: 21.11.2026. Gałąź: `feat/6-m2-silnik-zasad`.
+Stan: 21.11.2026. Gałąź: `feat/15-m3b-uczestnicy`.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | M0     | Szkielet, menu, treści, narzędzia i CI web  | Ukończony — kontrole lokalne i GitHub Actions zielone                                        |
 | M1     | Jazda, testowa mapa, kamera, bloki 2.5D     | Grywalny prototyp; lokalne kontrole zielone, test fizycznego Androida pozostaje do wykonania |
 | M2     | Silnik zasad v1                             | Scalony w `main` w PR #13                                                                    |
-| M3     | Ruch drogowy AI i pozostałe detektory       | M3a gotowe do recenzji. Kolejne części M3 pozostają otwarte.                                 |
+| M3     | Ruch drogowy AI i pozostałe detektory       | M3a scalone w main. M3b gotowe do recenzji. M3c pozostaje otwarte.                           |
 | M4     | Misje i fabuła                              | Nierozpoczęty                                                                                |
 | M5     | Punktacja, progresja, zapis                 | Nierozpoczęty                                                                                |
 | M6     | Mapy Warszawy i Wrocławia                   | Nierozpoczęty                                                                                |
@@ -119,3 +119,9 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Samochody uwzględniają odstęp, B-20, S-1 i warunkowe S-2 oraz korzystają z tego samego `IntersectionManager` co gracz. Hamują przed rowerzystą i zajętą zebrą. F3 pokazuje graf, manewry i powody oczekiwania.
 - Vitest sprawdza deterministyczność, walidację mapy, sygnały, hamowanie przed graczem i dziesięć minut ruchu 14 aut z kontrolą kolizji oraz postępu każdego pojazdu. Dotychczasowe scenariusze YAML zachowują własne dane uczestników.
 - Trasy pieszych w miasteczku pozostają skryptowe. Symulacja pozostałych typów uczestników ruchu oraz reszta detektorów należą do kolejnych części M3.
+
+## M3b — uczestnicy ruchu AI
+
+- Piesi chodzą po chodnikach i korzystają z zebr z sygnalizacją oraz bez niej. Rowerzyści AI jeżdżą po DDR, pasie rowerowym i przy prawej krawędzi jezdni. Trasy i kontrolę przejazdów opisują dane Tiled.
+- Tramwaj korzysta ze wspólnego rozstrzygania pierwszeństwa i obsługuje przystanek bez wysepki. Pojazd uprzywilejowany włącza niebieskie światła i syrenę, a auta zjeżdżają na prawo i czekają. F3 pokazuje uczestników i stan zdarzenia.
+- Testy obejmują dwa 10-minutowe przebiegi wszystkich typów uczestników, deterministyczny reset i scenariusze YAML interakcji z graczem. Werdykty PIER-07, PIER-09 i MSC-02 pozostają do M3c. Zachowania oparte na SYG-02, PIER-04, PIER-05 i PIER-09 korzystają z listy do konsultacji w [NOTES_FOR_HUMAN.md](NOTES_FOR_HUMAN.md).

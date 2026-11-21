@@ -6,7 +6,7 @@ To najważniejszy i najbardziej krytyczny moduł. Musi być **czystym TypeScript
 ```
 Tiled (.tmj) ──► WorldModel (strefy, LaneGraph, skrzyżowania, znaki, sygnalizatory)
                          │
-                  TrafficSimulation ──► AgentState[] (auta, trasy i hamowanie ochronne)
+                  TrafficParticipants ──► AgentState[] (ruch AI i hamowanie ochronne)
                                               │
 Gra (Phaser) ──► RiderState ──────────────────┘ co tick
                          │
@@ -74,6 +74,13 @@ Ważność (`kind`) domyślnie z `przepisy.yaml` (`waga_bledu`), detektor może 
 
 **Samochody w M3a.** Macierz konfliktów korzysta z łączników grafu. Przed linią auto ocenia fazę S-1, możliwość zatrzymania przy zmianie na żółte, pełny postój na B-20 lub S-2 oraz kierunek strzałki. `IntersectionManager` sprawdza przecinające się manewry, pierwszeństwo i TTC. Auto wjeżdża, gdy jest miejsce na wyjeździe i skrzyżowanie jest wolne. Przy cyklu prawej ręki stojące auta kolejno przepuszczają najdłużej czekające auto, które ustępuje wyłącznie z tej reguły. Ruch respektuje zajętą zebrę oraz odstęp od poprzednika. Hamowanie ochronne uwzględnia pozycję i krótki przewidywany ruch gracza, a flaga `protectiveBrake` pozwala ocenić wagę wymuszenia.
 
+**Uczestnicy ruchu w M3b.** `TrafficParticipants` aktualizuje pieszych, rowerzystów, tramwaj, pasażera i pojazd uprzywilejowany w tej samej pętli 1/60 s. Silnik zasad dostaje pozycje aktywnych uczestników po aktualizacji ruchu. Mapa Tiled określa trasy, sygnały, przystanek i czas ponownego wjazdu.
+
+- Piesi idą po chodniku i zajmują przejście dopiero po sprawdzeniu sygnału oraz zwolnieniu przejścia przez pojazdy. Kończą rozpoczęte przejście po zmianie sygnału. Przy zebrze bez sygnalizacji samochody ustępują pieszemu wchodzącemu na przejście również w fazie oczekiwania na jego zwolnienie. Sąsiadujące zebra i przejazd rowerowy mogą wskazać wspólny obszar zatrzymania pojazdów.
+- Rowerzyści jadą po DDR i pasie w kierunku wyznaczonym na mapie (GDZIE-01, GDZIE-02). Zwalniają przed przejazdem i stosują się do sygnalizatora rowerowego (PIER-05, SYG-02). Na jezdni jadą przy prawej krawędzi (GDZIE-03) i dzielą z autami odstępy, sygnalizację oraz pierwszeństwo. Trasa jezdnią jest dopuszczona wyłącznie bez przypisanej infrastruktury rowerowej i zakazu.
+- Tramwaj jedzie po polilinii Tiled i dostaje pierwszeństwo na równorzędnym przez `IntersectionManager` (PIER-09). Sygnalizacja i znaki są rozpatrywane wcześniej. Tramwaj zajmuje skrzyżowanie do zjazdu tyłu pojazdu i hamuje ochronnie przed graczem. Na przystanku bez wysepki samochody pozostawiają miejsce na wysiadanie. Tramwaj odjeżdża po przejściu pasażera przez jezdnię na chodnik (MSC-02).
+- Zdarzenie pojazdu uprzywilejowanego uruchamia niebieskie światła, syrenę i wskazanie kierunku (PIER-07). Samochody w kierunku jego jazdy zjeżdżają w prawo i czekają, jeśli mają miejsce. Pojazd uprzywilejowany przepuszcza uczestników kończących przejazd przez skrzyżowanie, a na zablokowanej trasie hamuje.
+
 **Sygnalizowanie zmiany kierunku (MAN-01):**
 - Manewr = zmiana kursu > 45° na skrzyżowaniu, zjazd z drogi, zmiana pasa, omijanie z przesunięciem bocznym > 1 m.
 - `good`: `signal` zgodny z kierunkiem aktywny ≥ 1,5 s przed wjazdem w obszar manewru (dozwolone opuszczenie ręki w trakcie samego skrętu).
@@ -94,6 +101,8 @@ Ważność (`kind`) domyślnie z `przepisy.yaml` (`waga_bledu`), detektor może 
 
 ## 6. Dobre nawyki (werdykty `good`) — lista obowiązkowa
 Zasygnalizowany manewr · ustąpione pierwszeństwo · zatrzymanie na STOP · zatrzymanie na czerwonym · przeprowadzenie roweru przez przejście · obejrzenie się przed manewrem · włączenie świateł o zmroku (raz na misję) · zachowanie odstępu od zaparkowanych aut (> 1 m) · zjazd na prawo przed pojazdem uprzywilejowanym · przepuszczenie pieszych na przystanku bez wysepki · wybór DDR zamiast jezdni · zwolnienie na chodniku przy pieszych · odebranie telefonu dopiero po zatrzymaniu.
+
+Przepuszczenie tramwaju, przepuszczenie pasażera oraz ułatwienie przejazdu pojazdowi uprzywilejowanemu są w M3b zachowaniami symulacji. Werdykty i ich informacje zwrotne dla gracza należą do M3c.
 
 ## 7. Stop-klatka i feedback
 Przy `major` (oraz pierwszym wystąpieniu `minor` danej reguły w sesji):
@@ -121,10 +130,16 @@ W M2 scenariusz podaje próbki wejściowe silnika. Pozycje w YAML odnoszą się 
 
 Dla każdej reguły testujemy `good`, `minor` i `major` tam, gdzie dana waga istnieje, oraz warunek graniczny. Przypadki i uruchomienie opisuje [README testów](../tests/rules/README.md).
 
+Scenariusze [M3b](../tests/sim/m3b.yaml) uruchamiają rzeczywistą symulację. Sprawdzają pierwszeństwo tramwaju, jego reakcję na zablokowanie toru i sygnalizację oraz zatrzymanie pojazdu uprzywilejowanego przed graczem i wznowienie przejazdu po zjechaniu gracza na prawo. Test dziesięciu minut obejmuje wszystkie typy uczestników, postęp każdego z nich, odstępy, wysiadanie i ustępowanie pojazdowi z sygnałami.
+
 ## 9. Debug overlay (F3)
 Nakładka pokazuje strefy, skierowane polilinie, węzły i dozwolone relacje skrętu. Strzałki nad autami pokazują zamiar jazdy, a panel opisuje manewr, docelowy pas i stan najbliższych aut. Nadal widać klasy pierwszeństwa wlotów, fazy świateł, TTC i 10 ostatnich werdyktów. Wyniki opanowania reguł są planowane od M5.
 
-![Nakładka F3 z grafem pasów i hamowaniem ochronnym auta](images/m3a-overlay.png)
+Panel M3b pokazuje również stan pieszych, rowerzystów, tramwaju z wysiadaniem i zdarzenia uprzywilejowanego. Strzałki nad uczestnikami wskazują kierunek ich ruchu.
+
+![Nakładka F3 przy przystanku bez wysepki](images/m3b-przystanek.png)
+
+![Nakładka F3 podczas przejazdu pojazdu uprzywilejowanego](images/m3b-przejazd.png)
 
 ## 10. Reguły `quiz-only`
 Niektóre przepisy trudno sprawdzić w symulacji (np. dokładna treść rozmowy z dyspozytorem 112, kolumna > 15 rowerów poza misją). W `przepisy.yaml` mają `detektor: quiz-only` albo `detektor: scenka` (interaktywna scenka z wyborami, np. pierwsza pomoc). Nie udawaj wykrywania, którego nie ma.
