@@ -23,11 +23,26 @@ export class RuleFeedback {
     parent.append(this.counts, this.bubble);
   }
 
-  receive(verdict: Verdict, counts: RuleEngine['counts']) {
+  explanation(verdict: Verdict) {
+    const text =
+      this.text.get(verdict.feedbackKey) ??
+      this.text.get(`przepisy.${verdict.ruleId}.feedback`);
+    if (!text) return '';
+    const first =
+      new Intl.Segmenter('pl', { granularity: 'sentence' })
+        .segment(text)
+        [Symbol.iterator]()
+        .next()
+        .value?.segment.trim() ?? '';
+    return first.length <= 140
+      ? first
+      : `${first.slice(0, 139).replace(/\s+\S*$/, '')}…`;
+  }
+
+  receive(verdict: Verdict, counts: RuleEngine['counts'], review: boolean) {
     this.showCounts(counts);
-    if (verdict.kind === 'good') return;
-    if (verdict.kind === 'major') this.pending.unshift(verdict);
-    else this.pending.push(verdict);
+    if (verdict.kind === 'good' || review) return;
+    this.pending.push(verdict);
     if (this.pending.length > 3) this.pending.pop();
   }
 

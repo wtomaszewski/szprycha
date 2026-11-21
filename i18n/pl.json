@@ -107,12 +107,36 @@
     },
     "emergencyApproaching": "Pojazd uprzywilejowany · zjedź na prawo"
   },
+  "replay": {
+    "title": "UPS!",
+    "play": "Powtórka",
+    "stop": "Zatrzymaj powtórkę",
+    "retry": "Jeszcze raz",
+    "resume": "Rozumiem"
+  },
+  "trafficEvents": {
+    "cwiczenie_stop": "Próba przed znakiem STOP",
+    "pojazd_uprzywilejowany": "Pojazd uprzywilejowany na sygnale",
+    "pieszy_na_pasach": "Pieszy zbliża się do przejścia",
+    "pilka_na_jezdni": "Piłka na drodze. Zwolnij i przygotuj się do zatrzymania.",
+    "drzwi_auta": "Uwaga, otwierają się drzwi auta!",
+    "tramwaj_bez_wysepki": "Tramwaj podjeżdża na przystanek bez wysepki",
+    "telefon_dzwoni": "Telefon dzwoni!",
+    "kolega_podwozka": "Kolega pyta: „Podwieziesz mnie na bagażniku?”",
+    "rowerzysta_pod_prad": "Rowerzysta jedzie pod prąd. Zwolnij i zachowaj odstęp.",
+    "answer": "Odbierz (G / Y)",
+    "decline": "Odmów (G / Y)",
+    "phonePutAway": "Telefon odłożony.",
+    "accepted": "Połączenie odebrane po zatrzymaniu.",
+    "declined": "Jedziesz dalej bez pasażera."
+  },
   "missionUi": {
     "timer": "Czas misji",
     "direction": "Kierunek i odległość do celu",
     "distanceUnit": "m",
     "equip": "Zapnij kask",
     "helmetHint": "Zapnij kask, zanim ruszysz.",
+    "eventWaypoint": "Jedź do zaznaczonego miejsca, by rozpocząć zdarzenie.",
     "checkpointHint": "Wróć i wykonaj instrukcję bieżącego celu.",
     "continue": "Jedź dalej od punktu kontrolnego",
     "result": "Wynik misji",

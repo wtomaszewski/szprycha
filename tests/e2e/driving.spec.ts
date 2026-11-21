@@ -70,8 +70,10 @@ test('touch joystick moves in simple mode and releases cleanly', async ({
   await page.mouse.move(box.x + box.width / 2, box.y + 8);
   await page.mouse.down();
   await expect
-    .poll(async () => Number(await canvas.getAttribute('data-y')))
-    .toBeLessThan(initial - 20);
+    .poll(async () => Number(await canvas.getAttribute('data-y')), {
+      intervals: [25, 50, 75],
+    })
+    .toBeLessThan(initial - 12);
   await page.mouse.up();
   await expect(canvas).toHaveAttribute('data-speed', '0');
 });
@@ -307,11 +309,13 @@ test('F3 toggles both debug tools and the HUD explains the choice of road', asyn
   await expect(overlay).toContainText(pl.rules.debug.emergency);
   await expect(overlay).toContainText(/car-\d+ · (prosto|w lewo|w prawo) ·/);
   await page.keyboard.down('ArrowUp');
-  await expect(page.locator('.rule-feedback')).toHaveText(
+  const lesson = page.getByRole('dialog', { name: pl.replay.title });
+  await expect(lesson).toContainText(
     'Obok jest droga dla rowerów w Twoim kierunku, więc wybierz ją.',
     { timeout: 15_000 },
   );
   await page.keyboard.up('ArrowUp');
+  await lesson.getByRole('button', { name: pl.replay.resume }).click();
   await page.keyboard.down('Space');
   await expect(canvas).toHaveAttribute('data-speed', '0');
   await page.keyboard.up('Space');

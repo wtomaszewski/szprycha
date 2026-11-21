@@ -7,6 +7,7 @@ import {
   portraitEmotions,
 } from '../src/content/dialogues.ts';
 import { missionsSchema } from '../src/content/missions.ts';
+import { eventIds, eventRules } from '../src/gameplay/TrafficEvents.ts';
 import { textAt } from '../src/content/translation.ts';
 import { validateMaps } from './maps.ts';
 
@@ -95,6 +96,14 @@ export async function readContent(root = process.cwd()) {
       if (key && !textAt(translations, key))
         throw new Error(`Mission ${mission.id}: missing translation ${key}`);
     }
+  }
+  const ruleIds = new Set(content.przepisy.przepisy.map(({ id }) => id));
+  for (const id of eventIds) {
+    if (!textAt(translations, `trafficEvents.${id}`))
+      throw new Error(`Traffic event: missing translation ${id}`);
+    for (const ruleId of eventRules[id])
+      if (!ruleIds.has(ruleId))
+        throw new Error(`Traffic event ${id}: unknown rule ${ruleId}`);
   }
   const translation = (key: string) => {
     const text = textAt(translations, key);

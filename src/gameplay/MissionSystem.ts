@@ -55,11 +55,18 @@ function reached(area: Box, position: Vec2): boolean {
 /** One step per simulation tick. Positions and map areas use metres. */
 export class MissionSystem {
   readonly start: MissionSpawn;
-  private readonly goals: { goal: MissionGoal; area: Box; position: Vec2 }[];
+  private readonly goals: {
+    goal: MissionGoal;
+    area: Box;
+    position: Vec2;
+    eventWaypoint?: boolean;
+  }[];
+  private forcedWaypoint?: MissionSystem['goals'][number];
   private readonly checkpoints: PointOfInterest[];
   private readonly forced: {
     event: ForcedMissionEvent;
     area: Box;
+    position: Vec2;
     fired: boolean;
   }[];
   private readonly goalTicks: number[];
@@ -103,13 +110,28 @@ export class MissionSystem {
         throw new Error(
           `Mission ${definition.id}: unknown event location ${event.przy}`,
         );
-      return { event, area, fired: false };
+      return { event, area, fired: false, position: center(area) };
     });
     this.failureConditions = new Set(definition.warunki_porazki);
   }
 
-  get target() {
+  private get goalTarget() {
     return this.outcome ? undefined : this.goals[this.goalIndex];
+  }
+
+  get target() {
+    const target = this.goalTarget;
+    if (!target || this.goalIndex !== this.goals.length - 1) return target;
+    const pending = this.forced.find(({ fired }) => !fired);
+    if (!pending) return target;
+    if (this.forcedWaypoint?.area !== pending.area)
+      this.forcedWaypoint = {
+        ...target,
+        area: pending.area,
+        position: pending.position,
+        eventWaypoint: true,
+      };
+    return this.forcedWaypoint;
   }
 
   get elapsedSeconds() {
@@ -118,7 +140,7 @@ export class MissionSystem {
 
   get remainingSeconds() {
     const whole = this.definition.limit_s ?? Infinity;
-    const stage = this.target?.goal.limit_s ?? Infinity;
+    const stage = this.goalTarget?.goal.limit_s ?? Infinity;
     const remaining = Math.min(
       whole - this.elapsedSeconds,
       stage - (this.goalTicks[this.goalIndex] ?? 0) / TICKS_PER_SECOND,
@@ -126,12 +148,23 @@ export class MissionSystem {
     return remaining === Infinity ? undefined : Math.max(0, remaining);
   }
 
+  rewindCheckpoint() {
+    this.goalIndex = this.checkpoint.goalIndex;
+    this.requiredHabitSeen = false;
+    return this.checkpoint.spawn;
+  }
+
   get result() {
     return this.outcome;
   }
 
-  step(position: Vec2, verdicts: readonly Verdict[]): TickEffects | undefined {
-    const target = this.target;
+  step(
+    position: Vec2,
+    verdicts: readonly Verdict[],
+    startEvent?: (event: ForcedMissionEvent, area: Box) => void,
+    forcedPending?: () => boolean,
+  ): TickEffects | undefined {
+    const target = this.goalTarget;
     if (!target) return;
 
     this.ticks++;
@@ -167,10 +200,19 @@ export class MissionSystem {
     const atTarget = reached(target.area, position);
     const missingHabit =
       atTarget && target.goal.wymagany_nawyk && !this.requiredHabitSeen;
+    let effects: TickEffects | undefined;
+    for (const forced of this.forced) {
+      if (forced.fired || !reached(forced.area, position)) continue;
+      forced.fired = true;
+      effects ??= {};
+      (effects.events ??= []).push(forced.event);
+      startEvent?.(forced.event, forced.area);
+    }
     if (major || missingHabit) {
       this.goalIndex = this.checkpoint.goalIndex;
       this.requiredHabitSeen = false;
       return {
+        ...effects,
         respawn: this.checkpoint.spawn,
         ...(missingHabit && {
           missingHabit: { hintKey: target.goal.wskazowka_powrotu },
@@ -178,14 +220,11 @@ export class MissionSystem {
       };
     }
 
-    let effects: TickEffects | undefined;
-    for (const forced of this.forced) {
-      if (forced.fired || !reached(forced.area, position)) continue;
-      forced.fired = true;
-      effects ??= {};
-      (effects.events ??= []).push(forced.event);
-    }
-    if (atTarget) {
+    if (
+      atTarget &&
+      (this.goalIndex < this.goals.length - 1 ||
+        (!this.forced.some(({ fired }) => !fired) && !forcedPending?.()))
+    ) {
       this.goalIndex++;
       this.requiredHabitSeen = false;
       if (this.goalIndex === this.goals.length)

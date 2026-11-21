@@ -25,7 +25,7 @@ export function distanceInto(box: Box, pos: Vec2, heading: number) {
 /** Time of a close approach if both participants keep their current motion. */
 export function timeToConflict(
   rider: RiderState,
-  agent: AgentState,
+  agent: Pick<AgentState, 'pos' | 'heading' | 'speed'>,
   radius: number,
 ) {
   const dx = agent.pos.x - rider.pos.x;

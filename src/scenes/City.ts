@@ -40,6 +40,17 @@ import { RuleFeedback } from '../ui/RuleFeedback';
 import { MissionHud } from '../ui/MissionHud';
 import { MissionPhone } from '../ui/MissionPhone';
 import { DialogueWindow } from '../ui/DialogueWindow';
+import { ReplayBuffer, type ReplayFrame } from '../gameplay/ReplayBuffer';
+import { TrafficEvents, propIds } from '../gameplay/TrafficEvents';
+import { ReplayDialog } from '../ui/ReplayDialog';
+import { TrafficEventNotice } from '../ui/TrafficEventNotice';
+import { EventArt } from '../render/EventArt';
+import { ReplayHighlight } from '../render/ReplayHighlight';
+import type { ForcedMissionEvent } from '../content/missions';
+import type { Box } from '../rules/world/WorldModel';
+
+const drivingZoom = 0.75;
+const reviewIntroMs = 300;
 
 const mapId = 'miasteczko';
 
@@ -49,6 +60,7 @@ export class City extends Scene {
     weather: 'clear',
     visibilityLow: false,
   };
+  private readonly renderEnvironment = { ...this.environment };
   private rider!: Rider;
   private sprite!: GameObjects.Image;
   private actionArt!: GameObjects.Graphics;
@@ -86,7 +98,27 @@ export class City extends Scene {
   private displayedTarget?: MissionSystem['target'];
   private missionInterrupted = false;
   private checkpointHint?: string;
-  private useTraffic = true;
+  private replay!: ReplayBuffer;
+  private replayDialog!: ReplayDialog;
+  private highlight!: ReplayHighlight;
+  private eventArt!: EventArt;
+  private eventNotice!: TrafficEventNotice;
+  private trafficEvents!: TrafficEvents;
+  private eventObstacles!: Obstacle[];
+  private phoneAnsweredSafely = false;
+  private readonly reviewedMinor = new Set<string>();
+  private review?: {
+    verdict: Verdict;
+    elapsed: number;
+    playback?: number;
+    shown: boolean;
+  };
+  private readonly reducedMotion = matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  );
+  private readonly startForced = (event: ForcedMissionEvent, area: Box) =>
+    this.trafficEvents.force(event, area, this.rulesRider);
+  private readonly forcedPending = () => this.trafficEvents.hasPendingForced;
   private readonly tickVerdicts: Verdict[] = [];
   private readonly rulesRider: RiderState = {
     id: 'player',
@@ -133,7 +165,9 @@ export class City extends Scene {
           this.content.balans.misja.major_do_porazki,
         )
       : undefined;
-    this.useTraffic = this.mission?.definition.ruch_ai !== false;
+    const ambientTraffic = definition?.ruch_ai !== false;
+    this.review = undefined;
+    this.phoneAnsweredSafely = false;
     this.missionInterrupted = false;
     this.checkpointHint = undefined;
     this.missionHud = undefined;
@@ -146,6 +180,16 @@ export class City extends Scene {
       this.world,
       this.intersectionManager,
       this.content.balans.silnik,
+      undefined,
+      ambientTraffic ? 'scheduled' : 'mission-only',
+    );
+    this.trafficEvents = new TrafficEvents(
+      this.world,
+      this.traffic,
+      undefined,
+      undefined,
+      ambientTraffic,
+      this.traffic.road.agents,
     );
     this.siren = new EmergencySiren();
     const map = this.make.tilemap({ key: 'training-map' });
@@ -221,17 +265,22 @@ export class City extends Scene {
       roof?.refresh();
     }
     this.blocks = new Blocks(this, buildings);
-    this.agents = this.useTraffic
-      ? [...this.traffic.road.agents, ...this.traffic.routed]
-      : [];
+    this.agents = [...this.traffic.road.agents, ...this.traffic.routed];
+    this.replay = new ReplayBuffer(this.agents.length, propIds.length);
     this.actorObstacles = this.agents.map(({ kind }) => {
       const diameter = actorRadiusPx[kind] * 2;
       return { x: 0, y: 0, width: diameter, height: diameter, kind: 'wall' };
     });
-    this.obstacles.push(...this.actorObstacles);
+    this.eventObstacles = propIds.map((id) => {
+      const size = id === 'rowerzysta_pod_prad' ? 16 : 10;
+      return { x: -1000, y: -1000, width: size, height: size, kind: 'wall' };
+    });
+    this.obstacles.push(...this.actorObstacles, ...this.eventObstacles);
     trafficTextures(this);
     this.actors = this.agents.map(({ kind }) => trafficSprite(this, kind));
     this.sirenArt = this.add.graphics().setDepth(23);
+    this.eventArt = new EventArt(this);
+    this.highlight = new ReplayHighlight(this, this.world, this.agents);
     this.syncActorObstacles();
     this.rider = {
       ...this.spawn,
@@ -250,7 +299,7 @@ export class City extends Scene {
       .setDepth(21)
       .setVisible(false);
     this.cameras.main
-      .setZoom(0.75)
+      .setZoom(drivingZoom)
       .setBounds(0, 0, this.worldWidth, this.worldHeight)
       .centerOn(this.rider.x, this.rider.y);
     this.controls = new DrivingControls(
@@ -295,6 +344,15 @@ export class City extends Scene {
           this.scene.restart({ missionId: id });
       },
     );
+    this.replayDialog = new ReplayDialog(
+      this.controls.root,
+      () => this.playReplay(),
+      () => this.closeReview(true),
+      () => this.closeReview(false),
+    );
+    this.eventNotice = new TrafficEventNotice(this.controls.root, () =>
+      this.respondToEvent(),
+    );
     this.dialogue = new DialogueWindow(
       this.controls.root,
       this.content.dialogi,
@@ -324,6 +382,7 @@ export class City extends Scene {
       this.updateMissionHud();
     }
     this.resetRules();
+    this.recordFrame(-FIXED_STEP);
     this.debug = new RuleDebugOverlay(this, this.world, this.controls.root);
     this.actionArt = this.add.graphics().setDepth(22);
     this.controls.setWalking(false);
@@ -333,7 +392,9 @@ export class City extends Scene {
       this.game.canvas.classList.remove('training-dusk');
       this.siren.destroy();
       this.debug.destroy();
+      this.replayDialog.close();
       this.dialogue.destroy();
+      this.eventNotice.destroy();
       this.phone.close();
       this.controls.destroy();
       const c = this.game.canvas;
@@ -368,7 +429,7 @@ export class City extends Scene {
       this.phone.close();
       return;
     }
-    if (this.dialogue.open) return;
+    if (this.dialogue.open || this.review) return;
     if (!canOpenPhone(this.rider.speed)) {
       this.message(this.phoneFeedback);
       return;
@@ -382,7 +443,11 @@ export class City extends Scene {
   }
 
   private overlayKeyboard(event: KeyboardEvent) {
-    if (this.phone.open || this.dialogue.open) return true;
+    if (this.phone.open || this.dialogue.open || this.review) return true;
+    if (event.code === 'KeyG' && !event.repeat && this.respondToEvent()) {
+      event.preventDefault();
+      return true;
+    }
     if (event.altKey || event.ctrlKey || event.metaKey) return false;
     const onControl =
       event.target instanceof Element &&
@@ -400,6 +465,17 @@ export class City extends Scene {
     pressed: (button: number) => boolean,
     justPressed: (button: number) => boolean,
   ) {
+    if (this.review) {
+      if (this.review.shown) this.replayDialog.gamepad(justPressed);
+      return true;
+    }
+    if (
+      !this.phone.open &&
+      !this.dialogue.open &&
+      justPressed(3) &&
+      this.respondToEvent()
+    )
+      return true;
     if (this.dialogue.open) {
       if (justPressed(1)) this.dialogue.skip();
       else {
@@ -445,7 +521,12 @@ export class City extends Scene {
     this.messageUntil = this.time.now + 2600;
   }
   private toggleMode() {
-    if (this.controls.paused || this.mission?.result || this.missionInterrupted)
+    if (
+      this.controls.paused ||
+      this.review ||
+      this.mission?.result ||
+      this.missionInterrupted
+    )
       return;
     if (this.rider.speed > 5) {
       this.message(ui.driving.slowDown);
@@ -481,6 +562,9 @@ export class City extends Scene {
       this.updateMissionHud();
     }
     this.traffic.reset();
+    this.trafficEvents.reset();
+    this.phoneAnsweredSafely = false;
+    this.eventNotice.update(undefined, false);
     this.siren.update(0, 0);
     this.syncActorObstacles();
     this.resetRules();
@@ -494,11 +578,14 @@ export class City extends Scene {
     });
     this.controls.setWalking(false);
     this.cameras.main.centerOn(this.rider.x, this.rider.y);
+    this.replay.clear();
+    this.recordFrame(-FIXED_STEP);
     this.openMissionDialogue();
   }
   private resetRules() {
     this.environment.time = 'day';
     this.rulesRider.shoulderCheck!.lastLeftAt = -Infinity;
+    this.rulesRider.phoneInHand = false;
     this.stopListeningForVerdicts?.();
     this.rules = new RuleEngine(
       this.world,
@@ -512,9 +599,26 @@ export class City extends Scene {
   private listenForVerdicts() {
     const engine = this.rules;
     this.stopListeningForVerdicts = engine.onVerdict((verdict) => {
-      this.feedback.receive(verdict, engine.counts);
-      if (this.mission) this.tickVerdicts.push(verdict);
+      this.tickVerdicts.push(verdict);
+      if (verdict.ruleId === 'MAN-11' && verdict.kind === 'good')
+        this.phoneAnsweredSafely = true;
     });
+  }
+
+  private respondToEvent() {
+    if (
+      this.controls.paused ||
+      this.review ||
+      this.dialogue.open ||
+      this.phone.open ||
+      this.missionInterrupted ||
+      this.mission?.result
+    )
+      return false;
+    const response = this.trafficEvents.respond(this.rulesRider);
+    if (response && this.rulesRider.phoneInHand)
+      this.phoneAnsweredSafely = false;
+    return response;
   }
 
   private placeRider(spawn: MissionSpawn) {
@@ -567,6 +671,34 @@ export class City extends Scene {
       obstacle.x = pos.x * scale - obstacle.width / 2;
       obstacle.y = pos.y * scale - obstacle.height / 2;
     }
+    for (let i = 0; i < this.eventObstacles.length; i++) {
+      const obstacle = this.eventObstacles[i]!;
+      const prop = this.trafficEvents.props[i]!;
+      const doorReach = i === 1 ? 19 : 0;
+      obstacle.x = prop.active
+        ? prop.x * scale +
+          doorReach * Math.cos(prop.heading) -
+          obstacle.width / 2
+        : -1000;
+      obstacle.y = prop.active
+        ? prop.y * scale +
+          doorReach * Math.sin(prop.heading) -
+          obstacle.height / 2
+        : -1000;
+    }
+  }
+
+  private recordFrame(at = this.rules.at) {
+    const actions = this.controls.actions;
+    this.replay.record(
+      at,
+      this.environment.time === 'dusk',
+      this.rider,
+      actions,
+      this.agents,
+      this.trafficEvents.props,
+      this.rules.signal === 'none' ? null : this.rules.signal,
+    );
   }
 
   private stepWorld() {
@@ -585,39 +717,164 @@ export class City extends Scene {
     rider.handsOnBar = rider.signal === 'none' ? 2 : 1;
     this.environment.time =
       this.rules.at + FIXED_STEP >= this.world.duskAt ? 'dusk' : 'day';
-    if (this.useTraffic) this.traffic.step(this.environment, rider);
-    this.syncActorObstacles();
+    this.trafficEvents.step(rider);
+    const cyclist = this.trafficEvents.wrongWayCyclist;
+    this.traffic.step(this.environment, rider, cyclist);
     this.activeAgents.length = 0;
     for (const agent of this.agents)
       if (!('active' in agent) || agent.active) this.activeAgents.push(agent);
+    if (cyclist) this.activeAgents.push(cyclist);
     this.tickVerdicts.length = 0;
-    this.rules.step(rider, this.activeAgents, this.environment);
-    const effects = this.mission?.step(rider.pos, this.tickVerdicts);
-    if (effects?.events) {
+    this.rules.step(
+      rider,
+      this.activeAgents,
+      this.environment,
+      this.trafficEvents.hazards,
+    );
+    this.trafficEvents.resolvePhoneResponse(
+      this.phoneAnsweredSafely,
+      rider.speed > 0.1 && rider.mode === 'riding',
+      rider,
+    );
+    rider.phoneInHand = false;
+    const effects = this.mission?.step(
+      rider.pos,
+      this.tickVerdicts,
+      this.startForced,
+      this.forcedPending,
+    );
+    this.syncActorObstacles();
+    this.recordFrame();
+
+    if (effects?.events)
       for (const event of effects.events)
         this.events.emit('mission:forced-event', event);
+
+    const major = this.tickVerdicts.find(({ kind }) => kind === 'major');
+    const minor =
+      !major &&
+      !effects?.respawn &&
+      !this.mission?.result &&
+      this.tickVerdicts.find(
+        ({ kind, ruleId }) =>
+          kind === 'minor' && !this.reviewedMinor.has(ruleId),
+      );
+    const lesson = major || minor;
+    for (const verdict of this.tickVerdicts)
+      this.feedback.receive(
+        verdict,
+        this.rules.counts,
+        verdict === lesson || verdict.kind === 'major',
+      );
+    if (lesson) {
+      if (lesson.kind === 'minor') this.reviewedMinor.add(lesson.ruleId);
+      this.review = { verdict: lesson, elapsed: 0, shown: false };
+      this.controls.clear();
+      return;
     }
     if (effects?.respawn) {
-      this.placeRider(effects.respawn);
-      this.controls.clear();
-      this.controls.setWalking(false);
-      this.rulesRider.shoulderCheck!.lastLeftAt = -Infinity;
-      this.stopListeningForVerdicts?.();
-      this.rules = this.rules.afterCheckpoint();
-      this.listenForVerdicts();
-      this.cameras.main.centerOn(this.rider.x, this.rider.y);
+      this.returnToCheckpoint(effects.respawn);
       const hint = effects.missingHabit;
-      this.checkpointHint = hint
-        ? hint.hintKey
-          ? translate(hint.hintKey)
-          : ui.missionUi.checkpointHint
-        : undefined;
+      this.checkpointHint = hint?.hintKey
+        ? translate(hint.hintKey)
+        : ui.missionUi.checkpointHint;
       this.missionInterrupted = true;
     }
   }
+
+  private returnToCheckpoint(spawn?: MissionSpawn) {
+    if (spawn) this.placeRider(spawn);
+    else
+      Object.assign(this.rider, this.spawn, {
+        speed: 0,
+        heading: -Math.PI / 2,
+        walking: false,
+      });
+    this.controls.clear();
+    this.controls.setWalking(false);
+    this.rulesRider.shoulderCheck!.lastLeftAt = -Infinity;
+    this.stopListeningForVerdicts?.();
+    this.rules = this.rules.afterCheckpoint();
+    this.listenForVerdicts();
+    this.cameras.main.centerOn(this.rider.x, this.rider.y);
+    this.replay.clear();
+    this.recordFrame();
+  }
+
+  private playReplay() {
+    const review = this.review;
+    if (!review?.shown) return;
+    review.playback = review.playback === undefined ? 0 : undefined;
+    this.replayDialog.setPlaying(review.playback !== undefined);
+  }
+
+  private closeReview(retry: boolean) {
+    const review = this.review;
+    if (!review) return;
+    this.review = undefined;
+    this.replayDialog.close();
+    this.highlight.clear();
+    this.cameras.main.setZoom(drivingZoom);
+    this.controls.clear();
+    if (retry && !this.mission?.result)
+      this.returnToCheckpoint(this.mission?.rewindCheckpoint());
+    else this.cameras.main.centerOn(this.rider.x, this.rider.y);
+    this.feedback.reset(this.rules.counts);
+    this.renderFrame(this.replay.frame(this.replay.size - 1)!, 0);
+    this.updateDrivingHud(this.rider, this.controls.actions);
+    this.updateMissionHud();
+    if (this.mission?.result) this.missionHud?.focusResult();
+    else this.missionHud?.focusEquipment();
+  }
+
+  private updateReview(delta: number) {
+    const review = this.review!;
+    const reduced = this.reducedMotion.matches;
+    review.elapsed += Math.min(delta, 100);
+    const intro = reduced ? 1 : Math.min(1, review.elapsed / reviewIntroMs);
+    const camera = this.cameras.main;
+    if (!review.shown && intro >= 1) {
+      review.shown = true;
+      this.feedback.reset(this.rules.counts);
+      this.replayDialog.show(
+        this.feedback.explanation(review.verdict),
+        review.verdict.kind === 'minor',
+        this.replay.size > 1,
+        Boolean(this.mission?.result),
+      );
+    }
+    const duration = this.replay.durationMs;
+    const playing = review.playback !== undefined;
+    const elapsed = playing
+      ? review.playback!
+      : Math.max(0, duration - ((1 - intro) * reviewIntroMs) / 4);
+    const frame = this.replay.frameAt(elapsed)!;
+    const focus = playing ? frame.rider : this.highlight.focus(review.verdict);
+    camera.setZoom(drivingZoom * (playing || reduced ? 1 : 1 + intro / 2));
+    camera.centerOn(focus.x, focus.y);
+    this.renderFrame(frame, 0, true);
+    this.highlight.draw(
+      review.verdict,
+      frame,
+      playing ? elapsed : review.elapsed,
+      reduced,
+    );
+    if (playing) {
+      review.playback = Math.min(duration, elapsed + Math.min(delta, 100));
+      if (elapsed >= duration) {
+        review.playback = undefined;
+        this.replayDialog.setPlaying(false);
+      }
+    }
+  }
+
   update(time: number, delta: number) {
     if (!this.controls) return;
     const input = this.controls.read();
+    if (this.review) {
+      this.updateReview(delta);
+      return;
+    }
     if (
       this.controls.paused ||
       this.phone.open ||
@@ -644,20 +901,72 @@ export class City extends Scene {
         this.message(ui.driving.collision);
       this.stepWorld();
       this.accumulator -= FIXED_STEP;
-      if (this.missionInterrupted || this.mission?.result) {
+      if (this.review || this.missionInterrupted || this.mission?.result) {
         this.accumulator = 0;
-        this.finishMissionDialogue();
+        if (!this.review) this.finishMissionDialogue();
         break;
       }
     }
-    const r = this.rider;
-    const a = this.controls.actions;
+    if (this.review) {
+      this.updateReview(delta);
+      return;
+    }
+    const sirenVolume = this.renderFrame(
+      this.replay.frame(this.replay.size - 1)!,
+      delta,
+    );
+    this.feedback.update(this.rules.at);
+    this.eventNotice.update(
+      this.trafficEvents.notice,
+      this.phoneAnsweredSafely,
+    );
+    this.updateMissionHud();
+    if (
+      time - this.hudAt > 100 ||
+      this.missionInterrupted ||
+      this.mission?.result
+    ) {
+      this.hudAt = time;
+      this.debug.update(
+        this.rules,
+        this.world,
+        this.environment,
+        this.traffic,
+        this.rulesRider.pos,
+      );
+      this.updateDrivingHud(this.rider, this.controls.actions);
+      if (time > this.messageUntil)
+        this.controls.notice.textContent =
+          sirenVolume > 0
+            ? ui.rules.emergencyApproaching
+            : this.mission
+              ? ''
+              : ui.driving.prototype;
+    }
+  }
+
+  private updateDrivingHud(r: Rider, actions: typeof this.controls.actions) {
+    this.controls.speed.textContent = `${Math.round(r.speed * METERS_PER_PIXEL * 3.6)} ${ui.driving.unit}`;
+    const canvas = this.game.canvas;
+    canvas.dataset.x = String(Math.round(r.x));
+    canvas.dataset.y = String(Math.round(r.y));
+    canvas.dataset.speed = String(r.speed);
     const signal = this.rules.signal;
+    canvas.dataset.actions = JSON.stringify({
+      ...actions,
+      signal: signal === 'none' ? null : signal,
+    });
+    canvas.dataset.walking = String(r.walking);
+  }
+
+  private renderFrame(frame: ReplayFrame, delta: number, reviewing = false) {
+    const { rider: r, actions: a, at, dusk } = frame;
+    const signal = a.signal;
     const art = this.actionArt
       .clear()
       .setPosition(Math.round(r.x), Math.round(r.y))
       .setRotation(r.heading);
-    if (signal !== 'none')
+    if (signal)
       art
         .lineStyle(5, 0xffcd75)
         .lineBetween(0, 0, 0, signal === 'left' ? -30 : 30);
@@ -665,7 +974,7 @@ export class City extends Scene {
     if (a.bell)
       art
         .lineStyle(2, 0xffcd75)
-        .strokeCircle(0, 0, 28 + (Math.floor(time / 100) % 6));
+        .strokeCircle(0, 0, 28 + (Math.floor(Math.max(at, 0) * 10) % 6));
     if (a.lights) {
       art.fillStyle(0xffcd75, 0.3).fillTriangle(16, 0, 65, -20, 65, 20);
       art.fillStyle(0xe43b44).fillRect(-23, -3, 5, 6);
@@ -696,25 +1005,21 @@ export class City extends Scene {
     const halfHeight =
       camera.height / (2 * camera.zoom) + actorRadiusPx.tram + 2;
     const sirenArt = this.sirenArt.clear();
-    const flash = emergencyLightPhase(this.rules.at);
+    const flash = emergencyLightPhase(Math.max(at, 0));
     let sirenVolume = 0;
     let bearing = 0;
     for (let index = 0; index < this.agents.length; index++) {
       const agent = this.agents[index]!;
-      const x = Math.round(agent.pos.x * scale);
-      const y = Math.round(agent.pos.y * scale);
-      const active = !('active' in agent) || agent.active;
+      const pose = frame.actors[index]!;
+      const x = Math.round(pose.x * scale);
+      const y = Math.round(pose.y * scale);
       const visible =
-        active &&
+        pose.active &&
         Math.abs(x - centerX) <= halfWidth &&
         Math.abs(y - centerY) <= halfHeight;
       const actor = this.actors[index]!.setVisible(visible);
-      if (visible) actor.setPosition(x, y).setRotation(agent.heading);
-      if (
-        agent.kind === 'emergency' &&
-        'signalActive' in agent &&
-        agent.signalActive
-      ) {
+      if (visible) actor.setPosition(x, y).setRotation(pose.heading);
+      if (pose.active && agent.kind === 'emergency' && pose.signalActive) {
         if (visible)
           sirenArt
             .fillStyle(flash ? 0x41a6f6 : 0x73eff7)
@@ -727,7 +1032,7 @@ export class City extends Scene {
         }
       }
     }
-    this.siren.update(sirenVolume, this.rules.at);
+    this.siren.update(reviewing ? 0 : sirenVolume, at);
     if (sirenVolume > 0) {
       const dx = Math.cos(bearing);
       const dy = Math.sin(bearing);
@@ -744,41 +1049,11 @@ export class City extends Scene {
           y + dx * 5,
         );
     }
-    const dusk = this.environment.time === 'dusk';
+    this.eventArt.draw(frame.props, scale);
     this.game.canvas.classList.toggle('training-dusk', dusk);
-    this.road.updateLights(this.rules.at, this.environment);
-    this.feedback.update(this.rules.at);
-    this.updateMissionHud();
-    if (
-      time - this.hudAt > 100 ||
-      this.missionInterrupted ||
-      this.mission?.result
-    ) {
-      this.hudAt = time;
-      this.debug.update(
-        this.rules,
-        this.world,
-        this.environment,
-        this.traffic,
-        this.rulesRider.pos,
-      );
-      this.controls.speed.textContent = `${Math.round(r.speed * METERS_PER_PIXEL * 3.6)} ${ui.driving.unit}`;
-      const canvas = this.game.canvas;
-      canvas.dataset.x = String(Math.round(r.x));
-      canvas.dataset.y = String(Math.round(r.y));
-      canvas.dataset.speed = String(r.speed);
-      canvas.dataset.actions = JSON.stringify({
-        ...a,
-        signal: signal === 'none' ? null : signal,
-      });
-      canvas.dataset.walking = String(r.walking);
-      if (time > this.messageUntil)
-        this.controls.notice.textContent =
-          sirenVolume > 0
-            ? ui.rules.emergencyApproaching
-            : this.mission
-              ? ''
-              : ui.driving.prototype;
-    }
+    const lighting = this.renderEnvironment;
+    lighting.time = dusk ? 'dusk' : 'day';
+    this.road.updateLights(Math.max(0, at), lighting);
+    return sirenVolume;
   }
 }

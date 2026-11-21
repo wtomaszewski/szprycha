@@ -138,14 +138,15 @@ export class TrafficParticipants {
     private readonly manager: IntersectionManager,
     private readonly settings: GameContent['balans']['silnik'],
     seed?: number,
+    private readonly mode: 'ambient' | 'scheduled' | 'mission-only' = 'ambient',
   ) {
     this.road = new TrafficSimulation(
       world,
       manager,
       settings,
       seed,
-      world.trafficCarCount,
-      true,
+      mode === 'mission-only' ? 0 : world.trafficCarCount,
+      mode !== 'mission-only',
     );
     this.actors = world.trafficRoutes.map((route) => {
       const reverse =
@@ -195,13 +196,72 @@ export class TrafficParticipants {
       actor.agent.trips = 0;
       this.restart(
         actor,
-        actor.route.kind === 'passenger' ? Infinity : actor.route.start_s,
+        actor.route.kind === 'passenger' ||
+          this.mode === 'mission-only' ||
+          this.isEventRoute(actor.route)
+          ? Infinity
+          : actor.route.start_s,
       );
       if (actor.startsAt === 0) this.activate(actor);
     }
   }
 
-  step(env: EnvState, player?: RiderState) {
+  private isEventRoute(route: TrafficRoute) {
+    return (
+      this.mode !== 'ambient' &&
+      (route.kind === 'emergency' ||
+        (route.kind === 'tram' && route.stops.length > 0) ||
+        (route.kind === 'pedestrian' && route.crossings.length > 0))
+    );
+  }
+
+  startEventRoute(route: TrafficRoute, distance: number, player: RiderState) {
+    const actor = this.actors.find((candidate) => candidate.route === route);
+    if (!actor || actor.agent.active || !this.isEventRoute(route)) return false;
+    const clearance =
+      actorRadiusPx[actor.agent.kind] * this.world.metersPerPixel + 0.3;
+    for (const control of route.junctions) {
+      if (
+        distance >= control.distance - clearance &&
+        distance <= control.exit + clearance
+      )
+        distance = Math.max(0, control.distance - clearance - 0.1);
+    }
+    const position = { x: 0, y: 0 };
+    route.path.place(distance, position);
+    if (
+      !this.clearOfRoadUsers(position, actor.agent.kind, player) ||
+      this.actors.some(
+        ({ agent }) =>
+          agent.active &&
+          Math.hypot(agent.pos.x - position.x, agent.pos.y - position.y) <
+            clearance + actorRadiusPx[agent.kind] * this.world.metersPerPixel,
+      )
+    )
+      return false;
+
+    actor.distance = distance;
+    while (
+      route.junctions[actor.junctionIndex] &&
+      route.junctions[actor.junctionIndex]!.exit + clearance < distance
+    )
+      actor.junctionIndex++;
+    while (
+      route.stops[actor.stopIndex] &&
+      route.stops[actor.stopIndex]!.distance < distance
+    )
+      actor.stopIndex++;
+    while (
+      actor.journey.gates[actor.gateIndex] &&
+      actor.journey.gates[actor.gateIndex]!.exit < distance
+    )
+      actor.gateIndex++;
+    this.place(actor);
+    this.activate(actor);
+    return true;
+  }
+
+  step(env: EnvState, player?: RiderState, eventCyclist?: AgentState) {
     const at = this.tick / TICKS_PER_SECOND;
     this.footAndBike.length = 0;
     this.priorityAgents.length = 0;
@@ -227,6 +287,7 @@ export class TrafficParticipants {
       this.walkOrCycle(actor, at, env, player);
       if (actor.agent.active) this.footAndBike.push(actor.agent);
     }
+    if (eventCyclist) this.footAndBike.push(eventCyclist);
     // Seed the reservations before any new request. Trips run in map order.
     for (const actor of this.actors) {
       if (actor.holdsJunction)
@@ -378,7 +439,8 @@ export class TrafficParticipants {
     }
     if (actor.distance + EPSILON < path.length) return;
     agent.trips++;
-    if (actor.returnLeg) {
+    if (this.isEventRoute(actor.route)) this.restart(actor, Infinity);
+    else if (actor.returnLeg) {
       actor.journey =
         actor.journey === actor.outward ? actor.returnLeg : actor.outward;
       actor.distance = 0;
@@ -491,7 +553,10 @@ export class TrafficParticipants {
     }
     if (actor.distance + EPSILON >= route.path.length) {
       agent.trips++;
-      this.restart(actor, at + route.repeat_s!);
+      this.restart(
+        actor,
+        this.isEventRoute(route) ? Infinity : at + route.repeat_s!,
+      );
     }
   }
 

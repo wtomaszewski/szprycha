@@ -20,7 +20,21 @@
 ## Zdarzenia losowe w wolnej jeździe i misjach
 Pojazd uprzywilejowany na sygnale · pieszy wchodzi na pasy · piłka wypada na jezdnię · drzwi auta otwierają się przed rowerzystą (zachowaj odstęp od zaparkowanych aut) · tramwaj podjeżdża na przystanek bez wysepki · dorożka na Starym Mieście · pawie/gołębie na ścieżce · roboty drogowe (znak A-14, objazd) · kolega proponuje „podwózkę na bagażniku” · telefon dzwoni w trakcie jazdy (odbierz po zatrzymaniu = bonus „Mądra Głowa”) · rowerzysta AI jedzie pod prąd.
 
-Każde zdarzenie ma `ruleIds`. System **podaje częściej zdarzenia związane z regułami o najniższym mastery** gracza (ważenie wg `docs/04 §5`).
+M4c udostępnia osiem zdarzeń z `ruleIds` oraz wymuszane ćwiczenie STOP. Pieszy, tramwaj i pojazd uprzywilejowany korzystają z tras i zachowań M3b. Drzwi mają punkt mocowania na zaparkowanym aucie, piłka wtacza się na jezdnię, a rowerzysta pod prąd jest osobno oznaczonym zagrożeniem i hamuje przed graczem. Telefon można odebrać po bezpiecznym zatrzymaniu, a koledze odmówić podwózki. Odpowiedź działa przyciskiem komunikatu, klawiszem G lub przyciskiem Y pada.
+
+| `typ` | `ruleIds` |
+|---|---|
+| `pojazd_uprzywilejowany` | `PIER-07` |
+| `pieszy_na_pasach` | `PIER-04`, `MAN-08` |
+| `pilka_na_jezdni` | `MAN-08` |
+| `drzwi_auta` | `MAN-06` |
+| `tramwaj_bez_wysepki` | `MSC-02` |
+| `telefon_dzwoni` | `MAN-11` |
+| `kolega_podwozka` | `MAN-10` |
+| `rowerzysta_pod_prad` | `MAN-08`, `GDZIE-03` |
+| `cwiczenie_stop` | `ZNAK-STOP` |
+
+Losowanie używa ziarna i stałego kroku symulacji. Rozpatruje tylko zdarzenia pasujące do miejsca, w którym gracz jedzie. Domyślne wagi są równe. Funkcja `EventWeight` przyjmuje `ruleIds` i identyfikator zdarzenia, dzięki czemu M5 może zwiększać szanse na reguły o najniższym mastery. Ziarno i wagi wpływają wyłącznie na losowanie.
 
 ---
 
@@ -42,9 +56,9 @@ Każde zdarzenie ma `ruleIds`. System **podaje częściej zdarzenia związane z 
   przesylka: { delikatna: false }
   warunki_porazki: [ czas_minal, major_x3 ]
   checkpointy: [ cp_bazar ]
-  reguly_cwiczone: [ PIER-01, PIER-06, MSC-03, MAN-01 ]
+  reguly_cwiczone: [ PIER-01, PIER-04, PIER-06, MSC-03, MAN-01 ]
   zdarzenia_wymuszone:
-    - { typ: auto_z_prawej, przy: skrzyzowanie_rownorzedne_ks1, regula: PIER-01 }
+    - { typ: pieszy_na_pasach, przy: podejscie_do_zebry, regula: PIER-04 }
   par_s: 140                               # czas na 3 gwiazdki
   min_dobre_nawyki: 4
   nagrody: { zetony: 30, xp: 400, odblokuj: [naklejka_pierogi] }
@@ -54,13 +68,13 @@ Każde zdarzenie ma `ruleIds`. System **podaje częściej zdarzenia związane z 
 
 `zdarzenia_wymuszone` gwarantują, że każde dziecko w misji spotka sytuację uczącą daną regułę (nie zostawiamy tego losowi).
 
-### Uruchamianie misji w M4a
+### Uruchamianie misji
 
 - `mapa` wskazuje plik Tiled bez rozszerzenia (domyślnie wartość z `miasto`). Samouczki używają `akt: 0`. `start.kask_zapiety` określa stan kasku przed ruszeniem, a `ruch_ai: false` pozwala przećwiczyć manewr bez ruchu AI.
 - Cele są wykonywane kolejno, po osiągnięciu obszaru POI. `odbierz` i `oddaj` bez własnego `poi` korzystają z ostatniego wskazanego POI. `wymagany_nawyk` wymaga werdyktu `good` dla wskazanej reguły w trakcie danego celu.
 - `checkpointy` to kolejność POI zapisujących pozycję oraz liczbę ukończonych celów. POI prostokątny używa środka do odrodzenia, a punktowy jest osiągnięty w promieniu 1,5 m. Opcjonalne `heading` w Tiled określa kierunek po odrodzeniu w radianach zgodnie z ruchem wskazówek zegara od osi +X.
 - `limit_s` można podać dla całej misji lub dla etapu. Liczniki korzystają z czasu symulacji. Próba powtórzona od checkpointu zachowuje zużyty czas obu limitów i wszystkie wcześniejsze werdykty.
-- `zdarzenia_wymuszone[].przy` wskazuje obiekt w `pois`, `triggers` lub `zones`. Każdy wpis wyzwala się raz na próbę misji. Biblioteka zachowań zdarzeń jest zakresem M4c.
+- `zdarzenia_wymuszone[].przy` wskazuje obiekt w `pois`, `triggers` lub `zones`. Build sprawdza typ zdarzenia, powiązanie z regułą i dostępność potrzebnej geometrii. Każdy wpis wyzwala się raz na próbę misji. Zajęte miejsce startu odkłada zdarzenie do kolejki. Nawigacja prowadzi do pominiętych wyzwalaczy przed ukończeniem ostatniego celu. Wyzwalacze działają również przy `ruch_ai: false`, które wyłącza ruch tła i losowanie w samouczku.
 
 ---
 
