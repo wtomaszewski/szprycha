@@ -1,0 +1,13 @@
+{
+  "groups": [
+    {
+      "adjectives": ["Szybki", "Wesoły", "Zwinny", "Odważny"],
+      "nouns": ["Jeż", "Borsuk", "Zając", "Szpak"]
+    },
+    {
+      "adjectives": ["Dzielna", "Czujna", "Wesoła", "Zwinna"],
+      "nouns": ["Szprycha", "Sroka", "Wiewiórka", "Wydra"]
+    }
+  ],
+  "legacy": ["Szybki Jeż", "Dzielna Szprycha", "Czujna Sroka"]
+}

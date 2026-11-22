@@ -1,9 +1,9 @@
+import { showBreakReminder } from '../ui/BreakReminder';
 import { verdictHaptics } from '../platform/haptics';
 import { audio } from '../audio/GameAudio';
 import { Scene, type GameObjects } from 'phaser';
 import type { PlacBalance, PlacCourse, PlacId } from '../content/plac';
 import type { GameContent } from '../content/schemas';
-import { readHelmetColor } from '../core/helmetColor';
 import { showError, translate, ui } from '../core/presentation';
 import { FIXED_STEP, METERS_PER_PIXEL } from '../gameplay/bicycle';
 import type { ExamAttempt, ExamRide } from '../gameplay/exam/exam';
@@ -95,6 +95,9 @@ export class Plac extends Scene {
         .filter(({ detektor }) => detektor === 'plac')
         .map(({ id, tytul }) => [id, tytul]),
     );
+    this.breakMinutes = this.progress.breakMinutes(
+      content.balans.zdrowe_granie,
+    );
     this.course = content.plac;
     this.balance = content.balans.plac;
     this.mastery = content.balans.mastery;
@@ -102,7 +105,7 @@ export class Plac extends Scene {
     this.courseKey = placCourseKey(this.course, this.balance);
     this.origin = origin;
     this.art = new PlacArt(this, this.course);
-    this.riderArt = new RiderArt(this, readHelmetColor());
+    this.riderArt = new RiderArt(this, this.progress.store.profile.avatarId);
     this.ghostArt = this.add
       .image(0, 0, 'rider', 0)
       .setDepth(18)
@@ -399,6 +402,7 @@ export class Plac extends Scene {
     this.dialog.showModal();
   }
 
+  private breakMinutes: number | null = null;
   private readonly portraitTouch = matchMedia(
     '(pointer: coarse) and (orientation: portrait) and (max-width: 600px)',
   );
@@ -416,7 +420,10 @@ export class Plac extends Scene {
     }
     const input = controls.read();
     if (controls.paused) return;
-    this.accumulator += Math.min(delta / 1000, 0.1);
+    const seconds = Math.min(delta / 1000, 0.1);
+    if (!run.result && this.progress.playFor(seconds, this.breakMinutes))
+      showBreakReminder(controls.root);
+    this.accumulator += seconds;
     while (this.accumulator >= FIXED_STEP) {
       this.accumulator -= FIXED_STEP;
       if (run.result) {

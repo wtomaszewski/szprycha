@@ -26,6 +26,8 @@ Gra używa lokalnej kopii fontu. W `licenses/` są teksty dołączane do not o k
 | Radio Szprycha FM i podkład Dzwonek Talk                                                | `src/audio/score.ts`, `src/audio/Radio.ts`. Autorskie melodie i dżingle, odtwarzane przez sekwencer i oscylatory Web Audio API.                                                          |
 | Lektor i porady Dzwonek Talk                                                            | `src/audio/Narrator.ts`, `i18n/pl.json`. Web Speech API korzysta wyłącznie z lokalnych polskich głosów systemowych. Głosy pozostają na urządzeniu i nie wchodzą w skład gry.             |
 
+Listy słów w `content/nicki.json` są autorskie. Strefa Rodzica korzysta z istniejących kolorów kasku i lokalnego fontu. Zrzuty `docs/screenshots/80-*.png` wygenerował Playwright z działającej gry.
+
 Wytwory projektu podlegają [LICENSE](../LICENSE). W bieżącej wersji gra nie dystrybuuje nagrań, sampli ani muzyki z zewnętrznych bibliotek.
 
 ## Audyt oznaczeń w #63

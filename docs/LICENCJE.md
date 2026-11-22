@@ -19,4 +19,6 @@ SZPRYCHA jest oprogramowaniem własnościowym. Prawa do projektu są zastrzeżon
 - Używamy nazw miejsc jako nazw geograficznych, np. PKiN, Stadion Narodowy i Hala Stulecia. Charakterystyczne budynki przedstawiamy we własnej interpretacji graficznej, bez kopiowania zdjęć i ilustracji.
 - Akty prawne nie podlegają ochronie prawnoautorskiej. Zasady opisujemy własnymi słowami i tworzymy własne pytania oraz ilustracje. Cudze podręczniki, testy na kartę rowerową i grafiki WORD-u lub Policji mogą podlegać ochronie.
 
+W M10a listy słów do generatora nicków i szablony w `legal/` są treściami własnymi. Zrzuty Strefy Rodzica pochodzą z testów Playwright. [Pochodzenie zasobów](../assets/LICENSES.md)
+
 Kwestie do rozstrzygnięcia przed wydaniem są w [NOTES_FOR_HUMAN.md](../NOTES_FOR_HUMAN.md).

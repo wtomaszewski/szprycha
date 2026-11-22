@@ -114,7 +114,7 @@ test('earns, prints and reopens the licence entirely offline', async ({
   ).toBeDisabled();
 
   const saved = await profile(page, {
-    nicknameSeed: 0,
+    nickname: 'Szybki Jeż 1',
     completed: content.misje
       .filter(({ miasto, poboczna }) => miasto === 'warszawa' && !poboczna)
       .map(({ id }) => id),
@@ -290,26 +290,19 @@ test('earns, prints and reopens the licence entirely offline', async ({
   await panel.getByRole('button', { name: exam.certificate }).click();
   const certificate = page.getByRole('dialog', { name: exam.licence });
   const paper = certificate.locator('article');
-  await expect(paper).toContainText(`${pl.skillMap.nicknames[0]} 1`);
+  await expect(paper).toContainText(earned.nickname);
   await expect(paper).toContainText(exam.disclaimer);
-  const name = certificate.getByRole('textbox', { name: exam.firstName });
-  await name.fill('Anna Kowalska <a@example.org>');
-  await expect(
-    certificate.getByRole('button', { name: exam.print }),
-  ).toBeDisabled();
-  await name.fill('Żaneta');
-  await expect(paper).toContainText('Żaneta');
-  await expect(paper).not.toContainText(/Kowalska|example.org/);
+  await expect(certificate.getByRole('textbox')).toHaveCount(0);
   await expect(await profile(page)).toEqual(earned);
   expect(await page.evaluate(() => localStorage.length)).toBe(0);
-  await name.fill('');
   await paper.screenshot({
     path: testInfo.outputPath('61-m7c-certyfikat.png'),
   });
-  await name.fill('Żaneta');
   await page.emulateMedia({ media: 'print' });
   await expect(paper).toBeVisible();
-  await expect(name).toBeHidden();
+  await expect(
+    certificate.getByRole('button', { name: exam.print }),
+  ).toBeHidden();
   await expect(page.locator('canvas')).toBeHidden();
   await page.pdf({
     path: testInfo.outputPath('certyfikat.pdf'),
@@ -329,9 +322,7 @@ test('earns, prints and reopens the licence entirely offline', async ({
   await page.reload();
   await open.click();
   await panel.getByRole('button', { name: exam.certificate }).click();
-  await expect(certificate.locator('article')).not.toContainText('Żaneta');
-  await expect(
-    certificate.getByRole('textbox', { name: exam.firstName }),
-  ).toHaveValue('');
+  await expect(certificate.locator('article')).toContainText(earned.nickname);
+  await expect(certificate.getByRole('textbox')).toHaveCount(0);
   expect(errors).toEqual([]);
 });

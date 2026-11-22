@@ -1,5 +1,5 @@
 import type { ProgressProfile } from '../core/progressStore';
-import { playerNickname, ui } from '../core/presentation';
+import { ui } from '../core/presentation';
 
 const labels = ui.exam;
 const points = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 2 });
@@ -29,8 +29,7 @@ export function showCertificate(
   title.textContent = labels.licence;
   const recipient = document.createElement('p');
   recipient.className = 'certificate-recipient';
-  const nickname = playerNickname(profile.nicknameSeed);
-  recipient.textContent = nickname;
+  recipient.textContent = profile.nickname;
   const earned = document.createElement('p');
   earned.textContent = labels.earned;
   const stats = document.createElement('dl');
@@ -57,45 +56,16 @@ export function showCertificate(
 
   const actions = document.createElement('div');
   actions.className = 'certificate-actions';
-  const nameLabel = document.createElement('label');
-  nameLabel.textContent = labels.firstName;
-  const name = document.createElement('input');
-  name.type = 'text';
-  name.autocomplete = 'off';
-  name.spellcheck = false;
-  name.maxLength = 32;
-  name.setAttribute('aria-describedby', 'certificate-local');
-  nameLabel.append(name);
-  const local = document.createElement('small');
-  local.id = 'certificate-local';
-  local.textContent = labels.localName;
-  const error = document.createElement('p');
-  error.className = 'certificate-error';
-  error.setAttribute('role', 'status');
   const print = document.createElement('button');
   print.type = 'button';
   print.textContent = labels.print;
   const close = document.createElement('button');
   close.type = 'button';
   close.textContent = ui.quiz.close;
-  const updateName = () => {
-    const firstName = name.value.trim().normalize('NFC');
-    const valid = !firstName || /^\p{L}+(?:-\p{L}+)*$/u.test(firstName);
-    error.textContent = valid ? '' : labels.invalidName;
-    name.setAttribute('aria-invalid', String(!valid));
-    print.disabled = !valid;
-    recipient.textContent =
-      valid && firstName ? `${firstName} · ${nickname}` : nickname;
-  };
-  name.addEventListener('input', updateName);
-  name.addEventListener('change', updateName);
-  print.addEventListener('click', () => {
-    updateName();
-    if (!print.disabled) window.print();
-  });
+  print.addEventListener('click', () => window.print());
   close.addEventListener('click', () => dialog.close());
   dialog.addEventListener('close', () => dialog.remove(), { once: true });
-  actions.append(nameLabel, local, error, print, close);
+  actions.append(print, close);
   dialog.append(article, actions);
   host.after(dialog);
   dialog.showModal();

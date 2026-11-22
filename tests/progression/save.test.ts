@@ -23,6 +23,22 @@ const legacy = {
 const reward = { points: 1011, stars: 3, balance: balans.gwiazdki } as const;
 const good = [{ ruleId: 'ZNAK-STOP', kind: 'good' }] as const;
 
+const uuidV4 =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const migratedIdentity = {
+  profileId: expect.any(String) as unknown,
+  nickname: expect.any(String) as unknown,
+  avatarId: 'gold',
+  onlineRankings: false,
+};
+
+function previousProfile() {
+  const profile = new ProgressStore().profile;
+  for (const field of ['profileId', 'nickname', 'avatarId', 'onlineRankings'])
+    Reflect.deleteProperty(profile, field);
+  return profile;
+}
+
 function localStorageFor(data: string) {
   let value: string | null = data;
   return {
@@ -63,7 +79,7 @@ it('migrates the M5a localStorage profile and retires it after the commit', asyn
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 8,
+    version: 9,
     missionPoints: 0,
     mastery: {},
   });
@@ -95,7 +111,7 @@ it('upgrades an IndexedDB v1 record and prefers it over remaining localStorage',
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 8,
+    version: 9,
     bestScores: {},
     quizXp: 0,
   });
@@ -118,7 +134,7 @@ it.each(['legacy', 'indexeddb'])(
     const store = await ProgressStore.open(factory, storage);
     expect(store).toMatchObject({ reset: true, sessionOnly: false });
     expect(store.profile).toMatchObject({
-      version: 8,
+      version: 9,
       completed: [],
       missionPoints: 0,
     });
@@ -169,7 +185,7 @@ it('preserves M5b progress when adding the album and milestone counters', async 
   expect(store.reset).toBe(false);
   expect(store.profile).toMatchObject({
     ...profile,
-    version: 8,
+    version: 9,
     signPhotos: {},
     goodHabits: {},
     cleanMissions: {},
@@ -197,7 +213,7 @@ it('adds the city choice to an existing profile and preserves the rest of the sa
 it('adds empty quiz progress to a v3 profile without changing its existing fields', async () => {
   const factory = new IDBFactory();
   const { audio, reducedEffects, reflectiveVest, ...profile } =
-    new ProgressStore().profile;
+    previousProfile();
   const v3 = {
     ...profile,
     version: 3,
@@ -211,7 +227,8 @@ it('adds empty quiz progress to a v3 profile without changing its existing field
   expect(store.reset).toBe(false);
   expect(store.profile).toEqual({
     ...v3,
-    version: 8,
+    ...migratedIdentity,
+    version: 9,
     audio,
     reducedEffects,
     reflectiveVest,
@@ -223,11 +240,12 @@ it('adds empty quiz progress to a v3 profile without changing its existing field
 it('carries quiz cards, streak and an existing rank from v4 into the audio profile', async () => {
   const factory = new IDBFactory();
   const { audio, reducedEffects, reflectiveVest, ...profile } =
-    new ProgressStore().profile;
+    previousProfile();
   const quiz = { cards: { Q001: { box: 2, due: '2026-11-23' } }, streak: 4 };
   await seed(factory, { ...profile, version: 4, licencePassed: true, quiz });
   expect((await ProgressStore.open(factory)).profile).toEqual({
     ...profile,
+    ...migratedIdentity,
     audio,
     reducedEffects,
     reflectiveVest,
@@ -239,7 +257,7 @@ it('carries quiz cards, streak and an existing rank from v4 into the audio profi
 it('migrates a v5 licence profile and saves audio changes alongside existing progress', async () => {
   const factory = new IDBFactory();
   const { audio, reducedEffects, reflectiveVest, ...profile } =
-    new ProgressStore().profile;
+    previousProfile();
   const licence = {
     date: '2026-11-22',
     theory: { correct: 9, total: 10 },
@@ -252,7 +270,8 @@ it('migrates a v5 licence profile and saves audio changes alongside existing pro
   expect(first.reset).toBe(false);
   expect(first.profile).toEqual({
     ...previous,
-    version: 8,
+    ...migratedIdentity,
+    version: 9,
     audio: defaultAudio,
     reducedEffects,
     reflectiveVest,
@@ -270,14 +289,15 @@ it('migrates a v5 licence profile and saves audio changes alongside existing pro
   await Promise.all([first.flush(), second.flush()]);
   expect((await ProgressStore.open(factory)).profile).toEqual({
     ...previous,
-    version: 8,
+    ...migratedIdentity,
+    version: 9,
     audio: { ...audio, music: 0.34, station: 'talk', muted: true },
     reducedEffects,
     reflectiveVest,
   });
 });
 
-it('keeps progression when the audio settings in a v6 profile are damaged', async () => {
+it('keeps progression when audio settings in the current profile are damaged', async () => {
   const factory = new IDBFactory();
   const profile = new ProgressStore().profile;
   await seed(factory, {
@@ -296,8 +316,7 @@ it('keeps progression when the audio settings in a v6 profile are damaged', asyn
 
 it('migrates audio settings from v6 and persists the ride preferences', async () => {
   const factory = new IDBFactory();
-  const { reducedEffects, reflectiveVest, ...previous } = new ProgressStore()
-    .profile;
+  const { reducedEffects, reflectiveVest, ...previous } = previousProfile();
   await seed(factory, {
     ...previous,
     version: 6,
@@ -306,7 +325,7 @@ it('migrates audio settings from v6 and persists the ride preferences', async ()
   const store = await ProgressStore.open(factory);
   expect(store.reset).toBe(false);
   expect(store.profile).toMatchObject({
-    version: 8,
+    version: 9,
     reducedEffects,
     reflectiveVest,
     audio: { music: 0.34 },
@@ -326,7 +345,7 @@ it('migrates audio settings from v6 and persists the ride preferences', async ()
 it('upgrades the existing accessibility preferences and saves a touch layout alongside them', async () => {
   const factory = new IDBFactory();
   const previous = {
-    ...new ProgressStore().profile,
+    ...previousProfile(),
     version: 7,
     missionPoints: 800,
     resultsTextSize: 'largest',
@@ -336,7 +355,11 @@ it('upgrades the existing accessibility preferences and saves a touch layout alo
   await seed(factory, previous);
   const store = await ProgressStore.open(factory);
   expect(store.reset).toBe(false);
-  expect(store.profile).toEqual({ ...previous, version: 8 });
+  expect(store.profile).toEqual({
+    ...previous,
+    ...migratedIdentity,
+    version: 9,
+  });
   const touchLayout = [
     'brake',
     'left',
@@ -352,14 +375,77 @@ it('upgrades the existing accessibility preferences and saves a touch layout alo
   await store.flush();
   expect((await ProgressStore.open(factory)).profile).toEqual({
     ...previous,
-    version: 8,
+    ...migratedIdentity,
+    version: 9,
     touchLayout,
   });
 });
 
+it.each(['IndexedDB', 'Preferences'])(
+  'migrates v8 in %s once, preserving the nick, helmet and save settings',
+  async (storage) => {
+    const previous = {
+      ...previousProfile(),
+      version: 8,
+      nicknameSeed: 124,
+      missionPoints: 900,
+      breakMinutes: 45,
+      haptics: false,
+    };
+    const factory = new IDBFactory();
+    const local = {
+      getItem: (key: string) =>
+        key === 'szprycha:helmet-color' ? 'pink' : null,
+      removeItem: vi.fn(),
+    };
+    let native;
+    if (storage === 'IndexedDB') await seed(factory, previous);
+    else
+      native = preferencesProgress(
+        progressRecordKey,
+        fakePreferences(JSON.stringify(previous)),
+      );
+    const [first, second] = await Promise.all([
+      ProgressStore.open(factory, local, native),
+      ProgressStore.open(factory, local, native),
+    ]);
+    expect(first.reset).toBe(false);
+    expect(first.profile).toEqual({
+      ...previous,
+      version: 9,
+      profileId: expect.stringMatching(uuidV4),
+      nickname: 'Dzielna Szprycha 42',
+      avatarId: 'pink',
+      onlineRankings: false,
+    });
+    expect(second.profile).toEqual(first.profile);
+    first.change((profile) => {
+      profile.onlineRankings = true;
+      profile.ageBand = 'under10';
+      profile.breakMinutes = null;
+      profile.nickname = 'Zwinna Wydra 17';
+    });
+    await first.flush();
+    expect((await ProgressStore.open(factory, local, native)).profile).toEqual(
+      first.profile,
+    );
+  },
+);
+
+it('creates a v4 UUID when a WebView only exposes random bytes', () => {
+  vi.stubGlobal('crypto', {
+    getRandomValues: crypto.getRandomValues.bind(crypto),
+  });
+  try {
+    expect(new ProgressStore().profile.profileId).toMatch(uuidV4);
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});
+
 it('preserves an unsupported future save', async () => {
   const factory = new IDBFactory();
-  const future = { version: 9, data: 'future' };
+  const future = { version: 10, data: 'future' };
   await seed(factory, future);
   const store = await ProgressStore.open(factory);
   expect(store).toMatchObject({ reset: false, sessionOnly: true });
@@ -450,6 +536,7 @@ it('copies an older IndexedDB profile to Preferences and serializes later edits'
   expect(first.profile.progression.tokens).toBe(20);
   expect(first.profile.completed).toEqual([legacy.completed[0]]);
   expect(second.profile.nicknameSeed).toBe(first.profile.nicknameSeed);
+  expect(second.profile.profileId).toBe(first.profile.profileId);
 
   for (const store of [first, second]) {
     store.change((profile) => {

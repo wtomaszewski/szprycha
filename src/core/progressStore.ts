@@ -1,6 +1,12 @@
 import { get, update, type UseStore } from 'idb-keyval';
 import { z } from 'zod';
 import { audioSettingsSchema, defaultAudio } from '../audio/settings';
+import {
+  generateNickname,
+  isGeneratedNickname,
+  maxNicknameLength,
+  migrateNickname,
+} from '../content/nicknames';
 import { missionCity } from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { placRecordsSchema } from '../gameplay/plac/placRecords';
@@ -8,7 +14,8 @@ import { leitnerBoxes } from '../gameplay/quiz/leitner';
 import { applyMastery, localDay } from '../progression/mastery';
 import type { Milestones } from '../progression/milestones';
 import { touchLayoutSchema } from './touchLayout';
-import { TICKS_PER_SECOND, type Verdict } from '../rules/types';
+import { helmetColors, type HelmetColor } from '../render/spriteFrames';
+import { ageBands, TICKS_PER_SECOND, type Verdict } from '../rules/types';
 import type { UpdateProgress } from '../platform/preferencesProgress';
 
 export const progressDatabase = 'szprycha';
@@ -134,11 +141,21 @@ const m8cProfileSchema = m8aProfileSchema.extend({
   resultsHighContrast: z.boolean().optional().catch(undefined),
 });
 
-const profileVersion = 8;
-const profileSchema = m8cProfileSchema.extend({
-  version: z.literal(profileVersion),
+const m9ProfileSchema = m8cProfileSchema.extend({
+  version: z.literal(8),
   touchLayout: touchLayoutSchema,
   haptics: z.boolean().optional().catch(undefined),
+});
+
+const profileVersion = 9;
+const profileSchema = m9ProfileSchema.extend({
+  version: z.literal(profileVersion),
+  profileId: z.uuidv4(),
+  nickname: z.string().max(maxNicknameLength).refine(isGeneratedNickname),
+  avatarId: z.enum(helmetColors),
+  ageBand: z.enum(ageBands).optional(),
+  breakMinutes: count.positive().nullable().optional(),
+  onlineRankings: z.boolean(),
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
@@ -182,16 +199,16 @@ class RideBatch {
 
 function addRidePreferences(
   profile: z.infer<typeof m8aProfileSchema>,
-): ProgressProfile {
+): z.infer<typeof m9ProfileSchema> {
   return {
     ...profile,
-    version: profileVersion,
+    version: 8,
     reducedEffects: false,
     reflectiveVest: false,
   };
 }
 
-function addAudio(profile: z.infer<typeof m7cProfileSchema>): ProgressProfile {
+function addAudio(profile: z.infer<typeof m7cProfileSchema>) {
   return addRidePreferences({
     ...profile,
     version: 6,
@@ -199,11 +216,11 @@ function addAudio(profile: z.infer<typeof m7cProfileSchema>): ProgressProfile {
   });
 }
 
-function addQuiz(profile: z.infer<typeof m5cProfileSchema>): ProgressProfile {
+function addQuiz(profile: z.infer<typeof m5cProfileSchema>) {
   return addAudio({ ...profile, version: 5, quiz: { cards: {}, streak: 0 } });
 }
 
-function upgrade(profile: z.infer<typeof m5bProfileSchema>): ProgressProfile {
+function upgrade(profile: z.infer<typeof m5bProfileSchema>) {
   return addQuiz({
     ...profile,
     version: 3,
@@ -215,8 +232,44 @@ function upgrade(profile: z.infer<typeof m5bProfileSchema>): ProgressProfile {
   });
 }
 
-function createProfile(legacy?: z.infer<typeof legacySchema>): ProgressProfile {
-  return upgrade({
+function newProfileId() {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  // WebViews can expose random bytes even when the document is not a secure context.
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6]! & 0x0f) | 0x40;
+  bytes[8] = (bytes[8]! & 0x3f) | 0x80;
+  const hex = Array.from(bytes, (byte) =>
+    byte.toString(16).padStart(2, '0'),
+  ).join('');
+  return [
+    hex.slice(0, 8),
+    hex.slice(8, 12),
+    hex.slice(12, 16),
+    hex.slice(16, 20),
+    hex.slice(20),
+  ].join('-');
+}
+
+function addLocalIdentity(
+  profile: z.infer<typeof m9ProfileSchema>,
+  avatarId: HelmetColor = helmetColors[0],
+  nickname = migrateNickname(profile.nicknameSeed),
+): ProgressProfile {
+  return {
+    ...profile,
+    version: profileVersion,
+    profileId: newProfileId(),
+    nickname,
+    avatarId,
+    onlineRankings: false,
+  };
+}
+
+function createProfile(
+  legacy?: z.infer<typeof legacySchema>,
+  avatarId?: HelmetColor,
+): ProgressProfile {
+  const profile = upgrade({
     version: 2,
     nicknameSeed: Math.floor(Math.random() * 300),
     completed: [...new Set(legacy?.completed)],
@@ -233,32 +286,43 @@ function createProfile(legacy?: z.infer<typeof legacySchema>): ProgressProfile {
     licencePassed: false,
     mastery: {},
   });
+  return addLocalIdentity(
+    profile,
+    avatarId,
+    legacy === undefined ? generateNickname() : undefined,
+  );
 }
 
-function decodeProfile(raw: unknown): {
+function decodeProfile(
+  raw: unknown,
+  avatarId?: HelmetColor,
+): {
   profile: ProgressProfile;
   reset: boolean;
 } {
   const current = profileSchema.safeParse(raw);
   if (current.success) return { profile: current.data, reset: false };
+  const migrated = (profile: z.infer<typeof m9ProfileSchema>) => ({
+    profile: addLocalIdentity(profile, avatarId),
+    reset: false,
+  });
+  const m9 = m9ProfileSchema.safeParse(raw);
+  if (m9.success) return migrated(m9.data);
   const m8c = m8cProfileSchema.safeParse(raw);
-  if (m8c.success)
-    return { profile: { ...m8c.data, version: profileVersion }, reset: false };
+  if (m8c.success) return migrated({ ...m8c.data, version: 8 });
   const m8a = m8aProfileSchema.safeParse(raw);
-  if (m8a.success)
-    return { profile: addRidePreferences(m8a.data), reset: false };
+  if (m8a.success) return migrated(addRidePreferences(m8a.data));
   const m7c = m7cProfileSchema.safeParse(raw);
-  if (m7c.success) return { profile: addAudio(m7c.data), reset: false };
+  if (m7c.success) return migrated(addAudio(m7c.data));
   const m7b = m7bProfileSchema.safeParse(raw);
-  if (m7b.success)
-    return { profile: addAudio({ ...m7b.data, version: 5 }), reset: false };
+  if (m7b.success) return migrated(addAudio({ ...m7b.data, version: 5 }));
   const m5c = m5cProfileSchema.safeParse(raw);
-  if (m5c.success) return { profile: addQuiz(m5c.data), reset: false };
+  if (m5c.success) return migrated(addQuiz(m5c.data));
   const m5b = m5bProfileSchema.safeParse(raw);
-  if (m5b.success) return { profile: upgrade(m5b.data), reset: false };
+  if (m5b.success) return migrated(upgrade(m5b.data));
   const legacy = legacySchema.safeParse(raw);
   return {
-    profile: createProfile(legacy.data),
+    profile: createProfile(legacy.data, avatarId),
     reset: raw !== undefined && !legacy.success,
   };
 }
@@ -348,12 +412,27 @@ export class ProgressStore {
       if (hasLegacy) legacy = null;
     }
 
-    const fallback = decodeProfile(legacy);
+    let avatarId: HelmetColor | undefined;
+    try {
+      const savedColor = legacyStorage?.getItem('szprycha:helmet-color');
+      avatarId = helmetColors.find((color) => color === savedColor);
+    } catch {
+      // Use the default avatar if the previous local setting is unavailable.
+    }
+
+    let fallback: ReturnType<typeof decodeProfile> | undefined;
+    const getFallback = () => (fallback ??= decodeProfile(legacy, avatarId));
     const openIndexed = () =>
-      this.openIndexedDB(factory, legacyStorage, hasLegacy, fallback);
+      this.openIndexedDB(
+        factory,
+        legacyStorage,
+        hasLegacy,
+        getFallback,
+        avatarId,
+      );
     if (!native) return openIndexed();
 
-    let loaded = fallback;
+    let loaded: ReturnType<typeof decodeProfile> | undefined;
     let future = false;
     try {
       await native(async (raw) => {
@@ -362,7 +441,7 @@ export class ProgressStore {
           return raw;
         }
         if (raw !== undefined) {
-          const saved = decodeProfile(raw);
+          const saved = decodeProfile(raw, avatarId);
           if (!saved.reset) {
             loaded = saved;
             return profileSchema.safeParse(raw).success ? raw : saved.profile;
@@ -381,14 +460,15 @@ export class ProgressStore {
               future = true;
               return raw;
             }
-            if (source !== undefined) loaded = decodeProfile(source);
+            if (source !== undefined) loaded = decodeProfile(source, avatarId);
           } finally {
             database.close();
           }
         }
-        return loaded.profile;
+        return (loaded ??= getFallback()).profile;
       });
       if (!future) retireLegacy(legacyStorage, hasLegacy);
+      loaded ??= getFallback();
       const progress = new ProgressStore(
         loaded.profile,
         future ? undefined : native,
@@ -404,7 +484,8 @@ export class ProgressStore {
     factory: IDBFactory | undefined,
     legacyStorage: LegacyStorage | undefined,
     hasLegacy: boolean,
-    fallback: ReturnType<typeof decodeProfile>,
+    getFallback: () => ReturnType<typeof decodeProfile>,
+    avatarId?: HelmetColor,
   ): Promise<ProgressStore> {
     let database: IDBDatabase | undefined;
     try {
@@ -413,23 +494,25 @@ export class ProgressStore {
         const store = indexedStore(database);
         const write: UpdateProgress = (edit) =>
           update<unknown>(progressRecordKey, edit, store);
-        let loaded = fallback;
+        let loaded: ReturnType<typeof decodeProfile> | undefined;
         await write((raw) => {
           if (hasFutureVersion(raw))
             throw new Error('Unsupported progress version');
-          if (raw !== undefined) loaded = decodeProfile(raw);
-          return loaded.profile;
+          if (raw !== undefined) loaded = decodeProfile(raw, avatarId);
+          return (loaded ??= getFallback()).profile;
         });
         retireLegacy(legacyStorage, hasLegacy);
-        const progress = new ProgressStore(loaded.profile, write);
-        progress.reset = loaded.reset;
+        const { profile, reset } = loaded ?? getFallback();
+        const progress = new ProgressStore(profile, write);
+        progress.reset = reset;
         return progress;
       }
     } catch {
       database?.close();
     }
-    const progress = new ProgressStore(fallback.profile);
-    progress.reset = fallback.reset;
+    const { profile, reset } = getFallback();
+    const progress = new ProgressStore(profile);
+    progress.reset = reset;
     return progress;
   }
 

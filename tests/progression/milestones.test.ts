@@ -333,6 +333,7 @@ describe('docs/04 §10 — breaks', () => {
     const next = configured(await ProgressStore.open(factory));
     expect(next.breakMinutes(balance)).toBe(15);
     const reminder = new BreakReminder();
+    expect(reminder.advance(3600, null)).toBe(false);
     expect(reminder.advance(899, next.breakMinutes(balance))).toBe(false);
     expect(reminder.advance(1, next.breakMinutes(balance))).toBe(true);
   });
