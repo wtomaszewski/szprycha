@@ -1,143 +1,197 @@
 import type { DialogueLine, Dialogues } from '../content/dialogues';
 import type { MissionDefinition } from '../content/missions';
-import type { GameContent } from '../content/schemas';
+import { moduleId, type GameContent } from '../content/schemas';
+import { ProgressStore, type RideVerdict } from '../core/progressStore';
+import {
+  applyMastery,
+  localDay,
+  masteryWeight,
+  moduleMastery,
+  type ModuleId,
+} from '../progression/mastery';
 import {
   tokensForImprovement,
   type Stars,
 } from '../progression/missionRewards';
+import {
+  rankUnlocks,
+  reputationRank,
+  reputationXp,
+} from '../progression/reputation';
 
-const progressKey = 'szprycha.mission-progress.v1';
+type MissionReward = {
+  points: number;
+  stars: Stars;
+  balance: GameContent['balans']['gwiazdki'];
+};
 
 export const canOpenPhone = (speed: number) => speed === 0;
 
-function savedIds(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((id): id is string => typeof id === 'string')
-    : [];
-}
-
-function savedCount(value: unknown) {
-  return typeof value === 'number' && Number.isSafeInteger(value) && value >= 0
-    ? value
-    : 0;
-}
-
 export class MissionProgress {
-  private readonly completed = new Set<string>();
-  private readonly introduced = new Set<string>();
-  private readonly bestStars = new Map<string, Stars>();
-  private tokenBalance = 0;
-  private seriesRecord = 0;
+  constructor(readonly store = new ProgressStore()) {}
 
   get tokens() {
-    return this.tokenBalance;
+    return this.store.profile.progression.tokens;
   }
 
   get longestSeries() {
-    return this.seriesRecord;
+    return this.store.profile.progression.longestSeries;
   }
 
-  constructor(private readonly storage?: Pick<Storage, 'getItem' | 'setItem'>) {
-    try {
-      const raw: unknown = JSON.parse(storage?.getItem(progressKey) ?? 'null');
-      if (raw && typeof raw === 'object') {
-        if ('completed' in raw)
-          for (const id of savedIds(raw.completed)) this.completed.add(id);
-        if (
-          'progression' in raw &&
-          raw.progression &&
-          typeof raw.progression === 'object'
-        ) {
-          const progress = raw.progression;
-          if ('tokens' in progress)
-            this.tokenBalance = savedCount(progress.tokens);
-          if ('longestSeries' in progress)
-            this.seriesRecord = savedCount(progress.longestSeries);
-          if (
-            'bestStars' in progress &&
-            progress.bestStars &&
-            typeof progress.bestStars === 'object'
-          ) {
-            for (const [id, stars] of Object.entries(progress.bestStars))
-              if (stars === 1 || stars === 2 || stars === 3)
-                this.bestStars.set(id, stars);
-          }
-        }
-        if ('introduced' in raw)
-          for (const id of savedIds(raw.introduced)) this.introduced.add(id);
-      }
-    } catch {
-      // In-memory progression also works when local storage is unavailable.
-    }
+  get xp() {
+    return reputationXp(this.store.profile);
   }
 
-  complete(
-    mission: MissionDefinition,
-    reward?: { stars: Stars; balance: GameContent['balans']['gwiazdki'] },
+  rank(content: GameContent) {
+    return reputationRank(
+      content.balans.rangi,
+      this.xp,
+      this.store.profile.licencePassed,
+    );
+  }
+
+  unlocks(content: GameContent) {
+    const { balans } = content;
+    const masteryMet = moduleId.options.every(
+      (module) =>
+        this.moduleMastery(module, content) >=
+        balans.licencja.mastery_min_modul,
+    );
+    return rankUnlocks(
+      balans.rangi,
+      this.xp,
+      this.store.profile.licencePassed,
+      masteryMet,
+    );
+  }
+
+  complete(mission: MissionDefinition, reward?: MissionReward) {
+    return this.store.change((profile) => {
+      if (!profile.completed.includes(mission.id))
+        profile.completed.push(mission.id);
+      if (!reward) return 0;
+      profile.missionPoints += Math.max(0, reward.points);
+      const best = profile.bestScores[mission.id];
+      if (best === undefined || reward.points > best)
+        profile.bestScores[mission.id] = reward.points;
+
+      const progression = profile.progression;
+      const previous = progression.bestStars[mission.id] ?? 0;
+      const tokens = tokensForImprovement(
+        reward.balance,
+        previous,
+        reward.stars,
+      );
+      if (reward.stars !== 0 && reward.stars > previous)
+        progression.bestStars[mission.id] = reward.stars;
+      progression.tokens += tokens;
+      return tokens;
+    });
+  }
+
+  bestScore(missionId: string) {
+    return this.store.profile.bestScores[missionId];
+  }
+
+  ruleMastery(ruleId: string) {
+    return this.store.profile.mastery[ruleId]?.value ?? 0;
+  }
+
+  moduleMastery(module: ModuleId, content: GameContent) {
+    const ids = content.przepisy.przepisy
+      .filter(({ modul }) => modul === module)
+      .map(({ id }) => id);
+    return moduleMastery(this.store.profile.mastery, ids);
+  }
+
+  eventWeight(ruleId: string, balance: GameContent['balans']['mastery']) {
+    return masteryWeight(this.ruleMastery(ruleId), balance);
+  }
+
+  recordRide(
+    verdicts: readonly RideVerdict[],
+    longest: number,
+    balance: GameContent['balans']['mastery'],
+    day?: string,
   ) {
-    this.completed.add(mission.id);
-    let tokens = 0;
-    if (reward) {
-      const previous = this.bestStars.get(mission.id) ?? 0;
-      tokens = tokensForImprovement(reward.balance, previous, reward.stars);
-      if (reward.stars > previous) this.bestStars.set(mission.id, reward.stars);
-      this.tokenBalance += tokens;
-    }
-    this.save();
-    return tokens;
+    this.store.recordRide(verdicts, longest, balance, day);
   }
 
-  recordSeries(length: number) {
-    if (length <= this.seriesRecord) return;
-    this.seriesRecord = length;
-    this.save();
+  recordControlAnswer(
+    ruleId: string,
+    correct: boolean,
+    balance: GameContent['balans']['mastery'],
+  ) {
+    if (correct) this.recordQuizAnswer(ruleId, true, balance);
+  }
+
+  recordQuizAnswer(
+    ruleId: string,
+    correct: boolean,
+    balance: GameContent['balans']['mastery'],
+    xpAwarded = 0,
+  ) {
+    const day = localDay(new Date());
+    this.store.change((profile) => {
+      applyMastery(
+        profile.mastery,
+        ruleId,
+        correct ? 'quiz_ok' : 'quiz_zle',
+        balance,
+        day,
+      );
+      if (correct) profile.quizXp += xpAwarded;
+    });
+  }
+
+  awardAchievement(id: string, xp: number) {
+    this.store.change((profile) => {
+      if (!Object.hasOwn(profile.achievementXp, id))
+        profile.achievementXp[id] = xp;
+    });
+  }
+
+  recordLicencePassed() {
+    this.store.change((profile) => {
+      profile.licencePassed = true;
+    });
   }
 
   isAvailable(mission: MissionDefinition, content: GameContent) {
     const { ranga_min, misje_ukonczone } = mission.wymagania ?? {};
-    if (misje_ukonczone?.some((id) => !this.completed.has(id))) return false;
+    if (
+      misje_ukonczone?.some((id) => !this.store.profile.completed.includes(id))
+    )
+      return false;
     if (!ranga_min) return true;
     const rank = content.balans.rangi.find(({ id }) => id === ranga_min);
-    if (rank?.xp == null) return false;
-    const xp = content.misje.reduce(
-      (sum, order) =>
-        sum + (this.completed.has(order.id) ? order.nagrody.xp : 0),
-      0,
-    );
-    return xp >= rank.xp;
+    if (!rank) return false;
+    return rank.xp === null
+      ? this.store.profile.licencePassed
+      : this.xp >= rank.xp;
   }
 
   opening(mission: MissionDefinition, content: Dialogues): DialogueLine[] {
     const lines: DialogueLine[] = [];
+    const newRules: string[] = [];
     for (const ruleId of mission.reguly_cwiczone) {
-      if (this.introduced.has(ruleId)) continue;
+      if (
+        this.store.profile.introduced.includes(ruleId) ||
+        newRules.includes(ruleId)
+      )
+        continue;
       const tip = content.zapowiedzi.find(({ regula }) => regula === ruleId);
       if (!tip) continue;
       const { emocja, tekst, lektor } = tip;
       lines.push({ postac: 'sierzant_ola', emocja, tekst, lektor });
-      this.introduced.add(ruleId);
+      newRules.push(ruleId);
     }
-    if (lines.length) this.save();
+    if (newRules.length)
+      this.store.change((profile) => {
+        for (const id of newRules)
+          if (!profile.introduced.includes(id)) profile.introduced.push(id);
+      });
     return [...lines, ...missionLines(content, mission.dialog_start)];
-  }
-
-  private save() {
-    try {
-      this.storage?.setItem(
-        progressKey,
-        JSON.stringify({
-          completed: [...this.completed],
-          introduced: [...this.introduced],
-          progression: {
-            bestStars: Object.fromEntries(this.bestStars),
-            tokens: this.tokenBalance,
-            longestSeries: this.seriesRecord,
-          },
-        }),
-      );
-    } catch {
-      // Keep the current session playable if persistence fails.
-    }
   }
 }
 
@@ -145,14 +199,20 @@ export function missionLines(content: Dialogues, id?: string): DialogueLine[] {
   return content.dialogi.find((dialogue) => dialogue.id === id)?.linie ?? [];
 }
 
-function localStorageIfAvailable() {
+export async function loadMissionProgress() {
+  let indexedDb: IDBFactory | undefined;
+  let legacyStorage: Storage | undefined;
   try {
-    return window.localStorage;
+    indexedDb = window.indexedDB;
   } catch {
-    return undefined;
+    // Some browser settings disallow access to the property itself.
   }
+  try {
+    legacyStorage = window.localStorage;
+  } catch {
+    // The IndexedDB profile can still load without localStorage.
+  }
+  return new MissionProgress(
+    await ProgressStore.open(indexedDb, legacyStorage),
+  );
 }
-
-export const missionProgress = new MissionProgress(
-  typeof window === 'undefined' ? undefined : localStorageIfAvailable(),
-);

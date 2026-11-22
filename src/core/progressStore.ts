@@ -1,0 +1,317 @@
+import { update, type UseStore } from 'idb-keyval';
+import { z } from 'zod';
+import type { GameContent } from '../content/schemas';
+import { applyMastery, localDay } from '../progression/mastery';
+import { TICKS_PER_SECOND, type Verdict } from '../rules/types';
+
+export const progressDatabase = 'szprycha';
+export const progressStoreName = 'progress';
+export const progressRecordKey = 'profile';
+export const legacyProgressKey = 'szprycha.mission-progress.v1';
+
+const id = z.string().regex(/^[A-Za-z0-9_-]+$/);
+const count = z.number().int().nonnegative();
+const score = z.number().int();
+const stars = z.union([z.literal(1), z.literal(2), z.literal(3)]);
+const missionProgressFields = {
+  completed: z.array(id),
+  introduced: z.array(id),
+  progression: z.strictObject({
+    bestStars: z.record(id, stars),
+    tokens: count,
+    longestSeries: count,
+  }),
+};
+
+const legacySchema = z.strictObject({
+  ...missionProgressFields,
+  version: z.literal(1).optional(),
+  introduced: missionProgressFields.introduced.optional(),
+  progression: missionProgressFields.progression.partial().optional(),
+});
+
+const profileSchema = z.strictObject({
+  ...missionProgressFields,
+  version: z.literal(2),
+  nicknameSeed: count.max(299),
+  missionPoints: count,
+  bestScores: z.record(id, score),
+  quizXp: count,
+  achievementXp: z.record(id, count),
+  licencePassed: z.boolean(),
+  mastery: z.record(
+    id,
+    z.strictObject({
+      value: z.number().min(0).max(100),
+      goodDay: z.iso.date().optional(),
+      goodToday: z.number().nonnegative(),
+    }),
+  ),
+});
+
+export type ProgressProfile = z.infer<typeof profileSchema>;
+export type RideVerdict = Pick<Verdict, 'kind' | 'ruleId'>;
+type LegacyStorage = Pick<Storage, 'getItem' | 'removeItem'>;
+type MasteryBalance = GameContent['balans']['mastery'];
+
+const rideSaveTicks = 5 * TICKS_PER_SECOND;
+
+class RideBatch {
+  // Copy only the replay inputs, without retaining the scene's reusable verdicts.
+  readonly ruleIds: string[] = [];
+  readonly kinds: RideVerdict['kind'][] = [];
+  readonly balances: MasteryBalance[] = [];
+  readonly days: string[] = [];
+  longest = 0;
+  ticks = 0;
+
+  apply(profile: ProgressProfile) {
+    for (let i = 0; i < this.ruleIds.length; i++)
+      applyMastery(
+        profile.mastery,
+        this.ruleIds[i]!,
+        this.kinds[i]!,
+        this.balances[i]!,
+        this.days[i]!,
+      );
+    profile.progression.longestSeries = Math.max(
+      profile.progression.longestSeries,
+      this.longest,
+    );
+  }
+}
+
+function createProfile(legacy?: z.infer<typeof legacySchema>): ProgressProfile {
+  return {
+    version: 2,
+    nicknameSeed: Math.floor(Math.random() * 300),
+    completed: [...new Set(legacy?.completed)],
+    introduced: [...new Set(legacy?.introduced)],
+    progression: {
+      bestStars: legacy?.progression?.bestStars ?? {},
+      tokens: legacy?.progression?.tokens ?? 0,
+      longestSeries: legacy?.progression?.longestSeries ?? 0,
+    },
+    missionPoints: 0,
+    bestScores: {},
+    quizXp: 0,
+    achievementXp: {},
+    licencePassed: false,
+    mastery: {},
+  };
+}
+
+function decodeProfile(raw: unknown) {
+  const current = profileSchema.safeParse(raw);
+  if (current.success) return { profile: current.data, reset: false };
+  const legacy = legacySchema.safeParse(raw);
+  return {
+    profile: createProfile(legacy.data),
+    reset: raw !== undefined && !legacy.success,
+  };
+}
+
+function hasFutureVersion(raw: unknown) {
+  return (
+    typeof raw === 'object' &&
+    raw !== null &&
+    'version' in raw &&
+    typeof raw.version === 'number' &&
+    raw.version > 2
+  );
+}
+
+function openDatabase(factory: IDBFactory) {
+  return new Promise<IDBDatabase>((resolve, reject) => {
+    const request = factory.open(progressDatabase, 1);
+    let blocked = false;
+    request.onblocked = () => {
+      blocked = true;
+      reject(new Error('Progress database is blocked'));
+    };
+    request.onupgradeneeded = () =>
+      request.result.createObjectStore(progressStoreName);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      const database = request.result;
+      database.onversionchange = () => database.close();
+      if (blocked) database.close();
+      else resolve(database);
+    };
+  });
+}
+
+export class ProgressStore {
+  private queue = Promise.resolve();
+  private ride = new RideBatch();
+  private readonly unusedMastery = new Map<
+    string,
+    ProgressProfile['mastery'][string]
+  >();
+  private readonly date = new Date();
+  private day = '';
+  private dayKey = NaN;
+  reset = false;
+  sessionOnly: boolean;
+
+  constructor(
+    readonly profile = createProfile(),
+    private readonly store?: UseStore,
+  ) {
+    this.sessionOnly = !store;
+  }
+
+  static async open(
+    factory: IDBFactory | undefined,
+    legacyStorage?: LegacyStorage,
+  ): Promise<ProgressStore> {
+    let legacy: unknown;
+    let hasLegacy = false;
+    try {
+      const raw = legacyStorage?.getItem(legacyProgressKey);
+      if (raw != null) {
+        hasLegacy = true;
+        legacy = JSON.parse(raw) as unknown;
+      }
+    } catch {
+      // Malformed legacy JSON is handled like a damaged IndexedDB record.
+      if (hasLegacy) legacy = null;
+    }
+
+    const fallback = decodeProfile(legacy);
+    let database: IDBDatabase | undefined;
+    try {
+      if (factory) {
+        database = await openDatabase(factory);
+        const db = database;
+        const store: UseStore = async (mode, callback) =>
+          callback(
+            db
+              .transaction(progressStoreName, mode)
+              .objectStore(progressStoreName),
+          );
+        let loaded = fallback;
+        await update<unknown>(
+          progressRecordKey,
+          (raw) => {
+            if (hasFutureVersion(raw))
+              throw new Error('Unsupported progress version');
+            if (raw !== undefined) loaded = decodeProfile(raw);
+            return loaded.profile;
+          },
+          store,
+        );
+        // Retire v1 only once the IndexedDB transaction has committed.
+        if (hasLegacy) {
+          try {
+            legacyStorage?.removeItem(legacyProgressKey);
+          } catch {
+            // IndexedDB already takes precedence on subsequent loads.
+          }
+        }
+        const progress = new ProgressStore(loaded.profile, store);
+        progress.reset = loaded.reset;
+        return progress;
+      }
+    } catch {
+      database?.close();
+    }
+    const progress = new ProgressStore(fallback.profile);
+    progress.reset = fallback.reset;
+    return progress;
+  }
+
+  change<T>(edit: (profile: ProgressProfile) => T): T {
+    const result = edit(this.profile);
+    this.save(edit);
+    return result;
+  }
+
+  prepareRide(rules: readonly { id: string }[]) {
+    for (const { id } of rules) {
+      if (
+        !Object.hasOwn(this.profile.mastery, id) &&
+        !this.unusedMastery.has(id)
+      )
+        this.unusedMastery.set(id, { value: 0, goodToday: 0 });
+    }
+    this.currentDay();
+  }
+
+  recordRide(
+    verdicts: readonly RideVerdict[],
+    longest: number,
+    balance: MasteryBalance,
+    day?: string,
+  ) {
+    const batch = this.ride;
+    const persistent = !this.sessionOnly;
+    if (verdicts.length) {
+      day ??= this.currentDay();
+      for (let i = 0; i < verdicts.length; i++) {
+        const { kind, ruleId } = verdicts[i]!;
+        applyMastery(
+          this.profile.mastery,
+          ruleId,
+          kind,
+          balance,
+          day,
+          this.unusedMastery,
+        );
+        if (persistent) {
+          batch.ruleIds.push(ruleId);
+          batch.kinds.push(kind);
+          batch.balances.push(balance);
+          batch.days.push(day);
+        }
+      }
+      const { progression } = this.profile;
+      progression.longestSeries = Math.max(progression.longestSeries, longest);
+      batch.longest = Math.max(batch.longest, longest);
+    }
+    if (persistent && batch.ruleIds.length && ++batch.ticks >= rideSaveTicks)
+      this.save();
+  }
+
+  private currentDay() {
+    const { date } = this;
+    date.setTime(Date.now());
+    const key =
+      date.getFullYear() * 10_000 + date.getMonth() * 100 + date.getDate();
+    if (key !== this.dayKey) {
+      this.day = localDay(date);
+      this.dayKey = key;
+    }
+    return this.day;
+  }
+
+  private save(edit?: (profile: ProgressProfile) => unknown) {
+    const batch = this.ride.ruleIds.length ? this.ride : undefined;
+    if (batch) this.ride = new RideBatch();
+    const { store } = this;
+    if (!store || this.sessionOnly || (!batch && !edit)) return;
+
+    // IndexedDB orders readwrite transactions on this store across tabs. Start
+    // immediately so pagehide can submit a write within the event handler.
+    const write = update<ProgressProfile | undefined>(
+      progressRecordKey,
+      (profile) => {
+        if (this.sessionOnly || profile?.version !== 2)
+          throw new Error('Progress record unavailable');
+        batch?.apply(profile);
+        edit?.(profile);
+        return profile;
+      },
+      store,
+    ).catch(() => {
+      this.sessionOnly = true;
+      if (this.ride.ruleIds.length) this.ride = new RideBatch();
+    });
+    this.queue = this.queue.then(() => write);
+  }
+
+  flush() {
+    this.save();
+    return this.queue;
+  }
+}

@@ -33,12 +33,12 @@ gwiazdki:
   zetony: [10, 20, 35]
   dwie_gwiazdki_max_minor: 1
 rangi:
-  - { id: zoltodziob, xp: 0 }
-  - { id: kurier, xp: 2000 }
-  - { id: kurier_pro, xp: 6000 }
-  - { id: pilot_miejski, xp: 12000 }
-  - { id: mistrz_szlaku, xp: 20000 }
-  - { id: legenda, xp: null, wymaga: licencja }
+  - { id: zoltodziob, xp: 0, odblokuj: [miasteczko, akt_1] }
+  - { id: kurier, xp: 2000, odblokuj: [akt_2, quiz, wyzwania_dzienne] }
+  - { id: kurier_pro, xp: 6000, odblokuj: [misje_poboczne, nocne_kursy] }
+  - { id: pilot_miejski, xp: 12000, odblokuj: [akt_3, rankingi_tygodniowe] }
+  - { id: mistrz_szlaku, xp: 20000, odblokuj: [egzamin_licencji] }
+  - { id: legenda, xp: null, wymaga: licencja, odblokuj: [zloty_dzwonek, sezon, tytul_przy_nicku] }
 licencja:
   mastery_min_modul: 70
   teoria_pytan: 25

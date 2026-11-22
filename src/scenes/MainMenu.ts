@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 import type { GameContent } from '../content/schemas';
-import { missionProgress } from '../gameplay/MissionProgress';
+import type { MissionProgress } from '../gameplay/MissionProgress';
+import { progressNotice, skillMapButton } from '../ui/SkillMap';
 import { FONT, translate, ui } from '../core/presentation';
 import { readHelmetColor, setHelmetColor } from '../core/helmetColor';
 import { helmetColors } from '../render/spriteFrames';
@@ -12,10 +13,15 @@ export class MainMenu extends Scene {
     // Data has passed the same schema at build time and at the loading boundary.
     if (content?.przepisy) this.registry.set('content', content);
     const gameContent = this.registry.get('content') as GameContent;
+    const progress = this.registry.get('missionProgress') as MissionProgress;
+    const skills = skillMapButton(progress, gameContent);
+    const notice = document.createElement('p');
+    notice.className = 'menu-save-notice';
+    notice.setAttribute('role', 'status');
+    notice.textContent = progressNotice(progress);
     const tutorial = gameContent.misje.find(
       (mission) =>
-        mission.id === 'WAW-T-01' &&
-        missionProgress.isAvailable(mission, gameContent),
+        mission.id === 'WAW-T-01' && progress.isAvailable(mission, gameContent),
     );
     const missionButton = document.createElement('button');
     if (tutorial) {
@@ -46,7 +52,13 @@ export class MainMenu extends Scene {
       if (selected) setHelmetColor(selected);
     });
     helmetLabel.append(helmet);
-    document.body.append(pragaButton, helmetLabel);
+    document.body.append(
+      pragaButton,
+      helmetLabel,
+      skills.button,
+      skills.dialog,
+      notice,
+    );
     const g = this.add.graphics();
     g.fillStyle(0x1a1c2c).fillRect(0, 0, 640, 360);
     g.fillStyle(0x257179).fillRect(0, 0, 8, 360);
@@ -96,7 +108,12 @@ export class MainMenu extends Scene {
         -Math.floor((this.scale.width - 640) / 2),
         -Math.floor((this.scale.height - 360) / 2),
       );
-      for (const button of [missionButton, pragaButton, helmetLabel])
+      for (const button of [
+        missionButton,
+        pragaButton,
+        helmetLabel,
+        skills.button,
+      ])
         button.style.setProperty('--menu-zoom', String(this.scale.zoom));
     };
     center();
@@ -105,7 +122,9 @@ export class MainMenu extends Scene {
       if (
         event.target !== missionButton &&
         event.target !== pragaButton &&
-        event.target !== helmet
+        event.target !== helmet &&
+        event.target !== skills.button &&
+        !skills.dialog.open
       )
         this.scene.start('City');
     };
@@ -116,6 +135,9 @@ export class MainMenu extends Scene {
       missionButton.remove();
       pragaButton.remove();
       helmetLabel.remove();
+      skills.button.remove();
+      skills.dialog.remove();
+      notice.remove();
     });
     const canvas = this.game.canvas;
     canvas.setAttribute(

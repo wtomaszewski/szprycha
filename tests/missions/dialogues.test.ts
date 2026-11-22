@@ -1,3 +1,5 @@
+import { IDBFactory } from 'fake-indexeddb';
+import { ProgressStore } from '../../src/core/progressStore';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { dialogueFileSchema } from '../../src/content/dialogues';
 import { contentSchema, type GameContent } from '../../src/content/schemas';
@@ -54,17 +56,11 @@ describe('dialogue content', () => {
     );
   });
 
-  it('preserves scripted order and introduces each rule once across missions and reloads', () => {
-    const data = new Map<string, string>();
-    const storage = {
-      getItem: (key: string) => data.get(key) ?? null,
-      setItem: (key: string, value: string) => {
-        data.set(key, value);
-      },
-    };
+  it('preserves scripted order and introduces each rule once across missions and reloads', async () => {
+    const factory = new IDBFactory();
     const tutorial = content.misje[0]!;
     const { dialogi } = content;
-    const progress = new MissionProgress(storage);
+    const progress = new MissionProgress(await ProgressStore.open(factory));
     const lines = progress.opening(tutorial, dialogi);
 
     expect(lines.map(({ tekst }) => tekst)).toEqual([
@@ -79,7 +75,11 @@ describe('dialogue content', () => {
     expect(lines[1]?.lektor).toBe('dialogi.lektor.ZNAK-STOP');
 
     const next = { ...tutorial, id: 'WAW-A1-99' };
-    for (const session of [progress, new MissionProgress(storage)])
+    await progress.store.flush();
+    for (const session of [
+      progress,
+      new MissionProgress(await ProgressStore.open(factory)),
+    ])
       expect(session.opening(next, dialogi).map(({ tekst }) => tekst)).toEqual([
         'dialogi.WAW-T-01.powitanie',
       ]);
@@ -99,7 +99,6 @@ describe('SzprychaApp', () => {
   it('requires prior successes and the declared minimum rank', () => {
     const world = structuredClone(content);
     const first = world.misje[0]!;
-    first.nagrody.xp = 2000;
     const progress = new MissionProgress();
     const order = {
       ...first,
@@ -108,7 +107,11 @@ describe('SzprychaApp', () => {
     };
     expect(progress.isAvailable(first, world)).toBe(true);
     expect(progress.isAvailable(order, world)).toBe(false);
-    progress.complete(first);
+    progress.complete(first, {
+      points: 4000,
+      stars: 1,
+      balance: world.balans.gwiazdki,
+    });
     expect(progress.isAvailable(order, world)).toBe(true);
     order.wymagania.ranga_min = 'kurier_pro';
     progress.complete(first);

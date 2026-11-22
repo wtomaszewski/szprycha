@@ -90,9 +90,10 @@ export class DrivingHud {
     attention: number,
     at: number,
   ) {
-    if (points !== this.lastPoints) {
-      this.points.textContent = String(points);
-      this.lastPoints = points;
+    const displayedPoints = Math.max(0, points);
+    if (displayedPoints !== this.lastPoints) {
+      this.points.textContent = String(displayedPoints);
+      this.lastPoints = displayedPoints;
     }
     if (multiplier !== this.lastMultiplier) {
       this.combo.textContent = `×${multiplier}`;

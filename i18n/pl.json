@@ -173,6 +173,41 @@
     "wiseHead": "Mądra Głowa",
     "continue": "Ruszaj dalej"
   },
+  "skillMap": {
+    "title": "Mapa Umiejętności",
+    "close": "Wróć do menu",
+    "xp": "XP Reputacji",
+    "rank": "Ranga",
+    "bestScores": "Najlepsze wyniki misji",
+    "noScores": "Ukończ misję, aby zapisać wynik.",
+    "reset": "Zapis postępu był uszkodzony. Zaczynasz od nowa.",
+    "sessionOnly": "Zapis jest niedostępny. Postęp pozostanie w tej sesji.",
+    "nicknames": ["Szybki Jeż", "Dzielna Szprycha", "Czujna Sroka"],
+    "ranks": {
+      "zoltodziob": "Żółtodziób",
+      "kurier": "Kurier",
+      "kurier_pro": "Kurier Pro",
+      "pilot_miejski": "Pilot Miejski",
+      "mistrz_szlaku": "Mistrz Szlaku",
+      "legenda": "Legenda Szprychy"
+    },
+    "modules": {
+      "M01": "Rower i kask",
+      "M02": "Gdzie jechać",
+      "M03": "Znaki i sygnały",
+      "M04": "Pierwszeństwo",
+      "M05": "Manewry",
+      "M06": "Szczególne miejsca i warunki",
+      "M07": "Pierwsza pomoc",
+      "M08": "Plac manewrowy"
+    },
+    "badges": {
+      "brak": "Bez odznaki",
+      "braz": "Brąz",
+      "srebro": "Srebro",
+      "zloto": "Złoto"
+    }
+  },
   "missionUi": {
     "timer": "Czas misji",
     "direction": "Kierunek i odległość do celu",
@@ -189,6 +224,7 @@
     "timeExpired": "Czas minął.",
     "threeMajor": "Trzy poważne błędy zakończyły przejazd.",
     "goodHabits": "Dobre nawyki",
+    "penalties": "Kary",
     "noTimeBonus": "Przejazd z poważnym błędem nie kwalifikuje się do premii za czas.",
     "goals": {
       "dojedz": "Jedź do zaznaczonego miejsca.",
