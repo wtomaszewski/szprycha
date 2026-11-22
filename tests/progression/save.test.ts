@@ -1,3 +1,4 @@
+import { defaultAudio } from '../../src/audio/settings';
 import { IDBDatabase, IDBFactory, IDBObjectStore } from 'fake-indexeddb';
 import { expect, it, vi } from 'vitest';
 import {
@@ -61,7 +62,7 @@ it('migrates the M5a localStorage profile and retires it after the commit', asyn
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 5,
+    version: 6,
     missionPoints: 0,
     mastery: {},
   });
@@ -93,7 +94,7 @@ it('upgrades an IndexedDB v1 record and prefers it over remaining localStorage',
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 5,
+    version: 6,
     bestScores: {},
     quizXp: 0,
   });
@@ -116,7 +117,7 @@ it.each(['legacy', 'indexeddb'])(
     const store = await ProgressStore.open(factory, storage);
     expect(store).toMatchObject({ reset: true, sessionOnly: false });
     expect(store.profile).toMatchObject({
-      version: 5,
+      version: 6,
       completed: [],
       missionPoints: 0,
     });
@@ -167,7 +168,7 @@ it('preserves M5b progress when adding the album and milestone counters', async 
   expect(store.reset).toBe(false);
   expect(store.profile).toMatchObject({
     ...profile,
-    version: 5,
+    version: 6,
     signPhotos: {},
     goodHabits: {},
     cleanMissions: {},
@@ -194,7 +195,7 @@ it('adds the city choice to an existing profile and preserves the rest of the sa
 
 it('adds empty quiz progress to a v3 profile without changing its existing fields', async () => {
   const factory = new IDBFactory();
-  const profile = new ProgressStore().profile;
+  const { audio, ...profile } = new ProgressStore().profile;
   const v3 = {
     ...profile,
     version: 3,
@@ -208,27 +209,82 @@ it('adds empty quiz progress to a v3 profile without changing its existing field
   expect(store.reset).toBe(false);
   expect(store.profile).toEqual({
     ...v3,
-    version: 5,
+    version: 6,
+    audio,
     quiz: { cards: {}, streak: 0 },
   });
   expect((await ProgressStore.open(factory)).profile).toEqual(store.profile);
 });
 
-it('carries quiz cards, streak and an existing rank from v4 into the licence profile', async () => {
+it('carries quiz cards, streak and an existing rank from v4 into the audio profile', async () => {
   const factory = new IDBFactory();
-  const profile = new ProgressStore().profile;
+  const { audio, ...profile } = new ProgressStore().profile;
   const quiz = { cards: { Q001: { box: 2, due: '2026-11-23' } }, streak: 4 };
   await seed(factory, { ...profile, version: 4, licencePassed: true, quiz });
   expect((await ProgressStore.open(factory)).profile).toEqual({
     ...profile,
+    audio,
     licencePassed: true,
     quiz,
   });
 });
 
+it('migrates a v5 licence profile and saves audio changes alongside existing progress', async () => {
+  const factory = new IDBFactory();
+  const { audio, ...profile } = new ProgressStore().profile;
+  const licence = {
+    date: '2026-11-22',
+    theory: { correct: 9, total: 10 },
+    practice: { points: 18, max: 20 },
+  };
+  const previous = { ...profile, version: 5, missionPoints: 550, licence };
+  await seed(factory, previous);
+  const first = await ProgressStore.open(factory);
+  const second = await ProgressStore.open(factory);
+  expect(first.reset).toBe(false);
+  expect(first.profile).toEqual({
+    ...previous,
+    version: 6,
+    audio: defaultAudio,
+  });
+
+  first.change(({ audio: settings }) => {
+    settings.music = 0.34;
+  });
+  second.change(({ audio: settings }) => {
+    settings.station = 'talk';
+  });
+  second.change(({ audio: settings }) => {
+    settings.muted = true;
+  });
+  await Promise.all([first.flush(), second.flush()]);
+  expect((await ProgressStore.open(factory)).profile).toEqual({
+    ...previous,
+    version: 6,
+    audio: { ...audio, music: 0.34, station: 'talk', muted: true },
+  });
+});
+
+it('keeps progression when the audio settings in a v6 profile are damaged', async () => {
+  const factory = new IDBFactory();
+  const profile = new ProgressStore().profile;
+  await seed(factory, {
+    ...profile,
+    audio: { ...defaultAudio, music: 4 },
+    quizXp: 20,
+  });
+  const store = await ProgressStore.open(factory);
+  expect(store.reset).toBe(false);
+  expect(store.profile).toEqual({
+    ...profile,
+    quizXp: 20,
+    audio: defaultAudio,
+  });
+});
+
 it('preserves an unsupported future save', async () => {
   const factory = new IDBFactory();
-  const future = { version: 6, data: 'future' };
+  const future = { version: 7, data: 'future' };
   await seed(factory, future);
   const store = await ProgressStore.open(factory);
   expect(store).toMatchObject({ reset: false, sessionOnly: true });

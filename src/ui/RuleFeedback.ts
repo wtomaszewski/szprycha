@@ -1,3 +1,4 @@
+import { audio } from '../audio/GameAudio';
 import type { GameContent } from '../content/schemas';
 import { ui } from '../core/presentation';
 import type { RuleEngine } from '../rules/RuleEngine';
@@ -53,6 +54,7 @@ export class RuleFeedback {
 
   reset(counts: RuleEngine['counts']) {
     this.pending.length = 0;
+    audio.stopReading('feedback');
     this.bubble.hidden = true;
     this.showCounts(counts);
   }
@@ -71,12 +73,13 @@ export class RuleFeedback {
         (next.kind === 'major' && this.bubble.dataset.kind === 'minor'))
     ) {
       this.pending.shift();
-      const text = this.text.get(next.feedbackKey);
+      const text = this.explanation(next);
       if (text) {
         this.bubble.hidden = false;
         this.bubble.textContent = text;
         this.bubble.dataset.kind = next.kind;
         this.until = at + 3;
+        audio.read('feedback', text);
       }
     }
     if (!this.bubble.hidden && at >= this.until) this.bubble.hidden = true;

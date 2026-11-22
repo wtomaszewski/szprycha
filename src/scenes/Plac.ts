@@ -1,3 +1,4 @@
+import { audio } from '../audio/GameAudio';
 import { Scene, type GameObjects } from 'phaser';
 import type { PlacBalance, PlacCourse, PlacId } from '../content/plac';
 import type { GameContent } from '../content/schemas';
@@ -120,10 +121,12 @@ export class Plac extends Scene {
       () => this.leaveRun(),
       () => {
         this.accumulator = 0;
+        audio.stopReading('lesson');
       },
       () => {},
       () => {},
       { keyboard: () => this.dialog.open, gamepad: () => this.dialog.open },
+      this.progress.store,
       true,
     );
     this.dialog = document.createElement('dialog');
@@ -170,6 +173,7 @@ export class Plac extends Scene {
     canvas.dataset.scene = this.scene.key;
     canvas.setAttribute('aria-label', ui.plac.title);
     this.events.once('shutdown', () => {
+      audio.leave();
       this.scale.off('resize', resize);
       this.controls.destroy();
       this.attempt = undefined;
@@ -287,7 +291,9 @@ export class Plac extends Scene {
     this.game.canvas.dataset.placExercise = run.id;
     delete this.game.canvas.dataset.placGrade;
     this.heading.textContent = `${run.index + 1}/${run.ids.length} · ${this.titles.get(run.id)}`;
-    this.coach.textContent = `${ui.plac.coach} · ${translate(this.course.exercises[run.id].hint)}`;
+    const hint = translate(this.course.exercises[run.id].hint);
+    this.coach.textContent = `${ui.plac.coach} · ${hint}`;
+    audio.read('lesson', hint);
     this.clock.hidden = !this.arcade;
     const ghost = this.arcade && this.records;
     this.clock.setAttribute('aria-description', ghost ? ui.plac.ghost : '');
@@ -299,6 +305,7 @@ export class Plac extends Scene {
 
   private results(run: PlacRun) {
     const score = scorePlac(run.results, this.balance, this.passThreshold);
+    if (score.medal) audio.play('stars');
     if (this.arcade && score.clean) {
       const { balance, courseKey } = this;
       this.progress.store.change((profile) => {
@@ -417,6 +424,11 @@ export class Plac extends Scene {
         this.game.canvas.dataset.placGrade = result.grade;
         const comment = `${ui.plac.coach} · ${fault ? ui.plac.faults[fault] : ui.exam.cleanExercise}`;
         this.coach.textContent = comment;
+        if (result.grade !== 'good') audio.play('oops');
+        audio.read(
+          'lesson',
+          fault ? ui.plac.faults[fault] : ui.exam.cleanExercise,
+        );
         if (!this.attempt)
           this.progress.recordRide(
             [{ ruleId: result.id, kind: result.grade }],

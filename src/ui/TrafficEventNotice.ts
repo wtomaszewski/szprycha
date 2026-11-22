@@ -1,4 +1,4 @@
-import { PhoneRing } from '../audio/PhoneRing';
+import { audio } from '../audio/GameAudio';
 import { ui } from '../core/presentation';
 import type { TrafficEvents } from '../gameplay/TrafficEvents';
 
@@ -7,7 +7,6 @@ export class TrafficEventNotice {
   private readonly text = document.createElement('p');
   private readonly action = document.createElement('button');
   private displayed?: string;
-  private readonly ring = new PhoneRing();
   private lastRing?: TrafficEvents['notice'];
 
   constructor(parent: HTMLElement, respond: () => void) {
@@ -20,16 +19,15 @@ export class TrafficEventNotice {
     parent.append(this.root);
   }
 
-  destroy() {
-    this.ring.destroy();
-  }
-
   update(notice: TrafficEvents['notice'], answeredSafely: boolean) {
     const id = notice?.id;
-    if (id === 'telefon_dzwoni' && notice !== this.lastRing) {
-      this.lastRing = notice;
-      if (!notice?.answered) this.ring.play();
-    }
+    if (
+      id === 'telefon_dzwoni' &&
+      notice !== this.lastRing &&
+      !notice?.answered
+    )
+      audio.play('phone');
+    this.lastRing = notice;
     const text =
       id === 'telefon_dzwoni' && notice?.answered
         ? answeredSafely

@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { audio } from '../audio/GameAudio';
 import { loadContent } from '../content/load';
 import { loadMissionProgress } from '../gameplay/MissionProgress';
 import { FONT, ui, showError } from '../core/presentation';
@@ -16,6 +17,7 @@ export class Preload extends Scene {
       .setOrigin(0.5);
     void Promise.all([loadContent(), loadMissionProgress()])
       .then(([content, progress]) => {
+        audio.configure(progress.store.profile.audio);
         this.registry.set('missionProgress', progress);
         this.scene.start('MainMenu', content);
       })

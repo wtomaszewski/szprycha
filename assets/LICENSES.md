@@ -20,6 +20,9 @@ Gra używa lokalnej kopii fontu. W `licenses/` są teksty dołączane do not o k
 | Oprawa menu i mapa wyboru miasta                                                        | `src/scenes/MainMenu.ts`, `src/scenes/CityPicker.ts`                                                                                                                                     |
 | Sylwetki budynków, dekoracje, oznakowanie drogowe, figurki krasnali i wyposażenie placu | `src/render/`, generatory map w `tools/`                                                                                                                                                 |
 | Reguły, pytania, dialogi i teksty interfejsu                                            | `content/`, `i18n/`. Przepisy opisane własnymi słowami. Źródła aktów prawnych w `docs/zrodla_i_stan_prawny.md`.                                                                          |
+| Efekty dźwiękowe, także dzwonki i neutralna syrena                                      | `src/audio/effects.ts`. Własny generator przebiegów, obwiedni i szumu z ustalonym ziarnem. Próbki powstają w pamięci podczas gry.                                                        |
+| Radio Szprycha FM i podkład Dzwonek Talk                                                | `src/audio/score.ts`, `src/audio/Radio.ts`. Autorskie melodie i dżingle, odtwarzane przez sekwencer i oscylatory Web Audio API.                                                          |
+| Lektor i porady Dzwonek Talk                                                            | `src/audio/Narrator.ts`, `i18n/pl.json`. Web Speech API korzysta wyłącznie z lokalnych polskich głosów systemowych. Głosy pozostają na urządzeniu i nie wchodzą w skład gry.             |
 
 Wytwory projektu podlegają [LICENSE](../LICENSE). W bieżącej wersji gra nie dystrybuuje nagrań, sampli ani muzyki z zewnętrznych bibliotek.
 

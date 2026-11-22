@@ -1,5 +1,6 @@
 import { update, type UseStore } from 'idb-keyval';
 import { z } from 'zod';
+import { audioSettingsSchema, defaultAudio } from '../audio/settings';
 import { missionCity } from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { placRecordsSchema } from '../gameplay/plac/placRecords';
@@ -97,7 +98,7 @@ const m7bProfileSchema = m5cProfileSchema.extend({
   }),
 });
 
-const profileSchema = m7bProfileSchema.extend({
+const m7cProfileSchema = m7bProfileSchema.extend({
   version: z.literal(5),
   licence: z
     .strictObject({
@@ -113,6 +114,12 @@ const profileSchema = m7bProfileSchema.extend({
         .refine(({ points, max }) => points <= max),
     })
     .optional(),
+});
+
+const profileVersion = 6;
+const profileSchema = m7cProfileSchema.extend({
+  version: z.literal(profileVersion),
+  audio: audioSettingsSchema.catch(() => ({ ...defaultAudio })),
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
@@ -154,8 +161,12 @@ class RideBatch {
   }
 }
 
+function addAudio(profile: z.infer<typeof m7cProfileSchema>): ProgressProfile {
+  return { ...profile, version: profileVersion, audio: { ...defaultAudio } };
+}
+
 function addQuiz(profile: z.infer<typeof m5cProfileSchema>): ProgressProfile {
-  return { ...profile, version: 5, quiz: { cards: {}, streak: 0 } };
+  return addAudio({ ...profile, version: 5, quiz: { cards: {}, streak: 0 } });
 }
 
 function upgrade(profile: z.infer<typeof m5bProfileSchema>): ProgressProfile {
@@ -193,9 +204,11 @@ function createProfile(legacy?: z.infer<typeof legacySchema>): ProgressProfile {
 function decodeProfile(raw: unknown) {
   const current = profileSchema.safeParse(raw);
   if (current.success) return { profile: current.data, reset: false };
+  const m7c = m7cProfileSchema.safeParse(raw);
+  if (m7c.success) return { profile: addAudio(m7c.data), reset: false };
   const m7b = m7bProfileSchema.safeParse(raw);
   if (m7b.success)
-    return { profile: { ...m7b.data, version: 5 as const }, reset: false };
+    return { profile: addAudio({ ...m7b.data, version: 5 }), reset: false };
   const m5c = m5cProfileSchema.safeParse(raw);
   if (m5c.success) return { profile: addQuiz(m5c.data), reset: false };
   const m5b = m5bProfileSchema.safeParse(raw);
@@ -213,7 +226,7 @@ function hasFutureVersion(raw: unknown) {
     raw !== null &&
     'version' in raw &&
     typeof raw.version === 'number' &&
-    raw.version > 5
+    raw.version > profileVersion
   );
 }
 
@@ -403,7 +416,7 @@ export class ProgressStore {
     const write = update<ProgressProfile | undefined>(
       progressRecordKey,
       (profile) => {
-        if (this.sessionOnly || profile?.version !== 5)
+        if (this.sessionOnly || profile?.version !== profileVersion)
           throw new Error('Progress record unavailable');
         batch?.apply(profile);
         edit?.(profile);

@@ -1,3 +1,4 @@
+import { audio } from '../audio/GameAudio';
 import olaPortrait from '../../assets/generated/portraits/sierzant_ola.png?url';
 import { ui } from '../core/presentation';
 import type { ControlQuestion } from '../progression/RoadAttention';
@@ -88,6 +89,7 @@ export class ControlQuestionDialog {
           result.correct && 'points' in result
             ? `${ui.progression.wiseHead} +${result.points}`
             : question.wyjasnienie;
+        audio.read('lesson', this.feedback.textContent);
         this.resume.hidden = false;
         this.resume.focus();
       });
@@ -95,6 +97,7 @@ export class ControlQuestionDialog {
     });
     this.answers.replaceChildren(...this.buttons);
     this.panel.showModal();
+    audio.read('lesson', question.pytanie);
   }
 
   gamepad(justPressed: (button: number) => boolean) {
@@ -122,6 +125,7 @@ export class ControlQuestionDialog {
   }
 
   close() {
+    audio.stopReading('lesson');
     this.panel.close();
   }
 }
