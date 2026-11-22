@@ -24,12 +24,17 @@ export class RailwayDetector {
     at: number,
     env: EnvState,
   ) {
-    const crossing = this.world.crossings.find(
-      (box) =>
-        box.kind === 'rail' &&
-        (contains(box, rider.pos) ||
-          distanceInto(box, rider.pos, rider.heading) <= 100),
-    );
+    let crossing: Crossing | undefined;
+    for (const box of this.world.crossings) {
+      if (
+        box.kind !== 'rail' ||
+        (!contains(box, rider.pos) &&
+          distanceInto(box, rider.pos, rider.heading) > 100)
+      )
+        continue;
+      crossing = box;
+      break;
+    }
     if (crossing !== this.crossing) {
       this.crossing = crossing;
       this.inside = false;

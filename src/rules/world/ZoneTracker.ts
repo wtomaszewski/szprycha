@@ -34,7 +34,12 @@ export class ZoneTracker {
     }
     const dx = Math.cos(heading);
     const dy = Math.sin(heading);
-    this.driveway = this.world.driveways.find((area) => contains(area, pos));
+    this.driveway = undefined;
+    for (const driveway of this.world.driveways) {
+      if (!contains(driveway, pos)) continue;
+      this.driveway = driveway;
+      break;
+    }
     this.crossing = undefined;
     for (const crossing of this.world.crossings) {
       if (
@@ -70,12 +75,16 @@ export class ZoneTracker {
     this.roadway = undefined;
     if (!this.zone || this.zone.kind === 'roadway') {
       const horizontal = Math.abs(dx) > Math.abs(dy);
-      this.roadway = this.world.zones.find(
-        (zone) =>
-          zone.kind === 'roadway' &&
-          zone.width > zone.height === horizontal &&
-          contains(zone, pos),
-      );
+      for (const zone of this.world.zones) {
+        if (
+          zone.kind !== 'roadway' ||
+          zone.width > zone.height !== horizontal ||
+          !contains(zone, pos)
+        )
+          continue;
+        this.roadway = zone;
+        break;
+      }
     }
     this.intersection = undefined;
     for (const intersection of this.world.intersections) {

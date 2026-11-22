@@ -18,7 +18,9 @@ test('desktop HUD uses the mission timer, goal arrow and compact pause menu', as
   await expect(
     page.getByLabel(new RegExp(pl.missionUi.direction)),
   ).toBeVisible();
-  await expect(page.getByLabel(pl.driving.joystick)).toBeHidden();
+  await expect(
+    page.locator('.touch-controls').getByLabel(pl.driving.joystick),
+  ).toBeHidden();
   await expect(page.getByText(pl.driving.help, { exact: false })).toBeHidden();
   await expect(left).toHaveCSS('font-family', '"Pixelify Sans", monospace');
 
@@ -49,12 +51,13 @@ test.describe('touch HUD', () => {
   }) => {
     await page.goto('/');
     await chooseCity(page, 'warszawa');
-    const joystick = page.getByLabel(pl.driving.joystick);
+    const touch = page.locator('.touch-controls');
+    const joystick = touch.getByLabel(pl.driving.joystick);
     await expect(joystick).toBeVisible();
     const [stick, dock, actions] = await Promise.all([
       joystick.boundingBox(),
       page.locator('.ride-quick-actions').boundingBox(),
-      page.locator('.touch-actions').boundingBox(),
+      touch.getByRole('button', { name: pl.driving.dismount }).boundingBox(),
     ]);
     expect(stick!.x + stick!.width).toBeLessThan(dock!.x);
     expect(dock!.x + dock!.width).toBeLessThan(actions!.x);
@@ -63,7 +66,9 @@ test.describe('touch HUD', () => {
     });
     await expect(radio).toBeVisible();
     const radioBox = (await radio.boundingBox())!;
-    expect(radioBox.y + radioBox.height).toBeLessThan(dock!.y);
+    expect(radioBox.y).toBeCloseTo(dock!.y, 0);
+    expect(radioBox.x).toBeGreaterThan(dock!.x);
+    expect(radioBox.x + radioBox.width).toBeLessThan(dock!.x + dock!.width);
     await radio.tap();
     await expect(
       page.getByRole('button', {

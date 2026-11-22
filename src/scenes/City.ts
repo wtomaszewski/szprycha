@@ -189,7 +189,7 @@ export class City extends Scene {
     shown: boolean;
   };
   private readonly portraitTouch = matchMedia(
-    '(pointer: coarse) and (orientation: portrait)',
+    '(pointer: coarse) and (orientation: portrait) and (max-width: 600px)',
   );
   private readonly reducedMotion = matchMedia(
     '(prefers-reduced-motion: reduce)',

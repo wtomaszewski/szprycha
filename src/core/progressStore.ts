@@ -7,6 +7,7 @@ import { placRecordsSchema } from '../gameplay/plac/placRecords';
 import { leitnerBoxes } from '../gameplay/quiz/leitner';
 import { applyMastery, localDay } from '../progression/mastery';
 import type { Milestones } from '../progression/milestones';
+import { touchLayoutSchema } from './touchLayout';
 import { TICKS_PER_SECOND, type Verdict } from '../rules/types';
 
 export const progressDatabase = 'szprycha';
@@ -121,9 +122,8 @@ const m8aProfileSchema = m7cProfileSchema.extend({
   audio: audioSettingsSchema.catch(() => ({ ...defaultAudio })),
 });
 
-const profileVersion = 7;
-const profileSchema = m8aProfileSchema.extend({
-  version: z.literal(profileVersion),
+const m8cProfileSchema = m8aProfileSchema.extend({
+  version: z.literal(7),
   reducedEffects: z.boolean().catch(false).default(false),
   reflectiveVest: z.boolean().catch(false).default(false),
   resultsTextSize: z
@@ -131,6 +131,12 @@ const profileSchema = m8aProfileSchema.extend({
     .optional()
     .catch(undefined),
   resultsHighContrast: z.boolean().optional().catch(undefined),
+});
+
+const profileVersion = 8;
+const profileSchema = m8cProfileSchema.extend({
+  version: z.literal(profileVersion),
+  touchLayout: touchLayoutSchema,
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
@@ -227,9 +233,15 @@ function createProfile(legacy?: z.infer<typeof legacySchema>): ProgressProfile {
   });
 }
 
-function decodeProfile(raw: unknown) {
+function decodeProfile(raw: unknown): {
+  profile: ProgressProfile;
+  reset: boolean;
+} {
   const current = profileSchema.safeParse(raw);
   if (current.success) return { profile: current.data, reset: false };
+  const m8c = m8cProfileSchema.safeParse(raw);
+  if (m8c.success)
+    return { profile: { ...m8c.data, version: profileVersion }, reset: false };
   const m8a = m8aProfileSchema.safeParse(raw);
   if (m8a.success)
     return { profile: addRidePreferences(m8a.data), reset: false };

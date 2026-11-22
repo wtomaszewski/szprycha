@@ -25,6 +25,7 @@ document.title = `${ui.title}: ${ui.subtitle}`;
 const parent = document.querySelector<HTMLElement>('#game')!;
 const baseWidth = 640;
 const baseHeight = 360;
+const touch = matchMedia('(any-pointer: coarse)');
 let game: Phaser.Game | undefined;
 let booted = false;
 
@@ -35,17 +36,25 @@ function resizeGame(game: Phaser.Game) {
     return;
   }
 
-  const zoom = Math.max(
+  const integerZoom = Math.max(
     1,
     Math.floor(Math.min(width / baseWidth, height / baseHeight)),
   );
-  const gameWidth = Math.floor(width / zoom);
-  const gameHeight = Math.floor(height / zoom);
+  const gameWidth = touch.matches ? baseWidth : Math.floor(width / integerZoom);
+  const gameHeight = touch.matches
+    ? Phaser.Math.Clamp(
+        Math.round((height * baseWidth) / width),
+        baseHeight,
+        480,
+      )
+    : Math.floor(height / integerZoom);
+  const zoom = touch.matches
+    ? Math.min(width / gameWidth, height / gameHeight)
+    : integerZoom;
+
+  if (game.scale.zoom !== zoom) game.scale.setZoom(zoom);
   if (game.scale.width !== gameWidth || game.scale.height !== gameHeight) {
     game.scale.resize(gameWidth, gameHeight);
-    game.scale.setZoom(zoom);
-  } else if (game.scale.zoom !== zoom) {
-    game.scale.setZoom(zoom);
   }
   game.resume();
 }

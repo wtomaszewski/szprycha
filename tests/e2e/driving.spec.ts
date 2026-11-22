@@ -65,10 +65,11 @@ test.describe('touch input', () => {
     const canvas = page.locator('canvas');
     await expect(canvas).toHaveAttribute('data-y', /\d+/);
     const initial = Number(await canvas.getAttribute('data-y'));
-    const stick = page.locator('.joystick');
+    const stick = page.locator('.touch-controls .joystick');
     const box = (await stick.boundingBox())!;
-    await page.mouse.move(box.x + box.width / 2, box.y + 8);
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2, box.y + 8);
     await expect
       .poll(async () => Number(await canvas.getAttribute('data-y')), {
         intervals: [25, 50, 75],
@@ -219,44 +220,40 @@ test.describe('touch actions', () => {
       )
       .toBe(true);
   });
-
-  for (const [width, height] of [
-    [1024, 768],
-    [1920, 1080],
-    [1366, 768],
-    [844, 390],
-  ]) {
-    test(`viewport fills ${width}×${height} at maximum integer scale`, async ({
-      page,
-    }) => {
-      await page.setViewportSize({ width: width!, height: height! });
-      await page.goto('/');
-      const canvas = page.locator('canvas');
-      await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
-      const metrics = await canvas.evaluate((c: HTMLCanvasElement) => ({
-        w: c.width,
-        h: c.height,
-        rect: c.getBoundingClientRect().toJSON(),
-        scroll: [
-          document.documentElement.scrollWidth,
-          document.documentElement.scrollHeight,
-        ],
-      }));
-      const zoom = Math.max(
-        1,
-        Math.floor(Math.min(width! / 640, height! / 360)),
-      );
-      expect(metrics.w).toBe(Math.floor(width! / zoom));
-      expect(metrics.h).toBe(Math.floor(height! / zoom));
-      expect(metrics.rect.width / metrics.w).toBe(zoom);
-      expect(metrics.rect.height / metrics.h).toBe(zoom);
-      expect(metrics.scroll).toEqual([width, height]);
-      expect(metrics.rect.x).toBeLessThan(zoom);
-      expect(metrics.rect.y).toBeLessThan(zoom);
-    });
-  }
 });
 
+for (const [width, height] of [
+  [1024, 768],
+  [1920, 1080],
+  [1366, 768],
+  [844, 390],
+]) {
+  test(`viewport fills ${width}×${height} at maximum integer scale`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: width!, height: height! });
+    await page.goto('/');
+    const canvas = page.locator('canvas');
+    await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
+    const metrics = await canvas.evaluate((c: HTMLCanvasElement) => ({
+      w: c.width,
+      h: c.height,
+      rect: c.getBoundingClientRect().toJSON(),
+      scroll: [
+        document.documentElement.scrollWidth,
+        document.documentElement.scrollHeight,
+      ],
+    }));
+    const zoom = Math.max(1, Math.floor(Math.min(width! / 640, height! / 360)));
+    expect(metrics.w).toBe(Math.floor(width! / zoom));
+    expect(metrics.h).toBe(Math.floor(height! / zoom));
+    expect(metrics.rect.width / metrics.w).toBe(zoom);
+    expect(metrics.rect.height / metrics.h).toBe(zoom);
+    expect(metrics.scroll).toEqual([width, height]);
+    expect(metrics.rect.x).toBeLessThan(zoom);
+    expect(metrics.rect.y).toBeLessThan(zoom);
+  });
+}
 test('phone portrait shows rotation prompt; landscape keeps controls compact', async ({
   browser,
 }) => {
@@ -276,17 +273,20 @@ test('phone portrait shows rotation prompt; landscape keeps controls compact', a
     'data-scene',
     'MainMenu',
   );
-  // The sole menu action is inside the canvas, at its logical coordinates.
-  await page.locator('canvas').tap({ position: { x: 282, y: 234 } });
+  await page.getByRole('button', { name: pl.driving.title }).tap();
   await expect(page.locator('canvas')).toHaveAttribute('data-scene', 'City');
   const area = await page.evaluate(() => {
     const rects = [
       '.ride-hud-left',
       '.ride-hud-right',
       '.ride-quick-actions',
-      '.joystick',
-      '.touch-actions',
-    ].map((s) => document.querySelector(s)!.getBoundingClientRect());
+      '.touch-controls .joystick',
+      '.touch-controls button:not([hidden])',
+    ].flatMap((s) =>
+      Array.from(document.querySelectorAll(s), (el) =>
+        el.getBoundingClientRect(),
+      ),
+    );
     return (
       rects.reduce((sum, r) => sum + r.width * r.height, 0) /
       (innerWidth * innerHeight)

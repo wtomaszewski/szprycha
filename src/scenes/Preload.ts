@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import { audio } from '../audio/GameAudio';
 import { loadContent } from '../content/load';
 import { loadMissionProgress } from '../gameplay/MissionProgress';
+import { applyAccessibility } from '../ui/RidePreferences';
 import { FONT, ui, showError } from '../core/presentation';
 export class Preload extends Scene {
   constructor() {
@@ -18,6 +19,7 @@ export class Preload extends Scene {
     void Promise.all([loadContent(), loadMissionProgress()])
       .then(([content, progress]) => {
         audio.configure(progress.store.profile.audio);
+        applyAccessibility(progress.store.profile);
         this.registry.set('missionProgress', progress);
         document.getElementById('pwa-splash')?.remove();
         this.scene.start('MainMenu', content);

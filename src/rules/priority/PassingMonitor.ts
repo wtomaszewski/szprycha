@@ -22,6 +22,13 @@ export interface PassingObservation {
 
 export class PassingMonitor {
   private readonly passing = new Map<string, PassingObservation>();
+  private readonly free: PassingObservation[] = [];
+  private readonly parkedPosition = { x: 0, y: 0 };
+
+  private release(pass: PassingObservation) {
+    this.passing.delete(pass.id);
+    this.free.push(pass);
+  }
 
   constructor(private readonly world: WorldModel) {}
 
@@ -42,6 +49,7 @@ export class PassingMonitor {
     ) => void,
   ) {
     if (rider.mode !== 'riding') {
+      for (const pass of this.passing.values()) this.free.push(pass);
       this.passing.clear();
       return;
     }
@@ -73,9 +81,11 @@ export class PassingMonitor {
         Math.abs(car.y + car.height / 2 - rider.pos.y) > 9
       )
         continue;
+      this.parkedPosition.x = car.x + car.width / 2;
+      this.parkedPosition.y = car.y + car.height / 2;
       this.observe(
         car.id,
-        { x: car.x + car.width / 2, y: car.y + car.height / 2 },
+        this.parkedPosition,
         this.passing.has(car.id)
           ? Math.atan2(
               this.passing.get(car.id)!.forward.y,
@@ -90,8 +100,8 @@ export class PassingMonitor {
         completed,
       );
     }
-    for (const [id, pass] of this.passing)
-      if (at - pass.seenAt > 0.25) this.passing.delete(id);
+    for (const pass of this.passing.values())
+      if (at - pass.seenAt > 0.25) this.release(pass);
   }
 
   private observe(
@@ -121,17 +131,17 @@ export class PassingMonitor {
       Math.abs(side) > 3.5 ||
       Math.abs(along) > 8
     ) {
-      this.passing.delete(id);
+      if (pass) this.release(pass);
       return;
     }
     if (!pass) {
       if (along > 0.8 && rider.speed > (agent?.speed ?? 0)) {
-        this.passing.set(id, {
+        const observation = this.free.pop() ?? {
           id,
-          forward: { x: fx, y: fy },
-          start: { ...rider.pos },
-          seenAt: at,
-          preparation,
+          forward: { x: 0, y: 0 },
+          start: { x: 0, y: 0 },
+          seenAt: 0,
+          preparation: 'none',
           prepared: false,
           alongside: false,
           clearance: Infinity,
@@ -141,12 +151,32 @@ export class PassingMonitor {
           turningRight: false,
           nearRail: false,
           yieldingAtCrossing: false,
-        });
+        };
+        observation.id = id;
+        observation.forward.x = fx;
+        observation.forward.y = fy;
+        observation.start.x = rider.pos.x;
+        observation.start.y = rider.pos.y;
+        observation.seenAt = at;
+        observation.preparation = preparation;
+        observation.lateralMove = 'none';
+        observation.clearance = Infinity;
+        observation.prepared =
+          observation.alongside =
+          observation.right =
+            false;
+        observation.moving =
+          observation.turningRight =
+          observation.nearRail =
+            false;
+        observation.yieldingAtCrossing = false;
+        observation.restricted = undefined;
+        this.passing.set(id, observation);
       }
       return;
     }
     if (at - pass.seenAt > 0.25) {
-      this.passing.delete(id);
+      this.release(pass);
       return;
     }
     pass.seenAt = at;
@@ -182,6 +212,7 @@ export class PassingMonitor {
     if (along < -0.8) {
       this.passing.delete(id);
       if (pass.alongside && rider.speed > 0) completed(pass, rider, at);
+      this.free.push(pass);
     }
   }
 
