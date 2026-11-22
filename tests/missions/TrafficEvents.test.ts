@@ -15,6 +15,7 @@ import { TrafficParticipants } from '../../src/sim/TrafficParticipants';
 import { readContent } from '../../tools/content';
 
 const content = await readContent();
+const { balans } = content;
 const world = new WorldModel(
   JSON.parse(await readFile('maps/miasteczko.tmj', 'utf8')),
   content.balans.silnik.kafel_m,
@@ -202,7 +203,7 @@ describe('traffic encounters', () => {
     const player = rider(424, 1199);
     for (let attempt = 0; attempt < 2; attempt++) {
       events.reset();
-      const mission = new MissionSystem(definition, world);
+      const mission = new MissionSystem(definition, world, balans);
       const step = () =>
         mission.step(player.pos, [], (event, area) =>
           events.force(event, area, player),
@@ -259,6 +260,7 @@ describe('traffic encounters', () => {
         zdarzenia_wymuszone: [event],
       },
       world,
+      balans,
     );
     const player = rider(424, 1525);
     const step = () =>

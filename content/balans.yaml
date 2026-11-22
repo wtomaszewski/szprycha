@@ -9,9 +9,13 @@ misja:
   kara_major: 300
   major_do_porazki: 3
 combo:
+  mnoznik_startowy: 1
+  efekt_od_mnoznika: 3
   krok_dobrych_nawykow: 3
   max_mnoznik: 5
 uwaga_drogowki:
+  przyrost_minor: 1
+  po_blednej_odpowiedzi: 1
   max: 3
   spadek_co_s: 60
   bonus_madra_glowa: 100

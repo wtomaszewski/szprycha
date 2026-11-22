@@ -74,7 +74,6 @@ export function runWarsawRoute(
   const mission = new MissionSystem(
     definition,
     world,
-    settings.misja.major_do_porazki,
     settings,
     definition.wyscig &&
       new MissionRace(
