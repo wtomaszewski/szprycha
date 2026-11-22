@@ -167,7 +167,7 @@ function bicycle(tile: Tile, x: number, frameColor: number) {
   tile.rect(x - 3, 6, 6, 1, steel);
   tile.rect(x - 2, 13, 4, 3, ink);
   tile.rect(x - 1, 3, 2, 1, steel);
-  tile.rect(x - 1, 21, 2, 1, burgundy);
+  tile.rect(x - 1, 20, 2, 1, burgundy);
 }
 
 const steps = [2, 1, -2, -1] as const;
