@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { buildThirdPartyNotices } from './tools/check-licenses.ts';
@@ -8,7 +9,7 @@ const noticesModule = 'virtual:third-party-notices';
 const noticesId = '\0' + noticesModule;
 let notices: string;
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: './',
   resolve: {
     // This upstream distribution omits Matter.js and its bundled SVG helper.
@@ -21,6 +22,8 @@ export default defineConfig({
       name: 'third-party-notices',
       buildStart() {
         notices = buildThirdPartyNotices(process.cwd());
+        if (mode === 'mobile')
+          notices += '\n' + readFileSync('assets/licenses/mobile.txt', 'utf8');
       },
       resolveId(id) {
         if (id === noticesModule) return noticesId;
@@ -55,7 +58,7 @@ export default defineConfig({
         });
       },
     },
-    offlineApp(),
+    offlineApp(mode === 'mobile'),
   ],
   build: {
     rolldownOptions: {
@@ -66,4 +69,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

@@ -17,7 +17,21 @@ import {
 const workerFile = 'quiz-worker.js';
 const manifestFile = 'app.webmanifest';
 
-export function offlineApp(): Plugin {
+const localOrigin = "'self' capacitor://localhost";
+const mobileContentPolicy = [
+  `default-src ${localOrigin}`,
+  `connect-src ${localOrigin}`,
+  `style-src ${localOrigin} 'unsafe-inline'`,
+  `img-src ${localOrigin} data: blob:`,
+  `media-src ${localOrigin} data: blob:`,
+  "object-src 'none'",
+  "frame-src 'none'",
+  "base-uri 'none'",
+  "form-action 'none'",
+  "worker-src 'none'",
+].join('; ');
+
+export function offlineApp(mobile = false): Plugin {
   return {
     name: 'offline-app',
     apply: 'build',
@@ -29,6 +43,18 @@ export function offlineApp(): Plugin {
           `<body>\n    <img id="pwa-splash" src="./${webSplash}" alt="" />`,
         ),
         tags: [
+          ...(mobile
+            ? [
+                {
+                  tag: 'meta',
+                  attrs: {
+                    'http-equiv': 'Content-Security-Policy',
+                    content: mobileContentPolicy,
+                  },
+                  injectTo: 'head-prepend' as const,
+                },
+              ]
+            : []),
           {
             tag: 'link',
             attrs: { rel: 'manifest', href: `./${manifestFile}` },

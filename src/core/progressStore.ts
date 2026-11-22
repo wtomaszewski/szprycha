@@ -1,4 +1,4 @@
-import { update, type UseStore } from 'idb-keyval';
+import { get, update, type UseStore } from 'idb-keyval';
 import { z } from 'zod';
 import { audioSettingsSchema, defaultAudio } from '../audio/settings';
 import { missionCity } from '../content/missions';
@@ -9,6 +9,7 @@ import { applyMastery, localDay } from '../progression/mastery';
 import type { Milestones } from '../progression/milestones';
 import { touchLayoutSchema } from './touchLayout';
 import { TICKS_PER_SECOND, type Verdict } from '../rules/types';
+import type { UpdateProgress } from '../platform/preferencesProgress';
 
 export const progressDatabase = 'szprycha';
 export const progressStoreName = 'progress';
@@ -137,6 +138,7 @@ const profileVersion = 8;
 const profileSchema = m8cProfileSchema.extend({
   version: z.literal(profileVersion),
   touchLayout: touchLayoutSchema,
+  haptics: z.boolean().optional().catch(undefined),
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
@@ -291,6 +293,22 @@ function openDatabase(factory: IDBFactory) {
   });
 }
 
+function indexedStore(db: IDBDatabase): UseStore {
+  return async (mode, callback) =>
+    callback(
+      db.transaction(progressStoreName, mode).objectStore(progressStoreName),
+    );
+}
+
+function retireLegacy(storage: LegacyStorage | undefined, hasLegacy: boolean) {
+  if (!hasLegacy) return;
+  try {
+    storage?.removeItem(legacyProgressKey);
+  } catch {
+    // The committed profile takes precedence on subsequent loads.
+  }
+}
+
 export class ProgressStore {
   private queue = Promise.resolve();
   private ride = new RideBatch();
@@ -307,14 +325,15 @@ export class ProgressStore {
 
   constructor(
     readonly profile = createProfile(),
-    private readonly store?: UseStore,
+    private readonly updateProgress?: UpdateProgress,
   ) {
-    this.sessionOnly = !store;
+    this.sessionOnly = !updateProgress;
   }
 
   static async open(
     factory: IDBFactory | undefined,
     legacyStorage?: LegacyStorage,
+    native?: UpdateProgress,
   ): Promise<ProgressStore> {
     let legacy: unknown;
     let hasLegacy = false;
@@ -330,37 +349,79 @@ export class ProgressStore {
     }
 
     const fallback = decodeProfile(legacy);
+    const openIndexed = () =>
+      this.openIndexedDB(factory, legacyStorage, hasLegacy, fallback);
+    if (!native) return openIndexed();
+
+    let loaded = fallback;
+    let future = false;
+    try {
+      await native(async (raw) => {
+        if (hasFutureVersion(raw)) {
+          future = true;
+          return raw;
+        }
+        if (raw !== undefined) {
+          const saved = decodeProfile(raw);
+          if (!saved.reset) {
+            loaded = saved;
+            return profileSchema.safeParse(raw).success ? raw : saved.profile;
+          }
+        }
+        // Keep the source record until a native write succeeds, so a retry can
+        // recover existing progress. Never replace a newer schema in either store.
+        if (factory) {
+          const database = await openDatabase(factory);
+          try {
+            const source = await get<unknown>(
+              progressRecordKey,
+              indexedStore(database),
+            );
+            if (hasFutureVersion(source)) {
+              future = true;
+              return raw;
+            }
+            if (source !== undefined) loaded = decodeProfile(source);
+          } finally {
+            database.close();
+          }
+        }
+        return loaded.profile;
+      });
+      if (!future) retireLegacy(legacyStorage, hasLegacy);
+      const progress = new ProgressStore(
+        loaded.profile,
+        future ? undefined : native,
+      );
+      progress.reset = loaded.reset;
+      return progress;
+    } catch {
+      return openIndexed();
+    }
+  }
+
+  private static async openIndexedDB(
+    factory: IDBFactory | undefined,
+    legacyStorage: LegacyStorage | undefined,
+    hasLegacy: boolean,
+    fallback: ReturnType<typeof decodeProfile>,
+  ): Promise<ProgressStore> {
     let database: IDBDatabase | undefined;
     try {
       if (factory) {
         database = await openDatabase(factory);
-        const db = database;
-        const store: UseStore = async (mode, callback) =>
-          callback(
-            db
-              .transaction(progressStoreName, mode)
-              .objectStore(progressStoreName),
-          );
+        const store = indexedStore(database);
+        const write: UpdateProgress = (edit) =>
+          update<unknown>(progressRecordKey, edit, store);
         let loaded = fallback;
-        await update<unknown>(
-          progressRecordKey,
-          (raw) => {
-            if (hasFutureVersion(raw))
-              throw new Error('Unsupported progress version');
-            if (raw !== undefined) loaded = decodeProfile(raw);
-            return loaded.profile;
-          },
-          store,
-        );
-        // Retire v1 only once the IndexedDB transaction has committed.
-        if (hasLegacy) {
-          try {
-            legacyStorage?.removeItem(legacyProgressKey);
-          } catch {
-            // IndexedDB already takes precedence on subsequent loads.
-          }
-        }
-        const progress = new ProgressStore(loaded.profile, store);
+        await write((raw) => {
+          if (hasFutureVersion(raw))
+            throw new Error('Unsupported progress version');
+          if (raw !== undefined) loaded = decodeProfile(raw);
+          return loaded.profile;
+        });
+        retireLegacy(legacyStorage, hasLegacy);
+        const progress = new ProgressStore(loaded.profile, write);
         progress.reset = loaded.reset;
         return progress;
       }
@@ -449,22 +510,19 @@ export class ProgressStore {
   private save(edit?: (profile: ProgressProfile) => unknown) {
     const batch = this.ride.ruleIds.length ? this.ride : undefined;
     if (batch) this.ride = new RideBatch();
-    const { store } = this;
-    if (!store || this.sessionOnly || (!batch && !edit)) return;
+    const { updateProgress } = this;
+    if (!updateProgress || this.sessionOnly || (!batch && !edit)) return;
 
     // IndexedDB orders readwrite transactions on this store across tabs. Start
     // immediately so pagehide can submit a write within the event handler.
-    const write = update<ProgressProfile | undefined>(
-      progressRecordKey,
-      (profile) => {
-        if (this.sessionOnly || profile?.version !== profileVersion)
-          throw new Error('Progress record unavailable');
-        batch?.apply(profile);
-        edit?.(profile);
-        return profile;
-      },
-      store,
-    ).catch(() => {
+    const write = updateProgress((raw) => {
+      const profile = raw as ProgressProfile | undefined;
+      if (this.sessionOnly || profile?.version !== profileVersion)
+        throw new Error('Progress record unavailable');
+      batch?.apply(profile);
+      edit?.(profile);
+      return { ...profile };
+    }).catch(() => {
       this.sessionOnly = true;
       if (this.ride.ruleIds.length) this.ride = new RideBatch();
     });

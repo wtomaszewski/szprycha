@@ -1,3 +1,4 @@
+import { verdictHaptics } from '../platform/haptics';
 import { audio } from '../audio/GameAudio';
 import { Scene, type GameObjects } from 'phaser';
 import type { PlacBalance, PlacCourse, PlacId } from '../content/plac';
@@ -436,6 +437,10 @@ export class Plac extends Scene {
         this.game.canvas.dataset.placGrade = result.grade;
         const comment = `${ui.plac.coach} · ${fault ? ui.plac.faults[fault] : ui.exam.cleanExercise}`;
         this.coach.textContent = comment;
+        verdictHaptics(
+          result.grade,
+          this.progress.store.profile.haptics !== false,
+        );
         if (result.grade !== 'good') audio.play('oops');
         audio.read(
           'lesson',

@@ -1,0 +1,46 @@
+name: Mobile quality
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  android-debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - run: npm ci
+      - run: npm run build -- --mode mobile
+      - run: npx --no-install cap sync android
+      - run: ./gradlew --no-daemon :app:assembleDebug
+        working-directory: android
+      - run: python3 tools/check-mobile.py android android/app/build/outputs/apk/debug/app-debug-unsigned.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: szprycha-debug-unsigned
+          path: android/app/build/outputs/apk/debug/app-debug-unsigned.apk
+          if-no-files-found: error
+
+  ios-config:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build -- --mode mobile
+      - run: npx --no-install cap sync ios
+      - run: python3 tools/check-mobile.py ios
+      - run: npm run assets:mobile
+      - run: git diff --exit-code -- ios android

@@ -26,15 +26,22 @@
     "coverage:maps": "tsx tools/coverage-report.ts",
     "map:generate:wroclaw": "tsx tools/gen-wroclaw-map.ts",
     "benchmark:plac": "tsx tools/benchmark-plac.ts",
-    "benchmark:mobile": "tsx tools/benchmark-mobile.ts"
+    "benchmark:mobile": "tsx tools/benchmark-mobile.ts",
+    "assets:mobile": "tsx tools/gen-mobile-assets.ts"
   },
   "dependencies": {
+    "@capacitor/android": "8.6.2",
+    "@capacitor/core": "8.6.2",
+    "@capacitor/haptics": "8.0.2",
+    "@capacitor/ios": "8.6.2",
+    "@capacitor/preferences": "8.0.1",
     "idb-keyval": "6.3.0",
     "phaser": "3.90.0",
     "yaml": "2.9.1",
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.6.2",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.65.1",
     "@types/node": "26.6.6",
