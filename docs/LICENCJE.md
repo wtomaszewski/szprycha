@@ -10,6 +10,12 @@ SZPRYCHA jest oprogramowaniem własnościowym. Prawa do projektu są zastrzeżon
 - `npm run licenses:check` sprawdza metadane zainstalowanych pakietów osiągalnych z `dependencies`, w tym zainstalowane zależności opcjonalne i peer. Odrzuca brak licencji lub identyfikator spoza listy. Złożone wyrażenia SPDX i wpisy odsyłające do innego pliku wymagają indywidualnego przeglądu. Raport dla zależności wyłącznie deweloperskich pokazuje odstępstwa jako ostrzeżenia.
 - Build tworzy `dist/THIRD_PARTY_NOTICES` z tekstami licencji, informacjami o prawach autorskich, plikami `NOTICE` i licencją fontu. Pełny tekst Apache 2.0 jest dołączany do not, również gdy paczka zawiera skróconą notę. Gracz znajdzie te same informacje w **Ustawieniach → O grze / Licencje**. Build korzysta z dystrybucji Arcade Physics Phasera, która pomija Matter.js i jego pomocniczy kod na niestandardowej licencji. Przy aktualizacji Phasera przejrzyj osadzone komponenty tej dystrybucji i zaktualizuj plik `assets/licenses/phaser-<wersja>.txt`.
 
+## Serwer rankingów
+
+`npm run licenses:check` obejmuje także zależności wykonawcze workspace `server/`. Serwer korzysta z Zod (MIT) oraz wbudowanych modułów Node.js (licencja MIT projektu Node.js, SQLite jest w domenie publicznej). Zod zachowuje swój plik licencji w kontenerze. Narzędzia budujące korzystają z istniejących zależności repozytorium. [Zod](https://github.com/colinhacks/zod/blob/main/LICENSE) · [Node.js](https://github.com/nodejs/node/blob/main/LICENSE) · [SQLite](https://www.sqlite.org/copyright.html)
+
+Dockerfile używa etapu budowania z Docker Official Image Node (repozytorium na MIT) oraz obrazu wykonawczego Distroless Node.js 24 (repozytorium na Apache-2.0). Składniki systemowe i biblioteki w obrazach zachowują własne licencje i noty dystrybucji. [Docker Official Image Node](https://github.com/nodejs/docker-node/blob/main/LICENSE) · [Distroless](https://github.com/GoogleContainerTools/distroless/blob/main/LICENSE)
+
 ## Grafika, audio, fonty i teksty
 
 - Grafikę, efekty, muzykę i inne zasoby tworzymy sami. Domyślnym źródłem zasobów jest generator w repozytorium. Wyjątki to fonty na SIL Open Font License 1.1 i materiały CC0 z udokumentowanym źródłem. Materiał CC-BY wymaga wpisu do [#7](https://github.com/wtomaszewski/szprycha/issues/7) i uprzedniej zgody Wojtka.

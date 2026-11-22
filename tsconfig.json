@@ -16,5 +16,5 @@
     "types": ["vite/client", "node"],
     "allowImportingTsExtensions": true
   },
-  "include": ["src", "tools", "tests", "*.ts"]
+  "include": ["src", "tools", "tests", "*.ts", "server/tests"]
 }

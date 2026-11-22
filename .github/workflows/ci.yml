@@ -27,3 +27,15 @@ jobs:
         with:
           name: web-smoke
           path: test-results/
+  server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run licenses:check
+      - run: npm run test:server
+      - run: npm run build:server

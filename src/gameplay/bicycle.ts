@@ -38,6 +38,7 @@ export const METERS_PER_PIXEL = 1.5 / 32;
 export const FIXED_STEP = 1 / 60;
 export const BRAKE_DECELERATION = 250;
 export const RIDER_RADIUS = 9;
+export const MAX_RIDING_SPEED = 150;
 const approach = (value: number, target: number, amount: number) =>
   value < target
     ? Math.min(target, value + amount)
@@ -77,7 +78,7 @@ export function stepRider(
   tuning?: Partial<RiderTuning>,
 ): boolean {
   const magnitude = Math.min(1, Math.hypot(input.x, input.y));
-  const limit = r.walking ? 32 : (tuning?.maxSpeed ?? 150);
+  const limit = r.walking ? 32 : (tuning?.maxSpeed ?? MAX_RIDING_SPEED);
   let target = 0;
   if (input.scheme === 'simple') {
     if (magnitude > 0.12) {

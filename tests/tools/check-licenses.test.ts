@@ -46,6 +46,11 @@ it.each([
         version: '2.0.0',
         license: 'MIT',
       });
+      manifest('server', {
+        name: '@test/server',
+        license: 'UNLICENSED',
+        dependencies: { runtime: '1.0.0' },
+      });
       manifest('node_modules/builder', {
         name: 'builder',
         license: 'MPL-2.0',
@@ -61,13 +66,16 @@ it.each([
         `@test/leaf@1.0.0: ${license ?? 'UNKNOWN'}`,
       );
       expect(result.stdout).not.toContain('@test/leaf@2.0.0');
+      expect(result.stdout).toContain('server (2 installed packages)');
       expect(result.stderr).toContain(
         'WARNING (development): builder@1.0.0: MPL-2.0',
       );
       if (status) {
-        expect(result.stderr).toContain(
-          `ERROR (production): @test/leaf@1.0.0: ${license ?? 'UNKNOWN'}`,
-        );
+        for (const scope of ['production', 'server']) {
+          expect(result.stderr).toContain(
+            `ERROR (${scope}): @test/leaf@1.0.0: ${license ?? 'UNKNOWN'}`,
+          );
+        }
       } else {
         expect(result.stderr).not.toContain('ERROR (production)');
       }

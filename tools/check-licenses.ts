@@ -112,9 +112,9 @@ function collect(
   };
 }
 
-function auditLicenses(root: string, includeDev = false) {
+function auditLicenses(root: string, includeDev = false, workspace = '.') {
   root = realpathSync(root);
-  const entry = resolve(root, 'package.json');
+  const entry = resolve(root, workspace, 'package.json');
   const manifest = readManifest(entry);
   if (!manifest) throw new Error(`Missing manifest: ${entry}`);
   const production = collect(root, entry, manifest, false);
@@ -195,7 +195,11 @@ if (
   import.meta.url === pathToFileURL(resolve(process.argv[1])).href
 ) {
   const audit = auditLicenses(process.cwd(), true);
-  for (const [scope, tree] of Object.entries(audit)) {
+  const serverManifest = resolve(process.cwd(), 'server/package.json');
+  const server = existsSync(serverManifest)
+    ? auditLicenses(process.cwd(), false, 'server').production
+    : { entries: [], missing: [] };
+  for (const [scope, tree] of Object.entries({ ...audit, server })) {
     console.log(`\n${scope} (${tree.entries.length} installed packages)`);
     for (const { label, license } of tree.entries)
       console.log(`  ${label}: ${license}`);
@@ -205,5 +209,7 @@ if (
     console.warn(`WARNING (development): ${warning}`);
   const errors = violations(audit.production);
   for (const error of errors) console.error(`ERROR (production): ${error}`);
-  if (errors.length) process.exitCode = 1;
+  const serverErrors = violations(server);
+  for (const error of serverErrors) console.error(`ERROR (server): ${error}`);
+  if (errors.length || serverErrors.length) process.exitCode = 1;
 }

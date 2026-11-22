@@ -7,6 +7,9 @@
   "engines": {
     "node": ">=22.12.0"
   },
+  "workspaces": [
+    "server"
+  ],
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
@@ -27,7 +30,10 @@
     "map:generate:wroclaw": "tsx tools/gen-wroclaw-map.ts",
     "benchmark:plac": "tsx tools/benchmark-plac.ts",
     "benchmark:mobile": "tsx tools/benchmark-mobile.ts",
-    "assets:mobile": "tsx tools/gen-mobile-assets.ts"
+    "assets:mobile": "tsx tools/gen-mobile-assets.ts",
+    "build:server": "npm run build --workspace @szprycha/rankings",
+    "start:server": "npm run start --workspace @szprycha/rankings",
+    "test:server": "vitest run server/tests"
   },
   "dependencies": {
     "@capacitor/android": "8.6.2",
