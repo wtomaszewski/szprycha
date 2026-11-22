@@ -1,0 +1,63 @@
+map: maps/miasteczko.tmj
+scenarios:
+  - name: GDZIE-04 śnieg dopuszcza jazdę po wąskim chodniku
+    env: { weather: snow }
+    player: { x: 368, y: 900, heading: -90, speed: 2 }
+    expect: { GDZIE-04: [] }
+
+  - name: GDZIE-04 gęsta mgła dopuszcza jazdę po wąskim chodniku
+    env: { weather: fog_dense }
+    player: { x: 368, y: 900, heading: -90, speed: 2 }
+    expect: { GDZIE-04: [] }
+
+  - name: GDZIE-04 silny wiatr dopuszcza jazdę po wąskim chodniku
+    env: { weather: wind_strong }
+    player: { x: 368, y: 900, heading: -90, speed: 2 }
+    expect: { GDZIE-04: [] }
+
+  - name: GDZIE-04 lekki deszcz i noc nie dają wyjątku
+    env: { weather: rain_light, time: night }
+    player: { x: 368, y: 900, heading: -90, speed: 2 }
+    expect: { GDZIE-04: [minor] }
+
+  - name: GDZIE-04 sama ograniczona widoczność i zwykła mgła nie dają wyjątku
+    env: { weather: fog, visibilityLow: true }
+    player: { x: 368, y: 900, heading: -90, speed: 2 }
+    expect: { GDZIE-04: [minor] }
+
+  - name: GDZIE-05 w ulewie nadal trzeba ustąpić pieszemu
+    env: { weather: rain_heavy }
+    player: { x: 368, y: 900, heading: -90, speed: 2 }
+    agents:
+      - { id: pedestrian, kind: pedestrian, x: 368, y: 870 }
+    expect: { GDZIE-04: [], GDZIE-05: [major] }
+
+  - name: MSC-04 lekki deszcz wymaga użycia świateł
+    env: { weather: rain_light }
+    player: { speed: 2, lights: { front: false, rear: false } }
+    expect: { MSC-04: [minor] }
+
+  - name: WYP-06 kamizelka nocą daje jeden bonus
+    env: { time: night }
+    player:
+      { speed: 3, reflectiveVest: true, lights: { front: true, rear: true } }
+    inputs:
+      - { t: 0.2, reflectiveVest: false }
+      - { t: 0.4, reflectiveVest: true }
+    expect: { WYP-06: [good], WYP-04: [], WYP-05: [], MSC-04: [] }
+
+  - name: WYP-06 brak kamizelki z włączonymi lampami nocą jest poprawny
+    env: { time: night }
+    player: { speed: 3, lights: { front: true, rear: true } }
+    expect: { WYP-06: [], WYP-04: [], WYP-05: [], MSC-04: [] }
+
+  - name: WYP-06 kamizelka ani tylny odblask nie zastępują tylnych świateł
+    env: { time: night }
+    player:
+      { speed: 3, reflectiveVest: true, lights: { front: true, rear: false } }
+    expect: { WYP-06: [], WYP-05: [minor], MSC-04: [] }
+
+  - name: WYP-06 kamizelka za dnia nie nalicza premii za nocny kurs
+    player:
+      { speed: 3, reflectiveVest: true, lights: { front: true, rear: true } }
+    expect: { WYP-06: [] }

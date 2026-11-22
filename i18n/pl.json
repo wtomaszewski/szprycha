@@ -112,7 +112,16 @@
     "lightsOff": "Światła wyłączone",
     "day": "Dzień",
     "night": "Noc",
-    "rain": "Deszcz"
+    "rain": "Deszcz",
+    "weather": {
+      "rain_light": "Deszcz",
+      "rain_heavy": "Ulewa",
+      "snow": "Śnieg",
+      "wind_strong": "Silny wiatr",
+      "fog": "Mgła",
+      "fog_dense": "Gęsta mgła",
+      "ice": "Gołoledź"
+    }
   },
   "rules": {
     "counts": "Werdykty",
@@ -208,7 +217,7 @@
     "zielona_strzalka": "Strzałka pozwala skręcić po zatrzymaniu i ustąpieniu pierwszeństwa.",
     "delikatny_czujnik": "Na nierównym odcinku zwolnij, żeby ochronić czujnik.",
     "wskazowka_na_moscie": "Zatrzymaj się przy niebieskim znaku i dodaj zdjęcie do Albumu.",
-    "ulewa": "Ulewa ogranicza widoczność, na chodniku jedź powoli i ustępuj pieszym.",
+    "ulewa": "W ulewie włącz światła, a jeżeli wybierzesz chodnik, jedź powoli i ustępuj pieszym.",
     "eskorta_franka": "Franek jedzie z Kazikiem, pokaż im, jak bezpiecznie dotrzeć do parku.",
     "przejazd_kolejowy": "Przed torami obserwuj zapory i czerwone światła.",
     "po_zdarzeniu": "Turbo się przewrócił, zatrzymaj się w bezpiecznym miejscu.",
@@ -508,7 +517,7 @@
       "tytul": "Fontanna o zmroku",
       "opis": "Po zmroku zabierz lampkę na objazd przy Hali i fontannie.",
       "cel1": "Włącz obie lampki.",
-      "cel2": "Odwiedź plac przy Hali Stulecia.",
+      "cel2": "Na chodniku prowadź rower do Hali Stulecia.",
       "cel3": "Dojedź do punktu przy fontannie."
     },
     "WRO-B-02": {
@@ -534,7 +543,7 @@
     },
     "WRO-B-03": {
       "tytul": "Dworcowy kurier",
-      "opis": "Dwie przesyłki jadą na Dworzec. Zbierz je po drodze i dostarcz na plac przed wejściem.",
+      "opis": "W gęstej mgle włącz światła i dostarcz dwie przesyłki na Dworzec.",
       "cel1": "Odbierz pierwszą przesyłkę.",
       "cel2": "Odbierz drugą przesyłkę przy przystanku.",
       "cel3": "Oddaj dokumenty przed Dworcem.",
@@ -542,7 +551,7 @@
     },
     "WRO-B-04": {
       "tytul": "Kontraruch na Nadodrzu",
-      "opis": "Sprawdź tabliczkę pod zakazem wjazdu i przejedź oznaczonym kontrapasem.",
+      "opis": "Pada lekki deszcz. Włącz światła i przejedź oznaczonym kontrapasem.",
       "cel1": "Przeczytaj znak i tabliczkę.",
       "cel1_pytanie": "Kiedy możesz wjechać pod B-2?",
       "cel1_wyjasnienie": "Wyjątek dla rowerów pod znakiem pozwala wjechać zgodnie z oznakowaniem.",
@@ -561,7 +570,7 @@
     },
     "WRO-B-06": {
       "tytul": "Japoński Ogród",
-      "opis": "Zabierz delikatne sadzonki przez mostek przy Ogrodzie Japońskim.",
+      "opis": "Pada śnieg. Ostrożnie przewieź sadzonki przez mostek.",
       "cel1": "Odbierz sadzonki przy Zoo.",
       "cel2": "Dojedź do południowego końca mostku.",
       "cel3": "Oddaj sadzonki po drugiej stronie mostku."
@@ -787,7 +796,7 @@
     },
     "WAW-A3-01": {
       "tytul": "Ulewa w Łazienkach",
-      "opis": "Zawieź ostrzeżenie o zakłóceniach do Pawilonu w Łazienkach. Pawilon prosi też o bezpieczny objazd parku od strony Wisły.",
+      "opis": "Mimo ulewy zawieź ostrzeżenie do Pawilonu w Łazienkach. Pawilon prosi też o bezpieczny objazd parku od strony Wisły.",
       "cel1": "Odbierz ostrzeżenie od Sierżant Oli.",
       "cel2": "W ulewie jedź chodnikiem powoli i ustępuj pieszym.",
       "cel3": "Omiń alejkę objętą zakazem wjazdu.",
@@ -1016,11 +1025,11 @@
       "koniec_tekst": "Przeprawy zaliczone. Odra zostaje za tobą!"
     },
     "WRO-B-03": {
-      "start_tekst": "Dwie przesyłki jadą na Dworzec. Zbierz je po drodze i dostarcz na plac przed wejściem.",
+      "start_tekst": "W gęstej mgle włącz światła i dostarcz dwie przesyłki na Dworzec.",
       "koniec_tekst": "Przesyłki przekazane przed odjazdem."
     },
     "WRO-B-04": {
-      "start_tekst": "Sprawdź tabliczkę pod zakazem wjazdu i przejedź oznaczonym kontrapasem.",
+      "start_tekst": "Pada lekki deszcz. Włącz światła i przejedź oznaczonym kontrapasem.",
       "koniec_tekst": "Kontrapas zaliczony. Wyjątek był oznaczony tabliczką."
     },
     "WRO-B-05": {
@@ -1028,7 +1037,7 @@
       "koniec_tekst": "Lody dotarły w samą porę."
     },
     "WRO-B-06": {
-      "start_tekst": "Zabierz delikatne sadzonki przez mostek przy Ogrodzie Japońskim.",
+      "start_tekst": "Pada śnieg. Ostrożnie przewieź sadzonki przez mostek.",
       "koniec_tekst": "Sadzonki dotarły całe."
     },
     "WRO-B-07": {
@@ -1154,7 +1163,7 @@
       "koniec_tekst": "Błyskawica to ślad Zawiły, a nadajnik wskazuje Pałac Kultury."
     },
     "WAW-A3-01": {
-      "start_tekst": "Zawieź ostrzeżenie o zakłóceniach do Pawilonu w Łazienkach.",
+      "start_tekst": "Mimo ulewy zawieź ostrzeżenie do Pawilonu w Łazienkach.",
       "koniec_tekst": "Ostrzeżenie dotarło, a przy parku ktoś widział Turbo."
     },
     "WAW-A3-02": {
@@ -1182,6 +1191,10 @@
   },
   "settings": {
     "title": "Ustawienia",
+    "accessibility": "Dostępność",
+    "reducedEffects": "Mniej efektów",
+    "equipment": "Wyposażenie",
+    "reflectiveVest": "Załóż kamizelkę odblaskową",
     "about": "O grze / Licencje",
     "back": "Wróć do ustawień",
     "thirdParty": "Licencje komponentów zewnętrznych"

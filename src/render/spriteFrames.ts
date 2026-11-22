@@ -33,7 +33,7 @@ export const cyclistVariants = 3;
 // Car columns are off, left, right, then the same three under braking.
 export const spriteSheets = {
   rider: [24, 24, riderDirections * 2, (riderPoses * helmetColors.length) / 2],
-  'rider-lights': [24, 24, riderDirections, 16],
+  'rider-lights': [24, 24, riderDirections, 32],
   'traffic-cyclist': [24, 24, riderDirections, strideFrames * cyclistVariants],
   'traffic-pedestrian': [
     16,

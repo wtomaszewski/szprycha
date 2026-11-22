@@ -1,4 +1,5 @@
 import { ui } from '../core/presentation';
+import type { Weather } from '../rules/types';
 
 export class DrivingHud {
   readonly timerSlot = document.createElement('div');
@@ -127,7 +128,7 @@ export class DrivingHud {
     helmet: boolean,
     lights: boolean,
     night: boolean,
-    rain: boolean,
+    weather: Weather,
   ) {
     this.setIcon(
       this.equipment,
@@ -142,8 +143,18 @@ export class DrivingHud {
     this.setIcon(this.time, ui.rideHud[night ? 'night' : 'day'], true);
     const icon = night ? 'night' : 'day';
     if (this.time.dataset.icon !== icon) this.time.dataset.icon = icon;
-    if (this.weather.hidden === rain) this.weather.hidden = !rain;
-    this.setIcon(this.weather, ui.rideHud.rain, true);
+    const clear = weather === 'clear';
+    if (this.weather.hidden !== clear) this.weather.hidden = clear;
+    if (!clear) {
+      const icon =
+        weather === 'rain_light' || weather === 'rain_heavy'
+          ? 'rain'
+          : weather === 'fog_dense'
+            ? 'fog'
+            : weather;
+      if (this.weather.dataset.icon !== icon) this.weather.dataset.icon = icon;
+      this.setIcon(this.weather, ui.rideHud.weather[weather], true);
+    }
   }
 
   private setIcon(element: HTMLElement, label: string, active: boolean) {

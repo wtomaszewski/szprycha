@@ -115,7 +115,7 @@ test('rain freezes with reduced motion and night preview leaves the rules in day
       if (
         this.fillStyle instanceof CanvasPattern &&
         !this.canvas.isConnected &&
-        width > 640
+        this.canvas.width > 640
       )
         document.documentElement.dataset.rainOffset = String(
           this.getTransform().f,

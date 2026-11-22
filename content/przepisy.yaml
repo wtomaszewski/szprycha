@@ -74,7 +74,7 @@ przepisy:
     dla_dziecka: "Odblaski na pedałach, szprychach i kamizelka odblaskowa nie zawsze są obowiązkowe, ale bardzo pomagają po zmroku."
     podstawa: "Zalecenie bezpieczeństwa"
     weryfikacja: true
-    detektor: garaz
+    detektor: sim
     waga_bledu: null
     dobry_nawyk: "Założenie kamizelki/odblasków przed nocnym kursem (bonus, nie wymóg)"
     feedback: "Kamizelka odblaskowa to supermoc widoczności. Nie musisz, ale warto!"

@@ -37,7 +37,7 @@ it('accounts for every rule and requires exercised implementations for sim rules
           }
         ).scenarios,
     );
-  for (const { id } of przepisy.filter(
+  for (const { id, waga_bledu } of przepisy.filter(
     ({ id, detektor }) => detektor === 'sim' || id === 'KASK-01',
   )) {
     const matching = scenarios.filter(({ expect }) =>
@@ -49,7 +49,12 @@ it('accounts for every rule and requires exercised implementations for sim rules
         expect[id]?.some((kind) => kind === 'minor' || kind === 'major'),
       ),
       id,
-    ).toBe(true);
+    ).toBe(waga_bledu !== null);
+    if (waga_bledu === null)
+      expect(
+        matching.some(({ expect }) => expect[id]?.includes('good')),
+        id,
+      ).toBe(true);
     expect(
       matching.some(
         ({ expect }) => !expect[id]?.some((kind) => kind !== 'good'),

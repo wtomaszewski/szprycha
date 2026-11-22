@@ -145,10 +145,10 @@ Deszcz (ukośne piksele, kałuże odbijające światła), śnieg, mgła (gradien
 
 ### Światło i efekty w grze
 
-- Noc ma granatową warstwę multiply (`#29366f`). Atlas efektów ma stopniowane aureole latarni, stożek lampki roweru, podwójny reflektor pojazdu, neon i deseń deszczu. Światła są dodawane po przyciemnieniu sceny. Okna naświetlają osobne maski na tych samych rzutowanych fasadach. Pozycje neonów Pragi pochodzą z dekoracji mapy.
+- Noc ma granatową warstwę multiply (`#29366f`). Atlas efektów ma stopniowane aureole latarni, stożek lampki roweru, podwójny reflektor pojazdu, neon, desenie opadów i gradient mgły. Światła są dodawane po przyciemnieniu sceny. Okna naświetlają osobne maski na tych samych rzutowanych fasadach. Pozycje neonów Pragi pochodzą z dekoracji mapy.
 - Tylny odblask wzmacnia się, gdy rower znajdzie się tyłem w reflektorach, i krótko utrzymuje jasność, żeby uniknąć migotania na brzegu wiązki. Render świateł i powtórki bazuje na próbce symulacji.
-- Pauza pozwala włączyć deszcz ze świetlnymi refleksami w kałużach. Dym ma źródło w kominach, a gołębie startują, kiedy rowerzysta podjeżdża blisko. Konfetti pojawia się przy ukończeniu misji, a ślad świetlny podczas jazdy z serią ×3 lub wyższą.
-- Ograniczenie ruchu w systemie zatrzymuje deseń deszczu i dym, pozostawia gołębie na ziemi, pokazuje statyczne konfetti oraz zastępuje ruchomy ślad poświatą pod rowerem. Tryb uproszczony stosuje te same warianty, ogranicza liczbę detali i pomija emisję fasad. Latarnie, neony i reflektory nadal oświetlają scenę.
+- Misje wyznaczają opady i mgłę, a podgląd deszczu w pauzie pozwala zobaczyć refleksy w kałużach. Dym ma źródło w kominach, a gołębie startują, kiedy rowerzysta podjeżdża blisko. Konfetti pojawia się przy ukończeniu misji, a ślad świetlny podczas jazdy z serią ×3 lub wyższą.
+- Ustawienie „Mniej efektów” i ograniczenie ruchu w systemie zatrzymują animację opadów, neonu i dymu, pozostawia gołębie na ziemi, pokazuje statyczne konfetti oraz zastępuje ruchomy ślad poświatą pod rowerem. Tryb uproszczony stosuje te same warianty, ogranicza liczbę detali i pomija emisję fasad. Latarnie, neony i reflektory nadal oświetlają scenę.
 - Podgląd nocy w F3 służy do sprawdzania grafiki. Widoczność, pora symulacji i stan lampek używany przez detektory pochodzą z dotychczasowych danych symulacji.
 
 Praga w dzień, w nocy i podczas deszczu, przed zmianą po lewej i po zmianie po prawej. [Zrzuty porównawcze](graphics-32-before-after.webp)

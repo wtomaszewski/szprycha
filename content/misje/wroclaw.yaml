@@ -427,7 +427,7 @@
   zleceniodawca: pan_latarnik
   typ: pogoda
   wymagania: { misje_ukonczone: [WRO-A3-02] }
-  start: { poi: bulwar-start, ulewa: true }
+  start: { poi: bulwar-start, pogoda: ulewa }
   ruch_ai: false
   cele:
     - { typ: dojedz, poi: bulwar-wschod, opis: misje.WRO-A3-03.cel1 }
@@ -572,7 +572,7 @@
   zleceniodawca: pan_latarnik
   typ: nocny
   wymagania: { misje_ukonczone: [WRO-A1-05] }
-  start: { poi: fontanna-zbiorka, zmrok: true }
+  start: { poi: fontanna-zbiorka, noc: true }
   ruch_ai: false
   cele:
     - { typ: przygotuj_rower, opis: misje.WRO-B-01.cel1 }
@@ -637,7 +637,7 @@
   zleceniodawca: lena_mapa
   typ: dostawa
   wymagania: { misje_ukonczone: [WRO-A2-03] }
-  start: { poi: dworzec-przejazd-za }
+  start: { poi: dworzec-przejazd-za, pogoda: gesta_mgla }
   ruch_ai: false
   cele:
     - { typ: odbierz, opis: misje.WRO-B-03.cel1, przedmiot: paczka }
@@ -664,7 +664,7 @@
   zleceniodawca: sierzant_ola
   typ: wyzwanie
   wymagania: { misje_ukonczone: [WRO-A1-03] }
-  start: { poi: nadodrze-start }
+  start: { poi: nadodrze-start, pogoda: lekki_deszcz }
   ruch_ai: false
   cele:
     - typ: wybor
@@ -723,7 +723,7 @@
   zleceniodawca: pani_doktor
   typ: delikatna_przesylka
   wymagania: { misje_ukonczone: [WRO-A2-02] }
-  start: { poi: zoo-brama }
+  start: { poi: zoo-brama, pogoda: snieg }
   ruch_ai: false
   przesylka: { delikatna: true }
   cele:

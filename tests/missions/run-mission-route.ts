@@ -6,10 +6,13 @@ import { MissionRace } from '../../src/gameplay/MissionRace';
 import { MissionSystem } from '../../src/gameplay/MissionSystem';
 import { TrafficEvents } from '../../src/gameplay/TrafficEvents';
 import {
+  BRAKE_DECELERATION,
+  FIXED_STEP,
   stepRider,
   type Obstacle,
   type Rider,
 } from '../../src/gameplay/bicycle';
+import { lightsRequired } from '../../src/rules/detectors/MSC-04';
 import { RuleEngine } from '../../src/rules/RuleEngine';
 import { IntersectionManager } from '../../src/rules/priority/IntersectionManager';
 import {
@@ -106,6 +109,11 @@ export function runMissionRoute(
     shoulderCheck: { lastLeftAt: -Infinity },
   };
   const env = missionEnvironment(world, definition);
+  const tuning = {
+    brakeForce: BRAKE_DECELERATION * settings.silnik.przyczepnosc[env.weather],
+  };
+  if (!mission.preparingBike && lightsRequired(env))
+    player.lights!.front = player.lights!.rear = true;
   const obstacles: Obstacle[] = map.layers.flatMap(({ name, objects }) =>
     name === 'blocks' || name === 'collisions'
       ? (objects ?? []).map((box) => ({
@@ -183,6 +191,8 @@ export function runMissionRoute(
         obstacles,
         map.width * map.tilewidth,
         map.height * map.tileheight,
+        FIXED_STEP,
+        rider.walking ? undefined : tuning,
       ) || collision;
     player.pos.x = rider.x * scale;
     player.pos.y = rider.y * scale;

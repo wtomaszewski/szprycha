@@ -460,12 +460,19 @@ export function spriteArt() {
     'rider-lights': sheet(
       'rider-lights',
       (t, row) => {
-        const x = [12, 8, 11, 9][Math.floor(row / 4)]!;
+        const pose = Math.floor((row % 16) / 4);
+        const x = [12, 8, 11, 9][pose]!;
         if (row & 1) {
           t.rect(x - 1, 2, 2, 2, white);
           t.rect(x - 1, 19, 2, 2, red);
         }
-        if (row & 2) t.rect(x - 2, 21, 4, 1, orange);
+        if (row & 2) t.rect(x - 2, 21, 4, 1, red);
+        if (row & 16) {
+          const body = [12, 16, 13, 15][pose]!;
+          const y = pose === 0 ? 12 : 13;
+          t.rect(body - 2, y, 5, 2, amber);
+          t.rect(body - 2, y + 1, 5, 1, row & 2 ? white : gold);
+        }
       },
       riderDirections,
     ),

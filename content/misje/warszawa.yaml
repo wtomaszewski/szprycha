@@ -464,7 +464,7 @@
   zleceniodawca: sierzant_ola
   typ: pogoda
   wymagania: { misje_ukonczone: [WAW-A2-06] }
-  start: { poi: lazienki_ulewa_start, ulewa: true }
+  start: { poi: lazienki_ulewa_start, pogoda: ulewa }
   ruch_ai: false
   cele:
     - { typ: odbierz, opis: misje.WAW-A3-01.cel1, przedmiot: ostrzezenie }

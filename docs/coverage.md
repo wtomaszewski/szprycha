@@ -32,7 +32,7 @@ Mapa [warszawa.tmj](../maps/warszawa.tmj)
 
 | Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
 | --- | :---: | --- | --- |
-| M01 | ✓ | `WYP-04`, `WYP-05` | `KASK-01`, `WYP-04`, `WYP-05` |
+| M01 | ✓ | `WYP-04`, `WYP-05`, `WYP-06` | `KASK-01`, `WYP-04`, `WYP-05`, `WYP-06` |
 | M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-01`, `GDZIE-02`, `GDZIE-04`, `GDZIE-05`, `GDZIE-06`, `GDZIE-07`, `GDZIE-08`, `GDZIE-09`, `GDZIE-10`, `GDZIE-11` |
 | M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `SYG-01`, `SYG-02`, `SYG-03`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-C13`, `ZNAK-S2`, `ZNAK-STOP` |
 | M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | `PIER-01`, `PIER-02`, `PIER-04`, `PIER-06`, `PIER-07`, `PIER-09` |
@@ -66,7 +66,7 @@ Mapa [wroclaw.tmj](../maps/wroclaw.tmj)
 
 | Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
 | --- | :---: | --- | --- |
-| M01 | ✓ | `WYP-04`, `WYP-05` | `KASK-01`, `WYP-04`, `WYP-05` |
+| M01 | ✓ | `WYP-04`, `WYP-05`, `WYP-06` | `KASK-01`, `WYP-04`, `WYP-05`, `WYP-06` |
 | M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-05`, `GDZIE-06`, `GDZIE-07`, `GDZIE-08`, `GDZIE-09`, `GDZIE-11` |
 | M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `SYG-01`, `SYG-03`, `ZNAK-A7`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-D1`, `ZNAK-P23` |
 | M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | `PIER-02`, `PIER-03`, `PIER-04`, `PIER-05`, `PIER-08`, `PIER-09` |
@@ -100,7 +100,7 @@ Mapa [miasteczko.tmj](../maps/miasteczko.tmj)
 
 | Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
 | --- | :---: | --- | --- |
-| M01 | ✓ | `WYP-04`, `WYP-05` | `KASK-01`, `WYP-04`, `WYP-05` |
+| M01 | ✓ | `WYP-04`, `WYP-05`, `WYP-06` | `KASK-01`, `WYP-04`, `WYP-05`, `WYP-06` |
 | M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-04`, `GDZIE-06` | `GDZIE-06` |
 | M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `ZNAK-STOP` |
 | M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-07`, `PIER-09` | — |

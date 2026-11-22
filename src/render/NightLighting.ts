@@ -91,12 +91,14 @@ export class NightLighting {
   finishFrame(
     camera: Cameras.Scene2D.Camera,
     night: boolean,
+    lowLight: boolean,
     bikeLight: boolean,
     rider: Rider,
     reflected: boolean,
     at: number,
+    reduced: boolean,
   ) {
-    if (at < this.lastTime || !night) this.lastReflection = -Infinity;
+    if (at < this.lastTime || !lowLight) this.lastReflection = -Infinity;
     this.lastTime = at;
     if (reflected) this.lastReflection = at;
     for (
@@ -107,24 +109,8 @@ export class NightLighting {
       this.headlights[index]!.setVisible(false);
     this.activeHeadlights = 0;
 
-    const wasNight = this.ambient.visible;
-    if (!night && !wasNight) return false;
-    this.ambient.setVisible(night);
-    this.bike.setVisible(night && bikeLight);
-    if (!night) {
-      for (const { glow } of this.lamps) glow.setVisible(false);
-      for (const { glow } of this.neons) glow.setVisible(false);
-      return false;
-    }
-
-    const x = camera.scrollX + camera.width / 2;
-    const y = camera.scrollY + camera.height / 2;
-    const halfWidth = camera.width / (2 * camera.zoom);
-    const halfHeight = camera.height / (2 * camera.zoom);
-    this.ambient
-      .setPosition(x, y)
-      .setDisplaySize(2 * halfWidth + 4, 2 * halfHeight + 4);
-    if (bikeLight) {
+    this.bike.setVisible(lowLight && bikeLight);
+    if (this.bike.visible) {
       const side = rider.walking ? -4 : 0;
       const dx = Math.cos(rider.heading);
       const dy = Math.sin(rider.heading);
@@ -135,8 +121,23 @@ export class NightLighting {
         )
         .setRotation(rider.heading);
     }
+    const reflecting = at - this.lastReflection <= 0.35;
+    if (!night && !this.ambient.visible) return reflecting;
+    this.ambient
+      .setVisible(night)
+      .setFillStyle(0x29366f, reduced ? 0.46 : 0.64);
+    const x = camera.scrollX + camera.width / 2;
+    const y = camera.scrollY + camera.height / 2;
+    const halfWidth = camera.width / (2 * camera.zoom);
+    const halfHeight = camera.height / (2 * camera.zoom);
+    if (night)
+      this.ambient
+        .setPosition(x, y)
+        .setDisplaySize(2 * halfWidth + 4, 2 * halfHeight + 4);
+
     for (const { lamp, glow } of this.lamps) {
       const visible =
+        night &&
         Math.abs(lamp.x - x) < halfWidth + 64 &&
         Math.abs(lamp.y - y) < halfHeight + 64;
       if (glow.visible !== visible) glow.setVisible(visible);
@@ -145,18 +146,20 @@ export class NightLighting {
     }
     for (const [index, { glow, cycling }] of this.neons.entries()) {
       const visible =
+        night &&
         Math.abs(glow.x - x) < halfWidth + 64 &&
         Math.abs(glow.y - y) < halfHeight + 64;
       if (glow.visible !== visible) glow.setVisible(visible);
       if (visible && cycling) {
         const color =
           neonPalette[
-            (Math.max(0, Math.floor(at)) + index) % neonPalette.length
+            ((reduced ? 0 : Math.max(0, Math.floor(at))) + index) %
+              neonPalette.length
           ]!;
         if (glow.tintTopLeft !== color) glow.setTint(color);
       }
     }
 
-    return at - this.lastReflection <= 0.35;
+    return reflecting;
   }
 }

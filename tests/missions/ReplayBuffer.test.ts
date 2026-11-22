@@ -7,6 +7,8 @@ import {
 import { FIXED_STEP, stepRider, type Rider } from '../../src/gameplay/bicycle';
 import { TICKS_PER_SECOND, type AgentState } from '../../src/rules/types';
 
+const day = { time: 'day', weather: 'clear', visibilityLow: false } as const;
+
 const capture = (frames: number) => {
   const player: Rider = {
     x: 100,
@@ -41,7 +43,9 @@ const capture = (frames: number) => {
     prop.x++;
     buffer.record(
       tick * FIXED_STEP,
-      tick >= 300,
+      tick >= 300
+        ? { time: 'night', weather: 'fog_dense', visibilityLow: true }
+        : day,
       player,
       actions,
       [agent],
@@ -59,6 +63,11 @@ describe('five-second replay', () => {
     expect(buffer.durationMs).toBe(5000);
     const first = buffer.frameAt(0)!;
     const last = buffer.frameAt(5000)!;
+    expect(last.environment).toEqual({
+      time: 'night',
+      weather: 'fog_dense',
+      visibilityLow: true,
+    });
     expect(last.at - first.at).toBeCloseTo(5);
     expect(last.rider.x).toBeGreaterThan(first.rider.x);
     expect(last.actors[0]?.x).toBeCloseTo((REPLAY_CAPACITY * 2 + 77) / 10);
@@ -102,11 +111,11 @@ it('records traffic lamps and both tram section headings for playback', () => {
     kind: 'tram' as const,
     tramHeadings: { front: 0.4, rear: 0.1 },
   };
-  buffer.record(0, false, player, actions, [car, tram]);
+  buffer.record(0, day, player, actions, [car, tram]);
   car.speed = 2.5;
   car.maneuver = 'right';
   tram.tramHeadings.front = 0.6;
-  buffer.record(FIXED_STEP, false, player, actions, [car, tram]);
+  buffer.record(FIXED_STEP, day, player, actions, [car, tram]);
 
   expect(buffer.frame(0)?.actors[0]).toMatchObject({
     braking: false,

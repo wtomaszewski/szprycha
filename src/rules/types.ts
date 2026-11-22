@@ -21,6 +21,7 @@ export interface RiderState {
   supervisedChildId?: string;
   shoulderCheck?: { lastLeftAt: number };
   lights?: { front: boolean; rear: boolean };
+  reflectiveVest?: boolean;
   handsOnBar?: 0 | 1 | 2;
   feetOnPedals?: boolean;
   holdingVehicle?: boolean;
@@ -46,9 +47,21 @@ export interface AgentState {
   junctionProgress?: number; // signed distance along the movement from the stop line
 }
 
+export const weatherKinds = [
+  'clear',
+  'rain_light',
+  'rain_heavy',
+  'snow',
+  'wind_strong',
+  'fog',
+  'fog_dense',
+  'ice',
+] as const;
+export type Weather = (typeof weatherKinds)[number];
+
 export interface EnvState {
   time: 'day' | 'dusk' | 'night';
-  weather: 'clear' | 'rain_heavy' | 'snow' | 'wind_strong' | 'fog' | 'ice';
+  weather: Weather;
   visibilityLow: boolean;
   railOverrides?: Readonly<Record<string, RailState>>;
   signalOverrides?: Readonly<Record<string, SignalPhase>>;

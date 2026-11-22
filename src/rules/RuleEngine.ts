@@ -1,5 +1,6 @@
 import type { GameContent } from '../content/schemas';
 import { BikeInfrastructureDetector } from './detectors/GDZIE-01';
+import { reflectiveVestHabit } from './detectors/WYP-06';
 import { sidewalkException, sidewalkVerdict } from './detectors/GDZIE-04';
 import { sidewalkPedestrian } from './detectors/GDZIE-05';
 import { pedestrianCrossing } from './detectors/GDZIE-06';
@@ -58,6 +59,7 @@ export class RuleEngine {
   private readonly railway: RailwayDetector;
   private readonly tramStop = new TramStopDetector();
   private readonly driveway = new DrivewayDetector();
+  private praisedVest = false;
   private readonly visibility = new VisibilityDetector();
   private readonly turningCrossing = new TurningCrossingDetector();
   private readonly bikeCrossing = new BikeCrossingDetector();
@@ -146,6 +148,7 @@ export class RuleEngine {
   afterCheckpoint() {
     const engine = new RuleEngine(this.world, this.content, this.manager);
     engine.tick = this.tick;
+    engine.praisedVest = this.praisedVest;
     Object.assign(engine.counts, this.counts);
     engine.recent.push(...this.recent);
     return engine;
@@ -168,8 +171,23 @@ export class RuleEngine {
     this.emit(this.helmet.evaluate(rider, at));
     this.evaluateTraffic(rider, agents, env, at);
     if (hazards?.length)
-      this.emit(encounterSpeed(this.world, rider, hazards, at, env));
+      this.emit(
+        encounterSpeed(
+          this.world,
+          rider,
+          hazards,
+          at,
+          this.settings.silnik.przyczepnosc[env.weather],
+        ),
+      );
     this.emit(this.visibility.evaluate(rider, at, env));
+    if (!this.praisedVest) {
+      const habit = reflectiveVestHabit(rider, at, env);
+      if (habit) {
+        this.praisedVest = true;
+        this.emit(habit);
+      }
+    }
     this.emit(this.ridingPosition.evaluate(rider, at));
     this.emit(this.passenger.evaluate(rider, at));
     this.emit(

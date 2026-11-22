@@ -97,7 +97,7 @@ export class RoadVisit {
       lane?.shoulder &&
       this.canReport('GDZIE-03b', lane.shoulder.id, tick)
     )
-      this.report(useShoulder(lane, rider, agents, env, at), emit);
+      this.report(useShoulder(lane, rider, agents, at), emit);
 
     const clearRoad =
       moving &&
@@ -155,7 +155,17 @@ export class RoadVisit {
       (!living || zone.surface === 'rough') &&
       this.canReport('MAN-08', zone.id, tick)
     )
-      this.report(safeSpeed(this.world, zone, rider, agents, at, env), emit);
+      this.report(
+        safeSpeed(
+          this.world,
+          zone,
+          rider,
+          agents,
+          at,
+          rights.przyczepnosc[env.weather],
+        ),
+        emit,
+      );
 
     const barred = this.findZone('no_bikes', rider.pos);
     const access = this.accessSign(rider.pos, barred, lane);

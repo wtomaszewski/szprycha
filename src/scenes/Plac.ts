@@ -457,6 +457,7 @@ export class Plac extends Scene {
         at: time,
         riderStride: this.stride,
         dismountAt: -Infinity,
+        reflectiveVest: this.progress.store.profile.reflectiveVest,
       },
       false,
     );

@@ -74,7 +74,7 @@ export function stepRider(
   width: number,
   height: number,
   dt = FIXED_STEP,
-  tuning?: RiderTuning,
+  tuning?: Partial<RiderTuning>,
 ): boolean {
   const magnitude = Math.min(1, Math.hypot(input.x, input.y));
   const limit = r.walking ? 32 : (tuning?.maxSpeed ?? 150);

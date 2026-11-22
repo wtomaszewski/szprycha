@@ -65,6 +65,14 @@ scenarios:
     inputs: [{ t: 1, x: 885 }]
     expect: { GDZIE-03b: [] }
 
+  - name: GDZIE-03b ulewa nie zmienia oznaczenia przejezdnego pobocza
+    env: { weather: rain_heavy }
+    objects: *shoulder
+    properties: *withShoulder
+    player: { x: 800, y: 665, speed: 4 }
+    inputs: [{ t: 1, x: 885 }]
+    expect: { GDZIE-03b: [minor] }
+
   - name: GDZIE-03b pobocze w przeciwnym kierunku
     objects: *shoulder
     properties:

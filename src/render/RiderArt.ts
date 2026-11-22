@@ -34,7 +34,12 @@ export class RiderArt {
   draw(
     frame: Pick<
       ReplayFrame,
-      'at' | 'actions' | 'dismountAt' | 'rider' | 'riderStride'
+      | 'at'
+      | 'actions'
+      | 'dismountAt'
+      | 'rider'
+      | 'riderStride'
+      | 'reflectiveVest'
     >,
     reflected: boolean,
   ) {
@@ -56,13 +61,14 @@ export class RiderArt {
     const index = (this.helmet * riderPoses + pose) * riderDirections + heading;
     this.image.setPosition(x, y);
     if (Number(this.image.frame.name) !== index) this.image.setFrame(index);
-    const show = actions.lights || reflected;
+    const show = actions.lights || reflected || frame.reflectiveVest;
     if (this.lights.visible !== show) this.lights.setVisible(show);
     if (show) {
       const row =
         (dismount >= 0 ? (2 + dismount) * 4 : rider.walking ? 4 : 0) +
         (actions.lights ? 1 : 0) +
-        (reflected ? 2 : 0);
+        (reflected ? 2 : 0) +
+        (frame.reflectiveVest ? 16 : 0);
       const index = row * riderDirections + heading;
       this.lights.setPosition(x, y);
       if (Number(this.lights.frame.name) !== index) this.lights.setFrame(index);

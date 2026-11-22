@@ -2,6 +2,17 @@ import { verdict, type EnvState, type RiderState } from '../types';
 import { frontLight } from './WYP-04';
 import { rearLight } from './WYP-05';
 
+export function lightsRequired(env: EnvState) {
+  return (
+    env.time !== 'day' ||
+    env.visibilityLow ||
+    env.weather === 'fog' ||
+    env.weather === 'fog_dense' ||
+    env.weather === 'rain_light' ||
+    env.weather === 'rain_heavy'
+  );
+}
+
 export class VisibilityDetector {
   private missing = false;
   private praised = false;
@@ -15,14 +26,7 @@ export class VisibilityDetector {
     const rearWasOff = this.rearWasOff;
     this.frontWasOff = lights && !lights.front;
     this.rearWasOff = lights && !lights.rear;
-    if (
-      !lights ||
-      rider.mode !== 'riding' ||
-      (env.time === 'day' &&
-        !env.visibilityLow &&
-        env.weather !== 'fog' &&
-        env.weather !== 'rain_heavy')
-    ) {
+    if (!lights || rider.mode !== 'riding' || !lightsRequired(env)) {
       this.missing = false;
       return;
     }

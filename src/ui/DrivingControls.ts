@@ -2,6 +2,7 @@ import type { DriveInput, Scheme, RiderState } from '../gameplay/bicycle';
 import { ui } from '../core/presentation';
 import { CAMERA_HEIGHT_PX } from '../render/projection';
 import type { ProgressStore } from '../core/progressStore';
+import { ridePreference } from './RidePreferences';
 import { audioSettings } from './AudioControls';
 interface OverlayControls {
   keyboard(event: KeyboardEvent): boolean;
@@ -140,6 +141,11 @@ export class DrivingControls {
       this.soundOptions,
       help,
     );
+    if (!plac)
+      options.append(
+        ridePreference(progress, 'reducedEffects'),
+        ridePreference(progress, 'reflectiveVest'),
+      );
     const touch = document.createElement('div');
     touch.className = 'touch-controls';
     const stick = document.createElement('div');

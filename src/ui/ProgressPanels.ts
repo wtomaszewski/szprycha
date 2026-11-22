@@ -3,6 +3,7 @@ import notices from 'virtual:third-party-notices';
 import type { GameContent } from '../content/schemas';
 import { translate, ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
+import { ridePreference } from './RidePreferences';
 import { audioSettings } from './AudioControls';
 import { signIllustration } from './SignIllustration';
 
@@ -43,6 +44,10 @@ export function progressPanels(
   about.textContent = ui.settings.about;
   const settings = () => [
     audioSettings(progress.store),
+    heading(ui.settings.accessibility),
+    ridePreference(progress.store, 'reducedEffects'),
+    heading(ui.settings.equipment),
+    ridePreference(progress.store, 'reflectiveVest'),
     heading(ui.m5c.breakSettings),
     breakSettings(progress, content),
     about,

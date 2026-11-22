@@ -41,6 +41,14 @@ export function effectArt() {
           tube ? 0.95 : bands(neon) * 0.27,
         );
       }
+      const fog = Math.hypot(dx, dy) / 64;
+      dot(
+        effectFrame.fog,
+        x,
+        y,
+        0xc0cbdc,
+        0.07 + 0.68 * bands(Math.min(1, fog ** 1.6)),
+      );
       const bike = x / 120;
       const bikeWidth = 2 + 21 * bike;
       if (bike < 1 && Math.abs(dy) <= bikeWidth) {
@@ -67,6 +75,17 @@ export function effectArt() {
         0x94b0c2,
         0.24 + step * 0.024,
       );
+  }
+
+  for (let i = 0; i < 36; i++) {
+    const n = artHash(i, 51, 87);
+    const x = n & 127;
+    const y = (n >>> 9) & 127;
+    dot(effectFrame.snow, x, y, 0xf4f4f4, 0.72);
+    if (i % 3 === 0) {
+      dot(effectFrame.snow, (x + 1) & 127, y, 0xc0cbdc, 0.55);
+      dot(effectFrame.snow, x, (y + 1) & 127, 0xf4f4f4, 0.6);
+    }
   }
 
   return sheet;

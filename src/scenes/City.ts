@@ -9,6 +9,7 @@ import roofDetailsUrl from '../../assets/generated/roof-details.png?url';
 import propsUrl from '../../assets/generated/props.png?url';
 import tilesUrl from '../../assets/generated/tiles.png?url';
 import {
+  BRAKE_DECELERATION,
   canRide,
   FIXED_STEP,
   METERS_PER_PIXEL,
@@ -32,7 +33,10 @@ import { nearbyPhotoSubject } from '../gameplay/signPhoto';
 import type { ExamResult, ExamRide } from '../gameplay/exam/exam';
 import { examRoute } from '../gameplay/exam/route';
 import { MissionRace } from '../gameplay/MissionRace';
-import { missionEnvironment } from '../gameplay/missionEnvironment';
+import {
+  missionEnvironment,
+  missionTime,
+} from '../gameplay/missionEnvironment';
 import { MissionSystem, type MissionSpawn } from '../gameplay/MissionSystem';
 import {
   canOpenPhone,
@@ -45,6 +49,7 @@ import { RuleDebugOverlay } from '../render/RuleDebugOverlay';
 import { TrainingRoad } from '../render/TrainingRoad';
 import { IntersectionManager } from '../rules/priority/IntersectionManager';
 import { RuleEngine } from '../rules/RuleEngine';
+import { lightsRequired } from '../rules/detectors/MSC-04';
 import type {
   AgentState,
   EnvState,
@@ -99,6 +104,7 @@ export class City extends Scene {
   private readonly renderEnvironment = { ...this.environment };
   private readonly graphics = { lite: false, rain: false };
   private rider!: Rider;
+  private readonly weatherTuning = { brakeForce: BRAKE_DECELERATION };
   private riderArt!: RiderArt;
   private controls!: DrivingControls;
   private blocks!: Blocks;
@@ -277,6 +283,9 @@ export class City extends Scene {
     this.mission = definition ? this.createMission(definition) : undefined;
     Object.assign(this.environment, missionEnvironment(this.world, definition));
     Object.assign(this.renderEnvironment, this.environment);
+    this.weatherTuning.brakeForce =
+      BRAKE_DECELERATION *
+      this.content.balans.silnik.przyczepnosc[this.environment.weather];
     const ambientTraffic = definition?.ruch_ai !== false;
     this.review = undefined;
     this.phoneAnsweredSafely = false;
@@ -644,6 +653,7 @@ export class City extends Scene {
       this.stopListeningForVerdicts?.();
       this.stopListeningForVerdicts = undefined;
       delete this.game.canvas.dataset.lighting;
+      delete this.game.canvas.dataset.weather;
       this.renderEnvironment.time = 'day';
       audio.leave();
       this.debug.destroy();
@@ -1025,7 +1035,11 @@ export class City extends Scene {
     this.openMissionDialogue();
   }
   private resetRules() {
-    this.environment.time = 'day';
+    this.environment.time = missionTime(
+      this.world,
+      this.mission?.definition,
+      0,
+    );
     this.rulesRider.shoulderCheck!.lastLeftAt = -Infinity;
     this.rulesRider.phoneInHand = false;
     this.stopListeningForVerdicts?.();
@@ -1273,12 +1287,13 @@ export class City extends Scene {
     const actions = this.controls.actions;
     this.replay.record(
       at,
-      this.environment.time === 'dusk',
+      this.environment,
       this.rider,
       actions,
       this.agents,
       this.trafficEvents.props,
       this.rules.signal === 'none' ? null : this.rules.signal,
+      this.progress.store.profile.reflectiveVest,
     );
   }
 
@@ -1296,9 +1311,12 @@ export class City extends Scene {
       rider.shoulderCheck!.lastLeftAt = this.rules.at;
     rider.lights!.front = rider.lights!.rear = this.controls.actions.lights;
     rider.handsOnBar = rider.signal === 'none' ? 2 : 1;
-    this.environment.time = this.isDusk(this.rules.at + FIXED_STEP)
-      ? 'dusk'
-      : 'day';
+    rider.reflectiveVest = this.progress.store.profile.reflectiveVest;
+    this.environment.time = missionTime(
+      this.world,
+      this.mission?.definition,
+      this.rules.at + FIXED_STEP,
+    );
     this.trafficEvents.step(rider);
     this.environment.officerOrders = this.trafficEvents.officerOrders;
     const cyclist = this.trafficEvents.wrongWayCyclist;
@@ -1443,7 +1461,7 @@ export class City extends Scene {
 
   private updateReview(delta: number) {
     const review = this.review!;
-    const reduced = this.reducedMotion.matches;
+    const reduced = this.reducedEffects;
     review.elapsed += Math.min(delta, 100);
     const intro = reduced ? 1 : Math.min(1, review.elapsed / reviewIntroMs);
     const camera = this.cameras.main;
@@ -1533,6 +1551,8 @@ export class City extends Scene {
           this.obstacles,
           this.worldWidth,
           this.worldHeight,
+          FIXED_STEP,
+          this.rider.walking ? undefined : this.weatherTuning,
         )
       )
         this.message(ui.driving.collision);
@@ -1648,24 +1668,19 @@ export class City extends Scene {
     if (canvas.dataset.actions !== inputs) canvas.dataset.actions = inputs;
   }
 
-  private rainy() {
-    return this.controls.rain || this.environment.weather === 'rain_heavy';
+  private get reducedEffects() {
+    return (
+      this.reducedMotion.matches || this.progress.store.profile.reducedEffects
+    );
   }
 
-  private isDusk(at: number) {
-    return (
-      this.mission?.definition.start.zmrok === true ||
-      ((!this.mission || !this.world.duskInFreeRideOnly) &&
-        at >= this.world.duskAt)
-    );
+  private renderedWeather(frame: ReplayFrame) {
+    const { weather } = frame.environment;
+    return weather === 'clear' && this.controls.rain ? 'rain_light' : weather;
   }
 
   private night(frame: ReplayFrame) {
-    return (
-      this.controls.previewNight ||
-      frame.dusk ||
-      (frame.at < 0 && this.isDusk(0))
-    );
+    return this.controls.previewNight || frame.environment.time !== 'day';
   }
 
   private updateHudConditions(frame: ReplayFrame) {
@@ -1673,13 +1688,16 @@ export class City extends Scene {
       this.rulesRider.helmet.fastened,
       this.controls.actions.lights,
       this.night(frame),
-      this.rainy(),
+      this.renderedWeather(frame),
     );
   }
 
   private renderFrame(frame: ReplayFrame, delta: number, reviewing = false) {
     const { rider: r, at } = frame;
     const night = this.night(frame);
+    const lowLight = night || lightsRequired(frame.environment);
+    const weather = this.renderedWeather(frame);
+    const reduced = this.reducedEffects;
     const camera = this.cameras.main,
       look = r.speed * 0.5;
     const targetX = r.x + Math.cos(r.heading) * look - camera.width / 2,
@@ -1721,7 +1739,7 @@ export class City extends Scene {
         Math.abs(y - centerY) <= halfHeight + art.reach;
       art.draw(x, y, visible, pose, at);
       if (
-        night &&
+        lowLight &&
         visible &&
         (agent.kind === 'car' ||
           agent.kind === 'emergency' ||
@@ -1779,10 +1797,12 @@ export class City extends Scene {
     const illuminatesReflector = this.lighting.finishFrame(
       camera,
       night,
+      lowLight,
       frame.actions.lights,
       r,
       reflected,
       at,
+      reduced,
     );
     for (const [index, sprite] of this.companions.entries()) {
       const tail = this.replay.frame(this.replay.size - 1 - (index + 1) * 19);
@@ -1799,16 +1819,18 @@ export class City extends Scene {
       r,
       Math.max(0, at),
       night,
-      this.rainy(),
+      weather,
       this.controls.lite,
-      this.reducedMotion.matches,
+      reduced,
       this.series.glowing,
       reviewing,
     );
     const time = night ? 'night' : 'day';
     const canvas = this.game.canvas;
     if (canvas.dataset.lighting !== time) canvas.dataset.lighting = time;
-    this.renderEnvironment.time = frame.dusk ? 'dusk' : 'day';
+    if (canvas.dataset.weather !== weather) canvas.dataset.weather = weather;
+    this.renderEnvironment.time = frame.environment.time;
+    this.renderEnvironment.weather = frame.environment.weather;
     this.road.updateLights(camera, Math.max(0, at), this.renderEnvironment);
     return sirenVolume;
   }
