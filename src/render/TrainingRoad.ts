@@ -13,6 +13,38 @@ const lightColor: Record<SignalPhase, number> = {
   off: 0x566c86,
 };
 
+function bicyclePictogram(
+  art: GameObjects.Graphics,
+  x: number,
+  y: number,
+  color: number,
+  size: number,
+) {
+  art
+    .lineStyle(1.5, color)
+    .strokeCircle(x - 5 * size, y + 3 * size, 3 * size)
+    .strokeCircle(x + 5 * size, y + 3 * size, 3 * size)
+    .lineBetween(x - 5 * size, y + 3 * size, x, y - 3 * size)
+    .lineBetween(x, y - 3 * size, x + 5 * size, y + 3 * size)
+    .lineBetween(x - 5 * size, y + 3 * size, x + 5 * size, y + 3 * size);
+}
+
+function pedestrianPictogram(
+  art: GameObjects.Graphics,
+  x: number,
+  y: number,
+  color: number,
+) {
+  art
+    .fillStyle(color)
+    .fillCircle(x, y - 4, 2)
+    .lineStyle(1, color)
+    .lineBetween(x, y - 2, x, y + 2)
+    .lineBetween(x - 2, y, x + 2, y)
+    .lineBetween(x, y + 2, x - 2, y + 5)
+    .lineBetween(x, y + 2, x + 2, y + 5);
+}
+
 export class TrainingRoad {
   readonly staticChunks: GameObjects.Image[] = [];
   private readonly lights: GameObjects.Graphics;
@@ -100,6 +132,72 @@ export class TrainingRoad {
           .fillCircle(x, y, 14)
           .fillStyle(0xf4f4f4)
           .fillRect(x - 9, y - 2, 18, 4);
+        if (sign.exceptBicycles) {
+          signs.fillStyle(0xf4f4f4).fillRect(x - 13, y + 15, 26, 13);
+          bicyclePictogram(signs, x, y + 20, 0x1a1c2c, 0.65);
+        }
+      } else if (sign.code === 'C-13/C-16') {
+        const divided = world.zones.some(
+          ({ id, sharedSide }) => id === sign.affects && sharedSide,
+        );
+        signs
+          .fillStyle(0xf4f4f4)
+          .fillCircle(x, y, 16)
+          .fillStyle(0x3b5dc9)
+          .fillCircle(x, y, 14);
+        if (divided) {
+          signs.lineStyle(1, 0xf4f4f4).lineBetween(x, y - 12, x, y + 12);
+          pedestrianPictogram(signs, x - 6, y, 0xf4f4f4);
+          bicyclePictogram(signs, x + 7, y, 0xf4f4f4, 0.65);
+        } else {
+          signs
+            .lineStyle(1, 0xf4f4f4)
+            .lineBetween(x - 11, y + 1, x + 11, y + 1);
+          pedestrianPictogram(signs, x, y - 6, 0xf4f4f4);
+          bicyclePictogram(signs, x, y + 7, 0xf4f4f4, 0.65);
+        }
+      } else if (sign.code === 'D-17' || sign.code === 'D-6a') {
+        signs
+          .fillStyle(0xf4f4f4)
+          .fillRect(x - 14, y - 13, 28, 26)
+          .fillStyle(0x3b5dc9)
+          .fillRect(x - 12, y - 11, 24, 22);
+        if (sign.code === 'D-6a') {
+          signs
+            .fillStyle(0xf4f4f4)
+            .fillTriangle(x, y - 10, x - 10, y + 9, x + 10, y + 9);
+          bicyclePictogram(signs, x, y + 3, 0x1a1c2c, 0.57);
+        } else {
+          signs
+            .fillStyle(0xf4f4f4)
+            .fillRect(x - 8, y - 8, 16, 16)
+            .fillStyle(0x1a1c2c)
+            .fillRect(x - 5, y - 4, 10, 9)
+            .lineStyle(1, 0x1a1c2c)
+            .lineBetween(x - 3, y - 4, x + 3, y - 8);
+          signs.fillStyle(0xf4f4f4).fillRect(x - 3, y - 3, 6, 3);
+        }
+      } else if (sign.code === 'G-1a') {
+        signs.fillStyle(0xf4f4f4).fillRect(x - 5, y - 18, 10, 32);
+        signs.lineStyle(2, 0xe43b44);
+        for (const dy of [-13, -5, 3]) {
+          const direction = sign.facing === 'S' ? -1 : 1;
+          signs.lineBetween(
+            x - 4 * direction,
+            y + dy + 3,
+            x + 4 * direction,
+            y + dy,
+          );
+        }
+      } else if (sign.code === 'G-3') {
+        for (const [width, color] of [
+          [6, 0xe43b44],
+          [3, 0xf4f4f4],
+        ] as const)
+          signs
+            .lineStyle(width, color)
+            .lineBetween(x - 11, y - 7, x + 11, y + 7)
+            .lineBetween(x + 11, y - 7, x - 11, y + 7);
       } else if (sign.code === 'C-13' || sign.code === 'B-9') {
         const cyclePath = sign.code === 'C-13';
         signs
@@ -177,14 +275,29 @@ export class TrainingRoad {
             .setDepth(7)
             .lineStyle(2, 0xe43b44)
             .lineBetween(x - 24, y + 7, x + 24, y - 7);
-      } else if (sign.code === 'A-11a' || sign.code === 'A-17') {
+      } else if (['A-9', 'A-10', 'A-11a', 'A-17'].includes(sign.code)) {
         signs
           .fillStyle(0xe43b44)
           .fillTriangle(x, y - 14, x - 17, y + 12, x + 17, y + 12);
         signs
           .fillStyle(0xfeae34)
           .fillTriangle(x, y - 9, x - 12, y + 9, x + 12, y + 9);
-        if (sign.code === 'A-11a')
+        if (sign.code === 'A-9')
+          signs
+            .lineStyle(1, 0x1a1c2c)
+            .lineBetween(x - 7, y + 1, x + 7, y + 1)
+            .lineBetween(x - 7, y + 5, x + 7, y + 5)
+            .lineBetween(x - 5, y, x - 5, y + 8)
+            .lineBetween(x + 5, y, x + 5, y + 8);
+        else if (sign.code === 'A-10')
+          signs
+            .fillStyle(0x1a1c2c)
+            .fillRect(x - 6, y + 1, 12, 5)
+            .fillRect(x - 5, y - 3, 5, 6)
+            .fillRect(x + 3, y - 2, 2, 5)
+            .fillCircle(x - 4, y + 6, 2)
+            .fillCircle(x + 3, y + 6, 2);
+        else if (sign.code === 'A-11a')
           signs.fillStyle(0x1a1c2c).fillEllipse(x, y + 5, 15, 5);
         else {
           signs
@@ -236,7 +349,7 @@ export class TrainingRoad {
           width,
           height,
           signCenters,
-          28,
+          32,
         ),
       );
     }
@@ -296,6 +409,13 @@ export class TrainingRoad {
             this.lightAt,
           );
       }
+      const trainX = this.world.railTrainX(crossing, this.lightAt);
+      const trainY = (crossing.y + crossing.height / 2) * scale;
+      if (
+        trainX !== undefined &&
+        visible(trainX * scale - 100, trainY - 14, 200, 28)
+      )
+        this.drawTrain(Math.round(trainX * scale), Math.round(trainY));
       const { signal } = crossing;
       if (!signal) continue;
       const pedestrian = crossing.kind === 'pedestrian';
@@ -310,7 +430,8 @@ export class TrainingRoad {
           ? (2 * crossing.y + crossing.height - signal.y) * scale
           : y;
       const firstVisible = visible(x, y);
-      const secondVisible = pedestrian && visible(oppositeX, oppositeY);
+      const secondVisible =
+        (pedestrian || signal.twoWay) && visible(oppositeX, oppositeY);
       if (!firstVisible && !secondVisible) continue;
       const open = this.world.crossingAllowsEntry(
         crossing,
@@ -320,7 +441,7 @@ export class TrainingRoad {
       const color = lightColor[open ? 'green' : 'red'];
       if (firstVisible) this.drawCrossingSignal(x, y, color, pedestrian);
       if (secondVisible)
-        this.drawCrossingSignal(oppositeX, oppositeY, color, true);
+        this.drawCrossingSignal(oppositeX, oppositeY, color, pedestrian);
     }
     for (const signal of this.world.signals) {
       const x = signal.x * scale;
@@ -363,6 +484,32 @@ export class TrainingRoad {
         ((horizontal ? width : height) * 48) / 38,
       )
       .setRotation(horizontal ? Math.PI / 2 : 0);
+  }
+
+  private drawTrain(x: number, y: number) {
+    for (const [offset, length] of [
+      [-100, 64],
+      [-34, 64],
+      [32, 68],
+    ] as const) {
+      const start = x + offset;
+      this.lights
+        .fillStyle(0x1a1c2c)
+        .fillRect(start, y - 14, length, 28)
+        .fillStyle(0x257179)
+        .fillRect(start + 2, y - 12, length - 4, 24)
+        .fillStyle(0xc0cbdc)
+        .fillRect(start + 3, y - 10, length - 6, 3)
+        .fillStyle(0x41a6f6);
+      for (let window = 6; window < length - 7; window += 13) {
+        this.lights.fillRect(start + window, y - 5, 8, 4);
+        this.lights.fillRect(start + window, y + 3, 8, 4);
+      }
+    }
+    this.lights
+      .fillStyle(0xf4f4f4)
+      .fillRect(x + 96, y - 8, 3, 3)
+      .fillRect(x + 96, y + 5, 3, 3);
   }
 
   private drawRailSignals(

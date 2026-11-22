@@ -18,29 +18,29 @@ Mapa [warszawa.tmj](../maps/warszawa.tmj)
 | --- | :---: | --- | --- |
 | Skrzyżowanie równorzędne | ✓ | `fabryka`, `kamienice`, `osiedle` | — |
 | Droga z pierwszeństwem + STOP | ✓ | `stop` | — |
-| Sygnalizacja + S-2 + S-6/S-7 | ✗ | `zamek-E-s1`, `zamek-N-s1`, `zamek-S-s1`, `zamek-W-s1` | S-2, sygnał dla rowerzystów |
+| Sygnalizacja + S-2 + S-6/S-7 | ✓ | `palac-E-s1`, `palac-N-s1`, `palac-N-s2`, `palac-S-s1`, `palac-W-s1`, `palac-tram-s1`, `pod-palacem-przejazd`, `zamek-E-s1`, `zamek-N-s1`, `zamek-S-s1`, `zamek-W-s1` | — |
 | Rondo | ✓ | `rondo-E`, `rondo-N`, `rondo-S`, `rondo-W` | — |
-| Tramwaj + przystanek bez wysepki | ✗ | — | trasa tramwaju, przystanek bez wysepki |
-| DDR, pas rowerowy, ciąg pieszo-rowerowy | ✗ | `ddr-most`, `ddr-zamek-wschod`, `ddr-zamek-zachod` | pas rowerowy, ciąg pieszo-rowerowy |
-| Przejazd dla rowerzystów | ✓ | `przejazd-przy-moscie` | — |
+| Tramwaj + przystanek bez wysepki | ✓ | `palac-przystanek-bez-wysepki`, `tramwaj-aleja` | — |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | ✓ | `ciag-dzielony-piesi`, `ciag-dzielony-rowery`, `ciag-wspolny-bulwary`, `ddr-bulwary`, `ddr-most`, `ddr-palac-wschod`, `ddr-palac-zachod`, `ddr-zamek-wschod`, `ddr-zamek-zachod`, `kontrapas-centrum`, `lazienki-ciag-wspolny`, `pas-rowerowy-powisle` | — |
+| Przejazd dla rowerzystów | ✓ | `pod-palacem-przejazd`, `przejazd-przy-moscie` | — |
 | Strefa zamieszkania / pieszych | ✓ | `deptak`, `kocie-lby`, `starowka-d40` | — |
 | Wyjazd z drogi wewnętrznej | ✓ | `brama-podworko` | — |
-| Przejazd kolejowy | ✗ | — | przejazd kolejowy |
-| Pobocze, zakaz wjazdu rowerów | ✗ | `deptak-b9` | pobocze |
-| Kontraruch | ✗ | — | B-2 z wyjątkiem dla rowerów |
-| Nocna jazda | ✗ | — | zmrok na mapie lub w misji |
+| Przejazd kolejowy | ✓ | `mokotow-przejazd-bez-zapor`, `mokotow-przejazd-z-zaporami` | — |
+| Pobocze, zakaz wjazdu rowerów | ✓ | `deptak-b9`, `lazienki-aleja-piesza`, `lazienki-znak-zakazu`, `pobocze-mokotow-polnoc`, `pobocze-mokotow-poludnie` | — |
+| Kontraruch | ✓ | `kontraruch-b2-t22` | — |
+| Nocna jazda | ✓ | `dusk_at_s` | — |
 
 | Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
 | --- | :---: | --- | --- |
-| M01 | ✗ | — | — |
-| M02 | ✓ | `GDZIE-01`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07` | `GDZIE-01`, `GDZIE-05`, `GDZIE-06`, `GDZIE-07` |
-| M03 | ✓ | `SYG-01`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-STOP` | `SYG-03`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-STOP` |
-| M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08` | `PIER-01`, `PIER-02`, `PIER-04`, `PIER-06` |
+| M01 | ✓ | `WYP-04`, `WYP-05` | — |
+| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-01`, `GDZIE-05`, `GDZIE-06`, `GDZIE-07` |
+| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `SYG-03`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-STOP` |
+| M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | `PIER-01`, `PIER-02`, `PIER-04`, `PIER-06` |
 | M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-06`, `MAN-08` | `MAN-01`, `MAN-04`, `MAN-07`, `MAN-08` |
-| M06 | ✓ | `MSC-03` | `MSC-03` |
+| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | `MSC-03` |
 | M07 | ✗ | — | — |
 
-**Pokrycie** 6/13 sytuacji, 5/7 modułów.
+**Pokrycie** 13/13 sytuacji, 6/7 modułów.
 
 ## Wrocław
 

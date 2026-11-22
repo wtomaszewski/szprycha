@@ -51,6 +51,8 @@
 - **POI:** punkt Szprychy w budce przy metrze, kwiaciarnia, kiosk.
 - **Reguły:** SYG-01, SYG-02, ZNAK-S2, PIER-04, PIER-09, MSC-02, GDZIE-01, ZNAK-B2T22.
 
+**Fragment M6a.** Od Zamku na południe prowadzi aleja do czterowlotowego skrzyżowania. Czerwono-żółty tramwaj jedzie wydzielonym torem pomiędzy pasami samochodowymi. Przed skrzyżowaniem pasażer przechodzi przez jezdnię do chodnika przy przystanku bez wysepki. Tramwaj zatrzymuje się także przy wysepce położonej dalej wzdłuż toru. Przejazd P-11 ma osobną fazę S-6 w obu kierunkach, a północny wlot ma S-2. Jadąc od alei w stronę wieżowców można wjechać na kontrapas przy B-2 z T-22. Pałac ma pięć brył, w tym wieżę z zegarami i iglicę. Przy jego skrzydle stoi wejście do metra, po drugiej stronie alei rotunda.
+
 ### 2. Stare Miasto — „Starówka”
 - **Landmarki:** Zamek Królewski (ceglasto-pomarańczowy, wieża z zegarem), Kolumna Zygmunta na placu, Rynek Starego Miasta z kolorowymi kamienicami i własną figurą syrenki (nasz projekt), Barbakan (ceglane mury, okrągłe baszty).
 - **Układ drogowy:** kocie łby (wolniejsza jazda, pasek wstrząsów), strefa zamieszkania (D-40/D-41), deptak — strefa pieszych, wąskie uliczki, dorożki konne (wolne „pojazdy”), mnóstwo turystów.
@@ -63,7 +65,9 @@
 ### 3. Powiśle i Bulwary — „Nad Wisłą”
 - **Landmarki:** Centrum Nauki Kopernik (ciemna, kanciasta bryła + kopuła planetarium jako srebrna kula), Most Świętokrzyski (jeden ukośny pylon, liny), bulwary z schodkami do wody, park fontann (nocą kolorowe).
 - **Układ drogowy:** długa DDR i ciąg pieszo-rowerowy (C-16/C-13 — oba warianty: wspólny i z podziałem), most z wydzieloną DDR, zjazd z bulwaru na jezdnię, ławki i spacerowicze, rowerzyści AI do wyprzedzania.
-- **Reguły:** GDZIE-01, GDZIE-02, GDZIE-08, GDZIE-11, MAN-04, MSC-04 (nocne misje).
+- **Reguły:** GDZIE-01, GDZIE-02, GDZIE-08, GDZIE-11, MAN-04, MSC-04 (nocna jazda).
+
+**Fragment M6a.** Od przyczółka można zjechać wzdłuż Wisły w stronę Kopernika i planetarium. DDR wzdłuż wody ma ruch rowerowy AI. Na sąsiednim ciągu znaki rozróżniają część wspólną i odcinek rozdzielony na stronę pieszą oraz rowerową. Pas P-23 biegnie przy alei. Po 90 sekundach wolnej jazdy zapada zmrok i włączają się światła latarni oraz fontann. Lampki roweru włącza `L`.
 
 **Most w M4d.** Pylon i wanty oznaczają przeprawę nad Wisłą. DDR oznaczona C-13 biegnie równolegle do jezdni, a przy zamku znajduje się przejazd dla rowerzystów. W WAW-A1-04 wolniejszy rowerzysta na DDR i pieszy przy zebrze tworzą sytuacje do ćwiczeń. Na przyczółku Turbo jedzie pod B-2 bez wyjątku dla rowerów. Obu zawodników ocenia ta sama punktacja.
 
@@ -73,7 +77,7 @@
 - **POI:** warsztat Pana Kazika (warszawski), blok Pani Haliny, kiosk z zapiekankami.
 - **Reguły:** PIER-01, PIER-02, PIER-06, MSC-03, ZNAK-STOP, ZNAK-A7, ZNAK-D1, MAN-01, MAN-07.
 
-**Fragment grywalny M4d.** `npm run map:generate:warsaw` odtwarza `maps/warszawa.tmj` wspólnym generatorem Tiled dla Warszawy i Miasteczka. Praga, most i Starówka tworzą kolaż w skali 124 × 48 kafli. Do M6 można dołączyć kolejne kwartały przy wlotach granicznych grafu pasów.
+**Mapa po M6a.** `npm run map:generate:warsaw` odtwarza `maps/warszawa.tmj` wspólnym generatorem Tiled dla Warszawy i Miasteczka. Kolaż wszystkich pięciu dzielnic zajmuje 156 × 112 kafli. Do Śródmieścia prowadzi ulica przy Zamku, a do Powiśla promenada po zachodniej stronie Wisły. Dalej na południe są Łazienki i Mokotów. Polecenie `npm run coverage:maps` odtwarza [raport 13 sytuacji Warszawy](coverage.md).
 
 | Miejsce | Praktyka |
 | --- | --- |
@@ -85,12 +89,16 @@
 
 SzprychaApp odblokowuje zadania w kolejności WAW-T-01 → WAW-T-02 → WAW-A1-01 → WAW-A1-02 → WAW-A1-03 → WAW-A1-04 → WAW-A1-05 → WAW-A1-06. Przegląd i próbna jazda odbywają się w Miasteczku. Zlecenia na Pradze używają wymuszonych uczestników ruchu, a wolna jazda uruchamia ruch po całym grafie. W WAW-A1-03 za skrzyżowaniem ze STOP-em jest skrót oznaczony B-1. Jazda rowerem przez pasaż wywołuje werdykt ZNAK-B1.
 
-Pomiar fragmentu w Chromium z ograniczeniem CPU 4× można powtórzyć podczas działania Vite poleceniem `BENCH_MAP=warszawa npm run benchmark:driving`. Wynik zapisuje się w `test-results/performance-praga.json`. Ustaw `BENCH_FRAGMENT=most` lub `BENCH_FRAGMENT=starowka` razem z `BENCH_MAP=warszawa`, żeby zmierzyć jazdę w tych częściach mapy. Opcja `BENCH_VIEWPORT=640x360` ustawia natywną rozdzielczość gry. Domyślny viewport to 1280 × 720.
+Pomiar fragmentu w Chromium z ograniczeniem CPU 4× można powtórzyć podczas działania Vite poleceniem `BENCH_MAP=warszawa npm run benchmark:driving`. Wynik zapisuje się w `test-results/performance-praga.json`. Ustaw `BENCH_FRAGMENT=most` lub `BENCH_FRAGMENT=starowka` razem z `BENCH_MAP=warszawa`, żeby zmierzyć jazdę w tych częściach mapy. Fragmenty `srodmiescie`, `powisle` i `mokotow` mierzy się w wolnej jeździe. `BENCH_LIGHT=night` uruchamia nocny wariant, a `BENCH_RUNS=3` zapisuje medianę i zakres trzech prób. Opcja `BENCH_VIEWPORT=640x360` ustawia natywną rozdzielczość gry. Domyślny viewport to 1280 × 720.
 
 ### 5. Łazienki i Mokotów — „Park i przedmieścia”
 - **Landmarki:** Pałac na Wodzie (biały pałac nad stawem, kolumny), pawie, wiewiórki, pomnik w parku (własny, bez kopiowania pomnika Chopina — „pianista pod wierzbą”, uproszczony), domki jednorodzinne, stacja kolejki podmiejskiej.
 - **Układ drogowy:** alejki parkowe z zakazem wjazdu rowerów (B-9) i alejki dozwolone, ciąg pieszo-rowerowy, **przejazd kolejowy z zaporami i bez zapór** (A-9, A-10, G-1, G-3), droga osiedlowa bez chodnika, droga z poboczem.
 - **Reguły:** GDZIE-09, GDZIE-04 (pogoda), GDZIE-10, MSC-01, GDZIE-03b, MSC-05.
+
+**Fragment M6a.** Przy stawie stoi Pałac na Wodzie. Aleje prowadzą do pomnika pianisty, ciągu wspólnego i odnogi z B-9. Na osi drogi do stacji są dwa przejazdy. Na północnym migają światła i opuszczają się zapory, na południowym są światła i krzyże św. Andrzeja. Przez oba przejeżdżają pociągi, a auta czekają przed czynną sygnalizacją. Odcinki bez chodnika mają przejezdne pobocza oznaczone w danych pasów.
+
+Zrzuty z wolnej jazdy pokazują [Śródmieście](screenshots/49-srodmiescie.webp), [Powiśle po zmroku](screenshots/49-powisle.webp), [Łazienki i Mokotów](screenshots/49-mokotow.webp) oraz [przejazd kolejowy](screenshots/49-mokotow-kolej.webp).
 
 ---
 

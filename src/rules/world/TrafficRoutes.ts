@@ -32,6 +32,12 @@ export const routeControlProperties = z.discriminatedUnion('kind', [
     lane: z.string(),
   }),
   z.object({
+    kind: z.literal('platform'),
+    route: z.string(),
+    vertex: z.number().int().positive(),
+    dwell_s: z.number().positive(),
+  }),
+  z.object({
     kind: z.literal('stop'),
     route: z.string(),
     vertex: z.number().int().nonnegative(),
@@ -46,6 +52,7 @@ export interface TrafficRoute extends z.infer<typeof routeProperties> {
   crossings: Crossing[];
   junctions: RouteJunction[];
   stops: TramStop[];
+  platforms: { distance: number; dwell: number }[];
 }
 export interface RouteJunction {
   distance: number;
@@ -161,6 +168,7 @@ export function buildTrafficRoutes(
           : [],
       junctions: [],
       stops: [],
+      platforms: [],
     });
   }
   const passengers = new Set<TrafficRoute>();
@@ -195,6 +203,13 @@ export function buildTrafficRoutes(
       )
         throw new Error(`Duplicate junction control: ${control.id}`);
       route.junctions.push({ distance, exit: exit.offset, lane });
+    } else if (control.kind === 'platform') {
+      if (
+        route.kind !== 'tram' ||
+        route.platforms.some((stop) => stop.distance === distance)
+      )
+        throw new Error(`Invalid tram platform: ${control.id}`);
+      route.platforms.push({ distance, dwell: control.dwell_s });
     } else {
       const passenger = byId.get(control.passenger);
       if (
@@ -232,6 +247,7 @@ export function buildTrafficRoutes(
       throw new Error(`Passenger route without stop: ${route.id}`);
     route.junctions.sort((a, b) => a.distance - b.distance);
     route.stops.sort((a, b) => a.distance - b.distance);
+    route.platforms.sort((a, b) => a.distance - b.distance);
   }
   return [...byId.values()];
 }

@@ -579,10 +579,6 @@ for (const [kind, x, y, turn = 0] of [
   ['bin', 1080, 720],
 ] as const)
   props.push(rect(`prop-${kind}-${x}-${y}`, x, y, 0, 0, { kind, turn }));
-await write(
-  'miasteczko',
-  14,
-  tileTerrain(width, height, surfaces),
-  markings,
-  90,
-);
+await write('miasteczko', 14, tileTerrain(width, height, surfaces), markings, {
+  duskAt: 90,
+});
