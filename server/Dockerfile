@@ -21,7 +21,7 @@ FROM gcr.io/distroless/nodejs24-debian13:nonroot
 WORKDIR /app
 ENV RANKING_HOST=0.0.0.0 RANKING_DB=/data/rankings.sqlite
 COPY --from=build --chown=65532:65532 /app/server/dist ./dist
-COPY --from=build /app/server/package.json ./package.json
+COPY --from=build --chmod=644 /app/server/package.json ./package.json
 COPY --from=runtime-deps /app/node_modules/zod ./node_modules/zod
 COPY --from=build --chown=65532:65532 /data /data
 USER 65532:65532
