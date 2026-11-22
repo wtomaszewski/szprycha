@@ -188,5 +188,6 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PNPOLY (Polygon.Contains adaptation)
-W. Randolph Franklin, via Jonas Raoni Soares Silva.
+Copyright (c) 1970-2003, Wm. Randolph Franklin
+Adaptation via Jonas Raoni Soares Silva.
 https://wrfranklin.org/Research/Short_Notes/pnpoly.html#License_to_Use
