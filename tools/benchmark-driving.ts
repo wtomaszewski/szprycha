@@ -18,14 +18,26 @@ const rain = process.env.BENCH_RAIN === '1';
 const warsaw = process.env.BENCH_MAP === 'warszawa';
 const map = warsaw ? 'warszawa' : 'miasteczko';
 const fragment = process.env.BENCH_FRAGMENT ?? 'praga';
+const missions = { most: 'WAW-A1-04', starowka: 'WAW-A1-05' } as const;
+const freeSpawns = {
+  most: { x: 2255, y: 352, heading: 0 },
+  starowka: { x: 3110, y: 688, heading: 0 },
+  srodmiescie: { x: 3570, y: 1808, heading: 0 },
+  powisle: { x: 2930, y: 1690, heading: Math.PI / 2 },
+  mokotow: { x: 3536, y: 3550, heading: -Math.PI / 2 },
+};
 if (
-  !['praga', 'most', 'starowka'].includes(fragment) ||
+  (fragment !== 'praga' && !Object.hasOwn(freeSpawns, fragment)) ||
   (!warsaw && process.env.BENCH_FRAGMENT)
 )
   throw new Error(`Unknown benchmark fragment: ${fragment}`);
 const mode =
-  process.env.BENCH_MODE ?? (fragment === 'praga' ? 'free' : 'mission');
-if (mode !== 'free' && (mode !== 'mission' || fragment === 'praga'))
+  process.env.BENCH_MODE ??
+  (Object.hasOwn(missions, fragment) ? 'mission' : 'free');
+if (
+  mode !== 'free' &&
+  (mode !== 'mission' || !Object.hasOwn(missions, fragment))
+)
   throw new Error(`Unsupported benchmark mode: ${mode} (${fragment})`);
 const orders = [
   'WAW-T-01',
@@ -36,18 +48,18 @@ const orders = [
   'WAW-A1-04',
 ] as const;
 const mission =
-  mode === 'mission'
-    ? fragment === 'most'
-      ? 'WAW-A1-04'
-      : 'WAW-A1-05'
-    : undefined;
+  mode === 'mission' ? missions[fragment as keyof typeof missions] : undefined;
 const spawn = !warsaw
   ? { x: 624, y: 1120, heading: -Math.PI / 2 }
-  : mode === 'free' && fragment === 'most'
-    ? { x: 2255, y: 352, heading: 0 }
-    : mode === 'free' && fragment === 'starowka'
-      ? { x: 3110, y: 688, heading: 0 }
-      : undefined;
+  : mode === 'free'
+    ? freeSpawns[fragment as keyof typeof freeSpawns]
+    : undefined;
+const heading = spawn?.heading ?? 0;
+const horizontal = Math.abs(Math.cos(heading)) > 0.5;
+const direction = horizontal
+  ? Math.sign(Math.cos(heading))
+  : Math.sign(Math.sin(heading));
+const axis = horizontal ? 'data-x' : 'data-y';
 async function runTrial() {
   const browser = await chromium.launch({
     executablePath: process.env.BENCH_CHROMIUM_PATH,
@@ -70,7 +82,8 @@ async function runTrial() {
           if (light === 'night') {
             tiled.properties = [
               ...(tiled.properties ?? []).filter(
-                ({ name }: { name: string }) => name !== 'dusk_at_s',
+                ({ name }: { name: string }) =>
+                  name !== 'dusk_at_s' && name !== 'dusk_free_ride_only',
               ),
               { name: 'dusk_at_s', type: 'float', value: 0 },
             ];
@@ -140,8 +153,8 @@ async function runTrial() {
     const stick = await page.getByLabel(pl.driving.joystick).boundingBox();
     if (!stick) throw new Error('Missing steering control');
     await page.mouse.move(
-      stick.x + stick.width * (warsaw ? 0.565 : 0.5),
-      stick.y + stick.height * (warsaw ? 0.5 : 0.435),
+      stick.x + stick.width * (horizontal ? 0.5 + direction * 0.065 : 0.5),
+      stick.y + stick.height * (horizontal ? 0.5 : 0.5 + direction * 0.065),
     );
     await page.mouse.down();
     await page.waitForFunction(
@@ -153,7 +166,6 @@ async function runTrial() {
         mission === 'WAW-A1-04' ? 2255 : 3110,
         { timeout: 60_000 },
       );
-    const axis = warsaw ? 'data-x' : 'data-y';
     const start = Number(await position.getAttribute(axis));
     // Raw browser source avoids TS runner helper injection into serialized callbacks.
     const frames = await page.evaluate<number[]>(`new Promise(resolve => {
@@ -168,7 +180,7 @@ async function runTrial() {
   })`);
     await page.mouse.up();
     const end = Number(await position.getAttribute(axis));
-    const travelledPx = warsaw ? end - start : start - end;
+    const travelledPx = (end - start) * direction;
     if (
       !frames.length ||
       travelledPx < 200 ||

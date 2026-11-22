@@ -74,7 +74,7 @@ export function tiledMap(width: number, height: number) {
     trafficCars: number,
     terrain: ReturnType<typeof tileTerrain>,
     markings: number[],
-    duskAt?: number,
+    lighting?: { duskAt: number; freeRideOnly?: boolean },
   ) {
     const mapLayers = [
       tileLayer(1, 'ground', terrain.ground),
@@ -83,11 +83,23 @@ export function tiledMap(width: number, height: number) {
       tileLayer(layers.length + 3, 'verge', terrain.verge),
       tileLayer(layers.length + 4, 'curb', terrain.curb),
     ];
-    const mapProperties = [
-      { name: 'trafficCars', type: 'int', value: trafficCars },
-    ];
-    if (duskAt !== undefined)
-      mapProperties.push({ name: 'dusk_at_s', type: 'float', value: duskAt });
+    const mapProperties: {
+      name: string;
+      type: string;
+      value: number | boolean;
+    }[] = [{ name: 'trafficCars', type: 'int', value: trafficCars }];
+    if (lighting)
+      mapProperties.push({
+        name: 'dusk_at_s',
+        type: 'float',
+        value: lighting.duskAt,
+      });
+    if (lighting?.freeRideOnly)
+      mapProperties.push({
+        name: 'dusk_free_ride_only',
+        type: 'bool',
+        value: true,
+      });
     await mkdir('maps', { recursive: true });
     await writeFile(
       `maps/${name}.tmj`,

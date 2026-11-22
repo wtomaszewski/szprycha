@@ -57,11 +57,16 @@ const zoneSchema = z.enum([
   'rail',
 ]);
 const railSchedule = z.object({
+  barriers: z.boolean().default(true),
   open_s: z.number().positive(),
   lowering_s: z.number().positive(),
   closed_s: z.number().positive(),
   raising_s: z.number().positive(),
   offset_s: z.number().nonnegative().default(0),
+});
+const railTrain = z.object({
+  from_x: z.number().nonnegative(),
+  to_x: z.number().positive(),
 });
 const railStates = {
   open: { barrier: 'open', flashing: false },
@@ -69,6 +74,7 @@ const railStates = {
   closed: { barrier: 'closed', flashing: true },
   raising: { barrier: 'raising', flashing: true },
 } as const satisfies Record<RailState['barrier'], RailState>;
+const flashingWithoutBarrier: RailState = { barrier: 'open', flashing: true };
 const crossingSchema = z.enum(['pedestrian', 'bike', 'combined', 'rail']);
 const intersectionSchema = z.enum([
   'equal',
@@ -139,9 +145,11 @@ export interface Crossing extends Box {
   axis: 'x' | 'y';
   signal?: CrossingSignal;
   rail?: z.infer<typeof railSchedule>;
+  train?: z.infer<typeof railTrain>;
   trafficArea?: Box;
 }
 interface CrossingSignal extends Vec2 {
+  twoWay?: boolean;
   offset_s: number;
   cycle_s: number;
   green_s: number;
@@ -239,6 +247,7 @@ export class WorldModel {
   readonly driveways: readonly Driveway[];
   readonly parkedCars: readonly Box[];
   readonly duskAt: number;
+  readonly duskInFreeRideOnly: boolean;
   readonly tramStops: readonly Box[];
   readonly intersections: readonly Intersection[];
   readonly lanes: readonly Lane[];
@@ -312,9 +321,14 @@ export class WorldModel {
           zoneOrder[a.kind] - zoneOrder[b.kind] ||
           (b.width_m ?? 0) - (a.width_m ?? 0),
       );
+    const mapProperties = properties(map);
     this.duskAt =
-      z.number().nonnegative().optional().parse(properties(map).dusk_at_s) ??
+      z.number().nonnegative().optional().parse(mapProperties.dusk_at_s) ??
       Infinity;
+    this.duskInFreeRideOnly = z
+      .boolean()
+      .default(false)
+      .parse(mapProperties.dusk_free_ride_only);
     this.driveways = layer('driveways').map((object) => ({
       ...box(object),
       direction: sideSchema.parse(properties(object).direction),
@@ -325,6 +339,7 @@ export class WorldModel {
         const props = z
           .object({
             crossing: z.string(),
+            twoWay: z.boolean().optional(),
             offset_s: z.number().nonnegative(),
             cycle_s: z.number().positive(),
             green_s: z.number().positive(),
@@ -349,7 +364,22 @@ export class WorldModel {
           props.kind === 'rail' && props.open_s !== undefined
             ? railSchedule.parse(props)
             : undefined,
+        train:
+          props.kind === 'rail' && props.train_from_x !== undefined
+            ? railTrain.parse({
+                from_x: Number(props.train_from_x) * scale,
+                to_x: Number(props.train_to_x) * scale,
+              })
+            : undefined,
       };
+      if (
+        crossing.train &&
+        (!crossing.rail ||
+          crossing.axis !== 'y' ||
+          crossing.train.from_x >= crossing.x ||
+          crossing.train.to_x <= crossing.x + crossing.width)
+      )
+        throw new Error(`Invalid train track: ${crossing.id}`);
       if (typeof props.trafficGroup === 'string') {
         const group = crossingGroups.get(props.trafficGroup) ?? [];
         group.push(crossing);
@@ -495,7 +525,7 @@ export class WorldModel {
           )
             continue;
           if (
-            ['C-13', 'D-40', 'D-41'].includes(sign.code) &&
+            ['C-13', 'C-13/C-16', 'D-40', 'D-41'].includes(sign.code) &&
             this.zones.some(({ id }) => id === sign.affects)
           )
             continue;
@@ -720,14 +750,30 @@ export class WorldModel {
     if (forced) return forced;
     const rail = crossing.rail;
     if (!rail) return undefined;
-    const cycle =
-      (at + rail.offset_s) %
-      (rail.open_s + rail.lowering_s + rail.closed_s + rail.raising_s);
+    const cycle = this.railCycle(rail, at);
     if (cycle < rail.open_s) return railStates.open;
+    if (!rail.barriers) return flashingWithoutBarrier;
     if (cycle < rail.open_s + rail.lowering_s) return railStates.lowering;
     if (cycle < rail.open_s + rail.lowering_s + rail.closed_s)
       return railStates.closed;
     return railStates.raising;
+  }
+
+  railTrainX(crossing: Crossing, at: number) {
+    const { rail, train } = crossing;
+    if (!rail || !train) return undefined;
+    const progress =
+      (this.railCycle(rail, at) - rail.open_s - rail.lowering_s) /
+      rail.closed_s;
+    if (progress < 0 || progress >= 1) return undefined;
+    return train.from_x + (train.to_x - train.from_x) * progress;
+  }
+
+  private railCycle(rail: z.infer<typeof railSchedule>, at: number) {
+    return (
+      (at + rail.offset_s) %
+      (rail.open_s + rail.lowering_s + rail.closed_s + rail.raising_s)
+    );
   }
 
   arrowMatches(lane: Lane, maneuver: Maneuver) {

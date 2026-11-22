@@ -74,6 +74,8 @@ interface RouteActor {
   stopLineTicks: number;
   holdsJunction: boolean;
   stopIndex: number;
+  platformIndex: number;
+  departureAt?: number;
   boarding?: TramStop;
 }
 
@@ -177,6 +179,7 @@ export class TrafficParticipants {
         stopLineTicks: 0,
         holdsJunction: false,
         stopIndex: 0,
+        platformIndex: 0,
       };
     });
     this.routed = this.actors.map(({ agent }) => agent);
@@ -254,6 +257,11 @@ export class TrafficParticipants {
       route.stops[actor.stopIndex]!.distance < distance
     )
       actor.stopIndex++;
+    while (
+      route.platforms[actor.platformIndex] &&
+      route.platforms[actor.platformIndex]!.distance < distance
+    )
+      actor.platformIndex++;
     while (
       actor.journey.gates[actor.gateIndex] &&
       actor.journey.gates[actor.gateIndex]!.exit < distance
@@ -341,6 +349,8 @@ export class TrafficParticipants {
     actor.stopLineTicks = 0;
     actor.holdsJunction = false;
     actor.stopIndex = 0;
+    actor.platformIndex = 0;
+    actor.departureAt = undefined;
     actor.boarding = undefined;
     this.place(actor);
   }
@@ -562,6 +572,20 @@ export class TrafficParticipants {
       } else agent.intent = 'junction';
     }
     if (stop) room = this.atTramStop(actor, stop, room, player);
+    const platform = route.platforms[actor.platformIndex];
+    if (platform) {
+      const gap = platform.distance - distance;
+      if (gap > EPSILON) room = Math.min(room, gap);
+      else {
+        agent.intent = 'boarding';
+        actor.departureAt ??= at + platform.dwell;
+        if (at < actor.departureAt) room = 0;
+        else {
+          actor.departureAt = undefined;
+          actor.platformIndex++;
+        }
+      }
+    }
     for (const walker of this.footAndBike) {
       const box =
         walker.crossingId &&

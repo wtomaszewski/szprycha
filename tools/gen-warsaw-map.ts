@@ -1,20 +1,28 @@
 import { tiledMap } from './tiled-map.ts';
+import {
+  duskAt,
+  mokotow,
+  newWarsawDistricts,
+  palace,
+} from './warsaw-districts.ts';
 import { tileTerrain, type Surface } from './tile-terrain.ts';
 import { tiles } from '../src/render/artFrames.ts';
 import { sides, otherSide } from '../src/rules/world/LaneGraph.ts';
 import { sideVector, type Side } from '../src/rules/world/WorldModel.ts';
 
-const width = 124;
+const width = 156;
 const pragaEdge = 2240;
 const riverWest = 2816;
-const height = 48;
+const height = 112;
 const tile = 32;
 const mapWidth = width * tile;
 const mapHeight = height * tile;
 const street = 128;
 const surfaces: Surface[] = [];
 const markings: number[] = [];
-const { rect, polyline, objectLayer, write } = tiledMap(width, height);
+const map = tiledMap(width, height);
+const { rect, polyline, objectLayer, write } = map;
+const extension = newWarsawDistricts(map, mapWidth, mapHeight);
 type Point = [number, number];
 type Junction = {
   id: string;
@@ -43,6 +51,8 @@ const junctions = [
   bazaar,
   ...merges,
   castle,
+  palace,
+  mokotow,
 ];
 
 const zones = [
@@ -79,6 +89,7 @@ const zones = [
   rect('deptak', 3552, 704, 352, 192, { kind: 'pedestrian_zone' }),
   rect('spacer-turystow', 3264, 704, 288, 192, { kind: 'sidewalk' }),
   rect('pasaz_pierogi', 1152, 280, 128, 72, { kind: 'park_path' }),
+  ...extension.zones,
 ];
 const hasTile = (
   x: number,
@@ -119,6 +130,12 @@ for (let row = 0; row < height; row++)
     const verge =
       [448, 1088].some((mid) => Math.abs(y - mid) < 96) ||
       [448, 1088, 1856].some((mid) => Math.abs(x - mid) < 96);
+    if (x >= riverWest && (y >= 1536 || (x < 3328 && y >= 1184) || x >= 3968)) {
+      const [surface, marking] = extension.terrain(x, y, onStreet);
+      surfaces.push(surface);
+      markings.push(marking);
+      continue;
+    }
     if (x >= pragaEdge) {
       const water = x < riverWest;
       const deck = y >= 310 && y < 529;
@@ -175,12 +192,18 @@ for (let row = 0; row < height; row++)
     );
   }
 
-const lanes: ReturnType<typeof polyline>[] = [];
+const lanes: ReturnType<typeof polyline>[] = [...extension.lanes];
 const signs: ReturnType<typeof rect>[] = [];
 function linePoint(junction: Junction, side: Side, inlet: boolean): Point {
   const { x, y } = sideVector[side];
   const offset = inlet ? 32 : -32;
-  return [junction.x + 64 * x + offset * y, junction.y + 64 * y - offset * x];
+  const broad = junction === palace;
+  const lateral =
+    broad && side === 'W' && inlet ? 80 : broad ? 2 * offset : offset;
+  return [
+    junction.x + 64 * x + offset * y,
+    junction.y + (broad ? 128 : 64) * y - lateral * x,
+  ];
 }
 function boundary([x, y]: Point, side: Side): Point {
   if (side === 'N') return [x, 0];
@@ -220,6 +243,13 @@ function approach(
       width_px: 64,
       speedLimit: junction.kind === 'roundabout' ? 18 : 30,
       ...(from && { from }),
+      ...(junction === mokotow &&
+        side !== 'E' && {
+          parallelShoulder:
+            side === 'N'
+              ? 'pobocze-mokotow-polnoc'
+              : 'pobocze-mokotow-poludnie',
+        }),
     }),
   );
   return id;
@@ -258,6 +288,7 @@ function connectStreet(
     ? linePoint(upstream, opposite, false)
     : boundary(end, side);
   const embankment = junction.id === 'rondo-E' && side === 'E';
+  const boulevard = junction === palace && side === 'W';
   const id = approach(
     junction,
     side,
@@ -271,7 +302,16 @@ function connectStreet(
           [2160, 1056],
           end,
         ]
-      : [start, end],
+      : boulevard
+        ? [
+            [3184, mapHeight],
+            [3184, 2112],
+            [3196, 2064],
+            [3224, 2018],
+            [3264, 2000],
+            end,
+          ]
+        : [start, end],
     priority,
     turns,
     upstream && `${upstream.id}-${opposite}`,
@@ -291,7 +331,16 @@ function connectStreet(
               [2144, 1176],
               [2144, mapHeight],
             ]
-          : [out, boundary(out, side)],
+          : boulevard
+            ? [
+                out,
+                [3200, 1856],
+                [3128, 1876],
+                [3064, 1928],
+                [3024, 2010],
+                [3024, mapHeight],
+              ]
+            : [out, boundary(out, side)],
         {
           role: 'exit',
           intersection: junction.id,
@@ -307,7 +356,15 @@ function connectStreet(
 for (const junction of junctions) {
   if (junction.kind === 'roundabout') continue;
   for (const side of sides) {
-    const minor = side === 'N' || side === 'S';
+    const turns =
+      junction === mokotow
+        ? { N: 'straight,left', S: 'straight,right', E: 'left,right', W: '' }[
+            side
+          ]
+        : 'straight,left,right';
+    if (!turns) continue;
+    const minor =
+      junction === mokotow ? side === 'E' : side === 'N' || side === 'S';
     connectStreet(
       junction,
       side,
@@ -318,7 +375,7 @@ for (const junction of junctions) {
           : minor
             ? 'minor'
             : 'main',
-      'straight,left,right',
+      turns,
       junction.kind === 'equal' || junction.kind === 'signals'
         ? []
         : [
@@ -424,9 +481,9 @@ signs.push(
   }),
 );
 objectLayer('zones', zones);
-objectLayer(
-  'signals',
-  sides.map((side) => {
+objectLayer('signals', [
+  ...extension.signals,
+  ...sides.map((side) => {
     const [x, y] = linePoint(castle, side, true);
     const group = side === 'E' || side === 'W' ? 'ew' : 'ns';
     return rect(`zamek-${side}-s1`, x, y, 0, 0, {
@@ -439,15 +496,25 @@ objectLayer(
       yellow_s: 2,
     });
   }),
-);
+]);
 objectLayer(
   'intersections',
   junctions.map(({ id, x, y, kind }) =>
-    rect(id, x - 64, y - 64, street, street, { kind }),
+    rect(
+      id,
+      x - 64,
+      id === palace.id ? y - 128 : y - 64,
+      street,
+      id === palace.id ? 256 : street,
+      { kind },
+    ),
   ),
 );
 objectLayer('lanes', lanes);
-objectLayer('signs', signs);
+objectLayer('signs', [...signs, ...extension.signs]);
+objectLayer('crossing_signals', extension.crossingSignals);
+objectLayer('triggers', []);
+objectLayer('collectibles', []);
 objectLayer('spawns', [rect('player', 550, 1145, 0, 0, { heading: 0 })]);
 objectLayer('driveways', [
   rect('brama-kamienicy', 762, 271, 70, 151, { direction: 'S' }),
@@ -455,6 +522,7 @@ objectLayer('driveways', [
   rect('brama-targowa', 1344, 1150, 72, 112, { direction: 'N' }),
 ]);
 objectLayer('pois', [
+  ...extension.pois,
   rect('warsztat_praga', 800, 224, 0, 0, { heading: Math.PI / 2 }),
   rect('wyjazd_warsztat', 779, 391, 42, 38),
   rect('prawa_reka', 531, 385, 98, 56, { heading: Math.PI }),
@@ -501,6 +569,7 @@ objectLayer('race_routes', [
   ),
 ]);
 objectLayer('traffic_routes', [
+  ...extension.trafficRoutes,
   polyline(
     'auto-z-prawej',
     [
@@ -571,6 +640,7 @@ objectLayer('traffic_routes', [
   ),
 ]);
 objectLayer('traffic_controls', [
+  ...extension.trafficControls,
   rect('auto-kamienice', 0, 0, 0, 0, {
     kind: 'junction',
     route: 'auto-z-prawej',
@@ -587,6 +657,7 @@ objectLayer('traffic_controls', [
   }),
 ]);
 objectLayer('crossings', [
+  ...extension.crossings,
   rect('zebra-pasaz', 1259, 384, 43, 128, { kind: 'pedestrian', axis: 'y' }),
   rect('zebra-bazar', 1496, 1024, 44, 128, { kind: 'pedestrian', axis: 'y' }),
   rect('zebra-targowa', 2888, 503, 52, 42, { kind: 'pedestrian', axis: 'y' }),
@@ -631,9 +702,9 @@ const buildings = [
   ['barbakan-baszta', 3762, 908, 76, 80, 4, 0xb96557],
   ['barbakan-mur', 3684, 929, 78, 45, 3, 0xdc9a73],
 ] as const;
-objectLayer(
-  'blocks',
-  buildings.map(([id, x, y, w, h, floors, tint]) =>
+objectLayer('blocks', [
+  ...extension.blocks,
+  ...buildings.map(([id, x, y, w, h, floors, tint]) =>
     rect(id, x, y, w, h, {
       height: floors,
       tint,
@@ -645,8 +716,9 @@ objectLayer(
         : {}),
     }),
   ),
-);
+]);
 objectLayer('collisions', [
+  ...extension.collisions,
   rect('wisla-polnoc', pragaEdge, 0, riverWest - pragaEdge, 310, {
     kind: 'wall',
   }),
@@ -680,13 +752,17 @@ objectLayer('traffic_islands', [
 objectLayer('districts', [
   rect('praga', 0, 0, pragaEdge, mapHeight),
   rect('wisla', pragaEdge, 0, riverWest - pragaEdge, mapHeight),
-  rect('stare-miasto', riverWest, 0, mapWidth - riverWest, mapHeight),
+  rect('stare-miasto', riverWest, 0, mapWidth - riverWest, 1184),
+  ...extension.districts,
 ]);
-const decorations = [rect('pylon', 2537, 529, 0, 0, { kind: 'bridge' })];
+const decorations = [
+  ...extension.decorations,
+  rect('pylon', 2537, 529, 0, 0, { kind: 'bridge' }),
+];
 objectLayer('map_decorations', decorations);
-objectLayer(
-  'props',
-  (
+objectLayer('props', [
+  ...extension.props,
+  ...(
     [
       ['tree', 594, 322],
       ['tree', 824, 320],
@@ -727,10 +803,13 @@ objectLayer(
   ).map(([kind, x, y, turn = 0]) =>
     rect(`prop-${kind}-${x}-${y}`, x, y, 0, 0, { kind, turn }),
   ),
-);
+]);
 decorations.push(
   rect('neon-brama', 746, 984, 0, 0, { kind: 'neon' }),
   rect('neon-warsztat', 921, 215, 0, 0, { kind: 'neon' }),
   rect('neon-bazar', 1419, 946, 0, 0, { kind: 'neon' }),
 );
-await write('warszawa', 9, tileTerrain(width, height, surfaces), markings);
+await write('warszawa', 9, tileTerrain(width, height, surfaces), markings, {
+  duskAt,
+  freeRideOnly: true,
+});

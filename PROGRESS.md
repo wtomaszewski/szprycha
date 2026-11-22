@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan na 22.11.2026. Gałąź `feat/40-m5c-album-osiagniecia`.
+Stan na 22.11.2026. Gałąź `feat/49-m6a-warszawa`.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -9,8 +9,8 @@ Stan na 22.11.2026. Gałąź `feat/40-m5c-album-osiagniecia`.
 | M2     | Silnik zasad v1                             | Scalony w `main` w PR #13                                                                    |
 | M3     | Ruch drogowy AI i pozostałe detektory       | Scalony w `main`. Ostatni PR to #21.                                                         |
 | M4     | Misje i fabuła                              | Akt 1 Warszawy grywalny od samouczka do finału M4d (#25).                                    |
-| M5     | Punktacja, progresja, zapis                 | M5a (#44) i M5b (#46) w `main`. M5c (#40) zamyka etap.                                       |
-| M6     | Mapy Warszawy i Wrocławia                   | Nierozpoczęty                                                                                |
+| M5     | Punktacja, progresja, zapis                 | M5a (#44), M5b (#46) i M5c (#54) w `main`.                                                   |
+| M6     | Mapy Warszawy i Wrocławia                   | M6a (#49) dodaje trzy dzielnice oraz pełne pokrycie sytuacji drogowych Warszawy.             |
 | M7     | Plac, quiz, egzamin                         | Nierozpoczęty                                                                                |
 | M8     | Audio i szlif                               | Nierozpoczęty                                                                                |
 | M9     | PWA, Capacitor, Android/iOS                 | Nierozpoczęty                                                                                |
@@ -185,3 +185,9 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - M5c rozszerza ten zapis o Album Znaków, osiągnięcia, trzy wyzwania dzienne od rangi Kurier oraz kolekcję naklejek. Zdjęcie z WAW-A1-06 trafia do Albumu. W wolnej jeździe można fotografować nowe znaki po zatrzymaniu poza jezdnią i zejściu z roweru.
 - Wyzwania utrwalają zestaw na bieżący dzień lokalny. Pominięcie dnia nie wpływa na zdobyte nagrody. Kazik proponuje przerwę po 30 minutach aktywnej gry. Czas można zmienić w menu.
 - Pełny Album wymaga znaków z kolejnych map. Wyzwanie tygodniowe miasta, przyszłe kolekcje oraz plac, quiz i egzamin będą dostępne wraz z odpowiednimi systemami w kolejnych etapach. Rankingi online pozostają w M10.
+
+## M6a — Warszawa
+
+- Generator dołącza Śródmieście, Powiśle z Bulwarami oraz Łazienki i Mokotów do istniejącej mapy z Pragi, mostu i Starówki.
+- Warszawa obejmuje 13/13 sytuacji w [raporcie pokrycia](docs/coverage.md). Testy tras referencyjnych zachowują werdykty aktu 1. Dwie próby headless po 10 minut symulacji obejmują auta, tramwaj, pasażera, pieszych i rowerzystę.
+- Misje na nowych odcinkach oraz ćwiczenia pierwszej pomocy pozostają w kolejnych częściach M6. Wrocław nie ma jeszcze osobnej mapy.

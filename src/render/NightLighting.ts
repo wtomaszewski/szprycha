@@ -26,7 +26,7 @@ export class NightLighting {
   constructor(
     private readonly scene: Scene,
     props: CityProps,
-    neons: readonly Vec2[],
+    neons: readonly (Vec2 & { color?: number })[],
   ) {
     this.ambient = scene.add
       .rectangle(0, 0, 1, 1, 0x29366f, 0.64)
@@ -38,9 +38,11 @@ export class NightLighting {
       lamp,
       glow: this.image(effectFrame.lamp),
     }));
-    this.neons = neons.map(({ x, y }) =>
-      this.image(effectFrame.neon).setPosition(x, y),
-    );
+    this.neons = neons.map(({ x, y, color }) => {
+      const glow = this.image(effectFrame.neon).setPosition(x, y);
+      if (color !== undefined) glow.setTint(color);
+      return glow;
+    });
   }
 
   private image(frame: number) {

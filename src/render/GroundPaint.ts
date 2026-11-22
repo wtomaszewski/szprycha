@@ -181,8 +181,9 @@ export function paintRoad(
       ctx.fillStyle = '#f4f4f4';
       for (let i = 1; i < length; i += 24) {
         const dash = Math.min(12, length - i);
-        if (vertical) ctx.fillRect(x + w - 2, y + i, 2, dash);
-        else ctx.fillRect(x + i, y + h - 2, dash, 2);
+        if (vertical)
+          ctx.fillRect(direction === 'N' ? x : x + w - 2, y + i, 2, dash);
+        else ctx.fillRect(x + i, direction === 'E' ? y : y + h - 2, dash, 2);
       }
     }
   }

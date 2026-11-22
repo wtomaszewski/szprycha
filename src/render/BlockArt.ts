@@ -2,6 +2,9 @@ import type { Scene, Textures } from 'phaser';
 import { artHash, roofDetails, roofKinds, wallKinds } from './artFrames';
 import { FLOOR_PX, type Block } from './projection';
 
+const isPalaceTower = (b: Block) =>
+  b.landmarkId === 'palace-test' || b.landmarkId === 'pkin';
+
 const cornice = [
   ['#c0cbdc', '#1a1c2c'],
   ['#d98a5a', '#5a3a2e'],
@@ -34,7 +37,7 @@ export function sheetImage(scene: Scene, key: string) {
 function roofMaterial(b: Block, hash: number) {
   const requested = roofKinds.findIndex((kind) => kind === b.roof);
   if (requested >= 0) return requested;
-  if (b.landmarkId === 'palace-test') return 3;
+  if (isPalaceTower(b)) return 3;
   return b.floors <= 2 ? 0 : hash % roofKinds.length;
 }
 
@@ -43,7 +46,14 @@ export function visitRoofDetails(
   hash: number,
   visit: (kind: number, x: number, y: number) => void,
 ) {
-  if (b.landmarkId === 'palace-test') return;
+  if (
+    isPalaceTower(b) ||
+    b.landmarkId === 'planetarium' ||
+    b.landmarkId === 'rotunda' ||
+    b.landmarkId === 'metro' ||
+    b.landmarkId === 'palac-na-wodzie'
+  )
+    return;
   const material = roofMaterial(b, hash);
   for (let y = 8; y + 36 <= b.height; y += 54)
     for (let x = 8; x + 36 <= b.width; x += 52) {
@@ -55,7 +65,7 @@ export function visitRoofDetails(
 }
 
 export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
-  const palace = b.landmarkId === 'palace-test';
+  const palace = isPalaceTower(b);
   const material = roofMaterial(b, hash);
   return surfaceTexture(
     scene,
@@ -90,6 +100,53 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
         if (b.width <= 8) ctx.fillRect(2, 2, b.width - 4, b.height - 4);
         return;
       }
+      if (b.landmarkId === 'kopernik') {
+        ctx.fillStyle = '#257179';
+        ctx.fillRect(20, 20, b.width - 40, b.height - 40);
+        for (let x = 28; x < b.width - 32; x += 16) {
+          ctx.fillStyle = x % 32 === 12 ? '#38b764' : '#6ab08a';
+          ctx.fillRect(x, 34, 8, b.height - 68);
+        }
+        return;
+      }
+      if (b.landmarkId === 'planetarium' || b.landmarkId === 'rotunda') {
+        for (let y = 0; y < b.height; y++) {
+          const radius = b.height / 2;
+          const inset = Math.floor(
+            (b.width / 2) *
+              (1 - Math.sqrt(1 - ((y + 0.5 - radius) / radius) ** 2)),
+          );
+          ctx.fillStyle = y < radius ? '#c0cbdc' : '#94b0c2';
+          ctx.fillRect(inset, y, b.width - 2 * inset, 1);
+        }
+        ctx.fillStyle = '#f4f4f4';
+        ctx.fillRect(b.width / 4, b.height / 4, b.width / 3, 3);
+        return;
+      }
+      if (b.landmarkId === 'metro') {
+        const x = Math.floor(b.width / 2);
+        ctx.fillStyle = '#e43b44';
+        ctx.fillRect(x - 12, 4, 24, 20);
+        ctx.fillStyle = '#f4f4f4';
+        ctx.fillRect(x - 8, 8, 3, 12);
+        ctx.fillRect(x + 5, 8, 3, 12);
+        ctx.fillRect(x - 5, 10, 3, 4);
+        ctx.fillRect(x - 2, 13, 4, 4);
+        ctx.fillRect(x + 2, 10, 3, 4);
+        return;
+      }
+      if (b.landmarkId === 'glass-spire') {
+        ctx.fillStyle = '#c0cbdc';
+        ctx.fillRect(Math.floor(b.width / 2) - 2, 4, 4, 23);
+      }
+      if (b.landmarkId === 'palac-na-wodzie') {
+        ctx.fillStyle = '#f4f4f4';
+        ctx.fillRect(8, 6, b.width - 16, b.height - 12);
+        ctx.fillStyle = '#c0cbdc';
+        ctx.fillRect(26, 14, b.width - 52, b.height - 32);
+        ctx.fillRect(64, b.height - 22, b.width - 128, 16);
+        return;
+      }
       const details = sheetImage(scene, 'roof-details');
       visitRoofDetails(b, hash, (kind, x, y) =>
         ctx.drawImage(details, kind * 32, 0, 32, 32, x, y, 32, 32),
@@ -101,7 +158,7 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
 function wallMaterial(b: Block, hash: number) {
   const requested = wallKinds.findIndex((kind) => kind === b.wall);
   if (requested >= 0) return requested;
-  return b.landmarkId === 'palace-test' ? 0 : hash % wallKinds.length;
+  return isPalaceTower(b) ? 0 : hash % wallKinds.length;
 }
 
 export function wallEmissionTexture(
@@ -175,7 +232,24 @@ export function wallTexture(
         );
       }
     }
-    if (b.landmarkId === 'palace-test' && b.floors === 26 && width >= 20) {
+    if (b.wall === 'glass') {
+      ctx.fillStyle = '#333c57';
+      ctx.fillRect(0, 0, width, height);
+      for (let y = 1; y < height; y += FLOOR_PX)
+        for (let x = 2; x < width; x += 12) {
+          ctx.fillStyle = (x + y) % 36 === 3 ? '#73eff7' : '#0099db';
+          ctx.fillRect(x, y, Math.min(10, width - x), 9);
+        }
+    }
+    if (b.landmarkId === 'palac-na-wodzie') {
+      ctx.fillStyle = '#c0cbdc';
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = '#f4f4f4';
+      for (let x = 6; x < width - 6; x += 16) ctx.fillRect(x, 4, 5, height - 8);
+      ctx.fillRect(0, 0, width, 4);
+      ctx.fillRect(0, height - 4, width, 4);
+    }
+    if (isPalaceTower(b) && b.floors === 26 && width >= 20) {
       const x = Math.floor(width / 2);
       ctx.fillStyle = '#5a3a2e';
       ctx.fillRect(x - 6, 4, 12, 12);

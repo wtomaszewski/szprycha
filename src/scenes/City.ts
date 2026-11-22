@@ -1,4 +1,5 @@
 import { Scene, GameObjects } from 'phaser';
+import { drawMapDecorations } from '../render/MapDecorations';
 import trainingUrl from '../../maps/miasteczko.tmj?url';
 import warsawUrl from '../../maps/warszawa.tmj?url';
 import blockWallsUrl from '../../assets/generated/walls.png?url';
@@ -280,28 +281,7 @@ export class City extends Scene {
     );
     this.siren = new EmergencySiren();
     const tilemap = this.make.tilemap({ key: mapId });
-    const neons: Vec2[] = [];
-    for (const { x = 0, y = 0, properties } of tilemap.getObjectLayer(
-      'map_decorations',
-    )?.objects ?? []) {
-      const kind = properties?.find(
-        (p: { name: string; value: unknown }) => p.name === 'kind',
-      )?.value;
-      if (kind === 'neon') {
-        neons.push({ x, y });
-        continue;
-      }
-      if (kind !== 'bridge') continue;
-      const bridge = this.add.graphics().setDepth(4);
-      const top = { x: x - 40, y: y - 168 };
-      bridge.lineStyle(2, 0xc0cbdc, 0.85);
-      for (const offset of [-240, -156, -78, 78, 156, 240]) {
-        bridge.lineBetween(top.x, top.y + Math.abs(offset) / 9, x + offset, y);
-      }
-      bridge.lineStyle(10, 0xf4f4f4).lineBetween(x, y, top.x, top.y);
-      bridge.lineStyle(3, 0x94b0c2).lineBetween(x + 4, y, top.x + 4, top.y);
-      bridge.lineStyle(4, 0xc0cbdc).lineBetween(x - 296, y, x + 278, y);
-    }
+    const scenery = drawMapDecorations(this, tilemap, mapId);
     this.worldWidth = tilemap.widthInPixels;
     this.worldHeight = tilemap.heightInPixels;
     this.road = new TrainingRoad(
@@ -379,10 +359,11 @@ export class City extends Scene {
     this.mapChunks = [
       ...drawMapGround(this, tilemap, mapId, this.world, buildings, props),
       ...this.road.staticChunks,
+      ...scenery.chunks,
     ];
     this.props = new CityProps(this, props);
     this.blocks = new Blocks(this, buildings, mapId);
-    this.lighting = new NightLighting(this, this.props, neons);
+    this.lighting = new NightLighting(this, this.props, scenery.neons);
     this.atmosphere = new CityAtmosphere(this, this.blocks, props);
     this.agents = [...this.traffic.road.agents, ...this.traffic.routed];
     this.replay = new ReplayBuffer(this.agents.length, propIds.length);
@@ -438,7 +419,7 @@ export class City extends Scene {
       .centerOn(this.rider.x, this.rider.y);
     cullMapChunks(this.mapChunks, this.cameras.main);
     const areaTitle =
-      mapId === 'warszawa' ? ui.driving.pragaTitle : ui.driving.title;
+      mapId === 'warszawa' ? ui.driving.warsawTitle : ui.driving.title;
     this.controls = new DrivingControls(
       areaTitle,
       this.graphics,
@@ -1114,11 +1095,9 @@ export class City extends Scene {
       rider.shoulderCheck!.lastLeftAt = this.rules.at;
     rider.lights!.front = rider.lights!.rear = this.controls.actions.lights;
     rider.handsOnBar = rider.signal === 'none' ? 2 : 1;
-    this.environment.time =
-      this.mission?.definition.start.zmrok === true ||
-      this.rules.at + FIXED_STEP >= this.world.duskAt
-        ? 'dusk'
-        : 'day';
+    this.environment.time = this.isDusk(this.rules.at + FIXED_STEP)
+      ? 'dusk'
+      : 'day';
     this.trafficEvents.step(rider);
     this.environment.officerOrders = this.trafficEvents.officerOrders;
     const cyclist = this.trafficEvents.wrongWayCyclist;
@@ -1434,13 +1413,19 @@ export class City extends Scene {
     return this.controls.rain || this.environment.weather === 'rain_heavy';
   }
 
+  private isDusk(at: number) {
+    return (
+      this.mission?.definition.start.zmrok === true ||
+      ((!this.mission || !this.world.duskInFreeRideOnly) &&
+        at >= this.world.duskAt)
+    );
+  }
+
   private night(frame: ReplayFrame) {
     return (
       this.controls.previewNight ||
       frame.dusk ||
-      (frame.at < 0 &&
-        (this.mission?.definition.start.zmrok === true ||
-          this.world.duskAt === 0))
+      (frame.at < 0 && this.isDusk(0))
     );
   }
 
