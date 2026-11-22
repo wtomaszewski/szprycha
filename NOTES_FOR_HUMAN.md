@@ -212,6 +212,13 @@ Poniżej zestawienie zmian do przejrzenia przez konsultanta merytorycznego (pier
 - Test i przejazd kontrolny oceniają gracza bez przyznawania XP ani zmiany mastery czy kart powtórek. Trening placu używa limitu dziennego mastery dla dobrych nawyków. Przy dwóch ukończonych kampaniach egzamin wybiera ostatnio wybrane miasto.
 - Profil v5 przechowuje pierwszą datę wydania i wyniki teorii oraz placu. Imię istnieje w otwartym podglądzie i trafia na wydruk lub do pliku PDF zapisanego przez gracza. Przed publikacją sprawdzić brzmienie klauzuli o karcie rowerowej.
 
+## M9c — przygotowanie wydania mobilnego przez Wojtka
+
+- Wybrać ostateczny identyfikator Android/iOS i potwierdzić jego dostępność przed publikacją. `pl.szprycha.game` służy obecnemu buildowi deweloperskiemu.
+- Przygotować konta Google Play Console i Apple Developer, wskazać wydawcę i zespół Apple. Skonfigurować klucz aplikacji i klucz przesyłania w Google Play oraz certyfikaty i provisioning w Apple. Materiały podpisu przechowywać poza repozytorium.
+- Wypełnić Google Play Data safety i Apple App Privacy zgodnie z działaniem wersji offline. Wybrać grupę wiekową Google Play Families i przedział 9–11 w Apple Kids Category oraz potwierdzić bramkę rodzicielską przed linkami.
+- Sprawdzić uruchomienie w trybie samolotowym, zapis po restarcie, wibracje, zgodność UI z safe-area i dostępność polskiego lektora na urządzeniach zgodnie z [BUILD_MOBILE.md](docs/BUILD_MOBILE.md).
+
 ## Do przeglądu prawnika
 
 Lista przed wydaniem komercyjnym. Decyzje i zgody odnotować w [#7](https://github.com/wtomaszewski/szprycha/issues/7).

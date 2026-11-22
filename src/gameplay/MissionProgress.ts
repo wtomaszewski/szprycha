@@ -1,3 +1,4 @@
+import { nativeProgress } from '../platform/preferencesProgress';
 import type { DialogueLine, Dialogues } from '../content/dialogues';
 import type { MissionCity, MissionDefinition } from '../content/missions';
 import type { GameContent } from '../content/schemas';
@@ -366,6 +367,6 @@ export async function loadMissionProgress() {
     // The IndexedDB profile can still load without localStorage.
   }
   return new MissionProgress(
-    await ProgressStore.open(indexedDb, legacyStorage),
+    await ProgressStore.open(indexedDb, legacyStorage, nativeProgress),
   );
 }

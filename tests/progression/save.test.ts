@@ -1,3 +1,4 @@
+import { preferencesProgress } from '../../src/platform/preferencesProgress';
 import { defaultAudio } from '../../src/audio/settings';
 import { IDBDatabase, IDBFactory, IDBObjectStore } from 'fake-indexeddb';
 import { expect, it, vi } from 'vitest';
@@ -424,4 +425,87 @@ it('keeps concurrent tab writes and pays each star or achievement only once on d
   expect(progress.tokens).toBe(35);
   expect(progress.xp).toBe(1061);
   expect(progress.ruleMastery('ZNAK-STOP')).toBe(20);
+});
+
+function fakePreferences(initial: string | null = null) {
+  let value = initial;
+  return {
+    get: vi.fn(async () => ({ value })),
+    set: vi.fn(async (options: { value: string }) => {
+      value = options.value;
+    }),
+  };
+}
+
+it('copies an older IndexedDB profile to Preferences and serializes later edits', async () => {
+  const database = new IDBFactory();
+  await seed(database, { version: 1, ...legacy });
+  const plugin = fakePreferences();
+  const native = preferencesProgress(progressRecordKey, plugin);
+  const [first, second] = await Promise.all([
+    ProgressStore.open(database, undefined, native),
+    ProgressStore.open(database, undefined, native),
+  ]);
+  expect(plugin.set).toHaveBeenCalledTimes(1);
+  expect(first.profile.progression.tokens).toBe(20);
+  expect(first.profile.completed).toEqual([legacy.completed[0]]);
+  expect(second.profile.nicknameSeed).toBe(first.profile.nicknameSeed);
+
+  for (const store of [first, second]) {
+    store.change((profile) => {
+      profile.progression.tokens += 2;
+      profile.haptics = false;
+    });
+  }
+  await Promise.all([first.flush(), second.flush()]);
+  const reopened = await ProgressStore.open(database, undefined, native);
+  expect(reopened.profile.progression.tokens).toBe(24);
+  expect(reopened.profile.haptics).toBe(false);
+  const web = await ProgressStore.open(database);
+  expect(web.profile.progression.tokens).toBe(20);
+});
+
+it('keeps saving in IndexedDB if the first Preferences write fails and migrates it on retry', async () => {
+  const database = new IDBFactory();
+  await seed(database, { version: 1, ...legacy });
+  const plugin = fakePreferences();
+  plugin.set.mockRejectedValueOnce(new Error('Preferences unavailable'));
+  const native = preferencesProgress(progressRecordKey, plugin);
+  const fallback = await ProgressStore.open(database, undefined, native);
+  expect(fallback.sessionOnly).toBe(false);
+  fallback.change((profile) => profile.progression.tokens++);
+  await fallback.flush();
+
+  const migrated = await ProgressStore.open(database, undefined, native);
+  expect(migrated.profile.progression.tokens).toBe(21);
+  expect(plugin.set).toHaveBeenCalledTimes(2);
+});
+
+it('loads from IndexedDB when Preferences cannot be read and protects newer versions', async () => {
+  const database = new IDBFactory();
+  await seed(database, { version: 1, ...legacy });
+  const plugin = fakePreferences(
+    JSON.stringify({ version: 99, progress: 123 }),
+  );
+  plugin.get.mockRejectedValueOnce(new Error('Preferences unavailable'));
+  const native = preferencesProgress(progressRecordKey, plugin);
+  expect(
+    (await ProgressStore.open(database, undefined, native)).profile.progression
+      .tokens,
+  ).toBe(20);
+  const future = await ProgressStore.open(database, undefined, native);
+  expect(future.sessionOnly).toBe(true);
+  future.change((profile) => profile.progression.tokens++);
+  await future.flush();
+  expect(plugin.set).not.toHaveBeenCalled();
+});
+
+it('does not write a native profile over a newer IndexedDB schema', async () => {
+  const database = new IDBFactory();
+  await seed(database, { version: 99, progress: 123 });
+  const plugin = fakePreferences();
+  const native = preferencesProgress(progressRecordKey, plugin);
+  const store = await ProgressStore.open(database, undefined, native);
+  expect(store.sessionOnly).toBe(true);
+  expect(plugin.set).not.toHaveBeenCalled();
 });

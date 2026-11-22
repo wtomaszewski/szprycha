@@ -1,5 +1,6 @@
 import { bicycleBells, sampleRate, synthesize, type Effect } from './effects';
 import { Narrator, type Reading } from './Narrator';
+import { nativeSpeech } from '../platform/nativeSpeech';
 import { Radio } from './Radio';
 import {
   channelLevel,
@@ -158,16 +159,14 @@ class GameAudio {
   private activate() {
     if (!this.activated) {
       this.activated = true;
-      if (
-        window.speechSynthesis &&
-        typeof SpeechSynthesisUtterance !== 'undefined'
-      ) {
-        this.narrator = new Narrator(
-          window.speechSynthesis,
-          this.lifetime.signal,
-        );
-        this.narrator.setVolume(channelLevel(this.settings, 'voice'));
-      }
+      this.narrator = new Narrator(
+        typeof SpeechSynthesisUtterance === 'undefined'
+          ? undefined
+          : window.speechSynthesis,
+        this.lifetime.signal,
+        nativeSpeech,
+      );
+      this.narrator.setVolume(channelLevel(this.settings, 'voice'));
       if (typeof AudioContext === 'undefined') return;
       try {
         const context = (this.context = new AudioContext());

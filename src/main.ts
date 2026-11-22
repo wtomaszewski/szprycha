@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core';
 import Phaser from 'phaser';
 import { Boot } from './scenes/Boot';
 import { Preload } from './scenes/Preload';
@@ -12,7 +13,11 @@ import './style.css';
 
 audio.listen();
 
-if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+if (
+  import.meta.env.PROD &&
+  !Capacitor.isNativePlatform() &&
+  'serviceWorker' in navigator
+) {
   void showUpdateNotice(navigator.serviceWorker);
 }
 

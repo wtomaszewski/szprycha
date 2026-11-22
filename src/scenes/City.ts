@@ -1,3 +1,4 @@
+import { verdictHaptics } from '../platform/haptics';
 import { Scene, GameObjects } from 'phaser';
 import { drawMapDecorations } from '../render/MapDecorations';
 import trainingUrl from '../../maps/miasteczko.tmj?url';
@@ -1551,6 +1552,13 @@ export class City extends Scene {
           kind === 'minor' && !this.reviewedMinor.has(ruleId),
       );
     const lesson = major || minor;
+    if (this.tickVerdicts.length) {
+      const kind =
+        major?.kind ??
+        this.tickVerdicts.find(({ kind }) => kind === 'minor')?.kind ??
+        'good';
+      verdictHaptics(kind, this.progress.store.profile.haptics !== false);
+    }
     for (const verdict of this.tickVerdicts)
       this.feedback.receive(
         verdict,

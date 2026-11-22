@@ -10,3 +10,9 @@ dydaktyka
 /content/
 assets/fonts
 package-lock.json
+android/app/src/main/assets
+ios/App/App/public
+ios/App/App/capacitor.config.json
+android/**/build
+android/capacitor-cordova-android-plugins
+ios/capacitor-cordova-ios-plugins

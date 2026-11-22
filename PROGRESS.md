@@ -13,22 +13,28 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M6     | Mapy Warszawy i Wrocławia                   | M6a–d: dwie mapy, dwie kampanie i wybór miasta. Raport strict obejmuje oba miasta.           |
 | M7     | Plac, quiz, egzamin                         | Ukończony. Plac (M7a), quiz (M7b) i egzamin z Licencją (M7c).                                |
 | M8     | Audio i szlif                               | Ukończony. M8a (#71), M8b (#72) i M8c (#73) w `main`.                                        |
-| M9     | PWA, Capacitor, Android/iOS                 | M9a (#74) w main. M9b (#75): układ mobilny, sterowanie, wydajność.                           |
+| M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Nierozpoczęty                                                                                |
+
+## M9c — aplikacje Android i iOS
+
+- Capacitor pakuje lokalny build gry i używa poziomego trybu pełnoekranowego. Ikony i splash pochodzą z generatora M9a.
+- Aplikacja używa Preferences i przenosi istniejący profil z IndexedDB w tej samej WebView. PWA dalej zapisuje w IndexedDB.
+- Opcjonalna haptyka rozróżnia błąd i dobry nawyk. Lektor wybiera zainstalowany polski głos systemowy, z lokalnym Web Speech w razie błędu lub braku głosu.
+- CI składa niepodpisany debug APK i sprawdza jego uprawnienia. Dla iOS obejmuje synchronizację i walidację konfiguracji. Kroki Xcode i testy na urządzeniu są w [BUILD_MOBILE.md](docs/BUILD_MOBILE.md).
 
 ## M9b — układ mobilny
 
 - Interfejs na telefonie i tablecie korzysta z bezpiecznego obszaru ekranu. Canvas dotykowy ma logiczną bazę 640×360 i rozszerza się do 640×480. Menu, HUD i dialogi zachowują rozmiary niezależne od skali canvasa.
 - Sterowanie jazdą ma pola dotykowe co najmniej 44 px na telefonie i 56 px na tablecie. Układ przycisków można zamienić przeciąganiem lub wyborem dwóch pól, zresetować i zachować w lokalnym profilu.
 - Rozmiar tekstu, wysoki kontrast i mniej efektów działają globalnie. Zrzuty interfejsu są w [docs/screenshots](docs/screenshots).
-- W najcięższej z dwóch zmierzonych scen (Wrocław nocą, ulewa, do 17 aktywnych uczestników ruchu) CPU 4× dało 3,4 ms mediany i 5,2 ms p95 pracy na klatkę. Pomiar można powtórzyć poleceniem `npm run benchmark:mobile` przy uruchomionym podglądzie produkcyjnym na porcie 4174. Buildy Capacitor i sprawdzenie na fizycznych urządzeniach pozostają w M9c.
+- W najcięższej z dwóch zmierzonych scen (Wrocław nocą, ulewa, do 17 aktywnych uczestników ruchu) CPU 4× dało 3,4 ms mediany i 5,2 ms p95 pracy na klatkę. Pomiar można powtórzyć poleceniem `npm run benchmark:mobile` przy uruchomionym podglądzie produkcyjnym na porcie 4174. Sprawdzenie na fizycznych urządzeniach opisuje instrukcja buildu mobilnego.
 
 ## M9a — PWA
 
 - Manifest i service worker obejmują pełny build, w tym treści, mapy, atlasy i font. Proceduralne audio działa z kodu w pamięci podręcznej. Generator tworzy ikony i ekrany startowe z palety projektu.
 - Po wykryciu nowej wersji gra wyświetla komunikat. Przejazd trwa dalej, a wersja zmienia się po zamknięciu wszystkich okien gry. Profil pozostaje w IndexedDB.
 - Playwright w CI sprawdza warunki instalacji Chromium, przejazd offline i zapis po aktualizacji. Instrukcja instalacji jest w [BUILD_WEB.md](docs/BUILD_WEB.md).
-- Buildy mobilne Capacitor należą do M9c.
 
 ## M8 — audio i szlif
 

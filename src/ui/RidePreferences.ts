@@ -1,3 +1,4 @@
+import { hasHaptics } from '../platform/haptics';
 import { ui } from '../core/presentation';
 import type { ProgressProfile, ProgressStore } from '../core/progressStore';
 
@@ -28,11 +29,14 @@ export function accessibilityPreferences(
     applyAccessibility(store.profile);
   });
   size.append(labels.textSize, select);
-  return [
+  const options = [
     size,
     preference(store, labels.highContrast, 'resultsHighContrast'),
     preference(store, ui.settings.reducedEffects, 'reducedEffects', reduce),
   ];
+  if (hasHaptics)
+    options.push(preference(store, ui.settings.haptics, 'haptics'));
+  return options;
 }
 
 export function ridePreference(store: ProgressStore, key: 'reflectiveVest') {
@@ -42,14 +46,14 @@ export function ridePreference(store: ProgressStore, key: 'reflectiveVest') {
 function preference(
   store: ProgressStore,
   text: string,
-  key: 'resultsHighContrast' | 'reducedEffects' | 'reflectiveVest',
+  key: 'resultsHighContrast' | 'reducedEffects' | 'reflectiveVest' | 'haptics',
   onEnable?: () => void,
 ) {
   const label = document.createElement('label');
   label.className = 'ride-preference';
   const input = document.createElement('input');
   input.type = 'checkbox';
-  input.checked = store.profile[key] ?? false;
+  input.checked = store.profile[key] ?? key === 'haptics';
   input.addEventListener('change', () => {
     const checked = input.checked;
     store.change((profile) => {

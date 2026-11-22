@@ -6,6 +6,11 @@ export default tseslint.config(
   {
     ignores: [
       'dist/**',
+      'android/**/build/**',
+      'android/app/src/main/assets/public/**',
+      'android/capacitor-cordova-android-plugins/**',
+      'ios/capacitor-cordova-ios-plugins/**',
+      'ios/App/App/public/**',
       'public/data/**',
       'playwright-report/**',
       'test-results/**',

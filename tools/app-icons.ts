@@ -64,7 +64,12 @@ function wheel(x: number, y: number, size: number, splash: boolean): string {
   return appTheme;
 }
 
-function draw(width: number, height: number, size: number, splash = false) {
+export function drawAppArt(
+  width: number,
+  height: number,
+  size: number,
+  { splash = false, transparent = false } = {},
+) {
   const image = new PNG({ width, height });
   const pixelSize = Math.floor(Math.min(width, height) / 48);
   const originX = (width - pixelSize) / 2;
@@ -80,19 +85,26 @@ function draw(width: number, height: number, size: number, splash = false) {
         rgb = Number.parseInt(hex.slice(1), 16);
         logicalColor.set(hex, rgb);
       }
-      image.data.writeUInt32BE(rgb * 256 + 255, (y * width + x) * 4);
+      const alpha = transparent && hex === appBackground ? 0 : 255;
+      image.data.writeUInt32BE(rgb * 256 + alpha, (y * width + x) * 4);
     }
   }
-  return PNG.sync.write(image);
+  return PNG.sync.write(image, { colorType: transparent ? 6 : 2 });
 }
 
 export function* generateAppIcons() {
-  yield { fileName: appIcons[0]!.src, source: draw(192, 192, 20) };
-  yield { fileName: appIcons[1]!.src, source: draw(512, 512, 20) };
+  yield { fileName: appIcons[0]!.src, source: drawAppArt(192, 192, 20) };
+  yield { fileName: appIcons[1]!.src, source: drawAppArt(512, 512, 20) };
   // All foreground pixels fit within the CSS maskable safe circle (40%).
-  yield { fileName: appIcons[2]!.src, source: draw(512, 512, 18) };
-  yield { fileName: appleTouchIcon, source: draw(180, 180, 20) };
-  yield { fileName: webSplash, source: draw(1280, 720, 9, true) };
+  yield { fileName: appIcons[2]!.src, source: drawAppArt(512, 512, 18) };
+  yield { fileName: appleTouchIcon, source: drawAppArt(180, 180, 20) };
+  yield {
+    fileName: webSplash,
+    source: drawAppArt(1280, 720, 9, { splash: true }),
+  };
   for (const { src, width, height } of appleSplashes)
-    yield { fileName: src, source: draw(width, height, 9, true) };
+    yield {
+      fileName: src,
+      source: drawAppArt(width, height, 9, { splash: true }),
+    };
 }
