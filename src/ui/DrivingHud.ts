@@ -1,36 +1,44 @@
 import { ui } from '../core/presentation';
 
-export interface DrivingHudStats {
-  points: number;
-  combo: number;
-  attention: number;
-}
-
 export class DrivingHud {
   readonly timerSlot = document.createElement('div');
+  private readonly score = document.createElement('div');
+  private readonly radio = document.createElement('p');
   private readonly points = document.createElement('output');
   private readonly combo = document.createElement('output');
   private readonly attention = document.createElement('output');
   private readonly attentionValue = document.createElement('span');
-  private readonly whistles = Array.from({ length: 3 }, () =>
-    document.createElement('span'),
-  );
+  private readonly whistles: HTMLSpanElement[];
+  private lastPoints?: number;
+  private lastMultiplier?: number;
+  private lastRecord?: number;
+  private previousAttention = -1;
+  private radioUntil = 0;
+
   private readonly equipment = document.createElement('span');
   private readonly lights = document.createElement('span');
   private readonly time = document.createElement('span');
   private readonly weather = document.createElement('span');
-  private previousAttention = -1;
-
-  constructor(parent: HTMLElement, details: HTMLElement) {
+  constructor(
+    parent: HTMLElement,
+    details: HTMLElement,
+    private readonly progressDetails: HTMLElement,
+    private readonly maxAttention: number,
+    private wasGlowing: boolean,
+  ) {
+    this.whistles = Array.from({ length: maxAttention }, () =>
+      document.createElement('span'),
+    );
     const left = document.createElement('div');
     left.className = 'ride-hud-left';
-    const score = document.createElement('div');
+    const score = this.score;
     score.className = 'ride-hud-panel ride-score';
+    score.classList.toggle('glowing', this.wasGlowing);
     const pointsLabel = document.createElement('span');
-    pointsLabel.textContent = ui.rideHud.points;
-    this.points.setAttribute('aria-label', ui.rideHud.points);
-    this.combo.setAttribute('aria-label', ui.rideHud.combo);
-    this.combo.title = ui.rideHud.combo;
+    pointsLabel.textContent = ui.progression.points;
+    this.points.setAttribute('aria-label', ui.progression.points);
+    this.combo.setAttribute('aria-label', ui.progression.series);
+    this.combo.title = ui.progression.series;
     score.append(pointsLabel, this.points, this.combo);
 
     const conditions = document.createElement('div');
@@ -54,39 +62,64 @@ export class DrivingHud {
     const alert = document.createElement('div');
     alert.className = 'ride-hud-panel ride-attention';
     const attentionLabel = document.createElement('span');
-    attentionLabel.textContent = ui.rideHud.attention;
+    attentionLabel.textContent = ui.progression.attention;
+    this.attention.setAttribute('aria-label', ui.progression.attention);
     this.attention.setAttribute('aria-live', 'off');
     for (const whistle of this.whistles) {
       whistle.className = 'ride-whistle';
       whistle.setAttribute('aria-hidden', 'true');
       this.attention.append(whistle);
     }
-    this.attentionValue.setAttribute('aria-hidden', 'true');
     this.attention.append(this.attentionValue);
     alert.append(attentionLabel, this.attention);
     right.append(alert, this.timerSlot);
     for (const output of [this.points, this.combo])
       output.setAttribute('aria-live', 'off');
+    this.radio.className = 'progression-radio';
+    this.radio.setAttribute('role', 'status');
+    this.radio.hidden = true;
     parent.prepend(left, right);
+    parent.append(this.radio);
   }
 
-  updateStats({ points, combo, attention }: DrivingHudStats) {
-    const score = String(points);
-    const multiplier = `×${combo}`;
-    if (this.points.textContent !== score) this.points.textContent = score;
-    if (this.combo.textContent !== multiplier)
-      this.combo.textContent = multiplier;
-    if (attention === this.previousAttention) return;
-    this.previousAttention = attention;
-    const tally = `${attention}/${this.whistles.length}`;
-    this.attentionValue.textContent = tally;
-    this.attention.setAttribute(
-      'aria-label',
-      `${ui.rideHud.attention} ${tally}`,
-    );
-    this.whistles.forEach((whistle, index) => {
-      whistle.classList.toggle('active', index < attention);
-    });
+  updateProgression(
+    points: number,
+    multiplier: number,
+    record: number,
+    glowing: boolean,
+    attention: number,
+    at: number,
+  ) {
+    if (points !== this.lastPoints) {
+      this.points.textContent = String(points);
+      this.lastPoints = points;
+    }
+    if (multiplier !== this.lastMultiplier) {
+      this.combo.textContent = `×${multiplier}`;
+      this.lastMultiplier = multiplier;
+    }
+    if (record !== this.lastRecord) {
+      this.progressDetails.textContent = `${ui.progression.record} ${record}`;
+      this.lastRecord = record;
+    }
+    if (attention !== this.previousAttention) {
+      this.previousAttention = attention;
+      this.attentionValue.textContent = `${attention}/${this.maxAttention}`;
+      this.whistles.forEach((whistle, index) => {
+        whistle.classList.toggle('active', index < attention);
+      });
+    }
+    if (glowing !== this.wasGlowing) {
+      this.score.classList.toggle('glowing', glowing);
+      if (glowing) {
+        this.radio.hidden = false;
+        this.radio.textContent = ui.progression.dj;
+        this.radioUntil = at + 3500;
+      }
+      this.wasGlowing = glowing;
+    }
+    if (!this.radio.hidden && (!glowing || at >= this.radioUntil))
+      this.radio.hidden = true;
   }
 
   updateConditions(

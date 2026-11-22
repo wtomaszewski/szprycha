@@ -489,6 +489,31 @@ button[aria-pressed='true'] {
   outline: 2px solid #ffcd75;
   color: #1a1c2c;
 }
+
+.ride-score.glowing {
+  border-color: #73eff7;
+}
+.progression-radio {
+  position: absolute;
+  bottom: max(174px, env(safe-area-inset-bottom));
+  left: 50%;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 4px 8px;
+  border: 1px solid #73eff7;
+  background: #1a1c2c;
+  color: #73eff7;
+  text-align: center;
+  font-size: 14px;
+}
+@media (max-height: 500px) {
+  .progression-radio {
+    bottom: max(134px, env(safe-area-inset-bottom));
+  }
+}
+
 .mission-panel,
 .mission-summary {
   position: absolute;
@@ -631,6 +656,9 @@ button[aria-pressed='true'] {
 }
 .mission-summary h2 {
   margin: 0;
+  color: #ffcd75;
+}
+.mission-rewards {
   color: #ffcd75;
 }
 .mission-summary button {
@@ -792,6 +820,27 @@ button[aria-pressed='true'] {
     min-height: 56px;
     min-width: 56px;
   }
+}
+
+.control-question {
+  width: 550px;
+  background: #1a1c2cf5;
+}
+.control-question::backdrop {
+  background: linear-gradient(transparent 40%, #1a1c2cbb);
+}
+.control-question p {
+  margin: 4px 0 8px;
+}
+.control-question-prompt {
+  font-size: 19px;
+}
+.control-question-answers:not([hidden]) {
+  display: grid;
+  gap: 6px;
+}
+.control-question-answers button {
+  text-align: left;
 }
 
 .replay-dialog {

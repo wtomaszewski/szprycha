@@ -18,6 +18,8 @@ it('loads traffic sprite frames at manifest dimensions and creates them at nativ
     setDepth: () => image,
     setOrigin: () => image,
     setVisible: () => image,
+    fillStyle: () => image,
+    fillEllipse: () => image,
   };
   const scene = {
     textures: { exists: () => false },

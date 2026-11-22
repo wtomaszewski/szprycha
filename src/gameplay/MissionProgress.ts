@@ -1,6 +1,10 @@
 import type { DialogueLine, Dialogues } from '../content/dialogues';
 import type { MissionDefinition } from '../content/missions';
 import type { GameContent } from '../content/schemas';
+import {
+  tokensForImprovement,
+  type Stars,
+} from '../progression/missionRewards';
 
 const progressKey = 'szprycha.mission-progress.v1';
 
@@ -12,9 +16,26 @@ function savedIds(value: unknown): string[] {
     : [];
 }
 
+function savedCount(value: unknown) {
+  return typeof value === 'number' && Number.isSafeInteger(value) && value >= 0
+    ? value
+    : 0;
+}
+
 export class MissionProgress {
   private readonly completed = new Set<string>();
   private readonly introduced = new Set<string>();
+  private readonly bestStars = new Map<string, Stars>();
+  private tokenBalance = 0;
+  private seriesRecord = 0;
+
+  get tokens() {
+    return this.tokenBalance;
+  }
+
+  get longestSeries() {
+    return this.seriesRecord;
+  }
 
   constructor(private readonly storage?: Pick<Storage, 'getItem' | 'setItem'>) {
     try {
@@ -22,6 +43,26 @@ export class MissionProgress {
       if (raw && typeof raw === 'object') {
         if ('completed' in raw)
           for (const id of savedIds(raw.completed)) this.completed.add(id);
+        if (
+          'progression' in raw &&
+          raw.progression &&
+          typeof raw.progression === 'object'
+        ) {
+          const progress = raw.progression;
+          if ('tokens' in progress)
+            this.tokenBalance = savedCount(progress.tokens);
+          if ('longestSeries' in progress)
+            this.seriesRecord = savedCount(progress.longestSeries);
+          if (
+            'bestStars' in progress &&
+            progress.bestStars &&
+            typeof progress.bestStars === 'object'
+          ) {
+            for (const [id, stars] of Object.entries(progress.bestStars))
+              if (stars === 1 || stars === 2 || stars === 3)
+                this.bestStars.set(id, stars);
+          }
+        }
         if ('introduced' in raw)
           for (const id of savedIds(raw.introduced)) this.introduced.add(id);
       }
@@ -30,8 +71,25 @@ export class MissionProgress {
     }
   }
 
-  complete(mission: MissionDefinition) {
+  complete(
+    mission: MissionDefinition,
+    reward?: { stars: Stars; balance: GameContent['balans']['gwiazdki'] },
+  ) {
     this.completed.add(mission.id);
+    let tokens = 0;
+    if (reward) {
+      const previous = this.bestStars.get(mission.id) ?? 0;
+      tokens = tokensForImprovement(reward.balance, previous, reward.stars);
+      if (reward.stars > previous) this.bestStars.set(mission.id, reward.stars);
+      this.tokenBalance += tokens;
+    }
+    this.save();
+    return tokens;
+  }
+
+  recordSeries(length: number) {
+    if (length <= this.seriesRecord) return;
+    this.seriesRecord = length;
     this.save();
   }
 
@@ -70,6 +128,11 @@ export class MissionProgress {
         JSON.stringify({
           completed: [...this.completed],
           introduced: [...this.introduced],
+          progression: {
+            bestStars: Object.fromEntries(this.bestStars),
+            tokens: this.tokenBalance,
+            longestSeries: this.seriesRecord,
+          },
         }),
       );
     } catch {

@@ -9,10 +9,10 @@ test('desktop HUD uses the mission timer, goal arrow and compact pause menu', as
   await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
 
   const left = page.locator('.ride-hud-left');
-  await expect(left.getByLabel(pl.rideHud.points)).toHaveText('0');
-  await expect(left.getByLabel(pl.rideHud.combo)).toHaveText('×1');
+  await expect(left.getByLabel(pl.progression.points)).toHaveText('0');
+  await expect(left.getByLabel(pl.progression.series)).toHaveText('×1');
   const right = page.locator('.ride-hud-right');
-  await expect(right.getByLabel(`${pl.rideHud.attention} 0/3`)).toBeVisible();
+  await expect(right.getByLabel(pl.progression.attention)).toHaveText('0/3');
   await expect(right.getByLabel(pl.missionUi.timer)).toBeVisible();
   await expect(
     page.getByLabel(new RegExp(pl.missionUi.direction)),
@@ -146,7 +146,7 @@ test('rain freezes with reduced motion and night preview leaves the rules in day
   await page.keyboard.down('Space');
   await expect(canvas).toHaveAttribute('data-speed', '0');
   await page.keyboard.up('Space');
-  await expect(page.getByLabel(`${pl.rideHud.attention} 0/3`)).toBeVisible();
+  await expect(page.getByLabel(pl.progression.attention)).toHaveText('0/3');
   await expect(page.getByLabel(pl.rules.debug.title)).not.toContainText(
     /WYP-04|WYP-05|MSC-04/,
   );

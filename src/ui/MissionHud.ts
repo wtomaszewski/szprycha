@@ -33,6 +33,7 @@ export class MissionHud {
   private readonly resume = document.createElement('button');
   private readonly summary = document.createElement('section');
   private readonly heading = document.createElement('h2');
+  private readonly rewards = document.createElement('p');
   private readonly resultText = document.createElement('p');
   private readonly confetti = document.createElement('div');
   private readonly retryButton = document.createElement('button');
@@ -114,7 +115,14 @@ export class MissionHud {
       piece.style.setProperty('--confetti-angle', `${(index * 29) % 90}deg`);
       this.confetti.append(piece);
     }
-    this.summary.append(this.confetti, this.heading, this.resultText, actions);
+    this.rewards.className = 'mission-rewards';
+    this.summary.append(
+      this.confetti,
+      this.heading,
+      this.rewards,
+      this.resultText,
+      actions,
+    );
     timerSlot.append(this.timer);
     parent.append(panel, this.navigation, this.summary);
   }
@@ -142,6 +150,8 @@ export class MissionHud {
     interrupted: boolean,
     checkpointHint: string | undefined,
     speed: number,
+    tokensAwarded: number,
+    tokenBalance: number,
   ) {
     const { target, result, remainingSeconds, elapsedSeconds } = mission;
     setText(this.title, translate(mission.definition.tytul));
@@ -168,6 +178,18 @@ export class MissionHud {
           ? ui.missionUi.completed
           : ui.missionUi.failed;
       setText(this.heading, label);
+      const { stars, points, longestSeries } = result;
+      const labels = [
+        `${ui.missionUi.yourPoints} ${points}`,
+        `${ui.progression.stars} ${stars} ${'★'.repeat(stars)}`.trim(),
+        `${ui.progression.missionSeries} ${longestSeries}`,
+      ];
+      if (result.status === 'completed')
+        labels.push(
+          `${ui.progression.tokens} +${tokensAwarded}`,
+          `${ui.progression.wallet} ${tokenBalance}`,
+        );
+      setText(this.rewards, labels.join(' · '));
       const details = [
         `${ui.missionUi.timer} ${clock(Math.floor(result.elapsedSeconds))}`,
         `${ui.missionUi.goodHabits} ${result.goodHabits}`,
@@ -183,10 +205,7 @@ export class MissionHud {
       else if (!result.timeBonusEligible)
         details.push(ui.missionUi.noTimeBonus);
       if (result.opponentScore !== undefined)
-        details.push(
-          `${ui.missionUi.yourPoints} ${result.points}`,
-          `${ui.missionUi.turboPoints} ${result.opponentScore}`,
-        );
+        details.push(`${ui.missionUi.turboPoints} ${result.opponentScore}`);
       if (result.shocks !== undefined)
         details.push(
           `${ui.missionUi.shocks} ${Math.round(result.shocks * 100)}%`,

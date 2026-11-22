@@ -33,11 +33,7 @@ async function runTutorial(
   ) as TrainingMap;
   const world = new WorldModel(map, content.balans.silnik.kafel_m);
   const definition = content.misje.find(({ id }) => id === 'WAW-T-01')!;
-  const mission = new MissionSystem(
-    definition,
-    world,
-    content.balans.misja.major_do_porazki,
-  );
+  const mission = new MissionSystem(definition, world, content.balans);
   expect(definition.ruch_ai).toBe(false);
   const metersPerPixel = world.metersPerPixel;
   const obstacles: Obstacle[] = [

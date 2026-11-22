@@ -76,7 +76,7 @@ export const questionsSchema = z.strictObject({
           pytanie: text,
           odpowiedzi: z.array(text).min(2),
           poprawna: count,
-          wyjasnienie: text,
+          wyjasnienie: text.max(140),
           zrodlo: text,
           obrazek: text.optional(),
           weryfikacja: z.boolean().optional(),
@@ -142,15 +142,31 @@ export const balanceSchema = z.strictObject({
     kara_major: count,
     major_do_porazki: positive.int(),
   }),
-  combo: z.strictObject({
-    krok_dobrych_nawykow: positive.int(),
-    max_mnoznik: positive.int(),
-  }),
-  uwaga_drogowki: z.strictObject({
-    max: positive.int(),
-    spadek_co_s: positive,
-    bonus_madra_glowa: count,
-  }),
+  combo: z
+    .strictObject({
+      mnoznik_startowy: positive.int(),
+      efekt_od_mnoznika: positive.int(),
+      krok_dobrych_nawykow: positive.int(),
+      max_mnoznik: positive.int(),
+    })
+    .refine(
+      (combo) =>
+        combo.mnoznik_startowy <= combo.efekt_od_mnoznika &&
+        combo.efekt_od_mnoznika <= combo.max_mnoznik,
+      'Combo thresholds must be ordered',
+    ),
+  uwaga_drogowki: z
+    .strictObject({
+      przyrost_minor: positive.int(),
+      po_blednej_odpowiedzi: count,
+      max: positive.int(),
+      spadek_co_s: positive,
+      bonus_madra_glowa: count,
+    })
+    .refine(
+      (attention) => attention.po_blednej_odpowiedzi < attention.max,
+      'Wrong answer must clear the stop',
+    ),
   mastery: z.strictObject({
     good: count,
     good_limit_dzienny: count,
@@ -174,7 +190,12 @@ export const balanceSchema = z.strictObject({
       'Intervals must increase',
     ),
   gwiazdki: z.strictObject({
-    zetony: z.array(count).length(3),
+    zetony: z
+      .tuple([count, count, count])
+      .refine(
+        ([one, two, three]) => one <= two && two <= three,
+        'Star payouts must increase',
+      ),
     dwie_gwiazdki_max_minor: count,
   }),
   rangi: z
@@ -283,6 +304,17 @@ export const contentSchema = z
         reference(r, ['pytania', 'pytania', i, 'przepisy', j]),
       ),
     );
+    const questionRules = new Set(
+      data.pytania.pytania.flatMap((q) => q.przepisy),
+    );
+    for (const { id, detektor } of data.przepisy.przepisy) {
+      if ((detektor === 'sim' || id === 'KASK-01') && !questionRules.has(id))
+        ctx.addIssue({
+          code: 'custom',
+          path: ['pytania', 'pytania'],
+          message: `Missing control question for ${id}`,
+        });
+    }
     function condition(c: Condition, path: (string | number)[]) {
       if ('good' in c) reference(c.good, [...path, 'good']);
       if ('all' in c)

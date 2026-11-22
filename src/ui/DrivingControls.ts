@@ -25,6 +25,7 @@ export class DrivingControls {
   private readonly pauseMenu = document.createElement('dialog');
   readonly quickActions = document.createElement('div');
   readonly details = document.createElement('div');
+  readonly progressDetails = document.createElement('p');
   private x = 0;
   private y = 0;
   private braking = false;
@@ -116,7 +117,7 @@ export class DrivingControls {
     this.notice.className = 'drive-notice';
     this.notice.setAttribute('role', 'status');
     help.append(' · ', ui.phone.controls);
-    pauseMenu.append(heading, title, options, help);
+    pauseMenu.append(heading, title, this.progressDetails, options, help);
     const touch = document.createElement('div');
     touch.className = 'touch-controls';
     const stick = document.createElement('div');
