@@ -1,6 +1,6 @@
 {
   "name": "szprycha",
-  "version": "0.0.0",
+  "version": "0.9.0",
   "private": true,
   "license": "UNLICENSED",
   "type": "module",
@@ -31,6 +31,7 @@
     "benchmark:plac": "tsx tools/benchmark-plac.ts",
     "benchmark:mobile": "tsx tools/benchmark-mobile.ts",
     "assets:mobile": "tsx tools/gen-mobile-assets.ts",
+    "store:assets": "tsx tools/gen-store-assets.ts",
     "build:server": "npm run build --workspace @szprycha/rankings",
     "start:server": "npm run start --workspace @szprycha/rankings",
     "test:server": "vitest run server/tests"

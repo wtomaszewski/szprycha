@@ -308,6 +308,9 @@ export const contentSchema = z
     plac: placSchema,
     osiagniecia: achievementsSchema,
     wyzwania: challengesSchema,
+    'o-grze': z.strictObject({
+      recenzja_merytoryczna: z.string().trim().min(1).nullable(),
+    }),
     misje: missionsSchema,
     dialogi: dialogueFileSchema,
   })

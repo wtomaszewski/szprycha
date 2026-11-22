@@ -120,6 +120,12 @@ describe('canonical content', () => {
       message: 'Question about a sign requires an illustration (obrazek)',
     },
     {
+      file: 'sklep.yaml',
+      from: 'Ruszaj w miasto',
+      to: 'GTA2',
+      message: 'Store copy contains a forbidden name',
+    },
+    {
       file: 'znaki.yaml',
       from: '[MAN-08]',
       to: '[MISSING-01]',

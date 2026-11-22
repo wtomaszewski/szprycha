@@ -1132,6 +1132,17 @@ button[aria-pressed='true'] {
   margin-top: 12px;
 }
 
+.about-game {
+  inset: var(--safe-insets);
+  margin: auto;
+  height: fit-content;
+}
+
+.about-game section,
+.about-game details {
+  margin-block: 16px;
+}
+
 .third-party-notices {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
