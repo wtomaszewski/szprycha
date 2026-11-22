@@ -1,7 +1,7 @@
 import type { GameObjects, Scene } from 'phaser';
 import { cacheMapGraphics } from './MapGround';
 import { FONT, ui } from '../core/presentation';
-import type { EnvState, SignalPhase } from '../rules/types';
+import type { EnvState, SignalPhase, Vec2 } from '../rules/types';
 import type { Box, WorldModel } from '../rules/world/WorldModel';
 import { vehicleFrame } from './spriteFrames';
 
@@ -25,12 +25,14 @@ export class TrainingRoad {
   ) {
     this.lights = scene.add.graphics().setDepth(7);
     const marks = scene.add.graphics().setDepth(3);
+    const markCenters: Vec2[] = [];
     const scale = 1 / world.metersPerPixel;
     for (const route of world.trafficRoutes) {
       if (route.kind !== 'tram') continue;
       for (const stop of route.stops) {
         const x = (stop.x + stop.width / 2) * scale;
         const y = (stop.y + stop.height) * scale + 10;
+        markCenters.push({ x, y });
         marks.fillStyle(0xf4f4f4).fillRect(x - 10, y - 10, 20, 20);
         marks.fillStyle(0x3b5dc9).fillRect(x - 9, y - 9, 18, 18);
         marks
@@ -43,9 +45,11 @@ export class TrainingRoad {
     for (const [index, car] of world.parkedCars.entries())
       this.drawParkedCar(scene, car, scale, index);
     const signs = scene.add.graphics().setDepth(6);
+    const signCenters: Vec2[] = [];
     for (const sign of world.signs) {
       const x = sign.x * scale;
       const y = sign.y * scale;
+      signCenters.push({ x, y });
       signs.fillStyle(0x1a1c2c).fillRect(x - 2, y, 4, 19);
       if (sign.displayOnly) {
         const graffiti = scene.add.graphics().setDepth(7);
@@ -209,8 +213,24 @@ export class TrainingRoad {
     if (staticMap) {
       const { key, width, height } = staticMap;
       this.staticChunks.push(
-        ...cacheMapGraphics(scene, marks, `${key}-marks`, width, height),
-        ...cacheMapGraphics(scene, signs, `${key}-signs`, width, height),
+        ...cacheMapGraphics(
+          scene,
+          marks,
+          `${key}-marks`,
+          width,
+          height,
+          markCenters,
+          10,
+        ),
+        ...cacheMapGraphics(
+          scene,
+          signs,
+          `${key}-signs`,
+          width,
+          height,
+          signCenters,
+          28,
+        ),
       );
     }
   }
