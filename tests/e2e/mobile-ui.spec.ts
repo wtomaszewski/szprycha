@@ -87,7 +87,17 @@ async function unlockQuiz(page: Page) {
           const record = tx.objectStore(store);
           const read = record.get(key);
           read.onsuccess = () =>
-            record.put({ ...read.result, missionPoints: 4000 }, key);
+            record.put(
+              {
+                ...read.result,
+                missionPoints: 4000,
+                quiz: {
+                  streak: 0,
+                  cards: { Q024: { box: 1, due: '2000-01-01' } },
+                },
+              },
+              key,
+            );
           tx.oncomplete = () => {
             db.close();
             resolve();
@@ -154,7 +164,7 @@ for (const { profile, device, viewport, target, logicalHeight } of [
       const settings = page.getByRole('dialog', { name: pl.settings.title });
       await settings
         .getByRole('combobox', { name: pl.missionResults.textSize })
-        .selectOption('large');
+        .selectOption('largest');
       await settings
         .getByRole('checkbox', { name: pl.missionResults.highContrast })
         .check();
@@ -163,7 +173,7 @@ for (const { profile, device, viewport, target, logicalHeight } of [
         .check();
       await settings.getByRole('button', { name: pl.m5c.close }).tap();
       const root = page.locator('html');
-      await expect(root).toHaveAttribute('data-text-size', 'large');
+      await expect(root).toHaveAttribute('data-text-size', 'largest');
       await expect(root).toHaveAttribute('data-contrast', '');
       await expect(root).toHaveAttribute('data-reduced-effects', '');
       await expect(menu).toHaveCSS('background-color', 'rgb(0, 0, 0)');
@@ -171,6 +181,7 @@ for (const { profile, device, viewport, target, logicalHeight } of [
       const quiz = page.getByRole('dialog', { name: pl.quiz.title });
       await quiz.getByRole('button', { name: new RegExp(pl.quiz.quick) }).tap();
       await expect(quiz.getByRole('progressbar')).toBeVisible();
+      await expect(quiz.locator('.quiz-signs img')).toHaveCount(2);
       await expect(quiz).toHaveCSS('background-color', 'rgb(0, 0, 0)');
       await layout(page, quiz.locator(buttons), target);
       await shot(page, profile, 'quiz');

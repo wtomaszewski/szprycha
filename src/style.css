@@ -2137,17 +2137,42 @@ html[data-reduced-effects]
     grid-template-columns: 1fr auto;
     padding-bottom: 4px;
   }
+  .quiz-panel :has(> .quiz-signs) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px 8px;
+  }
+  .quiz-panel :has(> .quiz-signs) > .quiz-meta {
+    margin-block: 2px;
+  }
+  .quiz-panel :has(> .quiz-signs) > progress {
+    grid-area: 1 / 2;
+  }
+  .quiz-panel :has(> .quiz-signs) > .quiz-answers {
+    grid-column: 1 / -1;
+  }
+  .quiz-panel .quiz-prompt {
+    font-size: calc(17px * var(--text-scale));
+    line-height: 1.1;
+    margin-block: 3px;
+  }
   .quiz-signs {
     padding: 2px;
-    margin-bottom: 4px;
+    margin: 0;
   }
   .quiz-signs img {
-    width: 54px;
+    width: 48px;
   }
   .quiz-modules,
   .quiz-answers {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 4px;
+  }
+  .quiz-answers button {
+    padding: 3px 6px;
+    font-size: calc(14px * var(--text-scale));
+    line-height: 1.15;
   }
   .quiz-feedback,
   .quiz-answers > .quiz-primary {
@@ -2209,5 +2234,40 @@ html[data-reduced-effects]
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+  }
+}
+
+@media (any-pointer: coarse) and (min-width: 561px) {
+  .driving-ui:has(.mission-panel) {
+    display: grid;
+    grid-template-columns: fit-content(29%) minmax(0, 1fr) fit-content(29%);
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: 8px;
+    padding: 8px;
+  }
+  .driving-ui:has(.mission-panel)
+    > :is(.ride-hud-left, .ride-hud-right, .mission-panel) {
+    position: relative;
+    inset: auto;
+    transform: none;
+    grid-row: 1;
+    align-self: start;
+  }
+  .ride-hud-left {
+    grid-column: 1;
+  }
+  .ride-hud-right {
+    grid-column: 3;
+  }
+  .mission-panel {
+    grid-column: 2;
+    justify-self: center;
+    max-width: min(100%, 380px);
+  }
+  .mission-navigation {
+    position: relative;
+    inset: auto;
+    grid-area: 2 / 1 / 3 / -1;
+    margin: 16px 34px calc(2 * var(--tap-size) + 22px);
   }
 }
