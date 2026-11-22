@@ -2,6 +2,30 @@ import { expect, test, type Page } from '@playwright/test';
 import questions from '../../content/pytania.json' with { type: 'json' };
 import { chooseCity } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
+import { readProfile } from './progress-profile';
+
+type MapView = { x: number; y: number; heading: number; night?: true };
+
+async function startAt(page: Page, view: MapView) {
+  await page.route(/\/wroclaw(?:-[^/]+)?\.tmj(?:\?|$)/, async (route) => {
+    if (route.request().resourceType() === 'script') return route.continue();
+    const response = await route.fetch();
+    const tiled = await response.json();
+    const player = tiled.layers
+      .find(({ name }: { name: string }) => name === 'spawns')
+      .objects.find(({ name }: { name: string }) => name === 'player');
+    player.x = view.x;
+    player.y = view.y;
+    player.properties.find(
+      ({ name }: { name: string }) => name === 'heading',
+    ).value = view.heading;
+    if (view.night)
+      tiled.properties.find(
+        ({ name }: { name: string }) => name === 'dusk_at_s',
+      ).value = 1;
+    await route.fulfill({ response, json: tiled });
+  });
+}
 
 async function openWroclaw(page: Page) {
   await page.goto('/');
@@ -14,18 +38,24 @@ async function openWroclaw(page: Page) {
 test('opens Wrocław from the map of Poland and saves collected gnomes', async ({
   page,
 }) => {
-  await openWroclaw(page);
+  // Start one short walk away from Dzwoneczek (3024, 2016).
+  const spawn = { x: 3000, y: 2016, heading: 0 };
+  await startAt(page, spawn);
+  const canvas = await openWroclaw(page);
+  await expect(canvas).toHaveAttribute('data-x', String(spawn.x));
   const collection = page.getByRole('status', { name: pl.driving.gnomes });
-  await expect(collection).toHaveText('Krasnale 0/100');
+  await expect(collection).toHaveText(`${pl.driving.gnomes} 0/100`);
   await page.keyboard.press('KeyX');
+  await expect(canvas).toHaveAttribute('data-walking', 'true');
   const quiz = page.getByRole('dialog', { name: pl.driving.gnomeQuestion });
+  await expect(quiz).toBeHidden();
   try {
     await page.keyboard.down('ArrowUp');
     await expect(quiz).toBeVisible();
   } finally {
     await page.keyboard.up('ArrowUp');
   }
-  await expect(collection).toHaveText('Krasnale 0/100');
+  await expect(collection).toHaveText(`${pl.driving.gnomes} 0/100`);
   const question = questions.pytania[0]!;
   await expect(quiz).toContainText(question.pytanie);
   await quiz
@@ -35,14 +65,17 @@ test('opens Wrocław from the map of Poland and saves collected gnomes', async (
     })
     .click();
   await quiz.getByRole('button', { name: pl.progression.continue }).click();
-  await expect(collection).toHaveText('Krasnale 1/100');
+  await expect(collection).toHaveText(`${pl.driving.gnomes} 1/100`);
+  await expect
+    .poll(async () => (await readProfile(page)).gnomes)
+    .toEqual(['dzwoneczek']);
   await page.keyboard.press('Escape');
   await page
     .getByRole('button', { name: pl.driving.menu, exact: true })
     .click();
   await expect(page.locator('canvas[data-scene="MainMenu"]')).toBeVisible();
   await openWroclaw(page);
-  await expect(collection).toHaveText('Krasnale 1/100');
+  await expect(collection).toHaveText(`${pl.driving.gnomes} 1/100`);
 });
 
 const views = [
@@ -60,29 +93,11 @@ for (const view of views)
   test(`renders Wrocław — ${view.name}`, async ({ page }, info) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
-    const night = 'night' in view;
-    await page.route(/\/wroclaw(?:-[^/]+)?\.tmj(?:\?|$)/, async (route) => {
-      if (route.request().resourceType() === 'script') return route.continue();
-      const response = await route.fetch();
-      const tiled = await response.json();
-      const player = tiled.layers
-        .find(({ name }: { name: string }) => name === 'spawns')
-        .objects.find(({ name }: { name: string }) => name === 'player');
-      player.x = view.x;
-      player.y = view.y;
-      player.properties.find(
-        ({ name }: { name: string }) => name === 'heading',
-      ).value = view.heading;
-      if (night)
-        tiled.properties.find(
-          ({ name }: { name: string }) => name === 'dusk_at_s',
-        ).value = 1;
-      await route.fulfill({ response, json: tiled });
-    });
+    await startAt(page, view);
     const canvas = await openWroclaw(page);
     await expect(canvas).toHaveAttribute('data-x', String(view.x));
     await expect(canvas).toHaveAttribute('data-y', String(view.y));
-    if (night) {
+    if ('night' in view) {
       await page.keyboard.press('KeyL');
       await expect(canvas).toHaveAttribute('data-lighting', 'night');
       await expect(

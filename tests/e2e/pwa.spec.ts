@@ -4,13 +4,8 @@ import { type AddressInfo } from 'node:net';
 import { extname, resolve, sep } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
-import {
-  progressDatabase,
-  progressRecordKey,
-  progressStoreName,
-  type ProgressProfile,
-} from '../../src/core/progressStore';
 import { chooseCity, cityPin } from './city-picker';
+import { readProfile } from './progress-profile';
 
 test.use({ baseURL: 'http://127.0.0.1:4174' });
 
@@ -97,6 +92,10 @@ async function deployableBuild() {
   const nextVersion = '0000000000000074';
   const server = createServer(async (request, response) => {
     const { pathname } = new URL(request.url!, 'http://localhost');
+    if (pathname === '/') {
+      response.writeHead(200, { 'Content-Type': 'text/html' }).end();
+      return;
+    }
     const file = pathname === '/gra/' ? 'index.html' : pathname.slice(5);
     const path = resolve(root, file);
     if (!pathname.startsWith('/gra/') || !path.startsWith(root + sep)) {
@@ -130,36 +129,12 @@ async function deployableBuild() {
     deploy: () => {
       updated = true;
     },
-    close: () => new Promise<void>((done) => server.close(() => done())),
-  };
-}
-
-async function readProfile(page: Page) {
-  return page.evaluate(
-    ({ database, store, key }) =>
-      new Promise<ProgressProfile>((resolve, reject) => {
-        const open = indexedDB.open(database);
-        open.onerror = () => reject(open.error);
-        open.onsuccess = () => {
-          const db = open.result;
-          const tx = db.transaction(store);
-          const record = tx.objectStore(store).get(key);
-          tx.oncomplete = () => {
-            db.close();
-            resolve(record.result);
-          };
-          tx.onabort = () => {
-            db.close();
-            reject(tx.error);
-          };
-        };
+    close: () =>
+      new Promise<void>((done) => {
+        server.close(() => done());
+        server.closeAllConnections();
       }),
-    {
-      database: progressDatabase,
-      store: progressStoreName,
-      key: progressRecordKey,
-    },
-  );
+  };
 }
 
 test('a waiting release leaves the current mission intact and retains the local profile', async ({
@@ -184,37 +159,61 @@ test('a waiting release leaves the current mission intact and retains the local 
     const saved = await readProfile(page);
     expect(saved.selectedCity).toBe('wroclaw');
 
-    const nextWorker = context.waitForEvent('serviceworker');
+    const updateNotice = page.getByText(pl.pwaUpdate, { exact: true });
+    await expect(updateNotice).toBeHidden();
     build.deploy();
-    await page.evaluate(async () => {
-      const registration = await navigator.serviceWorker.ready;
-      await registration.update();
-    });
-    const waiting = await nextWorker;
-    await expect(page.getByText(pl.pwaUpdate, { exact: true })).toBeVisible();
+    // Register a revision-specific URL in the same scope to start installation.
+    const script = new URL(
+      `quiz-worker.js?release=${build.nextVersion}`,
+      build.url,
+    );
+    await page.evaluate(async (scriptUrl) => {
+      await navigator.serviceWorker.register(scriptUrl, {
+        updateViaCache: 'none',
+      });
+    }, script.href);
+    await expect
+      .poll(() =>
+        page.evaluate(async () => {
+          const registration = await navigator.serviceWorker.getRegistration();
+          const waiting = registration?.waiting;
+          return waiting && { state: waiting.state, script: waiting.scriptURL };
+        }),
+      )
+      .toEqual({ state: 'installed', script: script.href });
+    await expect(updateNotice).toBeVisible();
     await expect(canvas).toHaveAttribute('data-mission', 'WRO-T-01');
     await expect(page.locator('html')).not.toHaveAttribute(
       'data-release',
       'next',
     );
-    await expect
-      .poll(() =>
-        page.evaluate(
-          async () => (await navigator.serviceWorker.ready).waiting?.state,
-        ),
-      )
-      .toBe('installed');
     await page.screenshot({ path: info.outputPath('74-pwa-aktualizacja.png') });
     await ride(page);
     await expect(canvas).toHaveAttribute('data-mission', 'WRO-T-01');
     const beforeRestart = await readProfile(page);
 
     await page.close();
-    await expect
-      .poll(() => waiting.evaluate(() => caches.keys()))
-      .toEqual([`szprycha-quiz:${build.url}:${build.nextVersion}`]);
-    await context.setOffline(true);
     const restarted = await context.newPage();
+    // Observe activation from the same origin, outside the worker's scope.
+    await restarted.goto(new URL('/', build.url).href);
+    await expect
+      .poll(() =>
+        restarted.evaluate(async (scope) => {
+          const registration =
+            await navigator.serviceWorker.getRegistration(scope);
+          return {
+            state: registration?.active?.state,
+            script: registration?.active?.scriptURL,
+            caches: await caches.keys(),
+          };
+        }, build.url),
+      )
+      .toEqual({
+        state: 'activated',
+        script: script.href,
+        caches: [`szprycha-quiz:${build.url}:${build.nextVersion}`],
+      });
+    await context.setOffline(true);
     await restarted.goto(build.url);
     await expect(restarted.locator('html')).toHaveAttribute(
       'data-release',
