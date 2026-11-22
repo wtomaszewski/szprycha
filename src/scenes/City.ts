@@ -13,7 +13,7 @@ import {
   type Rider,
 } from '../gameplay/bicycle';
 import { Blocks, type Block } from '../render/Blocks';
-import { drawMapGround } from '../render/MapGround';
+import { cullMapChunks, drawMapGround } from '../render/MapGround';
 import { DrivingControls } from '../ui/DrivingControls';
 import { showError, translate, ui } from '../core/presentation';
 
@@ -96,6 +96,7 @@ export class City extends Scene {
   private debug!: RuleDebugOverlay;
   private feedback!: RuleFeedback;
   private content!: GameContent;
+  private mapChunks: GameObjects.Image[] = [];
   private mission?: MissionSystem;
   private rivalSprite?: GameObjects.Image;
   private rivalLabel?: GameObjects.Text;
@@ -103,6 +104,7 @@ export class City extends Scene {
   private dialogue!: DialogueWindow;
   private phoneFeedback!: string;
   private missionHud?: MissionHud;
+  private missionHudAt = -Infinity;
   private missionMarker?: GameObjects.Graphics;
   private displayedTarget?: MissionSystem['target'];
   private missionInterrupted = false;
@@ -188,6 +190,7 @@ export class City extends Scene {
     this.missionInterrupted = false;
     this.checkpointHint = undefined;
     this.missionHud = undefined;
+    this.missionHudAt = -Infinity;
     this.missionMarker = undefined;
     this.displayedTarget = undefined;
     this.rulesRider.helmet.fastened = definition?.start.kask_zapiety ?? true;
@@ -212,7 +215,9 @@ export class City extends Scene {
     const tileset = mapId === 'warszawa' ? 'warsaw' : 'training';
     const tiles = tilemap.addTilesetImage(tileset, tileset);
     if (!tiles) throw new Error('Missing training tiles');
-    if (mapId === 'warszawa') drawMapGround(this, tilemap, tiles, mapId);
+    this.mapChunks = [];
+    if (mapId === 'warszawa')
+      this.mapChunks = drawMapGround(this, tilemap, tiles, mapId);
     else {
       tilemap.createLayer('ground', tiles);
       tilemap.createLayer('markings', tiles)?.setDepth(1);
@@ -238,6 +243,7 @@ export class City extends Scene {
         ? { key: mapId, width: this.worldWidth, height: this.worldHeight }
         : undefined,
     );
+    this.mapChunks.push(...this.road.staticChunks);
     const spawn = tilemap
       .getObjectLayer('spawns')
       ?.objects.find((o) => o.name === 'player');
@@ -380,6 +386,7 @@ export class City extends Scene {
       .setZoom(drivingZoom)
       .setBounds(0, 0, this.worldWidth, this.worldHeight)
       .centerOn(this.rider.x, this.rider.y);
+    if (this.mapChunks.length) cullMapChunks(this.mapChunks, this.cameras.main);
     const areaTitle =
       mapId === 'warszawa' ? ui.driving.pragaTitle : ui.driving.title;
     this.controls = new DrivingControls(
@@ -473,6 +480,7 @@ export class City extends Scene {
     this.actionArt = this.add.graphics().setDepth(22);
     this.controls.setWalking(false);
     const onShutdown = () => {
+      this.missionHud?.destroy();
       this.stopListeningForVerdicts?.();
       this.stopListeningForVerdicts = undefined;
       this.game.canvas.classList.remove('training-dusk');
@@ -1076,7 +1084,15 @@ export class City extends Scene {
       this.trafficEvents.notice,
       this.phoneAnsweredSafely,
     );
-    this.updateMissionHud();
+    if (
+      this.missionHud &&
+      (time - this.missionHudAt >= 50 ||
+        this.missionInterrupted ||
+        this.mission?.result)
+    ) {
+      this.missionHudAt = time;
+      this.updateMissionHud();
+    }
     this.publishRiderPosition(this.rider);
     if (
       time - this.hudAt > 100 ||
@@ -1185,6 +1201,7 @@ export class City extends Scene {
       Math.round(camera.scrollX + (targetX - camera.scrollX) * blend),
       Math.round(camera.scrollY + (targetY - camera.scrollY) * blend),
     );
+    if (this.mapChunks.length) cullMapChunks(this.mapChunks, camera);
     this.blocks.update(camera, this.controls.lite, r.x, r.y);
     const scale = 1 / this.world.metersPerPixel;
     const centerX = camera.scrollX + camera.width / 2;

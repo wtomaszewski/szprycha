@@ -15,6 +15,13 @@ export class MissionHud {
   private readonly instruction = document.createElement('p');
   private readonly timer = document.createElement('output');
   private readonly navigation = document.createElement('div');
+  private readonly navigationSize = { width: 0, height: 0 };
+  private readonly resize = new ResizeObserver(([entry]) => {
+    if (entry) {
+      const { width, height } = entry.contentRect;
+      Object.assign(this.navigationSize, { width, height });
+    }
+  });
   private readonly arrow = document.createElement('div');
   private readonly bearing = document.createElement('span');
   private readonly distance = document.createElement('span');
@@ -69,6 +76,7 @@ export class MissionHud {
     this.distance.className = 'mission-distance';
     this.arrow.append(this.bearing, this.distance);
     this.navigation.append(this.arrow);
+    this.resize.observe(this.navigation);
 
     this.equip.type = this.lights.type = this.resume.type = 'button';
     this.lights.textContent = ui.missionUi.turnOnLights;
@@ -95,6 +103,10 @@ export class MissionHud {
     }
     this.summary.append(this.heading, this.resultText, actions);
     parent.append(panel, this.timer, this.navigation, this.summary);
+  }
+
+  destroy() {
+    this.resize.disconnect();
   }
 
   focusEquipment() {
@@ -196,7 +208,7 @@ export class MissionHud {
   }
 
   private drawArrow(dx: number, dy: number) {
-    const { clientWidth: width, clientHeight: height } = this.navigation;
+    const { width, height } = this.navigationSize;
     if (width === 0 || height === 0) return;
     const magnitude = Math.max(Math.abs(dx) / width, Math.abs(dy) / height);
     const x = magnitude === 0 ? 100 : 50 + (50 * dx) / (width * magnitude);

@@ -13,6 +13,7 @@ const lightColor: Record<SignalPhase, number> = {
 };
 
 export class TrainingRoad {
+  readonly staticChunks: GameObjects.Image[] = [];
   private readonly lights: GameObjects.Graphics;
   private lastLightFrame = -1;
 
@@ -305,8 +306,10 @@ export class TrainingRoad {
     }
     if (staticMap) {
       const { key, width, height } = staticMap;
-      cacheMapGraphics(scene, marks, `${key}-marks`, width, height);
-      cacheMapGraphics(scene, signs, `${key}-signs`, width, height);
+      this.staticChunks.push(
+        ...cacheMapGraphics(scene, marks, `${key}-marks`, width, height),
+        ...cacheMapGraphics(scene, signs, `${key}-signs`, width, height),
+      );
     }
   }
 

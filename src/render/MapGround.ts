@@ -1,4 +1,4 @@
-import type { GameObjects, Scene, Tilemaps } from 'phaser';
+import type { Cameras, GameObjects, Scene, Tilemaps } from 'phaser';
 
 const chunkTiles = 16;
 
@@ -15,6 +15,7 @@ export function drawMapGround(
   if (!(source instanceof HTMLImageElement))
     throw new Error('Missing map tilesheet image');
   const { tileWidth, tileHeight } = map;
+  const chunks: GameObjects.Image[] = [];
 
   for (let row = 0; row < map.height; row += chunkTiles)
     for (let col = 0; col < map.width; col += chunkTiles) {
@@ -55,8 +56,11 @@ export function drawMapGround(
         }
         chunk.refresh();
       }
-      scene.add.image(col * tileWidth, row * tileHeight, name).setOrigin(0);
+      chunks.push(
+        scene.add.image(col * tileWidth, row * tileHeight, name).setOrigin(0),
+      );
     }
+  return chunks;
 }
 
 /** Keep static vector scenery in camera-cullable textures, like the tile layers. */
@@ -69,6 +73,7 @@ export function cacheMapGraphics(
 ) {
   const chunkSize = chunkTiles * 32;
   const depth = source.depth;
+  const chunks: GameObjects.Image[] = [];
   source.setScrollFactor(0);
   for (let y = 0; y < height; y += chunkSize)
     for (let x = 0; x < width; x += chunkSize) {
@@ -81,7 +86,30 @@ export function cacheMapGraphics(
             Math.min(chunkSize, width - x),
             Math.min(chunkSize, height - y),
           );
-      scene.add.image(x, y, name).setOrigin(0).setDepth(depth);
+      chunks.push(scene.add.image(x, y, name).setOrigin(0).setDepth(depth));
     }
   source.destroy();
+  return chunks;
+}
+
+export function cullMapChunks(
+  chunks: readonly GameObjects.Image[],
+  camera: Cameras.Scene2D.Camera,
+) {
+  const centerX = camera.clampX(camera.scrollX) + camera.width / 2;
+  const centerY = camera.clampY(camera.scrollY) + camera.height / 2;
+  const halfWidth = camera.width / (2 * camera.zoom);
+  const halfHeight = camera.height / (2 * camera.zoom);
+  const left = centerX - halfWidth;
+  const right = centerX + halfWidth;
+  const top = centerY - halfHeight;
+  const bottom = centerY + halfHeight;
+  for (const chunk of chunks) {
+    const visible =
+      chunk.x + chunk.width >= left &&
+      chunk.x <= right &&
+      chunk.y + chunk.height >= top &&
+      chunk.y <= bottom;
+    if (chunk.visible !== visible) chunk.setVisible(visible);
+  }
 }
