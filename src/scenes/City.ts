@@ -48,6 +48,10 @@ import { RiderArt } from '../render/RiderArt';
 import { readHelmetColor } from '../core/helmetColor';
 import { EmergencySiren } from '../audio/EmergencySiren';
 import { RuleFeedback } from '../ui/RuleFeedback';
+import { ProgressionHud } from '../ui/ProgressionHud';
+import { ControlQuestionDialog } from '../ui/ControlQuestionDialog';
+import { RoadAttention } from '../progression/RoadAttention';
+import { SafetySeries } from '../progression/SafetySeries';
 import { MissionHud } from '../ui/MissionHud';
 import { MissionPhone } from '../ui/MissionPhone';
 import { DialogueWindow } from '../ui/DialogueWindow';
@@ -104,6 +108,13 @@ export class City extends Scene {
   private content!: GameContent;
   private mapChunks: GameObjects.Image[] = [];
   private mission?: MissionSystem;
+  private series!: SafetySeries;
+  private attention!: RoadAttention;
+  private questionDialog!: ControlQuestionDialog;
+  private progressionHud!: ProgressionHud;
+  private freeRidePoints = 0;
+  private missionTokens = 0;
+  private resultPresented = false;
   private rivalSprite?: GameObjects.Image;
   private rivalLabel?: GameObjects.Text;
   private phone!: MissionPhone;
@@ -185,6 +196,17 @@ export class City extends Scene {
     this.hudAt = 0;
     this.messageUntil = 0;
     this.content = this.registry.get('content') as GameContent;
+    this.series ??= new SafetySeries(
+      this.content.balans.combo,
+      0,
+      missionProgress.longestSeries,
+    );
+    this.attention ??= new RoadAttention(
+      this.content.balans.uwaga_drogowki,
+      this.content.pytania.pytania,
+    );
+    this.missionTokens = 0;
+    this.resultPresented = false;
     const definition = this.availableOrders().find(
       ({ id }) => id === missionId,
     );
@@ -434,6 +456,29 @@ export class City extends Scene {
       this.controls.root,
       this.content.przepisy.przepisy,
     );
+    this.progressionHud = new ProgressionHud(
+      this.controls.root,
+      this.content.balans.uwaga_drogowki.max,
+      this.series.glowing,
+    );
+    this.questionDialog = new ControlQuestionDialog(
+      this.controls.root,
+      (index) => {
+        const answer = this.attention.answer(index);
+        if (!answer) return;
+        if (this.mission) this.mission.answerQuestion(answer.points);
+        else this.freeRidePoints += answer.points;
+        this.updateProgressionHud();
+        return answer;
+      },
+      () => {
+        this.controls.clear();
+        this.presentMissionResult();
+        this.updateMissionHud();
+        if (!this.mission?.result) this.missionHud?.focusEquipment();
+      },
+    );
+    this.updateProgressionHud();
     if (this.mission) {
       this.missionMarker = this.add.graphics().setDepth(8);
       this.missionHud = new MissionHud(
@@ -471,6 +516,7 @@ export class City extends Scene {
       this.siren.destroy();
       this.debug.destroy();
       this.replayDialog.close();
+      this.questionDialog.close();
       this.dialogue.destroy();
       this.eventNotice.destroy();
       this.phone.close();
@@ -512,7 +558,7 @@ export class City extends Scene {
       this.phone.close();
       return;
     }
-    if (this.dialogue.open || this.review) return;
+    if (this.dialogue.open || this.review || this.questionDialog.open) return;
     if (!canOpenPhone(this.rider.speed)) {
       this.message(this.phoneFeedback);
       return;
@@ -526,7 +572,13 @@ export class City extends Scene {
   }
 
   private overlayKeyboard(event: KeyboardEvent) {
-    if (this.phone.open || this.dialogue.open || this.review) return true;
+    if (
+      this.phone.open ||
+      this.dialogue.open ||
+      this.review ||
+      this.questionDialog.open
+    )
+      return true;
     if (event.code === 'KeyG' && !event.repeat && this.respondToEvent()) {
       event.preventDefault();
       return true;
@@ -554,6 +606,10 @@ export class City extends Scene {
   ) {
     if (this.review) {
       if (this.review.shown) this.replayDialog.gamepad(justPressed);
+      return true;
+    }
+    if (this.questionDialog.open) {
+      this.questionDialog.gamepad(justPressed);
       return true;
     }
     if (
@@ -593,16 +649,55 @@ export class City extends Scene {
     this.dialogue.show(lines, () => this.missionHud?.focusEquipment());
   }
 
-  private finishMissionDialogue() {
-    if (this.mission?.result?.status !== 'completed') return;
+  private presentMissionResult() {
+    const mission = this.mission;
+    const result = mission?.result;
+    if (!result || this.resultPresented) return;
+    this.resultPresented = true;
     this.rider.speed = 0;
     this.controls.clear();
-    missionProgress.complete(this.mission.definition);
-    this.dialogue.show(
-      missionLines(this.content.dialogi, this.mission.definition.dialog_koniec),
-      () => this.missionHud?.focusResult(),
+    if (result.status === 'completed') {
+      const { definition } = mission;
+      this.missionTokens = missionProgress.complete(definition, {
+        stars: result.stars,
+        balance: this.content.balans.gwiazdki,
+      });
+      this.updateMissionHud();
+      this.dialogue.show(
+        missionLines(this.content.dialogi, definition.dialog_koniec),
+        () => this.missionHud?.focusResult(),
+      );
+    } else {
+      this.updateMissionHud();
+      this.missionHud?.focusResult();
+    }
+  }
+
+  private updateProgressionHud() {
+    const { multiplier, longest, glowing } = this.series;
+    this.progressionHud.update(
+      this.mission?.points ?? this.freeRidePoints,
+      multiplier,
+      longest,
+      glowing,
+      this.attention.level,
+      this.time.now,
     );
   }
+
+  private showControlQuestion() {
+    const question = this.attention.pending;
+    if (!question) return false;
+    this.rider.speed = 0;
+    this.controls.clear();
+    this.publishRiderPosition(this.rider);
+    this.updateDrivingHud(this.rider, this.controls.actions);
+    this.updateProgressionHud();
+    this.updateMissionHud();
+    this.questionDialog.show(question);
+    return true;
+  }
+
   private message(text: string) {
     this.controls.notice.textContent = text;
     this.messageUntil = this.time.now + 2600;
@@ -611,6 +706,7 @@ export class City extends Scene {
     if (
       this.controls.paused ||
       this.review ||
+      this.questionDialog.open ||
       this.mission?.result ||
       this.missionInterrupted
     )
@@ -635,6 +731,9 @@ export class City extends Scene {
     });
     if (this.mission) {
       this.mission = this.createMission(this.mission.definition);
+      this.missionTokens = 0;
+      this.resultPresented = false;
+      this.updateProgressionHud();
       this.missionInterrupted = false;
       this.checkpointHint = undefined;
       this.controls.notice.textContent = '';
@@ -694,6 +793,7 @@ export class City extends Scene {
       this.controls.paused ||
       this.review ||
       this.dialogue.open ||
+      this.questionDialog.open ||
       this.phone.open ||
       this.missionInterrupted ||
       this.mission?.result
@@ -720,7 +820,6 @@ export class City extends Scene {
     return new MissionSystem(
       definition,
       this.world,
-      this.content.balans.misja.major_do_porazki,
       this.content.balans,
       definition.wyscig &&
         new MissionRace(
@@ -729,6 +828,7 @@ export class City extends Scene {
           this.world,
           this.content,
         ),
+      this.series.consecutive,
     );
   }
 
@@ -788,6 +888,8 @@ export class City extends Scene {
       this.missionInterrupted,
       this.checkpointHint,
       this.rider.speed,
+      this.missionTokens,
+      missionProgress.tokens,
     );
   }
 
@@ -870,6 +972,10 @@ export class City extends Scene {
       rider,
     );
     rider.phoneInHand = false;
+    for (const verdict of this.tickVerdicts) this.series.receive(verdict.kind);
+    if (this.tickVerdicts.length)
+      missionProgress.recordSeries(this.series.longest);
+    this.attention.step(this.tickVerdicts, rider.speed > 0);
     const effects = this.mission?.step(
       rider.pos,
       this.tickVerdicts,
@@ -882,6 +988,7 @@ export class City extends Scene {
           }
         : undefined,
       rider.speed,
+      Boolean(this.attention.pending),
     );
     this.updateRival();
     this.syncActorObstacles();
@@ -896,6 +1003,7 @@ export class City extends Scene {
       !major &&
       !effects?.respawn &&
       !this.mission?.result &&
+      !this.mission?.waitingForQuestion &&
       this.tickVerdicts.find(
         ({ kind, ruleId }) =>
           kind === 'minor' && !this.reviewedMinor.has(ruleId),
@@ -910,6 +1018,7 @@ export class City extends Scene {
     if (lesson) {
       if (lesson.kind === 'minor') this.reviewedMinor.add(lesson.ruleId);
       this.review = { verdict: lesson, elapsed: 0, shown: false };
+      this.updateProgressionHud();
       this.controls.clear();
       return;
     }
@@ -956,15 +1065,16 @@ export class City extends Scene {
     this.highlight.clear();
     this.cameras.main.setZoom(drivingZoom);
     this.controls.clear();
-    if (retry && !this.mission?.result)
+    if (retry && !this.mission?.result && !this.mission?.waitingForQuestion)
       this.returnToCheckpoint(this.mission?.rewindCheckpoint());
     else this.cameras.main.centerOn(this.rider.x, this.rider.y);
     this.feedback.reset(this.rules.counts);
     this.renderFrame(this.replay.frame(this.replay.size - 1)!, 0);
     this.updateDrivingHud(this.rider, this.controls.actions);
     this.updateMissionHud();
-    if (this.mission?.result) this.missionHud?.focusResult();
-    else this.missionHud?.focusEquipment();
+    if (this.showControlQuestion()) return;
+    this.presentMissionResult();
+    if (!this.mission?.result) this.missionHud?.focusEquipment();
   }
 
   private updateReview(delta: number) {
@@ -1019,6 +1129,7 @@ export class City extends Scene {
       this.controls.paused ||
       this.phone.open ||
       this.dialogue.open ||
+      this.questionDialog.open ||
       this.missionInterrupted ||
       this.mission?.result ||
       this.portraitTouch.matches
@@ -1042,9 +1153,15 @@ export class City extends Scene {
         this.message(ui.driving.collision);
       this.stepWorld();
       this.accumulator -= FIXED_STEP;
-      if (this.review || this.missionInterrupted || this.mission?.result) {
+      if (
+        this.review ||
+        this.attention.pending ||
+        this.missionInterrupted ||
+        this.mission?.result
+      ) {
         this.accumulator = 0;
-        if (!this.review) this.finishMissionDialogue();
+        if (!this.review && !this.showControlQuestion())
+          this.presentMissionResult();
         break;
       }
     }
@@ -1056,6 +1173,7 @@ export class City extends Scene {
       this.replay.frame(this.replay.size - 1)!,
       delta,
     );
+    this.updateProgressionHud();
     this.feedback.update(this.rules.at);
     this.eventNotice.update(
       this.trafficEvents.notice,
@@ -1219,7 +1337,7 @@ export class City extends Scene {
           y + dx * 5,
         );
     }
-    this.riderArt.draw(frame, reflected);
+    this.riderArt.draw(frame, reflected, !reviewing && this.series.glowing);
     this.eventArt.draw(frame.props, scale, at);
     const lighting = this.renderEnvironment;
     const time = dusk ? 'dusk' : 'day';

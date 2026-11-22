@@ -4,7 +4,8 @@ import type {
   MissionGoal,
 } from '../content/missions.ts';
 import type { GameContent } from '../content/schemas.ts';
-import { missionScore } from '../progression/missionScore.ts';
+import { MissionScore } from '../progression/missionScore.ts';
+import { missionStars, type Stars } from '../progression/missionRewards.ts';
 import type { MissionRace } from './MissionRace.ts';
 import { TICKS_PER_SECOND, type Vec2, type Verdict } from '../rules/types.ts';
 import {
@@ -31,7 +32,9 @@ export type MissionResult = Outcome & {
   verdicts: readonly Verdict[];
   timeBonusEligible: boolean;
   illegalShortcut: boolean;
-  points?: number;
+  points: number;
+  stars: Stars;
+  longestSeries: number;
   opponentScore?: number;
   shocks?: number;
   smoothBonus?: number;
@@ -93,18 +96,22 @@ export class MissionSystem {
   private ticks = 0;
   private goalIndex = 0;
   private requiredHabitSeen = false;
-  private goodHabits = 0;
-  private majorCount = 0;
+  private readonly score: MissionScore;
+  private delayedOutcome?: Outcome;
   private outcome?: MissionResult;
 
   constructor(
     readonly definition: MissionDefinition,
     world: Pick<WorldModel, 'pois' | 'zones' | 'triggers'> &
       Partial<Pick<WorldModel, 'signs' | 'raceRoutes'>>,
-    private readonly majorLimit = 3,
-    private readonly balance?: Pick<GameContent['balans'], 'misja' | 'combo'>,
+    private readonly balance: Pick<
+      GameContent['balans'],
+      'misja' | 'combo' | 'gwiazdki'
+    >,
     readonly race?: MissionRace,
+    initialStreak = 0,
   ) {
+    this.score = new MissionScore(balance, initialStreak);
     const poi = (id: string) => {
       const point = world.pois.get(id);
       if (!point)
@@ -170,7 +177,9 @@ export class MissionSystem {
   }
 
   private get goalTarget() {
-    return this.outcome ? undefined : this.goals[this.goalIndex];
+    return this.outcome || this.delayedOutcome
+      ? undefined
+      : this.goals[this.goalIndex];
   }
 
   get target() {
@@ -241,6 +250,24 @@ export class MissionSystem {
     return this.outcome;
   }
 
+  get points() {
+    return this.outcome?.points ?? this.score.points;
+  }
+
+  get waitingForQuestion() {
+    return this.delayedOutcome !== undefined;
+  }
+
+  answerQuestion(points: number) {
+    if (this.outcome) return;
+    this.score.points += points;
+    if (this.delayedOutcome) {
+      const outcome = this.delayedOutcome;
+      this.delayedOutcome = undefined;
+      this.finish(outcome);
+    }
+  }
+
   step(
     position: Vec2,
     verdicts: readonly Verdict[],
@@ -248,6 +275,7 @@ export class MissionSystem {
     forcedPending?: () => boolean,
     equipment?: Equipment,
     speed = 0,
+    questionPending = false,
   ): TickEffects | undefined {
     const target = this.goalTarget;
     if (!target) return;
@@ -272,29 +300,24 @@ export class MissionSystem {
     let major = false;
     for (const verdict of verdicts) {
       this.verdicts.push(verdict);
-      if (verdict.kind === 'good') {
-        this.goodHabits++;
-        if (verdict.ruleId === target.goal.wymagany_nawyk)
-          this.requiredHabitSeen = true;
-      }
-      if (verdict.kind === 'major') {
-        major = true;
-        this.majorCount++;
-      }
+      this.score.receive(verdict.kind);
+      if (
+        verdict.kind === 'good' &&
+        verdict.ruleId === target.goal.wymagany_nawyk
+      )
+        this.requiredHabitSeen = true;
+      major ||= verdict.kind === 'major';
     }
 
-    if (
-      this.failureConditions.has('major_x3') &&
-      this.majorCount >= this.majorLimit
-    ) {
-      this.finish({ status: 'failed', reason: 'major_x3' });
+    if (this.score.tooManyMajor) {
+      this.finish({ status: 'failed', reason: 'major_x3' }, questionPending);
       return;
     }
     if (
       this.failureConditions.has('czas_minal') &&
       this.remainingSeconds === 0
     ) {
-      this.finish({ status: 'failed', reason: 'czas_minal' });
+      this.finish({ status: 'failed', reason: 'czas_minal' }, questionPending);
       return;
     }
     const atTarget = this.preparingBike
@@ -334,15 +357,8 @@ export class MissionSystem {
     ) {
       this.goalIndex++;
       this.requiredHabitSeen = false;
-      if (this.goalIndex === this.goals.length) {
-        const opponent = this.race?.opponentScore;
-        const points = this.score(true)?.points;
-        this.finish(
-          opponent !== undefined && points !== undefined && points <= opponent
-            ? { status: 'failed', reason: 'wynik_wyscigu' }
-            : { status: 'completed' },
-        );
-      }
+      if (this.goalIndex === this.goals.length)
+        this.finish({ status: 'completed' }, questionPending);
     }
 
     this.saveCheckpoint(position);
@@ -368,38 +384,44 @@ export class MissionSystem {
     }
   }
 
-  private score(completed: boolean) {
-    return (
-      this.balance &&
-      missionScore(
-        this.balance,
-        this.definition,
-        this.elapsedSeconds,
-        this.verdicts,
-        completed,
-        this.shakeLevel,
-      )
+  private finish(outcome: Outcome, questionPending = false) {
+    if (questionPending) {
+      this.delayedOutcome = outcome;
+      return;
+    }
+    const score = this.score.result(
+      this.definition,
+      this.elapsedSeconds,
+      outcome.status === 'completed',
+      this.shakeLevel,
     );
-  }
-
-  private finish(outcome: Outcome) {
-    const score = this.score(
-      outcome.status === 'completed' || outcome.reason === 'wynik_wyscigu',
-    );
+    const opponent = this.race?.opponentScore;
+    if (
+      outcome.status === 'completed' &&
+      opponent !== undefined &&
+      score.points <= opponent
+    )
+      outcome = { status: 'failed', reason: 'wynik_wyscigu' };
     this.outcome = {
       ...outcome,
       missionId: this.definition.id,
       elapsedSeconds: this.elapsedSeconds,
       par_s: this.definition.par_s,
-      goodHabits: this.goodHabits,
+      goodHabits: this.score.goodHabits,
       verdicts: this.verdicts,
-      ...(score && { points: score.points }),
-      ...(this.race?.opponentScore !== undefined && {
-        opponentScore: this.race.opponentScore,
-      }),
+      points: score.points,
+      stars: missionStars(
+        this.balance.gwiazdki,
+        this.definition,
+        this.elapsedSeconds,
+        outcome.status === 'completed',
+        this.score,
+      ),
+      longestSeries: this.score.longest,
+      ...(opponent !== undefined && { opponentScore: opponent }),
       ...(this.shakeLevel !== undefined && {
         shocks: this.shakeLevel,
-        smoothBonus: score?.smoothBonus,
+        smoothBonus: score.smoothBonus,
       }),
       ...(this.photos.size > 0 && { photos: this.photos.size }),
       illegalShortcut: this.verdicts.some(
@@ -409,7 +431,7 @@ export class MissionSystem {
           highlight?.signId === this.shortcutSign?.id,
       ),
       timeBonusEligible:
-        outcome.status === 'completed' && this.majorCount === 0,
+        outcome.status === 'completed' && this.score.major === 0,
     };
   }
 }

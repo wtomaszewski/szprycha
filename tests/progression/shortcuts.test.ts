@@ -69,8 +69,11 @@ it.each(shortcuts)(
     ).timeBonus;
     const shortcutNetBonus =
       rule.waga_bledu === 'major' ? -kara_major : bonus_czasu_max - kara_minor;
-    expect(shortcutNetBonus).toBeLessThan(legalBonus);
-    expect(shortcutResult.points!).toBeLessThan(legalResult.points!);
+    const controlQuestionBonus = balance.uwaga_drogowki.bonus_madra_glowa;
+    expect(shortcutNetBonus + controlQuestionBonus).toBeLessThan(legalBonus);
+    expect(shortcutResult.points + controlQuestionBonus).toBeLessThan(
+      legalResult.points,
+    );
   },
 );
 

@@ -1,5 +1,6 @@
 import { expect as playwrightExpect, test, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
+import questions from '../../content/pytania.json' with { type: 'json' };
 import {
   warsawRoutes,
   type WarsawMissionId,
@@ -198,6 +199,21 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
           path: 'test-results/m4d-skrot-stop-klatka.png',
         });
         await lesson.getByRole('button', { name: pl.replay.resume }).click();
+        const question = page.getByRole('dialog', {
+          name: pl.progression.questionTitle,
+        });
+        const sign = questions.pytania.find(({ przepisy }) =>
+          przepisy.includes('ZNAK-B1'),
+        )!;
+        await question
+          .getByRole('button', {
+            name: sign.odpowiedzi[sign.poprawna],
+            exact: true,
+          })
+          .click();
+        await question
+          .getByRole('button', { name: pl.progression.continue })
+          .click();
         await expect(dialogue(page)).toBeVisible({ timeout: 12_000 });
       } else if (id === 'WAW-A1-04') {
         await routeWithGamepad(page, warsawRoutes[id].legal);

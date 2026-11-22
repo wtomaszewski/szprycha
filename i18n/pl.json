@@ -146,6 +146,21 @@
     "polecenie_oli": "Sierżant Ola: stój przed linią, niezależnie od światła.",
     "olaRusza": "Sierżant Ola: możesz ruszyć."
   },
+  "progression": {
+    "points": "Punkty",
+    "series": "Seria Bezpieczeństwa",
+    "record": "Najdłuższa Seria",
+    "missionSeries": "Najdłuższa seria w misji",
+    "attention": "Uwaga Drogówki",
+    "stars": "Gwiazdki",
+    "tokens": "Żetony",
+    "wallet": "Twoje żetony",
+    "dj": "DJ Dzwonek: Tak brzmi dobra jazda. Dzyń, dzyń!",
+    "questionTitle": "Pytanie kontrolne",
+    "olaIntro": "Zatrzymajmy się na chwilę i sprawdźmy, co pomoże następnym razem.",
+    "wiseHead": "Mądra Głowa",
+    "continue": "Ruszaj dalej"
+  },
   "missionUi": {
     "timer": "Czas misji",
     "direction": "Kierunek i odległość do celu",

@@ -1,3 +1,4 @@
+import { readContent } from '../../tools/content';
 import { describe, expect, it } from 'vitest';
 import { missionSchema } from '../../src/content/missions';
 import { MissionSystem } from '../../src/gameplay/MissionSystem';
@@ -7,6 +8,8 @@ import type {
   PointOfInterest,
   Zone,
 } from '../../src/rules/world/WorldModel';
+
+const { balans } = await readContent();
 
 const start = { id: 'start', x: 1, y: 1, width: 0, height: 0, heading: 0 };
 const pickup = { ...start, id: 'pickup', x: 8 };
@@ -68,7 +71,7 @@ function driveToCheckpoint(mission: MissionSystem) {
 
 describe('MissionSystem', () => {
   it('completes goals in order and records the mission result', () => {
-    const mission = new MissionSystem(definition, world);
+    const mission = new MissionSystem(definition, world, balans);
     expect(mission.start).toEqual({ x: 1, y: 1, heading: 0 });
     mission.step(destination, []);
     expect(mission.target?.goal.typ).toBe('dojedz');
@@ -84,6 +87,9 @@ describe('MissionSystem', () => {
       elapsedSeconds: 5 / 60,
       par_s: 25,
       goodHabits: 1,
+      points: 1550,
+      stars: 3,
+      longestSeries: 1,
       verdicts: [good],
       illegalShortcut: false,
       timeBonusEligible: true,
@@ -110,6 +116,7 @@ describe('MissionSystem', () => {
           ],
         },
         world,
+        balans,
       );
       for (let i = 0; i < 59; i++) mission.step(start, []);
       expect(mission.result).toBeUndefined();
@@ -125,7 +132,7 @@ describe('MissionSystem', () => {
   );
 
   it('fails at the third major verdict, even at the goal', () => {
-    const mission = new MissionSystem(definition, world);
+    const mission = new MissionSystem(definition, world, balans);
     driveToCheckpoint(mission);
     for (let i = 0; i < 2; i++) {
       expect(mission.step(destination, [major])?.respawn).toBeDefined();
@@ -138,6 +145,38 @@ describe('MissionSystem', () => {
       verdicts: [major, major, major],
       timeBonusEligible: false,
     });
+  });
+
+  it('counts a control answer before producing the result of the finishing tick', () => {
+    const mission = new MissionSystem(
+      { ...definition, cele: [{ typ: 'dojedz', poi: 'destination' }] },
+      world,
+      balans,
+    );
+    const minor = { ...major, kind: 'minor' } as const;
+    mission.step(
+      destination,
+      [minor],
+      undefined,
+      undefined,
+      undefined,
+      1,
+      true,
+    );
+    expect(mission.result).toBeUndefined();
+    const elapsed = mission.elapsedSeconds;
+    mission.step(destination, []);
+    expect(mission.elapsedSeconds).toBe(elapsed);
+    const bonus = balans.uwaga_drogowki.bonus_madra_glowa;
+    mission.answerQuestion(bonus);
+    expect(mission.result).toMatchObject({
+      status: 'completed',
+      stars: 2,
+      points: 1450,
+      elapsedSeconds: elapsed,
+    });
+    mission.answerQuestion(bonus);
+    expect(mission.result?.points).toBe(1450);
   });
 
   it('rewinds goal progress, preserving the clock, stage budget and verdicts', () => {
@@ -153,6 +192,7 @@ describe('MissionSystem', () => {
         ],
       },
       world,
+      balans,
     );
     expect(mission.step(start, [major])?.respawn).toEqual(mission.start);
     driveToCheckpoint(mission);
@@ -178,7 +218,7 @@ describe('MissionSystem', () => {
   });
 
   it('updates the checkpoint when the rider returns with more goals completed', () => {
-    const mission = new MissionSystem(definition, world);
+    const mission = new MissionSystem(definition, world, balans);
     mission.step(checkpoint, []);
     driveToCheckpoint(mission);
     mission.step(destination, [major]);
@@ -194,6 +234,7 @@ describe('MissionSystem', () => {
     const mission = new MissionSystem(
       { ...definition, zdarzenia_wymuszone: events },
       world,
+      balans,
     );
     expect(mission.step(checkpoint, [])?.events).toEqual(events.slice(0, 2));
     expect(mission.step(checkpoint, [major])?.respawn).toBeDefined();
@@ -204,7 +245,7 @@ describe('MissionSystem', () => {
 
   it('gives the same effects and result for the same positions and verdicts', () => {
     function run() {
-      const mission = new MissionSystem(definition, world);
+      const mission = new MissionSystem(definition, world, balans);
       const effects = [
         mission.step(start, [major]),
         mission.step(pickup, []),

@@ -1,11 +1,16 @@
 import { test, expect, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
+import questions from '../../content/pytania.json' with { type: 'json' };
 
 const tutorial = pl.misje['WAW-T-01'];
 const dialogue = (page: Page) =>
   page.getByRole('dialog', { name: pl.dialogueUi.title });
 const skipDialogue = (page: Page) =>
   dialogue(page).getByRole('button', { name: pl.dialogueUi.skip }).click();
+const questionDialog = (page: Page) =>
+  page.getByRole('dialog', { name: pl.progression.questionTitle });
+const questionFor = (rule: string) =>
+  questions.pytania.find(({ przepisy }) => przepisy.includes(rule))!;
 
 test('starts WAW-T-01 from the menu with a visible goal arrow and timer', async ({
   page,
@@ -71,6 +76,21 @@ test('recovers from a helmet mistake and finishes after stopping at B-20', async
   await expect(lesson).toBeHidden();
   await expect(canvas).toHaveAttribute('data-y', '928');
   await expect(canvas).toHaveAttribute('data-speed', '0');
+  const question = questionDialog(page);
+  const helmetQuestion = questionFor('KASK-01');
+  await expect(question).toContainText(helmetQuestion.pytanie);
+  await expect(page.getByLabel(pl.progression.attention)).toContainText('3/3');
+  await question
+    .getByRole('button', {
+      name: helmetQuestion.odpowiedzi[helmetQuestion.poprawna],
+      exact: true,
+    })
+    .click();
+  await expect(question.getByRole('status')).toHaveText(
+    `${pl.progression.wiseHead} +100`,
+  );
+  await expect(page.getByLabel(pl.progression.attention)).toContainText('0/3');
+  await question.getByRole('button', { name: pl.progression.continue }).click();
   await page.getByRole('button', { name: pl.missionUi.equip }).click();
 
   await page.keyboard.down('ArrowUp');
@@ -106,9 +126,10 @@ test('recovers from a helmet mistake and finishes after stopping at B-20', async
   ).toBeVisible();
 });
 
-test('shows the STOP retry hint and completes the tutorial after a full stop', async ({
+test('raises Road Attention for missed STOPs, explains the answer and grants stars', async ({
   page,
 }) => {
+  test.setTimeout(45_000);
   await page.goto('/');
   await page.getByRole('button', { name: tutorial.tytul }).click();
   await skipDialogue(page);
@@ -134,6 +155,35 @@ test('shows the STOP retry hint and completes the tutorial after a full stop', a
   await resume.click();
   await expect(resume).toBeHidden();
   await expect(page.getByText(tutorial.stop, { exact: true })).toBeVisible();
+  const attention = page.getByLabel(pl.progression.attention);
+  await expect(attention).toContainText('1/3');
+
+  await page.keyboard.down('ArrowUp');
+  await expect(resume).toBeVisible();
+  await page.keyboard.up('ArrowUp');
+  await expect(attention).toContainText('2/3');
+  await resume.click();
+
+  await page.keyboard.down('ArrowUp');
+  const question = questionDialog(page);
+  await expect(question).toBeVisible();
+  await page.keyboard.up('ArrowUp');
+  const stop = questionFor('ZNAK-STOP');
+  await expect(question).toContainText(stop.pytanie);
+  await expect(attention).toContainText('3/3');
+  const clock = await page.getByLabel(pl.missionUi.timer).textContent();
+  await page.screenshot({ path: 'test-results/m5a-pytanie.png' });
+  await question
+    .getByRole('button', { name: stop.odpowiedzi[0], exact: true })
+    .click();
+  await expect(question.getByRole('status')).toHaveText(stop.wyjasnienie);
+  await expect(attention).toContainText('1/3');
+  await expect(page.getByLabel(pl.missionUi.timer)).toHaveText(clock!);
+  await question.getByRole('button', { name: pl.progression.continue }).click();
+  await page.keyboard.down('ArrowUp');
+  await expect(resume).toBeVisible();
+  await page.keyboard.up('ArrowUp');
+  await resume.click();
 
   await page.keyboard.down('ArrowUp');
   await expect
@@ -150,9 +200,13 @@ test('shows the STOP retry hint and completes the tutorial after a full stop', a
   await expect(dialogue(page)).toBeVisible();
   await page.keyboard.up('ArrowUp');
   await skipDialogue(page);
-  await expect(
-    page.getByText(pl.missionUi.completed, { exact: true }),
-  ).toBeVisible();
+  const result = page.getByRole('region', { name: pl.missionUi.result });
+  await expect(result).toContainText(pl.missionUi.completed);
+  await expect(result).toContainText(`${pl.progression.stars} 1 ★`);
+  await expect(result).toContainText(pl.missionUi.yourPoints);
+  await expect(result).toContainText(`${pl.progression.missionSeries} 1`);
+  await expect(result).toContainText(`${pl.progression.tokens} +10`);
+  await page.screenshot({ path: 'test-results/m5a-wynik.png' });
 });
 
 test('opens SzprychaApp at a stop and plays the opening and closing dialogues', async ({

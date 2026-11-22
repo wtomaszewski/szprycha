@@ -307,6 +307,72 @@ button[aria-pressed='true'] {
   outline: 2px solid #ffcd75;
   color: #1a1c2c;
 }
+
+.progression-score,
+.progression-attention,
+.progression-radio {
+  position: absolute;
+  margin: 0;
+  padding: 4px 8px;
+  border: 1px solid #566c86;
+  background: #1a1c2cf5;
+  color: #f4f4f4;
+  font-size: 14px;
+}
+.progression-score {
+  top: 86px;
+  left: max(8px, env(safe-area-inset-left));
+  max-width: calc(100% - 205px);
+}
+.progression-score.glowing,
+.progression-radio {
+  border-color: #73eff7;
+  color: #73eff7;
+}
+.progression-radio {
+  bottom: max(174px, env(safe-area-inset-bottom));
+  left: 50%;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  transform: translateX(-50%);
+  text-align: center;
+}
+.progression-attention {
+  top: 90px;
+  right: max(8px, env(safe-area-inset-right));
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.progression-whistles {
+  display: flex;
+  gap: 3px;
+}
+.progression-whistles span {
+  width: 11px;
+  height: 9px;
+  background: #8995a6;
+  clip-path: polygon(0 0, 100% 0, 100% 44%, 62% 44%, 62% 100%, 0 100%);
+}
+.progression-whistles .active {
+  background: #ffcd75;
+}
+@media (max-height: 500px) {
+  .progression-score,
+  .progression-attention {
+    font-size: 12px;
+  }
+  .progression-score {
+    top: 52px;
+  }
+  .progression-attention {
+    top: 80px;
+  }
+  .progression-radio {
+    bottom: max(134px, env(safe-area-inset-bottom));
+  }
+}
+
 .mission-panel,
 .mission-timer,
 .mission-summary {
@@ -316,7 +382,7 @@ button[aria-pressed='true'] {
   padding: 8px 12px;
 }
 .mission-panel {
-  top: 86px;
+  top: 118px;
   left: max(8px, env(safe-area-inset-left));
   max-width: min(380px, calc(100% - 125px));
 }
@@ -341,7 +407,7 @@ button[aria-pressed='true'] {
   pointer-events: auto;
 }
 .mission-timer {
-  top: 92px;
+  top: 122px;
   right: max(8px, env(safe-area-inset-right));
   font-size: 22px;
   font-variant-numeric: tabular-nums;
@@ -400,16 +466,19 @@ button[aria-pressed='true'] {
   margin: 0;
   color: #ffcd75;
 }
+.mission-rewards {
+  color: #ffcd75;
+}
 .mission-summary button {
   margin: 2px 4px;
 }
 @media (max-height: 500px) {
   .mission-panel {
-    top: 54px;
+    top: 80px;
     font-size: 14px;
   }
   .mission-timer {
-    top: 82px;
+    top: 108px;
     font-size: 18px;
   }
   .mission-navigation {
@@ -566,6 +635,27 @@ button[aria-pressed='true'] {
     min-height: 56px;
     min-width: 56px;
   }
+}
+
+.control-question {
+  width: 550px;
+  background: #1a1c2cf5;
+}
+.control-question::backdrop {
+  background: linear-gradient(transparent 40%, #1a1c2cbb);
+}
+.control-question p {
+  margin: 4px 0 8px;
+}
+.control-question-prompt {
+  font-size: 19px;
+}
+.control-question-answers:not([hidden]) {
+  display: grid;
+  gap: 6px;
+}
+.control-question-answers button {
+  text-align: left;
 }
 
 .replay-dialog {
