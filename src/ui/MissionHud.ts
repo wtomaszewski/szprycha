@@ -10,6 +10,10 @@ function setText(element: HTMLElement, text: string) {
   if (element.textContent !== text) element.textContent = text;
 }
 
+function setHidden(element: HTMLElement, hidden: boolean) {
+  if (element.hidden !== hidden) element.hidden = hidden;
+}
+
 export class MissionHud {
   private readonly title = document.createElement('strong');
   private readonly instruction = document.createElement('p');
@@ -37,6 +41,9 @@ export class MissionHud {
   private readonly resultText = document.createElement('p');
   private readonly confetti = document.createElement('div');
   private readonly retryButton = document.createElement('button');
+  private displayedTitle?: string;
+  private displayedSeconds?: number;
+  private displayedDistance?: number;
   private displayedResult: MissionSystem['result'];
   private resultRevealed = false;
 
@@ -55,6 +62,7 @@ export class MissionHud {
     this.instruction.setAttribute('role', 'status');
     this.parcel.className = 'mission-parcel';
     this.shocks.max = 1;
+    this.shocks.value = 0;
     this.parcel.append(ui.missionUi.shocks, this.shocks);
     this.photo.type = 'button';
     this.photo.textContent = ui.missionUi.photograph;
@@ -153,24 +161,35 @@ export class MissionHud {
     tokensAwarded: number,
     tokenBalance: number,
   ) {
-    const { target, result, remainingSeconds, elapsedSeconds } = mission;
-    setText(this.title, translate(mission.definition.tytul));
-    this.instruction.hidden = !target;
-    this.equip.hidden = !!result || helmetFastened;
-    this.lights.hidden = !mission.preparingBike || lightsOn;
-    this.resume.hidden = !!result || !interrupted;
-    this.timer.hidden = !!result;
-    this.navigation.hidden = !!result || mission.preparingBike;
-    this.summary.hidden = !result;
+    const { target, result, remainingSeconds, elapsedSeconds, shakeLevel } =
+      mission;
+    const title = mission.definition.tytul;
+    if (this.displayedTitle !== title) {
+      this.title.textContent = translate(title);
+      this.displayedTitle = title;
+    }
+    const preparing = mission.preparingBike;
+    setHidden(this.instruction, !target);
+    setHidden(this.equip, !!result || helmetFastened);
+    setHidden(this.lights, !preparing || lightsOn);
+    setHidden(this.resume, !!result || !interrupted);
+    setHidden(this.timer, !!result);
+    setHidden(this.navigation, !!result || preparing);
+    setHidden(this.summary, !result);
     if (!result) this.resultRevealed = false;
-    this.confetti.hidden =
-      !this.resultRevealed || result?.status !== 'completed';
-    this.parcel.hidden = !!result || mission.shakeLevel === undefined;
-    if (mission.shakeLevel !== undefined)
-      this.shocks.value = mission.shakeLevel;
-    this.photo.hidden = target?.goal.typ !== 'sfotografuj';
-    this.photo.disabled =
-      interrupted || !mission.canPhotograph(position, speed);
+    setHidden(
+      this.confetti,
+      !this.resultRevealed || result?.status !== 'completed',
+    );
+    setHidden(this.parcel, !!result || shakeLevel === undefined);
+    if (shakeLevel !== undefined && this.shocks.value !== shakeLevel)
+      this.shocks.value = shakeLevel;
+    const photoGoal = target?.goal.typ === 'sfotografuj';
+    setHidden(this.photo, !photoGoal);
+    const photoDisabled =
+      interrupted || !photoGoal || !mission.canPhotograph(position, speed);
+    if (this.photo.disabled !== photoDisabled)
+      this.photo.disabled = photoDisabled;
 
     if (result && this.displayedResult !== result) {
       const label =
@@ -223,7 +242,7 @@ export class MissionHud {
     setText(
       this.instruction,
       checkpointHint ??
-        (helmetFastened || mission.preparingBike
+        (helmetFastened || preparing
           ? target.eventWaypoint
             ? ui.missionUi.eventWaypoint
             : target.goal.opis
@@ -231,14 +250,14 @@ export class MissionHud {
               : ui.missionUi.goals[target.goal.typ]
           : ui.missionUi.helmetHint),
     );
-    setText(
-      this.timer,
-      clock(
-        remainingSeconds === undefined
-          ? Math.floor(elapsedSeconds)
-          : Math.ceil(remainingSeconds),
-      ),
-    );
+    const seconds =
+      remainingSeconds === undefined
+        ? Math.floor(elapsedSeconds)
+        : Math.ceil(remainingSeconds);
+    if (this.displayedSeconds !== seconds) {
+      this.timer.textContent = clock(seconds);
+      this.displayedSeconds = seconds;
+    }
     this.drawArrow(
       target.position.x - position.x,
       target.position.y - position.y,
@@ -249,14 +268,15 @@ export class MissionHud {
     const { width, height } = this.navigationSize;
     if (width === 0 || height === 0) return;
     const magnitude = Math.max(Math.abs(dx) / width, Math.abs(dy) / height);
-    const x = magnitude === 0 ? 100 : 50 + (50 * dx) / (width * magnitude);
-    const y = magnitude === 0 ? 50 : 50 + (50 * dy) / (height * magnitude);
-    this.arrow.style.left = `${x}%`;
-    this.arrow.style.top = `${y}%`;
+    const x = magnitude === 0 ? width : (width + dx / magnitude) / 2;
+    const y = magnitude === 0 ? height / 2 : (height + dy / magnitude) / 2;
+    this.arrow.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
     this.bearing.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
-    const distance = `${Math.round(Math.hypot(dx, dy))} ${ui.missionUi.distanceUnit}`;
-    if (this.distance.textContent !== distance) {
-      setText(this.distance, distance);
+    const pixels = Math.round(Math.hypot(dx, dy));
+    if (this.displayedDistance !== pixels) {
+      this.displayedDistance = pixels;
+      const distance = `${pixels} ${ui.missionUi.distanceUnit}`;
+      this.distance.textContent = distance;
       this.arrow.setAttribute(
         'aria-label',
         `${ui.missionUi.direction} · ${distance}`,

@@ -1414,7 +1414,7 @@ export class City extends Scene {
     const canvas = this.game.canvas;
     if (canvas.dataset.lighting !== time) canvas.dataset.lighting = time;
     this.renderEnvironment.time = frame.dusk ? 'dusk' : 'day';
-    this.road.updateLights(Math.max(0, at), this.renderEnvironment);
+    this.road.updateLights(camera, Math.max(0, at), this.renderEnvironment);
     return sirenVolume;
   }
 }

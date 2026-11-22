@@ -44,13 +44,14 @@ export class TrafficEventNotice {
       this.text.textContent = text ?? '';
       this.displayed = text;
     }
-    this.root.hidden = !notice;
+    if (this.root.hidden === Boolean(notice)) this.root.hidden = !notice;
     const phone = id === 'telefon_dzwoni';
     const offer = id === 'kolega_podwozka';
-    this.action.hidden = !notice || notice?.answered || (!phone && !offer);
-    if (!this.action.hidden)
-      this.action.textContent = phone
-        ? ui.trafficEvents.answer
-        : ui.trafficEvents.decline;
+    const hidden = !notice || notice.answered || (!phone && !offer);
+    if (this.action.hidden !== hidden) this.action.hidden = hidden;
+    if (!hidden) {
+      const label = phone ? ui.trafficEvents.answer : ui.trafficEvents.decline;
+      if (this.action.textContent !== label) this.action.textContent = label;
+    }
   }
 }

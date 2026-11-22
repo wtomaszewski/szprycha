@@ -219,6 +219,7 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
           name: pl.missionUi.shocks,
         });
         await expect(shocks).toBeVisible();
+        await expect(shocks).toHaveAttribute('value', '0');
         await routeWithGamepad(page, warsawRoutes[id].legal);
         await expect(
           page.getByText(pl.trafficEvents.turysci_na_starowce, { exact: true }),
