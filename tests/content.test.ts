@@ -103,6 +103,7 @@ describe('canonical content', () => {
           'assets',
           'maps',
           'index.html',
+          'LICENSE',
           'package.json',
           'tsconfig.json',
           'vite.config.ts',

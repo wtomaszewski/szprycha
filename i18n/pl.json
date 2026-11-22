@@ -1138,6 +1138,12 @@
       "epilog": "Witaj w ekipie, Klemensie, czeka na nas nowy plac manewrowy."
     }
   },
+  "settings": {
+    "title": "Ustawienia",
+    "about": "O grze / Licencje",
+    "back": "Wróć do ustawień",
+    "thirdParty": "Licencje komponentów zewnętrznych"
+  },
   "m5c": {
     "album": "Album Znaków",
     "achievements": "Osiągnięcia",

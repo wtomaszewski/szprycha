@@ -33,9 +33,10 @@ Ty (Codex) budujesz całą grę: kod, silnik zasad, testy, narzędzia, grafiki z
 3. **Bez przemocy.** Brak krwi, zniszczeń, potrąceń z obrażeniami. Kolizja / bliskie zdarzenie = „UPS!”, stop-klatka, lekcja, powtórka. Pojazdy AI zawsze hamują przed graczem (nigdy go „nie zabijają”), ale wykrywamy, że gracz *spowodował* sytuację niebezpieczną.
 4. **Nauka przez akcję, nie przez wykład.** Maks. 1 zdanie wyjaśnienia na raz (≤140 znaków), zawsze w kontekście tego, co się właśnie stało. Żadnych ekranów z blokami tekstu w trakcie misji.
 5. **Prywatność dziecka.** Domyślnie zero danych osobowych, zero zewnętrznej analityki i reklam, brak czatu, brak wolnego tekstu od użytkownika (nicki z generatora). Szczegóły: `docs/09`.
-6. **Bez cudzych marek.** Nie używaj nazw/assetów GTA, logotypów klubów, nazw sponsorskich stadionów (piszemy „Stadion Narodowy”, „Stadion Wrocław”), logotypów sklepów, prawdziwych rzeźb krasnali (projektujemy własne krasnale). Wszystkie assety własne, wygenerowane albo na licencji CC0/OFL (zapisz licencję w `assets/LICENSES.md`).
+6. **Bez cudzych marek.** Nie używaj nazw/assetów GTA, logotypów klubów, nazw sponsorskich stadionów (piszemy „Stadion Narodowy”, „Stadion Wrocław”), logotypów sklepów, prawdziwych rzeźb krasnali (projektujemy własne krasnale). Zasoby własne lub wyjątki opisane w polityce licencji.
 7. **Polskie znaki wszędzie.** Font pikselowy musi mieć ą ę ć ł ń ó ś ź ż (+ wielkie). Dodaj test wizualny/jednostkowy renderowania pangramu „Zażółć gęślą jaźń”.
 8. **Deterministyczny silnik zasad** — czysty TypeScript bez zależności od Phasera, testowalny w Node (vitest), z testami scenariuszowymi.
+9. **Licencje przy wydaniu komercyjnym.** Każdy PR stosuje zasady z `docs/LICENCJE.md`. Zweryfikuj licencje nowych zależności i osadzonego kodu, uruchom `npm run licenses:check` i uzupełnij `assets/LICENSES.md` dla każdego zasobu z zewnątrz.
 
 ---
 

@@ -1,3 +1,5 @@
+import copyright from '../../LICENSE?raw';
+import notices from 'virtual:third-party-notices';
 import type { GameContent } from '../content/schemas';
 import { translate, ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
@@ -34,26 +36,58 @@ export function progressPanels(
   const body = document.createElement('div');
   dialog.append(header, body);
 
+  const about = document.createElement('button');
+  about.type = 'button';
+  about.textContent = ui.settings.about;
+  const settings = () => [
+    heading(ui.m5c.breakSettings),
+    breakSettings(progress, content),
+    about,
+  ];
+
+  function showPanel(label: string, ...elements: HTMLElement[]) {
+    title.textContent = label;
+    body.replaceChildren(...elements);
+    if (!dialog.open) dialog.showModal();
+    dialog.scrollTop = 0;
+  }
+
   const navigation = document.createElement('nav');
   navigation.className = 'menu-progress';
   for (const [label, render] of [
     [ui.m5c.album, () => album(progress, content)],
     [ui.m5c.achievements, () => achievements(progress, content)],
     [ui.m5c.daily, () => daily(progress, content)],
-    [ui.m5c.breakSettings, () => breakSettings(progress, content)],
+    [ui.settings.title, settings],
   ] as const) {
     const button = document.createElement('button');
     button.type = 'button';
     button.textContent = label;
     button.setAttribute('aria-haspopup', 'dialog');
-    button.addEventListener('click', () => {
-      title.textContent = label;
-      body.replaceChildren(...render());
-      dialog.showModal();
-      dialog.scrollTop = 0;
-    });
+    button.addEventListener('click', () => showPanel(label, ...render()));
     navigation.append(button);
   }
+
+  about.addEventListener('click', () => {
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.textContent = ui.settings.back;
+    back.addEventListener('click', () => {
+      showPanel(ui.settings.title, ...settings());
+      about.focus();
+    });
+    const text = document.createElement('pre');
+    text.className = 'third-party-notices';
+    text.textContent = notices;
+    showPanel(
+      ui.settings.about,
+      back,
+      paragraph(copyright.trim()),
+      heading(ui.settings.thirdParty),
+      text,
+    );
+    back.focus();
+  });
   return { dialog, navigation };
 }
 
@@ -176,5 +210,7 @@ function breakSettings(progress: MissionProgress, content: GameContent) {
     progress.setBreakMinutes(Number(select.value), balance),
   );
   label.append(ui.m5c.breakAfter, ' ', select);
-  return [label];
+  const p = document.createElement('p');
+  p.append(label);
+  return p;
 }
