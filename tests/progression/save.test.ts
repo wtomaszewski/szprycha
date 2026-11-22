@@ -62,7 +62,7 @@ it('migrates the M5a localStorage profile and retires it after the commit', asyn
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 7,
+    version: 8,
     missionPoints: 0,
     mastery: {},
   });
@@ -94,7 +94,7 @@ it('upgrades an IndexedDB v1 record and prefers it over remaining localStorage',
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 7,
+    version: 8,
     bestScores: {},
     quizXp: 0,
   });
@@ -117,7 +117,7 @@ it.each(['legacy', 'indexeddb'])(
     const store = await ProgressStore.open(factory, storage);
     expect(store).toMatchObject({ reset: true, sessionOnly: false });
     expect(store.profile).toMatchObject({
-      version: 7,
+      version: 8,
       completed: [],
       missionPoints: 0,
     });
@@ -168,7 +168,7 @@ it('preserves M5b progress when adding the album and milestone counters', async 
   expect(store.reset).toBe(false);
   expect(store.profile).toMatchObject({
     ...profile,
-    version: 7,
+    version: 8,
     signPhotos: {},
     goodHabits: {},
     cleanMissions: {},
@@ -210,7 +210,7 @@ it('adds empty quiz progress to a v3 profile without changing its existing field
   expect(store.reset).toBe(false);
   expect(store.profile).toEqual({
     ...v3,
-    version: 7,
+    version: 8,
     audio,
     reducedEffects,
     reflectiveVest,
@@ -251,7 +251,7 @@ it('migrates a v5 licence profile and saves audio changes alongside existing pro
   expect(first.reset).toBe(false);
   expect(first.profile).toEqual({
     ...previous,
-    version: 7,
+    version: 8,
     audio: defaultAudio,
     reducedEffects,
     reflectiveVest,
@@ -269,7 +269,7 @@ it('migrates a v5 licence profile and saves audio changes alongside existing pro
   await Promise.all([first.flush(), second.flush()]);
   expect((await ProgressStore.open(factory)).profile).toEqual({
     ...previous,
-    version: 7,
+    version: 8,
     audio: { ...audio, music: 0.34, station: 'talk', muted: true },
     reducedEffects,
     reflectiveVest,
@@ -305,7 +305,7 @@ it('migrates audio settings from v6 and persists the ride preferences', async ()
   const store = await ProgressStore.open(factory);
   expect(store.reset).toBe(false);
   expect(store.profile).toMatchObject({
-    version: 7,
+    version: 8,
     reducedEffects,
     reflectiveVest,
     audio: { music: 0.34 },
@@ -322,9 +322,43 @@ it('migrates audio settings from v6 and persists the ride preferences', async ()
   });
 });
 
+it('upgrades the existing accessibility preferences and saves a touch layout alongside them', async () => {
+  const factory = new IDBFactory();
+  const previous = {
+    ...new ProgressStore().profile,
+    version: 7,
+    missionPoints: 800,
+    resultsTextSize: 'largest',
+    resultsHighContrast: true,
+    reducedEffects: true,
+  };
+  await seed(factory, previous);
+  const store = await ProgressStore.open(factory);
+  expect(store.reset).toBe(false);
+  expect(store.profile).toEqual({ ...previous, version: 8 });
+  const touchLayout = [
+    'brake',
+    'left',
+    'look',
+    'right',
+    'bell',
+    'lights',
+    'dismount',
+  ] as const;
+  store.change((profile) => {
+    profile.touchLayout = [...touchLayout];
+  });
+  await store.flush();
+  expect((await ProgressStore.open(factory)).profile).toEqual({
+    ...previous,
+    version: 8,
+    touchLayout,
+  });
+});
+
 it('preserves an unsupported future save', async () => {
   const factory = new IDBFactory();
-  const future = { version: 8, data: 'future' };
+  const future = { version: 9, data: 'future' };
   await seed(factory, future);
   const store = await ProgressStore.open(factory);
   expect(store).toMatchObject({ reset: false, sessionOnly: true });
