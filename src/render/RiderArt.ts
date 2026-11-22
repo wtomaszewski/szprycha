@@ -27,7 +27,13 @@ export class RiderArt {
     this.effects = scene.add.graphics().setDepth(19);
   }
 
-  draw(frame: ReplayFrame, reflected: boolean) {
+  draw(
+    frame: Pick<
+      ReplayFrame,
+      'at' | 'actions' | 'dismountAt' | 'rider' | 'riderStride'
+    >,
+    reflected: boolean,
+  ) {
     const { rider, actions, at } = frame;
     const x = Math.round(rider.x);
     const y = Math.round(rider.y);

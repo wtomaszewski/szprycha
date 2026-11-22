@@ -25,12 +25,11 @@ Stan: 21.11.2026. Przeczytano AGENTS.md, dokumenty w kolejności §1, wszystkie 
 - **Skrót może się opłacać przy obecnych liczbach:** kara minor 150 jest mniejsza niż maksymalny bonus czasu 500. Sam balans nie gwarantuje nadrzędnej zasady. M5 musi testować każdą trasę i zysk czasu, zanim misja zostanie dopuszczona.
 - **Opcjonalne odblaski:** WYP-06 jest zaleceniem/bonusem, ale ma waga_bledu: minor. Nie karać za brak zalecenia; przed M2/M5 oddzielić nagradzanie od naruszeń.
 - **Wagi i nakładające się reguły:** docs/07 dopuszcza minor przy TTC <2 s, choć PIER-* domyślnie mają major. GDZIE-09 i ZNAK-B9 mają różne wagi dla zakazu; MSC-03/PIER-06 i WYP-04/05/MSC-04 mogą podwójnie punktować jedno zdarzenie. Potrzebna tabela priorytetów i deduplikacja przed M2.
-- **Zakres detektorów:** DoD M3 mówi o detektorze albo quiz-only, natomiast dane poprawnie rozróżniają też garaz, scenka i plac. Nie wymuszać detektorów symulacyjnych dla tych typów; raport pokrycia powinien uwzględnić ich osobne implementacje.
+- **Zakres detektorów:** Raport pokrycia pokazuje osobne detektory i geometrię ćwiczeń `plac`. Dane rozróżniają również typy `garaz`, `scenka` i `quiz-only`.
 - **Pierwsza pomoc a przedstawienie zdarzeń:** AGENTS zabrania karetki z poszkodowanym dzieckiem, M07 opisuje odjazd na kontrolę. Przed M4/M7 ustalić neutralne zakończenie bez pokazywania transportu. PP-04 i scenariusze wymagają recenzji ratownika, bez dorabiania zaleceń w kodzie.
 - **Wiek:** docs/09 przewiduje przedziały, docs/07 liczbowy RiderState.age. Propozycja: lokalny przedział i wyprowadzane uprawnienia, bez zbierania daty urodzenia. Uzgodnić granice „do 10 lat” / „poniżej 10” z konsultantem.
 - **Materiały nie są dowodem aktualności prawa:** stan_prawny i weryfikacja:false pochodzą z paczki. M0 weryfikuje strukturę, nie potwierdza prawdziwości przepisów. KASK-01, daty reform i całość banku także wymagają końcowej recenzji wskazanej w docs/zrodla_i_stan_prawny.md.
 - **Obrazek Q024:** B-2+T-22 jest kompozycją dwóch znaków, nie pojedynczym kodem albumu. Przyszły loader ilustracji powinien rozpoznawać kompozycje; M0 nie ładuje ilustracji quizu.
-- **Egzamin praktyczny:** 90% z sześciu binarnych elementów oznacza w praktyce 6/6; sposób liczenia punktów i progi wymagają decyzji przed M7.
 - **Zakres CI:** Android/iOS z ogólnego stosu dopiero w M9. M0 ma CI web: instalacja, lint, format, vitest, build i smoke Playwright. Repozytorium GitHub zostało podłączone; CI dla M0 przeszło na Ubuntu / Node 24 (run 44895919210).
 
 ## c) Reguły weryfikacja: true — lista do konsultanta
@@ -191,3 +190,9 @@ Poniżej zestawienie zmian do przejrzenia przez konsultanta merytorycznego (pier
 - Mostowy maraton liczy 12 przepraw przez cztery istniejące mosty i kładki. Krótkie zlecenia miejscowe i scenka pierwszej pomocy mogą trwać poniżej dwóch minut.
 - Scenka pierwszej pomocy korzysta z czterech wyborów w dialogu, tak jak kampania Warszawy. Ratownik lub nauczyciel EDB powinien sprawdzić scenkę, w tym reakcję na osobę nieprzytomną, która oddycha (PP-04).
 - Wrocław używa też reguł oznaczonych do weryfikacji w treści gry. Należy sprawdzić między innymi pierwszeństwo przy skręcie i na przejeździe (PIER-04, PIER-05), przejazd przy niepełnym oznakowaniu (GDZIE-03b) i warunki korzystania z chodnika podczas pogody (GDZIE-04).
+
+## M7a — plac manewrowy
+
+- Zastosowano decyzję [#7](https://github.com/wtomaszewski/szprycha/issues/7) o punktacji 1 / 0,5 / 0 i progu 90%. Dotknięcie linii lub pachołka, częściowe zatrzymanie poza polem oraz poślizg obniżają ocenę do 0,5. Wyjazd środkiem roweru za linię, podparcie, ominięcie pachołka z niewłaściwej strony, zatrzymanie całego roweru poza polem, brak wymaganej sekwencji lub sygnału i upływ czasu dają 0.
+- Podparcie w ósemce jest symulowane po utracie prędkości i krótkim postoju w trakcie przejazdu. Przed wydaniem trzeba porównać elementy i kryteria gry z aktualnymi wymaganiami egzaminu szkolnego. Reguły PLAC-01…06 pozostają na liście do konsultacji w §c.
+- Medale i lokalny ranking dotyczą czystych przejazdów wszystkich sześciu elementów. Zmiana geometrii lub fizyki rozpoczyna ranking od nowa. Progi medalowe można dostroić w `content/balans.yaml`.

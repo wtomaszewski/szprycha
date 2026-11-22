@@ -6,7 +6,7 @@ Sytuacje odpowiadają tabeli pokrycia w [dokumentacji map](05_mapy.md). Wiersz z
 
 W każdym mieście moduł jest pokryty, gdy wykryto co najmniej jedną jego regułę w misjach. Moduły wspólnego hubu są liczone informacyjnie, także z obiektów mapy. Raport przypisuje misje do mapy, na której się odbywają. Kolumna mapy obejmuje reguły powiązane z wykrytymi obiektami, a kolumna misji obejmuje reguły deklarowane i wykryte w celach, zdarzeniach oraz miejscach misji.
 
-Aby odtworzyć raport, uruchom `npm run coverage:maps`. Opcja `--strict` (po separatorze `--`) zapisuje raport i kończy się błędem, jeśli w którymkolwiek mieście brakuje mapy, sytuacji lub całego modułu.
+Aby odtworzyć raport, uruchom `npm run coverage:maps`. Opcja `--strict` (po separatorze `--`) zapisuje raport i kończy się błędem, jeśli w którymkolwiek mieście brakuje mapy, sytuacji lub całego modułu albo brakuje pokrycia reguł placu.
 
 ## Warszawa
 
@@ -109,3 +109,16 @@ Mapa [miasteczko.tmj](../maps/miasteczko.tmj)
 | M07 | ✗ | — | — |
 
 **Pokrycie** 7/13 sytuacji, 6/7 modułów.
+
+## Plac manewrowy (M08)
+
+Pokrycie reguł typu `plac` wymaga osobnego detektora ćwiczenia oraz geometrii w [plac.yaml](../content/plac.yaml).
+
+| Reguła | Ćwiczenie | Pokrycie |
+| --- | --- | :---: |
+| `PLAC-01` | Ósemka | ✓ |
+| `PLAC-02` | Slalom | ✓ |
+| `PLAC-03` | Wąski tor | ✓ |
+| `PLAC-04` | Zatrzymanie w wyznaczonym miejscu | ✓ |
+| `PLAC-05` | Ruszanie z sygnalizacją | ✓ |
+| `PLAC-06` | Jazda z jedną ręką (sygnalizowanie skrętu) | ✓ |

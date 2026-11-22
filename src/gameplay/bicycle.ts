@@ -26,6 +26,13 @@ export interface DriveInput {
   y: number;
   brake: boolean;
   scheme: Scheme;
+  brakePressure?: number;
+}
+
+export interface RiderTuning {
+  maxSpeed: number;
+  brakeForce: number;
+  driftAngle: number;
 }
 export const METERS_PER_PIXEL = 1.5 / 32;
 export const FIXED_STEP = 1 / 60;
@@ -67,9 +74,10 @@ export function stepRider(
   width: number,
   height: number,
   dt = FIXED_STEP,
+  tuning?: RiderTuning,
 ): boolean {
   const magnitude = Math.min(1, Math.hypot(input.x, input.y));
-  const limit = r.walking ? 32 : 150;
+  const limit = r.walking ? 32 : (tuning?.maxSpeed ?? 150);
   let target = 0;
   if (input.scheme === 'simple') {
     if (magnitude > 0.12) {
@@ -89,7 +97,11 @@ export function stepRider(
   r.speed = approach(
     r.speed,
     brake ? 0 : target,
-    (brake ? BRAKE_DECELERATION : target > r.speed ? 70 : 40) * dt,
+    (brake
+      ? (tuning?.brakeForce ?? BRAKE_DECELERATION)
+      : target > r.speed
+        ? 70
+        : 40) * dt,
   );
   const onCurb =
     !r.walking &&
@@ -100,8 +112,9 @@ export function stepRider(
   const travel = r.speed * dt;
   // Sweep in <=2 px increments to avoid tunnelling through thin walls.
   const steps = Math.max(1, Math.ceil(travel / 2));
-  const dx = (Math.cos(r.heading) * travel) / steps,
-    dy = (Math.sin(r.heading) * travel) / steps;
+  const direction = r.heading + (tuning?.driftAngle ?? 0);
+  const dx = (Math.cos(direction) * travel) / steps,
+    dy = (Math.sin(direction) * travel) / steps;
   for (let i = 0; i < steps; i++) {
     const x = r.x + dx,
       y = r.y + dy;

@@ -1,0 +1,57 @@
+# Współrzędne w pikselach planszy. Na odcinkach prostych kierunek jazdy to +X.
+width: 640
+height: 360
+exercises:
+  PLAC-01:
+    start: { x: 320, y: 178, heading: -0.67 }
+    hint: plac.hints.figureEight
+    halfWidth: 32
+    gateRadius: 23
+    path:
+      - { x: 320, y: 178 }
+      - { x: 389, y: 123 }
+      - { x: 454, y: 119 }
+      - { x: 487, y: 175 }
+      - { x: 455, y: 232 }
+      - { x: 388, y: 234 }
+      - { x: 320, y: 178 }
+      - { x: 251, y: 123 }
+      - { x: 186, y: 119 }
+      - { x: 153, y: 175 }
+      - { x: 185, y: 232 }
+      - { x: 252, y: 234 }
+      - { x: 320, y: 178 }
+    cones:
+      - { x: 421, y: 151, radius: 7 }
+      - { x: 219, y: 151, radius: 7 }
+  PLAC-02:
+    start: { x: 104, y: 175, heading: 0 }
+    hint: plac.hints.slalom
+    finishX: 535
+    gates:
+      - { x: 183, y: 175, radius: 7, side: above }
+      - { x: 252, y: 175, radius: 7, side: below }
+      - { x: 321, y: 175, radius: 7, side: above }
+      - { x: 390, y: 175, radius: 7, side: below }
+      - { x: 459, y: 175, radius: 7, side: above }
+  PLAC-03:
+    start: { x: 106, y: 175, heading: 0 }
+    hint: plac.hints.narrow
+    finishX: 518
+    halfWidth: 18
+  PLAC-04:
+    start: { x: 106, y: 175, heading: 0 }
+    hint: plac.hints.stop
+    stopBox: { x: 439, y: 150, width: 58, height: 50 }
+    stopTolerance: 22
+  PLAC-05:
+    start: { x: 106, y: 175, heading: 0 }
+    hint: plac.hints.start
+    finishX: 455
+  PLAC-06:
+    start: { x: 106, y: 175, heading: 0 }
+    hint: plac.hints.oneHand
+    finishX: 528
+    halfWidth: 29
+    signalFromX: 172
+    signal: left

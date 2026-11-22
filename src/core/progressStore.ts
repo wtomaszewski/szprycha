@@ -2,6 +2,7 @@ import { update, type UseStore } from 'idb-keyval';
 import { z } from 'zod';
 import { missionCity } from '../content/missions';
 import type { GameContent } from '../content/schemas';
+import { placRecordsSchema } from '../gameplay/plac/placRecords';
 import { applyMastery, localDay } from '../progression/mastery';
 import type { Milestones } from '../progression/milestones';
 import { TICKS_PER_SECOND, type Verdict } from '../rules/types';
@@ -77,6 +78,7 @@ const profileSchema = m5bProfileSchema.extend({
   stickers: z.array(id),
   gnomes: z.array(id).optional(),
   selectedCity: missionCity.optional(),
+  plac: placRecordsSchema.optional(),
   breakMinutes: count.positive().optional(),
 });
 

@@ -481,6 +481,18 @@ export class City extends Scene {
           this.overlayGamepad(pressed, justPressed),
       },
     );
+    if (mapId === defaultMap && !this.mission) {
+      const plac = document.createElement('button');
+      plac.type = 'button';
+      plac.className = 'ride-plac';
+      plac.textContent = ui.plac.short;
+      plac.title = ui.plac.title;
+      plac.setAttribute('aria-label', ui.plac.title);
+      plac.addEventListener('click', () =>
+        this.scene.start('Plac', { origin: 'City' }),
+      );
+      this.controls.quickActions.append(plac);
+    }
     const collectibles = tilemap.getObjectLayer('collectibles')?.objects;
     this.gnomes = collectibles?.length
       ? new Gnomes(

@@ -25,8 +25,16 @@ const urls = import.meta.glob<string>('../../assets/generated/*.png', {
   import: 'default',
 });
 
+export function loadRiderArt(scene: Scene) {
+  loadSpriteSheets(scene, ['rider', 'rider-lights']);
+}
+
 export function loadTrafficArt(scene: Scene) {
-  for (const key of Object.keys(spriteSheets) as SpriteSheet[]) {
+  loadSpriteSheets(scene, Object.keys(spriteSheets) as SpriteSheet[]);
+}
+
+function loadSpriteSheets(scene: Scene, sheets: readonly SpriteSheet[]) {
+  for (const key of sheets) {
     const [frameWidth, frameHeight] = spriteSheets[key];
     if (!scene.textures.exists(key))
       scene.load.spritesheet(key, urls[`../../assets/generated/${key}.png`]!, {

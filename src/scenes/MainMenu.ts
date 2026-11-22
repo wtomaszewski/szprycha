@@ -35,6 +35,11 @@ export class MainMenu extends Scene {
     freeRide.addEventListener('click', () =>
       this.scene.start('CityPicker', { mode: 'freeRide' }),
     );
+    const plac = document.createElement('button');
+    plac.type = 'button';
+    plac.className = 'menu-plac';
+    plac.textContent = ui.plac.title;
+    plac.addEventListener('click', () => this.scene.start('Plac'));
     const helmetLabel = document.createElement('label');
     helmetLabel.className = 'menu-helmet';
     helmetLabel.textContent = ui.helmet.label;
@@ -50,6 +55,7 @@ export class MainMenu extends Scene {
     document.body.append(
       campaign,
       freeRide,
+      plac,
       helmetLabel,
       skills.button,
       skills.dialog,
@@ -109,6 +115,7 @@ export class MainMenu extends Scene {
       for (const button of [
         campaign,
         freeRide,
+        plac,
         helmetLabel,
         skills.button,
         panels.navigation,
@@ -121,6 +128,7 @@ export class MainMenu extends Scene {
       if (
         event.target !== campaign &&
         event.target !== freeRide &&
+        event.target !== plac &&
         event.target !== helmet &&
         event.target !== skills.button &&
         !skills.dialog.open &&
@@ -138,6 +146,7 @@ export class MainMenu extends Scene {
       this.input.keyboard?.off('keydown-ENTER', startDrive);
       campaign.remove();
       freeRide.remove();
+      plac.remove();
       helmetLabel.remove();
       skills.button.remove();
       skills.dialog.remove();

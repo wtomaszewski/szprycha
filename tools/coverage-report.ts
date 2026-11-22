@@ -2,6 +2,8 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { parse } from 'yaml';
 import { missionCity } from '../src/content/missions.ts';
+import { placSchema } from '../src/content/plac.ts';
+import { placIds } from '../src/gameplay/plac/PlacRun.ts';
 import { balanceSchema, rulesSchema } from '../src/content/schemas.ts';
 import { readMissions } from './content.ts';
 import { analyseMapCoverage } from './map-coverage.ts';
@@ -60,10 +62,11 @@ const codeList = (ids: readonly string[]) =>
 async function generateCoverageReport(root: string) {
   const readYaml = async (file: string): Promise<unknown> =>
     parse(await readFile(resolve(root, 'content', file), 'utf8'));
-  const [rules, balance, missions] = await Promise.all([
+  const [rules, balance, missions, plac] = await Promise.all([
     readYaml('przepisy.yaml').then((data) => rulesSchema.parse(data)),
     readYaml('balans.yaml').then((data) => balanceSchema.parse(data)),
     readMissions(root),
+    readYaml('plac.yaml').then((data) => placSchema.parse(data)),
   ]);
   const worlds = await readMaps(root, balance.silnik.kafel_m);
   const mapId = ({ mapa, miasto }: (typeof missions)[number]) => mapa ?? miasto;
@@ -86,7 +89,7 @@ async function generateCoverageReport(root: string) {
     '',
     'W każdym mieście moduł jest pokryty, gdy wykryto co najmniej jedną jego regułę w misjach. Moduły wspólnego hubu są liczone informacyjnie, także z obiektów mapy. Raport przypisuje misje do mapy, na której się odbywają. Kolumna mapy obejmuje reguły powiązane z wykrytymi obiektami, a kolumna misji obejmuje reguły deklarowane i wykryte w celach, zdarzeniach oraz miejscach misji.',
     '',
-    'Aby odtworzyć raport, uruchom `npm run coverage:maps`. Opcja `--strict` (po separatorze `--`) zapisuje raport i kończy się błędem, jeśli w którymkolwiek mieście brakuje mapy, sytuacji lub całego modułu.',
+    'Aby odtworzyć raport, uruchom `npm run coverage:maps`. Opcja `--strict` (po separatorze `--`) zapisuje raport i kończy się błędem, jeśli w którymkolwiek mieście brakuje mapy, sytuacji lub całego modułu albo brakuje pokrycia reguł placu.',
   ];
   let hasGaps = false;
   for (const id of [...cities, hub]) {
@@ -153,6 +156,29 @@ async function generateCoverageReport(root: string) {
       hasGaps = true;
     }
   }
+  const placRules = rules.przepisy.filter(
+    ({ detektor }) => detektor === 'plac',
+  );
+  const uncatalogued = placIds.filter(
+    (id) => !placRules.some((rule) => rule.id === id),
+  );
+  output.push(
+    '',
+    '## Plac manewrowy (M08)',
+    '',
+    'Pokrycie reguł typu `plac` wymaga osobnego detektora ćwiczenia oraz geometrii w [plac.yaml](../content/plac.yaml).',
+    '',
+    '| Reguła | Ćwiczenie | Pokrycie |',
+    '| --- | --- | :---: |',
+  );
+  for (const { id, tytul } of placRules) {
+    const covered = placIds.some(
+      (implemented) => implemented === id && Object.hasOwn(plac.exercises, id),
+    );
+    hasGaps ||= !covered;
+    output.push(`| \`${id}\` | ${tytul} | ${covered ? '✓' : '✗'} |`);
+  }
+  hasGaps ||= uncatalogued.length > 0;
   return { markdown: output.join('\n') + '\n', hasGaps };
 }
 
@@ -166,7 +192,7 @@ async function main() {
   await writeFile(resolve(root, 'docs/coverage.md'), markdown);
   console.log('Zapisano docs/coverage.md');
   if (args.includes('--strict') && hasGaps) {
-    console.error('Raport wykazał braki pokrycia w miastach.');
+    console.error('Raport wykazał braki pokrycia.');
     process.exitCode = 1;
   }
 }

@@ -1169,5 +1169,72 @@
     "kazik": "Pan Kazik",
     "breakMessage": "Czas na prawdziwy rower! Kask na głowę!",
     "dismiss": "Schowaj przypomnienie"
+  },
+  "plac": {
+    "title": "Plac manewrowy",
+    "short": "Plac",
+    "arcade": "Arcade na czas",
+    "fullCourse": "Wszystkie ćwiczenia",
+    "exercise": "Ćwiczenie",
+    "start": "Rozpocznij trening",
+    "return": "Wróć do wyboru ćwiczenia",
+    "returnToMap": "Wróć do Miasteczka",
+    "retry": "Powtórz przejazd",
+    "startHere": "Start",
+    "finish": "Meta",
+    "ranking": "Lokalne czasy Arcade",
+    "emptyRanking": "Ukończ czysty przejazd, aby zapisać czas.",
+    "ghost": "Twój rekordowy przejazd",
+    "time": "Czas",
+    "seconds": "s",
+    "brakeForce": "Siła hamowania",
+    "coach": "Sierżant Ola",
+    "points": "Punkty",
+    "passed": "Plac zaliczony",
+    "failed": "Spróbuj jeszcze raz",
+    "completed": "Wynik ćwiczenia",
+    "clean": "Czysty przejazd",
+    "noMedal": "Bez medalu",
+    "practiceOutside": "Po grze poćwicz na prawdziwym rowerze w bezpiecznym miejscu, np. na boisku z pachołkami.",
+    "help": "Strzałki lub WASD: jazda · Spacja: hamuj · C: spójrz za siebie · Q/E: pokaż kierunek · Esc: pauza",
+    "medals": {
+      "gold": "Złoto",
+      "silver": "Srebro",
+      "bronze": "Brąz"
+    },
+    "grades": {
+      "good": "Czysto",
+      "minor": "Drobny błąd",
+      "major": "Poważny błąd"
+    },
+    "sequence": [
+      "Spójrz za siebie",
+      "Pokaż lewą rękę",
+      "Ruszaj",
+      "Jedź do mety"
+    ],
+    "hints": {
+      "figureEight": "Rower jedzie tam, gdzie patrzysz — skieruj wzrok na wyjście z łuku zamiast na pachołek.",
+      "slalom": "Omijaj pachołki po stronie wskazanej strzałką i skręcaj płynnie.",
+      "narrow": "Za wolno też źle — trochę prędkości daje stabilność.",
+      "stop": "Zacznij hamować wcześniej, żeby zatrzymać cały rower w polu.",
+      "start": "Najpierw spójrz za siebie, potem wyciągnij lewą rękę i ruszaj.",
+      "oneHand": "Od żółtej linii trzymaj rękę w bok aż do mety i jedź prosto."
+    },
+    "faults": {
+      "footDown": "Utrzymaj ruch na ósemce, żeby nie podpierać się nogą.",
+      "line": "Zostaw więcej miejsca między rowerem a linią.",
+      "cone": "Zostaw odstęp od pachołka.",
+      "missedCone": "Miń każdy pachołek po stronie pokazanej strzałką.",
+      "offTrack": "Utrzymaj rower między liniami.",
+      "shortStop": "Podjedź tak, by cały rower znalazł się w polu.",
+      "longStop": "Zacznij hamować wcześniej, żeby zmieścić się w polu.",
+      "skid": "Hamuj stopniowo, żeby uniknąć zablokowania koła.",
+      "noLook": "Spójrz za siebie przed ruszeniem.",
+      "noStartSignal": "Pokaż zamiar ruszenia lewą ręką.",
+      "signalOrder": "Po spojrzeniu za siebie wyciągnij lewą rękę i ruszaj.",
+      "noHandSignal": "Trzymaj wyciągniętą rękę od żółtej linii do mety.",
+      "timeout": "Ukończ tor przed końcem czasu."
+    }
   }
 }
