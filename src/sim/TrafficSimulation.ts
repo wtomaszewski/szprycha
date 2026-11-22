@@ -211,9 +211,9 @@ export class TrafficSimulation {
     this.reset();
   }
 
-  reset() {
+  reset(seed = this.seed) {
     this.tick = 0;
-    this.randomState = this.seed >>> 0;
+    this.randomState = seed >>> 0;
     this.playerLane = undefined;
     this.junctions.clear();
     const lanes = [...this.approaches];

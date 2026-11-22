@@ -1,3 +1,4 @@
+import { inputHash, rankingSeed, RideEvidence } from '../rankings/evidence';
 import { showBreakReminder } from '../ui/BreakReminder';
 import { verdictHaptics } from '../platform/haptics';
 import { audio } from '../audio/GameAudio';
@@ -57,6 +58,7 @@ export class Plac extends Scene {
   private sequence!: HTMLElement;
   private run?: PlacRun;
   private arcade = false;
+  private rankingRide?: RideEvidence;
   private attempt?: ExamAttempt;
   private rehearsal = false;
   private origin: 'MainMenu' | 'City' = 'MainMenu';
@@ -273,6 +275,11 @@ export class Plac extends Scene {
     if (this.dialog.open) this.dialog.close();
     this.controls.focus();
     this.arcade = arcade;
+    const consent = this.progress.rankings?.consent;
+    this.rankingRide =
+      arcade && consent !== undefined
+        ? new RideEvidence(rankingSeed(), consent)
+        : undefined;
     this.finishedTicks = 0;
     this.shownClockTick = -1;
     this.run = new PlacRun(
@@ -311,7 +318,30 @@ export class Plac extends Scene {
     const score = scorePlac(run.results, this.balance, this.passThreshold);
     if (score.medal) audio.play('stars');
     if (this.arcade && score.clean) {
-      const { balance, courseKey } = this;
+      const { balance, courseKey, rankingRide: ride } = this;
+      const client = this.progress.rankings;
+      if (client && ride?.valid) {
+        const inputLog = async () => {
+          if (
+            (await inputHash(new TextEncoder().encode(courseKey))) !==
+            client.versions.plac.version
+          )
+            throw new Error('Plac course version changed');
+          return ride.digest();
+        };
+        void client.record(
+          {
+            kind: 'plac',
+            ticks: score.ticks,
+            speedPercent: 100,
+            minor: 0,
+            major: 0,
+          },
+          ride.seed,
+          ride.consent,
+          inputLog,
+        );
+      }
       this.progress.store.change((profile) => {
         profile.plac = rankPlac(
           profile.plac,
@@ -332,11 +362,8 @@ export class Plac extends Scene {
       `${ui.plac.points} ${pointsFormat.format(score.points)} / ${pointsFormat.format(score.max)}`,
     ];
     if (this.arcade) {
-      summary.push(
-        seconds(score.ticks),
-        score.medal ? ui.plac.medals[score.medal] : ui.plac.noMedal,
-      );
-      if (score.clean) summary.push(ui.plac.clean);
+      summary.push(score.medal ? ui.plac.medals[score.medal] : ui.plac.noMedal);
+      if (score.clean) summary.push(seconds(score.ticks), ui.plac.clean);
     }
     const rows = document.createElement('ul');
     rows.className = 'plac-results';
@@ -435,6 +462,7 @@ export class Plac extends Scene {
         }
         continue;
       }
+      this.rankingRide?.step(input, controls.actions, run.ride.rider.walking);
       const result = run.step(input);
       this.stride = (this.stride + (run.ride.rider.speed * FIXED_STEP) / 8) % 4;
       if (result) {

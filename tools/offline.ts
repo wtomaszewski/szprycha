@@ -18,20 +18,25 @@ const workerFile = 'quiz-worker.js';
 const manifestFile = 'app.webmanifest';
 
 const localOrigin = "'self' capacitor://localhost";
-const mobileContentPolicy = [
-  `default-src ${localOrigin}`,
-  `connect-src ${localOrigin}`,
-  `style-src ${localOrigin} 'unsafe-inline'`,
-  `img-src ${localOrigin} data: blob:`,
-  `media-src ${localOrigin} data: blob:`,
-  "object-src 'none'",
-  "frame-src 'none'",
-  "base-uri 'none'",
-  "form-action 'none'",
-  "worker-src 'none'",
-].join('; ');
+function mobileContentPolicy(rankingOrigin?: string) {
+  const connect = rankingOrigin
+    ? localOrigin + ' ' + rankingOrigin
+    : localOrigin;
+  return [
+    `default-src ${localOrigin}`,
+    `connect-src ${connect}`,
+    `style-src ${localOrigin} 'unsafe-inline'`,
+    `img-src ${localOrigin} data: blob:`,
+    `media-src ${localOrigin} data: blob:`,
+    "object-src 'none'",
+    "frame-src 'none'",
+    "base-uri 'none'",
+    "form-action 'none'",
+    "worker-src 'none'",
+  ].join('; ');
+}
 
-export function offlineApp(mobile = false): Plugin {
+export function offlineApp(mobile = false, rankingOrigin?: string): Plugin {
   return {
     name: 'offline-app',
     apply: 'build',
@@ -49,7 +54,7 @@ export function offlineApp(mobile = false): Plugin {
                   tag: 'meta',
                   attrs: {
                     'http-equiv': 'Content-Security-Policy',
-                    content: mobileContentPolicy,
+                    content: mobileContentPolicy(rankingOrigin),
                   },
                   injectTo: 'head-prepend' as const,
                 },

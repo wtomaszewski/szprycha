@@ -1,3 +1,4 @@
+import type { RankingClient } from '../rankings/RankingClient';
 import { nativeProgress } from '../platform/preferencesProgress';
 import type { DialogueLine, Dialogues } from '../content/dialogues';
 import type { MissionCity, MissionDefinition } from '../content/missions';
@@ -61,6 +62,7 @@ function recordAnswer(
 }
 
 export class MissionProgress {
+  rankings?: RankingClient;
   private catalog?: Milestones;
   private readonly breakReminder = new BreakReminder();
 

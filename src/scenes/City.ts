@@ -1,3 +1,4 @@
+import { rankingSeed, RideEvidence } from '../rankings/evidence';
 import { showBreakReminder } from '../ui/BreakReminder';
 import { verdictHaptics } from '../platform/haptics';
 import { Scene, GameObjects } from 'phaser';
@@ -153,6 +154,8 @@ export class City extends Scene {
   private campaignCity!: MissionCity;
   private examRide?: ExamRide;
   private freeRidePoints = 0;
+  private rankingRide?: RideEvidence;
+  private rankingCity?: MissionCity;
   private resultPresented = false;
   private results?: MissionResults;
   private glory?: GloryReplay;
@@ -285,6 +288,10 @@ export class City extends Scene {
       ? examRoute(examRide.city, this.content.balans.licencja)
       : this.availableOrders().find(({ id }) => id === missionId);
     const mapId = definition?.mapa ?? definition?.miasto ?? map ?? defaultMap;
+    this.rankingCity =
+      mapId === 'warszawa' || mapId === 'wroclaw' ? mapId : undefined;
+    this.startRankingRide(Boolean(definition));
+    const rankingSeed = this.rankingRide?.seed;
     const cached = this.cache.tilemap.get(mapId) as { data: unknown };
     this.world = new WorldModel(
       cached.data,
@@ -314,7 +321,7 @@ export class City extends Scene {
       this.world,
       this.intersectionManager,
       this.content.balans.silnik,
-      undefined,
+      rankingSeed,
       !ambientTraffic
         ? 'mission-only'
         : mapId === 'wroclaw' && !definition
@@ -324,7 +331,7 @@ export class City extends Scene {
     this.trafficEvents = new TrafficEvents(
       this.world,
       this.traffic,
-      undefined,
+      rankingSeed,
       (rules) =>
         rules.reduce(
           (sum, ruleId) =>
@@ -681,6 +688,7 @@ export class City extends Scene {
     );
     window.addEventListener('pagehide', this.flushProgress, { signal });
     const onShutdown = () => {
+      this.finishFreeRide();
       lifecycle.abort();
       this.scale.off('resize', refreshGlory);
       this.flushProgress();
@@ -877,6 +885,28 @@ export class City extends Scene {
     }
     if (result.status === 'completed') {
       const { definition } = mission;
+      const ride = this.rankingRide;
+      if (ride?.valid) {
+        const stats = RideEvidence.verdictStats(result.verdicts);
+        void this.progress.rankings?.record(
+          {
+            kind: 'mission',
+            ...ride.roadStats,
+            ...stats,
+            cleanMeters:
+              stats.minor || stats.major ? 0 : ride.roadStats.cleanMeters,
+            ticks: Math.round(result.elapsedSeconds / FIXED_STEP),
+            points: stats.minor
+              ? result.points - result.timeBonus
+              : result.points,
+            city: definition.miasto,
+            missionId: definition.id,
+          },
+          ride.seed,
+          ride.consent,
+          () => ride.digest(),
+        );
+      }
       const { progress, content } = this;
       const unlocks = progress.unlocks(content);
       const nextOrders = content.misje.filter(
@@ -1140,7 +1170,33 @@ export class City extends Scene {
     this.controls.setWalking(this.rider.walking);
     if (this.rider.walking) this.message(ui.driving.walkingHint);
   }
+  private startRankingRide(mission: boolean) {
+    const consent = this.progress.rankings?.consent;
+    this.rankingRide =
+      consent === undefined || this.examRide || (!mission && !this.rankingCity)
+        ? undefined
+        : new RideEvidence(rankingSeed(), consent);
+  }
+
+  private finishFreeRide() {
+    const { rankingRide: ride, rankingCity: city } = this;
+    if (this.mission || !city || !ride?.valid) return;
+    this.rankingRide = undefined;
+    void this.progress.rankings?.record(
+      {
+        kind: 'ride',
+        city,
+        ...ride.roadStats,
+      },
+      ride.seed,
+      ride.consent,
+      () => ride.digest(),
+    );
+  }
+
   private reset() {
+    this.finishFreeRide();
+    this.startRankingRide(Boolean(this.mission));
     Object.assign(this.rider, this.spawn, {
       speed: 0,
       walking: false,
@@ -1166,8 +1222,8 @@ export class City extends Scene {
       this.placeRider(this.mission.start);
       this.updateMissionHud();
     }
-    this.traffic.reset();
-    this.trafficEvents.reset();
+    this.traffic.reset(this.rankingRide?.seed);
+    this.trafficEvents.reset(this.rankingRide?.seed);
     this.environment.officerOrders = undefined;
     this.updateRival();
     this.phoneAnsweredSafely = false;
@@ -1438,7 +1494,7 @@ export class City extends Scene {
     );
   }
 
-  private stepWorld(collided: boolean) {
+  private stepWorld(collided: boolean, meters: number) {
     const source = this.rider;
     const rider = this.rulesRider;
     const scale = this.world.metersPerPixel;
@@ -1506,6 +1562,16 @@ export class City extends Scene {
       source.walking &&
         gnome !== undefined &&
         this.progress.store.profile.gnomes?.includes(gnome),
+    );
+    this.rankingRide?.road(
+      this.tickVerdicts,
+      meters,
+      collided ||
+        Boolean(effects?.respawn) ||
+        this.rules.unsafeForReplay ||
+        this.activeAgents.some(
+          ({ protectiveBrake }) => protectiveBrake === true,
+        ),
     );
     this.updateRival();
     this.syncActorObstacles();
@@ -1706,6 +1772,14 @@ export class City extends Scene {
       showBreakReminder(this.controls.root);
     this.accumulator += seconds;
     while (this.accumulator >= FIXED_STEP) {
+      const { x, y, walking } = this.rider;
+      this.rankingRide?.step(
+        input,
+        this.controls.actions,
+        walking,
+        this.rulesRider.helmet.fastened,
+        this.rulesRider.phoneInHand,
+      );
       const collided =
         !this.mission?.preparingBike &&
         stepRider(
@@ -1718,7 +1792,12 @@ export class City extends Scene {
           this.rider.walking ? undefined : this.weatherTuning,
         );
       if (collided) this.message(ui.driving.collision);
-      this.stepWorld(collided);
+      const meters =
+        this.rankingRide && !walking
+          ? Math.hypot(this.rider.x - x, this.rider.y - y) *
+            this.world.metersPerPixel
+          : 0;
+      this.stepWorld(collided, meters);
       this.accumulator -= FIXED_STEP;
       if (
         this.review ||

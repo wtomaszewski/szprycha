@@ -398,8 +398,8 @@ export class TrafficEvents {
     return this.props[2]!.active ? this.cyclist : undefined;
   }
 
-  reset() {
-    this.state = this.seed >>> 0;
+  reset(seed = this.seed) {
+    this.state = seed >>> 0;
     this.tick = 0;
     this.nextRandom = 4 * TICKS_PER_SECOND;
     this.pending.length = 0;

@@ -1,7 +1,9 @@
 import { z } from 'zod';
-import type { PlacBalance, PlacCourse } from '../../content/plac';
+import type { PlacBalance } from '../../content/plac';
 import { FIXED_STEP } from '../bicycle';
 import { ghostInterval, placIds, type Ghost } from './PlacRun';
+
+export { placCourseKey } from './courseKey';
 
 const ticks = z.number().int().positive();
 export const placRecordsSchema = z
@@ -35,17 +37,6 @@ export const placRecordsSchema = z
   );
 
 export type PlacRecords = z.infer<typeof placRecordsSchema>;
-
-export const placCourseKey = (course: PlacCourse, balance: PlacBalance) =>
-  JSON.stringify(
-    [
-      1, // Bump when fixed-step physics or judging changes.
-      course,
-      balance.physics,
-      balance.time_limit_s,
-    ],
-    (key, value: unknown) => (key === 'hint' ? undefined : value),
-  );
 
 export function rankPlac(
   previous: PlacRecords | undefined,

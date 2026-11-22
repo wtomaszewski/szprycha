@@ -11,8 +11,21 @@ export default defineConfig({
   use: {
     baseURL: 'http://127.0.0.1:4173',
     viewport: { width: 1280, height: 720 },
+    launchOptions: {
+      executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
+    },
   },
   webServer: [
+    {
+      command: 'npm run build:server && npm run start:server',
+      url: 'http://127.0.0.1:8787/v1/health',
+      reuseExistingServer: false,
+      env: {
+        RANKING_DB: ':memory:',
+        RANKING_ORIGINS: 'http://127.0.0.1:4175',
+        RANKING_PORT: '8787',
+      },
+    },
     {
       command: 'npm run dev -- --port 4173 --strictPort',
       url: 'http://127.0.0.1:4173',
@@ -26,11 +39,12 @@ export default defineConfig({
       env: offlineConfig,
     },
     {
-      command: 'npm run dev -- --port 4175 --strictPort',
+      command:
+        'npm run build -- --outDir node_modules/.cache/rankings-e2e && npm run preview -- --outDir node_modules/.cache/rankings-e2e --port 4175 --strictPort',
       url: 'http://127.0.0.1:4175',
       reuseExistingServer: false,
       env: {
-        VITE_RANKING_URL: 'https://rankings.example/',
+        VITE_RANKING_URL: 'http://127.0.0.1:8787/',
         VITE_PRIVACY_POLICY_URL: 'https://project.example/privacy',
         VITE_PROJECT_URL: 'https://project.example/',
       },

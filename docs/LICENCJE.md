@@ -10,6 +10,8 @@ SZPRYCHA jest oprogramowaniem własnościowym. Prawa do projektu są zastrzeżon
 - `npm run licenses:check` sprawdza metadane zainstalowanych pakietów osiągalnych z `dependencies`, w tym zainstalowane zależności opcjonalne i peer. Odrzuca brak licencji lub identyfikator spoza listy. Złożone wyrażenia SPDX i wpisy odsyłające do innego pliku wymagają indywidualnego przeglądu. Raport dla zależności wyłącznie deweloperskich pokazuje odstępstwa jako ostrzeżenia.
 - Build tworzy `dist/THIRD_PARTY_NOTICES` z tekstami licencji, informacjami o prawach autorskich, plikami `NOTICE` i licencją fontu. Pełny tekst Apache 2.0 jest dołączany do not, również gdy paczka zawiera skróconą notę. Gracz znajdzie te same informacje w **Ustawieniach → O grze / Licencje**. Build korzysta z dystrybucji Arcade Physics Phasera, która pomija Matter.js i jego pomocniczy kod na niestandardowej licencji. Przy aktualizacji Phasera przejrzyj osadzone komponenty tej dystrybucji i zaktualizuj plik `assets/licenses/phaser-<wersja>.txt`.
 
+Ekran rankingów M10c używa istniejącego arkusza rowerzysty i fontu. [Pochodzenie zasobów](../assets/LICENSES.md)
+
 ## Serwer rankingów
 
 `npm run licenses:check` obejmuje także zależności wykonawcze workspace `server/`. Serwer korzysta z Zod (MIT) oraz wbudowanych modułów Node.js (licencja MIT projektu Node.js, SQLite jest w domenie publicznej). Zod zachowuje swój plik licencji w kontenerze. Narzędzia budujące korzystają z istniejących zależności repozytorium. [Zod](https://github.com/colinhacks/zod/blob/main/LICENSE) · [Node.js](https://github.com/nodejs/node/blob/main/LICENSE) · [SQLite](https://www.sqlite.org/copyright.html)

@@ -196,9 +196,9 @@ export class TrafficParticipants {
     this.reset();
   }
 
-  reset() {
+  reset(seed?: number) {
     this.tick = 0;
-    this.road.reset();
+    this.road.reset(seed);
     for (const actor of this.actors) {
       actor.agent.trips = 0;
       this.restart(

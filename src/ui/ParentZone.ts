@@ -23,6 +23,7 @@ function button(text: string) {
 export function parentZone(
   progress: MissionProgress,
   balance: GameContent['balans']['zdrowe_granie'],
+  rankingChanged: () => void,
 ) {
   const open = button(labels.title);
   open.setAttribute('aria-haspopup', 'dialog');
@@ -43,7 +44,7 @@ export function parentZone(
 
   function showSettings() {
     title.textContent = labels.title;
-    body.replaceChildren(...settings(progress, balance));
+    body.replaceChildren(...settings(progress, balance, rankingChanged));
     dialog.scrollTop = 0;
     title.focus();
   }
@@ -136,6 +137,7 @@ function gate(unlock: () => void) {
 function settings(
   progress: MissionProgress,
   balance: GameContent['balans']['zdrowe_granie'],
+  rankingChanged: () => void,
 ) {
   const { store } = progress;
   const nickname = document.createElement('output');
@@ -195,28 +197,74 @@ function settings(
   preferences.append(ageLabel, ageHelp, breakLabel);
   const parts = [identity, preferences];
 
-  if (config.rankingAvailable) {
+  const client = progress.rankings;
+  if (client) {
     const online = document.createElement('div');
     online.className = 'parent-zone-preferences';
     const label = document.createElement('label');
     label.className = 'parent-zone-toggle';
     const rankings = document.createElement('input');
     rankings.type = 'checkbox';
-    rankings.checked = store.profile.onlineRankings;
     rankings.setAttribute('aria-describedby', 'parent-rankings-help');
-    rankings.addEventListener('change', () => {
-      const enabled = rankings.checked;
-      store.change((profile) => {
-        profile.onlineRankings = enabled;
-      });
-    });
     label.append(rankings, labels.rankings);
     const help = document.createElement('small');
     help.id = 'parent-rankings-help';
-    help.textContent = labels.rankingsHelp;
+    help.textContent = store.sessionOnly
+      ? labels.rankingStorage
+      : labels.rankingsHelp;
     const remove = button(labels.removeProfile);
-    remove.disabled = true;
-    online.append(label, help, remove);
+    const confirmation = document.createElement('fieldset');
+    confirmation.className = 'parent-delete-confirmation';
+    confirmation.hidden = true;
+    const explanation = document.createElement('legend');
+    explanation.textContent = labels.removeConfirmation;
+    const accept = button(labels.removeConfirm);
+    const cancel = button(labels.removeCancel);
+    const status = document.createElement('small');
+    status.setAttribute('role', 'status');
+
+    function refresh() {
+      rankings.checked = client!.enabled;
+      rankings.disabled =
+        store.sessionOnly || client!.deletionPending || !confirmation.hidden;
+      remove.disabled = !client!.canDelete || !confirmation.hidden;
+    }
+
+    rankings.addEventListener('change', () => {
+      client.setEnabled(rankings.checked);
+      refresh();
+      rankingChanged();
+    });
+    remove.addEventListener('click', () => {
+      status.textContent = '';
+      confirmation.hidden = false;
+      refresh();
+      cancel.focus();
+    });
+    cancel.addEventListener('click', () => {
+      confirmation.hidden = true;
+      refresh();
+      remove.focus();
+    });
+    accept.addEventListener('click', async () => {
+      accept.disabled = cancel.disabled = true;
+      status.textContent = labels.removingProfile;
+      const deletion = client.deleteProfile();
+      rankingChanged();
+      const removed = await deletion;
+      confirmation.hidden = true;
+      accept.disabled = cancel.disabled = false;
+      refresh();
+      rankingChanged();
+      status.textContent = removed
+        ? labels.profileRemoved
+        : labels.removeFailed;
+      if (!remove.disabled) remove.focus();
+      else rankings.focus();
+    });
+    confirmation.append(explanation, cancel, accept);
+    online.append(label, help, remove, confirmation, status);
+    refresh();
     parts.push(online);
   }
 

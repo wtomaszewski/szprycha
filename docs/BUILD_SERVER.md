@@ -12,7 +12,7 @@ RANKING_ORIGINS=http://127.0.0.1:5173 npm run start:server
 curl http://127.0.0.1:8787/v1/health
 ```
 
-Serwer korzysta z wbudowanych `node:http` i `node:sqlite`. Build zapisuje program i katalog reguł w `server/dist/`. Katalog jest wyliczany z wersjonowanych danych gry. Przy zmianie logiki fizyki, oceny lub naliczania XP należy zmienić odpowiedni klucz wersji w `server/src/buildRules.ts` lub w `placCourseKey`. Build serwera jest osobnym poleceniem i osobnym zadaniem CI. Klienta rankingów przewiduje M10c.
+Serwer korzysta z wbudowanych `node:http` i `node:sqlite`. Build zapisuje program i katalog reguł w `server/dist/`. Katalog jest wyliczany z wersjonowanych danych gry. Przy zmianie logiki fizyki, oceny lub naliczania XP należy zmienić odpowiedni klucz wersji w `tools/ranking-rules.ts` lub w `placCourseKey`. Build serwera jest osobnym poleceniem i osobnym zadaniem CI.
 
 | Zmienna                       | Domyślnie              | Znaczenie                                                                                                                                                  |
 | ----------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -23,6 +23,20 @@ Serwer korzysta z wbudowanych `node:http` i `node:sqlite`. Build zapisuje progra
 | `RANKING_REQUESTS_PER_MINUTE` | `240`                  | Limit żądań aplikacji na adres połączenia w oknie 60 s.                                                                                                    |
 | `RANKING_SEASON_START`        | `2026-01-05`           | Data odniesienia cyklu sezonów w formacie RRRR-MM-DD w Warszawie.                                                                                          |
 | `RANKING_SEASON_WEEKS`        | `13`                   | Długość sezonu w tygodniach, od 1 do 52.                                                                                                                   |
+
+## Klient web i PWA
+
+W osobnym terminalu ustaw adres API przy budowaniu lub uruchamianiu klienta:
+
+```sh
+VITE_RANKING_URL=http://127.0.0.1:8787 npm run dev -- --port 5173
+```
+
+Przy wdrożeniu ustaw `VITE_RANKING_URL` na adres HTTPS i dodaj origin klienta do `RANKING_ORIGINS`. W grze otwórz Strefę Rodzica, rozwiąż działanie i włącz rankingi. Starsze ustawienie z M10a dotyczyło lokalnej wersji interfejsu. Gra prosi ponownie o zgodę na korzystanie z usługi.
+
+Klient zapisuje do 50 oczekujących przejazdów na urządzeniu. Po odzyskaniu połączenia porównuje lokalną wersję z katalogiem `GET /v1/rules` i ponawia wysyłkę. Wynik z inną wersją wypada z kolejki. Tygodniowy XP nalicza się od chwili zgody, w strefie `Europe/Warsaw`. Wyłączenie rankingów usuwa niewysłane wyniki. Potwierdzenie usunięcia z serwera działa także po wyłączeniu funkcji i zachowuje lokalne postępy.
+
+`npm run test:e2e -- tests/e2e/rankings.spec.ts` uruchamia lokalny serwer M10b z bazą SQLite w pamięci oraz produkcyjny build gry z adresem tego API.
 
 ## Kontrakt API
 
@@ -39,7 +53,7 @@ Serwer korzysta z wbudowanych `node:http` i `node:sqlite`. Build zapisuje progra
 
 Formaty żądań są współdzielone z klientem przez `src/content/rankings.ts`. Każdy `score` podaje 32-bitowy `seed`, `version` odpowiadającą wersji gry i `inputHash` w postaci 64 małych cyfr szesnastkowych SHA-256. Skrót liczy klient z logu wejść. Sam log pozostaje lokalnie. Wersje misji, wolnej jazdy i XP należy powiązać z danymi używanymi przez dany build gry. Dla placu wersja to SHA-256 (UTF-8) istniejącego klucza `placCourseKey(plac, balans.plac)`. W v1 weryfikujemy format dowodu oraz granice fizyczne i punktowe. Odtworzenie przejazdu przewidziano na v2.
 
-- `board=mission&city=warszawa&missionId=WAW-A1-01` pokazuje najlepsze punkty z ukończonej misji bez `major`. `mission` podaje czas w tickach, punkty, miasto i identyfikator misji oraz liczbę werdyktów, najdłuższą serię i czyste metry. Przejazdy przy normalnym tempie mają `speedPercent: 100`.
+- `board=mission&city=warszawa&missionId=WAW-A1-01` pokazuje najlepsze punkty z ukończonej misji bez `major`. `mission` podaje czas w tickach, punkty, miasto i identyfikator misji oraz liczbę werdyktów, najdłuższą serię i czyste metry. Przejazdy przy normalnym tempie mają `speedPercent: 100`. Klient uwzględnia premię za czas na tablicy misji wyłącznie przy przejeździe bez błędów.
 - `board=safety` pokazuje najdłuższy ciąg werdyktów `good` z jednej misji lub wolnego przejazdu. Wynik `ride` wolnej jazdy podaje te same dane jazdy co misja, poza punktami i identyfikatorem misji.
 - `board=plac` pokazuje najlepszy czas całego czystego Arcade w tickach (60 ticków/s). Wynik `plac` podaje ticki, tempo oraz liczbę `minor` i `major`.
 - `board=cities` sumuje czyste metry z misji i wolnej jazdy osobno dla Warszawy i Wrocławia w bieżącym tygodniu. `self` to lista miast, do których profil wniósł wkład, z metrami w `contributedMeters`. Dystans raportuje się w całych metrach jako część statystyk gry. Przejazd z błędem ma zero czystych metrów.
