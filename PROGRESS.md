@@ -11,7 +11,7 @@ Stan na 22.11.2026. Gałąź `feat/52-m6d-misje-wroclawia`.
 | M4     | Misje i fabuła                              | Akt 1 Warszawy grywalny od samouczka do finału M4d (#25).                                    |
 | M5     | Punktacja, progresja, zapis                 | M5a (#44), M5b (#46) i M5c (#54) w `main`.                                                   |
 | M6     | Mapy Warszawy i Wrocławia                   | M6a–d: dwie mapy, dwie kampanie i wybór miasta. Raport strict obejmuje oba miasta.           |
-| M7     | Plac, quiz, egzamin                         | Nierozpoczęty                                                                                |
+| M7     | Plac, quiz, egzamin                         | M7a wdrożony, quiz i egzamin w kolejnych częściach                                           |
 | M8     | Audio i szlif                               | Nierozpoczęty                                                                                |
 | M9     | PWA, Capacitor, Android/iOS                 | Nierozpoczęty                                                                                |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Nierozpoczęty                                                                                |
@@ -211,3 +211,10 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Warszawa ćwiczy moduły M01–M07. Nocny kurs zaczyna się od przygotowania kasku i świateł, a scena z Turbo uczy zabezpieczenia miejsca, wezwania pomocy i reakcji z dorosłym.
 - Konwój rusza po awarii sygnalizacji i stosuje się do poleceń Oli. Oznaczony nielegalny skrót odbiera premię za czas zarówno graczowi, jak i Turbo.
 - Zlecenia poboczne, plac i Licencja Szprychy pozostają w późniejszym zakresie. Scena pierwszej pomocy jest ćwiczeniem wyborów bez limitu czasu.
+
+## M7a — plac manewrowy
+
+- Plac dostępny z menu głównego i Miasteczka Ruchu Drogowego. Trening obejmuje wybrane ćwiczenie lub wszystkie sześć. W Arcade czyste przejazdy walczą o medale, a profil przechowuje czasy i odtwarza na torze najlepszy przejazd.
+- PLAC-01…06 mają osobne detektory i testy scenariuszowe. Wynik to suma punktów ułamkowych z progiem 90%. Geometria, porady Sierżant Oli i balans są w danych, a po sesji gra zachęca do ćwiczeń na rowerze.
+- `npm run benchmark:plac` mierzy płynność jazdy w Chromium z CPU 4× przy uruchomionym serwerze gry. Test Playwright zapisuje zrzut w `test-results/plac.png`. Raport pokrycia zawiera reguły typu `plac`.
+- Weryfikacja kryteriów szkolnego egzaminu pozostaje otwarta. Quiz i próbna Licencja Szprychy należą do następnych części M7.

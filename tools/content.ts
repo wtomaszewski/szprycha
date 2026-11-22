@@ -16,6 +16,7 @@ export const contentFiles = [
   'znaki.yaml',
   'pytania.json',
   'balans.yaml',
+  'plac.yaml',
   'osiagniecia.yaml',
   'wyzwania.yaml',
 ] as const;
@@ -142,6 +143,17 @@ export async function readContent(root = process.cwd()) {
       if (lektor) translation(lektor);
     }
   const sentences = new Intl.Segmenter('pl', { granularity: 'sentence' });
+  for (const [id, { hint }] of Object.entries(content.plac.exercises)) {
+    if (
+      !content.przepisy.przepisy.some(
+        (rule) => rule.id === id && rule.detektor === 'plac',
+      )
+    )
+      throw new Error(`Missing plac rule: ${id}`);
+    const text = textAt(translations, hint)?.trim();
+    if (!text || text.length > 140 || [...sentences.segment(text)].length !== 1)
+      throw new Error(`Invalid plac hint: ${hint}`);
+  }
   for (const { tekst, lektor } of content.dialogi.zapowiedzi) {
     for (const key of [tekst, lektor]) {
       if (!key) continue;

@@ -47,6 +47,7 @@ export class DrivingControls {
     setCameraHeight: (height: number) => void,
     setDebugVisible: (visible: boolean) => void,
     private readonly overlays: OverlayControls,
+    private readonly plac = false,
   ) {
     const signal = this.abort.signal;
     const pad = navigator.getGamepads?.().find((gamepad) => gamepad?.connected);
@@ -107,17 +108,24 @@ export class DrivingControls {
       rain.setAttribute('aria-pressed', String(this.rain));
     });
     rain.setAttribute('aria-pressed', String(this.rain));
+    if (plac) {
+      rain.hidden = true;
+      lite.hidden = true;
+    }
     button(ui.driving.reset, () => {
       this.togglePause();
       reset();
     });
-    button(ui.driving.menu, menu);
+    button(plac ? ui.plac.return : ui.driving.menu, () => {
+      if (plac) pauseMenu.close();
+      menu();
+    });
     const help = document.createElement('p');
     help.className = 'drive-help';
-    help.textContent = ui.driving.help;
+    help.textContent = plac ? ui.plac.help : ui.driving.help;
     this.notice.className = 'drive-notice';
     this.notice.setAttribute('role', 'status');
-    help.append(' · ', ui.phone.controls);
+    if (!plac) help.append(' · ', ui.phone.controls);
     pauseMenu.append(heading, title, this.progressDetails, options, help);
     const touch = document.createElement('div');
     touch.className = 'touch-controls';
@@ -181,7 +189,7 @@ export class DrivingControls {
     hold(ui.driving.signalLeft, 'KeyQ');
     hold(ui.driving.signalRight, 'KeyE');
     hold(ui.driving.look, 'KeyC');
-    hold(ui.driving.bell, 'KeyF');
+    if (!plac) hold(ui.driving.bell, 'KeyF');
     const lights = (this.lightButton = button(
       ui.driving.lights,
       () => this.setLights(!this.actions.lights),
@@ -189,6 +197,10 @@ export class DrivingControls {
     ));
     this.setLights(false);
     this.toggleLabel = button(ui.driving.dismount, () => toggle(), actions);
+    if (plac) {
+      lights.hidden = true;
+      this.toggleLabel.hidden = true;
+    }
     const brake = button(ui.driving.brake, () => {}, actions);
     brake.className = 'brake';
     brake.addEventListener(
@@ -263,7 +275,7 @@ export class DrivingControls {
           if (!e.repeat) this.togglePause();
           return;
         }
-        if (e.code === 'F3') {
+        if (!plac && e.code === 'F3') {
           e.preventDefault();
           if (!e.repeat) {
             const visible = projection.hasAttribute('hidden');
@@ -288,7 +300,7 @@ export class DrivingControls {
           e.preventDefault();
         this.keys.add(e.code);
         if (e.repeat) return;
-        if (e.code === 'KeyL') lights.click();
+        if (!plac && e.code === 'KeyL') lights.click();
         if (e.code === 'KeyX') toggle();
         if (e.code === 'KeyR') reset();
       },
@@ -328,6 +340,10 @@ export class DrivingControls {
 
   get paused() {
     return this.pauseMenu.open;
+  }
+
+  focus() {
+    this.pauseButton.focus();
   }
 
   private togglePause() {
@@ -373,13 +389,21 @@ export class DrivingControls {
       this.y ||
       Number(has('KeyS', 'ArrowDown')) - Number(has('KeyW', 'ArrowUp'));
     let brake = this.braking || has('Space');
+    let brakePressure = brake ? 1 : 0;
     this.actions.signal = has('KeyQ') ? 'left' : has('KeyE') ? 'right' : null;
     this.actions.looking = has('KeyC');
-    this.actions.bell = has('KeyF');
+    this.actions.bell = !this.plac && has('KeyF');
     if (pad) {
       if (Math.abs(pad.axes[0] ?? 0) > 0.15) x = pad.axes[0]!;
       if (Math.abs(pad.axes[1] ?? 0) > 0.15) y = pad.axes[1]!;
+      // The yard reads analog pressure for progressive braking.
+      brakePressure = Math.max(
+        brakePressure,
+        pad.buttons[1]?.value ?? 0,
+        pad.buttons[7]?.value ?? 0,
+      );
       brake ||= !!pad.buttons[1]?.pressed || !!pad.buttons[7]?.pressed;
+      if (this.plac) brake ||= brakePressure > 0.05;
       if (justPressed(0)) this.toggle();
       if (justPressed(9)) {
         this.togglePause();
@@ -387,10 +411,12 @@ export class DrivingControls {
       if (pad.buttons[4]?.pressed) this.actions.signal = 'left';
       if (pad.buttons[5]?.pressed) this.actions.signal = 'right';
       this.actions.looking ||= !!pad.buttons[3]?.pressed;
-      this.actions.bell ||= !!pad.buttons[2]?.pressed;
-      if (justPressed(12)) this.setLights(!this.actions.lights);
+      this.actions.bell ||= !this.plac && !!pad.buttons[2]?.pressed;
+      if (!this.plac && justPressed(12)) this.setLights(!this.actions.lights);
     }
-    return { x, y, brake, scheme: this.scheme };
+    if (this.plac && this.scheme === 'classic' && y > 0.1)
+      brakePressure = Math.max(brakePressure, y);
+    return { x, y, brake, scheme: this.scheme, brakePressure };
   }
   setWalking(walking: boolean) {
     this.mode.textContent = walking ? ui.driving.walking : ui.driving.riding;

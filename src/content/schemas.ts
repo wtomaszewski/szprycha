@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { placBalanceSchema, placSchema } from './plac.ts';
 import { missionsSchema } from './missions.ts';
 import { dialogueFileSchema } from './dialogues.ts';
 
@@ -225,6 +226,7 @@ export const balanceSchema = z.strictObject({
       ]),
     )
     .min(1),
+  plac: placBalanceSchema,
   licencja: z.strictObject({
     mastery_min_modul: percent,
     teoria_pytan: positive.int(),
@@ -283,6 +285,7 @@ export const contentSchema = z
     znaki: signsSchema,
     pytania: questionsSchema,
     balans: balanceSchema,
+    plac: placSchema,
     osiagniecia: achievementsSchema,
     wyzwania: challengesSchema,
     misje: missionsSchema,

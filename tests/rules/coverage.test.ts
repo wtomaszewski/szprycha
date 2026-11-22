@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';
 import { parse } from 'yaml';
+import { placIds } from '../../src/gameplay/plac/PlacRun';
 import { buildContent } from '../../tools/content';
 
 it('accounts for every rule and requires exercised implementations for sim rules', async () => {
@@ -17,6 +18,12 @@ it('accounts for every rule and requires exercised implementations for sim rules
       .sort(),
   ).toEqual([]);
   const known = new Map(przepisy.map(({ id, detektor }) => [id, detektor]));
+  expect(
+    przepisy
+      .filter(({ detektor }) => detektor === 'plac')
+      .map(({ id }) => id)
+      .sort(),
+  ).toEqual([...placIds].sort());
   for (const id of implemented)
     expect(known.get(id), id).toBe(id === 'KASK-01' ? 'garaz' : 'sim');
 

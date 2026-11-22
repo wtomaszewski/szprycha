@@ -72,14 +72,16 @@ Dla każdej reguły `ruleId`:
 **Egzamin „Licencja Szprychy”** (wartości w `balans.yaml`, domyślnie wzorowane na egzaminie szkolnym):
 - Warunek dostępu: ranga Mistrz Szlaku + mastery każdego modułu ≥70.
 - Teoria: 25 pytań losowanych proporcjonalnie z modułów, próg **80%**.
-- Plac: 6 elementów, próg **90%** (element zaliczony = bez dotknięcia linii/pachołka i bez podparcia nogą).
+- Plac: wynik to suma punktów z sześciu elementów. Domyślnie czysty element daje **1 pkt**, drobny błąd **0,5 pkt**, a poważny błąd **0 pkt**. Decyduje najpoważniejszy błąd w danym elemencie. Próg **90%** to **5,4 z 6 pkt**, więc jeden drobny błąd daje zaliczenie (5,5 pkt), a dwa drobne lub jeden poważny dają 5 pkt. Parametry w `content/balans.yaml` opisują próbę w grze i wymagają porównania z aktualnymi kryteriami egzaminu szkolnego.
 - Przejazd kontrolny: trasa w mieście, 0 błędów `major`, max 2 `minor`.
 - Wynik: certyfikat do wydruku (nick + data + wynik; imię wpisane lokalnie, opcjonalnie, nie wysyłane).
 - Komunikat: „Licencja Szprychy to trening. Prawdziwą kartę rowerową wydaje szkoła po egzaminie.”
 
 ## 7. Rankingi
 
-**Lokalne (MVP, offline):** najlepsze wyniki misji, rekord serii, najlepszy czas na placu, statystyki tygodnia.
+**Lokalne (MVP, offline):** najlepsze wyniki misji, rekord serii, ranking placu i statystyki tygodnia.
+
+W Arcade plac mierzy czas wszystkich sześciu ćwiczeń. Czas płynie podczas wykonywania zadania, także przy zatrzymaniu roweru, i pomija pauzę oraz przerwy na informację zwrotną. Do rankingu i medali kwalifikuje się przejazd bez błędów. Progi złota, srebra i brązu wynoszą domyślnie odpowiednio 33, 42 i 55 s. Profil przechowuje pięć najszybszych różnych czasów oraz trasę najlepszego przejazdu do odtworzenia na placu. Geometria i parametry fizyki identyfikują wersję rankingu.
 
 **Online (M10, opcjonalne, za zgodą rodzica):**
 | Ranking | Co się liczy | Reset |

@@ -72,3 +72,20 @@ wyzwania_dzienne:
 zdrowe_granie:
   przypomnienie_po_min: 30
   opcje_min: [15, 30, 45, 60]
+plac:
+  points: { good: 1, minor: 0.5, major: 0 }
+  medals_s: { gold: 33, silver: 42, bronze: 55 }
+  time_limit_s: 35
+  feedback_s: 1.5
+  ranking_limit: 5
+  physics:
+    max_speed: 132
+    balance_speed: 36
+    wobble_degrees: 14
+    wobble_hz: 2.2
+    one_hand_degrees: 5
+    brake_rise_per_s: 2.7
+    lock_pressure: 0.72
+    lock_speed: 82
+    skid_brake_force: 112
+    foot_delay_s: 0.25

@@ -1336,3 +1336,87 @@ button[aria-pressed='true'] {
   outline: 2px solid #ffcd75;
   outline-offset: 2px;
 }
+
+.menu-plac {
+  position: fixed;
+  left: calc(50% + 23px * var(--menu-zoom, 1));
+  top: calc(50% - 55px * var(--menu-zoom, 1));
+  width: calc(255px * var(--menu-zoom, 1));
+  min-height: calc(38px * var(--menu-zoom, 1));
+  border-color: #73eff7;
+  font-size: calc(16px * var(--menu-zoom, 1));
+}
+
+.ride-plac {
+  position: absolute;
+  top: max(8px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+
+.plac-hud {
+  position: absolute;
+  top: max(4px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(92%, 680px);
+  text-align: center;
+}
+.plac-hud h1 {
+  color: #ffcd75;
+  font-size: clamp(17px, 4dvh, 32px);
+  margin: 0;
+}
+.plac-hud p {
+  margin: 2px 0;
+  line-height: 1.15;
+}
+.plac-hud .ride-details {
+  justify-content: center;
+  font-size: 14px;
+  margin-top: 2px;
+}
+.plac-hud .plac-sequence:not([hidden]) {
+  display: inline;
+}
+.plac-hud .ride-details > [hidden] {
+  display: none;
+}
+.plac-hud meter {
+  width: 100px;
+}
+.plac-dialog {
+  inset: 0;
+  margin: auto;
+  width: 560px;
+  max-height: calc(100dvh - 24px);
+}
+.plac-dialog h2,
+.plac-dialog h3,
+.plac-dialog p {
+  margin: 0 0 9px;
+}
+.plac-dialog > :last-child {
+  margin-bottom: 0;
+}
+.plac-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.plac-actions select {
+  padding: 4px;
+  color: inherit;
+  background: #333c57;
+  font: inherit;
+}
+.plac-results,
+.plac-ranking ol {
+  margin: 0 0 9px;
+  padding-left: 24px;
+}
+.plac-ranking h3 {
+  color: #73eff7;
+}
