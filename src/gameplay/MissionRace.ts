@@ -50,6 +50,10 @@ export class MissionRace {
     this.rules.onVerdict((entry) => this.verdicts.push(entry));
   }
 
+  get opponentVerdicts(): readonly Verdict[] {
+    return this.verdicts;
+  }
+
   step() {
     if (this.opponentScore !== undefined) return;
     this.ticks++;

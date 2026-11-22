@@ -44,10 +44,20 @@ it.each(Object.keys(warsawRoutes) as WarsawMissionId[])(
     expect(legal.fired).toEqual(
       legal.mission.definition.zdarzenia_wymuszone.map(({ typ }) => typ),
     );
-    if (id === 'WAW-A1-04')
+    if (id === 'WAW-A1-04') {
+      const violations = legal.mission.race?.opponentVerdicts.filter(
+        ({ kind }) => kind !== 'good',
+      );
+      expect(violations?.map(({ ruleId }) => ruleId)).toEqual(
+        expect.arrayContaining(['ZNAK-B2T22', 'GDZIE-06']),
+      );
+      expect(legal.mission.result!.opponentScore).toBeLessThan(
+        missionContent.balans.misja.ukonczenie,
+      );
       expect(legal.mission.result!.points!).toBeGreaterThan(
         legal.mission.result!.opponentScore!,
       );
+    }
     if (id === 'WAW-A1-05')
       expect(legal.mission.result!.smoothBonus).toBeGreaterThan(0);
     if (id === 'WAW-A1-06') expect(legal.mission.result!.photos).toBe(1);
