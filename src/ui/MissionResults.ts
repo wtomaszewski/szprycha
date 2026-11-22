@@ -238,6 +238,8 @@ export class MissionResults {
             ? mission.noTimeBonus
             : '';
     if (outcomeText) this.body.append(textElement('p', outcomeText));
+    if (result.illegalShortcut)
+      this.body.append(textElement('p', mission.illegalShortcut));
     if (tip)
       this.body.append(
         textElement('h3', labels.remember),
