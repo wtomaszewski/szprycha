@@ -170,3 +170,4 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 
 - Sprite’y ruchu korzystają z klatek atlasu w skali 1:1. Symulacja liczy obrysy, odstępy i zatrzymania z wymiarów w metrach, a kolizje z graczem wykorzystują skalę bieżącej mapy.
 - Przesunięto przystanek bez wysepki w Miasteczku, przejście przy światłach na tej mapie oraz przejście przy bazarze w Warszawie, aby pojazdy mogły je zwolnić przed linią zatrzymania.
+- Po dołączeniu #34 wyłagodzono łuki wjazdu i zjazdu z nasypu przy rondzie, żeby obrysy aut mieściły się na osobnych pasach.

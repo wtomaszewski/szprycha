@@ -262,7 +262,15 @@ function connectStreet(
     junction,
     side,
     embankment
-      ? [[2208, mapHeight], [2208, 1080], [2184, 1056], end]
+      ? [
+          [2208, mapHeight],
+          [2208, 1104],
+          [2204, 1086],
+          [2194, 1070],
+          [2178, 1060],
+          [2160, 1056],
+          end,
+        ]
       : [start, end],
     priority,
     turns,
@@ -274,7 +282,15 @@ function connectStreet(
       polyline(
         `${id}-out`,
         embankment
-          ? [out, [2120, 1120], [2144, 1144], [2144, mapHeight]]
+          ? [
+              out,
+              [2088, 1120],
+              [2109, 1124],
+              [2128, 1136],
+              [2140, 1155],
+              [2144, 1176],
+              [2144, mapHeight],
+            ]
           : [out, boundary(out, side)],
         {
           role: 'exit',
