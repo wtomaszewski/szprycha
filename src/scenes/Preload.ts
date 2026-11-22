@@ -19,6 +19,7 @@ export class Preload extends Scene {
       .then(([content, progress]) => {
         audio.configure(progress.store.profile.audio);
         this.registry.set('missionProgress', progress);
+        document.getElementById('pwa-splash')?.remove();
         this.scene.start('MainMenu', content);
       })
       .catch(showError);

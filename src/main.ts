@@ -7,16 +7,13 @@ import { City } from './scenes/City';
 import { Plac } from './scenes/Plac';
 import { audio } from './audio/GameAudio';
 import { ui } from './core/presentation';
+import { showUpdateNotice } from './platform/pwa';
 import './style.css';
 
 audio.listen();
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-  void navigator.serviceWorker
-    .register(`${import.meta.env.BASE_URL}quiz-worker.js`)
-    .catch((error: unknown) =>
-      console.warn('Offline cache unavailable', error),
-    );
+  void showUpdateNotice(navigator.serviceWorker);
 }
 
 const orientation = document.createElement('div');

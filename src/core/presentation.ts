@@ -11,6 +11,7 @@ export function missionClock(seconds: number) {
 }
 export function showError(error: unknown) {
   console.error(error);
+  document.getElementById('pwa-splash')?.remove();
   const status = document.getElementById('status');
   if (status) {
     status.textContent = ui.loadError;
