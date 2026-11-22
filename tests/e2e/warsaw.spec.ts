@@ -101,7 +101,7 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
           active?.maxInput ?? 1,
           gentle && !coasting
             ? Math.max(
-                0.16,
+                0.22,
                 Math.sqrt(Math.max(0, distance - 5) * 50) /
                   (attributes?.walking === 'true' ? 32 : 150),
               )
@@ -113,7 +113,7 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
           {
             connected: true,
             axes:
-              !active || stop
+              !active || stop || distance === 0
                 ? [0, 0]
                 : [(dx / distance) * strength, (dy / distance) * strength],
             buttons: Array.from({ length: 17 }, (_, i) => ({
