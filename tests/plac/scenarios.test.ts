@@ -267,6 +267,19 @@ it('detects low-speed instability, supporting a foot, a locked wheel and one-han
   expect(ride.sample.footDown).toBe(true);
 });
 
+it('requires actual braking input even with a zero lock threshold', () => {
+  const start = course.exercises['PLAC-03'].start;
+  const ride = new PlacRide(
+    course,
+    start,
+    { ...balance.physics, lock_pressure: 0 },
+    actions(),
+  );
+  for (let tick = 0; tick < 120; tick++) ride.step(drive);
+  expect(ride.sample.skidding).toBe(false);
+  expect(ride.step(brake).skidding).toBe(true);
+});
+
 it('awards fractions, checks the 90% boundary and withholds a fast medal after any fault', () => {
   const results: PlacResult[] = placIds.map((id) => ({
     id,

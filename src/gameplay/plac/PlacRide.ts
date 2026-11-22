@@ -60,6 +60,7 @@ export class PlacRide {
       this.brakePressure + physics.brake_rise_per_s * FIXED_STEP,
     );
     sample.skidding =
+      this.brakePressure > 0 &&
       this.brakePressure >= physics.lock_pressure &&
       rider.speed >= physics.lock_speed;
     tuning.brakeForce = sample.skidding
