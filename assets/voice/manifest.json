@@ -630,6 +630,10 @@
       "text": "Świetnie, ten element jest bez błędów.",
       "hash": "fa9ade25973d383236e51a0199366816d914157ea654323bbeee745431fe78e8"
     },
+    "exam.rideIntro": {
+      "text": "Jedź do kolejnych punktów i przestrzegaj przepisów po drodze.",
+      "hash": "0cf82aaedb416792702d728e3e7502fe1ca8d42bacdd13558ee1b0b25c1005b4"
+    },
     "m5c.noPhoto": {
       "text": "Zsiądź z roweru i zatrzymaj się blisko nowego znaku, poza jezdnią.",
       "hash": "db201651c30a04ffdab4d549030ae09164c7a6d5066f1b4f7b7af4725432d798"

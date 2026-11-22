@@ -4,6 +4,7 @@ import type pl from '../../i18n/pl.json';
 import type { GameContent } from '../../src/content/schemas.ts';
 import { textAt } from '../../src/content/translation.ts';
 import {
+  examRideIntro,
   questionVoiceLine,
   quizExplanationLine,
   resultVoiceIds,
@@ -51,6 +52,7 @@ export function collectLines(
   for (const key of [
     ...voiceNoticeIds,
     ...Object.values(resultVoiceIds),
+    examRideIntro,
     'exam.cleanExercise',
     'missionUi.checkpointHint',
     'progression.wiseHead',

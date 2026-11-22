@@ -13,6 +13,8 @@ export const voiceNoticeIds = [
   'm5c.photoFailed',
 ] as const;
 
+export const examRideIntro = 'exam.rideIntro';
+
 export const resultVoiceIds = {
   completed: 'missionUi.completed',
   glory: 'missionResults.gloryVoice',

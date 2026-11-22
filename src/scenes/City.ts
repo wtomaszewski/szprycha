@@ -1,4 +1,5 @@
 import {
+  examRideIntro,
   localizedVoiceLine,
   resultVoiceIds,
   ruleFeedbackLine,
@@ -859,7 +860,7 @@ export class City extends Scene {
           {
             postac: 'sierzant_ola',
             emocja: 'neutral',
-            tekst: 'exam.rideIntro',
+            tekst: examRideIntro,
           },
         ],
         () => this.controls.focus(),

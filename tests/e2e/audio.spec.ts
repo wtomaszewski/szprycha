@@ -255,9 +255,7 @@ test('ducks radio during a dialogue and preserves captions without recordings', 
   await chooseCity(page, 'warszawa', 'campaign');
   const dialogue = page.getByRole('dialog', { name: pl.dialogueUi.title });
   await expect(dialogue).toBeVisible();
-  await expect(
-    dialogue.getByText(pl.dialogi['WAW-T-01'].powitanie),
-  ).toBeVisible();
+  await expect(dialogue.getByText(pl.dialogi.reguly['KASK-01'])).toBeVisible();
   expect((await log(page)).speechCalls).toBe(0);
   await expect.poll(async () => (await log(page)).levels).toContain(0.6 * 0.26);
   await dialogue.getByRole('button', { name: pl.dialogueUi.skip }).click();

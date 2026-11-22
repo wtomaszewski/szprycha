@@ -18,6 +18,7 @@ it('extracts fixed lines by content keys and changes only the hash when a line i
   expect(lines[questionId]).toEqual({ text: pytanie, hash: hash(pytanie) });
   expect(lines[`pytania.${id}.wyjasnienie`]?.text).toBe(wyjasnienie);
   expect(lines['audio.tipText.stop']?.text).toBe(pl.audio.tipText.stop);
+  expect(lines['exam.rideIntro']?.text).toBe(pl.exam.rideIntro);
   expect(lines['missionResults.gloryVoice']?.text).toBe(
     pl.missionResults.gloryVoice,
   );
