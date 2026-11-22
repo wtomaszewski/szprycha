@@ -1,4 +1,5 @@
 import type { GameObjects, Scene } from 'phaser';
+import { sceneDepth } from './effectFrames';
 import type { ReplayFrame } from '../gameplay/ReplayBuffer';
 import {
   helmetColors,
@@ -13,7 +14,6 @@ export class RiderArt {
   private readonly image: GameObjects.Image;
   private readonly lights: GameObjects.Image;
   private readonly effects: GameObjects.Graphics;
-  private readonly trail: GameObjects.Graphics;
   private readonly helmet: number;
   private hadEffects = false;
 
@@ -22,19 +22,13 @@ export class RiderArt {
     this.image = scene.add.image(0, 0, 'rider', 0).setDepth(20);
     this.lights = scene.add
       .image(0, 0, 'rider-lights', 0)
-      .setDepth(21)
+      .setDepth(sceneDepth.light + 1)
       .setVisible(false);
     this.effects = scene.add.graphics().setDepth(19);
-    this.trail = scene.add.graphics().setDepth(19).setVisible(false);
-    this.trail
-      .fillStyle(0x73eff7, 0.28)
-      .fillEllipse(-20, 0, 30, 16)
-      .fillStyle(0x73eff7, 0.65)
-      .fillEllipse(-16, 0, 18, 7);
   }
 
-  draw(frame: ReplayFrame, reflected: boolean, glowing: boolean) {
-    const { rider, actions, at, dusk } = frame;
+  draw(frame: ReplayFrame, reflected: boolean) {
+    const { rider, actions, at } = frame;
     const x = Math.round(rider.x);
     const y = Math.round(rider.y);
     const heading = spriteDirection(rider.heading, riderDirections);
@@ -63,21 +57,9 @@ export class RiderArt {
       this.lights.setPosition(x, y);
       if (Number(this.lights.frame.name) !== index) this.lights.setFrame(index);
     }
-    if (this.trail.visible !== glowing) this.trail.setVisible(glowing);
-    if (glowing) this.trail.setPosition(x, y).setRotation(rider.heading);
-    const beam = actions.lights && dusk;
-    if (!beam && !actions.bell && !this.hadEffects) return;
-    this.hadEffects = beam || actions.bell;
-    const art = this.effects
-      .clear()
-      .setPosition(x, y)
-      .setRotation(rider.heading);
-    if (beam) {
-      const side = rider.walking ? -4 : 0;
-      art
-        .fillStyle(0xf4f4f4, 0.28)
-        .fillTriangle(9, side, 66, side - 19, 66, side + 19);
-    }
+    if (!actions.bell && !this.hadEffects) return;
+    this.hadEffects = actions.bell;
+    const art = this.effects.clear().setPosition(x, y);
     if (actions.bell)
       art
         .lineStyle(2, 0xffcd75)

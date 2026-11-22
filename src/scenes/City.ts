@@ -19,6 +19,8 @@ import {
   placeTrafficObstacles,
 } from '../gameplay/trafficObstacles';
 import { Blocks, type Block } from '../render/Blocks';
+import { CityAtmosphere } from '../render/CityAtmosphere';
+import { NightLighting, loadCityEffects } from '../render/NightLighting';
 import { CityProps, readProps } from '../render/CityProps';
 import { cullMapChunks, drawMapGround } from '../render/MapGround';
 import { DrivingControls } from '../ui/DrivingControls';
@@ -36,7 +38,13 @@ import { RuleDebugOverlay } from '../render/RuleDebugOverlay';
 import { TrainingRoad } from '../render/TrainingRoad';
 import { IntersectionManager } from '../rules/priority/IntersectionManager';
 import { RuleEngine } from '../rules/RuleEngine';
-import type { AgentState, EnvState, RiderState, Verdict } from '../rules/types';
+import type {
+  AgentState,
+  EnvState,
+  RiderState,
+  Vec2,
+  Verdict,
+} from '../rules/types';
 import { WorldModel } from '../rules/world/WorldModel';
 import {
   TrafficParticipants,
@@ -48,7 +56,7 @@ import { RiderArt } from '../render/RiderArt';
 import { readHelmetColor } from '../core/helmetColor';
 import { EmergencySiren } from '../audio/EmergencySiren';
 import { RuleFeedback } from '../ui/RuleFeedback';
-import { ProgressionHud } from '../ui/ProgressionHud';
+import { DrivingHud } from '../ui/DrivingHud';
 import { ControlQuestionDialog } from '../ui/ControlQuestionDialog';
 import { RoadAttention } from '../progression/RoadAttention';
 import { SafetySeries } from '../progression/SafetySeries';
@@ -79,11 +87,15 @@ export class City extends Scene {
     visibilityLow: false,
   };
   private readonly renderEnvironment = { ...this.environment };
+  private readonly graphics = { lite: false, rain: false };
   private rider!: Rider;
   private riderArt!: RiderArt;
   private controls!: DrivingControls;
   private blocks!: Blocks;
   private props!: CityProps;
+  private lighting!: NightLighting;
+  private atmosphere!: CityAtmosphere;
+  private hud!: DrivingHud;
   private obstacles: Obstacle[] = [];
   private accumulator = 0;
   private worldWidth = 0;
@@ -112,7 +124,6 @@ export class City extends Scene {
   private series!: SafetySeries;
   private attention!: RoadAttention;
   private questionDialog!: ControlQuestionDialog;
-  private progressionHud!: ProgressionHud;
   private freeRidePoints = 0;
   private missionTokens = 0;
   private resultPresented = false;
@@ -187,6 +198,7 @@ export class City extends Scene {
         frameHeight: 48,
       });
     loadTrafficArt(this);
+    loadCityEffects(this);
     this.load.on('loaderror', showError);
     this.load.once('complete', () => this.load.off('loaderror', showError));
   }
@@ -256,8 +268,18 @@ export class City extends Scene {
     );
     this.siren = new EmergencySiren();
     const tilemap = this.make.tilemap({ key: mapId });
-    for (const { x = 0, y = 0 } of tilemap.getObjectLayer('map_decorations')
-      ?.objects ?? []) {
+    const neons: Vec2[] = [];
+    for (const { x = 0, y = 0, properties } of tilemap.getObjectLayer(
+      'map_decorations',
+    )?.objects ?? []) {
+      const kind = properties?.find(
+        (p: { name: string; value: unknown }) => p.name === 'kind',
+      )?.value;
+      if (kind === 'neon') {
+        neons.push({ x, y });
+        continue;
+      }
+      if (kind !== 'bridge') continue;
       const bridge = this.add.graphics().setDepth(4);
       const top = { x: x - 40, y: y - 168 };
       bridge.lineStyle(2, 0xc0cbdc, 0.85);
@@ -348,6 +370,8 @@ export class City extends Scene {
     ];
     this.props = new CityProps(this, props);
     this.blocks = new Blocks(this, buildings, mapId);
+    this.lighting = new NightLighting(this, this.props, neons);
+    this.atmosphere = new CityAtmosphere(this, this.blocks, props);
     this.agents = [...this.traffic.road.agents, ...this.traffic.routed];
     this.replay = new ReplayBuffer(this.agents.length, propIds.length);
     this.actorObstacles = this.agents.map((agent) =>
@@ -405,6 +429,7 @@ export class City extends Scene {
       mapId === 'warszawa' ? ui.driving.pragaTitle : ui.driving.title;
     this.controls = new DrivingControls(
       areaTitle,
+      this.graphics,
       () => this.toggleMode(),
       () => this.reset(),
       () => this.scene.start('MainMenu'),
@@ -419,6 +444,7 @@ export class City extends Scene {
       },
       (visible) => {
         this.debug.setVisible(visible);
+        this.feedback.setDebugVisible(visible);
         this.debug.update(
           this.rules,
           this.world,
@@ -433,8 +459,16 @@ export class City extends Scene {
           this.overlayGamepad(pressed, justPressed),
       },
     );
+    this.hud = new DrivingHud(
+      this.controls.root,
+      this.controls.details,
+      this.controls.progressDetails,
+      this.content.balans.uwaga_drogowki.max,
+      this.series.glowing,
+    );
     this.phone = new MissionPhone(
       this.controls.root,
+      this.controls.quickActions,
       () => this.togglePhone(),
       (id) => {
         if (
@@ -459,15 +493,9 @@ export class City extends Scene {
       this.controls.root,
       this.content.dialogi,
     );
-    if (this.mission) this.controls.notice.textContent = '';
     this.feedback = new RuleFeedback(
       this.controls.root,
       this.content.przepisy.przepisy,
-    );
-    this.progressionHud = new ProgressionHud(
-      this.controls.root,
-      this.content.balans.uwaga_drogowki.max,
-      this.series.glowing,
     );
     this.questionDialog = new ControlQuestionDialog(
       this.controls.root,
@@ -496,6 +524,7 @@ export class City extends Scene {
       this.missionMarker = this.add.graphics().setDepth(8);
       this.missionHud = new MissionHud(
         this.controls.root,
+        this.hud.timerSlot,
         () => {
           this.rulesRider.helmet.fastened = true;
           this.updateMissionHud();
@@ -524,7 +553,7 @@ export class City extends Scene {
       this.missionHud?.destroy();
       this.stopListeningForVerdicts?.();
       this.stopListeningForVerdicts = undefined;
-      this.game.canvas.classList.remove('training-dusk');
+      delete this.game.canvas.dataset.lighting;
       this.renderEnvironment.time = 'day';
       this.siren.destroy();
       this.debug.destroy();
@@ -554,7 +583,9 @@ export class City extends Scene {
     this.game.canvas.setAttribute('aria-label', areaTitle);
     this.controls.speed.textContent = `0 ${ui.driving.unit}`;
     this.publishRiderPosition(this.rider);
-    this.renderFrame(this.replay.frame(0)!, 0);
+    const frame = this.replay.frame(0)!;
+    this.renderFrame(frame, 0);
+    this.updateHudConditions(frame);
     this.openMissionDialogue();
   }
 
@@ -689,8 +720,8 @@ export class City extends Scene {
 
   private updateProgressionHud() {
     const { multiplier, longest, glowing } = this.series;
-    this.progressionHud.update(
-      Math.max(0, this.mission?.points ?? this.freeRidePoints),
+    this.hud.updateProgression(
+      this.mission?.points ?? this.freeRidePoints,
       multiplier,
       longest,
       glowing,
@@ -776,7 +807,11 @@ export class City extends Scene {
     this.controls.setWalking(false);
     this.cameras.main.centerOn(this.rider.x, this.rider.y);
     this.replay.clear();
+    this.atmosphere.reset();
     this.recordFrame(-FIXED_STEP);
+    const frame = this.replay.frame(0)!;
+    this.renderFrame(frame, 0);
+    this.updateHudConditions(frame);
     this.openMissionDialogue();
   }
   private resetRules() {
@@ -1221,13 +1256,9 @@ export class City extends Scene {
         this.rulesRider.pos,
       );
       this.updateDrivingHud(this.rider, this.controls.actions);
+      this.updateHudConditions(this.replay.frame(this.replay.size - 1)!);
       if (time > this.messageUntil) {
-        const notice =
-          sirenVolume > 0
-            ? ui.rules.emergencyApproaching
-            : this.mission
-              ? ''
-              : ui.driving.prototype;
+        const notice = sirenVolume > 0 ? ui.rules.emergencyApproaching : '';
         if (this.controls.notice.textContent !== notice)
           this.controls.notice.textContent = notice;
       }
@@ -1276,8 +1307,32 @@ export class City extends Scene {
     if (canvas.dataset.actions !== inputs) canvas.dataset.actions = inputs;
   }
 
+  private rainy() {
+    return this.controls.rain || this.environment.weather === 'rain_heavy';
+  }
+
+  private night(frame: ReplayFrame) {
+    return (
+      this.controls.previewNight ||
+      frame.dusk ||
+      (frame.at < 0 &&
+        (this.mission?.definition.start.zmrok === true ||
+          this.world.duskAt === 0))
+    );
+  }
+
+  private updateHudConditions(frame: ReplayFrame) {
+    this.hud.updateConditions(
+      this.rulesRider.helmet.fastened,
+      this.controls.actions.lights,
+      this.night(frame),
+      this.rainy(),
+    );
+  }
+
   private renderFrame(frame: ReplayFrame, delta: number, reviewing = false) {
-    const { rider: r, at, dusk } = frame;
+    const { rider: r, at } = frame;
+    const night = this.night(frame);
     const camera = this.cameras.main,
       look = r.speed * 0.5;
     const targetX = r.x + Math.cos(r.heading) * look - camera.width / 2,
@@ -1288,7 +1343,13 @@ export class City extends Scene {
       Math.round(camera.scrollY + (targetY - camera.scrollY) * blend),
     );
     cullMapChunks(this.mapChunks, camera);
-    this.blocks.update(camera, this.controls.lite, r.x, r.y);
+    this.blocks.update(
+      camera,
+      this.controls.lite,
+      r.x,
+      r.y,
+      night && !this.controls.lite,
+    );
     this.props.update(camera, this.controls.lite, this.blocks.cameraHeight);
     const scale = 1 / this.world.metersPerPixel;
     const centerX = camera.scrollX + camera.width / 2;
@@ -1311,24 +1372,15 @@ export class City extends Scene {
         Math.abs(y - centerY) <= halfHeight + art.reach;
       art.draw(x, y, visible, pose, at);
       if (
-        dusk &&
+        night &&
         visible &&
-        !reflected &&
         (agent.kind === 'car' ||
           agent.kind === 'emergency' ||
           agent.kind === 'tram')
       ) {
-        const dx = r.x - x;
-        const dy = r.y - y;
-        if (Math.abs(dx) < 85 && Math.abs(dy) < 85) {
-          const distance = Math.hypot(dx, dy);
-          reflected =
-            distance <= 85 &&
-            dx * Math.cos(pose.heading) + dy * Math.sin(pose.heading) >
-              distance * 0.94 &&
-            dx * Math.cos(r.heading) + dy * Math.sin(r.heading) >
-              distance * 0.7;
-        }
+        const heading = agent.kind === 'tram' ? pose.tramFront : pose.heading;
+        reflected =
+          this.lighting.drawVehicle(x, y, heading, art.nose, r) || reflected;
       }
       if (pose.active && agent.kind === 'emergency' && pose.signalActive) {
         const volume = Math.max(0, 1 - Math.hypot(x - r.x, y - r.y) / 560);
@@ -1355,15 +1407,32 @@ export class City extends Scene {
           y + dx * 5,
         );
     }
-    this.riderArt.draw(frame, reflected, !reviewing && this.series.glowing);
+    const illuminatesReflector = this.lighting.finishFrame(
+      camera,
+      night,
+      frame.actions.lights,
+      r,
+      reflected,
+      at,
+    );
+    this.riderArt.draw(frame, illuminatesReflector);
     this.eventArt.draw(frame.props, scale, at);
-    const lighting = this.renderEnvironment;
-    const time = dusk ? 'dusk' : 'day';
-    if (lighting.time !== time) {
-      lighting.time = time;
-      this.game.canvas.classList.toggle('training-dusk', dusk);
-    }
-    this.road.updateLights(Math.max(0, at), lighting);
+    this.atmosphere.draw(
+      camera,
+      r,
+      Math.max(0, at),
+      night,
+      this.rainy(),
+      this.controls.lite,
+      this.reducedMotion.matches,
+      this.series.glowing,
+      reviewing,
+    );
+    const time = night ? 'night' : 'day';
+    const canvas = this.game.canvas;
+    if (canvas.dataset.lighting !== time) canvas.dataset.lighting = time;
+    this.renderEnvironment.time = frame.dusk ? 'dusk' : 'day';
+    this.road.updateLights(Math.max(0, at), this.renderEnvironment);
     return sirenVolume;
   }
 }

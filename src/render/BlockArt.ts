@@ -31,17 +31,32 @@ export function sheetImage(scene: Scene, key: string) {
   return source;
 }
 
+function roofMaterial(b: Block, hash: number) {
+  const requested = roofKinds.findIndex((kind) => kind === b.roof);
+  if (requested >= 0) return requested;
+  if (b.landmarkId === 'palace-test') return 3;
+  return b.floors <= 2 ? 0 : hash % roofKinds.length;
+}
+
+export function visitRoofDetails(
+  b: Block,
+  hash: number,
+  visit: (kind: number, x: number, y: number) => void,
+) {
+  if (b.landmarkId === 'palace-test') return;
+  const material = roofMaterial(b, hash);
+  for (let y = 8; y + 36 <= b.height; y += 54)
+    for (let x = 8; x + 36 <= b.width; x += 52) {
+      const n = artHash(x, y, hash);
+      if (n % 2 === 0 && (x !== 8 || y !== 8)) continue;
+      const kind = material === 1 ? n % 2 : n % roofDetails.length;
+      visit(kind, x + ((n >>> 4) & 3), y + ((n >>> 6) & 3));
+    }
+}
+
 export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
   const palace = b.landmarkId === 'palace-test';
-  const requested = roofKinds.findIndex((kind) => kind === b.roof);
-  const material =
-    requested >= 0
-      ? requested
-      : palace
-        ? 3
-        : b.floors <= 2
-          ? 0
-          : hash % roofKinds.length;
+  const material = roofMaterial(b, hash);
   return surfaceTexture(
     scene,
     key,
@@ -76,23 +91,54 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
         return;
       }
       const details = sheetImage(scene, 'roof-details');
-      for (let y = 8; y + 36 <= b.height; y += 54)
-        for (let x = 8; x + 36 <= b.width; x += 52) {
-          const n = artHash(x, y, hash);
-          if (n % 2 === 0 && (x !== 8 || y !== 8)) continue;
-          const kind = material === 1 ? n % 2 : n % roofDetails.length;
-          ctx.drawImage(
-            details,
-            kind * 32,
-            0,
-            32,
-            32,
-            x + ((n >>> 4) & 3),
-            y + ((n >>> 6) & 3),
-            32,
-            32,
-          );
+      visitRoofDetails(b, hash, (kind, x, y) =>
+        ctx.drawImage(details, kind * 32, 0, 32, 32, x, y, 32, 32),
+      );
+    },
+  );
+}
+
+function wallMaterial(b: Block, hash: number) {
+  const requested = wallKinds.findIndex((kind) => kind === b.wall);
+  if (requested >= 0) return requested;
+  return b.landmarkId === 'palace-test' ? 0 : hash % wallKinds.length;
+}
+
+export function wallEmissionTexture(
+  scene: Scene,
+  key: string,
+  b: Block,
+  hash: number,
+  width: number,
+  floors: number,
+  groundFloor: boolean,
+) {
+  const material = wallMaterial(b, hash);
+  return surfaceTexture(
+    scene,
+    key,
+    Math.ceil(width),
+    floors * FLOOR_PX,
+    (ctx) => {
+      for (let floor = 0; floor < floors; floor++) {
+        const row = groundFloor && floor === floors - 1 ? 2 : floor % 2;
+        for (let x = 0; x < width; x += 32) {
+          const variant = artHash(x, floor, hash) & 3;
+          const y = floor * FLOOR_PX + 3;
+          ctx.fillStyle = 'rgba(255, 205, 117, 0.58)';
+          if (row === 2 && variant % 2 === 0) {
+            ctx.fillRect(x + 19, y, 10, 6);
+            continue;
+          }
+          for (const pane of [4, 19]) {
+            if (
+              artHash(pane + material, row + variant, 30) % 5 === 0 ||
+              (variant === 3 && pane === 4)
+            )
+              ctx.fillRect(x + pane + 2, y, 6, 6);
+          }
         }
+      }
     },
   );
 }
@@ -107,13 +153,7 @@ export function wallTexture(
   groundFloor: boolean,
   sunny: boolean,
 ) {
-  const requested = wallKinds.findIndex((kind) => kind === b.wall);
-  const material =
-    requested >= 0
-      ? requested
-      : b.landmarkId === 'palace-test'
-        ? 0
-        : hash % wallKinds.length;
+  const material = wallMaterial(b, hash);
   const height = floors * FLOOR_PX;
   return surfaceTexture(scene, key, Math.ceil(width), height, (ctx) => {
     const sheet = sheetImage(scene, 'block-walls');

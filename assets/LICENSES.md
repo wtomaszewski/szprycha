@@ -16,3 +16,6 @@ z `assets/palette.hex`.
 Sprite’y uczestników ruchu (`generated/rider*.png` i `generated/traffic-*.png`)
 powstają w `tools/sprite-art.ts` z własnych wzorów i palety projektu.
 Układ klatek i wymiary są zapisane w `assets/manifest.json`.
+
+Atlas efektów (`generated/city-effects.png`) powstaje w `tools/effect-art.ts`
+z własnych wzorów i kolorów palety projektu.

@@ -6,6 +6,11 @@ const viewport = /^(\d+)x(\d+)$/.exec(process.env.BENCH_VIEWPORT ?? '1280x720');
 if (!viewport || !Number(viewport[1]) || !Number(viewport[2]))
   throw new Error('BENCH_VIEWPORT must use WIDTHxHEIGHT in pixels');
 const [, width, height] = viewport;
+const light = process.env.BENCH_LIGHT ?? 'day';
+if (light !== 'day' && light !== 'night')
+  throw new Error('BENCH_LIGHT must be day or night');
+const lite = process.env.BENCH_QUALITY === 'lite';
+const rain = process.env.BENCH_RAIN === '1';
 const warsaw = process.env.BENCH_MAP === 'warszawa';
 const map = warsaw ? 'warszawa' : 'miasteczko';
 const fragment = process.env.BENCH_FRAGMENT ?? 'praga';
@@ -46,8 +51,9 @@ const browser = await chromium.launch({
 try {
   const page = await browser.newPage({
     viewport: { width: Number(width), height: Number(height) },
+    hasTouch: true,
   });
-  if (spawn) {
+  if (spawn || light === 'night') {
     // Start on the route with the complete map and all its traffic.
     await page.route(
       new RegExp(`/(maps|assets)/${map}(?:-[^/]+)?\\.tmj(?:\\?|$)`),
@@ -56,6 +62,15 @@ try {
           return route.continue();
         const response = await route.fetch();
         const tiled = await response.json();
+        if (light === 'night') {
+          tiled.properties = [
+            ...(tiled.properties ?? []).filter(
+              ({ name }: { name: string }) => name !== 'dusk_at_s',
+            ),
+            { name: 'dusk_at_s', type: 'float', value: 0 },
+          ];
+        }
+        if (!spawn) return route.fulfill({ response, json: tiled });
         const player = tiled.layers
           .find(({ name }: { name: string }) => name === 'spawns')
           .objects.find(({ name }: { name: string }) => name === 'player');
@@ -107,9 +122,13 @@ try {
     );
   const position = page.locator('canvas[data-x]');
   await position.waitFor();
-  await page
-    .getByRole('button', { name: pl.driving.classic, exact: true })
-    .click();
+  if (light === 'night') await page.keyboard.press('KeyL');
+  if (lite || rain) {
+    await page.keyboard.press('Escape');
+    if (lite) await page.getByRole('button', { name: pl.driving.full }).click();
+    if (rain) await page.getByRole('button', { name: pl.driving.rain }).click();
+    await page.keyboard.press('Escape');
+  }
   // Stick slightly off-centre for a continuous ride below the random event speed.
   const stick = await page.getByLabel(pl.driving.joystick).boundingBox();
   if (!stick) throw new Error('Missing steering control');
@@ -153,6 +172,9 @@ try {
     map,
     fragment: warsaw ? fragment : undefined,
     mode,
+    light,
+    quality: lite ? 'lite' : 'full',
+    rain,
     travelledPx,
     samples: frames.length,
     meanFps: 1000 / (frames.reduce((a, b) => a + b, 0) / frames.length),
@@ -160,10 +182,11 @@ try {
     maxFrameMs: frames.at(-1),
   };
   await mkdir('test-results', { recursive: true });
+  const route = warsaw
+    ? `-${fragment}${mode === 'free' && fragment !== 'praga' ? '-free' : ''}`
+    : '';
   await writeFile(
-    warsaw
-      ? `test-results/performance-${fragment}${mode === 'free' && fragment !== 'praga' ? '-free' : ''}.json`
-      : 'test-results/performance.json',
+    `test-results/performance${route}${light === 'night' ? '-night' : ''}${lite ? '-lite' : ''}${rain ? '-rain' : ''}.json`,
     JSON.stringify(report, null, 2),
   );
   console.log(report);

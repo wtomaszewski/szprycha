@@ -35,11 +35,14 @@ export class MissionHud {
   private readonly heading = document.createElement('h2');
   private readonly rewards = document.createElement('p');
   private readonly resultText = document.createElement('p');
+  private readonly confetti = document.createElement('div');
   private readonly retryButton = document.createElement('button');
   private displayedResult: MissionSystem['result'];
+  private resultRevealed = false;
 
   constructor(
     parent: HTMLElement,
+    timerSlot: HTMLElement,
     equipHelmet: () => void,
     turnOnLights: () => void,
     resumeFromCheckpoint: () => void,
@@ -102,9 +105,26 @@ export class MissionHud {
       button.addEventListener('click', action);
       actions.append(button);
     }
+    this.confetti.className = 'mission-confetti';
+    this.confetti.setAttribute('aria-hidden', 'true');
+    for (let index = 0; index < 17; index++) {
+      const piece = document.createElement('i');
+      piece.style.setProperty('--confetti-x', `${index * 6}%`);
+      piece.style.setProperty('--confetti-y', `${(index * 13) % 16}px`);
+      piece.style.setProperty('--confetti-drift', `${(8 - index) * 4}px`);
+      piece.style.setProperty('--confetti-angle', `${(index * 29) % 90}deg`);
+      this.confetti.append(piece);
+    }
     this.rewards.className = 'mission-rewards';
-    this.summary.append(this.heading, this.rewards, this.resultText, actions);
-    parent.append(panel, this.timer, this.navigation, this.summary);
+    this.summary.append(
+      this.confetti,
+      this.heading,
+      this.rewards,
+      this.resultText,
+      actions,
+    );
+    timerSlot.append(this.timer);
+    parent.append(panel, this.navigation, this.summary);
   }
 
   destroy() {
@@ -117,6 +137,8 @@ export class MissionHud {
   }
 
   focusResult() {
+    this.resultRevealed = true;
+    this.confetti.hidden = this.displayedResult?.status !== 'completed';
     this.retryButton.focus();
   }
 
@@ -140,6 +162,9 @@ export class MissionHud {
     this.timer.hidden = !!result;
     this.navigation.hidden = !!result || mission.preparingBike;
     this.summary.hidden = !result;
+    if (!result) this.resultRevealed = false;
+    this.confetti.hidden =
+      !this.resultRevealed || result?.status !== 'completed';
     this.parcel.hidden = !!result || mission.shakeLevel === undefined;
     if (mission.shakeLevel !== undefined)
       this.shocks.value = mission.shakeLevel;

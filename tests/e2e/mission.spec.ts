@@ -106,9 +106,9 @@ test('recovers from a helmet mistake and keeps XP, mastery and mission progress 
   const question = questionDialog(page);
   const helmetQuestion = questionFor('KASK-01');
   await expect(question).toContainText(helmetQuestion.pytanie);
-  await expect(page.locator('.progression-score')).toContainText(
-    `${pl.progression.points} 0 ·`,
-  );
+  await expect(
+    page.getByLabel(pl.progression.points, { exact: true }),
+  ).toHaveText('0');
   for (const answer of await question.getByRole('button').all()) {
     await expect(answer).not.toBeFocused();
     await expect(answer).toHaveCSS('outline-style', 'none');
@@ -153,6 +153,7 @@ test('recovers from a helmet mistake and keeps XP, mastery and mission progress 
   await expect(
     page.getByText(pl.missionUi.completed, { exact: true }),
   ).toBeVisible();
+  await expect(page.locator('.mission-confetti')).toBeVisible();
   await expect(
     page.getByText(pl.missionUi.noTimeBonus, { exact: false }),
   ).toBeVisible();
