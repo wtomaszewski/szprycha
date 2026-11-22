@@ -33,6 +33,7 @@ export type MissionResult = Outcome & {
   timeBonusEligible: boolean;
   illegalShortcut: boolean;
   points: number;
+  penaltyPoints: number;
   stars: Stars;
   longestSeries: number;
   opponentScore?: number;
@@ -410,6 +411,9 @@ export class MissionSystem {
       goodHabits: this.score.goodHabits,
       verdicts: this.verdicts,
       points: score.points,
+      penaltyPoints:
+        this.score.minor * this.balance.misja.kara_minor +
+        this.score.major * this.balance.misja.kara_major,
       stars: missionStars(
         this.balance.gwiazdki,
         this.definition,

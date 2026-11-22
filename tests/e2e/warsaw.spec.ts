@@ -283,15 +283,15 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
     });
   }
   await page.reload();
+  await page.getByRole('button', { name: pl.skillMap.title }).click();
+  const skillMap = page.getByRole('dialog', { name: pl.skillMap.title });
+  for (const id of ['WAW-T-01', ...ids] as const)
+    await expect(
+      skillMap.getByText(pl.misje[id].tytul, { exact: true }),
+    ).toBeVisible();
+  await skillMap.getByRole('button', { name: pl.skillMap.close }).click();
   await page.getByRole('button', { name: pl.driving.praga }).click();
   await expect(canvas(page)).toHaveAttribute('data-map', 'warszawa');
   await page.keyboard.press('KeyM');
   await expect(order(page, 'WAW-A1-06')).toBeEnabled();
-  expect(
-    await page.evaluate(
-      () =>
-        JSON.parse(localStorage.getItem('szprycha.mission-progress.v1') ?? '{}')
-          .completed,
-    ),
-  ).toEqual(['WAW-T-01', ...ids]);
 });

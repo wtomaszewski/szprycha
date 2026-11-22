@@ -29,7 +29,7 @@ import { MissionSystem, type MissionSpawn } from '../gameplay/MissionSystem';
 import {
   canOpenPhone,
   missionLines,
-  missionProgress,
+  type MissionProgress,
 } from '../gameplay/MissionProgress';
 import type { GameContent } from '../content/schemas';
 import { RuleDebugOverlay } from '../render/RuleDebugOverlay';
@@ -106,6 +106,7 @@ export class City extends Scene {
   private debug!: RuleDebugOverlay;
   private feedback!: RuleFeedback;
   private content!: GameContent;
+  private progress!: MissionProgress;
   private mapChunks: GameObjects.Image[] = [];
   private mission?: MissionSystem;
   private series!: SafetySeries;
@@ -196,10 +197,11 @@ export class City extends Scene {
     this.hudAt = 0;
     this.messageUntil = 0;
     this.content = this.registry.get('content') as GameContent;
+    this.progress = this.registry.get('missionProgress') as MissionProgress;
     this.series ??= new SafetySeries(
       this.content.balans.combo,
       0,
-      missionProgress.longestSeries,
+      this.progress.longestSeries,
     );
     this.attention ??= new RoadAttention(
       this.content.balans.uwaga_drogowki,
@@ -242,7 +244,13 @@ export class City extends Scene {
       this.world,
       this.traffic,
       undefined,
-      undefined,
+      (rules) =>
+        rules.reduce(
+          (sum, ruleId) =>
+            sum +
+            this.progress.eventWeight(ruleId, this.content.balans.mastery),
+          0,
+        ) / rules.length,
       ambientTraffic,
       this.traffic.road.agents,
     );
@@ -466,6 +474,11 @@ export class City extends Scene {
       (index) => {
         const answer = this.attention.answer(index);
         if (!answer) return;
+        this.progress.recordControlAnswer(
+          answer.ruleId,
+          answer.correct,
+          this.content.balans.mastery,
+        );
         if (this.mission) this.mission.answerQuestion(answer.points);
         else this.freeRidePoints += answer.points;
         this.updateProgressionHud();
@@ -549,7 +562,7 @@ export class City extends Scene {
     return this.content.misje.filter(
       (mission) =>
         this.cache.tilemap.exists(mission.mapa ?? mission.miasto) &&
-        missionProgress.isAvailable(mission, this.content),
+        this.progress.isAvailable(mission, this.content),
     );
   }
 
@@ -642,7 +655,7 @@ export class City extends Scene {
 
   private openMissionDialogue() {
     if (!this.mission) return;
-    const lines = missionProgress.opening(
+    const lines = this.progress.opening(
       this.mission.definition,
       this.content.dialogi,
     );
@@ -658,7 +671,8 @@ export class City extends Scene {
     this.controls.clear();
     if (result.status === 'completed') {
       const { definition } = mission;
-      this.missionTokens = missionProgress.complete(definition, {
+      this.missionTokens = this.progress.complete(definition, {
+        points: result.points,
         stars: result.stars,
         balance: this.content.balans.gwiazdki,
       });
@@ -676,7 +690,7 @@ export class City extends Scene {
   private updateProgressionHud() {
     const { multiplier, longest, glowing } = this.series;
     this.progressionHud.update(
-      this.mission?.points ?? this.freeRidePoints,
+      Math.max(0, this.mission?.points ?? this.freeRidePoints),
       multiplier,
       longest,
       glowing,
@@ -889,7 +903,7 @@ export class City extends Scene {
       this.checkpointHint,
       this.rider.speed,
       this.missionTokens,
-      missionProgress.tokens,
+      this.progress.tokens,
     );
   }
 
@@ -974,7 +988,11 @@ export class City extends Scene {
     rider.phoneInHand = false;
     for (const verdict of this.tickVerdicts) this.series.receive(verdict.kind);
     if (this.tickVerdicts.length)
-      missionProgress.recordSeries(this.series.longest);
+      this.progress.recordRide(
+        this.tickVerdicts,
+        this.series.longest,
+        this.content.balans.mastery,
+      );
     this.attention.step(this.tickVerdicts, rider.speed > 0);
     const effects = this.mission?.step(
       rider.pos,

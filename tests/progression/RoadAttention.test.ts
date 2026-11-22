@@ -42,7 +42,11 @@ it('raises any major straight to 3 and grants Mądra Głowa only once', () => {
   ).toBeUndefined();
   expect(attention.level).toBe(3);
   const index = attention.pending!.poprawna;
-  expect(attention.answer(index)).toEqual({ correct: true, points: 100 });
+  expect(attention.answer(index)).toEqual({
+    ruleId: redLight.ruleId,
+    correct: true,
+    points: 100,
+  });
   expect(attention.level).toBe(0);
   expect(attention.pending).toBeUndefined();
   expect(attention.answer(index)).toBeUndefined();
@@ -60,7 +64,11 @@ it('returns the counter to 1 after a wrong answer and rotates matching questions
     expect(attention.pending).toEqual(expected);
     expect(expected.wyjasnienie).toBeTruthy();
     const wrong = (expected.poprawna + 1) % expected.odpowiedzi.length;
-    expect(attention.answer(wrong)).toEqual({ correct: false, points: 0 });
+    expect(attention.answer(wrong)).toEqual({
+      ruleId,
+      correct: false,
+      points: 0,
+    });
     expect(attention.level).toBe(1);
     expect(attention.pending).toBeUndefined();
   }

@@ -1,3 +1,5 @@
+import { IDBFactory } from 'fake-indexeddb';
+import { ProgressStore } from '../../src/core/progressStore';
 import { expect, it } from 'vitest';
 import { MissionProgress } from '../../src/gameplay/MissionProgress';
 import {
@@ -57,27 +59,36 @@ it.each([
   expect(tokensForImprovement(balance, previous, earned)).toBe(tokens);
 });
 
-it('extends a legacy profile and restores the record, payouts and per-mission best on reload', () => {
+it('restores the record, payouts and per-mission best stars on reload', async () => {
   const [first, second] = misje;
-  let data = JSON.stringify({ completed: [first!.id] });
-  const storage = {
-    getItem: () => data,
-    setItem: (_key: string, value: string) => {
-      data = value;
-    },
-  };
-  let progress = new MissionProgress(storage);
+  const factory = new IDBFactory();
+  const good = [{ ruleId: 'ZNAK-STOP', kind: 'good' }] as const;
+  let progress = new MissionProgress(await ProgressStore.open(factory));
   expect(progress.longestSeries).toBe(0);
   expect(progress.tokens).toBe(0);
-  progress.recordSeries(8);
-  progress.recordSeries(2);
-  expect(progress.complete(first!, { stars: 1, balance })).toBe(10);
-  expect(progress.complete(second!, { stars: 2, balance })).toBe(20);
-  progress = new MissionProgress(storage);
+  progress.recordRide(good, 8, balans.mastery);
+  progress.recordRide(good, 2, balans.mastery);
+  expect(progress.complete(first!, { stars: 1, points: 1000, balance })).toBe(
+    10,
+  );
+  expect(progress.complete(second!, { stars: 2, points: 1000, balance })).toBe(
+    20,
+  );
+  await progress.store.flush();
+  progress = new MissionProgress(await ProgressStore.open(factory));
   expect(progress.longestSeries).toBe(8);
   expect(progress.tokens).toBe(30);
-  expect(progress.complete(first!, { stars: 3, balance })).toBe(25);
-  expect(progress.complete(first!, { stars: 3, balance })).toBe(0);
-  expect(progress.complete(first!, { stars: 2, balance })).toBe(0);
-  expect(new MissionProgress(storage).tokens).toBe(55);
+  expect(progress.complete(first!, { stars: 3, points: 1000, balance })).toBe(
+    25,
+  );
+  expect(progress.complete(first!, { stars: 3, points: 1000, balance })).toBe(
+    0,
+  );
+  expect(progress.complete(first!, { stars: 2, points: 1000, balance })).toBe(
+    0,
+  );
+  await progress.store.flush();
+  expect(new MissionProgress(await ProgressStore.open(factory)).tokens).toBe(
+    55,
+  );
 });

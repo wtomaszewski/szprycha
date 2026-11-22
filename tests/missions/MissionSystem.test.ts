@@ -88,6 +88,7 @@ describe('MissionSystem', () => {
       par_s: 25,
       goodHabits: 1,
       points: 1550,
+      penaltyPoints: 0,
       stars: 3,
       longestSeries: 1,
       verdicts: [good],

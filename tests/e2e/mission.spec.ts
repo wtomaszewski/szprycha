@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import questions from '../../content/pytania.json' with { type: 'json' };
+import type { GameContent } from '../../src/content/schemas';
 
 const tutorial = pl.misje['WAW-T-01'];
 const dialogue = (page: Page) =>
@@ -11,6 +12,30 @@ const questionDialog = (page: Page) =>
   page.getByRole('dialog', { name: pl.progression.questionTitle });
 const questionFor = (rule: string) =>
   questions.pytania.find(({ przepisy }) => przepisy.includes(rule))!;
+
+async function mockGamepad(page: Page) {
+  await page.addInitScript(() => {
+    const state = { button: -1 };
+    window.addEventListener('test:gamepad', (event) => {
+      state.button = (event as CustomEvent<number>).detail;
+    });
+    Object.defineProperty(navigator, 'getGamepads', {
+      value: () => [
+        {
+          connected: true,
+          axes: [0, 0],
+          buttons: Array.from({ length: 17 }, (_, i) => ({
+            pressed: i === state.button,
+          })),
+        },
+      ],
+    });
+  });
+  return (button: number) =>
+    page.evaluate((detail) => {
+      window.dispatchEvent(new CustomEvent('test:gamepad', { detail }));
+    }, button);
+}
 
 test('starts WAW-T-01 from the menu with a visible goal arrow and timer', async ({
   page,
@@ -38,7 +63,7 @@ test('starts WAW-T-01 from the menu with a visible goal arrow and timer', async 
   await expect(arrow).toBeVisible();
 });
 
-test('recovers from a helmet mistake and finishes after stopping at B-20', async ({
+test('recovers from a helmet mistake and keeps XP, mastery and mission progress after reload', async ({
   page,
 }) => {
   test.setTimeout(45_000);
@@ -54,11 +79,13 @@ test('recovers from a helmet mistake and finishes after stopping at B-20', async
   await expect(lesson).toBeVisible();
   await page.keyboard.up('ArrowUp');
   const feedback = lesson.locator('#replay-feedback');
-  const content = await (await page.request.get('/data/content.json')).json();
+  const content: GameContent = await (
+    await page.request.get('/data/content.json')
+  ).json();
   const helmet = content.przepisy.przepisy.find(
     (rule: { id: string }) => rule.id === 'KASK-01',
   );
-  await expect(feedback).toHaveText(helmet.feedback);
+  await expect(feedback).toHaveText(helmet!.feedback);
   await expect(
     lesson.getByRole('button', { name: pl.replay.resume }),
   ).toBeHidden();
@@ -79,6 +106,18 @@ test('recovers from a helmet mistake and finishes after stopping at B-20', async
   const question = questionDialog(page);
   const helmetQuestion = questionFor('KASK-01');
   await expect(question).toContainText(helmetQuestion.pytanie);
+  await expect(page.locator('.progression-score')).toContainText(
+    `${pl.progression.points} 0 ·`,
+  );
+  for (const answer of await question.getByRole('button').all()) {
+    await expect(answer).not.toBeFocused();
+    await expect(answer).toHaveCSS('outline-style', 'none');
+  }
+  await page.keyboard.press('Enter');
+  await expect(question.getByRole('status')).toBeHidden();
+  await page.screenshot({ path: 'test-results/m5b-pytanie.png' });
+  await page.keyboard.press('ArrowDown');
+  await expect(question.getByRole('button').first()).toBeFocused();
   await expect(page.getByLabel(pl.progression.attention)).toContainText('3/3');
   await question
     .getByRole('button', {
@@ -117,19 +156,55 @@ test('recovers from a helmet mistake and finishes after stopping at B-20', async
   await expect(
     page.getByText(pl.missionUi.noTimeBonus, { exact: false }),
   ).toBeVisible();
-  await page.screenshot({ path: 'test-results/m4a-result.png' });
+  const summary = page.getByRole('region', { name: pl.missionUi.result });
+  await expect(summary).toContainText(`${pl.missionUi.penalties} −300`);
+  const points = Number(
+    (await summary.textContent())?.match(
+      new RegExp(`${pl.missionUi.yourPoints} (\\d+)`),
+    )?.[1],
+  );
+  expect(points).toBeGreaterThan(0);
+  await page.screenshot({ path: 'test-results/m5b-wynik.png' });
   await page.getByRole('button', { name: pl.missionUi.retry }).click();
   await expect(dialogue(page)).toContainText(pl.dialogi['WAW-T-01'].powitanie);
   await skipDialogue(page);
   await expect(
     page.getByRole('button', { name: pl.missionUi.equip }),
   ).toBeVisible();
+
+  await page.reload();
+  await page.getByRole('button', { name: pl.skillMap.title }).click();
+  const skillMap = page.getByRole('dialog', { name: pl.skillMap.title });
+  const formatter = new Intl.NumberFormat('pl-PL');
+  await expect(skillMap).toContainText(
+    `${pl.skillMap.xp} ${formatter.format(points / 2)}`,
+  );
+  await expect(skillMap).toContainText(pl.skillMap.ranks.zoltodziob);
+  await expect(skillMap).toContainText(pl.misje['WAW-T-01'].tytul);
+  await expect(skillMap).toContainText(`${pl.progression.record} 1`);
+  await expect(skillMap.getByRole('listitem')).toHaveCount(8);
+  const meter = skillMap.getByRole('meter', { name: pl.skillMap.modules.M01 });
+  const moduleRules = content.przepisy.przepisy.filter(
+    ({ modul }) => modul === 'M01',
+  );
+  await expect(meter).toHaveJSProperty('value', 15 / moduleRules.length);
+  await page.screenshot({ path: 'test-results/m5b-mapa-umiejetnosci.png' });
+  await skillMap.getByRole('button', { name: pl.skillMap.close }).click();
+  await page.getByRole('button', { name: pl.driving.praga }).click();
+  await expect(canvas).toHaveAttribute('data-scene', 'City');
+  await page.keyboard.press('KeyM');
+  await expect(
+    page.getByRole('button', {
+      name: `${pl.phone.start} · ${pl.misje['WAW-T-02'].tytul}`,
+    }),
+  ).toBeEnabled();
 });
 
 test('raises Road Attention for missed STOPs, explains the answer and grants stars', async ({
   page,
 }) => {
   test.setTimeout(45_000);
+  const press = await mockGamepad(page);
   await page.goto('/');
   await page.getByRole('button', { name: tutorial.tytul }).click();
   await skipDialogue(page);
@@ -172,10 +247,15 @@ test('raises Road Attention for missed STOPs, explains the answer and grants sta
   await expect(question).toContainText(stop.pytanie);
   await expect(attention).toContainText('3/3');
   const clock = await page.getByLabel(pl.missionUi.timer).textContent();
-  await page.screenshot({ path: 'test-results/m5a-pytanie.png' });
-  await question
-    .getByRole('button', { name: stop.odpowiedzi[0], exact: true })
-    .click();
+  await press(0);
+  await expect(question.getByRole('button').first()).not.toBeFocused();
+  await press(-1);
+  await press(13);
+  await expect(
+    question.getByRole('button', { name: stop.odpowiedzi[0], exact: true }),
+  ).toBeFocused();
+  await press(-1);
+  await press(0);
   await expect(question.getByRole('status')).toHaveText(stop.wyjasnienie);
   await expect(attention).toContainText('1/3');
   await expect(page.getByLabel(pl.missionUi.timer)).toHaveText(clock!);
@@ -301,28 +381,7 @@ test('opens SzprychaApp at a stop and plays the opening and closing dialogues', 
 test('uses Select and A on a gamepad without passing A through to the bicycle', async ({
   page,
 }) => {
-  await page.addInitScript(() => {
-    const state = { button: -1 };
-    window.addEventListener('test:gamepad', (event) => {
-      state.button = (event as CustomEvent<number>).detail;
-    });
-    Object.defineProperty(navigator, 'getGamepads', {
-      value: () => [
-        {
-          connected: true,
-          axes: [0, 0],
-          buttons: Array.from({ length: 17 }, (_, i) => ({
-            pressed: i === state.button,
-          })),
-        },
-      ],
-    });
-  });
-  const press = (button: number) =>
-    page.evaluate((detail) => {
-      window.dispatchEvent(new CustomEvent('test:gamepad', { detail }));
-    }, button);
-
+  const press = await mockGamepad(page);
   await page.goto('/');
   const canvas = page.locator('canvas');
   await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');

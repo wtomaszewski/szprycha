@@ -650,12 +650,26 @@ button[aria-pressed='true'] {
 .control-question-prompt {
   font-size: 19px;
 }
+.control-question-prompt:focus {
+  outline: none;
+}
 .control-question-answers:not([hidden]) {
   display: grid;
   gap: 6px;
 }
 .control-question-answers button {
   text-align: left;
+}
+
+.control-question-answers button:hover:not(:focus) {
+  border-color: #566c86;
+  outline: none;
+  color: #f4f4f4;
+}
+.control-question-answers button:focus {
+  border-color: #ffcd75;
+  outline: 1px solid #ffcd75;
+  color: #ffcd75;
 }
 
 .replay-dialog {
@@ -743,4 +757,109 @@ button[aria-pressed='true'] {
 
 .menu-helmet select:focus-visible {
   outline: 2px solid #ffcd75;
+}
+
+.menu-skills {
+  position: fixed;
+  top: calc(50% - 101px * var(--menu-zoom, 1));
+  right: calc(50% - 292px * var(--menu-zoom, 1));
+  font-size: calc(15px * var(--menu-zoom, 1));
+}
+
+.menu-save-notice {
+  position: fixed;
+  inset: auto 1rem 0;
+  margin: 0 auto 0.5rem;
+  width: fit-content;
+  max-width: calc(100% - 2rem);
+  padding: 0.3rem 0.6rem;
+  background: #1a1c2c;
+  border: 1px solid #ffcd75;
+  text-align: center;
+}
+
+.menu-save-notice:empty {
+  display: none;
+}
+
+.skill-map {
+  width: min(640px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  padding: 16px 20px;
+}
+
+.skill-map header {
+  position: sticky;
+  top: -16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #1a1c2c;
+  padding: 4px 0;
+}
+
+.skill-map h2 {
+  margin: 0;
+  color: #ffcd75;
+}
+
+.skill-map p {
+  margin: 6px 0;
+}
+
+.skill-map ul {
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.skill-map li {
+  display: grid;
+  gap: 2px;
+  padding: 8px;
+  border: 1px solid #566c86;
+  background: #333c57;
+}
+
+.skill-map meter {
+  width: 100%;
+  accent-color: #73eff7;
+}
+
+.skill-badge.braz {
+  color: #ffb088;
+}
+
+.skill-badge.srebro {
+  color: #e4efff;
+}
+
+.skill-badge.zloto {
+  color: #ffcd75;
+}
+
+.skill-map dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+}
+
+.skill-map dd {
+  margin: 0;
+}
+
+@media (max-width: 540px) {
+  .menu-skills {
+    top: 4px;
+    right: 4px;
+  }
+
+  .skill-map ul {
+    grid-template-columns: 1fr;
+  }
 }

@@ -169,6 +169,8 @@ export class MissionHud {
         `${ui.missionUi.timer} ${clock(Math.floor(result.elapsedSeconds))}`,
         `${ui.missionUi.goodHabits} ${result.goodHabits}`,
       ];
+      if (result.penaltyPoints)
+        details.push(`${ui.missionUi.penalties} −${result.penaltyPoints}`);
       if (result.status === 'failed')
         details.push(
           result.reason === 'czas_minal'

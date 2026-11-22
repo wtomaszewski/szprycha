@@ -36,6 +36,14 @@ export class ControlQuestionDialog {
     intro.textContent = ui.progression.olaIntro;
     this.prompt.id = 'control-question-prompt';
     this.prompt.className = 'control-question-prompt';
+    this.prompt.tabIndex = -1;
+    this.prompt.setAttribute('autofocus', '');
+    this.panel.addEventListener('keydown', (event) => {
+      if (event.code !== 'ArrowUp' && event.code !== 'ArrowDown') return;
+      event.preventDefault();
+      if (!event.repeat && this.resume.hidden)
+        this.focusAnswer(event.code === 'ArrowUp' ? -1 : 1);
+    });
     speech.append(speaker, intro, this.prompt);
     line.append(portrait, speech);
 
@@ -80,18 +88,30 @@ export class ControlQuestionDialog {
     });
     this.answers.replaceChildren(...this.buttons);
     this.panel.showModal();
-    this.buttons[0]?.focus();
   }
 
   gamepad(justPressed: (button: number) => boolean) {
-    const choices = this.resume.hidden ? this.buttons : [this.resume];
-    const index = choices.findIndex(
+    if (justPressed(0)) {
+      const active = document.activeElement;
+      if (active === this.resume && !this.resume.hidden) this.resume.click();
+      else this.buttons.find((button) => button === active)?.click();
+    } else if (this.resume.hidden) {
+      if (justPressed(12)) this.focusAnswer(-1);
+      else if (justPressed(13)) this.focusAnswer(1);
+    }
+  }
+
+  private focusAnswer(direction: number) {
+    const index = this.buttons.findIndex(
       (button) => button === document.activeElement,
     );
-    if (justPressed(0)) choices[Math.max(0, index)]?.click();
-    else if (justPressed(12)) choices[Math.max(0, index - 1)]?.focus();
-    else if (justPressed(13))
-      choices[Math.min(index + 1, choices.length - 1)]?.focus();
+    const next =
+      index === -1
+        ? direction > 0
+          ? 0
+          : this.buttons.length - 1
+        : Math.max(0, Math.min(index + direction, this.buttons.length - 1));
+    this.buttons[next]?.focus();
   }
 
   close() {

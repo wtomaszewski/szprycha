@@ -4,7 +4,7 @@ import { dialogueFileSchema } from './dialogues.ts';
 
 const text = z.string().trim().min(1);
 const id = text.regex(/^[A-Za-z0-9_-]+$/);
-const moduleId = z.enum([
+export const moduleId = z.enum([
   'M01',
   'M02',
   'M03',
@@ -201,8 +201,13 @@ export const balanceSchema = z.strictObject({
   rangi: z
     .array(
       z.union([
-        z.strictObject({ id, xp: count }),
-        z.strictObject({ id, xp: z.null(), wymaga: z.literal('licencja') }),
+        z.strictObject({ id, xp: count, odblokuj: z.array(id) }),
+        z.strictObject({
+          id,
+          xp: z.null(),
+          wymaga: z.literal('licencja'),
+          odblokuj: z.array(id),
+        }),
       ]),
     )
     .min(1),

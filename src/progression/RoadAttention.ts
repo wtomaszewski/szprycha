@@ -7,6 +7,7 @@ export class RoadAttention {
   level = 0;
   pending?: ControlQuestion;
   private cleanTicks = 0;
+  private pendingRule = '';
   private readonly decayTicks: number;
   private readonly byRule = new Map<string, ControlQuestion[]>();
   private readonly questionIndex = new Map<string, number>();
@@ -44,6 +45,7 @@ export class RoadAttention {
           throw new Error(`No control question for ${ruleId}`);
         const index = this.questionIndex.get(ruleId) ?? 0;
         this.pending = questions[index];
+        this.pendingRule = ruleId;
         this.questionIndex.set(ruleId, (index + 1) % questions.length);
         break;
       }
@@ -67,6 +69,10 @@ export class RoadAttention {
     const correct = index === question.poprawna;
     this.level = correct ? 0 : this.balance.po_blednej_odpowiedzi;
     this.pending = undefined;
-    return { correct, points: correct ? this.balance.bonus_madra_glowa : 0 };
+    return {
+      ruleId: this.pendingRule,
+      correct,
+      points: correct ? this.balance.bonus_madra_glowa : 0,
+    };
   }
 }
