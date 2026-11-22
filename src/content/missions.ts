@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { dialogueId } from './dialogues.ts';
 
 const id = z.string().regex(/^[A-Za-z0-9_-]+$/);
-const city = z.enum(['warszawa', 'wroclaw']);
+export const missionCity = z.enum(['warszawa', 'wroclaw']);
 const key = z.string().regex(/^(misje|dialogi)(\.[A-Za-z0-9_-]+)+$/);
 const seconds = z.number().positive();
 const count = z.number().int().nonnegative();
@@ -38,7 +38,7 @@ const missionGoal = z.discriminatedUnion('typ', [
 export const missionSchema = z
   .strictObject({
     id: z.string().regex(/^(WAW|WRO)-(T|A[1-3])-\d{2}$/),
-    miasto: city,
+    miasto: missionCity,
     mapa: id.optional(),
     akt: count.max(3),
     tytul: key,
