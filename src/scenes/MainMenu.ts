@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import type { GameContent } from '../content/schemas';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 import { progressPanels } from '../ui/ProgressPanels';
+import { quizPanel } from '../ui/QuizPanel';
 import { progressNotice, skillMapButton } from '../ui/SkillMap';
 import { FONT, ui } from '../core/presentation';
 import { readHelmetColor, setHelmetColor } from '../core/helmetColor';
@@ -17,6 +18,9 @@ export class MainMenu extends Scene {
     const progress = this.registry.get('missionProgress') as MissionProgress;
     const skills = skillMapButton(progress, gameContent);
     const panels = progressPanels(progress, gameContent);
+    const quiz = quizPanel(progress, gameContent);
+    const menuDialogOpen = () =>
+      skills.dialog.open || panels.dialog.open || quiz.dialog.open;
     const notice = document.createElement('p');
     notice.className = 'menu-save-notice';
     notice.setAttribute('role', 'status');
@@ -37,9 +41,11 @@ export class MainMenu extends Scene {
     );
     const plac = document.createElement('button');
     plac.type = 'button';
-    plac.className = 'menu-plac';
     plac.textContent = ui.plac.title;
     plac.addEventListener('click', () => this.scene.start('Plac'));
+    const training = document.createElement('div');
+    training.className = 'menu-training';
+    training.append(plac, quiz.button);
     const helmetLabel = document.createElement('label');
     helmetLabel.className = 'menu-helmet';
     helmetLabel.textContent = ui.helmet.label;
@@ -55,7 +61,8 @@ export class MainMenu extends Scene {
     document.body.append(
       campaign,
       freeRide,
-      plac,
+      training,
+      quiz.dialog,
       helmetLabel,
       skills.button,
       skills.dialog,
@@ -106,7 +113,9 @@ export class MainMenu extends Scene {
     this.add
       .zone(180, 219, 272, 39)
       .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => this.scene.start('City'));
+      .on('pointerdown', () => {
+        if (!menuDialogOpen()) this.scene.start('City');
+      });
     const center = () => {
       this.cameras.main.setScroll(
         -Math.floor((this.scale.width - 640) / 2),
@@ -115,7 +124,7 @@ export class MainMenu extends Scene {
       for (const button of [
         campaign,
         freeRide,
-        plac,
+        training,
         helmetLabel,
         skills.button,
         panels.navigation,
@@ -129,10 +138,10 @@ export class MainMenu extends Scene {
         event.target !== campaign &&
         event.target !== freeRide &&
         event.target !== plac &&
+        event.target !== quiz.button &&
         event.target !== helmet &&
         event.target !== skills.button &&
-        !skills.dialog.open &&
-        !panels.dialog.open &&
+        !menuDialogOpen() &&
         !(
           event.target instanceof Node &&
           panels.navigation.contains(event.target)
@@ -146,7 +155,8 @@ export class MainMenu extends Scene {
       this.input.keyboard?.off('keydown-ENTER', startDrive);
       campaign.remove();
       freeRide.remove();
-      plac.remove();
+      training.remove();
+      quiz.dialog.remove();
       helmetLabel.remove();
       skills.button.remove();
       skills.dialog.remove();

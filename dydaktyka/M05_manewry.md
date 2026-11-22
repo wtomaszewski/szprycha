@@ -31,7 +31,7 @@ Sygnalizacja w trakcie skrętu, a nie przed · brak obejrzenia się · skręt w 
 - „Telefon w kieszeni — ręce i oczy na drodze.”
 
 ## Pytania
-Q038–Q046.
+Q028, Q038–Q046.
 
 ## Ćwiczenie w realu
 Na pustym parkingu: jazda prosto z wyciągniętą ręką na 3 sekundy, potem obejrzenie się przez ramię bez zjeżdżania z linii. To przygotowuje też do PLAC-05 i PLAC-06.

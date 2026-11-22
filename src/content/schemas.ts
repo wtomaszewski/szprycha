@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { placBalanceSchema, placSchema } from './plac.ts';
 import { missionsSchema } from './missions.ts';
 import { dialogueFileSchema } from './dialogues.ts';
+import { illustratedSigns } from './signIllustrations.ts';
 
 const text = z.string().trim().min(1);
 const id = text.regex(/^[A-Za-z0-9_-]+$/);
@@ -43,7 +44,7 @@ export const signsSchema = z.strictObject({
   znaki: z
     .array(
       z.strictObject({
-        kod: text,
+        kod: text.regex(/^[A-Z]-\d+[a-z]?(?:\/[A-Z]-\d+[a-z]?)?$/),
         kategoria: z.enum([
           'ostrzegawczy',
           'zakazu',
@@ -201,9 +202,10 @@ export const balanceSchema = z.strictObject({
     .array(count)
     .length(5)
     .refine(
-      (a) => a.every((v, i) => i === 0 || v > a[i - 1]!),
-      'Intervals must increase',
+      (a) => a[0] === 0 && a.slice(1).every((v, i) => v > a[i]!),
+      'Intervals must start at zero and increase',
     ),
+  quiz: z.strictObject({ szybki_pytan: positive.int(), xp_za_poprawna: count }),
   gwiazdki: z.strictObject({
     zetony: z
       .tuple([count, count, count])
@@ -292,7 +294,7 @@ export const contentSchema = z
     dialogi: dialogueFileSchema,
   })
   .superRefine((data, ctx) => {
-    function unique(values: string[], path: string[]) {
+    function unique(values: string[], path: (string | number)[]) {
       const seen = new Set<string>();
       for (const value of values) {
         if (seen.has(value))
@@ -328,7 +330,8 @@ export const contentSchema = z
       data.misje.map((mission) => mission.id),
       ['misje'],
     );
-    const rules = new Set(data.przepisy.przepisy.map((r) => r.id));
+    const rules = new Map(data.przepisy.przepisy.map((r) => [r.id, r.modul]));
+    const signs = new Map(data.znaki.znaki.map((s) => [s.kod, s.kategoria]));
     function reference(value: string, path: (string | number)[]) {
       if (!rules.has(value))
         ctx.addIssue({
@@ -342,15 +345,49 @@ export const contentSchema = z
         reference(r, ['znaki', 'znaki', i, 'reguly', j]),
       ),
     );
-    data.pytania.pytania.forEach((q, i) =>
-      q.przepisy.forEach((r, j) =>
-        reference(r, ['pytania', 'pytania', i, 'przepisy', j]),
-      ),
-    );
+    data.pytania.pytania.forEach((q, i) => {
+      const path = ['pytania', 'pytania', i];
+      const primaryModule = rules.get(q.przepisy[0]!);
+      if (primaryModule && primaryModule !== q.modul)
+        ctx.addIssue({
+          code: 'custom',
+          path: [...path, 'modul'],
+          message: `Question module must match its primary rule (${primaryModule})`,
+        });
+      unique(q.przepisy, [...path, 'przepisy']);
+      q.przepisy.forEach((r, j) => reference(r, [...path, 'przepisy', j]));
+      if (q.obrazek) {
+        const codes = illustratedSigns(q.obrazek);
+        unique(codes, [...path, 'obrazek']);
+        for (const [index, code] of codes.entries())
+          if (
+            !signs.has(code) ||
+            (index > 0 && signs.get(code) !== 'tabliczka')
+          )
+            ctx.addIssue({
+              code: 'custom',
+              path: [...path, 'obrazek'],
+              message: `Unknown sign or invalid plate: ${code}`,
+            });
+      }
+    });
+    for (const module of moduleId.options)
+      if (!data.pytania.pytania.some(({ modul }) => modul === module))
+        ctx.addIssue({
+          code: 'custom',
+          path: ['pytania', 'pytania'],
+          message: `Missing quiz questions for ${module}`,
+        });
     const questionRules = new Set(
       data.pytania.pytania.flatMap((q) => q.przepisy),
     );
     for (const { id, detektor } of data.przepisy.przepisy) {
+      if (detektor === 'quiz-only' && !questionRules.has(id))
+        ctx.addIssue({
+          code: 'custom',
+          path: ['pytania', 'pytania'],
+          message: `Missing quiz question for ${id}`,
+        });
       if ((detektor === 'sim' || id === 'KASK-01') && !questionRules.has(id))
         ctx.addIssue({
           code: 'custom',

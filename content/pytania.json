@@ -193,12 +193,12 @@
     "GDZIE-10"
    ],
    "poziom": 2,
-   "pytanie": "Jedziesz z 7-letnim bratem, który też jest na rowerze. Gdzie możesz jechać?",
+   "pytanie": "Wyobraź sobie, że jesteś dorosłym opiekunem 7-letniego rowerzysty. Gdzie możesz jechać na rowerze?",
    "odpowiedzi": [
     "Tylko jezdnią",
-    "Chodnikiem obok brata, opiekując się nim",
-    "Brat jezdnią, Ty chodnikiem",
-    "Nigdzie, brat nie może jeździć rowerem"
+    "Chodnikiem obok dziecka, którym się opiekujesz",
+    "Dziecko jezdnią, Ty chodnikiem",
+    "Nigdzie, dziecko nie może jeździć rowerem"
    ],
    "poprawna": 1,
    "wyjasnienie": "Dziecko do 10 lat jedzie chodnikiem pod opieką, a opiekun może jechać obok niego chodnikiem.",
@@ -503,7 +503,7 @@
   },
   {
    "id": "Q028",
-   "modul": "M03",
+   "modul": "M05",
    "przepisy": [
     "MAN-08"
    ],
@@ -1112,6 +1112,23 @@
   ],
   "poprawna": 0,
   "wyjasnienie": "Zwolnij i zostaw miejsce, gdy pojazd zaczyna skręcać lub odstęp jest mały.",
+  "zrodlo": "wlasne",
+  "weryfikacja": true
+ },
+ {
+  "id": "Q062",
+  "modul": "M03",
+  "przepisy": ["ZNAK-P23"],
+  "poziom": 1,
+  "obrazek": "P-23",
+  "pytanie": "Co wskazuje biały symbol roweru namalowany na jezdni?",
+  "odpowiedzi": [
+   "Miejsce przeznaczone dla rowerzystów, na przykład pas ruchu dla rowerów",
+   "Miejsce zatrzymania autobusu",
+   "Zakaz jazdy na rowerze"
+  ],
+  "poprawna": 0,
+  "wyjasnienie": "Biały symbol roweru wskazuje miejsce przeznaczone dla rowerzystów.",
   "zrodlo": "wlasne",
   "weryfikacja": true
  }
