@@ -763,6 +763,8 @@ export class City extends Scene {
     if (!mission || !goal) return false;
     this.rider.speed = 0;
     this.controls.clear();
+    this.publishRiderPosition(this.rider);
+    this.updateDrivingHud(this.rider, this.controls.actions);
     this.questionDialog.show(
       {
         pytanie: translate(goal.pytanie),

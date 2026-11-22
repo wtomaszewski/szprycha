@@ -1,6 +1,7 @@
 import { expect as playwrightExpect, test, type Page } from '@playwright/test';
 import type { GameContent } from '../../src/content/schemas';
 import pl from '../../i18n/pl.json' with { type: 'json' };
+import questions from '../../content/pytania.json' with { type: 'json' };
 import {
   warsawRoutes,
   type WarsawMissionId,
@@ -300,9 +301,29 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
         if (id !== 'WAW-T-02') await speedUp(4);
       }
       const replay = page.getByRole('dialog', { name: pl.replay.title });
+      const control = page.getByRole('dialog', {
+        name: pl.progression.questionTitle,
+      });
       await expect(async () => {
         if (await replay.isVisible())
           await replay.getByRole('button', { name: pl.replay.resume }).click();
+        if (await control.isVisible()) {
+          const prompt = await control
+            .locator('.control-question-prompt')
+            .textContent();
+          const question = questions.pytania.find(
+            ({ pytanie }) => pytanie === prompt,
+          )!;
+          await control
+            .getByRole('button', {
+              name: question.odpowiedzi[question.poprawna],
+              exact: true,
+            })
+            .click();
+          await control
+            .getByRole('button', { name: pl.progression.continue })
+            .click();
+        }
         await expect(dialogue(page)).toBeVisible({ timeout: 500 });
       }).toPass({ timeout: 100_000, intervals: [150] });
       await speedUp(1);

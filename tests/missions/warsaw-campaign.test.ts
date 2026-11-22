@@ -156,7 +156,7 @@ it('keeps the bridge investigation open if the rider skips the photograph', () =
 
 it.each([
   ['WAW-A3-02', 0, 0, 'GDZIE-10'],
-  ['WAW-A3-04', 3, 0, 'PP-01'],
+  ['WAW-A3-04', 2, 0, 'PP-01'],
 ] as const)(
   '%s keeps a wrong answer open and counts the penalty on the completed route',
   (id, index, answer, ruleId) => {

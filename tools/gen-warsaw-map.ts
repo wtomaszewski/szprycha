@@ -630,7 +630,7 @@ objectLayer('pois', [
       ['mokotow_stacja_przed', 3658, 2976, 58, 42, Math.PI / 2],
       ['mokotow_kolej_meta', 4700, 2912, 64, 54, 0],
       ['palac_pomoc_start', 4620, 1808, 0, 0, Math.PI],
-      ['palac_pomoc_miejsce', 3410, 1750, 52, 42, Math.PI],
+      ['palac_pomoc_miejsce', 3552, 1748, 44, 42, -Math.PI / 2],
       ['palac_ola_przed', 3488, 2088, 48, 42, -Math.PI / 2],
       ['palac_ola_za', 3488, 1825, 44, 40, -Math.PI / 2],
       ['stadion_start', 1856, 2528, 0, 0, Math.PI],

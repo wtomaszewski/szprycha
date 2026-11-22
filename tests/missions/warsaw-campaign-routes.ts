@@ -147,12 +147,11 @@ export const campaignRoutes = {
   ],
   'WAW-A3-04': [
     { x: 3560, y: 1808 },
-    { x: 3552, y: 1750, walking: true },
-    { x: 3410, y: 1750 },
-    { x: 3410, y: 1750, answer: 1 },
-    { x: 3410, y: 1750, answer: 2 },
-    { x: 3410, y: 1750, answer: 0 },
-    { x: 3410, y: 1750, answer: 1 },
+    { x: 3552, y: 1748, walking: true },
+    { x: 3552, y: 1748, answer: 1 },
+    { x: 3552, y: 1748, answer: 2 },
+    { x: 3552, y: 1748, answer: 0 },
+    { x: 3552, y: 1748, answer: 1 },
   ],
   'WAW-A3-05': [
     { x: 3500, y: 2764, answer: 0 },

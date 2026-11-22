@@ -42719,9 +42719,9 @@
           "id": 363,
           "name": "palac_pomoc_miejsce",
           "type": "",
-          "x": 3384,
-          "y": 1729,
-          "width": 52,
+          "x": 3530,
+          "y": 1727,
+          "width": 44,
           "height": 42,
           "rotation": 0,
           "visible": true,
@@ -42729,7 +42729,7 @@
             {
               "name": "heading",
               "type": "float",
-              "value": 3.141592653589793
+              "value": -1.5707963267948966
             }
           ]
         },
