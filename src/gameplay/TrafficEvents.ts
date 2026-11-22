@@ -22,6 +22,16 @@ import type { TrafficRoute } from '../rules/world/TrafficRoutes';
 
 export const eventRules = {
   cwiczenie_stop: ['ZNAK-STOP'],
+  swiatla_palac: ['SYG-01', 'SYG-02'],
+  zielona_strzalka: ['ZNAK-S2'],
+  delikatny_czujnik: ['GDZIE-01', 'MAN-08'],
+  wskazowka_na_moscie: ['ZNAK-C13'],
+  ulewa: ['GDZIE-04'],
+  eskorta_franka: ['GDZIE-10'],
+  przejazd_kolejowy: ['MSC-01'],
+  po_zdarzeniu: ['PP-01'],
+  start_kolumny: ['MSC-05'],
+  start_finalu: ['GDZIE-01', 'MAN-04'],
   kontrola_swiatel: ['WYP-04', 'WYP-05'],
   pojazd_na_skrzyzowaniu: ['PIER-01', 'PIER-02'],
   pieszy_przy_bramie: ['PIER-06', 'MSC-03'],
@@ -41,6 +51,16 @@ export const eventRules = {
 export type TrafficEventId = keyof typeof eventRules;
 const forcedOnly = new Set<TrafficEventId>([
   'cwiczenie_stop',
+  'swiatla_palac',
+  'zielona_strzalka',
+  'delikatny_czujnik',
+  'wskazowka_na_moscie',
+  'ulewa',
+  'eskorta_franka',
+  'przejazd_kolejowy',
+  'po_zdarzeniu',
+  'start_kolumny',
+  'start_finalu',
   'kontrola_swiatel',
   'pojazd_na_skrzyzowaniu',
   'pieszy_przy_bramie',

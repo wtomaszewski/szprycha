@@ -25,7 +25,7 @@ Wszystkie wartości liczbowe trzymaj w `content/balans.yaml` (łatwe strojenie).
 | Błąd poważny (`major`: wjazd na czerwonym, nieustąpienie pieszemu na przejściu, wymuszenie pierwszeństwa z kolizją/near-miss, wjazd na przejazd przy opuszczanych zaporach) | −300, stop-klatka + lekcja, powrót do checkpointu, reset combo |
 | 3 błędy poważne w misji | porażka misji (można od razu powtórzyć) |
 
-**Gwarancja „skrót się nie opłaca”:** test jednostkowy w `progression/` musi wykazać, że dla każdej misji z oznaczonym skrótem `max(bonus_czasu_ze_skrótem) − kara(błędy na skrócie) < 0` w porównaniu z trasą zgodną z przepisami. Bonus czasu znika przy jakimkolwiek `major`.
+**Gwarancja „skrót się nie opłaca”:** test jednostkowy w `progression/` musi wykazać, że dla każdej misji z oznaczonym skrótem `max(bonus_czasu_ze_skrótem) − kara(błędy na skrócie) < 0` w porównaniu z trasą zgodną z przepisami. Bonus czasu znika przy jakimkolwiek `major` oraz przy naruszeniu zakazu na oznaczonym skrócie. Ta sama zasada obowiązuje Turbo.
 
 ## 3. Seria Bezpieczeństwa (combo)
 Odpowiednik szału punktowego z GTA2, ale za dobre zachowania.

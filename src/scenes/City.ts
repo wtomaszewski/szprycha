@@ -29,6 +29,7 @@ import { showError, translate, ui } from '../core/presentation';
 
 import { nearbyPhotoSubject } from '../gameplay/signPhoto';
 import { MissionRace } from '../gameplay/MissionRace';
+import { missionEnvironment } from '../gameplay/missionEnvironment';
 import { MissionSystem, type MissionSpawn } from '../gameplay/MissionSystem';
 import {
   canOpenPhone,
@@ -131,6 +132,7 @@ export class City extends Scene {
   private resultPresented = false;
   private rivalSprite?: GameObjects.Image;
   private rivalLabel?: GameObjects.Text;
+  private companions: GameObjects.Image[] = [];
   private phone!: MissionPhone;
   private dialogue!: DialogueWindow;
   private phoneFeedback!: string;
@@ -247,6 +249,8 @@ export class City extends Scene {
       ({ id }) => id === 'MAN-11',
     )!.feedback;
     this.mission = definition ? this.createMission(definition) : undefined;
+    Object.assign(this.environment, missionEnvironment(this.world, definition));
+    Object.assign(this.renderEnvironment, this.environment);
     const ambientTraffic = definition?.ruch_ai !== false;
     this.review = undefined;
     this.phoneAnsweredSafely = false;
@@ -391,6 +395,9 @@ export class City extends Scene {
           .setDepth(17)
           .setTint(0xef7d57)
       : undefined;
+    this.companions = Array.from({ length: definition?.towarzysze ?? 0 }, () =>
+      this.add.image(0, 0, 'traffic-cyclist').setDepth(17).setVisible(false),
+    );
     this.rivalLabel = this.mission?.race
       ? this.add
           .text(0, 0, ui.dialogi.postacie.turbo, {
@@ -748,6 +755,33 @@ export class City extends Scene {
       this.attention.level,
       this.time.now,
     );
+  }
+
+  private showMissionChoice() {
+    const mission = this.mission;
+    const goal = mission?.pendingChoice;
+    if (!mission || !goal) return false;
+    this.rider.speed = 0;
+    this.controls.clear();
+    this.questionDialog.show(
+      {
+        pytanie: translate(goal.pytanie),
+        odpowiedzi: goal.odpowiedzi.map((key) => translate(key)),
+        wyjasnienie: translate(goal.wyjasnienie),
+      },
+      (index) => {
+        const answer = mission.answerChoice(index);
+        if (answer)
+          this.progress.recordQuizAnswer(
+            answer.ruleId,
+            answer.correct,
+            this.content.balans.mastery,
+          );
+        this.updateProgressionHud();
+        return answer;
+      },
+    );
+    return true;
   }
 
   private showControlQuestion() {
@@ -1223,7 +1257,7 @@ export class City extends Scene {
     this.renderFrame(this.replay.frame(this.replay.size - 1)!, 0);
     this.updateDrivingHud(this.rider, this.controls.actions);
     this.updateMissionHud();
-    if (this.showControlQuestion()) return;
+    if (this.showControlQuestion() || this.showMissionChoice()) return;
     this.presentMissionResult();
     if (!this.mission?.result) this.missionHud?.focusEquipment();
   }
@@ -1311,11 +1345,16 @@ export class City extends Scene {
       if (
         this.review ||
         this.attention.pending ||
+        this.mission?.pendingChoice ||
         this.missionInterrupted ||
         this.mission?.result
       ) {
         this.accumulator = 0;
-        if (!this.review && !this.showControlQuestion())
+        if (
+          !this.review &&
+          !this.showControlQuestion() &&
+          !this.showMissionChoice()
+        )
           this.presentMissionResult();
         break;
       }
@@ -1523,6 +1562,14 @@ export class City extends Scene {
       reflected,
       at,
     );
+    for (const [index, sprite] of this.companions.entries()) {
+      const tail = this.replay.frame(this.replay.size - 1 - (index + 1) * 19);
+      sprite.setVisible(Boolean(tail) && !reviewing);
+      if (tail) {
+        sprite.setPosition(tail.rider.x, tail.rider.y);
+        drawCyclist(sprite, tail.rider.heading, 1, 2);
+      }
+    }
     this.riderArt.draw(frame, illuminatesReflector);
     this.eventArt.draw(frame.props, scale, at);
     this.atmosphere.draw(

@@ -56,7 +56,11 @@ function respondsTo(condition: Condition, trigger: Trigger): boolean {
       'seria' in condition
     );
   if (trigger === 'mission')
-    return 'misje_typ' in condition || 'zleceniodawca' in condition;
+    return (
+      'misje_typ' in condition ||
+      'zleceniodawca' in condition ||
+      'scenka_pp' in condition
+    );
   return 'album' in condition;
 }
 
@@ -202,6 +206,11 @@ export class Milestones {
       );
     if ('seria' in condition)
       return profile.achievementSeries >= condition.seria;
+    if ('scenka_pp' in condition)
+      return this.content.misje.some(
+        ({ id, typ }) =>
+          typ === 'pierwsza_pomoc' && (profile.cleanMissions[id] ?? 0) > 0,
+      );
     if ('misje_typ' in condition || 'zleceniodawca' in condition) {
       let total = 0;
       for (const mission of this.content.misje) {

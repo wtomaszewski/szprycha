@@ -66,12 +66,20 @@
     - { typ: odbierz, przedmiot: klucze, opis: misje.WAW-A1-01.cel1 }
     - { typ: dojedz, poi: wyjazd_warsztat, opis: misje.WAW-A1-01.cel2 }
     - { typ: oddaj, poi: sasiad_praga, przedmiot: klucze, opis: misje.WAW-A1-01.cel3 }
-  checkpointy: [prawa_reka]
+    - { typ: dojedz, poi: praga_szkola, opis: misje.WAW-A1-01.objazd1 }
+    - { typ: dojedz, poi: praga_zjazd_polnoc, opis: misje.WAW-A1-01.objazd2 }
+    - { typ: dojedz, poi: praga_petla_zachod, opis: misje.WAW-A1-01.objazd3 }
+    - { typ: dojedz, poi: praga_petla_wschod, opis: misje.WAW-A1-01.objazd4 }
+    - { typ: dojedz, poi: praga_lacznik_srodek, opis: misje.WAW-A1-01.objazd5 }
+    - { typ: dojedz, poi: praga_lacznik_zachod, opis: misje.WAW-A1-01.objazd6 }
+    - { typ: dojedz, poi: praga_osiedle_powrot, opis: misje.WAW-A1-01.objazd7 }
+    - { typ: dojedz, poi: praga_warsztat_powrot, opis: misje.WAW-A1-01.objazd8 }
+  checkpointy: [prawa_reka, praga_petla_zachod, praga_osiedle_powrot]
   warunki_porazki: [major_x3]
   reguly_cwiczone: [PIER-01, MSC-03]
   zdarzenia_wymuszone:
     - { typ: pojazd_na_skrzyzowaniu, przy: prawa_reka, regula: PIER-01 }
-  par_s: 28
+  par_s: 170
   min_dobre_nawyki: 1
   nagrody: { zetony: 15, xp: 150 }
   dialog_start: dialogi.WAW-A1-01.start
@@ -91,12 +99,20 @@
     - { typ: odbierz, przedmiot: zamowienie, opis: misje.WAW-A1-02.cel1 }
     - { typ: dojedz, poi: za_brama, opis: misje.WAW-A1-02.cel2 }
     - { typ: oddaj, poi: odbiorca_bazar, przedmiot: zamowienie, opis: misje.WAW-A1-02.cel3 }
-  checkpointy: [cp_bramy]
+    - { typ: dojedz, poi: praga_szkola, opis: misje.WAW-A1-02.objazd1 }
+    - { typ: dojedz, poi: praga_zjazd_polnoc, opis: misje.WAW-A1-02.objazd2 }
+    - { typ: dojedz, poi: praga_petla_zachod, opis: misje.WAW-A1-02.objazd3 }
+    - { typ: dojedz, poi: praga_petla_wschod, opis: misje.WAW-A1-02.objazd4 }
+    - { typ: dojedz, poi: praga_lacznik_srodek, opis: misje.WAW-A1-02.objazd5 }
+    - { typ: dojedz, poi: praga_lacznik_zachod, opis: misje.WAW-A1-02.objazd6 }
+    - { typ: dojedz, poi: praga_osiedle_powrot, opis: misje.WAW-A1-02.objazd7 }
+    - { typ: dojedz, poi: odbiorca_bazar, opis: misje.WAW-A1-02.objazd8 }
+  checkpointy: [cp_bramy, praga_petla_zachod, praga_osiedle_powrot]
   warunki_porazki: [major_x3]
   reguly_cwiczone: [PIER-06, MAN-01, MAN-07]
   zdarzenia_wymuszone:
     - { typ: pieszy_przy_bramie, przy: przed_brama, regula: PIER-06 }
-  par_s: 25
+  par_s: 170
   min_dobre_nawyki: 1
   nagrody: { zetony: 20, xp: 200 }
   dialog_start: dialogi.WAW-A1-02.start
@@ -117,14 +133,22 @@
     - { typ: dojedz, poi: podejscie_do_stop, opis: misje.WAW-A1-03.cel2 }
     - { typ: dojedz, poi: przez_stop, opis: misje.WAW-A1-03.stop, wymagany_nawyk: ZNAK-STOP, wskazowka_powrotu: misje.WAW-A1-03.powrot }
     - { typ: oddaj, poi: blok_haliny, przedmiot: pierogi, opis: misje.WAW-A1-03.cel4 }
-  limit_s: 75
+    - { typ: dojedz, poi: praga_szkola, opis: misje.WAW-A1-03.objazd1 }
+    - { typ: dojedz, poi: praga_zjazd_polnoc, opis: misje.WAW-A1-03.objazd2 }
+    - { typ: dojedz, poi: praga_petla_zachod, opis: misje.WAW-A1-03.objazd3 }
+    - { typ: dojedz, poi: praga_petla_wschod, opis: misje.WAW-A1-03.objazd4 }
+    - { typ: dojedz, poi: praga_lacznik_srodek, opis: misje.WAW-A1-03.objazd5 }
+    - { typ: dojedz, poi: praga_lacznik_zachod, opis: misje.WAW-A1-03.objazd6 }
+    - { typ: dojedz, poi: praga_osiedle_powrot, opis: misje.WAW-A1-03.objazd7 }
+    - { typ: dojedz, poi: praga_warsztat_powrot, opis: misje.WAW-A1-03.objazd8 }
+  limit_s: 250
   warunki_porazki: [czas_minal, major_x3]
-  checkpointy: [cp_bazar, podejscie_do_stop]
+  checkpointy: [cp_bazar, podejscie_do_stop, praga_petla_zachod, praga_osiedle_powrot]
   reguly_cwiczone: [PIER-01, PIER-02, MAN-01]
   zdarzenia_wymuszone:
     - { typ: pojazd_na_skrzyzowaniu, przy: podejscie_do_stop, regula: PIER-02 }
   skrot: { odcinek: pasaz_pierogi }
-  par_s: 24
+  par_s: 170
   min_dobre_nawyki: 1
   nagrody: { zetony: 30, xp: 400, odblokuj: [naklejka_pierogi] }
   dialog_start: dialogi.WAW-A1-03.start
@@ -143,17 +167,24 @@
   cele:
     - { typ: dojedz, poi: most_ddr, opis: misje.WAW-A1-04.cel1 }
     - { typ: dojedz, poi: przyczolek_mostu, opis: misje.WAW-A1-04.cel2 }
+    - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A1-04.objazd1 }
+    - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A1-04.objazd2 }
+    - { typ: dojedz, poi: bulwar_srodek, opis: misje.WAW-A1-04.objazd3 }
+    - { typ: dojedz, poi: bulwar_poludnie, opis: misje.WAW-A1-04.objazd4 }
+    - { typ: dojedz, poi: bulwar_noc_start, opis: misje.WAW-A1-04.objazd5 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A1-04.objazd6 }
+    - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A1-04.objazd7 }
     - { typ: dojedz, poi: kolumna, opis: misje.WAW-A1-04.cel3 }
-  limit_s: 90
+  limit_s: 250
   warunki_porazki: [czas_minal, major_x3]
-  checkpointy: [most_ddr, przyczolek_mostu]
+  checkpointy: [most_ddr, przyczolek_mostu, bulwar_srodek, bulwary_noca]
   reguly_cwiczone: [MAN-04, GDZIE-06, PIER-04]
   zdarzenia_wymuszone:
     - { typ: rowerzysta_na_moscie, przy: przed_mostem, regula: MAN-04 }
     - { typ: pieszy_na_pasach, przy: przyczolek_mostu, regula: PIER-04 }
   skrot: { odcinek: uliczka-jednokierunkowa }
   wyscig: { trasa_rywala: turbo-most }
-  par_s: 38
+  par_s: 170
   min_dobre_nawyki: 1
   nagrody: { zetony: 30, xp: 450 }
   dialog_start: dialogi.WAW-A1-04.start
@@ -174,13 +205,21 @@
     - { typ: dojedz, poi: kamienny_rynek, opis: misje.WAW-A1-05.cel2 }
     - { typ: dojedz, poi: przed_deptakiem, opis: misje.WAW-A1-05.cel3 }
     - { typ: oddaj, poi: przewodnik, przedmiot: syrenka, opis: misje.WAW-A1-05.cel4 }
+    - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A1-05.objazd1 }
+    - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A1-05.objazd2 }
+    - { typ: dojedz, poi: bulwar_srodek, opis: misje.WAW-A1-05.objazd3 }
+    - { typ: dojedz, poi: bulwar_poludnie, opis: misje.WAW-A1-05.objazd4 }
+    - { typ: dojedz, poi: bulwar_noc_start, opis: misje.WAW-A1-05.objazd5 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A1-05.objazd6 }
+    - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A1-05.objazd7 }
+    - { typ: dojedz, poi: przewodnik, opis: misje.WAW-A1-05.objazd8 }
   przesylka: { delikatna: true }
   warunki_porazki: [major_x3]
-  checkpointy: [kamienny_rynek, przed_deptakiem]
+  checkpointy: [kamienny_rynek, przed_deptakiem, bulwar_srodek, bulwary_noca]
   reguly_cwiczone: [GDZIE-07, GDZIE-05, MAN-08]
   zdarzenia_wymuszone:
     - { typ: turysci_na_starowce, przy: kamienny_rynek, regula: MAN-08 }
-  par_s: 34
+  par_s: 235
   min_dobre_nawyki: 0
   nagrody: { zetony: 25, xp: 350 }
   dialog_start: dialogi.WAW-A1-05.start
@@ -201,13 +240,476 @@
     - { typ: dojedz, poi: za_skrzyzowaniem, opis: misje.WAW-A1-06.cel2 }
     - { typ: sfotografuj, poi: foto_znak, znak: znak-przestawiony, opis: misje.WAW-A1-06.cel3 }
     - { typ: dojedz, poi: podpis_zakloczacza, opis: misje.WAW-A1-06.cel4 }
+    - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A1-06.objazd1 }
+    - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A1-06.objazd2 }
+    - { typ: dojedz, poi: bulwar_srodek, opis: misje.WAW-A1-06.objazd3 }
+    - { typ: dojedz, poi: bulwar_poludnie, opis: misje.WAW-A1-06.objazd4 }
+    - { typ: dojedz, poi: bulwar_noc_start, opis: misje.WAW-A1-06.objazd5 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A1-06.objazd6 }
+    - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A1-06.objazd7 }
+    - { typ: dojedz, poi: podpis_zakloczacza, opis: misje.WAW-A1-06.objazd8 }
   warunki_porazki: [major_x3]
-  checkpointy: [posterunek_oli, za_skrzyzowaniem]
+  checkpointy: [posterunek_oli, za_skrzyzowaniem, bulwar_srodek, bulwary_noca]
   reguly_cwiczone: [SYG-03, ZNAK-A7]
   zdarzenia_wymuszone:
     - { typ: polecenie_oli, przy: posterunek_oli, regula: SYG-03 }
-  par_s: 25
+  par_s: 205
   min_dobre_nawyki: 0
   nagrody: { zetony: 35, xp: 500 }
   dialog_start: dialogi.WAW-A1-06.start
   dialog_koniec: dialogi.WAW-A1-06.koniec
+
+- id: WAW-A2-01
+  miasto: warszawa
+  akt: 2
+  tytul: misje.WAW-A2-01.tytul
+  opis: misje.WAW-A2-01.opis
+  zleceniodawca: lena_mapa
+  typ: dostawa_na_czas
+  wymagania: { misje_ukonczone: [WAW-A1-06] }
+  start: { poi: centrum_nauki }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: centrum_nauki, opis: misje.WAW-A2-01.cel1, przedmiot: czesci }
+    - { typ: dojedz, poi: palac_ddr_wjazd, opis: misje.WAW-A2-01.cel2 }
+    - { typ: dojedz, poi: palac_ddr_przed, opis: misje.WAW-A2-01.cel3 }
+    - { typ: dojedz, poi: palac_ddr_za, opis: misje.WAW-A2-01.cel4 }
+    - { typ: oddaj, poi: palac_serwis, opis: misje.WAW-A2-01.cel5, przedmiot: czesci }
+    - { typ: dojedz, poi: palac_sygnal_przed, opis: misje.WAW-A2-01.s1Przed }
+    - { typ: dojedz, poi: palac_strzalka_za, opis: misje.WAW-A2-01.s1Za }
+    - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A2-01.objazd1 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-01.objazd2 }
+    - { typ: dojedz, poi: bulwar_srodek, opis: misje.WAW-A2-01.objazd3 }
+    - { typ: dojedz, poi: bulwar_poludnie, opis: misje.WAW-A2-01.objazd4 }
+    - { typ: dojedz, poi: bulwar_noc_start, opis: misje.WAW-A2-01.objazd5 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-01.objazd6 }
+    - { typ: dojedz, poi: palac_ddr_wjazd, opis: misje.WAW-A2-01.objazd7 }
+  limit_s: 280
+  warunki_porazki: [czas_minal, major_x3]
+  checkpointy: [palac_ddr_przed, starowka_lacznik, bulwar_poludnie]
+  reguly_cwiczone: [SYG-01, SYG-02, PIER-09]
+  zdarzenia_wymuszone:
+    - { typ: swiatla_palac, przy: palac_ddr_przed, regula: SYG-02 }
+  par_s: 245
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 500 }
+  dialog_start: dialogi.WAW-A2-01.start
+  dialog_koniec: dialogi.WAW-A2-01.koniec
+
+- id: WAW-A2-02
+  miasto: warszawa
+  akt: 2
+  tytul: misje.WAW-A2-02.tytul
+  opis: misje.WAW-A2-02.opis
+  zleceniodawca: sierzant_ola
+  typ: wyzwanie
+  wymagania: { misje_ukonczone: [WAW-A2-01] }
+  start: { poi: palac_strzalka_start }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: palac_strzalka_przed, opis: misje.WAW-A2-02.cel1 }
+    - { typ: dojedz, poi: palac_strzalka_za, opis: misje.WAW-A2-02.cel2, wymagany_nawyk: ZNAK-S2, wskazowka_powrotu: misje.WAW-A2-02.powrot }
+    - { typ: dojedz, poi: palac_ddr_wjazd, opis: misje.WAW-A2-02.cel3 }
+    - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A2-02.objazd1 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-02.objazd2 }
+    - { typ: dojedz, poi: bulwar_srodek, opis: misje.WAW-A2-02.objazd3 }
+    - { typ: dojedz, poi: bulwar_poludnie, opis: misje.WAW-A2-02.objazd4 }
+    - { typ: dojedz, poi: bulwar_noc_start, opis: misje.WAW-A2-02.objazd5 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-02.objazd6 }
+    - { typ: dojedz, poi: palac_ddr_wjazd, opis: misje.WAW-A2-02.objazd7 }
+  warunki_porazki: [major_x3]
+  checkpointy: [palac_strzalka_przed, bulwar_srodek, bulwar_poludnie]
+  reguly_cwiczone: [ZNAK-S2, PIER-04]
+  zdarzenia_wymuszone:
+    - { typ: zielona_strzalka, przy: palac_strzalka_przed, regula: ZNAK-S2 }
+  par_s: 180
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 500 }
+  dialog_start: dialogi.WAW-A2-02.start
+  dialog_koniec: dialogi.WAW-A2-02.koniec
+
+- id: WAW-A2-03
+  miasto: warszawa
+  akt: 2
+  tytul: misje.WAW-A2-03.tytul
+  opis: misje.WAW-A2-03.opis
+  zleceniodawca: lena_mapa
+  typ: dostawa
+  wymagania: { misje_ukonczone: [WAW-A2-02] }
+  start: { poi: palac_tram_start }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, opis: misje.WAW-A2-03.cel1, przedmiot: rozklad }
+    - { typ: dojedz, poi: palac_tram_przed, opis: misje.WAW-A2-03.cel2 }
+    - { typ: dojedz, poi: palac_tram_stop, opis: misje.WAW-A2-03.cel3 }
+    - { typ: oddaj, poi: palac_tram_meta, opis: misje.WAW-A2-03.cel4, przedmiot: rozklad }
+    - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A2-03.objazd1 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-03.objazd2 }
+    - { typ: dojedz, poi: bulwar_srodek, opis: misje.WAW-A2-03.objazd3 }
+    - { typ: dojedz, poi: bulwar_poludnie, opis: misje.WAW-A2-03.objazd4 }
+    - { typ: dojedz, poi: bulwar_noc_start, opis: misje.WAW-A2-03.objazd5 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-03.objazd6 }
+    - { typ: dojedz, poi: palac_ddr_wjazd, opis: misje.WAW-A2-03.objazd7 }
+  warunki_porazki: [major_x3]
+  checkpointy: [palac_tram_przed, starowka_lacznik, bulwar_poludnie]
+  reguly_cwiczone: [MSC-02, PIER-09]
+  zdarzenia_wymuszone:
+    - { typ: tramwaj_bez_wysepki, przy: palac_tram_przed, regula: MSC-02 }
+  par_s: 190
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 500 }
+  dialog_start: dialogi.WAW-A2-03.start
+  dialog_koniec: dialogi.WAW-A2-03.koniec
+
+- id: WAW-A2-04
+  miasto: warszawa
+  akt: 2
+  tytul: misje.WAW-A2-04.tytul
+  opis: misje.WAW-A2-04.opis
+  zleceniodawca: profesor_kwant
+  typ: delikatna_przesylka
+  wymagania: { misje_ukonczone: [WAW-A2-03] }
+  start: { poi: centrum_nauki }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, opis: misje.WAW-A2-04.cel1, przedmiot: czujnik }
+    - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A2-04.cel2 }
+    - { typ: dojedz, poi: bulwar_srodek, opis: misje.WAW-A2-04.cel3 }
+    - { typ: oddaj, poi: bulwar_poludnie, opis: misje.WAW-A2-04.cel4, przedmiot: czujnik }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-04.objazd1 }
+    - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A2-04.objazd2 }
+    - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A2-04.objazd3 }
+  warunki_porazki: [major_x3]
+  checkpointy: [bulwar_srodek, bulwar_poludnie, bulwary_noca]
+  reguly_cwiczone: [GDZIE-01, GDZIE-08, MAN-04]
+  zdarzenia_wymuszone:
+    - { typ: delikatny_czujnik, przy: bulwar_polnoc, regula: GDZIE-01 }
+  przesylka: { delikatna: true }
+  par_s: 190
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 500 }
+  dialog_start: dialogi.WAW-A2-04.start
+  dialog_koniec: dialogi.WAW-A2-04.koniec
+
+- id: WAW-A2-05
+  miasto: warszawa
+  akt: 2
+  tytul: misje.WAW-A2-05.tytul
+  opis: misje.WAW-A2-05.opis
+  zleceniodawca: pan_kazik
+  typ: nocny
+  wymagania: { misje_ukonczone: [WAW-A2-04] }
+  start: { poi: bulwar_noc_start, zmrok: true, kask_zapiety: false }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.WAW-A2-05.cel1 }
+    - { typ: dojedz, poi: bulwar_srodek, opis: misje.WAW-A2-05.cel2 }
+    - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A2-05.cel3 }
+    - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A2-05.objazd1 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-05.objazd2 }
+    - { typ: dojedz, poi: bulwar_srodek, opis: misje.WAW-A2-05.objazd3 }
+    - { typ: dojedz, poi: bulwar_poludnie, opis: misje.WAW-A2-05.objazd4 }
+    - { typ: dojedz, poi: bulwar_noc_start, opis: misje.WAW-A2-05.objazd5 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-05.objazd6 }
+    - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A2-05.objazd7 }
+  warunki_porazki: [major_x3]
+  checkpointy: [bulwar_srodek, starowka_lacznik, bulwar_poludnie]
+  reguly_cwiczone: [KASK-01, WYP-04, WYP-05]
+  zdarzenia_wymuszone:
+    - { typ: kontrola_swiatel, przy: bulwar_noc_start, regula: WYP-04 }
+  par_s: 175
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 500 }
+  dialog_start: dialogi.WAW-A2-05.start
+  dialog_koniec: dialogi.WAW-A2-05.koniec
+
+- id: WAW-A2-06
+  miasto: warszawa
+  akt: 2
+  tytul: misje.WAW-A2-06.tytul
+  opis: misje.WAW-A2-06.opis
+  zleceniodawca: sierzant_ola
+  typ: detektyw_znakow
+  wymagania: { misje_ukonczone: [WAW-A2-05] }
+  start: { poi: most_detektyw_start }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: most_detektyw_srodek, opis: misje.WAW-A2-06.cel1 }
+    - { typ: sfotografuj, poi: most_detektyw_foto, opis: misje.WAW-A2-06.cel2, znak: most-detektyw-c13 }
+    - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A2-06.cel3 }
+    - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A2-06.objazd1 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-06.objazd2 }
+    - { typ: dojedz, poi: bulwar_srodek, opis: misje.WAW-A2-06.objazd3 }
+    - { typ: dojedz, poi: bulwar_poludnie, opis: misje.WAW-A2-06.objazd4 }
+    - { typ: dojedz, poi: bulwar_noc_start, opis: misje.WAW-A2-06.objazd5 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-06.objazd6 }
+    - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A2-06.objazd7 }
+  warunki_porazki: [major_x3]
+  checkpointy: [most_detektyw_foto, bulwar_srodek, bulwar_poludnie]
+  reguly_cwiczone: [GDZIE-01, GDZIE-02, ZNAK-C13]
+  zdarzenia_wymuszone:
+    - { typ: wskazowka_na_moscie, przy: most_detektyw_foto, regula: ZNAK-C13 }
+  skrot: { odcinek: uliczka-jednokierunkowa }
+  par_s: 175
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 500 }
+  dialog_start: dialogi.WAW-A2-06.start
+  dialog_koniec: dialogi.WAW-A2-06.koniec
+
+- id: WAW-A3-01
+  miasto: warszawa
+  akt: 3
+  tytul: misje.WAW-A3-01.tytul
+  opis: misje.WAW-A3-01.opis
+  zleceniodawca: sierzant_ola
+  typ: pogoda
+  wymagania: { misje_ukonczone: [WAW-A2-06] }
+  start: { poi: lazienki_ulewa_start, ulewa: true }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, opis: misje.WAW-A3-01.cel1, przedmiot: ostrzezenie }
+    - { typ: dojedz, poi: fontanny_poludnie, opis: misje.WAW-A3-01.cel2 }
+    - { typ: dojedz, poi: lazienki_aleja, opis: misje.WAW-A3-01.cel3 }
+    - { typ: oddaj, poi: lazienki_pawilon, opis: misje.WAW-A3-01.cel4, przedmiot: ostrzezenie }
+    - { typ: dojedz, poi: lazienki_aleja, opis: misje.WAW-A3-01.objazd1 }
+    - { typ: dojedz, poi: lazienki_ciag, opis: misje.WAW-A3-01.objazd2 }
+    - { typ: dojedz, poi: lazienki_frank_start, opis: misje.WAW-A3-01.objazd3 }
+    - { typ: dojedz, poi: park_poludnie, opis: misje.WAW-A3-01.objazd4 }
+    - { typ: dojedz, poi: bulwar_srodek, opis: misje.WAW-A3-01.objazd5 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A3-01.bulwarNawrot }
+    - { typ: dojedz, poi: park_powrot, opis: misje.WAW-A3-01.objazd6 }
+    - { typ: dojedz, poi: lazienki_pawilon, opis: misje.WAW-A3-01.objazd7 }
+  warunki_porazki: [major_x3]
+  checkpointy: [fontanny_poludnie, lazienki_frank_start, bulwar_srodek]
+  reguly_cwiczone: [GDZIE-04, GDZIE-05, GDZIE-09]
+  zdarzenia_wymuszone:
+    - { typ: ulewa, przy: lazienki_ulewa_start, regula: GDZIE-04 }
+  par_s: 190
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 45, xp: 650 }
+  dialog_start: dialogi.WAW-A3-01.start
+  dialog_koniec: dialogi.WAW-A3-01.koniec
+
+- id: WAW-A3-02
+  miasto: warszawa
+  akt: 3
+  tytul: misje.WAW-A3-02.tytul
+  opis: misje.WAW-A3-02.opis
+  zleceniodawca: maly_franek
+  typ: eskorta
+  wymagania: { misje_ukonczone: [WAW-A3-01] }
+  start: { poi: lazienki_frank_start }
+  ruch_ai: false
+  towarzysze: 2
+  cele:
+    - typ: wybor
+      poi: lazienki_frank_start
+      opis: misje.WAW-A3-02.cel1
+      regula: GDZIE-10
+      pytanie: misje.WAW-A3-02.cel1Pytanie
+      odpowiedzi:
+        - misje.WAW-A3-02.cel1Odp1
+        - misje.WAW-A3-02.cel1Odp2
+        - misje.WAW-A3-02.cel1Odp3
+      poprawna: 1
+      wyjasnienie: misje.WAW-A3-02.cel1Feedback
+    - { typ: dojedz, poi: lazienki_ciag, opis: misje.WAW-A3-02.cel2 }
+    - { typ: dojedz, poi: lazienki_aleja, opis: misje.WAW-A3-02.cel3 }
+    - { typ: dojedz, poi: lazienki_pawilon, opis: misje.WAW-A3-02.cel4 }
+    - { typ: dojedz, poi: lazienki_aleja, opis: misje.WAW-A3-02.objazd1 }
+    - { typ: dojedz, poi: lazienki_ciag, opis: misje.WAW-A3-02.objazd2 }
+    - { typ: dojedz, poi: lazienki_frank_start, opis: misje.WAW-A3-02.objazd3 }
+    - { typ: dojedz, poi: park_poludnie, opis: misje.WAW-A3-02.objazd4 }
+    - { typ: dojedz, poi: bulwar_srodek, opis: misje.WAW-A3-02.objazd5 }
+    - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A3-02.bulwarNawrot }
+    - { typ: dojedz, poi: park_powrot, opis: misje.WAW-A3-02.objazd6 }
+    - { typ: dojedz, poi: lazienki_pawilon, opis: misje.WAW-A3-02.objazd7 }
+  warunki_porazki: [major_x3]
+  checkpointy: [lazienki_aleja, lazienki_frank_start, bulwar_srodek]
+  reguly_cwiczone: [GDZIE-10, GDZIE-08, MAN-01]
+  zdarzenia_wymuszone:
+    - { typ: eskorta_franka, przy: lazienki_frank_start, regula: GDZIE-10 }
+  par_s: 190
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 45, xp: 650 }
+  dialog_start: dialogi.WAW-A3-02.start
+  dialog_koniec: dialogi.WAW-A3-02.koniec
+
+- id: WAW-A3-03
+  miasto: warszawa
+  akt: 3
+  tytul: misje.WAW-A3-03.tytul
+  opis: misje.WAW-A3-03.opis
+  zleceniodawca: profesor_kwant
+  typ: dostawa
+  wymagania: { misje_ukonczone: [WAW-A3-02] }
+  start: { poi: mokotow_kolej_start }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: mokotow_kolej_przed, opis: misje.WAW-A3-03.cel1 }
+    - { typ: dojedz, poi: mokotow_kolej_za, opis: misje.WAW-A3-03.cel2 }
+    - { typ: odbierz, poi: mokotow_stacja_przed, opis: misje.WAW-A3-03.cel3, przedmiot: nagranie }
+    - { typ: oddaj, poi: mokotow_kolej_meta, opis: misje.WAW-A3-03.cel4, przedmiot: nagranie }
+    - { typ: dojedz, poi: kolej_wschod, opis: misje.WAW-A3-03.objazd1 }
+    - { typ: dojedz, poi: kolej_poludnie, opis: misje.WAW-A3-03.objazd2 }
+    - { typ: dojedz, poi: kolej_poludnie_przed, opis: misje.WAW-A3-03.objazd3 }
+    - { typ: dojedz, poi: kolej_poludnie_za, opis: misje.WAW-A3-03.objazd4 }
+    - { typ: dojedz, poi: mokotow_stacja_przed, opis: misje.WAW-A3-03.objazd5 }
+  warunki_porazki: [major_x3]
+  checkpointy: [mokotow_kolej_przed, mokotow_stacja_przed, kolej_poludnie_przed]
+  reguly_cwiczone: [MSC-01, MAN-04]
+  zdarzenia_wymuszone:
+    - { typ: przejazd_kolejowy, przy: mokotow_kolej_przed, regula: MSC-01 }
+  par_s: 175
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 45, xp: 650 }
+  dialog_start: dialogi.WAW-A3-03.start
+  dialog_koniec: dialogi.WAW-A3-03.koniec
+
+- id: WAW-A3-04
+  miasto: warszawa
+  akt: 3
+  tytul: misje.WAW-A3-04.tytul
+  opis: misje.WAW-A3-04.opis
+  zleceniodawca: sierzant_ola
+  typ: pierwsza_pomoc
+  wymagania: { misje_ukonczone: [WAW-A3-03] }
+  start: { poi: palac_pomoc_start }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: palac_pomoc_miejsce, opis: misje.WAW-A3-04.cel1 }
+    - typ: wybor
+      poi: palac_pomoc_miejsce
+      opis: misje.WAW-A3-04.cel2
+      regula: PP-01
+      pytanie: misje.WAW-A3-04.cel2Pytanie
+      odpowiedzi:
+        - misje.WAW-A3-04.cel2Odp1
+        - misje.WAW-A3-04.cel2Odp2
+        - misje.WAW-A3-04.cel2Odp3
+      poprawna: 1
+      wyjasnienie: misje.WAW-A3-04.cel2Feedback
+    - typ: wybor
+      poi: palac_pomoc_miejsce
+      opis: misje.WAW-A3-04.cel3
+      regula: PP-03
+      pytanie: misje.WAW-A3-04.cel3Pytanie
+      odpowiedzi:
+        - misje.WAW-A3-04.cel3Odp1
+        - misje.WAW-A3-04.cel3Odp2
+        - misje.WAW-A3-04.cel3Odp3
+      poprawna: 2
+      wyjasnienie: misje.WAW-A3-04.cel3Feedback
+    - typ: wybor
+      poi: palac_pomoc_miejsce
+      opis: misje.WAW-A3-04.cel4
+      regula: PP-02
+      pytanie: misje.WAW-A3-04.cel4Pytanie
+      odpowiedzi:
+        - misje.WAW-A3-04.cel4Odp1
+        - misje.WAW-A3-04.cel4Odp2
+        - misje.WAW-A3-04.cel4Odp3
+      poprawna: 0
+      wyjasnienie: misje.WAW-A3-04.cel4Feedback
+    - typ: wybor
+      poi: palac_pomoc_miejsce
+      opis: misje.WAW-A3-04.cel5
+      regula: PP-04
+      pytanie: misje.WAW-A3-04.cel5Pytanie
+      odpowiedzi:
+        - misje.WAW-A3-04.cel5Odp1
+        - misje.WAW-A3-04.cel5Odp2
+        - misje.WAW-A3-04.cel5Odp3
+      poprawna: 1
+      wyjasnienie: misje.WAW-A3-04.cel5Feedback
+  warunki_porazki: [major_x3]
+  checkpointy: [palac_pomoc_miejsce]
+  reguly_cwiczone: [PP-01, PP-02, PP-03]
+  zdarzenia_wymuszone:
+    - { typ: po_zdarzeniu, przy: palac_pomoc_miejsce, regula: PP-01 }
+  par_s: 145
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 45, xp: 650 }
+  dialog_start: dialogi.WAW-A3-04.start
+  dialog_koniec: dialogi.WAW-A3-04.koniec
+
+- id: WAW-A3-05
+  miasto: warszawa
+  akt: 3
+  tytul: misje.WAW-A3-05.tytul
+  opis: misje.WAW-A3-05.opis
+  zleceniodawca: sierzant_ola
+  typ: konwoj
+  wymagania: { misje_ukonczone: [WAW-A3-04] }
+  start: { poi: lazienki_pawilon, awaria_swiatel: true }
+  ruch_ai: false
+  towarzysze: 4
+  cele:
+    - { typ: odbierz, opis: misje.WAW-A3-05.cel1, przedmiot: klucz }
+    - typ: wybor
+      poi: lazienki_pawilon
+      opis: misje.WAW-A3-05.cel2
+      regula: MSC-05
+      pytanie: misje.WAW-A3-05.cel2Pytanie
+      odpowiedzi:
+        - misje.WAW-A3-05.cel2Odp1
+        - misje.WAW-A3-05.cel2Odp2
+        - misje.WAW-A3-05.cel2Odp3
+      poprawna: 0
+      wyjasnienie: misje.WAW-A3-05.cel2Feedback
+    - { typ: dojedz, poi: lazienki_aleja, opis: misje.WAW-A3-05.cel3 }
+    - { typ: dojedz, poi: fontanny_poludnie, opis: misje.WAW-A3-05.cel4 }
+    - { typ: dojedz, poi: palac_ola_przed, opis: misje.WAW-A3-05.cel5 }
+    - { typ: dojedz, poi: palac_ola_za, opis: misje.WAW-A3-05.cel6 }
+    - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A3-05.cel7 }
+    - { typ: dojedz, poi: most_detektyw_srodek, opis: misje.WAW-A3-05.cel8 }
+    - { typ: dojedz, poi: stadion_start, opis: misje.WAW-A3-05.stadionPrzed }
+    - { typ: oddaj, poi: stadion_meta, opis: misje.WAW-A3-05.cel9, przedmiot: klucz }
+  warunki_porazki: [major_x3]
+  checkpointy: [fontanny_poludnie, palac_ola_przed, bulwar_polnoc]
+  reguly_cwiczone: [MSC-05, SYG-03, PIER-07]
+  zdarzenia_wymuszone:
+    - { typ: polecenie_oli, przy: palac_ola_przed, regula: SYG-03 }
+    - { typ: start_kolumny, przy: lazienki_pawilon, regula: MSC-05 }
+    - { typ: pojazd_uprzywilejowany, przy: stadion_mijanka, regula: PIER-07 }
+  skrot: { odcinek: stadion-skrot }
+  par_s: 145
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 45, xp: 650 }
+  dialog_start: dialogi.WAW-A3-05.start
+  dialog_koniec: dialogi.WAW-A3-05.koniec
+
+- id: WAW-A3-06
+  miasto: warszawa
+  akt: 3
+  tytul: misje.WAW-A3-06.tytul
+  opis: misje.WAW-A3-06.opis
+  zleceniodawca: turbo
+  typ: wyscig
+  wymagania: { misje_ukonczone: [WAW-A3-05] }
+  start: { poi: stadion_start }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: stadion_wjazd, opis: misje.WAW-A3-06.cel1 }
+    - { typ: dojedz, poi: stadion_trening_zachod, opis: misje.WAW-A3-06.trening1 }
+    - { typ: dojedz, poi: stadion_trening_wschod, opis: misje.WAW-A3-06.trening2 }
+    - { typ: dojedz, poi: stadion_trening_brama, opis: misje.WAW-A3-06.trening3 }
+    - { typ: dojedz, poi: stadion_wjazd, opis: misje.WAW-A3-06.trening4 }
+    - { typ: dojedz, poi: stadion_trening_zachod, opis: misje.WAW-A3-06.trening1 }
+    - { typ: dojedz, poi: stadion_trening_wschod, opis: misje.WAW-A3-06.trening2 }
+    - { typ: dojedz, poi: stadion_trening_brama, opis: misje.WAW-A3-06.trening3 }
+    - { typ: dojedz, poi: stadion_start, opis: misje.WAW-A3-06.cel2 }
+    - { typ: dojedz, poi: stadion_meta, opis: misje.WAW-A3-06.cel3 }
+  limit_s: 250
+  warunki_porazki: [czas_minal, major_x3]
+  checkpointy: [stadion_trening_brama, stadion_start, stadion_nawrot]
+  reguly_cwiczone: [GDZIE-01, MAN-04, PIER-01]
+  zdarzenia_wymuszone:
+    - { typ: start_finalu, przy: stadion_start, regula: MAN-04 }
+  skrot: { odcinek: stadion-skrot }
+  wyscig: { trasa_rywala: turbo-stadion }
+  par_s: 175
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 45, xp: 650 }
+  dialog_start: dialogi.WAW-A3-06.start
+  dialog_koniec: dialogi.WAW-A3-06.koniec

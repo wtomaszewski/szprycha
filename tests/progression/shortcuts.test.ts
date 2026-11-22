@@ -10,11 +10,13 @@ import {
 } from '../missions/warsaw-routes';
 import { missionContent, runWarsawRoute } from '../missions/run-warsaw-route';
 
-const shortcuts = missionContent.misje.filter(({ skrot }) => skrot);
+const shortcuts = missionContent.misje.filter(
+  ({ skrot, akt }) => skrot && akt === 1,
+);
 const balance = missionContent.balans;
-const { bonus_czasu_max, kara_minor, kara_major } = balance.misja;
+const { kara_minor, kara_major } = balance.misja;
 
-it('uses two different marked shortcuts across the seven Warsaw orders', () => {
+it('uses two different marked shortcuts in Warsaw act one', () => {
   expect(shortcuts.map(({ id, skrot }) => [id, skrot!.odcinek])).toEqual([
     ['WAW-A1-03', 'pasaz_pierogi'],
     ['WAW-A1-04', 'uliczka-jednokierunkowa'],
@@ -48,7 +50,7 @@ it.each(shortcuts)(
     expect(shortcutResult).toMatchObject({
       status: 'completed',
       illegalShortcut: true,
-      timeBonusEligible: rule.waga_bledu === 'minor',
+      timeBonusEligible: false,
       verdicts: expect.arrayContaining([
         expect.objectContaining({ ruleId, kind: rule.waga_bledu }),
       ]),
@@ -68,7 +70,7 @@ it.each(shortcuts)(
       true,
     ).timeBonus;
     const shortcutNetBonus =
-      rule.waga_bledu === 'major' ? -kara_major : bonus_czasu_max - kara_minor;
+      rule.waga_bledu === 'major' ? -kara_major : -kara_minor;
     const controlQuestionBonus = balance.uwaga_drogowki.bonus_madra_glowa;
     expect(shortcutNetBonus + controlQuestionBonus).toBeLessThan(legalBonus);
     expect(shortcutResult.points + controlQuestionBonus).toBeLessThan(

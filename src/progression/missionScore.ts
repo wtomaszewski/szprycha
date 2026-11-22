@@ -45,10 +45,11 @@ export class MissionScore {
     elapsed: number,
     completed: boolean,
     shocks?: number,
+    eligibleForTimeBonus = true,
   ) {
     const { misja } = this.balance;
     const timeBonus =
-      completed && this.major === 0
+      completed && eligibleForTimeBonus && this.major === 0
         ? Math.round(
             misja.bonus_czasu_max *
               (elapsed <= mission.par_s
@@ -81,8 +82,15 @@ export function missionScore(
   verdicts: readonly Verdict[],
   completed: boolean,
   shocks?: number,
+  eligibleForTimeBonus = true,
 ) {
   const score = new MissionScore(balance);
   for (const { kind } of verdicts) score.receive(kind);
-  return score.result(mission, elapsed, completed, shocks);
+  return score.result(
+    mission,
+    elapsed,
+    completed,
+    shocks,
+    eligibleForTimeBonus,
+  );
 }

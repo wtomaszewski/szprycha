@@ -12,7 +12,7 @@ Aby odtworzyć raport, uruchom `npm run coverage:maps`. Opcja `--strict` (po sep
 
 Mapa [warszawa.tmj](../maps/warszawa.tmj)
 
-**Misje na mapie** `WAW-A1-01`, `WAW-A1-02`, `WAW-A1-03`, `WAW-A1-04`, `WAW-A1-05`, `WAW-A1-06`
+**Misje na mapie** `WAW-A1-01`, `WAW-A1-02`, `WAW-A1-03`, `WAW-A1-04`, `WAW-A1-05`, `WAW-A1-06`, `WAW-A2-01`, `WAW-A2-02`, `WAW-A2-03`, `WAW-A2-04`, `WAW-A2-05`, `WAW-A2-06`, `WAW-A3-01`, `WAW-A3-02`, `WAW-A3-03`, `WAW-A3-04`, `WAW-A3-05`, `WAW-A3-06`
 
 | Sytuacja drogowa | Pokrycie | Wykryte obiekty lub misje | Brakujące elementy |
 | --- | :---: | --- | --- |
@@ -21,26 +21,26 @@ Mapa [warszawa.tmj](../maps/warszawa.tmj)
 | Sygnalizacja + S-2 + S-6/S-7 | ✓ | `palac-E-s1`, `palac-N-s1`, `palac-N-s2`, `palac-S-s1`, `palac-W-s1`, `palac-tram-s1`, `pod-palacem-przejazd`, `zamek-E-s1`, `zamek-N-s1`, `zamek-S-s1`, `zamek-W-s1` | — |
 | Rondo | ✓ | `rondo-E`, `rondo-N`, `rondo-S`, `rondo-W` | — |
 | Tramwaj + przystanek bez wysepki | ✓ | `palac-przystanek-bez-wysepki`, `tramwaj-aleja` | — |
-| DDR, pas rowerowy, ciąg pieszo-rowerowy | ✓ | `ciag-dzielony-piesi`, `ciag-dzielony-rowery`, `ciag-wspolny-bulwary`, `ddr-bulwary`, `ddr-most`, `ddr-palac-wschod`, `ddr-palac-zachod`, `ddr-zamek-wschod`, `ddr-zamek-zachod`, `kontrapas-centrum`, `lazienki-ciag-wspolny`, `pas-rowerowy-powisle` | — |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | ✓ | `bulwar-nierownosci`, `ciag-dzielony-piesi`, `ciag-dzielony-rowery`, `ciag-wspolny-bulwary`, `ddr-bulwary`, `ddr-most`, `ddr-palac-wschod`, `ddr-palac-zachod`, `ddr-zamek-wschod`, `ddr-zamek-zachod`, `kontrapas-centrum`, `lazienki-ciag-wspolny`, `lazienki-poludniowy-lacznik`, `osiedle-ddr-polnoc`, `osiedle-ddr-poludnie`, `pas-rowerowy-powisle`, `stadion-ddr-dojazd-polnoc`, `stadion-ddr-dojazd-wschod`, `stadion-ddr-dojazd-zachod`, `stadion-ddr-polnoc`, `stadion-ddr-poludnie`, `stadion-ddr-wschod`, `stadion-ddr-zachod`, `starowka-ddr-lacznik` | — |
 | Przejazd dla rowerzystów | ✓ | `pod-palacem-przejazd`, `przejazd-przy-moscie` | — |
 | Strefa zamieszkania / pieszych | ✓ | `deptak`, `kocie-lby`, `starowka-d40` | — |
 | Wyjazd z drogi wewnętrznej | ✓ | `brama-podworko` | — |
 | Przejazd kolejowy | ✓ | `mokotow-przejazd-bez-zapor`, `mokotow-przejazd-z-zaporami` | — |
 | Pobocze, zakaz wjazdu rowerów | ✓ | `deptak-b9`, `lazienki-aleja-piesza`, `lazienki-znak-zakazu`, `pobocze-mokotow-polnoc`, `pobocze-mokotow-poludnie` | — |
 | Kontraruch | ✓ | `kontraruch-b2-t22` | — |
-| Nocna jazda | ✓ | `dusk_at_s` | — |
+| Nocna jazda | ✓ | `WAW-A2-05`, `dusk_at_s` | — |
 
 | Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
 | --- | :---: | --- | --- |
-| M01 | ✓ | `WYP-04`, `WYP-05` | — |
-| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-01`, `GDZIE-05`, `GDZIE-06`, `GDZIE-07` |
-| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `SYG-03`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-STOP` |
-| M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | `PIER-01`, `PIER-02`, `PIER-04`, `PIER-06` |
+| M01 | ✓ | `WYP-04`, `WYP-05` | `KASK-01`, `WYP-04`, `WYP-05` |
+| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-01`, `GDZIE-02`, `GDZIE-04`, `GDZIE-05`, `GDZIE-06`, `GDZIE-07`, `GDZIE-08`, `GDZIE-09`, `GDZIE-10`, `GDZIE-11` |
+| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `SYG-01`, `SYG-02`, `SYG-03`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-C13`, `ZNAK-S2`, `ZNAK-STOP` |
+| M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | `PIER-01`, `PIER-02`, `PIER-04`, `PIER-06`, `PIER-07`, `PIER-09` |
 | M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-06`, `MAN-08` | `MAN-01`, `MAN-04`, `MAN-07`, `MAN-08` |
-| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | `MSC-03` |
-| M07 | ✗ | — | — |
+| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04`, `MSC-05` |
+| M07 | ✓ | — | `PP-01`, `PP-02`, `PP-03`, `PP-04` |
 
-**Pokrycie** 13/13 sytuacji, 6/7 modułów.
+**Pokrycie** 13/13 sytuacji, 7/7 modułów.
 
 ## Wrocław
 

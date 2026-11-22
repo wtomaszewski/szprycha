@@ -196,6 +196,7 @@ function missionRules(mission: MissionDefinition, world: WorldModel) {
   for (const goal of mission.cele) {
     if (goal.wymagany_nawyk) rules.add(goal.wymagany_nawyk);
     if ('poi' in goal && goal.poi) locations.add(goal.poi);
+    if (goal.typ === 'wybor') rules.add(goal.regula);
     if (goal.typ === 'przygotuj_rower') {
       for (const id of ['KASK-01', 'WYP-04', 'WYP-05']) rules.add(id);
     }

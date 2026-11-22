@@ -8,6 +8,7 @@ export class ControlQuestionDialog {
   private readonly answers = document.createElement('div');
   private readonly feedback = document.createElement('p');
   private readonly resume = document.createElement('button');
+  private readonly intro = document.createElement('p');
   private buttons: HTMLButtonElement[] = [];
 
   constructor(
@@ -32,8 +33,7 @@ export class ControlQuestionDialog {
     speech.className = 'dialogue-speech';
     const speaker = document.createElement('strong');
     speaker.textContent = ui.dialogi.postacie.sierzant_ola;
-    const intro = document.createElement('p');
-    intro.textContent = ui.progression.olaIntro;
+    this.intro.textContent = ui.progression.olaIntro;
     this.prompt.id = 'control-question-prompt';
     this.prompt.className = 'control-question-prompt';
     this.prompt.tabIndex = -1;
@@ -44,7 +44,7 @@ export class ControlQuestionDialog {
       if (!event.repeat && this.resume.hidden)
         this.focusAnswer(event.code === 'ArrowUp' ? -1 : 1);
     });
-    speech.append(speaker, intro, this.prompt);
+    speech.append(speaker, this.intro, this.prompt);
     line.append(portrait, speech);
 
     this.answers.className = 'control-question-answers';
@@ -63,7 +63,15 @@ export class ControlQuestionDialog {
     return this.panel.open;
   }
 
-  show(question: ControlQuestion) {
+  show(
+    question: Pick<ControlQuestion, 'pytanie' | 'odpowiedzi' | 'wyjasnienie'>,
+    choice?: (index: number) => { correct: boolean } | undefined,
+  ) {
+    this.panel.setAttribute(
+      'aria-label',
+      choice ? ui.missionUi.choice : ui.progression.questionTitle,
+    );
+    this.intro.hidden = Boolean(choice);
     this.prompt.textContent = question.pytanie;
     this.answers.hidden = false;
     this.feedback.textContent = '';
@@ -74,13 +82,14 @@ export class ControlQuestionDialog {
       button.type = 'button';
       button.textContent = text;
       button.addEventListener('click', () => {
-        const result = this.answer(index);
+        const result = choice ? choice(index) : this.answer(index);
         if (!result) return;
         this.answers.hidden = true;
         this.feedback.hidden = false;
-        this.feedback.textContent = result.correct
-          ? `${ui.progression.wiseHead} +${result.points}`
-          : question.wyjasnienie;
+        this.feedback.textContent =
+          result.correct && 'points' in result
+            ? `${ui.progression.wiseHead} +${result.points}`
+            : question.wyjasnienie;
         this.resume.hidden = false;
         this.resume.focus();
       });

@@ -89,6 +89,29 @@ const zones = [
   rect('deptak', 3552, 704, 352, 192, { kind: 'pedestrian_zone' }),
   rect('spacer-turystow', 3264, 704, 288, 192, { kind: 'sidewalk' }),
   rect('pasaz_pierogi', 1152, 280, 128, 72, { kind: 'park_path' }),
+  rect('osiedle-ddr-polnoc', 384, 2176, 768, 64, { kind: 'bike_path' }),
+  rect('osiedle-ddr-poludnie', 384, 3296, 768, 64, { kind: 'bike_path' }),
+  rect('lazienki-poludniowy-lacznik', 2848, 3328, 448, 64, {
+    kind: 'bike_path',
+  }),
+  rect('lazienki-polnocny-lacznik', 2848, 2496, 384, 64, { kind: 'park_path' }),
+  rect('bulwar-nierownosci', 2848, 2630, 64, 232, {
+    kind: 'bike_path',
+    surface: 'rough',
+  }),
+  rect('starowka-ddr-lacznik', 2848, 608, 64, 576, { kind: 'bike_path' }),
+  rect('stadion-ddr-dojazd-zachod', 1568, 1376, 64, 1120, {
+    kind: 'bike_path',
+  }),
+  rect('stadion-ddr-dojazd-wschod', 2016, 1376, 64, 1120, {
+    kind: 'bike_path',
+  }),
+  rect('stadion-ddr-dojazd-polnoc', 1568, 1376, 512, 64, { kind: 'bike_path' }),
+  rect('stadion-ddr-zachod', 1568, 2496, 64, 704, { kind: 'bike_path' }),
+  rect('stadion-ddr-wschod', 2016, 2496, 64, 704, { kind: 'bike_path' }),
+  rect('stadion-ddr-polnoc', 1568, 2496, 512, 64, { kind: 'bike_path' }),
+  rect('stadion-ddr-poludnie', 1568, 3136, 512, 64, { kind: 'bike_path' }),
+  rect('stadion-skrot', 1792, 2560, 128, 576, { kind: 'roadway' }),
   ...extension.zones,
 ];
 const hasTile = (
@@ -127,6 +150,28 @@ for (let row = 0; row < height; row++)
     const inRoundabout =
       Math.abs(x - island.x) < 224 && Math.abs(y - island.y) < 224;
     const onStreet = streetTiles.some((area) => hasTile(x, y, area));
+    if (
+      zones.some(
+        (zone) =>
+          /^(stadion|osiedle|starowka)-ddr-/.test(zone.name) &&
+          hasTile(x, y, zone),
+      )
+    ) {
+      surfaces.push('bike');
+      markings.push(0);
+      continue;
+    }
+    if (
+      hasTile(
+        x,
+        y,
+        zones.find(({ name }) => name === 'bulwar-nierownosci')!,
+      )
+    ) {
+      surfaces.push('cobble');
+      markings.push(0);
+      continue;
+    }
     const verge =
       [448, 1088].some((mid) => Math.abs(y - mid) < 96) ||
       [448, 1088, 1856].some((mid) => Math.abs(x - mid) < 96);
@@ -511,7 +556,21 @@ objectLayer(
   ),
 );
 objectLayer('lanes', lanes);
-objectLayer('signs', [...signs, ...extension.signs]);
+objectLayer('signs', [
+  ...signs,
+  ...extension.signs,
+  rect('most-detektyw-c13', 2860, 327, 0, 0, {
+    code: 'C-13',
+    affects: 'ddr-most',
+    facing: 'E',
+    displayOnly: true,
+  }),
+  rect('stadion-skrot-b1', 1810, 2550, 0, 0, {
+    code: 'B-1',
+    affects: 'stadion-skrot',
+    facing: 'N',
+  }),
+]);
 objectLayer('crossing_signals', extension.crossingSignals);
 objectLayer('triggers', []);
 objectLayer('collectibles', []);
@@ -523,6 +582,70 @@ objectLayer('driveways', [
 ]);
 objectLayer('pois', [
   ...extension.pois,
+  ...(
+    [
+      ['praga_szkola', 420, 1540, 56, 64, Math.PI / 2],
+      ['praga_zjazd_polnoc', 420, 2220, 56, 64, Math.PI / 2],
+      ['praga_petla_zachod', 420, 3324, 56, 64, 0],
+      ['praga_petla_wschod', 1118, 3324, 60, 60, -Math.PI / 2],
+      ['praga_lacznik_srodek', 1118, 2204, 62, 60, Math.PI],
+      ['praga_lacznik_zachod', 480, 2204, 60, 60, -Math.PI / 2],
+      ['praga_osiedle_powrot', 480, 770, 56, 64, -Math.PI / 2],
+      ['praga_warsztat_powrot', 580, 480, 56, 50, 0],
+      ['starowka_lacznik', 2880, 642, 52, 52, Math.PI / 2],
+      ['park_poludnie', 2880, 3360, 52, 56, -Math.PI / 2],
+      ['park_powrot', 3260, 2530, 54, 58, Math.PI / 2],
+      ['kolej_wschod', 4810, 2920, 56, 60, Math.PI / 2],
+      ['kolej_poludnie', 4670, 3480, 56, 60, Math.PI],
+      ['kolej_poludnie_przed', 3488, 3268, 56, 60, -Math.PI / 2],
+      ['kolej_poludnie_za', 3488, 3140, 56, 60, -Math.PI / 2],
+      ['palac_ddr_wjazd', 3248, 1808, 52, 22, 0],
+      ['palac_ddr_przed', 3362, 1808, 38, 22, 0],
+      ['palac_ddr_za', 3560, 1808, 56, 22, 0],
+      ['palac_sygnal_przed', 3545, 1856, 36, 50, Math.PI],
+      ['palac_serwis', 4660, 1808, 64, 22, 0],
+      ['palac_strzalka_start', 3424, 1680, 0, 0, Math.PI / 2],
+      ['palac_strzalka_przed', 3424, 1761, 42, 30, Math.PI / 2],
+      ['palac_strzalka_za', 3305, 1856, 58, 50, Math.PI],
+      ['palac_tram_start', 4544, 1862, 0, 0, Math.PI],
+      ['palac_tram_przed', 4006, 1862, 42, 45, Math.PI],
+      ['palac_tram_stop', 3960, 1862, 32, 45, Math.PI],
+      ['palac_tram_meta', 3648, 1862, 60, 45, Math.PI],
+      ['bulwar_polnoc', 2880, 1268, 48, 56, Math.PI / 2],
+      ['bulwar_srodek', 2880, 2210, 48, 60, Math.PI / 2],
+      ['bulwar_poludnie', 2880, 3500, 48, 60, Math.PI / 2],
+      ['bulwar_noc_start', 2880, 3456, 48, 54, -Math.PI / 2],
+      ['most_detektyw_start', 1968, 346, 0, 0, 0],
+      ['most_detektyw_srodek', 2550, 347, 58, 42, 0],
+      ['most_detektyw_foto', 2856, 347, 56, 48, 0],
+      ['lazienki_ulewa_start', 3260, 2134, 0, 0, Math.PI / 2],
+      ['fontanny_poludnie', 3260, 2530, 42, 60, Math.PI / 2],
+      ['lazienki_aleja', 3261, 2764, 48, 52, -Math.PI / 2],
+      ['lazienki_pawilon', 3500, 2764, 58, 48, Math.PI],
+      ['lazienki_frank_start', 3260, 3290, 42, 42, -Math.PI / 2],
+      ['lazienki_ciag', 3260, 3110, 42, 48, -Math.PI / 2],
+      ['mokotow_kolej_start', 3424, 2144, 0, 0, Math.PI / 2],
+      ['mokotow_kolej_przed', 3424, 2358, 48, 40, Math.PI / 2],
+      ['mokotow_kolej_za', 3424, 2480, 56, 56, Math.PI / 2],
+      ['mokotow_stacja_przed', 3658, 2976, 58, 42, Math.PI / 2],
+      ['mokotow_kolej_meta', 4700, 2912, 64, 54, 0],
+      ['palac_pomoc_start', 4620, 1808, 0, 0, Math.PI],
+      ['palac_pomoc_miejsce', 3410, 1750, 52, 42, Math.PI],
+      ['palac_ola_przed', 3488, 2088, 48, 42, -Math.PI / 2],
+      ['palac_ola_za', 3488, 1825, 44, 40, -Math.PI / 2],
+      ['stadion_start', 1856, 2528, 0, 0, Math.PI],
+      ['stadion_trening_zachod', 1600, 1410, 56, 54, 0],
+      ['stadion_trening_wschod', 2048, 1410, 56, 54, Math.PI / 2],
+      ['stadion_trening_brama', 2048, 2528, 56, 54, Math.PI],
+      ['stadion_wjazd', 1600, 2528, 52, 52, Math.PI / 2],
+      ['stadion_mijanka', 1820, 480, 76, 42, Math.PI / 2],
+      ['stadion_nawrot', 1600, 3168, 54, 48, 0],
+      ['stadion_meta', 1856, 3168, 70, 54, 0],
+    ] as const
+  ).map(([id, x, y, w, h, heading]) =>
+    rect(id, x - w / 2, y - h / 2, w, h, { heading }),
+  ),
+
   rect('warsztat_praga', 800, 224, 0, 0, { heading: Math.PI / 2 }),
   rect('wyjazd_warsztat', 779, 391, 42, 38),
   rect('prawa_reka', 531, 385, 98, 56, { heading: Math.PI }),
@@ -557,12 +680,35 @@ objectLayer('pois', [
 ]);
 objectLayer('race_routes', [
   polyline(
+    'turbo-stadion',
+    [
+      [1856, 2528],
+      [1600, 2528],
+      [1600, 1410],
+      [2048, 1410],
+      [2048, 2528],
+      [1600, 2528],
+      [1600, 1410],
+      [2048, 1410],
+      [2048, 2528],
+      [1856, 2528],
+      [1856, 2740],
+      [1856, 3168],
+    ],
+    { speed: 7.5 },
+  ),
+  polyline(
     'turbo-most',
     [
       [1968, 334],
       [2885, 342],
       [2914, 391],
       [2914, 540],
+      [2914, 596],
+      [2880, 635],
+      [2880, 3500],
+      [2896, 3460],
+      [2896, 638],
       [3030, 580],
     ],
     { speed: 7.5 },
@@ -570,6 +716,20 @@ objectLayer('race_routes', [
 ]);
 objectLayer('traffic_routes', [
   ...extension.trafficRoutes,
+  polyline(
+    'pojazd-na-sygnale-praga',
+    [
+      [1824, 3584],
+      [1824, 416],
+      [0, 416],
+    ],
+    {
+      kind: 'emergency',
+      speed: 5,
+      repeat_s: 120,
+      event_only: true,
+    },
+  ),
   polyline(
     'auto-z-prawej',
     [
@@ -704,6 +864,24 @@ const buildings = [
 ] as const;
 objectLayer('blocks', [
   ...extension.blocks,
+  rect('stadion-trybuna-poludniowa', 1632, 3232, 352, 64, {
+    height: 4,
+    roof: 'sand',
+    wall: 'brick',
+    landmarkId: 'stadion-narodowy',
+  }),
+  rect('stadion-trybuna-zachodnia', 1504, 2592, 48, 512, {
+    height: 4,
+    roof: 'stone',
+    wall: 'brick',
+    landmarkId: 'stadion-narodowy',
+  }),
+  rect('stadion-trybuna-wschodnia', 2112, 2592, 48, 512, {
+    height: 4,
+    roof: 'stone',
+    wall: 'brick',
+    landmarkId: 'stadion-narodowy',
+  }),
   ...buildings.map(([id, x, y, w, h, floors, tint]) =>
     rect(id, x, y, w, h, {
       height: floors,

@@ -191,3 +191,10 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Generator dołącza Śródmieście, Powiśle z Bulwarami oraz Łazienki i Mokotów do istniejącej mapy z Pragi, mostu i Starówki.
 - Warszawa obejmuje 13/13 sytuacji w [raporcie pokrycia](docs/coverage.md). Testy tras referencyjnych zachowują werdykty aktu 1. Dwie próby headless po 10 minut symulacji obejmują auta, tramwaj, pasażera, pieszych i rowerzystę.
 - Misje na nowych odcinkach oraz ćwiczenia pierwszej pomocy pozostają w kolejnych częściach M6. Wrocław nie ma jeszcze osobnej mapy.
+
+## M6b — kampania Warszawy (#50)
+
+- Dwa samouczki i 18 zleceń głównych prowadzą od Pragi do finału na Stadionie Narodowym. Dodano dialogi, trasę finału, osiedlowe łączniki i wydłużone trasy aktu 1 z checkpointami.
+- Warszawa ćwiczy moduły M01–M07. Nocny kurs zaczyna się od przygotowania kasku i świateł, a scena z Turbo uczy zabezpieczenia miejsca, wezwania pomocy i reakcji z dorosłym.
+- Konwój rusza po awarii sygnalizacji i stosuje się do poleceń Oli. Oznaczony nielegalny skrót odbiera premię za czas zarówno graczowi, jak i Turbo.
+- Zlecenia poboczne, plac i Licencja Szprychy pozostają w późniejszym zakresie. Scena pierwszej pomocy jest ćwiczeniem wyborów bez limitu czasu.
