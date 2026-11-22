@@ -41,7 +41,7 @@ export class DrivingControls {
     areaTitle: string,
     private readonly visuals: { lite: boolean; rain: boolean },
     private toggle: () => void,
-    reset: () => void,
+    reset: (() => void) | undefined,
     menu: () => void,
     private readonly onPause: () => void,
     setCameraHeight: (height: number) => void,
@@ -112,10 +112,11 @@ export class DrivingControls {
       rain.hidden = true;
       lite.hidden = true;
     }
-    button(ui.driving.reset, () => {
-      this.togglePause();
-      reset();
-    });
+    if (reset)
+      button(ui.driving.reset, () => {
+        this.togglePause();
+        reset();
+      });
     button(plac ? ui.plac.return : ui.driving.menu, () => {
       if (plac) pauseMenu.close();
       menu();
@@ -302,7 +303,7 @@ export class DrivingControls {
         if (e.repeat) return;
         if (!plac && e.code === 'KeyL') lights.click();
         if (e.code === 'KeyX') toggle();
-        if (e.code === 'KeyR') reset();
+        if (e.code === 'KeyR') reset?.();
       },
       { signal },
     );

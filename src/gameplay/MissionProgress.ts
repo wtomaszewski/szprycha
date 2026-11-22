@@ -1,6 +1,6 @@
 import type { DialogueLine, Dialogues } from '../content/dialogues';
 import type { MissionCity, MissionDefinition } from '../content/missions';
-import { moduleId, type GameContent } from '../content/schemas';
+import type { GameContent } from '../content/schemas';
 import { BreakReminder } from '../progression/breakReminder';
 import { Milestones } from '../progression/milestones';
 import {
@@ -24,6 +24,11 @@ import {
   reputationRank,
   reputationXp,
 } from '../progression/reputation';
+import {
+  evaluateExam,
+  licenceRequirements,
+  type ExamResult,
+} from './exam/exam';
 import { reviewCard, type QuizQuestion } from './quiz/leitner';
 
 type MissionReward = {
@@ -132,16 +137,15 @@ export class MissionProgress {
 
   unlocks(content: GameContent) {
     const { balans } = content;
-    const masteryMet = moduleId.options.every(
-      (module) =>
-        this.moduleMastery(module, content) >=
-        balans.licencja.mastery_min_modul,
+    const { cities, rankMet, missingModules } = licenceRequirements(
+      this.store.profile,
+      content,
     );
     return rankUnlocks(
       balans.rangi,
       this.xp,
       this.store.profile.licencePassed,
-      masteryMet,
+      cities.length > 0 && rankMet && missingModules.length === 0,
     );
   }
 
@@ -256,9 +260,32 @@ export class MissionProgress {
     });
   }
 
-  recordLicencePassed() {
-    this.store.change((profile) => {
+  recordLicence(
+    content: GameContent,
+    result: ExamResult,
+    date = localDay(new Date()),
+  ) {
+    const { passed, practice } = evaluateExam(result, content.balans);
+    if (!passed) return false;
+    const isEligible = (profile: ProgressProfile) => {
+      const { cities, rankMet, missingModules } = licenceRequirements(
+        profile,
+        content,
+      );
+      return (
+        cities.includes(result.city) && rankMet && missingModules.length === 0
+      );
+    };
+    if (!isEligible(this.store.profile)) return false;
+    return this.store.change((profile) => {
+      if (!isEligible(profile)) return false;
       profile.licencePassed = true;
+      profile.licence ??= {
+        date,
+        theory: { correct: result.theory.correct, total: result.theory.total },
+        practice: { points: practice.points, max: practice.max },
+      };
+      return true;
     });
   }
 

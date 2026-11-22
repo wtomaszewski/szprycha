@@ -70,11 +70,11 @@ Dla każdej reguły `ruleId`:
 | Legenda Szprychy | Licencja zdana | Złoty dzwonek, tryb Sezon, tytuł przy nicku |
 
 **Egzamin „Licencja Szprychy”** (wartości w `balans.yaml`, domyślnie wzorowane na egzaminie szkolnym):
-- Warunek dostępu: ranga Mistrz Szlaku + mastery każdego modułu ≥70.
+- Warunki dostępu obejmują ukończenie kampanii jednego miasta, rangę Mistrz Szlaku i mastery każdego modułu ≥70.
 - Teoria: 25 pytań losowanych proporcjonalnie z modułów, próg **80%**.
 - Plac: wynik to suma punktów z sześciu elementów. Domyślnie czysty element daje **1 pkt**, drobny błąd **0,5 pkt**, a poważny błąd **0 pkt**. Decyduje najpoważniejszy błąd w danym elemencie. Próg **90%** to **5,4 z 6 pkt**, więc jeden drobny błąd daje zaliczenie (5,5 pkt), a dwa drobne lub jeden poważny dają 5 pkt. Parametry w `content/balans.yaml` opisują próbę w grze i wymagają porównania z aktualnymi kryteriami egzaminu szkolnego.
 - Przejazd kontrolny: trasa w mieście, 0 błędów `major`, max 2 `minor`.
-- Wynik: certyfikat do wydruku (nick + data + wynik; imię wpisane lokalnie, opcjonalnie, nie wysyłane).
+- Po zaliczeniu wszystkich części gracz może wydrukować certyfikat z nickiem, datą wydania i wynikiem. Opcjonalne imię pozostaje w podglądzie i na wydruku.
 - Komunikat: „Licencja Szprychy to trening. Prawdziwą kartę rowerową wydaje szkoła po egzaminie.”
 
 ## 7. Rankingi

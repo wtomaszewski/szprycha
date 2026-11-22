@@ -29,6 +29,8 @@ import { DrivingControls } from '../ui/DrivingControls';
 import { showError, translate, ui } from '../core/presentation';
 
 import { nearbyPhotoSubject } from '../gameplay/signPhoto';
+import type { ExamResult, ExamRide } from '../gameplay/exam/exam';
+import { examRoute } from '../gameplay/exam/route';
 import { MissionRace } from '../gameplay/MissionRace';
 import { missionEnvironment } from '../gameplay/missionEnvironment';
 import { MissionSystem, type MissionSpawn } from '../gameplay/MissionSystem';
@@ -133,6 +135,7 @@ export class City extends Scene {
   private attention!: RoadAttention;
   private questionDialog!: ControlQuestionDialog;
   private campaignCity!: MissionCity;
+  private examRide?: ExamRide;
   private freeRidePoints = 0;
   private missionTokens = 0;
   private resultPresented = false;
@@ -223,14 +226,22 @@ export class City extends Scene {
     missionId,
     map,
     city,
-  }: { missionId?: string; map?: string; city?: MissionCity } = {}) {
+    examRide,
+  }: {
+    missionId?: string;
+    map?: string;
+    city?: MissionCity;
+    examRide?: ExamRide;
+  } = {}) {
+    this.examRide = examRide;
+    if (examRide) this.sys.settings.data = {};
     this.obstacles = [];
     this.accumulator = 0;
     this.hudAt = 0;
     this.messageUntil = 0;
     this.content = this.registry.get('content') as GameContent;
     this.progress = this.registry.get('missionProgress') as MissionProgress;
-    this.campaignCity = city ?? this.progress.selectedCity;
+    this.campaignCity = examRide?.city ?? city ?? this.progress.selectedCity;
     this.progress.milestones(this.content);
     this.breakMinutes = this.progress.breakMinutes(
       this.content.balans.zdrowe_granie,
@@ -249,9 +260,9 @@ export class City extends Scene {
     );
     this.missionTokens = 0;
     this.resultPresented = false;
-    const definition = this.availableOrders().find(
-      ({ id }) => id === missionId,
-    );
+    const definition = examRide
+      ? examRoute(examRide.city, this.content.balans.licencja)
+      : this.availableOrders().find(({ id }) => id === missionId);
     const mapId = definition?.mapa ?? definition?.miasto ?? map ?? defaultMap;
     const cached = this.cache.tilemap.get(mapId) as { data: unknown };
     this.world = new WorldModel(
@@ -436,7 +447,11 @@ export class City extends Scene {
       walking: false,
     };
     if (this.mission) this.placeRider(this.mission.start);
-    this.riderArt = new RiderArt(this, readHelmetColor());
+    this.riderArt = new RiderArt(
+      this,
+      readHelmetColor(),
+      this.progress.store.profile.licencePassed,
+    );
     this.cameras.main
       .setZoom(drivingZoom)
       .setBounds(0, 0, this.worldWidth, this.worldHeight)
@@ -449,10 +464,10 @@ export class City extends Scene {
           ? ui.driving.wroclawTitle
           : ui.driving.title;
     this.controls = new DrivingControls(
-      areaTitle,
+      examRide ? ui.exam.ride : areaTitle,
       this.graphics,
       () => this.toggleMode(),
-      () => this.reset(),
+      examRide ? undefined : () => this.reset(),
       () => this.scene.start('MainMenu'),
       this.flushProgress,
       (height) => {
@@ -532,6 +547,7 @@ export class City extends Scene {
           this.scene.restart({ missionId: id, city: this.campaignCity });
       },
     );
+    this.phone.button.hidden = !!examRide;
     this.replayDialog = new ReplayDialog(
       this.controls.root,
       () => this.playReplay(),
@@ -627,6 +643,7 @@ export class City extends Scene {
       this.eventNotice.destroy();
       this.phone.close();
       this.controls.destroy();
+      this.examRide = undefined;
       this.gnomes = undefined;
       const c = this.game.canvas;
       delete c.dataset.map;
@@ -664,6 +681,7 @@ export class City extends Scene {
   }
 
   private togglePhone() {
+    if (this.examRide) return;
     if (this.phone.open) {
       this.phone.close();
       return;
@@ -754,6 +772,19 @@ export class City extends Scene {
   }
 
   private openMissionDialogue() {
+    if (this.examRide) {
+      this.dialogue.show(
+        [
+          {
+            postac: 'sierzant_ola',
+            emocja: 'neutral',
+            tekst: 'exam.rideIntro',
+          },
+        ],
+        () => this.controls.focus(),
+      );
+      return;
+    }
     if (!this.mission) return;
     const lines = this.progress.opening(
       this.mission.definition,
@@ -769,6 +800,17 @@ export class City extends Scene {
     this.resultPresented = true;
     this.rider.speed = 0;
     this.controls.clear();
+    if (this.examRide) {
+      const ride = {
+        completed: result.status === 'completed',
+        minor: 0,
+        major: 0,
+      };
+      for (const { kind } of result.verdicts) if (kind !== 'good') ride[kind]++;
+      const examResult: ExamResult = { ...this.examRide, ride };
+      this.scene.start('MainMenu', { examResult });
+      return;
+    }
     if (result.status === 'completed') {
       const { definition } = mission;
       this.missionTokens = this.progress.complete(definition, {
@@ -831,6 +873,7 @@ export class City extends Scene {
   }
 
   private showGnomeQuestion() {
+    if (this.examRide) return false;
     const { x, y, walking } = this.rider;
     const gnomes = this.gnomes;
     const nearby = walking ? gnomes?.nearby(x, y) : undefined;
@@ -870,6 +913,7 @@ export class City extends Scene {
   }
 
   private showControlQuestion() {
+    if (this.examRide) return false;
     const question = this.attention.pending;
     if (!question) return false;
     this.rider.speed = 0;
@@ -1005,10 +1049,19 @@ export class City extends Scene {
   }
 
   private createMission(definition: MissionDefinition) {
+    const balance = this.content.balans;
     return new MissionSystem(
       definition,
       this.world,
-      this.content.balans,
+      this.examRide
+        ? {
+            ...balance,
+            misja: {
+              ...balance.misja,
+              major_do_porazki: balance.licencja.przejazd_max_major + 1,
+            },
+          }
+        : balance,
       definition.wyscig &&
         new MissionRace(
           definition.wyscig.trasa_rywala,
@@ -1016,7 +1069,7 @@ export class City extends Scene {
           this.world,
           this.content,
         ),
-      this.series.consecutive,
+      this.examRide ? 0 : this.series.consecutive,
     );
   }
 
@@ -1238,13 +1291,16 @@ export class City extends Scene {
       rider,
     );
     rider.phoneInHand = false;
-    for (const verdict of this.tickVerdicts) this.series.receive(verdict.kind);
-    this.progress.recordRide(
-      this.tickVerdicts,
-      this.series.longest,
-      this.content.balans.mastery,
-    );
-    this.attention.step(this.tickVerdicts, rider.speed > 0);
+    if (!this.examRide) {
+      for (const verdict of this.tickVerdicts)
+        this.series.receive(verdict.kind);
+      this.progress.recordRide(
+        this.tickVerdicts,
+        this.series.longest,
+        this.content.balans.mastery,
+      );
+      this.attention.step(this.tickVerdicts, rider.speed > 0);
+    }
     const gnome = this.mission?.gnomeTarget;
     const effects = this.mission?.step(
       rider.pos,
@@ -1258,7 +1314,7 @@ export class City extends Scene {
           }
         : undefined,
       rider.speed,
-      Boolean(this.attention.pending),
+      !this.examRide && Boolean(this.attention.pending),
       source.walking &&
         gnome !== undefined &&
         this.progress.store.profile.gnomes?.includes(gnome),
@@ -1433,7 +1489,7 @@ export class City extends Scene {
       this.accumulator -= FIXED_STEP;
       if (
         this.review ||
-        this.attention.pending ||
+        (!this.examRide && this.attention.pending) ||
         this.mission?.pendingChoice ||
         this.missionInterrupted ||
         this.mission?.result

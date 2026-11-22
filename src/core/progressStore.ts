@@ -83,7 +83,7 @@ const m5cProfileSchema = m5bProfileSchema.extend({
   breakMinutes: count.positive().optional(),
 });
 
-const profileSchema = m5cProfileSchema.extend({
+const m7bProfileSchema = m5cProfileSchema.extend({
   version: z.literal(4),
   quiz: z.strictObject({
     cards: z.record(
@@ -95,6 +95,24 @@ const profileSchema = m5cProfileSchema.extend({
     ),
     streak: count,
   }),
+});
+
+const profileSchema = m7bProfileSchema.extend({
+  version: z.literal(5),
+  licence: z
+    .strictObject({
+      date: z.iso.date(),
+      theory: z
+        .strictObject({ correct: count, total: count.positive() })
+        .refine(({ correct, total }) => correct <= total),
+      practice: z
+        .strictObject({
+          points: z.number().nonnegative(),
+          max: z.number().positive(),
+        })
+        .refine(({ points, max }) => points <= max),
+    })
+    .optional(),
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
@@ -137,7 +155,7 @@ class RideBatch {
 }
 
 function addQuiz(profile: z.infer<typeof m5cProfileSchema>): ProgressProfile {
-  return { ...profile, version: 4, quiz: { cards: {}, streak: 0 } };
+  return { ...profile, version: 5, quiz: { cards: {}, streak: 0 } };
 }
 
 function upgrade(profile: z.infer<typeof m5bProfileSchema>): ProgressProfile {
@@ -175,6 +193,9 @@ function createProfile(legacy?: z.infer<typeof legacySchema>): ProgressProfile {
 function decodeProfile(raw: unknown) {
   const current = profileSchema.safeParse(raw);
   if (current.success) return { profile: current.data, reset: false };
+  const m7b = m7bProfileSchema.safeParse(raw);
+  if (m7b.success)
+    return { profile: { ...m7b.data, version: 5 as const }, reset: false };
   const m5c = m5cProfileSchema.safeParse(raw);
   if (m5c.success) return { profile: addQuiz(m5c.data), reset: false };
   const m5b = m5bProfileSchema.safeParse(raw);
@@ -192,7 +213,7 @@ function hasFutureVersion(raw: unknown) {
     raw !== null &&
     'version' in raw &&
     typeof raw.version === 'number' &&
-    raw.version > 4
+    raw.version > 5
   );
 }
 
@@ -382,7 +403,7 @@ export class ProgressStore {
     const write = update<ProgressProfile | undefined>(
       progressRecordKey,
       (profile) => {
-        if (this.sessionOnly || profile?.version !== 4)
+        if (this.sessionOnly || profile?.version !== 5)
           throw new Error('Progress record unavailable');
         batch?.apply(profile);
         edit?.(profile);

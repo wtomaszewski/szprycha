@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { placBalanceSchema, placSchema } from './plac.ts';
-import { missionsSchema } from './missions.ts';
+import { missionCity, missionsSchema } from './missions.ts';
 import { dialogueFileSchema } from './dialogues.ts';
 import { illustratedSigns } from './signIllustrations.ts';
 
@@ -236,6 +236,10 @@ export const balanceSchema = z.strictObject({
     plac_prog: ratio,
     przejazd_max_minor: count,
     przejazd_max_major: count,
+    przejazdy: z.record(
+      missionCity,
+      z.strictObject({ start: id, punkty: z.array(id).min(2) }),
+    ),
   }),
   silnik: z
     .strictObject({

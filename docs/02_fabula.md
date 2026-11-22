@@ -65,7 +65,7 @@ Kryjówka gangu na przedmieściach za przejazdem kolejowym (przejazd, pobocze, z
 ---
 
 ## Finał wspólny — „Licencja Szprychy”
-Odblokowuje się, gdy gracz ukończy kampanię co najmniej jednego miasta i ma mastery ≥70% w każdym module (M01–M08). Egzamin w Miasteczku Ruchu Drogowego: teoria (quiz), plac manewrowy, przejazd kontrolny przez miasto z Sierżant Olą jako egzaminatorką. Ceremonia: konfetti, Kazik wręcza Licencję, Turbo bije brawo, DJ Dzwonek robi audycję na żywo. Ranga **Legenda Szprychy** + złoty dzwonek.
+Egzamin odblokowuje się po ukończeniu kampanii co najmniej jednego miasta, osiągnięciu rangi Mistrz Szlaku oraz mastery ≥70% w każdym module (M01–M08). Sierżant Ola prowadzi teorię (quiz), próbę na placu i przejazd kontrolny w mieście ukończonej kampanii. Po zaliczeniu Kazik wręcza Licencję, Turbo bije brawo, DJ Dzwonek komentuje na żywo, a gracz zdobywa rangę **Legenda Szprychy** i złoty dzwonek.
 
 Po finale: tryb „Sezon” — co tydzień nowe wyzwanie miasta, rotujące misje celujące w najsłabsze przepisy gracza.
 

@@ -1,4 +1,5 @@
 import { expect, it } from 'vitest';
+import { examRoute } from '../../src/gameplay/exam/route';
 import { MissionProgress } from '../../src/gameplay/MissionProgress';
 import { missionContent, runMissionRoute } from './run-mission-route';
 import type { Waypoint } from './warsaw-routes';
@@ -254,4 +255,25 @@ it('unlocks the Wrocław campaign in order, independently of Warsaw and side mis
     progress.complete(mission);
   }
   expect(progress.nextMission('wroclaw', missionContent)).toBeUndefined();
+});
+
+it('can finish the Wrocław control ride within the licence limits', () => {
+  const balance = missionContent.balans.licencja;
+  const { mission } = runMissionRoute(examRoute('wroclaw', balance), [
+    at(4384, 1792, { signal: 'right', wait: 1.6 }),
+    ...routes['WRO-A2-01'].map<Waypoint>((point, index) =>
+      index < 3 || (index >= 5 && index <= 7)
+        ? { ...point, signal: 'right', ...(index === 5 && { wait: 1.6 }) }
+        : point,
+    ),
+  ]);
+  expect(mission.result?.status).toBe('completed');
+  const errors = mission.result!.verdicts.filter(({ kind }) => kind !== 'good');
+  expect(errors.filter(({ kind }) => kind === 'major')).toHaveLength(0);
+  expect(
+    errors.filter(({ kind }) => kind === 'minor').length,
+    JSON.stringify(
+      errors.map(({ ruleId, evidence }) => ({ ruleId, evidence })),
+    ),
+  ).toBeLessThanOrEqual(balance.przejazd_max_minor);
 });

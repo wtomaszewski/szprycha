@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import type { MissionDefinition } from '../../src/content/missions';
 import { readContent } from '../../tools/content';
 import { missionEnvironment } from '../../src/gameplay/missionEnvironment';
 import { MissionRace } from '../../src/gameplay/MissionRace';
@@ -40,12 +41,16 @@ interface TiledMap {
 }
 
 export function runMissionRoute(
-  id: string,
+  missionOrId: string | MissionDefinition,
   route: readonly Waypoint[],
   afterViolation?: readonly Waypoint[],
   stopOnRewind = false,
 ) {
-  const definition = missionContent.misje.find((mission) => mission.id === id)!;
+  const definition =
+    typeof missionOrId === 'string'
+      ? missionContent.misje.find((mission) => mission.id === missionOrId)!
+      : missionOrId;
+  const { id } = definition;
   const map = JSON.parse(
     readFileSync(`maps/${definition.mapa ?? definition.miasto}.tmj`, 'utf8'),
   ) as TiledMap;

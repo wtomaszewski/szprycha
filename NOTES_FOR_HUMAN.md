@@ -19,7 +19,7 @@ Stan: 21.11.2026. Przeczytano AGENTS.md, dokumenty w kolejności §1, wszystkie 
 
 - **Kolejność pierwszego commitu:** AGENTS §1 każe przeczytać wszystko przed pierwszym commitem, ale polecenie użytkownika wymaga commitu dokumentacji przed krokiem 2. Zastosowano kolejność użytkownika; wszystkie materiały przeczytano przed implementacją.
 - **Opiekun Franka:** dydaktyka M02 i Q011 pozwalają graczowi opiekować się siedmiolatkiem, podczas gdy GDZIE-10 mówi o dorosłym opiekunie, a bohater jest dzieckiem. Przed M4 potrzebne doprecyzowanie: bezpieczna propozycja to towarzyszący dorosły NPC; M0 nie rozstrzyga tego mechaniką.
-- **Dostęp do Licencji:** docs/02 wymaga ukończonej kampanii i mastery ≥70 każdego modułu, docs/04 wymaga rangi Mistrz Szlaku i mastery. Propozycja na M7: koniunkcja wszystkich warunków, do decyzji projektowej.
+- **Dostęp do Licencji:** zgodnie z decyzją #7 wymagane są łącznie ukończona kampania jednego miasta, ranga Mistrz Szlaku i mastery ≥70 każdego modułu. Licencja jest przyznawana po zdaniu egzaminu.
 - **Długość tekstów:** komentarz w przepisy.yaml deklaruje ≤160 znaków dla_dziecka, ale GDZIE-04 ma 261, GDZIE-08 166, PIER-08 170, MAN-12 203, MSC-01 197. Nie skrócono merytoryki. Schemat wymaga niepustego opisu, bez limitu 160; limit feedback ≤140 jest egzekwowany. Długie opisy są materiałem do późniejszego albumu, nie gotowymi dymkami misji.
 - **Jedno zdanie vs dialog:** AGENTS §2 wymaga jednego zdania w trakcie misji; docs/02 dopuszcza kilka dymków, a docs/04 wyjaśnienie 1–2 zdań. W przyszłości stosować jedno krótkie zdanie podczas akcji, rozwinięcie poza jazdą.
 - **Skrót może się opłacać przy obecnych liczbach:** kara minor 150 jest mniejsza niż maksymalny bonus czasu 500. Sam balans nie gwarantuje nadrzędnej zasady. M5 musi testować każdą trasę i zysk czasu, zanim misja zostanie dopuszczona.
@@ -196,6 +196,12 @@ Poniżej zestawienie zmian do przejrzenia przez konsultanta merytorycznego (pier
 - Zastosowano decyzję [#7](https://github.com/wtomaszewski/szprycha/issues/7) o punktacji 1 / 0,5 / 0 i progu 90%. Dotknięcie linii lub pachołka, częściowe zatrzymanie poza polem oraz poślizg obniżają ocenę do 0,5. Wyjazd środkiem roweru za linię, podparcie, ominięcie pachołka z niewłaściwej strony, zatrzymanie całego roweru poza polem, brak wymaganej sekwencji lub sygnału i upływ czasu dają 0.
 - Podparcie w ósemce jest symulowane po utracie prędkości i krótkim postoju w trakcie przejazdu. Przed wydaniem trzeba porównać elementy i kryteria gry z aktualnymi wymaganiami egzaminu szkolnego. Reguły PLAC-01…06 pozostają na liście do konsultacji w §c.
 - Medale i lokalny ranking dotyczą czystych przejazdów wszystkich sześciu elementów. Zmiana geometrii lub fizyki rozpoczyna ranking od nowa. Progi medalowe można dostroić w `content/balans.yaml`.
+
+## M7c — egzamin i certyfikat do weryfikacji
+
+- Z aktualnym rozporządzeniem i konsultantem porównać bank i rozkład 25 pytań, progi gry (80% teorii i 90% placu), sześć elementów placu, klasyfikację błędów i punktację 1 / 0,5 / 0. Przejazd kontrolny z progiem dwóch drobnych i zera poważnych błędów jest częścią finału gry. Sprawdzić, jak opisać zakres treningu dziecku i rodzicowi. Parametry są w `content/balans.yaml`.
+- Test i przejazd kontrolny oceniają gracza bez przyznawania XP ani zmiany mastery czy kart powtórek. Trening placu używa limitu dziennego mastery dla dobrych nawyków. Przy dwóch ukończonych kampaniach egzamin wybiera ostatnio wybrane miasto.
+- Profil v5 przechowuje pierwszą datę wydania i wyniki teorii oraz placu. Imię istnieje w otwartym podglądzie i trafia na wydruk lub do pliku PDF zapisanego przez gracza. Przed publikacją sprawdzić brzmienie klauzuli o karcie rowerowej.
 
 ## Do przeglądu prawnika
 
