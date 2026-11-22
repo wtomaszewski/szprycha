@@ -16,6 +16,12 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Audyt grafiki (#100)
+
+- Zrzuty Playwright obejmują trzy mapy w dzień, w nocy i podczas opadów, landmarki, ekrany gry oraz wariant dotykowy. Porównania i wyniki są w [raporcie audytu](docs/AUDYT_GRAFIKI.md).
+- Atlasy własne uzupełniono o studzienki, liście, śnieg, wyposażenie ulic i ikony HUD. Poprawiono cienie, projekcję kondygnacji, czytelność B-20 i wybrane landmarki.
+- Dalsze prace mają zgłoszenia [#108](https://github.com/wtomaszewski/szprycha/issues/108), [#109](https://github.com/wtomaszewski/szprycha/issues/109), [#110](https://github.com/wtomaszewski/szprycha/issues/110) i [#111](https://github.com/wtomaszewski/szprycha/issues/111).
+
 ## M9c — aplikacje Android i iOS
 
 - Capacitor pakuje lokalny build gry i używa poziomego trybu pełnoekranowego. Ikony i splash pochodzą z generatora M9a.
