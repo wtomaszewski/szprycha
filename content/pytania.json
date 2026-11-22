@@ -994,6 +994,126 @@
    "poprawna": 1,
    "wyjasnienie": "Na egzaminie błędem jest podparcie się nogą, najechanie na linię lub potrącenie pachołka.",
    "zrodlo": "wlasne"
-  }
+  },
+ {
+  "id": "Q055",
+  "modul": "M02",
+  "przepisy": [
+   "GDZIE-02"
+  ],
+  "poziom": 1,
+  "pytanie": "Na jezdni widzisz pas rowerowy wyznaczony w Twoim kierunku. Jak z niego korzystasz?",
+  "odpowiedzi": [
+   "Jadę nim w wyznaczonym kierunku",
+   "Jadę nim pod prąd",
+   "Jadę obok niego środkiem jezdni"
+  ],
+  "poprawna": 0,
+  "wyjasnienie": "Pasem rowerowym jedź w kierunku wyznaczonym na jezdni.",
+  "zrodlo": "wlasne"
+ },
+ {
+  "id": "Q056",
+  "modul": "M02",
+  "przepisy": [
+   "GDZIE-03"
+  ],
+  "poziom": 1,
+  "pytanie": "Jedziesz prostą, pustą jezdnią i niczego nie omijasz. Gdzie jest Twoje miejsce?",
+  "odpowiedzi": [
+   "Przy lewej krawędzi",
+   "Blisko prawej krawędzi",
+   "Na środku jezdni"
+  ],
+  "poprawna": 1,
+  "wyjasnienie": "Na prostej jedź możliwie blisko prawej krawędzi jezdni.",
+  "zrodlo": "wlasne"
+ },
+ {
+  "id": "Q057",
+  "modul": "M03",
+  "przepisy": [
+   "ZNAK-B1"
+  ],
+  "poziom": 1,
+  "pytanie": "Przed ulicą stoi białe koło z czerwoną obwódką i bez dodatkowej tabliczki. Co robisz?",
+  "odpowiedzi": [
+   "Wjeżdżam, bo znak dotyczy tylko samochodów",
+   "Wjeżdżam, jeśli ulica jest pusta",
+   "Wybieram inną drogę, bo znak dotyczy też roweru"
+  ],
+  "poprawna": 2,
+  "wyjasnienie": "Znak B-1 oznacza zakaz ruchu także dla rowerów, chyba że tabliczka wskazuje wyjątek.",
+  "zrodlo": "wlasne"
+ },
+ {
+  "id": "Q058",
+  "modul": "M04",
+  "przepisy": [
+   "PIER-02"
+  ],
+  "poziom": 1,
+  "pytanie": "Przed skrzyżowaniem masz znak A-7, a drogą główną nadjeżdża samochód. Kto przejeżdża pierwszy?",
+  "odpowiedzi": [
+   "Samochód na drodze głównej",
+   "Rowerzysta przed znakiem A-7",
+   "Ten, kto pierwszy zacznie skręcać"
+  ],
+  "poprawna": 0,
+  "wyjasnienie": "Wyjeżdżając z drogi podporządkowanej, przepuść pojazdy na drodze z pierwszeństwem.",
+  "zrodlo": "wlasne"
+ },
+ {
+  "id": "Q059",
+  "modul": "M05",
+  "przepisy": [
+   "MAN-02"
+  ],
+  "poziom": 1,
+  "pytanie": "Skręcasz w prawo na pustym skrzyżowaniu. Którędy poprowadzisz rower?",
+  "odpowiedzi": [
+   "Szeroko przez środek jezdni",
+   "Łagodnie, blisko prawej krawędzi",
+   "Najpierw przy lewej krawędzi, potem w prawo"
+  ],
+  "poprawna": 1,
+  "wyjasnienie": "Przy skręcie w prawo trzymaj się blisko prawej krawędzi i jedź łagodnym łukiem.",
+  "zrodlo": "wlasne"
+ },
+ {
+  "id": "Q060",
+  "modul": "M05",
+  "przepisy": [
+   "MAN-04"
+  ],
+  "poziom": 1,
+  "pytanie": "Chcesz ominąć stojący samochód i zmienić tor w lewo. Co robisz przed manewrem?",
+  "odpowiedzi": [
+   "Dzwonię i od razu zmieniam tor",
+   "Przyspieszam, by szybko minąć samochód",
+   "Oglądam się, sprawdzam miejsce i sygnalizuję manewr"
+  ],
+  "poprawna": 2,
+  "wyjasnienie": "Przed ominięciem obejrzyj się, zasygnalizuj zmianę toru i zostaw bezpieczny odstęp.",
+  "zrodlo": "wlasne"
+ },
+ {
+  "id": "Q061",
+  "modul": "M05",
+  "przepisy": [
+   "MAN-05"
+  ],
+  "poziom": 1,
+  "pytanie": "Powoli jadący pojazd obok Ciebie zaczyna skręcać w prawo. Jak najbezpieczniej zareagujesz?",
+  "odpowiedzi": [
+   "Zwalniam i zostawiam pojazdowi miejsce na skręt",
+   "Przyspieszam po jego prawej stronie",
+   "Jadę dalej przy jego boku"
+  ],
+  "poprawna": 0,
+  "wyjasnienie": "Zwolnij i zostaw miejsce, gdy pojazd zaczyna skręcać lub odstęp jest mały.",
+  "zrodlo": "wlasne",
+  "weryfikacja": true
+ }
  ]
 }
