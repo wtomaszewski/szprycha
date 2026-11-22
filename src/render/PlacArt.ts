@@ -36,18 +36,9 @@ function arrow(
     );
 }
 
-export class PlacArt {
-  private readonly markings: GameObjects.Graphics;
-  private readonly active: GameObjects.Graphics;
-  private readonly labels: GameObjects.Text[] = [];
-  private previousMarker = -1;
-  private coneHitAt: (number | undefined)[] = [];
-
-  constructor(
-    private readonly scene: Scene,
-    private readonly course: PlacCourse,
-  ) {
-    const { width, height } = course;
+function drawGround(scene: Scene, { width, height }: PlacCourse) {
+  const key = `plac-ground-${width}x${height}`;
+  if (!scene.textures.exists(key)) {
     const ground = scene.add.graphics();
     ground.fillStyle(0x25494c).fillRect(0, 0, width, height);
     ground.fillStyle(0x1c293d).fillRect(26, 66, width - 52, height - 105);
@@ -70,6 +61,24 @@ export class PlacArt {
     for (let y = 82; y < height - 66; y += 13)
       for (let x = 49; x < width - 48; x += 16)
         ground.fillStyle(0x354158).fillRect(x + (y % 5), y, 2, 1);
+    ground.generateTexture(key, width, height);
+    ground.destroy();
+  }
+  scene.add.image(0, 0, key).setOrigin(0);
+}
+
+export class PlacArt {
+  private readonly markings: GameObjects.Graphics;
+  private readonly active: GameObjects.Graphics;
+  private readonly labels: GameObjects.Text[] = [];
+  private previousMarker = -1;
+  private coneHitAt: (number | undefined)[] = [];
+
+  constructor(
+    private readonly scene: Scene,
+    private readonly course: PlacCourse,
+  ) {
+    drawGround(scene, course);
     this.markings = scene.add.graphics();
     this.active = scene.add.graphics().setDepth(2);
   }
