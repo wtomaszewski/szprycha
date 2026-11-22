@@ -37,7 +37,9 @@ export class TrafficEventNotice {
           : ui.trafficEvents.phonePutAway
         : id === 'kolega_podwozka' && notice?.answered
           ? ui.trafficEvents.declined
-          : id && ui.trafficEvents[id];
+          : id === 'polecenie_oli' && notice?.officerCleared
+            ? ui.trafficEvents.olaRusza
+            : id && ui.trafficEvents[id];
     if (this.displayed !== text) {
       this.text.textContent = text ?? '';
       this.displayed = text;

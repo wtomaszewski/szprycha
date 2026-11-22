@@ -3,19 +3,23 @@ import type {
   MissionDefinition,
   MissionGoal,
 } from '../content/missions.ts';
+import type { GameContent } from '../content/schemas.ts';
+import { missionScore } from '../progression/missionScore.ts';
+import type { MissionRace } from './MissionRace.ts';
 import { TICKS_PER_SECOND, type Vec2, type Verdict } from '../rules/types.ts';
 import {
   contains,
   type Box,
   type PointOfInterest,
   type WorldModel,
+  type Zone,
 } from '../rules/world/WorldModel.ts';
 
 export interface MissionSpawn extends Vec2 {
   heading: number;
 }
 
-type Failure = MissionDefinition['warunki_porazki'][number];
+type Failure = MissionDefinition['warunki_porazki'][number] | 'wynik_wyscigu';
 type Equipment = { helmet: boolean; lights: boolean };
 type Outcome = { status: 'completed' } | { status: 'failed'; reason: Failure };
 
@@ -27,6 +31,11 @@ export type MissionResult = Outcome & {
   verdicts: readonly Verdict[];
   timeBonusEligible: boolean;
   illegalShortcut: boolean;
+  points?: number;
+  opponentScore?: number;
+  shocks?: number;
+  smoothBonus?: number;
+  photos?: number;
 };
 
 interface TickEffects {
@@ -73,7 +82,11 @@ export class MissionSystem {
   }[];
   private readonly goalTicks: number[];
   private readonly verdicts: Verdict[] = [];
-  private readonly shortcutSigns: ReadonlySet<string>;
+  private readonly shortcutSign?: { id: string; ruleId: string };
+  private readonly roughSurfaces: readonly Zone[];
+  private readonly photos = new Set<string>();
+  private previousSpeed = 0;
+  private shocks = 0;
   private readonly failureConditions: ReadonlySet<Failure>;
   private checkpoint: Checkpoint;
   private nextCheckpoint = 0;
@@ -87,8 +100,10 @@ export class MissionSystem {
   constructor(
     readonly definition: MissionDefinition,
     world: Pick<WorldModel, 'pois' | 'zones' | 'triggers'> &
-      Partial<Pick<WorldModel, 'signs'>>,
+      Partial<Pick<WorldModel, 'signs' | 'raceRoutes'>>,
     private readonly majorLimit = 3,
+    private readonly balance?: Pick<GameContent['balans'], 'misja' | 'combo'>,
+    readonly race?: MissionRace,
   ) {
     const poi = (id: string) => {
       const point = world.pois.get(id);
@@ -101,6 +116,13 @@ export class MissionSystem {
     this.checkpoint = { spawn: this.start, goalIndex: 0 };
     this.goals = definition.cele.map((goal) => {
       if ('poi' in goal && goal.poi) area = poi(goal.poi);
+      if (goal.typ === 'sfotografuj') {
+        const sign = world.signs?.find(({ id }) => id === goal.znak);
+        if (!sign || !reached(area, sign))
+          throw new Error(
+            `Mission ${definition.id}: sign ${goal.znak} is outside its photo POI`,
+          );
+      }
       return { goal, area, position: center(area) };
     });
     this.goalTicks = this.goals.map(() => 0);
@@ -118,24 +140,33 @@ export class MissionSystem {
     });
     this.failureConditions = new Set(definition.warunki_porazki);
     const shortcut = definition.skrot?.odcinek;
-    this.shortcutSigns = new Set(
-      shortcut
-        ? world.signs
-            ?.filter(
-              ({ affects, code, exceptBicycles }) =>
-                affects === shortcut && code === 'B-1' && !exceptBicycles,
-            )
-            .map(({ id }) => id)
-        : [],
-    );
-    if (
-      shortcut &&
-      (!this.shortcutSigns.size ||
-        !world.zones.some(({ id }) => id === shortcut))
-    )
-      throw new Error(
-        `Mission ${definition.id}: shortcut ${shortcut} needs a B-1 zone`,
+    if (shortcut) {
+      const sign = world.signs?.find(
+        ({ affects, code, exceptBicycles, displayOnly }) =>
+          !displayOnly &&
+          affects === shortcut &&
+          (code === 'B-1' || code === 'B-2') &&
+          !exceptBicycles,
       );
+      if (!sign || !world.zones.some(({ id }) => id === shortcut))
+        throw new Error(
+          `Mission ${definition.id}: shortcut ${shortcut} needs a B-1 or B-2 zone`,
+        );
+      this.shortcutSign = {
+        id: sign.id,
+        ruleId: sign.code === 'B-1' ? 'ZNAK-B1' : 'ZNAK-B2T22',
+      };
+    }
+    this.roughSurfaces = definition.przesylka?.delikatna
+      ? world.zones.filter(({ surface }) => surface === 'rough')
+      : [];
+    if (definition.wyscig) {
+      const route = world.raceRoutes?.get(definition.wyscig.trasa_rywala);
+      if (!route || !reached(this.goals.at(-1)!.area, route.path.end))
+        throw new Error(
+          `Mission ${definition.id}: rival route must end at the finish`,
+        );
+    }
   }
 
   private get goalTarget() {
@@ -161,6 +192,30 @@ export class MissionSystem {
     return this.goalTarget?.goal.typ === 'przygotuj_rower';
   }
 
+  get shakeLevel() {
+    return this.definition.przesylka?.delikatna ? this.shocks : undefined;
+  }
+
+  canPhotograph(position: Vec2, speed: number) {
+    const target = this.target;
+    return (
+      target?.goal.typ === 'sfotografuj' &&
+      speed === 0 &&
+      !target.eventWaypoint &&
+      reached(target.area, position) &&
+      !this.photos.has(target.goal.znak)
+    );
+  }
+
+  photograph(position: Vec2, speed: number) {
+    const goal = this.goalTarget?.goal;
+    if (goal?.typ === 'sfotografuj' && this.canPhotograph(position, speed)) {
+      this.photos.add(goal.znak);
+      return true;
+    }
+    return false;
+  }
+
   get elapsedSeconds() {
     return this.ticks / TICKS_PER_SECOND;
   }
@@ -178,6 +233,7 @@ export class MissionSystem {
   rewindCheckpoint() {
     this.goalIndex = this.checkpoint.goalIndex;
     this.requiredHabitSeen = false;
+    this.previousSpeed = 0;
     return this.checkpoint.spawn;
   }
 
@@ -191,11 +247,27 @@ export class MissionSystem {
     startEvent?: (event: ForcedMissionEvent, area: Box) => void,
     forcedPending?: () => boolean,
     equipment?: Equipment,
+    speed = 0,
   ): TickEffects | undefined {
     const target = this.goalTarget;
     if (!target) return;
 
     this.ticks++;
+    this.race?.step();
+    if (this.shakeLevel !== undefined) {
+      const deceleration = this.previousSpeed - speed;
+      const cobbles = this.roughSurfaces.some((zone) =>
+        contains(zone, position),
+      );
+      // A crawl over the stones leaves the parcel steady. Sharp stops and curb
+      // impacts both produce a larger speed drop than ordinary coasting.
+      const vibration = cobbles
+        ? Math.max(0, speed - 2.5) / (3 * TICKS_PER_SECOND)
+        : 0;
+      const jolt = Math.max(0, deceleration - 3.5 / TICKS_PER_SECOND) * 0.07;
+      this.shocks = Math.min(1, this.shocks + vibration + jolt);
+      this.previousSpeed = speed;
+    }
     this.goalTicks[this.goalIndex] = this.goalTicks[this.goalIndex]! + 1;
     let major = false;
     for (const verdict of verdicts) {
@@ -227,7 +299,9 @@ export class MissionSystem {
     }
     const atTarget = this.preparingBike
       ? Boolean(equipment?.helmet && equipment.lights)
-      : reached(target.area, position);
+      : target.goal.typ === 'sfotografuj'
+        ? this.photos.has(target.goal.znak)
+        : reached(target.area, position);
     const missingHabit =
       atTarget && target.goal.wymagany_nawyk && !this.requiredHabitSeen;
     let effects: TickEffects | undefined;
@@ -241,6 +315,7 @@ export class MissionSystem {
     if (major || missingHabit) {
       this.goalIndex = this.checkpoint.goalIndex;
       this.requiredHabitSeen = false;
+      this.previousSpeed = 0;
       return {
         ...effects,
         respawn: this.checkpoint.spawn,
@@ -253,12 +328,21 @@ export class MissionSystem {
     if (
       atTarget &&
       (this.goalIndex < this.goals.length - 1 ||
-        (!this.forced.some(({ fired }) => !fired) && !forcedPending?.()))
+        (!this.forced.some(({ fired }) => !fired) &&
+          !forcedPending?.() &&
+          (!this.race || this.race.opponentScore !== undefined)))
     ) {
       this.goalIndex++;
       this.requiredHabitSeen = false;
-      if (this.goalIndex === this.goals.length)
-        this.finish({ status: 'completed' });
+      if (this.goalIndex === this.goals.length) {
+        const opponent = this.race?.opponentScore;
+        const points = this.score(true)?.points;
+        this.finish(
+          opponent !== undefined && points !== undefined && points <= opponent
+            ? { status: 'failed', reason: 'wynik_wyscigu' }
+            : { status: 'completed' },
+        );
+      }
     }
 
     this.saveCheckpoint(position);
@@ -284,7 +368,24 @@ export class MissionSystem {
     }
   }
 
+  private score(completed: boolean) {
+    return (
+      this.balance &&
+      missionScore(
+        this.balance,
+        this.definition,
+        this.elapsedSeconds,
+        this.verdicts,
+        completed,
+        this.shakeLevel,
+      )
+    );
+  }
+
   private finish(outcome: Outcome) {
+    const score = this.score(
+      outcome.status === 'completed' || outcome.reason === 'wynik_wyscigu',
+    );
     this.outcome = {
       ...outcome,
       missionId: this.definition.id,
@@ -292,12 +393,20 @@ export class MissionSystem {
       par_s: this.definition.par_s,
       goodHabits: this.goodHabits,
       verdicts: this.verdicts,
+      ...(score && { points: score.points }),
+      ...(this.race?.opponentScore !== undefined && {
+        opponentScore: this.race.opponentScore,
+      }),
+      ...(this.shakeLevel !== undefined && {
+        shocks: this.shakeLevel,
+        smoothBonus: score?.smoothBonus,
+      }),
+      ...(this.photos.size > 0 && { photos: this.photos.size }),
       illegalShortcut: this.verdicts.some(
         ({ kind, ruleId, highlight }) =>
           kind !== 'good' &&
-          ruleId === 'ZNAK-B1' &&
-          highlight?.signId !== undefined &&
-          this.shortcutSigns.has(highlight.signId),
+          ruleId === this.shortcutSign?.ruleId &&
+          highlight?.signId === this.shortcutSign?.id,
       ),
       timeBonusEligible:
         outcome.status === 'completed' && this.majorCount === 0,

@@ -4,6 +4,7 @@ import type { RoadHazard } from '../rules/detectors/MAN-08';
 import {
   TICKS_PER_SECOND,
   type AgentState,
+  type EnvState,
   type RiderState,
   type Vec2,
 } from '../rules/types.ts';
@@ -11,6 +12,9 @@ import {
   contains,
   sideVector,
   type Box,
+  type Lane,
+  distanceToLine,
+  lateralOffset,
   type WorldModel,
 } from '../rules/world/WorldModel.ts';
 import { RoadPath } from '../rules/world/RoadPath.ts';
@@ -21,6 +25,9 @@ export const eventRules = {
   kontrola_swiatel: ['WYP-04', 'WYP-05'],
   pojazd_na_skrzyzowaniu: ['PIER-01', 'PIER-02'],
   pieszy_przy_bramie: ['PIER-06', 'MSC-03'],
+  turysci_na_starowce: ['GDZIE-05', 'MAN-08'],
+  rowerzysta_na_moscie: ['MAN-04'],
+  polecenie_oli: ['SYG-03'],
   pojazd_uprzywilejowany: ['PIER-07'],
   pieszy_na_pasach: ['PIER-04', 'MAN-08'],
   pilka_na_jezdni: ['MAN-08'],
@@ -37,6 +44,8 @@ const forcedOnly = new Set<TrafficEventId>([
   'kontrola_swiatel',
   'pojazd_na_skrzyzowaniu',
   'pieszy_przy_bramie',
+  'turysci_na_starowce',
+  'polecenie_oli',
 ]);
 export const eventIds = Object.keys(eventRules) as TrafficEventId[];
 export const propIds = [
@@ -59,6 +68,7 @@ type Site =
   | { type: 'route'; route: TrafficRoute; distance: number }
   | { type: 'prop'; path: RoadPath }
   | { type: 'door'; pos: Vec2; heading: number }
+  | { type: 'officer'; lane: Lane }
   | { type: 'notice' };
 
 export interface EventRouteLauncher {
@@ -93,9 +103,10 @@ function routeSite(
       }
     }
     if (
-      id === 'pieszy_przy_bramie' &&
-      route.kind === 'pedestrian' &&
-      route.event_only
+      route.event_only &&
+      (id === 'pieszy_przy_bramie' || id === 'turysci_na_starowce'
+        ? route.kind === 'pedestrian'
+        : id === 'rowerzysta_na_moscie' && route.kind === 'cyclist')
     ) {
       const start = route.path.start;
       const gap = Math.hypot(start.x - pos.x, start.y - pos.y);
@@ -163,10 +174,18 @@ function eventSite(
   switch (id) {
     case 'pojazd_na_skrzyzowaniu':
     case 'pieszy_przy_bramie':
+    case 'turysci_na_starowce':
+    case 'rowerzysta_na_moscie':
     case 'pojazd_uprzywilejowany':
     case 'pieszy_na_pasach':
     case 'tramwaj_bez_wysepki':
       return routeSite(id, world, pos);
+    case 'polecenie_oli': {
+      const lane = world.approachAt(pos, heading);
+      if (lane?.mainSignal && distanceToLine(lane, pos) < 7)
+        return { type: 'officer', lane };
+      return;
+    }
     case 'drzwi_auta': {
       const car = world.parkedCars.find((box) => distanceTo(box, pos) < 7);
       if (!car) return;
@@ -268,6 +287,12 @@ interface Encounter {
   source: 'forced' | 'random';
   endsAt: number;
   answered: boolean;
+  officer?: {
+    lane: Lane;
+    stoppedTicks: number;
+    orders: Record<string, 'stop' | 'go'>;
+  };
+  officerCleared?: boolean;
 }
 
 interface Prop extends ReplayProp {
@@ -325,11 +350,17 @@ export class TrafficEvents {
     return this.active;
   }
 
+  get officerOrders(): EnvState['officerOrders'] {
+    return this.active?.officer?.orders;
+  }
+
   get hasPendingForced() {
     return (
       this.pending.length > 0 ||
       (this.active?.source === 'forced' &&
-        this.active.endsAt - this.tick > noticeTicks - TICKS_PER_SECOND)
+        (this.active.officer
+          ? !this.active.officerCleared
+          : this.active.endsAt - this.tick > noticeTicks - TICKS_PER_SECOND))
     );
   }
 
@@ -350,7 +381,10 @@ export class TrafficEvents {
   force(event: ForcedMissionEvent, area: Box, player: RiderState) {
     const id = event.typ as TrafficEventId;
     const site =
-      eventSite(id, this.world, player) ?? siteAtArea(id, this.world, area);
+      id === 'polecenie_oli'
+        ? siteAtArea(id, this.world, area)
+        : (eventSite(id, this.world, player) ??
+          siteAtArea(id, this.world, area));
     if (!site || !Object.hasOwn(eventRules, id))
       throw new Error(`Event ${id} has no suitable site at ${area.id}`);
     if (this.pending.length || !this.start(id, site, 'forced', player))
@@ -382,6 +416,23 @@ export class TrafficEvents {
 
   step(player: RiderState) {
     this.tick++;
+    const encounter = this.active;
+    const officer = encounter?.officer;
+    if (officer && !encounter.officerCleared) {
+      const distance = distanceToLine(officer.lane, player.pos);
+      const stopped =
+        player.speed === 0 &&
+        distance > 0 &&
+        distance < 3 &&
+        Math.abs(lateralOffset(officer.lane, player.pos)) <=
+          officer.lane.width / 2;
+      officer.stoppedTicks = stopped ? officer.stoppedTicks + 1 : 0;
+      encounter.endsAt = this.tick + noticeTicks;
+      if (officer.stoppedTicks >= TICKS_PER_SECOND) {
+        officer.orders[officer.lane.id] = 'go';
+        encounter.officerCleared = true;
+      }
+    }
     if (this.active && this.tick >= this.active.endsAt) {
       const index = propIds.indexOf(this.active.id as PropId);
       if (index !== -1) this.props[index]!.active = false;
@@ -467,6 +518,14 @@ export class TrafficEvents {
       source,
       endsAt: this.tick + noticeTicks,
       answered: false,
+      officer:
+        site.type === 'officer'
+          ? {
+              lane: site.lane,
+              stoppedTicks: 0,
+              orders: { [site.lane.id]: 'stop' },
+            }
+          : undefined,
     };
     return true;
   }

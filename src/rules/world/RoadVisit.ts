@@ -44,7 +44,10 @@ export class RoadVisit {
   constructor(
     private readonly world: WorldModel,
     private readonly settings: Balance,
-    private readonly noVehiclesWeight: Exclude<Verdict['kind'], 'good'> | null,
+    private readonly accessWeights: Record<
+      'noVehicles' | 'noEntry',
+      Exclude<Verdict['kind'], 'good'> | null
+    >,
   ) {}
 
   evaluate(
@@ -149,7 +152,7 @@ export class RoadVisit {
       zone &&
       zone.kind !== 'sidewalk' &&
       !shared &&
-      !living &&
+      (!living || zone.surface === 'rough') &&
       this.canReport('MAN-08', zone.id, tick)
     )
       this.report(safeSpeed(this.world, zone, rider, agents, at, env), emit);
@@ -193,9 +196,9 @@ export class RoadVisit {
 
   private accessVerdict(sign: Sign, rider: RiderState, at: number) {
     if (sign.code === 'B-1')
-      return noVehicles(sign, rider, at, this.noVehiclesWeight);
+      return noVehicles(sign, rider, at, this.accessWeights.noVehicles);
     if (sign.code === 'B-9') return noBicycles(sign, rider, at);
-    return noEntry(sign, rider, at);
+    return noEntry(sign, rider, at, this.accessWeights.noEntry);
   }
 
   private canReport(ruleId: string, section: string | undefined, tick: number) {

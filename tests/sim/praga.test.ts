@@ -59,7 +59,7 @@ it('routes cars around the island and gives circulating traffic priority', () =>
 });
 
 it.each([1403, 17])(
-  'keeps Praga traffic running for ten simulated minutes (seed %s)',
+  'keeps Warsaw traffic running for ten simulated minutes (seed %s)',
   (seed) => {
     const traffic = new TrafficParticipants(
       world,
@@ -99,6 +99,13 @@ it.each([1403, 17])(
     expect([...crossings].filter((id) => id.startsWith('rondo-'))).toHaveLength(
       8,
     );
+    expect([...crossings]).toEqual(
+      expect.arrayContaining(['fabryka-E', 'zamek-W']),
+    );
+    for (const id of ['pieszy-zamkowy', 'spacer-deptak'])
+      expect(
+        traffic.routed.find((agent) => agent.id === id)!.trips,
+      ).toBeGreaterThan(2);
     expect(Math.min(...latest.map(({ passed }) => passed))).toBeGreaterThan(25);
   },
 );

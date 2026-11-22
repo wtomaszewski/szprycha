@@ -52,6 +52,9 @@ export class IntersectionVisit {
   private pendingLeft?: { verdict: Verdict; lane: Lane };
   private arrowEntry?: { verdict: Verdict; invalid: Verdict; lane: Lane };
 
+  get stopReady() {
+    return this.stopped && this.lane?.stopSign?.code === 'B-20';
+  }
   debugLane?: Lane;
   debugPhase: SignalPhase = 'off';
   debugConflict?: PriorityConflict;

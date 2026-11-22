@@ -1,73 +1,115 @@
+import { readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';
-import { pragaRoutes, type Waypoint } from '../missions/praga-routes';
-import { missionContent, runPragaRoute } from '../missions/run-praga-route';
+import { RuleEngine } from '../../src/rules/RuleEngine';
+import { WorldModel } from '../../src/rules/world/WorldModel';
+import { missionScore } from '../../src/progression/missionScore';
+import {
+  warsawRoutes,
+  type WarsawMissionId,
+  type Waypoint,
+} from '../missions/warsaw-routes';
+import { missionContent, runWarsawRoute } from '../missions/run-warsaw-route';
 
 const shortcuts = missionContent.misje.filter(({ skrot }) => skrot);
-const { bonus_czasu_max, kara_minor } = missionContent.balans.misja;
+const balance = missionContent.balans;
+const { bonus_czasu_max, kara_minor, kara_major } = balance.misja;
 
-it('keeps a shortcut in only one or two of the four M4d part 1 missions', () => {
-  const count = shortcuts.filter(({ id }) =>
-    Object.hasOwn(pragaRoutes, id),
-  ).length;
-  expect(count).toBeGreaterThanOrEqual(1);
-  expect(count).toBeLessThanOrEqual(2);
+it('uses two different marked shortcuts across the seven Warsaw orders', () => {
+  expect(shortcuts.map(({ id, skrot }) => [id, skrot!.odcinek])).toEqual([
+    ['WAW-A1-03', 'pasaz_pierogi'],
+    ['WAW-A1-04', 'uliczka-jednokierunkowa'],
+  ]);
 });
 
 it.each(shortcuts)(
-  '$id: even the maximum shortcut time bonus loses to the legal route',
+  '$id: the legal route scores higher even against the largest possible shortcut time bonus',
   (definition) => {
-    const { id, par_s, limit_s } = definition;
-    if (!Object.hasOwn(pragaRoutes, id))
-      throw new Error(`Missing route for ${id}`);
-    const missionId = id as keyof typeof pragaRoutes;
+    const id = definition.id as WarsawMissionId;
     const routes: { legal: Waypoint[]; shortcut?: Waypoint[] } =
-      pragaRoutes[missionId];
-    if (!routes.shortcut || !limit_s || limit_s <= par_s)
-      throw new Error(`Missing shortcut or valid time limit for ${id}`);
-
-    const legal = runPragaRoute(missionId, routes.legal);
-    const shortcut = runPragaRoute(missionId, routes.shortcut);
-    expect(legal.collision).toBe(false);
-    expect(shortcut.collision).toBe(false);
-    expect(legal.mission.result).toMatchObject({
+      warsawRoutes[id];
+    const race = Boolean(definition.wyscig);
+    const ruleId = race ? 'ZNAK-B2T22' : 'ZNAK-B1';
+    const rule = missionContent.przepisy.przepisy.find(
+      ({ id }) => id === ruleId,
+    )!;
+    const legal = runWarsawRoute(id, routes.legal);
+    const shortcut = runWarsawRoute(
+      id,
+      routes.shortcut!,
+      race ? routes.legal.slice(3) : undefined,
+    );
+    const legalResult = legal.mission.result!;
+    const shortcutResult = shortcut.mission.result!;
+    expect(legalResult).toMatchObject({
       status: 'completed',
       timeBonusEligible: true,
       illegalShortcut: false,
     });
-    expect(
-      legal.mission.result!.verdicts.every(({ kind }) => kind === 'good'),
-    ).toBe(true);
-    const result = shortcut.mission.result;
-    expect(
-      result,
-      JSON.stringify({ ...shortcut, mission: undefined }),
-    ).toMatchObject({
+    expect(shortcutResult).toMatchObject({
       status: 'completed',
-      timeBonusEligible: true,
       illegalShortcut: true,
+      timeBonusEligible: rule.waga_bledu === 'minor',
       verdicts: expect.arrayContaining([
-        expect.objectContaining({
-          ruleId: 'ZNAK-B1',
-          kind: 'minor',
-          highlight: expect.objectContaining({
-            signId: `${definition.skrot!.odcinek}-B-1`,
-          }),
-        }),
+        expect.objectContaining({ ruleId, kind: rule.waga_bledu }),
       ]),
     });
-    expect(result!.elapsedSeconds).toBeLessThan(
-      legal.mission.result!.elapsedSeconds,
-    );
-    const legalBonus =
-      bonus_czasu_max *
-      Math.max(
-        0,
-        Math.min(
-          1,
-          (limit_s - legal.mission.result!.elapsedSeconds) / (limit_s - par_s),
-        ),
+    expect(shortcut.collision).toBe(false);
+    expect(legal.collision).toBe(false);
+    if (!race)
+      expect(shortcutResult.elapsedSeconds).toBeLessThan(
+        legalResult.elapsedSeconds,
       );
-    // Use the full time bonus and only the unavoidable B-1 penalty.
-    expect(bonus_czasu_max - kara_minor).toBeLessThan(legalBonus);
+
+    const legalBonus = missionScore(
+      balance,
+      definition,
+      legalResult.elapsedSeconds,
+      legalResult.verdicts,
+      true,
+    ).timeBonus;
+    const shortcutNetBonus =
+      rule.waga_bledu === 'major' ? -kara_major : bonus_czasu_max - kara_minor;
+    expect(shortcutNetBonus).toBeLessThan(legalBonus);
+    expect(shortcutResult.points!).toBeLessThan(legalResult.points!);
+  },
+);
+
+it.each([
+  { ruleId: 'ZNAK-B1', section: 'pasaz_pierogi', weight: 'major', heading: 0 },
+  {
+    ruleId: 'ZNAK-B2T22',
+    section: 'uliczka-jednokierunkowa',
+    weight: 'minor',
+    heading: Math.PI / 2,
+  },
+] as const)(
+  'reads $ruleId severity from the rules data',
+  ({ ruleId, section, weight, heading }) => {
+    const content = structuredClone(missionContent);
+    content.przepisy.przepisy.find(({ id }) => id === ruleId)!.waga_bledu =
+      weight;
+    const world = new WorldModel(
+      JSON.parse(readFileSync('maps/warszawa.tmj', 'utf8')),
+      balance.silnik.kafel_m,
+    );
+    const zone = world.zones.find(({ id }) => id === section)!;
+    const rules = new RuleEngine(world, content);
+    rules.step(
+      {
+        id: 'player',
+        pos: { x: zone.x + zone.width / 2, y: zone.y + zone.height / 2 },
+        heading,
+        speed: 2,
+        mode: 'riding',
+        signal: 'none',
+        ageBand: '10to15',
+        helmet: { worn: true, fastened: true },
+      },
+      [],
+      { time: 'day', weather: 'clear', visibilityLow: false },
+    );
+    expect(rules.recent).toContainEqual(
+      expect.objectContaining({ ruleId, kind: weight }),
+    );
   },
 );
