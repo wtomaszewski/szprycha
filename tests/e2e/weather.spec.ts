@@ -178,6 +178,34 @@ test('persists the reduced effects setting from the accessibility panel', async 
   await expect(preference).not.toBeChecked();
   await preference.check();
   await expect(preference).toBeChecked();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        ({ database, store, key }) =>
+          new Promise<boolean>((resolve, reject) => {
+            const open = indexedDB.open(database);
+            open.onerror = () => reject(open.error);
+            open.onsuccess = () => {
+              const db = open.result;
+              const read = db.transaction(store).objectStore(store).get(key);
+              read.onsuccess = () => {
+                db.close();
+                resolve(read.result?.reducedEffects === true);
+              };
+              read.onerror = () => {
+                db.close();
+                reject(read.error);
+              };
+            };
+          }),
+        {
+          database: progressDatabase,
+          store: progressStoreName,
+          key: progressRecordKey,
+        },
+      ),
+    )
+    .toBe(true);
   await page.reload();
   await settings.click();
   await expect(preference).toBeChecked();

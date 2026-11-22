@@ -11,8 +11,9 @@ export function ridePreference(
   input.type = 'checkbox';
   input.checked = store.profile[preference];
   input.addEventListener('change', () => {
+    const checked = input.checked;
     store.change((profile) => {
-      profile[preference] = input.checked;
+      profile[preference] = checked;
     });
   });
   label.append(input, ui.settings[preference]);

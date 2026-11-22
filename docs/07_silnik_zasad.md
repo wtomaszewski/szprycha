@@ -44,6 +44,8 @@ interface RiderState {
 ## 3. Kontekst środowiskowy
 `EnvState { time: 'day'|'dusk'|'night', weather: 'clear'|'rain_light'|'rain_heavy'|'snow'|'wind_strong'|'fog'|'fog_dense'|'ice', visibilityLow: boolean }` — wpływa na WYP-04/05, MSC-04, GDZIE-04.
 
+W GDZIE-04 wyjątek uruchamiają wyłącznie śnieg, silny wiatr, ulewa, gęsta mgła i gołoledź. Na dozwolonym chodniku nadal obowiązuje GDZIE-05. Przejezdność pobocza w GDZIE-03b wynika z danych mapy i sytuacji na poboczu.
+
 ## 4. Detektor — kontrakt
 ```ts
 interface Detector {

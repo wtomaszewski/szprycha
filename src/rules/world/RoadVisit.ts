@@ -97,7 +97,7 @@ export class RoadVisit {
       lane?.shoulder &&
       this.canReport('GDZIE-03b', lane.shoulder.id, tick)
     )
-      this.report(useShoulder(lane, rider, agents, env, at), emit);
+      this.report(useShoulder(lane, rider, agents, at), emit);
 
     const clearRoad =
       moving &&

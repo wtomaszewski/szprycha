@@ -1,27 +1,14 @@
-import {
-  verdict,
-  type AgentState,
-  type EnvState,
-  type RiderState,
-} from '../types';
+import { verdict, type AgentState, type RiderState } from '../types';
 import { contains, sideVector, type Lane } from '../world/WorldModel';
 
 export function useShoulder(
   lane: Lane,
   rider: RiderState,
   agents: readonly AgentState[],
-  env: EnvState,
   at: number,
 ) {
   const shoulder = lane.shoulder;
-  if (
-    lane.parallelBikeInfra ||
-    !shoulder?.shoulderUsable ||
-    (env.weather !== 'clear' &&
-      env.weather !== 'rain_light' &&
-      env.weather !== 'fog')
-  )
-    return;
+  if (lane.parallelBikeInfra || !shoulder?.shoulderUsable) return;
   const horizontal = Math.abs(lane.forward.x) > Math.abs(lane.forward.y);
   const offset = horizontal
     ? rider.pos.x - shoulder.x
