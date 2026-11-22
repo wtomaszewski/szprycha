@@ -22,44 +22,8 @@ export class TrainingRoad {
     this.lights = scene.add.graphics().setDepth(7);
     const marks = scene.add.graphics().setDepth(3);
     const scale = 1 / world.metersPerPixel;
-    for (const zone of world.zones) {
-      if (zone.kind !== 'bike_path' && zone.kind !== 'bike_lane') continue;
-      const x = zone.x * scale;
-      const y = zone.y * scale;
-      const w = zone.width * scale;
-      const h = zone.height * scale;
-      marks
-        .fillStyle(0x3b5dc9, zone.kind === 'bike_path' ? 0.8 : 0.47)
-        .fillRect(x, y, w, h);
-      if (zone.kind === 'bike_lane') {
-        marks.lineStyle(2, 0xf4f4f4, 0.85);
-        for (let i = 0; i < w; i += 26)
-          marks.lineBetween(x + i, y + h, x + Math.min(i + 13, w), y + h);
-        for (let i = 54; i < w; i += 96) {
-          marks
-            .strokeCircle(x + i - 6, y + h / 2, 4)
-            .strokeCircle(x + i + 6, y + h / 2, 4)
-            .lineBetween(x + i - 6, y + h / 2, x + i, y + h / 2 - 5)
-            .lineBetween(x + i, y + h / 2 - 5, x + i + 6, y + h / 2);
-        }
-      }
-    }
     for (const route of world.trafficRoutes) {
       if (route.kind !== 'tram') continue;
-      for (const { start, end, direction } of route.path.segments) {
-        const x = start.x * scale;
-        const y = start.y * scale;
-        const ex = end.x * scale;
-        const ey = end.y * scale;
-        marks.lineStyle(14, 0x24283b).lineBetween(x, y, ex, ey);
-        for (const offset of [-5, 5]) {
-          const dx = -direction.y * offset;
-          const dy = direction.x * offset;
-          marks
-            .lineStyle(2, 0x8895a8)
-            .lineBetween(x + dx, y + dy, ex + dx, ey + dy);
-        }
-      }
       for (const stop of route.stops) {
         const x = (stop.x + stop.width / 2) * scale;
         const y = (stop.y + stop.height) * scale + 10;
@@ -73,70 +37,6 @@ export class TrainingRoad {
       }
     }
     for (const car of world.parkedCars) this.drawParkedCar(marks, car, scale);
-    for (const drive of world.driveways) {
-      marks
-        .fillStyle(0x566c86, 0.7)
-        .fillRect(
-          drive.x * scale,
-          drive.y * scale,
-          drive.width * scale,
-          drive.height * scale,
-        );
-    }
-    for (const crossing of world.crossings) {
-      const x = crossing.x * scale;
-      const y = crossing.y * scale;
-      const width = crossing.width * scale;
-      const height = crossing.height * scale;
-      if (crossing.kind === 'pedestrian') {
-        marks.fillStyle(0xf4f4f4);
-        const vertical = crossing.axis === 'y';
-        const length = vertical ? height : width;
-        for (let i = 0; i < length; i += 16) {
-          if (vertical)
-            marks.fillRect(x, y + i, width, Math.min(9, length - i));
-          else marks.fillRect(x + i, y, Math.min(9, length - i), height);
-        }
-      } else if (crossing.kind === 'rail') {
-        marks.fillStyle(0x333c57).fillRect(x, y, width, height);
-        for (let i = 0; i < width; i += 12)
-          marks.fillStyle(0x566c86).fillRect(x + i, y + 8, 5, height - 16);
-        for (const offset of [14, height - 14])
-          marks.fillStyle(0x8895a8).fillRect(x, y + offset, width, 3);
-      } else if (crossing.kind === 'bike') {
-        marks.fillStyle(0x3b5dc9, 0.65).fillRect(x, y, width, height);
-        const vertical = crossing.axis === 'y';
-        const length = vertical ? height : width;
-        for (let i = 0; i < length; i += 16) {
-          marks.fillStyle(0xf4f4f4);
-          if (vertical)
-            marks.fillRect(x, y + i, 6, 7).fillRect(x + width - 6, y + i, 6, 7);
-          else
-            marks
-              .fillRect(x + i, y, 7, 4)
-              .fillRect(x + i, y + height - 4, 7, 4);
-        }
-      }
-    }
-    for (const lane of world.lanes) {
-      if (!lane.stopSign && !lane.mainSignal) continue;
-      const x = lane.end.x * scale;
-      const y = lane.end.y * scale;
-      const halfWidth = Math.min(45, (lane.width * scale) / 2 - 3);
-      const halfX = -lane.forward.y * halfWidth;
-      const halfY = lane.forward.x * halfWidth;
-      marks.lineStyle(lane.stopSign?.code === 'A-7' ? 2 : 4, 0xf4f4f4);
-      if (lane.stopSign?.code === 'A-7') {
-        for (let i = -1; i < 1; i += 0.25) {
-          marks.lineBetween(
-            x + i * halfX,
-            y + i * halfY,
-            x + (i + 0.12) * halfX,
-            y + (i + 0.12) * halfY,
-          );
-        }
-      } else marks.lineBetween(x - halfX, y - halfY, x + halfX, y + halfY);
-    }
     const signs = scene.add.graphics().setDepth(6);
     for (const sign of world.signs) {
       const x = sign.x * scale;

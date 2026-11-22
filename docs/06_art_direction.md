@@ -92,6 +92,34 @@ Wspólny prompt bazowy: *„top-down pixel art building in the style of 1999 GTA
 ## 7. Kafelki (tileset minimum)
 Asfalt (zwykły, łatany, mokry), linie (ciągła, przerywana, P-10 zebra, P-11 przejazd rowerowy — czerwony/kratka, P-12, P-13 trójkąty, P-23 symbol roweru, strzałki), chodnik (płyty), kostka, kocie łby, krawężniki (z przejściami obniżonymi), DDR (czerwona nawierzchnia), trawa, żwir, pobocze, tory tramwajowe (w jezdni i na zieleni), tory kolejowe, zapory (animowane), woda (animowana 4 klatki), nabrzeże, schodki, piasek plaży miejskiej, liście jesienią, śnieg (wariant zimowy).
 
+### Stan oprawy terenu i zabudowy
+
+Miasteczko i Praga korzystają z własnego atlasu terenu. Generator map dobiera
+warianty z deterministycznym ziarnem i wylicza warstwy `verge` oraz `curb`
+z sąsiedztwa kafli. Krawężnik zaokrągla narożniki chodników. Dymki, światła
+i uczestnicy ruchu są osobnymi elementami, a statyczne podłoże, oznakowanie
+oraz cienie są zapisane w teksturach fragmentów mapy. Woda fontanny zmienia
+klatkę co 280 ms.
+
+| Obszar | Dostępna grafika proceduralna |
+| --- | --- |
+| Podłoże | Cztery warianty trawy, asfaltu, płyt chodnikowych, kostki, żwiru i czerwonej nawierzchni rowerowej. Tory w jezdni, zaokrąglone i obniżone krawężniki, cztery klatki wody. |
+| Oznakowanie | Białe P-10, P-11, P-12, P-13, P-23, linie ciągłe i przerywane oraz strzałki dopuszczonych kierunków na pasach z ograniczonym wyborem. Czerwone tło wydziela przejazd, a jego granice wyznaczają dwa rzędy białych pól. |
+| Zabudowa | Cztery materiały ścian, okna i witryny na pasach 32×12, papa, dachówka, miedź i piaskowiec. Gzyms, kominy, wywietrzniki, klimatyzatory i świetliki. Światło z północnego zachodu i schodkowo zmiękczone cienie. |
+| Ulica | Drzewa, latarnie, ławki, kosze, słupki i wiaty rozmieszczone w warstwie `props`. Korony i osprzęt wysokich obiektów przesuwają się z kamerą. |
+
+`roof` i `wall` wybierają materiał bloku, a identyfikator bloku ustala
+warianty. Nazwy dachów i ścian oraz indeksy kafli są opisane w
+`src/render/artFrames.ts`. `assets/manifest.json` podaje rozmiary, układ i
+liczbę klatek do podmiany plików 1:1. Atlasy odtwarza `npm run assets:generate`,
+Miasteczko `npm run map:generate`, a Pragę `npm run map:generate:warsaw`.
+
+Rowerzyści, piesi, pojazdy, znaki pionowe i portrety korzystają z dotychczasowych
+placeholderów. Osobne warianty mokrej i zimowej nawierzchni, animacje pogody,
+nocne oświetlenie oraz pozostałe landmarki należą do kolejnych etapów.
+
+Wzory oznakowania pochodzą z [załącznika nr 2 do rozporządzenia o szczegółowych warunkach technicznych dla znaków i sygnałów drogowych](https://eli.gov.pl/eli/DU/2019/2311/ogl).
+
 ## 8. Znaki drogowe
 Sprite'y znaków 16×16 (na mapie) i 64×64 (Album, quiz, stop-klatka). Rysowane **wg wzorów z rozporządzenia** (kształt, kolor, piktogram) w pixel-arcie — muszą być jednoznacznie rozpoznawalne. Lista w `content/znaki.yaml`. W stop-klatce znak, którego dotyczy błąd, pulsuje.
 

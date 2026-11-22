@@ -1,19 +1,98 @@
-import { GameObjects, Scene, Cameras } from 'phaser';
+import { GameObjects, type Scene, type Cameras, type Renderer } from 'phaser';
+import { artHash } from './artFrames';
+import { roofTexture, wallTexture } from './BlockArt';
 import { CAMERA_HEIGHT_PX, roofOffset, type Block } from './projection';
 export type { Block } from './projection';
+
+// Use Phaser's normal batchers with a parent transform for the projected face.
+// This draws a whole pre-rasterized façade with the same quad in WebGL and Canvas.
+class Wall extends GameObjects.Image {
+  readonly transform = new GameObjects.Components.TransformMatrix();
+  private readonly lightTexture: string;
+  private readonly darkTexture: string;
+
+  constructor(
+    scene: Scene,
+    key: string,
+    block: Block,
+    hash: number,
+    vertical: boolean,
+    floors: number,
+    ground: boolean,
+  ) {
+    const width = vertical ? block.height : block.width;
+    const light = wallTexture(
+      scene,
+      key + '-lit',
+      block,
+      hash,
+      width,
+      floors,
+      ground,
+      true,
+    );
+    const dark = wallTexture(
+      scene,
+      key + '-shade',
+      block,
+      hash,
+      width,
+      floors,
+      ground,
+      false,
+    );
+    super(scene, 0, 0, light);
+    this.lightTexture = light.key;
+    this.darkTexture = dark.key;
+    this.setOrigin(0);
+    scene.add.existing(this);
+  }
+
+  project(
+    x: number,
+    y: number,
+    dx: number,
+    dy: number,
+    vertical: boolean,
+    sunny: boolean,
+  ) {
+    const texture = sunny ? this.lightTexture : this.darkTexture;
+    if (this.texture.key !== texture) this.setTexture(texture);
+    this.transform.setTransform(
+      vertical ? 0 : 1,
+      vertical ? 1 : 0,
+      -dx / this.height,
+      -dy / this.height,
+      x,
+      y,
+    );
+  }
+
+  renderCanvas(
+    renderer: Renderer.Canvas.CanvasRenderer,
+    src: Wall,
+    camera: Cameras.Scene2D.Camera,
+  ) {
+    camera.addToRenderList(src);
+    renderer.batchSprite(src, src.frame, camera, src.transform);
+  }
+
+  renderWebGL(
+    _renderer: Renderer.WebGL.WebGLRenderer,
+    src: Wall,
+    camera: Cameras.Scene2D.Camera,
+  ) {
+    camera.addToRenderList(src);
+    const pipeline = src.pipeline as Renderer.WebGL.Pipelines.MultiPipeline;
+    pipeline.batchSprite(src, camera, src.transform);
+  }
+}
+
 export class Blocks {
   cameraHeight = CAMERA_HEIGHT_PX;
-  private items: {
-    block: Block;
-    support?: Block;
-    walls: GameObjects.Graphics;
-    roof: GameObjects.TileSprite;
-    dx: number;
-    dy: number;
-    baseX: number;
-    baseY: number;
-  }[];
-  constructor(scene: Scene, blocks: Block[]) {
+  private readonly items;
+
+  constructor(scene: Scene, blocks: Block[], mapId: string) {
     const landmarkTiers = new Map<string, Block>();
     this.items = [...blocks]
       .sort((a, b) => a.floors - b.floors)
@@ -22,64 +101,112 @@ export class Blocks {
           ? landmarkTiers.get(block.landmarkId)
           : undefined;
         if (block.landmarkId) landmarkTiers.set(block.landmarkId, block);
+        let id = 0;
+        for (const ch of block.id ?? String(i))
+          id = Math.imul(id, 31) + ch.charCodeAt(0);
+        const hash = artHash(id, 30);
+        const key = `block-${mapId}-${i}`;
+        const depth = 100 + i * 3;
+        const floors = Math.max(
+          1,
+          Math.round(block.floors - (support?.floors ?? 0)),
+        );
         return {
           block,
           support,
-          walls: scene.add.graphics().setDepth(100 + i * 2),
+          horizontal: new Wall(
+            scene,
+            key + '-horizontal',
+            block,
+            hash,
+            false,
+            floors,
+            !support,
+          ).setDepth(depth),
+          vertical: new Wall(
+            scene,
+            key + '-vertical',
+            block,
+            hash,
+            true,
+            floors,
+            !support,
+          ).setDepth(depth + 1),
           roof: scene.add
-            .tileSprite(block.x, block.y, block.width, block.height, 'roof')
-            .setTint(block.tint ?? (block.landmarkId ? 0xe8c39e : 0xffffff))
+            .image(
+              block.x,
+              block.y,
+              roofTexture(scene, key + '-roof', block, hash),
+            )
             .setOrigin(0)
-            .setDepth(101 + i * 2),
+            .setDepth(depth + 2)
+            .setVisible(false),
+          offset: { x: 0, y: 0 },
+          base: { x: 0, y: 0 },
           dx: NaN,
           dy: NaN,
           baseX: NaN,
           baseY: NaN,
+          visible: false,
+          alpha: 1,
         };
       });
   }
+
   update(
     camera: Cameras.Scene2D.Camera,
     lite: boolean,
     playerX: number,
     playerY: number,
   ) {
-    const cx = camera.scrollX + camera.width / 2,
-      cy = camera.scrollY + camera.height / 2;
+    const cx = camera.scrollX + camera.width / 2;
+    const cy = camera.scrollY + camera.height / 2;
     const halfWidth = camera.width / (2 * camera.zoom);
     const halfHeight = camera.height / (2 * camera.zoom);
-    const left = cx - halfWidth,
-      right = cx + halfWidth;
-    const top = cy - halfHeight,
-      bottom = cy + halfHeight;
+    const left = cx - halfWidth;
+    const right = cx + halfWidth;
+    const top = cy - halfHeight;
+    const bottom = cy + halfHeight;
     for (const item of this.items) {
-      const b = item.block,
-        offset = roofOffset(b, cx, cy, lite, this.cameraHeight);
-      const base = item.support
-        ? roofOffset(item.support, cx, cy, lite, this.cameraHeight)
-        : { x: 0, y: 0 };
-      const margin =
-        Math.max(
-          Math.abs(offset.x),
-          Math.abs(offset.y),
-          Math.abs(base.x),
-          Math.abs(base.y),
-        ) + 32;
+      const { block: b, offset, base, horizontal, vertical, roof } = item;
+      roofOffset(b, cx, cy, lite, this.cameraHeight, offset);
+      if (item.support)
+        roofOffset(item.support, cx, cy, lite, this.cameraHeight, base);
+      const dx = offset.x - base.x;
+      const dy = offset.y - base.y;
+      const margin = Math.max(
+        Math.abs(offset.x),
+        Math.abs(offset.y),
+        Math.abs(base.x),
+        Math.abs(base.y),
+      );
       const visible =
         b.x + b.width + margin > left &&
         b.x - margin < right &&
         b.y + b.height + margin > top &&
         b.y - margin < bottom;
-      item.walls.setVisible(visible);
-      item.roof.setVisible(visible);
+      if (visible !== item.visible) {
+        item.visible = visible;
+        roof.setVisible(visible);
+      }
+      const showX = visible && dx !== 0;
+      const showY = visible && dy !== 0;
+      if (horizontal.visible !== showY) horizontal.setVisible(showY);
+      if (vertical.visible !== showX) vertical.setVisible(showX);
       if (!visible) continue;
-      const hidden =
+      const alpha =
         playerX > b.x + offset.x - 16 &&
         playerX < b.x + b.width + offset.x + 16 &&
         playerY > b.y + offset.y - 16 &&
-        playerY < b.y + b.height + offset.y + 16;
-      item.walls.setAlpha(hidden ? 0.35 : 1);
-      item.roof.setAlpha(hidden ? 0.35 : 1);
+        playerY < b.y + b.height + offset.y + 16
+          ? 0.35
+          : 1;
+      if (item.alpha !== alpha) {
+        item.alpha = alpha;
+        roof.setAlpha(alpha);
+        horizontal.setAlpha(alpha);
+        vertical.setAlpha(alpha);
+      }
       if (
         item.dx === offset.x &&
         item.dy === offset.y &&
@@ -91,70 +218,20 @@ export class Blocks {
       item.dy = offset.y;
       item.baseX = base.x;
       item.baseY = base.y;
-      const g = item.walls.clear(),
-        dx = offset.x - base.x,
-        dy = offset.y - base.y,
-        x = b.x + base.x,
-        y = b.y + base.y,
-        w = b.width,
-        h = b.height;
-      if (!item.support)
-        g.fillStyle(0x10121e, 0.25).fillRect(
-          x + 12,
-          y + 12,
-          w + Math.max(0, dx),
-          h + Math.max(0, dy),
+      const x = b.x + offset.x;
+      const y = b.y + offset.y;
+      if (dx !== 0)
+        vertical.project(x + (dx > 0 ? 0 : b.width), y, dx, dy, true, dx > 0);
+      if (dy !== 0)
+        horizontal.project(
+          x,
+          y + (dy > 0 ? 0 : b.height),
+          dx,
+          dy,
+          false,
+          dy > 0,
         );
-      if (dx !== 0) {
-        g.fillStyle(b.landmarkId ? 0xe8c39e : (b.tint ?? 0xc2c3c7));
-        const edge = dx > 0 ? x : x + w;
-        g.fillPoints(
-          [
-            { x: edge, y },
-            { x: edge + dx, y: y + dy },
-            { x: edge + dx, y: y + h + dy },
-            { x: edge, y: y + h },
-          ],
-          true,
-        );
-      }
-      if (dy !== 0) {
-        g.fillStyle(b.landmarkId ? 0xad7655 : 0x8b6d5c);
-        const edge = dy > 0 ? y : y + h;
-        g.fillPoints(
-          [
-            { x, y: edge },
-            { x: x + dx, y: edge + dy },
-            { x: x + w + dx, y: edge + dy },
-            { x: x + w, y: edge },
-          ],
-          true,
-        );
-      }
-      g.lineStyle(1, 0x566c86);
-      const floors = b.floors - (item.support?.floors ?? 0);
-      for (let f = 1; f < floors; f++) {
-        const t = f / floors;
-        if (dy !== 0) {
-          const edge = dy > 0 ? y : y + h;
-          g.lineBetween(
-            x + dx * t,
-            edge + dy * t,
-            x + w + dx * t,
-            edge + dy * t,
-          );
-        }
-        if (dx !== 0) {
-          const edge = dx > 0 ? x : x + w;
-          g.lineBetween(
-            edge + dx * t,
-            y + dy * t,
-            edge + dx * t,
-            y + h + dy * t,
-          );
-        }
-      }
-      item.roof.setPosition(x + dx, y + dy);
+      roof.setPosition(x, y);
     }
   }
 }

@@ -1,11 +1,8 @@
 import { mkdir, writeFile } from 'node:fs/promises';
+import { TILE, TILE_COLUMNS, TILE_COUNT } from '../src/render/artFrames.ts';
+import type { tileTerrain } from './tile-terrain.ts';
 
-export function tiledMap(
-  width: number,
-  height: number,
-  ground: number[],
-  markings: number[],
-) {
+export function tiledMap(width: number, height: number) {
   let id = 1;
   const rect = (
     name: string,
@@ -46,35 +43,22 @@ export function tiledMap(
       polyline: points.map(([px, py]) => ({ x: px - x, y: py - y })),
     };
   };
-  const layers: unknown[] = [
-    {
-      id: 1,
-      name: 'ground',
-      type: 'tilelayer',
-      width,
-      height,
-      x: 0,
-      y: 0,
-      opacity: 1,
-      visible: true,
-      data: ground,
-    },
-    {
-      id: 2,
-      name: 'markings',
-      type: 'tilelayer',
-      width,
-      height,
-      x: 0,
-      y: 0,
-      opacity: 1,
-      visible: true,
-      data: markings,
-    },
-  ];
+  const layers: unknown[] = [];
+  const tileLayer = (id: number, name: string, data: number[]) => ({
+    id,
+    name,
+    type: 'tilelayer',
+    width,
+    height,
+    x: 0,
+    y: 0,
+    opacity: 1,
+    visible: true,
+    data,
+  });
   function objectLayer(name: string, objects: unknown[]) {
     layers.push({
-      id: layers.length + 1,
+      id: layers.length + 3,
       name,
       type: 'objectgroup',
       opacity: 1,
@@ -85,7 +69,20 @@ export function tiledMap(
     });
   }
 
-  async function write(name: string, trafficCars: number, duskAt?: number) {
+  async function write(
+    name: string,
+    trafficCars: number,
+    terrain: ReturnType<typeof tileTerrain>,
+    markings: number[],
+    duskAt?: number,
+  ) {
+    const mapLayers = [
+      tileLayer(1, 'ground', terrain.ground),
+      tileLayer(2, 'markings', markings),
+      ...layers,
+      tileLayer(layers.length + 3, 'verge', terrain.verge),
+      tileLayer(layers.length + 4, 'curb', terrain.curb),
+    ];
     const mapProperties = [
       { name: 'trafficCars', type: 'int', value: trafficCars },
     ];
@@ -104,23 +101,23 @@ export function tiledMap(
           infinite: false,
           width,
           height,
-          tilewidth: 32,
-          tileheight: 32,
+          tilewidth: TILE,
+          tileheight: TILE,
           properties: mapProperties,
-          nextlayerid: layers.length + 1,
+          nextlayerid: mapLayers.length + 1,
           nextobjectid: id,
-          layers,
+          layers: mapLayers,
           tilesets: [
             {
               firstgid: 1,
               name: 'training',
-              tilewidth: 32,
-              tileheight: 32,
-              tilecount: 8,
-              columns: 8,
+              tilewidth: TILE,
+              tileheight: TILE,
+              tilecount: TILE_COUNT,
+              columns: TILE_COLUMNS,
               image: '../assets/generated/tiles.png',
-              imagewidth: 256,
-              imageheight: 32,
+              imagewidth: TILE * TILE_COLUMNS,
+              imageheight: (TILE_COUNT / TILE_COLUMNS) * TILE,
               margin: 0,
               spacing: 0,
             },
