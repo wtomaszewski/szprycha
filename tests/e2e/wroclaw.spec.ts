@@ -3,6 +3,7 @@ import questions from '../../content/pytania.json' with { type: 'json' };
 import { chooseCity } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { readProfile } from './progress-profile';
+import { expectQuestionSign } from './question-dialog';
 
 type MapView = { x: number; y: number; heading: number; night?: true };
 
@@ -58,6 +59,7 @@ test('opens Wrocław from the map of Poland and saves collected gnomes', async (
   await expect(collection).toHaveText(`${pl.driving.gnomes} 0/100`);
   const question = questions.pytania[0]!;
   await expect(quiz).toContainText(question.pytanie);
+  await expect(quiz.getByRole('img')).toHaveCount(0);
   await quiz
     .getByRole('button', {
       name: question.odpowiedzi[question.poprawna],
@@ -77,6 +79,83 @@ test('opens Wrocław from the map of Poland and saves collected gnomes', async (
   await openWroclaw(page);
   await expect(collection).toHaveText(`${pl.driving.gnomes} 1/100`);
 });
+
+for (const view of ['desktop', 'mobile'] as const) {
+  test.describe(view, () => {
+    if (view === 'mobile')
+      test.use({ viewport: { width: 844, height: 390 }, hasTouch: true });
+
+    test('shows Q028 with A-17 at a gnome before the narrator speaks', async ({
+      page,
+    }, info) => {
+      const question = questions.pytania.find(({ id }) => id === 'Q028')!;
+      await page.addInitScript((prompt) => {
+        const speech = new EventTarget();
+        Object.assign(speech, {
+          getVoices: () => [{ localService: true, lang: 'pl-PL' }],
+          cancel: () => {},
+          speak: ({ text }: SpeechSynthesisUtterance) => {
+            if (text !== prompt) return;
+            const image = document.querySelector<HTMLImageElement>(
+              '.control-question[open] .question-signs img',
+            );
+            const content = image?.closest('.question-prompt');
+            document.documentElement.dataset.questionNarration =
+              image?.naturalWidth === 64 &&
+              content &&
+              getComputedStyle(content).opacity === '1'
+                ? 'with-image'
+                : 'without-image';
+          },
+        });
+        Object.defineProperty(window, 'speechSynthesis', { value: speech });
+        class Utterance {
+          constructor(readonly text: string) {}
+        }
+        Object.defineProperty(window, 'SpeechSynthesisUtterance', {
+          value: Utterance,
+        });
+      }, question.pytanie);
+      // Start inside the interaction radius of the 28th gnome, which uses Q028.
+      await startAt(page, { x: 3572, y: 2340, heading: 0 });
+      let releaseImage!: () => void;
+      const imageGate = new Promise<void>((resolve) => {
+        releaseImage = resolve;
+      });
+      await page.route('**/A-17.png', async (route) => {
+        await imageGate;
+        await route.continue();
+      });
+      const canvas = await openWroclaw(page);
+      await expect(canvas).toHaveAttribute('data-x', '3572');
+
+      const quiz = page.getByRole('dialog', { name: pl.driving.gnomeQuestion });
+      const narration = page.locator('html[data-question-narration]');
+      try {
+        await page.keyboard.press('KeyX');
+        await expect(quiz).toBeVisible();
+        await expect(quiz.locator('.question-prompt')).toHaveCSS(
+          'opacity',
+          '0',
+        );
+        await expect(narration).toHaveCount(0);
+      } finally {
+        releaseImage();
+      }
+      await expectQuestionSign(quiz, 'A-17');
+      await expect(quiz.locator('#control-question-prompt')).toHaveText(
+        question.pytanie,
+      );
+      await expect(narration).toHaveAttribute(
+        'data-question-narration',
+        'with-image',
+      );
+      const path = info.outputPath(`92-${view}-krasnal-q028.png`);
+      await page.screenshot({ path, animations: 'disabled' });
+      await info.attach('Q028 — A-17', { path, contentType: 'image/png' });
+    });
+  });
+}
 
 const views = [
   { name: 'rynek', x: 2992, y: 2016, heading: 0 },

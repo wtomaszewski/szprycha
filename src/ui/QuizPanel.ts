@@ -1,8 +1,7 @@
 import { audio } from '../audio/GameAudio';
 import portrait from '../../assets/generated/portraits/sierzant_ola.png?url';
 import { moduleId, type GameContent } from '../content/schemas';
-import { illustratedSigns } from '../content/signIllustrations';
-import { translate, ui } from '../core/presentation';
+import { ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 import {
   answerOrder,
@@ -11,7 +10,7 @@ import {
   type QuizQuestion,
 } from '../gameplay/quiz/leitner';
 import { localDay, type ModuleId } from '../progression/mastery';
-import { signIllustration } from './SignIllustration';
+import { questionPrompt } from './SignIllustration';
 import { progressNotice } from './SkillMap';
 
 const labels = ui.quiz;
@@ -269,17 +268,10 @@ export function quizQuestions({
         }),
       );
     }
-    body.replaceChildren(step, meter, prompt);
-    if (question.obrazek) {
-      const figure = document.createElement('div');
-      figure.className = 'quiz-signs';
-      for (const code of illustratedSigns(question.obrazek)) {
-        const image = signIllustration(code, translate(`quiz.signAlt.${code}`));
-        if (image) figure.append(image);
-      }
-      body.append(figure);
-    }
-    body.append(answers);
+    const questionText = document.createElement('div');
+    questionText.append(step, meter, prompt);
+    const { element } = questionPrompt(questionText, question.obrazek);
+    body.replaceChildren(element, answers);
     dialog.scrollTop = 0;
     prompt.focus();
   }

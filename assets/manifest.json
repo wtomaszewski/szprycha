@@ -331,6 +331,17 @@
       "description": "Ilustracja A-17 do Albumu Znaków i quizu."
     },
     {
+      "id": "znak-B-1",
+      "file": "generated/signs/B-1.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja B-1 do Albumu Znaków i pytań."
+    },
+    {
       "id": "znak-B-2",
       "file": "generated/signs/B-2.png",
       "width": 64,
@@ -375,6 +386,17 @@
       "description": "Ilustracja C-13 do Albumu Znaków i quizu."
     },
     {
+      "id": "znak-C-13/C-16",
+      "file": "generated/signs/C-13_C-16.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja C-13/C-16 do Albumu Znaków i pytań."
+    },
+    {
       "id": "znak-D-1",
       "file": "generated/signs/D-1.png",
       "width": 64,
@@ -395,6 +417,39 @@
       "frames": 1,
       "directions": 1,
       "description": "Ilustracja P-23 do Albumu Znaków i quizu."
+    },
+    {
+      "id": "znak-S-1",
+      "file": "generated/signs/S-1.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja S-1 do Albumu Znaków i pytań."
+    },
+    {
+      "id": "znak-S-2",
+      "file": "generated/signs/S-2.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja S-2 do Albumu Znaków i pytań."
+    },
+    {
+      "id": "znak-S-6",
+      "file": "generated/signs/S-6.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja S-6 do Albumu Znaków i pytań."
     },
     {
       "id": "znak-T-22",

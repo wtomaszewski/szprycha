@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import bank from '../../content/pytania.json' with { type: 'json' };
 import pl from '../../i18n/pl.json' with { type: 'json' };
+import { findDisplayedQuestion } from './question-dialog';
 import {
   progressDatabase,
   progressRecordKey,
@@ -86,7 +87,10 @@ test('solves both sign illustrations offline and retains scheduled reviews after
     const prompt = await dialog
       .getByRole('heading', { level: 3 })
       .textContent();
-    const question = questions.find(({ pytanie }) => pytanie === prompt)!;
+    const options = await dialog
+      .locator('.quiz-answers button')
+      .allTextContents();
+    const question = findDisplayedQuestion(questions, prompt, options)!;
     expect(question).toBeDefined();
     expect(seen.has(question.id)).toBe(false);
     seen.add(question.id);

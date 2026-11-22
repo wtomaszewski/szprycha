@@ -1455,12 +1455,17 @@
     "signAlt": {
       "A-7": "Odwrócony żółty trójkąt w czerwonej obwódce",
       "A-17": "Żółty trójkąt w czerwonej obwódce z dwiema sylwetkami dzieci",
+      "B-1": "Białe koło w czerwonej obwódce, bez symbolu w środku",
       "B-2": "Czerwone koło z białą poziomą kreską",
       "B-9": "Czarny rower na białym kole w czerwonej obwódce",
       "B-20": "Czerwony ośmiokąt z białym napisem STOP",
       "C-13": "Biały rower na niebieskim kole",
+      "C-13/C-16": "Niebieskie koło z białym rowerem nad poziomą kreską i pieszym pod nią",
       "D-1": "Żółty romb w białej obwódce",
       "P-23": "Biały rower namalowany na szarej jezdni",
+      "S-1": "Sygnalizator ze świecącym tylko środkowym, żółtym światłem",
+      "S-2": "Sygnalizator ze świecącym czerwonym światłem i zieloną strzałką w prawo",
+      "S-6": "Sygnalizator ze świecącym czerwonym symbolem roweru",
       "T-22": "Biała tabliczka z napisem Nie dotyczy i czarnym rowerem"
     }
   },

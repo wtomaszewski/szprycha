@@ -181,7 +181,12 @@ for (const { profile, device, viewport, target, logicalHeight } of [
       const quiz = page.getByRole('dialog', { name: pl.quiz.title });
       await quiz.getByRole('button', { name: new RegExp(pl.quiz.quick) }).tap();
       await expect(quiz.getByRole('progressbar')).toBeVisible();
-      await expect(quiz.locator('.quiz-signs img')).toHaveCount(2);
+      await expect(
+        quiz.getByRole('img', { name: pl.quiz.signAlt['B-2'], exact: true }),
+      ).toBeInViewport();
+      await expect(
+        quiz.getByRole('img', { name: pl.quiz.signAlt['T-22'], exact: true }),
+      ).toBeInViewport();
       await expect(quiz).toHaveCSS('background-color', 'rgb(0, 0, 0)');
       await layout(page, quiz.locator(buttons), target);
       await shot(page, profile, 'quiz');

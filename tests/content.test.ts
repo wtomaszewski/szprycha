@@ -11,7 +11,8 @@ import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 import { buildContent, readContent, contentFiles } from '../tools/content';
-import { contentSchema } from '../src/content/schemas';
+import { contentSchema, questionsSchema } from '../src/content/schemas';
+import bank from '../content/pytania.json';
 
 describe('canonical content', () => {
   it('loads the canonical files and mission data', async () => {
@@ -83,6 +84,22 @@ describe('canonical content', () => {
       'Unknown sign or invalid plate: B-2',
     );
   });
+  it.each([
+    'Co oznacza ten znak?',
+    'Co oznacza napis na tej tabliczce?',
+    'Kogo dotyczy ten sygnalizator?',
+    'Jak reagujesz na zieloną strzałkę?',
+    'Co oznacza A-17?',
+  ])('requires an illustration for "%s"', (pytanie) => {
+    const question = { ...bank.pytania[0]!, pytanie };
+    const result = questionsSchema.safeParse({ ...bank, pytania: [question] });
+    expect(result.error?.issues).toContainEqual(
+      expect.objectContaining({
+        path: ['pytania', 0, 'obrazek'],
+        message: 'Question about a sign requires an illustration (obrazek)',
+      }),
+    );
+  });
   it('rejects duplicate rules, invalid answer indexes, bad balance and unknown fields', async () => {
     const c = await readContent();
     c.przepisy.przepisy.push(c.przepisy.przepisy[0]!);
@@ -96,6 +113,12 @@ describe('canonical content', () => {
     expect(contentSchema.safeParse({ ...c, typo: true }).success).toBe(false);
   });
   it.each([
+    {
+      file: 'pytania.json',
+      from: '"obrazek": "A-17",',
+      to: '',
+      message: 'Question about a sign requires an illustration (obrazek)',
+    },
     {
       file: 'sklep.yaml',
       from: 'Ruszaj w miasto',
