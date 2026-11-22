@@ -1,3 +1,4 @@
+import { localizedVoiceLine } from '../audio/voiceLines';
 import { inputHash, rankingSeed, RideEvidence } from '../rankings/evidence';
 import { showBreakReminder } from '../ui/BreakReminder';
 import { verdictHaptics } from '../platform/haptics';
@@ -5,7 +6,7 @@ import { audio } from '../audio/GameAudio';
 import { Scene, type GameObjects } from 'phaser';
 import type { PlacBalance, PlacCourse, PlacId } from '../content/plac';
 import type { GameContent } from '../content/schemas';
-import { showError, translate, ui } from '../core/presentation';
+import { showError, ui } from '../core/presentation';
 import { FIXED_STEP, METERS_PER_PIXEL } from '../gameplay/bicycle';
 import type { ExamAttempt, ExamRide } from '../gameplay/exam/exam';
 import type { MissionProgress } from '../gameplay/MissionProgress';
@@ -302,8 +303,8 @@ export class Plac extends Scene {
     this.game.canvas.dataset.placExercise = run.id;
     delete this.game.canvas.dataset.placGrade;
     this.heading.textContent = `${run.index + 1}/${run.ids.length} · ${this.titles.get(run.id)}`;
-    const hint = translate(this.course.exercises[run.id].hint);
-    this.coach.textContent = `${ui.plac.coach} · ${hint}`;
+    const hint = localizedVoiceLine(this.course.exercises[run.id].hint);
+    this.coach.textContent = `${ui.plac.coach} · ${hint.text}`;
     audio.read('lesson', hint);
     this.clock.hidden = !this.arcade;
     const ghost = this.arcade && this.records;
@@ -479,7 +480,9 @@ export class Plac extends Scene {
         if (result.grade !== 'good') audio.play('oops');
         audio.read(
           'lesson',
-          fault ? ui.plac.faults[fault] : ui.exam.cleanExercise,
+          localizedVoiceLine(
+            fault ? `plac.faults.${fault}` : 'exam.cleanExercise',
+          ),
         );
         if (!this.attempt)
           this.progress.recordRide(

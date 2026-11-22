@@ -9,3 +9,6 @@ test-results/
 .env.*
 
 /server/data/
+
+/assets/voice/.render*
+/assets/voice/manifest.json.*.tmp

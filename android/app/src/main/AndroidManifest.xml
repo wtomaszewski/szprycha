@@ -34,11 +34,4 @@
             android:name="android.window.PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY"
             android:value="true" />
     </application>
-
-    <!-- Discover the system speech engine on Android 11+ without listing other apps. -->
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.TTS_SERVICE" />
-        </intent>
-    </queries>
 </manifest>

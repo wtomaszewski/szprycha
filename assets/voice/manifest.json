@@ -1,0 +1,1855 @@
+{
+  "version": 1,
+  "language": "pl",
+  "lines": {
+    "audio.tipText.bell": {
+      "text": "Rower musi mieć dzwonek albo inny sygnał ostrzegawczy o nieprzeraźliwym dźwięku.",
+      "hash": "11c04aca9d109a287802e673c8b99254290f9ce38b62dea4f5ab75cc2ff912a0"
+    },
+    "audio.tipText.rail": {
+      "text": "Gdy światła na przejeździe migają albo zapory są w ruchu, poczekaj przed torami.",
+      "hash": "ac0013c31b2ce7f552f8c2f8fe6c959f5e6bc8cdb30fabedb42e12b657b4e4d4"
+    },
+    "audio.tipText.speed": {
+      "text": "Na kocich łbach zwolnij, żeby zdążyć bezpiecznie zahamować.",
+      "hash": "e997b41b3c3d46bafd02c3ee0ddde9d52c55c061c2932ed6dc18cb78ef028d11"
+    },
+    "audio.tipText.stop": {
+      "text": "Przy znaku STOP zatrzymaj się zawsze, nawet gdy nic nie jedzie, i przepuść pojazdy z pierwszeństwem.",
+      "hash": "cb4289aae6d8d5b91ae07c34f66ca6ebd10be0433c6328f2aa8870f284af067a"
+    },
+    "dialogi.WAW-A1-01.koniec_tekst": {
+      "text": "Klucze dotarły. Lena ma dla ciebie kurs na bazar.",
+      "hash": "2bdc0fb49bbda8bc9a99fdb3039304eba67d4ba43016525c089074075727a385"
+    },
+    "dialogi.WAW-A1-01.start_tekst": {
+      "text": "Sąsiad zostawił u mnie klucze. Podrzucisz mu je? Na rogu kamienic pilnuj prawej strony.",
+      "hash": "9d3f988c51ebcb79ed5a2c4596c6e2ab991fa88eb480e0143cea0f91232cd2bf"
+    },
+    "dialogi.WAW-A1-02.koniec_tekst": {
+      "text": "Dostawa odebrana! Pani Halina czeka na pierogi.",
+      "hash": "946805d916896c03e1626682f76031ce9280e6c1a3847ab0ee8d6f0846613a4b"
+    },
+    "dialogi.WAW-A1-02.start_tekst": {
+      "text": "To zamówienie na bazar. W praskich bramach piesi pojawiają się znienacka.",
+      "hash": "4fb37d9ca9d9f288bc759c88cd50da9bcb580bb230337069d0b705f4e526fa72"
+    },
+    "dialogi.WAW-A1-03.koniec_tekst": {
+      "text": "Jeszcze parują! Dobrze, że przy tym skrzyżowaniu dajesz sobie czas na rozejrzenie.",
+      "hash": "2201bc264e3fafd5f8750f3e06885ea5df4cd648ee88c2cf17186aee1f988b2f"
+    },
+    "dialogi.WAW-A1-03.start_tekst": {
+      "text": "Dowieź pierogi, póki są ciepłe. Przy STOP-ie zatrzymaj się, choćby pachniały na całą Pragę.",
+      "hash": "3b22788896df423a0333465ad5f4be607a2840c56e090878ed6a31c9889d79d1"
+    },
+    "dialogi.WAW-A1-04.koniec_tekst": {
+      "text": "Byłem pierwszy, ale straciłem punkty za jazdę pod prąd i przez zebrę.",
+      "hash": "b5920915319e2d074d7f7c91d52b84a9cdad2ecc954767f38e17e2b486954b8c"
+    },
+    "dialogi.WAW-A1-04.punkty": {
+      "text": "Masz więcej punktów niż Turbo. Wygrywasz dzięki bezpiecznej jeździe!",
+      "hash": "9493a31b0062f47c0a42ec2b187ced41b77df5bb1bb9f6b511106f52540a2441"
+    },
+    "dialogi.WAW-A1-04.start_tekst": {
+      "text": "Do Kolumny Zygmunta! Za mostem jest uliczka pod prąd. A ty, którą drogę wybierzesz?",
+      "hash": "67be28a26ddab4b2accf3e68a3c689e122b269de353bd935f33a02e0d01f912c"
+    },
+    "dialogi.WAW-A1-05.koniec_tekst": {
+      "text": "Przewodnik odebrał syrenkę. Widział dziwny znak obok zamku. Sprawdzisz?",
+      "hash": "2c8c55f3b80f15336c7b6377f04375845b34354021b6092c3b19446b4569f3fc"
+    },
+    "dialogi.WAW-A1-05.start_tekst": {
+      "text": "Wieziemy kruchą syrenkę. Zwolnij na kocich łbach i pilnuj paska wstrząsów.",
+      "hash": "da23b7ebf4710ef6fe3ef60b88a0960a550cba769a059d4b08fef46bbdc3a88b"
+    },
+    "dialogi.WAW-A1-06.final": {
+      "text": "Akt 1 ukończony! Mamy pierwszą wskazówkę i wiemy, gdzie szukać dalej.",
+      "hash": "71f03845ea47b45b83f66aa35d003a64b5f48db88300493992218156dbad6377"
+    },
+    "dialogi.WAW-A1-06.koniec_tekst": {
+      "text": "Błyskawica i podpis „Zakłócacz”! Ktoś celowo przestawia znaki.",
+      "hash": "118090d2bbdd476ef4dab997d54327bf69a6130b7e0b9e1a5bc238a346a0f64c"
+    },
+    "dialogi.WAW-A1-06.start_tekst": {
+      "text": "Kieruję ruchem przy zamku. Zatrzymaj się na mój znak, nawet jeśli światło będzie zielone.",
+      "hash": "a95651f8ee8a2ea19228464f4fb6bc454bbe9a0a96b580a4a99f87d83ad0a25c"
+    },
+    "dialogi.WAW-A2-01.koniec_tekst": {
+      "text": "Części na miejscu, ale ktoś znów przestawił sterownik.",
+      "hash": "3dd21027b991a18ae095d2d5cf35711cf6bb42abd604b76a0afea344a27c80f5"
+    },
+    "dialogi.WAW-A2-01.start_tekst": {
+      "text": "Lena wysyła Cię z częściami do sygnalizacji pod Pałacem Kultury.",
+      "hash": "42fd98ed6ea7a929fea33ba7b1d11d36fc0d2b5c2284c0b13d2aa5825cf42684"
+    },
+    "dialogi.WAW-A2-02.koniec_tekst": {
+      "text": "Strzałka działa, ale ten ślad błyskawicy wygląda znajomo.",
+      "hash": "a1052d98a5ebc28ed8610f9bba068f1c05f33ae5e3f8da9c2c7f92d7baaba693"
+    },
+    "dialogi.WAW-A2-02.start_tekst": {
+      "text": "Sprawdźmy, czy sygnalizacja pozwala bezpiecznie skręcić w stronę bulwarów.",
+      "hash": "167a8706330992238b5f25ce7bb1f5cc06b66a63f261426ce3f738b57b791ecf"
+    },
+    "dialogi.WAW-A2-03.koniec_tekst": {
+      "text": "Rozkład dotarł, a pasażerowie mieli czas bezpiecznie zejść z jezdni.",
+      "hash": "09898f84f25cdd98ed6b593e482cd00599f8937419f28d0ed532e92a628d4f64"
+    },
+    "dialogi.WAW-A2-03.start_tekst": {
+      "text": "Zawieź rozkład jazdy do punktu obsługi przy alei.",
+      "hash": "7dc5c6462d376036939201abc98131502b696f107c31e0e17a33403ecc220d01"
+    },
+    "dialogi.WAW-A2-04.koniec_tekst": {
+      "text": "Czujnik działa i odbiera sygnał znad Wisły.",
+      "hash": "59b3940293cb8d705507cfcd147a24b86b5655fb312bb32d50aefd40d7bffe1f"
+    },
+    "dialogi.WAW-A2-04.start_tekst": {
+      "text": "Czujnik wykryje zakłócenia, jeśli dowieziesz go bez wstrząsów.",
+      "hash": "edb91a61781413e50c5e116c8f888b68ce516e98a2cf4abcb1ffff8a71043d4a"
+    },
+    "dialogi.WAW-A2-05.koniec_tekst": {
+      "text": "W świetle lampki widać na wydruku kolejny ślad błyskawicy.",
+      "hash": "725a0630487b786fcfd86c237561539b3e5270265f7e0ca2db596e1a4ff6b8b6"
+    },
+    "dialogi.WAW-A2-05.start_tekst": {
+      "text": "Po zmroku trzeba dostarczyć Profesorowi wyniki pomiarów.",
+      "hash": "8cc5eb59d8a55031fb8f73480f27e1c1d40120655417d42646dbe4158901c327"
+    },
+    "dialogi.WAW-A2-06.koniec_tekst": {
+      "text": "Błyskawica to ślad Zawiły, a nadajnik wskazuje Pałac Kultury.",
+      "hash": "980e9a04be7f188127af161de10cba08d2d7c3d445043b914e5dbddf234fbf93"
+    },
+    "dialogi.WAW-A2-06.start_tekst": {
+      "text": "Ktoś namalował swój znak przy wjeździe na most, sprawdź prawdziwe oznakowanie.",
+      "hash": "361180f41e691d4ce5994eab55a3b9ef7bf9e838fe726e613c20df7d2e53a545"
+    },
+    "dialogi.WAW-A3-01.koniec_tekst": {
+      "text": "Ostrzeżenie dotarło, a przy parku ktoś widział Turbo.",
+      "hash": "6e87d5ad6b5708c01cbcb1119c8c5e6db0288cc42547107510c501bbdc3e78ac"
+    },
+    "dialogi.WAW-A3-01.start_tekst": {
+      "text": "Mimo ulewy zawieź ostrzeżenie do Pawilonu w Łazienkach.",
+      "hash": "89422cd9bf0a621c916eb2cd73f613a23d1ddbe0791d1e0d1ef29e96959971a9"
+    },
+    "dialogi.WAW-A3-02.koniec_tekst": {
+      "text": "Dzięki za wspólną drogę, Kazik i ja widzieliśmy Twój znak przed skrętem!",
+      "hash": "cf24c60c8cce6ce28915e2fd92c0428985deb5bfbf42e6899c7fd1c54acf01c0"
+    },
+    "dialogi.WAW-A3-02.start_tekst": {
+      "text": "Kazik idzie ze mną, pokaż nam bezpieczną drogę do parku!",
+      "hash": "1a39dc8e509021a7bae3525639176595d5c200253b1aa9d8c39aeeab1595ccbd"
+    },
+    "dialogi.WAW-A3-03.koniec_tekst": {
+      "text": "Nagranie mówi, że Zawiła wyłączy światła w dniu święta.",
+      "hash": "9271dfcfb805c40a65d361a69eef466b493221379ec5dfb45031d09f6bbddbeb"
+    },
+    "dialogi.WAW-A3-03.start_tekst": {
+      "text": "Nadajnik przy stacji na Mokotowie nagrał wiadomość Zakłócacza.",
+      "hash": "7c6de718eac80088b1a673c307bf1e0387e438de9a9aae1b5ce4dc07be13f073"
+    },
+    "dialogi.WAW-A3-04.koniec_tekst": {
+      "text": "Turbo jest pod opieką dorosłych i chce pomóc odzyskać klucz systemu.",
+      "hash": "69b1d8182ac8d007f28a58da7e74c84088fa9ccb0414cb1a7c5495a8645854ba"
+    },
+    "dialogi.WAW-A3-04.start_tekst": {
+      "text": "Turbo ruszył w stronę Pałacu Kultury, sprawdź, czy dojechał bezpiecznie.",
+      "hash": "4284d7cb136c32b28d26a1962de239994c299295cb3952f8187311b33daaa9ba"
+    },
+    "dialogi.WAW-A3-05.koniec_tekst": {
+      "text": "Klucz dotarł na Stadion, czas pokazać Zawile, jak jeździ Szprycha.",
+      "hash": "611dda06dee5a16aeba30860c7e2a5996f746791c9927a629bba7e479f0e822e"
+    },
+    "dialogi.WAW-A3-05.start_tekst": {
+      "text": "Zawieźcie klucz z Łazienek na Stadion, a na skrzyżowaniu patrzcie na moje polecenia.",
+      "hash": "86581c92dfd1a3b3b92e9eb0d54c985226e2287e59e5de1726aa6b0b215252f3"
+    },
+    "dialogi.WAW-A3-06.epilog": {
+      "text": "Witaj w ekipie, Klemensie, czeka na nas nowy plac manewrowy.",
+      "hash": "fd2b37e49db4f06067f58ce6de795dc074e62817a40115210eb675faa06e1ed3"
+    },
+    "dialogi.WAW-A3-06.koniec_tekst": {
+      "text": "Oddaję sterownik Szprysze i pomogę Kazikowi zbudować plac manewrowy.",
+      "hash": "2aab9a4ff5f7022e5df0cf96ee9c51bbadfa56eed6ccb242fef94aec30de4b6a"
+    },
+    "dialogi.WAW-A3-06.start_tekst": {
+      "text": "Czas na finałowy wyścig punktowy do Stadionu Narodowego!",
+      "hash": "99f4f3c1a0fd8164f462eee837574240b5f5ebeec3fa785cc3f81f7467e0acb3"
+    },
+    "dialogi.WAW-A3-06.swieto": {
+      "text": "Tyle rowerów i każdy zostawia innym miejsce, przywracam światła na całej trasie!",
+      "hash": "ae827f9e08e77a53daec52aef10d62e73cc58723cb1d26c48f7a46b7bfd55e7d"
+    },
+    "dialogi.WAW-T-01.meta": {
+      "text": "Pełne zatrzymanie przed STOP zaliczone!",
+      "hash": "8d4d93659a3cac21b57303334e3b0ea2b561da66fc4ccdee43aa51e2ff5da491"
+    },
+    "dialogi.WAW-T-01.po_mecie": {
+      "text": "Tak trzymać, Szprycho!",
+      "hash": "d8fbe1a76f6ab16e83ff3b3bfaed1dd6b18368151ac7b3cf692ec689a1d65c73"
+    },
+    "dialogi.WAW-T-01.powitanie": {
+      "text": "Witaj w Szprysze! Zanim ruszymy z dostawami, zróbmy próbę w miasteczku.",
+      "hash": "a95f00392ed38b2127c746ce129ef58453d7ad2868f6709b8c587d7023cdf790"
+    },
+    "dialogi.WAW-T-02.koniec_tekst": {
+      "text": "Rower gotowy! Mam dla ciebie pierwszy kurs po Pradze.",
+      "hash": "27985ec1861a67e42f682a8e7ce36d2fa51b0582f2b4453c3be8d57e55d6851b"
+    },
+    "dialogi.WAW-T-02.start_tekst": {
+      "text": "Już się ściemnia. Zapnij kask, włącz światła i zrób próbne kółko po placu.",
+      "hash": "626c885ba883f2ba36939134939e7765dc1141825f0a8cd2d9b7df4cbdf261df"
+    },
+    "dialogi.WRO-A1-01.koniec_tekst": {
+      "text": "Są wszyscy! Kwiaciarka widziała kogoś, kto chował krasnale także przy placu Solnym.",
+      "hash": "302a87a59865ddbddbb0b7f05d0c9fd52328c825c31277cc7a685124522d6d1b"
+    },
+    "dialogi.WRO-A1-01.start_tekst": {
+      "text": "Dwóch krasnali nie ma na próbie parady. Na deptaku zejdź z roweru i rozejrzyj się przy Rynku.",
+      "hash": "f9aa5d6645142522d430622a10940c15c2deb3572436a93103d9bab709b98781"
+    },
+    "dialogi.WRO-A1-02.koniec_tekst": {
+      "text": "Bukiet cały! Te kwiaty są dla Latarnika, który pilnuje naszego festiwalu.",
+      "hash": "51e08ca8ff28b57312058590bdf6c6e5ac74365c1aff16e51fa99e32123ddb8e"
+    },
+    "dialogi.WRO-A1-02.start_tekst": {
+      "text": "Zawieź kwiaty Dzwoneczkowi. Na kostce zwolnij i uważaj na spacerowiczów.",
+      "hash": "bcaefffa01e7f5524941c80f990a006d56a7da00cbfcf5b4bdbb020db1351722"
+    },
+    "dialogi.WRO-A1-03.koniec_tekst": {
+      "text": "Zaproszenie dotarło. Latarnik wie, gdzie widziano następne krasnale.",
+      "hash": "8d362073c126f95c49536af94944bb7aafd9dcc761d9de6727d09c3a32c0ef2d"
+    },
+    "dialogi.WRO-A1-03.start_tekst": {
+      "text": "Gołębie rozniosły karteczki o paradzie. Zanieś ocalałą kopertę Latarnikowi po drugiej stronie Odry.",
+      "hash": "9ccea225a43ab8d8beb989d9b759ce4fecc4cd9c1b045594f8141b997d3894bb"
+    },
+    "dialogi.WRO-A1-04.koniec_tekst": {
+      "text": "Dziękuję! Kiedy zapalę latarnie, sprawdzimy, czy w świetle nie widać śladów gangu.",
+      "hash": "1f47f99251a4c95d24a559f42b19a199db9ca15315dc4076196a1ba3b6449aa8"
+    },
+    "dialogi.WRO-A1-04.start_tekst": {
+      "text": "Moje zapasowe zapałki zostały po drugiej stronie skrzyżowania; rozejrzyj się, zanim je przewieziesz.",
+      "hash": "fb6cf6c04d331bdf7f52165a70f6702b7240710ebe6881c76953525e79dc0995"
+    },
+    "dialogi.WRO-A1-05.koniec_tekst": {
+      "text": "W blasku lampy widziałem kartkę z mapą mostów. Zabierz ją do Oli.",
+      "hash": "350a846619b7376d15cc9ec445e4a94e9c62f9d360ecf7efec3ea407bad447e8"
+    },
+    "dialogi.WRO-A1-05.start_tekst": {
+      "text": "Za chwilę zapadnie zmrok. Włącz lampki i sprawdź ostatnie latarnie przed mostem.",
+      "hash": "976a9d355a6b3b19ce98ad6a12b8ed8657e816ddb26be851bbac728edbe38703"
+    },
+    "dialogi.WRO-A1-06.koniec_tekst": {
+      "text": "Oba zdjęcia są w Albumie. Na kartce został jeszcze rysunek Hali Stulecia.",
+      "hash": "da20a6cb1375ece11ce5111e050724b556deb0155a526608ed086b654367b825"
+    },
+    "dialogi.WRO-A1-06.start_tekst": {
+      "text": "Ślad z kartki prowadzi w stronę Rynku. Zrób zdjęcia znaku ustąpienia i znaku drogi z pierwszeństwem.",
+      "hash": "a7332097c2b62ecaeca3784a1826595414f55a8e8bb574d3b74389ad4a6a0b68"
+    },
+    "dialogi.WRO-A2-01.koniec_tekst": {
+      "text": "Plan dotarł, a pani Doktor prosi o kurs do Zoo.",
+      "hash": "0aab8db4cdcf4cc812635e79d7e40aa84679bc4cc4a1d8d2c189d40f4c0999ae"
+    },
+    "dialogi.WRO-A2-01.start_tekst": {
+      "text": "Dostarcz plan parady pod Halę Stulecia. Na rondzie prowadź trasę zgodnie ze znakami i strzałkami.",
+      "hash": "b365d34ee6edcb2cc924e81da2bd8eac7b5a444a2f0c738db731f095e7a879b7"
+    },
+    "dialogi.WRO-A2-02.koniec_tekst": {
+      "text": "Pingwiny dostały obiad. Dostawca na Dworcu widział rowery gangu.",
+      "hash": "88a252d5cc14341385b2855c1fd7e5433b31ab7014592e33abd7aacbd2f87fb5"
+    },
+    "dialogi.WRO-A2-02.start_tekst": {
+      "text": "Jedź z karmą do Afrykarium. Na wspólnej drodze zostaw miejsce pieszym i wieź paczkę płynnie.",
+      "hash": "a797be4862e0c93ca7da24f727759eae9c13b4bccb6f9de1e09baf90dbc1921c"
+    },
+    "dialogi.WRO-A2-03.koniec_tekst": {
+      "text": "Bilet dotarł na czas. Ślady gangu biegną dalej w stronę Sky Tower.",
+      "hash": "0eec037b39a87f095d198cb90d9bcaa6624dd366eaf2af03e01d3f6aaa98b119"
+    },
+    "dialogi.WRO-A2-03.start_tekst": {
+      "text": "Zawieź bilet na Dworzec Główny. Na przejeździe czekaj na zielone, a przy tramwaju przepuść pasażerów.",
+      "hash": "357890fab582a40bf03bb3c9cbf291a191fefc623dcb2af1511c3617bcc21721"
+    },
+    "dialogi.WRO-A2-04.koniec_tekst": {
+      "text": "Świetnie. Sprawdźmy jeszcze oznakowanie pasa rowerowego na alei.",
+      "hash": "ed84c5c9f888f422be3ab76ca1017c579074b1695209bcfb2202da40abd4836d"
+    },
+    "dialogi.WRO-A2-04.start_tekst": {
+      "text": "Pod Sky Tower przećwicz zmianę pasa. Obejrzyj się, zasygnalizuj manewr i przepuść pojazdy na pasie, na który wjeżdżasz.",
+      "hash": "18c1ad896ec7f92cfdfc3fd41e2f860b4bdf6b5ee5a54351f556ae639f825476"
+    },
+    "dialogi.WRO-A2-05.koniec_tekst": {
+      "text": "Symbol jest w Albumie. Został nam jeszcze trop do magazynu na zachodzie.",
+      "hash": "88249d930ec99bde5d9d8b24fe092e8632dd4aee16c89a64160eb67e5eb85e19"
+    },
+    "dialogi.WRO-A2-05.start_tekst": {
+      "text": "Wypatrz symbol roweru namalowany na pasie i sfotografuj go po zatrzymaniu.",
+      "hash": "c1bacb9049cc2a7b7d8ddff3131a696f3f3a42e7ea2c0352f61633acbe19967a"
+    },
+    "dialogi.WRO-A2-06.koniec_tekst": {
+      "text": "Trop skręca za tory. Powiedzmy o tym Oli.",
+      "hash": "4d1da5763eb702c16b47475957e63ff2f22e1680db59e5a12ed9d45969ffc2d2"
+    },
+    "dialogi.WRO-A2-06.start_tekst": {
+      "text": "Jedź po tropie w stronę zachodniego magazynu. Obserwuj drogę i wyprzedzaj tylko wtedy, gdy masz miejsce.",
+      "hash": "391f1aec24617fe03fdf5c9409d7b4413ca7afd0785ea56e0591368f544506a4"
+    },
+    "dialogi.WRO-A3-01.koniec_tekst": {
+      "text": "Stróż potwierdza trop i pokazuje bezpieczną drogę w stronę stadionu.",
+      "hash": "4a7280be4852d687fe8122b8b652baad9ef42583c5cad939f7ff8c810571fde8"
+    },
+    "dialogi.WRO-A3-01.start_tekst": {
+      "text": "Zawieź wiadomość do stróża. Po drodze są dwa przejazdy: przed każdym sprawdź, czy nie nadjeżdża pociąg.",
+      "hash": "76bd8a43607fe6a7742c3fc05fbab206d295961b70d29767880d2e20bc2313d0"
+    },
+    "dialogi.WRO-A3-02.koniec_tekst": {
+      "text": "Dobra decyzja. Turbo rozstawia już trasę wyścigu nad Odrą.",
+      "hash": "0d160e3c9eced87747aabb1bb817803d666e6db20af7984a7457d277fb6e7d54"
+    },
+    "dialogi.WRO-A3-02.start_tekst": {
+      "text": "Przy obwodnicy stoi zakaz wjazdu rowerów. Znajdź znak i wybierz boczną drogę.",
+      "hash": "744840ad72c6c4855644085c3cc4b2fd8ef834ab8d032d61a8aa417823682091"
+    },
+    "dialogi.WRO-A3-03.koniec_tekst": {
+      "text": "Próba trasy zaliczona. Turbo czeka już na starcie.",
+      "hash": "7aecf0e0da1de073c03591aaf09318d8eef0c28e1d6121c92a819bb840210a6c"
+    },
+    "dialogi.WRO-A3-03.start_tekst": {
+      "text": "Wieje i pada ulewny deszcz. Na bulwarze jest droga dla rowerów; jedź uważnie i zwolnij na mokrej nawierzchni.",
+      "hash": "3a6607f88f0850f4b13f5a1a8f89aca202100d1f1482cdd7569fcf29090df8f3"
+    },
+    "dialogi.WRO-A3-04.koniec_tekst": {
+      "text": "Dobra jazda! Na końcu bulwaru ktoś z gangu się przewrócił. Pomóżmy mu.",
+      "hash": "511465c7c7a840ddefe7248e21eb2f342797196e8fd530e28ef50b52a9c03121"
+    },
+    "dialogi.WRO-A3-04.start_tekst": {
+      "text": "Wyścig zaczyna się przy Wyspach. Liczą się punkty za bezpieczną jazdę, nawet jeśli Turbo dotrze pierwszy.",
+      "hash": "2870c4bdba1e9117d5453572005961e490e1079251a98152f453bbf58a0a19ee"
+    },
+    "dialogi.WRO-A3-05.koniec_tekst": {
+      "text": "Pomoc jest w drodze. Gang oddaje krasnale i chce pomóc przygotować paradę.",
+      "hash": "c7ebf80476b69bea0ac5a9343d14c95e47bf8fa84b9e5bb32f0537d5999d8df4"
+    },
+    "dialogi.WRO-A3-05.start_tekst": {
+      "text": "Na bulwarze przewrócił się rowerzysta. Zwolnij, zatrzymaj się w bezpiecznym miejscu i sprawdź, co się stało.",
+      "hash": "3bf1265519403d9e625fb802289cc6c87aedc7820c004bac43f08f02d3753333"
+    },
+    "dialogi.WRO-A3-06.koniec_tekst": {
+      "text": "Parada dotarła pod Ratusz! Mam już swoje miejsce w warsztacie Kazika, a ty jesteś naszym Pilotem Miejskim.",
+      "hash": "8889615053aed1f702aac22534924ffc62da9cd6edd9635486863aea74362a0d"
+    },
+    "dialogi.WRO-A3-06.start_tekst": {
+      "text": "Krasnale wracają na Rynek! Poprowadź grupę w bezpiecznym odstępie i słuchaj poleceń Oli.",
+      "hash": "c84b840226a0aa800cf9a4dcf9a35c0abb4aa6103d453aad2159dd2e2d6a25db"
+    },
+    "dialogi.WRO-B-01.koniec_tekst": {
+      "text": "Lampki świeciły przez całą trasę.",
+      "hash": "7e11889b2dc6dbaeffdef1a7fde5d49c2370065ae06af0851e1e0d7c4f492baa"
+    },
+    "dialogi.WRO-B-01.start_tekst": {
+      "text": "Po zmroku zabierz lampkę na objazd przy Hali i fontannie.",
+      "hash": "a65924533af6b8046b585f68fb6a4655653facba24087ac0dd0472377fa68bcd"
+    },
+    "dialogi.WRO-B-02.koniec_tekst": {
+      "text": "Przeprawy zaliczone. Odra zostaje za tobą!",
+      "hash": "ce59f08cdd9f2364f00a4d2c83319c8fa5e4d22f5136b1fe7eee12ff395ac494"
+    },
+    "dialogi.WRO-B-02.start_tekst": {
+      "text": "Przejedź dwanaście razy przez przeprawy w czterech częściach miasta.",
+      "hash": "4deb397859d034075e1ca21e494dbd34592d99e120997852c2a5a2c394225b8f"
+    },
+    "dialogi.WRO-B-03.koniec_tekst": {
+      "text": "Przesyłki przekazane przed odjazdem.",
+      "hash": "ca8ff14066170868719dc5c733ffd096e5d77ddc994a0cdaa552dd6e4dfe0a0d"
+    },
+    "dialogi.WRO-B-03.start_tekst": {
+      "text": "W gęstej mgle włącz światła i dostarcz dwie przesyłki na Dworzec.",
+      "hash": "8f37178c04efc54e866d9c482fa0e8401a4edc402d3fec3abb5fdf1d42e2016d"
+    },
+    "dialogi.WRO-B-04.koniec_tekst": {
+      "text": "Kontrapas zaliczony. Wyjątek był oznaczony tabliczką.",
+      "hash": "92dd5fea93cb45008a9e187beaf770abba4aafdc1395e69b7590fe1c0c1ebb27"
+    },
+    "dialogi.WRO-B-04.start_tekst": {
+      "text": "Pada lekki deszcz. Włącz światła i przejedź oznaczonym kontrapasem.",
+      "hash": "05df0931c04eb0d68e87c2d1f028b25cd576684b52442ddae93ad8353b44b465"
+    },
+    "dialogi.WRO-B-05.koniec_tekst": {
+      "text": "Lody dotarły w samą porę.",
+      "hash": "4a7fe7084660ca4c4120ae7d78dea61cbda19ab4e20d68edb6b860d5951fcc63"
+    },
+    "dialogi.WRO-B-05.start_tekst": {
+      "text": "Dowieź lody na wyspę, zanim się rozpuszczą. Na wspólnej kładce uważaj na spacerowiczów.",
+      "hash": "e0ecb280536a190dfbfac9d9d730f9f931bbbeeafb7bb16bc81416d0df8e2bb3"
+    },
+    "dialogi.WRO-B-06.koniec_tekst": {
+      "text": "Sadzonki dotarły całe.",
+      "hash": "50d8d2d4e78ec03def180905ad617375877fe3a5f6f833ee8f8d4c50ce90ae60"
+    },
+    "dialogi.WRO-B-06.start_tekst": {
+      "text": "Pada śnieg. Ostrożnie przewieź sadzonki przez mostek.",
+      "hash": "e58ef825274ba64f988b06f058ed998b0a512eabc84d4920b48e13a40766ef6d"
+    },
+    "dialogi.WRO-B-07.koniec_tekst": {
+      "text": "Pięć czystych okrążeń. Dobra jazda!",
+      "hash": "cecf6bba019e8427413189e881e11fe2443bdbaa9bbb6fef20412c4e4d584492"
+    },
+    "dialogi.WRO-B-07.start_tekst": {
+      "text": "Zrób pięć pełnych okrążeń ronda przy Hali, zgodnie z kierunkiem ruchu i bez błędu.",
+      "hash": "28e7a8c0c3df2445eb259b7655be07570cabca83058b4e18109863a5197ac8ae"
+    },
+    "dialogi.WRO-T-01.koniec_tekst": {
+      "text": "Dzwonek w górę! Zanim ruszymy na Rynek, odwiedź Kazika.",
+      "hash": "9c3c0c37ccbcc59e56bf4c7243f456634acd20f4d6b55fca073d5503d26f2a57"
+    },
+    "dialogi.WRO-T-01.start_tekst": {
+      "text": "Jestem Dzwoneczek i szukam ekipy na wrocławski festiwal. Zapnij kask i pokaż mi, jak zatrzymujesz się na STOP-ie.",
+      "hash": "b5a54cf0a2df553dfdbf09aadc0e3862f820cef369a9fdc6c085ae980370162c"
+    },
+    "dialogi.WRO-T-02.koniec_tekst": {
+      "text": "Rower gotowy. Dzwoneczek czeka na Rynku.",
+      "hash": "53467a7fa5fecf7429e66b5789fe6aa44db8edcb170fbf1047caa438fcdf8752"
+    },
+    "dialogi.WRO-T-02.start_tekst": {
+      "text": "Sprawdź kask i obie lampki, a potem zrób krótką rundę.",
+      "hash": "04c82170c704a50328819b84d462149c17c92f4b4ccb11316013285bc7b6a7c0"
+    },
+    "dialogi.lektor.ZNAK-STOP": {
+      "text": "Przed linią stop zatrzymaj się całkowicie i ustąp pierwszeństwa.",
+      "hash": "54047d2f5a5067a18ca4dc92009b476bc5f95aec2f73e60ee2859b036f57e75a"
+    },
+    "dialogi.reguly.GDZIE-01": {
+      "text": "Jeśli droga dla rowerów biegnie w Twoim kierunku, korzystaj z niej.",
+      "hash": "b0246f7a75407b695cb4325d406d3ed2d3888aba9d76fe73a2169106e7400d8d"
+    },
+    "dialogi.reguly.GDZIE-02": {
+      "text": "Na pasie rowerowym jedź w wyznaczonym kierunku.",
+      "hash": "8671e162abf9f5c19e3b5f2f9a3c59c59bdc6620717354e1f23ddbd68188585a"
+    },
+    "dialogi.reguly.GDZIE-04": {
+      "text": "W ulewie możesz jechać chodnikiem, ale jedź powoli i ustępuj pieszym.",
+      "hash": "d45820d21c0bf3cff1bf3de088756039f38cf36c76e4425595436fd1cc1151b9"
+    },
+    "dialogi.reguly.GDZIE-05": {
+      "text": "Jeśli wyjątkowo wolno ci jechać po chodniku, jedź powoli i ustępuj pieszym.",
+      "hash": "eef1c2baa83b0f303c7f7d8a5446e1d19c4f2a6549dd0dd6cd0a16f6cbe0a194"
+    },
+    "dialogi.reguly.GDZIE-06": {
+      "text": "Na zebrze zejdź z roweru i przeprowadź go pieszo.",
+      "hash": "89a734d9a7458684db508a70b04ce9f17e218945228fb2105e0eb1b6ffc73c6c"
+    },
+    "dialogi.reguly.GDZIE-07": {
+      "text": "W strefie zamieszkania piesi mają pierwszeństwo, a ty możesz jechać najwyżej 20 km/h.",
+      "hash": "0a05372d55931840649cf71943a66bc0ed4ebd555078813e4800111cbd424824"
+    },
+    "dialogi.reguly.GDZIE-08": {
+      "text": "Jedźcie jeden za drugim, gdy jazda obok siebie przeszkadza innym.",
+      "hash": "a60645db0b6e2345d885788e55f551420bb4fa0797d74d9145229c0c571ad7cf"
+    },
+    "dialogi.reguly.GDZIE-09": {
+      "text": "Gdy znak zabrania wjazdu rowerem, wybierz inną trasę.",
+      "hash": "41b26a05da816dd4b83f104dedc4758eafc2e5218d8ec6b42f27c1c0a8288742"
+    },
+    "dialogi.reguly.GDZIE-10": {
+      "text": "Siedmioletni Franek jedzie po chodniku pod opieką dorosłego.",
+      "hash": "8b7404bfe380e00984ea415ea605c46133eaa973cb3681e1d5909e8604716a49"
+    },
+    "dialogi.reguly.KASK-01": {
+      "text": "Zanim ruszysz, zapnij kask, żeby chronił głowę.",
+      "hash": "fd412dc1c5f23dd18ed83c7bd2073bb7480052e279d0d6b57a11b64f4fe83b11"
+    },
+    "dialogi.reguly.MAN-01": {
+      "text": "Zamiar skrętu pokaż ręką odpowiednio wcześnie.",
+      "hash": "4194c4825012777a07c145eea3379ab6160e0a8c1c166de402a673ed34d5c891"
+    },
+    "dialogi.reguly.MAN-04": {
+      "text": "Przed ominięciem lub wyprzedzaniem obejrzyj się, pokaż zamiar i zostaw bezpieczny odstęp.",
+      "hash": "74dbf86cae990e8959f66538106ad814c0ffa2f804414638865bdea3199b8e61"
+    },
+    "dialogi.reguly.MAN-07": {
+      "text": "Przed ruszeniem od krawędzi jezdni obejrzyj się za siebie.",
+      "hash": "57ac365f377e27d824d20f2b97867ff7059e309f9ab34c79846e0dd786afcbd8"
+    },
+    "dialogi.reguly.MAN-08": {
+      "text": "Zwolnij na kocich łbach i tam, gdzie w każdej chwili może pojawić się pieszy.",
+      "hash": "0717d30d91849cc90241e9af00b3f22c45d28d11368674c0dd5f3f78ce7c3778"
+    },
+    "dialogi.reguly.MSC-01": {
+      "text": "Gdy zapory są w ruchu lub miga czerwone światło, zatrzymaj się przed torami.",
+      "hash": "f9b3e9df74359160b1412887101d2c87ec80aadd7d8f63c7a0b8f37fa81d5ca8"
+    },
+    "dialogi.reguly.MSC-02": {
+      "text": "Stój przed przystankiem bez wysepki, aż pasażerowie zejdą z jezdni.",
+      "hash": "90a8528297f266681c5e3f40d5ece096f526337596624b3553dc65c693b420b8"
+    },
+    "dialogi.reguly.MSC-03": {
+      "text": "Przed przecięciem chodnika przy wyjeździe z bramy zatrzymaj się i przepuść pieszych.",
+      "hash": "2cb06688f3f1c776c9f53161556a0f8d82a8b77bf77a868a8ed07ae39a74c747"
+    },
+    "dialogi.reguly.MSC-04": {
+      "text": "Po zmroku włącz przednią i tylną lampkę.",
+      "hash": "6d7d7d3f776ea73016e4e12f52e8a228988d890363c184c945e08990877714af"
+    },
+    "dialogi.reguly.MSC-05": {
+      "text": "W jednej kolumnie może jechać najwyżej piętnaście rowerów.",
+      "hash": "6f9bdb538b0db6c63f144e089e83b35e7b4db637321473024f8095a5bc4ea529"
+    },
+    "dialogi.reguly.PIER-01": {
+      "text": "Na skrzyżowaniu równorzędnym ustąp pojazdowi nadjeżdżającemu z prawej.",
+      "hash": "26b3f0d21aa946c23a6bb70e9f5b44028c159ba833976e25c3acdf74f0ac967b"
+    },
+    "dialogi.reguly.PIER-02": {
+      "text": "Z drogi podporządkowanej ustąp pojazdom na drodze z pierwszeństwem.",
+      "hash": "c16c728017d962fbeb7e88c2a3bfbe3b0b6d46a0eefc323a327a0e5ee0bae05f"
+    },
+    "dialogi.reguly.PIER-04": {
+      "text": "Przy skręcie przepuść pieszych i rowerzystów jadących prosto przez twój tor jazdy.",
+      "hash": "d9aaf9e6430087baf96b9670587fb78f6cea0816fe3e8d8a9b57e64e6b9130fb"
+    },
+    "dialogi.reguly.PIER-06": {
+      "text": "Gdy włączasz się do ruchu, ustąp pierwszeństwa wszystkim uczestnikom ruchu.",
+      "hash": "c2e20eb637cf6291366df8a940a0d38931a0a0132c1af4824b8a4ef963f0be71"
+    },
+    "dialogi.reguly.PIER-07": {
+      "text": "Zostaw bezpieczne miejsce dla pojazdu z syreną i niebieskimi światłami.",
+      "hash": "c8908923cd96f35f9b6297a71c9a75099585af037649710cbbcaff8278811c15"
+    },
+    "dialogi.reguly.PIER-09": {
+      "text": "Gdy tory przecinają Twój tor jazdy, zwolnij i obserwuj tramwaj, znaki oraz światła.",
+      "hash": "aa6b3f74222b1433e450e53f8622f0735cae5a2962ff5fb3e0bebd99f21b9a2a"
+    },
+    "dialogi.reguly.PP-01": {
+      "text": "Po zdarzeniu najpierw zadbaj o bezpieczeństwo swoje i innych.",
+      "hash": "a1d12397eb6b24614ff4729a6f16bdaf0f53a61b3ca3122df7a778abf4d5cbdc"
+    },
+    "dialogi.reguly.PP-02": {
+      "text": "Dzwoniąc na 112, podaj miejsce, opisz zdarzenie i powiedz, ilu osobom trzeba pomóc.",
+      "hash": "4aa0ee8f887617b74e3b534daa2382c493c25d1b3bbc50c5d9b96a109a3e0300"
+    },
+    "dialogi.reguly.PP-03": {
+      "text": "Zawołaj dorosłego i zapytaj poszkodowanego, czy Cię słyszy.",
+      "hash": "37bfa6b614135965e0b50502a6adcc6af5e83d4b2e71f69113ccb05fefea2367"
+    },
+    "dialogi.reguly.PP-04": {
+      "text": "Jeśli ktoś nie odpowiada, ale oddycha, poproś dorosłego o pomoc w ułożeniu go w pozycji bezpiecznej.",
+      "hash": "5fe44a8b47a551b700aceb35849e32b33aedb2b639f87fc69fedb088f7be375b"
+    },
+    "dialogi.reguly.SYG-01": {
+      "text": "Na czerwonym świetle zatrzymaj się przed linią i poczekaj na zielone.",
+      "hash": "b6609161c5c491605f9ea462eba2966704e0249b78ec1860c18b593e21796aef"
+    },
+    "dialogi.reguly.SYG-02": {
+      "text": "Patrz na sygnalizator z rowerem, gdy jedziesz przez przejazd rowerowy.",
+      "hash": "1f23d447837b381ddf51c38e1688948612e12df0567cfdf4d3e7f1f88f3bbfde"
+    },
+    "dialogi.reguly.SYG-03": {
+      "text": "Polecenie osoby kierującej ruchem jest ważniejsze niż światła i znaki.",
+      "hash": "51b4618a0e8e83bd824984d96c7e5f17fd5e7b7c6adb3ba96e070da19cdadd36"
+    },
+    "dialogi.reguly.WYP-04": {
+      "text": "Po zmroku włącz przednie światło.",
+      "hash": "fb5470df1eeafe1d16320b9a4519037260c51f7a808fe502517e2270bdbc09b9"
+    },
+    "dialogi.reguly.WYP-05": {
+      "text": "Tylne czerwone światło pomaga innym zobaczyć cię od tyłu.",
+      "hash": "ae8023cf079f596dd8857da5edf560add381ed35a5a82f1a5be31b2f714ff027"
+    },
+    "dialogi.reguly.ZNAK-A7": {
+      "text": "Odwrócony trójkąt oznacza „ustąp pierwszeństwa”.",
+      "hash": "47cefa141a7c53b1b42a1df90230e576b74ccbe7a3916fe7bbddc3f9f4076948"
+    },
+    "dialogi.reguly.ZNAK-C13": {
+      "text": "Biały rower na niebieskim kole wskazuje drogę dla rowerów.",
+      "hash": "35d8396fc73a17cabef12b2c25f3c2ad35f1a2b82aaf497817eb7e3531c52efe"
+    },
+    "dialogi.reguly.ZNAK-S2": {
+      "text": "Przy zielonej strzałce najpierw stań, a potem ustąp pieszym i pojazdom.",
+      "hash": "23d8cc38a56f8f0b82080c6a64ba40f42bcc3f934c3166ca871fdcce0db723e1"
+    },
+    "dialogi.wroclaw_zapowiedzi.GDZIE-03b": {
+      "text": "Korzystaj z pobocza, gdy nadaje się do jazdy i nie utrudnisz ruchu pieszym.",
+      "hash": "9989e9968259461acaf4a3c9444cefde407c694749d7a7a091fe7521efa27c12"
+    },
+    "dialogi.wroclaw_zapowiedzi.GDZIE-11": {
+      "text": "Na wspólnej drodze pieszych i rowerów zwolnij i daj pieszym pierwszeństwo.",
+      "hash": "be038e05cc50614c60485034d597bdbf19baa75f6e18805a3d9db096ee45f730"
+    },
+    "dialogi.wroclaw_zapowiedzi.MAN-03": {
+      "text": "Przed zmianą pasa rozejrzyj się, zasygnalizuj i ustąp tym, którzy już jadą tym pasem.",
+      "hash": "5fa422ecac809b2252577a8043292f298797ca18a6797446d9787bf80d3656d3"
+    },
+    "dialogi.wroclaw_zapowiedzi.MAN-05": {
+      "text": "Przed ominięciem przeszkody sprawdź, czy masz bezpieczny odstęp.",
+      "hash": "3be9b768cb1182affdd4e305b47fddce09b03f982eb4f4753d4023480f92d227"
+    },
+    "dialogi.wroclaw_zapowiedzi.PIER-03": {
+      "text": "Przed skrętem w lewo przepuść jadących z naprzeciwka prosto lub w prawo.",
+      "hash": "c92fb916d06a5d221884fc60fd698401886b099d9fcf4a4262add453addc0cd1"
+    },
+    "dialogi.wroclaw_zapowiedzi.PIER-05": {
+      "text": "Przed przejazdem rowerowym upewnij się, że masz czas na spokojny przejazd.",
+      "hash": "1ba8fbc46b39d39a20302e76da82182bb9bec3c60d989b0714db2c469a18a273"
+    },
+    "dialogi.wroclaw_zapowiedzi.PIER-08": {
+      "text": "Przed wjazdem na rondo patrz na znaki i ustąp zgodnie z oznakowaniem.",
+      "hash": "4e0a5273fda5d3ccbb61516f242b98392fa52e0a0ceab797e51305533d878236"
+    },
+    "dialogi.wroclaw_zapowiedzi.ZNAK-B2T22": {
+      "text": "Pod znakiem B-2 szukaj tabliczki, która dopuszcza wjazd rowerów.",
+      "hash": "fa38c582e60c601298d1dac6014d5cdf3437b707766d64343b3666c0a8c5bbfa"
+    },
+    "dialogi.wroclaw_zapowiedzi.ZNAK-B9": {
+      "text": "Znak B-9 to zakaz wjazdu rowerów, więc poszukaj innej drogi.",
+      "hash": "e54b27be291368fdca29d45c5f3f8053d41f7f275cb6ea6ea711de5cb5563ae3"
+    },
+    "dialogi.wroclaw_zapowiedzi.ZNAK-D1": {
+      "text": "Żółty romb D-1 oznacza drogę z pierwszeństwem.",
+      "hash": "3ae45183a11f8560fe2858d342f6754b5e4c5d86027464204510bddbe6674f15"
+    },
+    "dialogi.wroclaw_zapowiedzi.ZNAK-P23": {
+      "text": "Symbol roweru na nawierzchni może oznaczać pas dla rowerów.",
+      "hash": "f7a8f602fa20071ad330ad7e2f4c13b93fa4fdeb6560d5ecd8c3d30035944162"
+    },
+    "driving.blocked": {
+      "text": "Odsuń się od ściany, zanim wsiądziesz.",
+      "hash": "da5fb67ba1782ebfd3ef25815f4da1bb7ee340ceb1e8fae4df962c48dba2ac86"
+    },
+    "driving.collision": {
+      "text": "UPS, zatrzymaj się przed przeszkodą i wybierz inną drogę.",
+      "hash": "4fdb42ae9877484995126bb3a2b58025abc62acdfee947161009ab4237a60560"
+    },
+    "driving.slowDown": {
+      "text": "Zahamuj, zanim wsiądziesz lub zsiądziesz.",
+      "hash": "62e89d2c19d0053d66099da453b07c6be15def14228b606a9e377e3bb8c8dd46"
+    },
+    "driving.walkingHint": {
+      "text": "Prowadzisz rower.",
+      "hash": "9c3e5d2af6dfd8273cc3c486c7fe2e9b4593cebfbf4e78871baa7e5786e72914"
+    },
+    "exam.cleanExercise": {
+      "text": "Świetnie, ten element jest bez błędów.",
+      "hash": "fa9ade25973d383236e51a0199366816d914157ea654323bbeee745431fe78e8"
+    },
+    "m5c.noPhoto": {
+      "text": "Zsiądź z roweru i zatrzymaj się blisko nowego znaku, poza jezdnią.",
+      "hash": "db201651c30a04ffdab4d549030ae09164c7a6d5066f1b4f7b7af4725432d798"
+    },
+    "m5c.photoFailed": {
+      "text": "Spróbuj zrobić zdjęcie jeszcze raz.",
+      "hash": "e41f2ca2a3d4d31717cd20076995ad033709cd0cab30db382c77dc9f65655cb2"
+    },
+    "m5c.photoSaved": {
+      "text": "Zdjęcie trafiło do Albumu Znaków.",
+      "hash": "35ebb45b92119c5407f57c31e142e1511b5bdc30c69bb00355d29ba92fd69989"
+    },
+    "misje.WAW-A1-03.powrot": {
+      "text": "Wróć przed linię i zatrzymaj się całkowicie przed znakiem STOP.",
+      "hash": "2be4d70a6b7be735fd1a9e93b6156cc9fe002bd19b0c190db6e6f5fb167ee3d4"
+    },
+    "misje.WAW-A2-02.powrot": {
+      "text": "Wróć przed sygnalizator i zatrzymaj się przed skrętem na zielonej strzałce.",
+      "hash": "2e518efaf6598a9f42d09a28a2c3f7bba79cf8b8a96e263d3c9cd2849f25c37e"
+    },
+    "misje.WAW-A3-02.cel1Feedback": {
+      "text": "Franek ma siedem lat i jedzie chodnikiem pod opieką Kazika.",
+      "hash": "904f04f575ccee2b5464655ef5c5e6d4c9872dcd78f89cf6a2109743ec1d013d"
+    },
+    "misje.WAW-A3-02.cel1Pytanie": {
+      "text": "Gdzie siedmioletni Franek jedzie razem z dorosłym Kazikiem?",
+      "hash": "2901f010e1468c87b93dbb3c4d526f73735ccfa030c198a8862aa4ea874ced4f"
+    },
+    "misje.WAW-A3-04.cel2Feedback": {
+      "text": "Zostań w bezpiecznym miejscu poza jezdnią i ostrzeż innych.",
+      "hash": "4aa07e97b857384eac392451a8f007b8b5ff488b8e6fb9e70a561ef9b206583b"
+    },
+    "misje.WAW-A3-04.cel2Pytanie": {
+      "text": "Turbo przewrócił się za przejściem, gdzie zatrzymasz rower?",
+      "hash": "6b77071aa0069ad51417623c44fd39ebe676ee216bef920e94287f6886b5913a"
+    },
+    "misje.WAW-A3-04.cel3Feedback": {
+      "text": "Zawołaj dorosłego i sprawdź przytomność oraz oddech bez zbędnego przenoszenia.",
+      "hash": "24282c60e48cb1b625cfda36e0bd6bb3ff169d92da4538d7cc0c4c346ae8aba8"
+    },
+    "misje.WAW-A3-04.cel3Pytanie": {
+      "text": "Ola jest obok, a Turbo nie odpowiada na Twoje wołanie, co robisz?",
+      "hash": "1c58b78d77fd00edf2da24df10fea1631a91806172afd8be8b5fdc64061ce8e6"
+    },
+    "misje.WAW-A3-04.cel4Feedback": {
+      "text": "Podaj miejsce, opisz zdarzenie, powiedz, ilu osobom trzeba pomóc, i poczekaj na pytania.",
+      "hash": "4d2e437a7b845ec2933571cf18eeb81dc1260c8e1e2331198968928992d28302"
+    },
+    "misje.WAW-A3-04.cel4Pytanie": {
+      "text": "Dyspozytor 112 pyta o miejsce zdarzenia, co mu powiesz?",
+      "hash": "dec24c06b12b81b62337f07f078e2e8de985b7d349c97de8a524ea318294eb84"
+    },
+    "misje.WAW-A3-04.cel5Feedback": {
+      "text": "Z dorosłym wykonuj polecenia dyspozytora, ułóż Turbo w pozycji bezpiecznej i obserwuj oddech.",
+      "hash": "2bf3877aa88332814f2c84e8f7cf8b1d4ed501becb855d8a96a57e343dd2b037"
+    },
+    "misje.WAW-A3-04.cel5Pytanie": {
+      "text": "Turbo oddycha prawidłowo, ale nie odpowiada, a dyspozytor mówi, jak pomóc.",
+      "hash": "ffe9b52d74b6718a219feb7aac4ffd631ca8efd062acc7886fe765a90fa638fe"
+    },
+    "misje.WAW-A3-05.cel2Feedback": {
+      "text": "Jedna kolumna może liczyć najwyżej 15 rowerów.",
+      "hash": "cdc5f34c19ae588442e33e6e34b55b0bbac586375b5396e4bcccd5663516f785"
+    },
+    "misje.WAW-A3-05.cel2Pytanie": {
+      "text": "Ilu rowerzystów może jechać w jednej kolumnie?",
+      "hash": "a62f3259eebe7b8d20025704af5694c469f40f0e5c0ff2534f1722052055c369"
+    },
+    "misje.WAW-T-01.powrot_stop": {
+      "text": "Wróć i zatrzymaj się całkowicie przed linią STOP.",
+      "hash": "3643187a7164c57f8858f9567904f252c2514d98004afc4e29a46c16e84141cf"
+    },
+    "misje.WRO-A3-02.cel2_pytanie": {
+      "text": "Gdzie możesz pojechać rowerem?",
+      "hash": "b186e0af3c7e308c98598af3aae785b6b711ccbe16a3ada973b6a7094dadb2ac"
+    },
+    "misje.WRO-A3-02.cel2_wyjasnienie": {
+      "text": "B-9 oznacza zakaz wjazdu rowerów, więc wybierz inną drogę.",
+      "hash": "0ec1921479d6ab83faaf5e71ca23c84ac5cda64a25de0e11266c83efa50e93d9"
+    },
+    "misje.WRO-A3-05.cel2_pytanie": {
+      "text": "Gdzie zostawisz swój rower?",
+      "hash": "d2b9be4c361f2b82b37233b59dcaed5539edada0d7e6a62faf00dfd28ed9bd28"
+    },
+    "misje.WRO-A3-05.cel2_wyjasnienie": {
+      "text": "Zatrzymaj się w bezpiecznym miejscu i nie blokuj drogi.",
+      "hash": "7fa853d17055d6a8ba023fca62ba54e99429a3b0b3b9ff87d5ed2c7d0cd7f053"
+    },
+    "misje.WRO-A3-05.cel3_pytanie": {
+      "text": "Jak sprawdzisz, czy rowerzysta jest przytomny?",
+      "hash": "6f32bd9c35f69449eb1fc16def3b2181e9fb3d2d842f03025481d5937ed6eaba"
+    },
+    "misje.WRO-A3-05.cel3_wyjasnienie": {
+      "text": "Zawołaj dorosłego i sprawdź, czy osoba reaguje na głos.",
+      "hash": "6988d5d0550b31db53c3b17c9dc93943e8f0c31b115934ca222b608aa6eea748"
+    },
+    "misje.WRO-A3-05.cel4_pytanie": {
+      "text": "Co powiesz podczas symulowanej rozmowy z 112?",
+      "hash": "e57212f3a468b85de52e4f34184d2bc11b2f1f1cd10078f40f9642118749c472"
+    },
+    "misje.WRO-A3-05.cel4_wyjasnienie": {
+      "text": "Podaj miejsce, rodzaj zdarzenia i liczbę osób; czekaj na polecenia dyspozytora.",
+      "hash": "639d1e36ccd85dfeb95752e6c85a38bb24f64614da1323fc18b331871d28ade0"
+    },
+    "misje.WRO-A3-05.cel5_pytanie": {
+      "text": "Rowerzysta oddycha, lecz nie odpowiada. Jak pomożesz?",
+      "hash": "854769f783cb0e881e3ab29eabfedad6c986baf7e34715abca2513618485ebf5"
+    },
+    "misje.WRO-A3-05.cel5_wyjasnienie": {
+      "text": "Słuchaj dyspozytora i z dorosłym obserwuj oddech, aż przyjedzie pomoc.",
+      "hash": "15d602807895628e6874ca93d004aaa56c223b28336de4236a8c2cfd6d6f894a"
+    },
+    "misje.WRO-A3-06.cel1_pytanie": {
+      "text": "Ile rowerów może jechać w jednej zorganizowanej kolumnie?",
+      "hash": "9b03ab865265697fc6bb8d1f491a44d65de34719c423c713d205e86649a1f337"
+    },
+    "misje.WRO-A3-06.cel1_wyjasnienie": {
+      "text": "W zorganizowanej kolumnie może jechać najwyżej 15 rowerów.",
+      "hash": "4066e03b9a47df55039ce7c5b5932ebf110e0ffbb77291e558ef1cf92c1d964c"
+    },
+    "misje.WRO-B-04.cel1_pytanie": {
+      "text": "Kiedy możesz wjechać pod B-2?",
+      "hash": "7c7a2dc7f03adc8d4b43f08b2bffb7fea67b116ab1b2691b659d70675ee20d1a"
+    },
+    "misje.WRO-B-04.cel1_wyjasnienie": {
+      "text": "Wyjątek dla rowerów pod znakiem pozwala wjechać zgodnie z oznakowaniem.",
+      "hash": "d56b80277d2757433880c8887cf99d4233737ec4bfd3f69f4c7a84ff24e5fa2c"
+    },
+    "missionResults.gloryVoice": {
+      "text": "Misja ukończona. Zobacz swój dobry nawyk w momencie chwały!",
+      "hash": "d1c7639f1276c481ad8f93b01d72ae24a3ffccaa653573831a34639792454a85"
+    },
+    "missionUi.checkpointHint": {
+      "text": "Wróć i wykonaj instrukcję bieżącego celu.",
+      "hash": "e2671364091b699e4eacc76542bd75d21fcf0c736f8221ed6fcfc3e709842f01"
+    },
+    "missionUi.completed": {
+      "text": "Misja ukończona",
+      "hash": "f959c572ce69a8f7cf4224e52235a24ef5657b075bf8adfad778aa53d67ebdcb"
+    },
+    "missionUi.failed": {
+      "text": "Spróbuj jeszcze raz",
+      "hash": "d7703985002468da18892b69a59f6cc92f4f46b6e1534ae2d56a36ddb7b8bcd2"
+    },
+    "plac.faults.cone": {
+      "text": "Zostaw odstęp od pachołka.",
+      "hash": "cd18e7522a82092f79875130ccdb599a3063bf7f1441796be2d131be53a996c9"
+    },
+    "plac.faults.footDown": {
+      "text": "Utrzymaj ruch na ósemce, żeby nie podpierać się nogą.",
+      "hash": "bcf47cfbfa62a60c4617a9cde28c760239a3b6be7503a8267aa7aba73b6d865a"
+    },
+    "plac.faults.line": {
+      "text": "Zostaw więcej miejsca między rowerem a linią.",
+      "hash": "ef83efe621850bb1c2b131e8d21fed9f45bf639cda45c7694caf5afa4ff78fd3"
+    },
+    "plac.faults.longStop": {
+      "text": "Zacznij hamować wcześniej, żeby zmieścić się w polu.",
+      "hash": "111ee9b31f96c76454b4a39b8d81c60d5ae038cd0bc7eaef6fcf71c1c9f4970d"
+    },
+    "plac.faults.missedCone": {
+      "text": "Miń każdy pachołek po stronie pokazanej strzałką.",
+      "hash": "3bec880fb3fac729eb59481bd102c2f712eca7e278b1bea32de5b05dd4c96252"
+    },
+    "plac.faults.noHandSignal": {
+      "text": "Trzymaj wyciągniętą rękę od żółtej linii do mety.",
+      "hash": "37ae7ab9f21fa7663f9fc5e45739defb10dd6fa2ef8c088c2a98d0af6af3e930"
+    },
+    "plac.faults.noLook": {
+      "text": "Spójrz za siebie przed ruszeniem.",
+      "hash": "2561275246fe60cd8e4cc9522b7e8c24da01f05e5b39527ad3da291549a649c8"
+    },
+    "plac.faults.noStartSignal": {
+      "text": "Pokaż zamiar ruszenia lewą ręką.",
+      "hash": "0be5722b7087dac64ef7d6a86f31fdfe0c62bd65fd58daa3764e19908c8acfd9"
+    },
+    "plac.faults.offTrack": {
+      "text": "Utrzymaj rower między liniami.",
+      "hash": "3b0afc03ce83b2e009df17f0143a4c388da17f4757288e445c3926f2e06f1e12"
+    },
+    "plac.faults.shortStop": {
+      "text": "Podjedź tak, by cały rower znalazł się w polu.",
+      "hash": "4c12f17cea1fd8ea7799ea7b318314a4a91e0432de1289c22d6bc480b0fea7d5"
+    },
+    "plac.faults.signalOrder": {
+      "text": "Po spojrzeniu za siebie wyciągnij lewą rękę i ruszaj.",
+      "hash": "af800e9494b8d556af694543081d3aa85410d0b5a8abe459ebd32dfc1f5c3ba4"
+    },
+    "plac.faults.skid": {
+      "text": "Hamuj stopniowo, żeby uniknąć zablokowania koła.",
+      "hash": "082b994b8a70e95962daf342fe6dbac93969c49e973ee63da2ad024646c5ca5c"
+    },
+    "plac.faults.timeout": {
+      "text": "Ukończ tor przed końcem czasu.",
+      "hash": "eda517b1083a3382840eb8414588932e8ff9d8ceaf96edb48ff68d41d3a42983"
+    },
+    "plac.hints.figureEight": {
+      "text": "Rower jedzie tam, gdzie patrzysz — skieruj wzrok na wyjście z łuku zamiast na pachołek.",
+      "hash": "8e77b7d2bbb6b58511601c21b3cc4846c4f1ad74f7a2789493391f39d8cb9b2d"
+    },
+    "plac.hints.narrow": {
+      "text": "Za wolno też źle — trochę prędkości daje stabilność.",
+      "hash": "c66b84281402ef9adc5d6c142093733a445ecaa2009fc47f9090dad85a0b0889"
+    },
+    "plac.hints.oneHand": {
+      "text": "Od żółtej linii trzymaj rękę w bok aż do mety i jedź prosto.",
+      "hash": "83a7e017cde6bf6dd6534b11ef7120f94139ec59e1dee05e94fed1877a247f2f"
+    },
+    "plac.hints.slalom": {
+      "text": "Omijaj pachołki po stronie wskazanej strzałką i skręcaj płynnie.",
+      "hash": "a59ec8ab86d36d43f89153d5afe17725e35fc0406d140384498aa17c2d07bc4e"
+    },
+    "plac.hints.start": {
+      "text": "Najpierw spójrz za siebie, potem wyciągnij lewą rękę i ruszaj.",
+      "hash": "36313f38ae420a1029990945447dd062c39ca57275f262ceff7aef1957b2114e"
+    },
+    "plac.hints.stop": {
+      "text": "Zacznij hamować wcześniej, żeby zatrzymać cały rower w polu.",
+      "hash": "1a1cb25724ff1e653022ec7b6836405a6f0367616eea2c28d1bcc64d860f343e"
+    },
+    "progression.wiseHead": {
+      "text": "Mądra Głowa",
+      "hash": "fc1170768843ec2faffe504bb06ad5cf821320bb24f387cf3c4ec481216c9f5d"
+    },
+    "przepisy.GDZIE-01.feedback": {
+      "text": "Obok jest droga dla rowerów w Twoim kierunku, więc wybierz ją.",
+      "hash": "b22b4a730d52ba813ccf3f802f2585ecf06d214d50787c49de411e5e74e2fb75"
+    },
+    "przepisy.GDZIE-01.quiz": {
+      "text": "Jeśli jest droga dla rowerów albo pas dla rowerów w Twoim kierunku (lub tam, gdzie skręcasz) — musisz z niej korzystać.",
+      "hash": "3f0893e90d44be9fc94c9abf38d540db55748885b616fc4f90e89b978a074a32"
+    },
+    "przepisy.GDZIE-02.feedback": {
+      "text": "Jedź po pasie rowerowym zgodnie z wyznaczonym kierunkiem.",
+      "hash": "244182de2515f68a57919d4d39112ecec694f444c6bba874209ab85e6fd6245b"
+    },
+    "przepisy.GDZIE-02.quiz": {
+      "text": "Pas na jezdni z symbolem roweru jest dla rowerzystów.",
+      "hash": "6859b8696d33eed5c839f9aad2975ede368a2819756071ddc0ccc58dc48c82eb"
+    },
+    "przepisy.GDZIE-03.feedback": {
+      "text": "Trzymaj się prawej strony — środek jezdni to nie miejsce dla roweru.",
+      "hash": "4efd4c2b5f2faa4481beebfbb170bda0d799f766e4677e8711696bc22222c6dc"
+    },
+    "przepisy.GDZIE-03.quiz": {
+      "text": "Na jezdni jedź prawą stroną, jak najbliżej prawej krawędzi.",
+      "hash": "7f495de870355c59071bcd480656da1429fd6cfc2ab27519e6f09f295f4d4936"
+    },
+    "przepisy.GDZIE-03b.feedback": {
+      "text": "Skorzystaj z pobocza, jeśli jest przejezdne i możesz jechać nim bezpiecznie.",
+      "hash": "3d016bc266e2fb6374398fe73c0cd8b2a83c9a7049b1fc4f8dd3bd8f7861587c"
+    },
+    "przepisy.GDZIE-03b.quiz": {
+      "text": "Gdy nie ma drogi ani pasa dla rowerów, a jest pobocze nadające się do jazdy — jedź poboczem.",
+      "hash": "deef55b413099ee0c011e0ab3310f65e718f0143263db5101b3f4421ee12157b"
+    },
+    "przepisy.GDZIE-04.feedback": {
+      "text": "Jedź po chodniku tylko wtedy, gdy przepis na to pozwala.",
+      "hash": "a68298dba3c2efeb691f3f8f9681ef8766aff2e1f8e8743d91a1d329b09739fe"
+    },
+    "przepisy.GDZIE-04.quiz": {
+      "text": "Jedź po chodniku tylko wtedy, gdy przepis na to pozwala.",
+      "hash": "a68298dba3c2efeb691f3f8f9681ef8766aff2e1f8e8743d91a1d329b09739fe"
+    },
+    "przepisy.GDZIE-05.feedback": {
+      "text": "Zwolnij na chodniku i ustąp pieszym.",
+      "hash": "adea1a7c3ab861590484817ca4c777e0c14679c70c73d87783c49e5e51eab01b"
+    },
+    "przepisy.GDZIE-05.quiz": {
+      "text": "Gdy jedziesz chodnikiem (wyjątkowo), jedź powoli, uważaj i ustępuj pieszym.",
+      "hash": "149decb5687ae2c874e0fdbfc3d45cdd59d6b0930e73599c4160b382d7b9a308"
+    },
+    "przepisy.GDZIE-06.feedback": {
+      "text": "Przez zebrę przeprowadź rower pieszo.",
+      "hash": "9076600e4e1992e5d47c8215d9063903c422031440166e7109ba0f04882d52af"
+    },
+    "przepisy.GDZIE-06.quiz": {
+      "text": "Przez przejście dla pieszych (zebrę) nie wolno przejeżdżać rowerem.",
+      "hash": "9070aec8f75ee06a1d9f131e175d470973b5b1aba7ed2ba5649aeda3e06c0af2"
+    },
+    "przepisy.GDZIE-07.feedback": {
+      "text": "W strefie zamieszkania jedź najwyżej 20 km/h i ustępuj pieszym.",
+      "hash": "2ea39f8dde94c1ffc33cf023c257002c9f44a917c15a0da71287dbcd6fb8ffc1"
+    },
+    "przepisy.GDZIE-07.quiz": {
+      "text": "W strefie zamieszkania piesi mogą iść całą szerokością drogi i mają pierwszeństwo.",
+      "hash": "e6955fb758af1fb00ad9248ecbc5dfb3b039a38c850830b3d752054f4a9da109"
+    },
+    "przepisy.GDZIE-08.feedback": {
+      "text": "Za Wami jedzie ktoś szybszy — ustawcie się jeden za drugim.",
+      "hash": "705c6b2f2d6b68ebd1a359eabe7ebd16b47fea24ba88572217b8b386e4153a5a"
+    },
+    "przepisy.GDZIE-08.quiz": {
+      "text": "Obok innego rowerzysty możesz jechać tylko wtedy, gdy nie utrudniasz ruchu innym i nie stwarzasz zagrożenia.",
+      "hash": "4fa1c9bfaa97bb0aeecb0e43da479957ac487b6b36cca00b4b29479d9b4385a6"
+    },
+    "przepisy.GDZIE-09.feedback": {
+      "text": "Na tym odcinku obowiązuje zakaz jazdy rowerem, więc wybierz inną drogę.",
+      "hash": "4591562f7e72c4881f13df4fdabb3cfccb6aa8dc455e281c621a207b9f95a6a6"
+    },
+    "przepisy.GDZIE-09.quiz": {
+      "text": "Rowerem nie wolno wjeżdżać na autostradę, drogę ekspresową i tam, gdzie stoi znak zakazu wjazdu rowerów.",
+      "hash": "4652bff456bd8f4557aacd83fd4b7b5ae7f16739b82dcf42fb093e519c99f77f"
+    },
+    "przepisy.GDZIE-10.feedback": {
+      "text": "Franek ma 7 lat — jedzie chodnikiem z opiekunem.",
+      "hash": "0bce8efed9e6cb545c1eb484903470a7612125cdffa8a955f52d0c98f8e00414"
+    },
+    "przepisy.GDZIE-11.feedback": {
+      "text": "Zwolnij i zostaw miejsce pieszym, a jeśli ścieżka jest podzielona, wybierz część dla rowerów.",
+      "hash": "e8f65a03235a6697d96d5e080b06f9a8085844b7ade8a9605a96efd896d844c2"
+    },
+    "przepisy.GDZIE-11.quiz": {
+      "text": "Na wspólnej drodze dla pieszych i rowerów uważaj i ustępuj pieszym.",
+      "hash": "12be151515611d1da18c231b5613e492a209bb697fdb5c823533bd13408a1740"
+    },
+    "przepisy.KASK-01.feedback": {
+      "text": "Zapnij pasek kasku, zanim ruszysz rowerem.",
+      "hash": "a8a3dae5c5306707c2b253ed27b270d7930ca9296f455018fc14288ea076a735"
+    },
+    "przepisy.KASK-01.quiz": {
+      "text": "Do 16. urodzin musisz jeździć rowerem w kasku.",
+      "hash": "f1c7c01eb0d69ac47c184858a9adc5ed5e4aa57e04ec42d763ba6070cb8c880a"
+    },
+    "przepisy.KONTROLA-01.feedback": {
+      "text": "Minuta przeglądu oszczędza godzinę naprawy.",
+      "hash": "9066198c3b4c7d539c4ecfced2a3ac5a74e3d65c5867db124d8d09daacdb5eaf"
+    },
+    "przepisy.MAN-01.feedback": {
+      "text": "Przed zmianą kierunku albo pasa pokaż ręką, dokąd jedziesz.",
+      "hash": "ef98a57898c0083bc0075c7c29bb44db35e590c947f120589a2df5d0d050cb84"
+    },
+    "przepisy.MAN-01.quiz": {
+      "text": "Przed skrętem, zmianą pasa czy omijaniem pokaż ręką kierunek: lewa ręka w bok — w lewo, prawa w bok — w prawo.",
+      "hash": "666e7bef415f53f87d2d41570e885f63b31af8d84db92a35136053002fcf03ad"
+    },
+    "przepisy.MAN-02.feedback": {
+      "text": "W prawo skręcamy blisko krawędzi — nie zajeżdżaj szerokim łukiem na środek.",
+      "hash": "7e4999ee4f08458738ea938b29d98ae7c3abc26ab9327caa0f6caac65ac2632e"
+    },
+    "przepisy.MAN-02.quiz": {
+      "text": "Skręcając w prawo, trzymaj się blisko prawej krawędzi jezdni i skręcaj łagodnym łukiem.",
+      "hash": "8735d61ddb1190127c6fc71014029f9b03ea6f1e7cf02758f7e904632f215ea4"
+    },
+    "przepisy.MAN-03.feedback": {
+      "text": "Skręt w lewo to najtrudniejszy manewr: obejrzyj się, ręka w lewo, ustaw się przy środku.",
+      "hash": "97f47c40366615d8c020c55383ba16f375a017efce23b3de147e1e53a8086655"
+    },
+    "przepisy.MAN-03.quiz": {
+      "text": "Skręt w lewo to najtrudniejszy manewr: obejrzyj się, ręka w lewo, ustaw się przy środku.",
+      "hash": "97f47c40366615d8c020c55383ba16f375a017efce23b3de147e1e53a8086655"
+    },
+    "przepisy.MAN-04.feedback": {
+      "text": "Wyjeżdżając na lewo, upewnij się, że nikt Cię właśnie nie wyprzedza.",
+      "hash": "7f9951a8e2bc340fdbd0c53dc8bdcd812406bcf13467516684c35e381f347724"
+    },
+    "przepisy.MAN-04.quiz": {
+      "text": "Zanim ominiesz przeszkodę lub wyprzedzisz, obejrzyj się, zasygnalizuj i zachowaj bezpieczny odstęp.",
+      "hash": "7f1d899519e016244549c07279f03e9e1192d01aaec46cb7c0b40cacbce3e8fa"
+    },
+    "przepisy.MAN-05.feedback": {
+      "text": "Zwolnij, jeśli obok pojazdu jest mało miejsca albo pojazd zaczyna skręcać.",
+      "hash": "7bad982df95eff2fe474c61d285c26ec5a99637b81840560ecc50d522fd650a8"
+    },
+    "przepisy.MAN-05.quiz": {
+      "text": "Rowerem możesz wyprzedzić wolno jadące pojazdy z prawej strony, ale bardzo ostrożnie — kierowca może Cię nie widzieć.",
+      "hash": "c99c71d3811d2697ba123c1b6d1758e7fa43ed3aa7ef81c60d8dfa0d7deb7b10"
+    },
+    "przepisy.MAN-06.feedback": {
+      "text": "Zostaw ponad metr odstępu od zaparkowanego auta na wypadek otwarcia drzwi.",
+      "hash": "0db68c3a507d503919576a260a98c2c62121bcd525039b4193540d8d509c2147"
+    },
+    "przepisy.MAN-06.quiz": {
+      "text": "Mijając zaparkowane auta, trzymaj odstęp — ktoś może nagle otworzyć drzwi.",
+      "hash": "4a9240cc2a8714a8582df7141d005beb10db76e8d39510f766d00a6c6f6f381f"
+    },
+    "przepisy.MAN-07.feedback": {
+      "text": "Przed ruszeniem obejrzyj się przez lewe ramię, bo z tyłu może nadjeżdżać pojazd.",
+      "hash": "eacb443c47b2ade9ae133bf3ca57d916b8cb92922a5a4347b623fa3e836b708e"
+    },
+    "przepisy.MAN-07.quiz": {
+      "text": "Zanim ruszysz z krawędzi, obejrzyj się przez lewe ramię i pokaż lewą ręką.",
+      "hash": "ecdaef472421eded45e8ab63b449ae8026cbbe0c704e447fe62e7a30a0cfccdd"
+    },
+    "przepisy.MAN-08.feedback": {
+      "text": "Zwolnij, żeby mieć dość miejsca i czasu na zatrzymanie.",
+      "hash": "23cd10181d1b9f7f195eb0bac753c11ac1db15b140a649960e51ba372b62f978"
+    },
+    "przepisy.MAN-08.quiz": {
+      "text": "Jedź z prędkością, przy której zdążysz się zatrzymać: wolniej w tłumie, na kocich łbach, w deszczu i przy wyjazdach.",
+      "hash": "eb7257b51f8e6de5982a71ba754d526d4cceb1767414132b17b8754ceaa9c98d"
+    },
+    "przepisy.MAN-09.feedback": {
+      "text": "Podczas jazdy trzymaj co najmniej jedną rękę na kierownicy, a nogi na pedałach.",
+      "hash": "32c2e8d3f35b7092892d3b5f0616c1097d95af8343800d270d6dcd9c9d16b690"
+    },
+    "przepisy.MAN-09.quiz": {
+      "text": "Zawsze trzymaj co najmniej jedną rękę na kierownicy, a nogi na pedałach.",
+      "hash": "7e2692bec7721d9d7222c4f23b6fc9b0beb07ead1bdff388b15c73796fcf2257"
+    },
+    "przepisy.MAN-10.feedback": {
+      "text": "Jednoosobowym rowerem jedź sam, a kolega może iść pieszo albo jechać swoim.",
+      "hash": "929153bdd3dcec213d6af942cfee359726e5e4c6b4764ac2837f332856ec472e"
+    },
+    "przepisy.MAN-10.quiz": {
+      "text": "Na zwykłym rowerze nie wolno wozić kolegi — ani na bagażniku, ani na ramie.",
+      "hash": "f7c05fa7cb16ee72fb045800be5d6cc529104b86036ad37d56e1b9e5000e13ec"
+    },
+    "przepisy.MAN-11.feedback": {
+      "text": "Zatrzymaj się w bezpiecznym miejscu, zanim sięgniesz po telefon.",
+      "hash": "9b732a1b7cded249aba0c2076465f0db06d790c038dbbad1828ed87cdf71e7bc"
+    },
+    "przepisy.MAN-11.quiz": {
+      "text": "Podczas jazdy nie wolno trzymać telefonu w ręku.",
+      "hash": "f46efb10864ea8fb83fe21eb3a9f51fcbb883bc02905778ad60c195641ebfe47"
+    },
+    "przepisy.MAN-12.feedback": {
+      "text": "Nie wyprzedzaj na przejściu, przejeździe, skrzyżowaniu bez świateł ani przed torami i nie omijaj auta, które stoi, by przepuścić pieszych.",
+      "hash": "7a138c164d48581ec799161f38daad74ba3edb57949fda9d556ff9aee08c778e"
+    },
+    "przepisy.MAN-12.quiz": {
+      "text": "Nie wyprzedzaj na przejściu, przejeździe, skrzyżowaniu bez świateł ani przed torami i nie omijaj auta, które stoi, by przepuścić pieszych.",
+      "hash": "7a138c164d48581ec799161f38daad74ba3edb57949fda9d556ff9aee08c778e"
+    },
+    "przepisy.MSC-01.feedback": {
+      "text": "Gdy migają czerwone światła, dzwoni sygnał lub zapory się ruszają, stój przed torami, a przez tory przejedź bez zatrzymywania.",
+      "hash": "3abe5ac1a419d8ab1465f0dc777d9f5a43aa48c964d79f113263bf51d824a1f0"
+    },
+    "przepisy.MSC-01.quiz": {
+      "text": "Przed przejazdem kolejowym zwolnij i rozejrzyj się.",
+      "hash": "6f0103a032f72f6a6293bb1393013fc55aa035ea4db37ae1b7272b94303aca72"
+    },
+    "przepisy.MSC-02.feedback": {
+      "text": "Przed przystankiem bez wysepki stań i poczekaj, aż pasażerowie zejdą z jezdni.",
+      "hash": "e6b1bd7104b67d56251f474e56c89bc5719f350ea96f2841df694cedb1d064e9"
+    },
+    "przepisy.MSC-02.quiz": {
+      "text": "Gdy tramwaj stoi na przystanku bez wysepki, piesi przechodzą przez jezdnię do tramwaju.",
+      "hash": "bf5b2b08cc3c308aa1e1fbfc84e04f99c65f9965c5549b7736e9dd3a08abb7c5"
+    },
+    "przepisy.MSC-03.feedback": {
+      "text": "Z bramy wyjeżdżamy powoli — za rogiem może iść pieszy.",
+      "hash": "5d8d4e11282aa8293983182946da23f75d045618b4de051277f04256ab4ec184"
+    },
+    "przepisy.MSC-04.feedback": {
+      "text": "Gdy robi się ciemno lub słabo widać, włącz obie lampki.",
+      "hash": "789dcd2e6777fbe7275bdacd6c7f7276b0292f896250985705b286042bef1343"
+    },
+    "przepisy.MSC-04.quiz": {
+      "text": "Po zmroku, we mgle i w deszczu włącz światła.",
+      "hash": "f751e289f9cb6221ee284b58a5c02a8b254129cd97be8c9ad66b0022c6cfa1c0"
+    },
+    "przepisy.MSC-05.feedback": {
+      "text": "Za dużo nas w jednej kolumnie!",
+      "hash": "6602f96d6a0fc1757aae352d645cee20a8a9f3dab10c9afd4010e140d5450ca1"
+    },
+    "przepisy.MSC-05.quiz": {
+      "text": "Grupa rowerzystów jedzie jeden za drugim.",
+      "hash": "7fdc0f248b35495ad38618671037f9ec8c851be8b100d3c31ce349938707b3f8"
+    },
+    "przepisy.PIER-01.feedback": {
+      "text": "Na skrzyżowaniu równorzędnym ustąp pojazdowi nadjeżdżającemu z prawej.",
+      "hash": "26b3f0d21aa946c23a6bb70e9f5b44028c159ba833976e25c3acdf74f0ac967b"
+    },
+    "przepisy.PIER-01.quiz": {
+      "text": "Na skrzyżowaniu bez znaków i świateł ustępujesz temu, kto nadjeżdża z prawej strony.",
+      "hash": "5815bc3caffd947b7ff00ef989237ab493effe3e1169de64b74b00b277c6f87a"
+    },
+    "przepisy.PIER-02.feedback": {
+      "text": "Z drogi podporządkowanej wjedź dopiero po przepuszczeniu pojazdu na drodze głównej.",
+      "hash": "dda268766a3e5d6d93477d201d0cab43bcb6c4ab7018457cc460ad94c303a478"
+    },
+    "przepisy.PIER-02.quiz": {
+      "text": "Jeśli wyjeżdżasz z drogi podporządkowanej (znak A-7 lub STOP), przepuszczasz wszystkich na drodze z pierwszeństwem.",
+      "hash": "4cada5453a34606974209efdb938c60c70fad0f09f2d9599c3aac8b88b865def"
+    },
+    "przepisy.PIER-03.feedback": {
+      "text": "Przed skrętem w lewo przepuść jadących z naprzeciwka prosto i skręcających w prawo.",
+      "hash": "23b2db48e167e82441a13f248059a8b008438bd1f576157806e128419e969922"
+    },
+    "przepisy.PIER-03.quiz": {
+      "text": "Skręcając w lewo, przepuszczasz pojazdy jadące z naprzeciwka prosto i skręcające w prawo.",
+      "hash": "8eb026e427da0462773b38f23feeec27b829d7976d877376904f6f376cb28d00"
+    },
+    "przepisy.PIER-04.feedback": {
+      "text": "Przy skręcie uważaj na pieszych i rowerzystów przecinających Twój tor jazdy.",
+      "hash": "2dd085cb6bfc5dc725a7aeef1445686fb958c0983c1ddf48a87673571fcf9dcd"
+    },
+    "przepisy.PIER-04.quiz": {
+      "text": "Gdy skręcasz, przepuść pieszych przechodzących przez drogę, w którą wjeżdżasz, i rowerzystów jadących prosto.",
+      "hash": "402486a628410ba8354887f5b6ee268bb380fe7c5d03871d1e5f105f1975f5bf"
+    },
+    "przepisy.PIER-05.feedback": {
+      "text": "Przed wjazdem na przejazd zwolnij i sprawdź, czy zbliża się samochód.",
+      "hash": "d5b4fb11e603d9792566aba043aafd8eb6f5c93a1daf46093e9c7431aef9df39"
+    },
+    "przepisy.PIER-05.quiz": {
+      "text": "Na przejeździe dla rowerzystów kierowcy muszą uważać i przepuścić rower, który już jest na przejeździe.",
+      "hash": "87c19d232b70054227c4ce87b2d3a4b74f22f0864db09a0c65747ceecea96169"
+    },
+    "przepisy.PIER-06.feedback": {
+      "text": "Gdy włączasz się do ruchu, przepuść pojazdy i pieszych przecinających Twój tor.",
+      "hash": "b1d28d1817c524a22cdf4c00b6fb2c2bd1e03794056d2b61df612ddda7bcc6e4"
+    },
+    "przepisy.PIER-06.quiz": {
+      "text": "Gdy ruszasz z miejsca albo wyjeżdżasz z bramy, parkingu czy drogi wewnętrznej, przepuszczasz wszystkich.",
+      "hash": "e7a0f1f8000dccb0f718c98e5a81ddcf4cd8203e225b951dfd9a7f6bf823a6c2"
+    },
+    "przepisy.PIER-07.feedback": {
+      "text": "Zjedź bezpiecznie na prawo i zostaw miejsce dla pojazdu z syreną i niebieskimi światłami.",
+      "hash": "90d0ea7ce1f7d5ff828c2b8f5c486ddcc8124bf6d60c7396aa3b3dfdfe873935"
+    },
+    "przepisy.PIER-07.quiz": {
+      "text": "Słyszysz syrenę i widzisz niebieskie światła?",
+      "hash": "5e4b8c7cf32de2273288e1cc8a7d5b5c37b64faa9c24f196bcf5b17a6f3b6899"
+    },
+    "przepisy.PIER-08.feedback": {
+      "text": "Przy znaku ustąp pierwszeństwa poczekaj na wolne miejsce na rondzie.",
+      "hash": "3e94489d49e499e35a4ec583fd34a44d87f795c7cabebb970bd9b289cd83d918"
+    },
+    "przepisy.PIER-08.quiz": {
+      "text": "Przed rondem zwykle stoi znak „ustąp pierwszeństwa” — przepuszczasz tych, którzy już jadą po rondzie.",
+      "hash": "65a5c5c06e7632d4f006c1e2b9683bf1e0d3f472b0f44d0bd6b82e35152adc33"
+    },
+    "przepisy.PIER-09.feedback": {
+      "text": "Gdy tory przecinają Twój tor jazdy, zwolnij i obserwuj tramwaj, znaki oraz światła.",
+      "hash": "aa6b3f74222b1433e450e53f8622f0735cae5a2962ff5fb3e0bebd99f21b9a2a"
+    },
+    "przepisy.PIER-09.quiz": {
+      "text": "Na skrzyżowaniu równorzędnym tramwaj ma pierwszeństwo przed innymi pojazdami, także przed rowerem.",
+      "hash": "9a8acc6fbc95ce1f9c73096a25110a99ffbff1a0e6d92440779419dafd87a090"
+    },
+    "przepisy.PLAC-01.feedback": {
+      "text": "Patrz tam, gdzie chcesz jechać, nie na pachołek — rower pojedzie za wzrokiem.",
+      "hash": "ece88d354a24490d3d2d6e2366acdcb53f76ed110576615bca8f03ecc6581ba8"
+    },
+    "przepisy.PLAC-01.quiz": {
+      "text": "Przejedź ósemkę między pachołkami bez podpierania się nogą i bez najeżdżania na linie.",
+      "hash": "85997df1aa51f12379b23ccb32c8cefa8b3cab51e12fc5a02ce22577e4cb33eb"
+    },
+    "przepisy.PLAC-02.feedback": {
+      "text": "Spokojnie i płynnie — slalom wygrywa ten, kto nie szarpie kierownicą.",
+      "hash": "19b0bccb0b432b725317b0fc5c68c5455a418312e8d31c5de1feb98c0683e99f"
+    },
+    "przepisy.PLAC-03.feedback": {
+      "text": "Nie za wolno!",
+      "hash": "f21127a5c1651520e65a1a5f4084e8f17fe7fb159014fe96d6cd03c79ddbdef7"
+    },
+    "przepisy.PLAC-04.feedback": {
+      "text": "Hamuj wcześniej i delikatniej — dojedziesz idealnie do linii.",
+      "hash": "428dabb25a89e2e84213f112e4704f39e2732d5b12271e20ba493d43aff23ebf"
+    },
+    "przepisy.PLAC-05.feedback": {
+      "text": "Najpierw spojrzenie przez ramię, potem ręka, potem jazda.",
+      "hash": "8ba301ca7f4652643ad9a92e78518a79797383957a819d63741be9b8aa07a29c"
+    },
+    "przepisy.PLAC-06.feedback": {
+      "text": "Ręka w bok, wzrok przed siebie — rower jedzie prosto, gdy Ty patrzysz prosto.",
+      "hash": "2ae200c74db3888a08f1a883b4183a82c870b97add261e74273e2eff1eabfa3d"
+    },
+    "przepisy.PP-01.feedback": {
+      "text": "Ratownik, który sam wpadnie pod auto, nikomu nie pomoże.",
+      "hash": "311316f8a417c81e7435dacff8b406039b1641a27cc5b126f5f797f7657de60f"
+    },
+    "przepisy.PP-01.quiz": {
+      "text": "Gdy ktoś się przewróci: najpierw zadbaj o swoje bezpieczeństwo, zejdź z drogi, ostrzeż innych.",
+      "hash": "3585dbae29e454c18e2f5375c6a5b25b667c46d574cae6e1c6eaea4372059d00"
+    },
+    "przepisy.PP-02.feedback": {
+      "text": "Przy 112 najważniejsze jest GDZIE.",
+      "hash": "d15da2240d90343706175a05b75bb4faa0e2917b28bbe56ede55e1f2e1d2c06c"
+    },
+    "przepisy.PP-02.quiz": {
+      "text": "Dzwoń na 112.",
+      "hash": "6b08c38d4976e299c6d9441f6232a4f2ccd345a119322b034ebe03c95ff74634"
+    },
+    "przepisy.PP-03.feedback": {
+      "text": "Mów głośno i wyraźnie.",
+      "hash": "6182991e47c969117d541de636bdb2ac25219bd24c9ee2e6da6bd3ed936def4a"
+    },
+    "przepisy.PP-04.feedback": {
+      "text": "Pozycja bezpieczna chroni drogi oddechowe.",
+      "hash": "80ef80d5e5fa3104b6e868007aec7d02421297afc033f85aa82893048c44bee8"
+    },
+    "przepisy.PP-04.quiz": {
+      "text": "Jeśli ktoś nie odpowiada, ale oddycha — z pomocą dorosłego ułóż go w pozycji bezpiecznej.",
+      "hash": "569e242918772b3384c11c383882cf30393116f8e8505f9d06fcf7a3d5eec142"
+    },
+    "przepisy.SYG-01.feedback": {
+      "text": "Zatrzymaj się na czerwonym, a na żółtym zahamuj, jeśli możesz to zrobić bezpiecznie.",
+      "hash": "d3701d888396756f8baa894702674e3d116fde20dc42ca2d0f00212b7a4f1a81"
+    },
+    "przepisy.SYG-01.quiz": {
+      "text": "Czerwone — stoisz przed linią.",
+      "hash": "8a0afd7c8cfe196faf630bcddd4e0406152c0999ebfd0d1dd9f6db125abd4a45"
+    },
+    "przepisy.SYG-02.feedback": {
+      "text": "Przy czerwonym świetle z symbolem roweru poczekaj przed przejazdem.",
+      "hash": "4458cf7aecabe4ea73d33065b9262ea48ed3b3420955d4556eaaf1da6de51e34"
+    },
+    "przepisy.SYG-02.quiz": {
+      "text": "Sygnalizator z symbolem roweru dotyczy rowerzystów.",
+      "hash": "4059c55e908f3dbb19d2cc19faa14e1a3e7b0c76f739ff67f496b0ca480bc999"
+    },
+    "przepisy.SYG-03.feedback": {
+      "text": "Policjant kieruje ruchem — jego polecenia są ważniejsze niż światła i znaki.",
+      "hash": "5e2dacadae294067b6d514bb8963bdef8e45d941a7b778c9d66c4e7eaeb00d65"
+    },
+    "przepisy.SYG-03.quiz": {
+      "text": "Najpierw polecenia policjanta, potem sygnały świetlne, potem znaki, a na końcu ogólne przepisy.",
+      "hash": "1110ded7499efecb751d34f1c82321e140d6f93ba97396be1f6f6dbc36f2350c"
+    },
+    "przepisy.WYP-01.feedback": {
+      "text": "Hamulec nie działa?",
+      "hash": "57769615002f4bfdf8504d4de650c5f5305409c62d4d47299b919929bdb696ce"
+    },
+    "przepisy.WYP-01.quiz": {
+      "text": "Rower musi mieć co najmniej jeden skutecznie działający hamulec.",
+      "hash": "01babdbdc0eef094f24e3a5d0415a15794b8b87540514438178459734697c22e"
+    },
+    "przepisy.WYP-02.feedback": {
+      "text": "Dzwonek to obowiązek.",
+      "hash": "77dac1ff7856d9e6ca48befaae0502c40eff83d6a42f83fc8a6091a44bcd0366"
+    },
+    "przepisy.WYP-02.quiz": {
+      "text": "Rower musi mieć dzwonek albo inny sygnał ostrzegawczy o nieprzeraźliwym dźwięku.",
+      "hash": "11c04aca9d109a287802e673c8b99254290f9ce38b62dea4f5ab75cc2ff912a0"
+    },
+    "przepisy.WYP-03.feedback": {
+      "text": "Bez odblasku kierowca zobaczy Cię w nocy za późno.",
+      "hash": "ef0bc7d67786ad903c657373821263b2cab5f37bf227255f0644d95e661c28bd"
+    },
+    "przepisy.WYP-03.quiz": {
+      "text": "Z tyłu roweru musi być czerwone światło odblaskowe w kształcie innym niż trójkąt.",
+      "hash": "991c61dd8274a3e49a58366636522e5a68a110fa8a6cb2b38e226a1a05332bd5"
+    },
+    "przepisy.WYP-04.feedback": {
+      "text": "Gdy robi się ciemno, włącz przednią lampkę, żeby oświetlić drogę.",
+      "hash": "3c88d9e60ecb0b0e62d6481935ec57f6373783ac3c9c14890c1c1b3b486b9638"
+    },
+    "przepisy.WYP-04.quiz": {
+      "text": "Z przodu: światło białe lub żółte selektywne.",
+      "hash": "bbbf2659173b9052d680dab82e125ddfa155f0c1220f5ef7a58e1f60f7e2c50f"
+    },
+    "przepisy.WYP-05.feedback": {
+      "text": "Gdy słabo widać, włącz tylną czerwoną lampkę, żeby kierowcy widzieli Cię z daleka.",
+      "hash": "76b5b117761a812577c4dcad4fa0e9b9d8e86927b890043e76dadab75b609198"
+    },
+    "przepisy.WYP-06.feedback": {
+      "text": "Kamizelka odblaskowa to supermoc widoczności.",
+      "hash": "2a57fb7e02978a96f9474e98881885c8e9838f4a21d9646132327b7da91e7ad8"
+    },
+    "przepisy.ZNAK-A7.feedback": {
+      "text": "Przy odwróconym trójkącie przepuść jadących drogą, na którą wjeżdżasz.",
+      "hash": "fd3ae3f6281ad0e3c3cc7e21a29f4dbf197fd1a9e843b082849c6c334a8f3ce9"
+    },
+    "przepisy.ZNAK-A7.quiz": {
+      "text": "Trójkąt odwrócony do góry nogami: ustąp pierwszeństwa jadącym drogą, na którą wjeżdżasz.",
+      "hash": "9bac5cf12a40d3a7cf18ef3cd17c30acefae65a454ce121a20059ff423224412"
+    },
+    "przepisy.ZNAK-B1.feedback": {
+      "text": "Białe koło z czerwoną obwódką oznacza zakaz ruchu także dla rowerów, chyba że tabliczka wskazuje wyjątek.",
+      "hash": "88d6f5084b17ed8b7cd581ff149a82bc92c8118496556f5d92e2fba298552ed4"
+    },
+    "przepisy.ZNAK-B1.quiz": {
+      "text": "Białe koło w czerwonej obwódce: zakaz ruchu wszystkich pojazdów — także rowerów (chyba że tabliczka mówi inaczej).",
+      "hash": "5ec3b024af7d52c02961c9023c69e077e2f1814f7b2bbd81408741083b700c28"
+    },
+    "przepisy.ZNAK-B2T22.feedback": {
+      "text": "Sprawdź tabliczkę pod zakazem wjazdu i wybierz inną drogę, jeśli zakaz dotyczy Twojego roweru.",
+      "hash": "d08ff7525d61175f69eebf9c92035d519da1dd0a67bdc11905b6bb401ed3ca5d"
+    },
+    "przepisy.ZNAK-B2T22.quiz": {
+      "text": "Zakaz wjazdu z tabliczką „nie dotyczy rowerów” — rowerem wolno tam wjechać pod prąd jednokierunkowej ulicy.",
+      "hash": "e62a5380fb5e1b1d8deebfbe5a0407b84df5dedee46182020c6111024f655eb0"
+    },
+    "przepisy.ZNAK-B9.feedback": {
+      "text": "Przy zakazie wjazdu rowerów wybierz inną drogę albo przeprowadź rower, jeśli jest chodnik.",
+      "hash": "6a40ad7881b860307d326e01ade51d044d606818925063e6fcec67c5f8688b7a"
+    },
+    "przepisy.ZNAK-B9.quiz": {
+      "text": "Czerwone kółko z rowerem: rowerem tu nie wjedziesz.",
+      "hash": "3fff5c89870f6e5f97ed93042174c8e25fd38371ee4e75c8b3d367df16710161"
+    },
+    "przepisy.ZNAK-C13.feedback": {
+      "text": "Niebieskie koło z rowerem — to nakaz.",
+      "hash": "6e5d73f115d27dfd3d5405ac34c4a9e2f81404c418e085baba1f3d890b891fe0"
+    },
+    "przepisy.ZNAK-C13.quiz": {
+      "text": "Niebieskie koło z białym rowerem: droga dla rowerów, musisz z niej korzystać.",
+      "hash": "e3eaa0b6061dce20679caa6f19857d81cc0583a1d69f53e6d9a5a1072341131b"
+    },
+    "przepisy.ZNAK-D1.feedback": {
+      "text": "Masz pierwszeństwo, ale kierowca może Cię nie zauważyć.",
+      "hash": "cf132d40aea3ec4f36959c4eb44baeb1f795db830ef9cb2423d258f2a7a61921"
+    },
+    "przepisy.ZNAK-D1.quiz": {
+      "text": "Żółty romb: jesteś na drodze z pierwszeństwem — inni z dróg bocznych powinni Cię przepuścić.",
+      "hash": "9b7885ca62bdc406c32b1bdd74c83262ff6deaf7a64da24feb307c7b8d200153"
+    },
+    "przepisy.ZNAK-P23.feedback": {
+      "text": "Rowerek na asfalcie to podpowiedź: tu jest miejsce dla Ciebie.",
+      "hash": "727c9d44a20a32fdc4a72d4221fbb3473f2b54e68c06ccf2a0ada2cf19c1deee"
+    },
+    "przepisy.ZNAK-P23.quiz": {
+      "text": "Symbol roweru namalowany na jezdni oznacza pas ruchu dla rowerów albo miejsce dla rowerzystów.",
+      "hash": "e9c0290a39bf6aa182006dad1c8ac66a4c4637c34fa8c3a352993620cdb22201"
+    },
+    "przepisy.ZNAK-S2.feedback": {
+      "text": "Przy zielonej strzałce zatrzymaj się i ustąp, zanim skręcisz.",
+      "hash": "a0218dc48ae2168e257eff932b8ee19d3c2ff2a551b46d9adab4f7875bff35c2"
+    },
+    "przepisy.ZNAK-S2.quiz": {
+      "text": "Zielona strzałka przy czerwonym świetle: najpierw się zatrzymaj, przepuść pieszych i pojazdy, dopiero potem skręć.",
+      "hash": "c5188bc033001b8c9c945a5495d2181ccf224529e9e04bc4c02f6ab52e5a1335"
+    },
+    "przepisy.ZNAK-STOP.feedback": {
+      "text": "Przy znaku STOP zatrzymaj się całkowicie i przepuść jadących drogą z pierwszeństwem.",
+      "hash": "14d5348c96063852ad0dfd084db6fdb89d73d0fcbd846459a0f89d8871b6e190"
+    },
+    "przepisy.ZNAK-STOP.quiz": {
+      "text": "Przy znaku STOP zatrzymujesz się zawsze — nawet gdy nic nie jedzie — i przepuszczasz pojazdy na drodze z pierwszeństwem.",
+      "hash": "e028d0ce1c8c4c5daa711ab5d2162eb15e9fd2caedd52adbbf64e97284ede57f"
+    },
+    "pytania.Q001.pytanie": {
+      "text": "Do ilu lat kierujący rowerem musi jeździć w kasku?",
+      "hash": "a850bad14178c935f59ed20dd169f17b4d8b31c85eb1253630b763a6ebc98f9e"
+    },
+    "pytania.Q001.wyjasnienie": {
+      "text": "Od 3 czerwca 2026 r. kask jest obowiązkowy dla wszystkich, którzy nie ukończyli 16 lat.",
+      "hash": "d70a3a38fc7bbe93fa241ddf1e5a93a22b7bc8dd04aacdd3529e7ba8ef2cb755"
+    },
+    "pytania.Q002.pytanie": {
+      "text": "Jak powinien być założony kask?",
+      "hash": "d351948dce3d05441a1bb45a74b47c9598980075110c5f34ee237cef40554e3c"
+    },
+    "pytania.Q002.wyjasnienie": {
+      "text": "Kask chroni tylko wtedy, gdy jest zapięty i nie przesuwa się na głowie.",
+      "hash": "61d9cfe7df329219d632aacd467ee4fedd4dd61d0d304d2bcba8603d67c99287"
+    },
+    "pytania.Q003.pytanie": {
+      "text": "Który element jest obowiązkowym wyposażeniem roweru?",
+      "hash": "fa1dc6109e71eb1e7246e0a8b1c4b64856795ae244c1edb417f203d0729d1e6c"
+    },
+    "pytania.Q003.wyjasnienie": {
+      "text": "Rower musi mieć dzwonek albo inny sygnał ostrzegawczy o nieprzeraźliwym dźwięku.",
+      "hash": "11c04aca9d109a287802e673c8b99254290f9ce38b62dea4f5ab75cc2ff912a0"
+    },
+    "pytania.Q004.pytanie": {
+      "text": "Jakie światło odblaskowe musi mieć rower z tyłu?",
+      "hash": "dc9f67052df25a5f71497e0d6fccd514ab411a37e114e559067ecc2666e74647"
+    },
+    "pytania.Q004.wyjasnienie": {
+      "text": "Z tyłu: czerwone światło odblaskowe o kształcie innym niż trójkąt. Trójkąty odblaskowe mają przyczepy.",
+      "hash": "4d856646edc34e06bfb09c4fdadb233e1d0ac11be49cb09a37235b468a3b2bf0"
+    },
+    "pytania.Q005.pytanie": {
+      "text": "Jakiego koloru światło pozycyjne musi mieć rower z przodu?",
+      "hash": "e6f1d96ea9f86cf6febeb3d409ea283f76e78e0b101b23c930c0f1b4b2c55c1c"
+    },
+    "pytania.Q005.wyjasnienie": {
+      "text": "Przednie światło roweru jest białe lub żółte selektywne. Czerwone jest zawsze z tyłu.",
+      "hash": "4c471ba95bc3072b1f9a6732983c9fc2e0de7add03d43ca4564fb4938734923a"
+    },
+    "pytania.Q006.pytanie": {
+      "text": "Kiedy musisz mieć włączone światła w rowerze?",
+      "hash": "a2c5e92155cfda3e46917b4fc60bcd3a6e6cebde4b15b62410466be4ea98fa21"
+    },
+    "pytania.Q006.wyjasnienie": {
+      "text": "Światła włączasz zawsze, gdy widoczność jest słaba — po zmroku, we mgle, w tunelu, w ulewie.",
+      "hash": "3df2787c12257f6e305dd773961838c3779b06c8cbe15d3a9c1f3eb8127bafbf"
+    },
+    "pytania.Q007.pytanie": {
+      "text": "Ile co najmniej skutecznie działających hamulców musi mieć rower?",
+      "hash": "f2d9a4fdfd60914dc35a4a3814c801fc26ff9a6f7b7d1ffd5fe8dbefa4602f76"
+    },
+    "pytania.Q007.wyjasnienie": {
+      "text": "Rower musi mieć co najmniej jeden skutecznie działający hamulec.",
+      "hash": "01babdbdc0eef094f24e3a5d0415a15794b8b87540514438178459734697c22e"
+    },
+    "pytania.Q008.pytanie": {
+      "text": "Wzdłuż jezdni biegnie droga dla rowerów w kierunku, w którym jedziesz. Gdzie jedziesz?",
+      "hash": "f18b0acd1f6c44ca73c8b23ed3037774809b1b08c193ff622a9b0540c5060331"
+    },
+    "pytania.Q008.wyjasnienie": {
+      "text": "Jeśli jest droga dla rowerów dla Twojego kierunku, masz obowiązek z niej korzystać.",
+      "hash": "d82c099d04505b042392afd1b6e4c2de76bec72e23f4b8cc456629ff37e7556b"
+    },
+    "pytania.Q009.pytanie": {
+      "text": "Poza miastem nie ma drogi dla rowerów, ale jest szerokie, równe pobocze. Gdzie jedziesz?",
+      "hash": "4e5f31c085ed4b03bd92997644026926612b73e811bb3d2f03d9133a9b570b89"
+    },
+    "pytania.Q009.wyjasnienie": {
+      "text": "Gdy nie ma drogi ani pasa dla rowerów, a pobocze nadaje się do jazdy — jedziesz poboczem.",
+      "hash": "c57b87cd268c7eb34736dc381561ab1463093b0eb2260cc4be9bf79e876fd571"
+    },
+    "pytania.Q010.pytanie": {
+      "text": "W której sytuacji wolno Ci jechać rowerem po chodniku?",
+      "hash": "855111280b4068485585c7f2f4f218f803a591df675880a22e7632dfa79c0b33"
+    },
+    "pytania.Q010.wyjasnienie": {
+      "text": "Chodnik tylko wyjątkowo: m.in. przy groźnej pogodzie (śnieg, silny wiatr, ulewa, gołoledź, gęsta mgła).",
+      "hash": "03b2f4feb82e5fb08234f75b338e73f9b329906e2d12152ed74c0f8098d12886"
+    },
+    "pytania.Q011.pytanie": {
+      "text": "Wyobraź sobie, że jesteś dorosłym opiekunem 7-letniego rowerzysty. Gdzie możesz jechać na rowerze?",
+      "hash": "5a959020ff2c8eae0b82d0e2ed3bf33b41f2ffd812cad6588b44ad6f2b0008b1"
+    },
+    "pytania.Q011.wyjasnienie": {
+      "text": "Dziecko do 10 lat jedzie chodnikiem pod opieką, a opiekun może jechać obok niego chodnikiem.",
+      "hash": "e4fc4dd72b64cd566812df3f5d35b43a96f72a6896839f99c91668021463aa3d"
+    },
+    "pytania.Q012.pytanie": {
+      "text": "Jedziesz wyjątkowo chodnikiem. Jak się zachowujesz?",
+      "hash": "e8b8cc70956013570ed98b22e0a7210f7d62492252203fce293d113e3c6f6bd9"
+    },
+    "pytania.Q012.wyjasnienie": {
+      "text": "Na chodniku piesi mają pierwszeństwo. Jedziesz powoli i ostrożnie.",
+      "hash": "2bfb4cdd27a1bbe130f2fc1a8052de6b853e276afe8e8dba9cc4e019a7de5254"
+    },
+    "pytania.Q013.pytanie": {
+      "text": "Jak rowerzysta pokonuje przejście dla pieszych (zebrę), gdy obok nie ma przejazdu dla rowerzystów?",
+      "hash": "3de8cf2d1d7b9430eec4b15e0f496febdcabd113bb070a6ad34da51617905d6b"
+    },
+    "pytania.Q013.wyjasnienie": {
+      "text": "Po przejściu dla pieszych nie wolno jechać rowerem. Zejdź i przeprowadź rower.",
+      "hash": "58924c4023e93e345cee93f3ef62393f4b150b321bf220ddaa625f87b604e475"
+    },
+    "pytania.Q014.pytanie": {
+      "text": "Kto ma pierwszeństwo w strefie zamieszkania?",
+      "hash": "3e3079fb23ba502da16ccfb4eec317e9fa0fec129d4c92d39f6aadd73ef467b9"
+    },
+    "pytania.Q014.wyjasnienie": {
+      "text": "W strefie zamieszkania piesi mogą iść całą szerokością drogi i mają pierwszeństwo przed pojazdami.",
+      "hash": "a001b550d211d72cc3b0deddc1d580e0249efa7ebf5c929c477aee0987f0ff17"
+    },
+    "pytania.Q015.pytanie": {
+      "text": "Kiedy możesz jechać obok kolegi na rowerze?",
+      "hash": "ef57aa89c8748b2a1b13d44c78007aba39e116f7493797683aa6361560de0409"
+    },
+    "pytania.Q015.wyjasnienie": {
+      "text": "Jazda obok siebie jest dozwolona, jeśli nikomu nie utrudniacie ruchu i nie stwarzacie zagrożenia.",
+      "hash": "1fe9ea78827556b123f6290d1669857c4ed9a59069dddf14c3ec1d4d1e07ca2d"
+    },
+    "pytania.Q016.pytanie": {
+      "text": "Na którą drogę nie wolno wjeżdżać rowerem?",
+      "hash": "d6729bf87568441f1c45cd4fd363131329b4ffc07b3e65aa0a3b07c73de54b23"
+    },
+    "pytania.Q016.wyjasnienie": {
+      "text": "Rowerem nie wolno jeździć po autostradzie i drodze ekspresowej.",
+      "hash": "75a4aba31fc4b9d47850390b23a071c88bdfeef0b542d3363f2b8f4ac58bdf0a"
+    },
+    "pytania.Q017.pytanie": {
+      "text": "Jedziesz wspólną drogą dla pieszych i rowerów (symbole jeden nad drugim). Przed Tobą idą piesi. Co robisz?",
+      "hash": "19b56cbfc2efcae288c1c27aa3b5963f486ea75b91d683b9743bea49d42d50a6"
+    },
+    "pytania.Q017.wyjasnienie": {
+      "text": "Na wspólnej drodze dla pieszych i rowerów rowerzysta uważa i ustępuje pieszym.",
+      "hash": "6724af21e46f48769ed38bf9df54bd944daed9747cebae33125644f9455448d2"
+    },
+    "pytania.Q018.pytanie": {
+      "text": "Kogo słuchasz najpierw?",
+      "hash": "f79b608b0f031edaf5008eafdca2163a3671902d65d90651fce836073db812fd"
+    },
+    "pytania.Q018.wyjasnienie": {
+      "text": "Kolejność: polecenia osoby kierującej ruchem, sygnały świetlne, znaki, przepisy.",
+      "hash": "2ba0df3517fbca070dbb72156195deaeb477a11a23ba76fc1b69ddc46000e0f7"
+    },
+    "pytania.Q019.pytanie": {
+      "text": "Co oznacza żółte światło (bez migania) na sygnalizatorze?",
+      "hash": "061e2443c6236f8bf11e811c213d788c01fb035b2376064ff80ef23633927a95"
+    },
+    "pytania.Q019.wyjasnienie": {
+      "text": "Żółte to zakaz wjazdu za sygnalizator — chyba że jesteś już tak blisko, że bezpieczne zatrzymanie nie jest możliwe.",
+      "hash": "1ef95fc566739ed859219109f645848361e7616fc6634fa44bb96a1129754d50"
+    },
+    "pytania.Q020.pytanie": {
+      "text": "Pali się czerwone światło i obok zielona strzałka w prawo. Chcesz skręcić w prawo. Co robisz?",
+      "hash": "229d385336669cd89d4d5ff216d921df82255e75eace22a98dcff4a58c0e8486"
+    },
+    "pytania.Q020.wyjasnienie": {
+      "text": "Zielona strzałka pozwala skręcić dopiero po zatrzymaniu i ustąpieniu pierwszeństwa.",
+      "hash": "c8ede14137120d1e7b33006600241b833d85dcc281b2fb076e839331d62c0a00"
+    },
+    "pytania.Q021.pytanie": {
+      "text": "Co musisz zrobić przy znaku STOP?",
+      "hash": "79bd881c40394a99256cc61fc4b839ee75a94da4cae97943a8f44211009d5972"
+    },
+    "pytania.Q021.wyjasnienie": {
+      "text": "Przy STOP zatrzymujesz się zawsze, nawet gdy droga jest pusta.",
+      "hash": "7121b80a11c26c85512f1ff80560ce9bbd96718361ec13181a6d29d9e3a5c200"
+    },
+    "pytania.Q022.pytanie": {
+      "text": "Co oznacza ten znak (odwrócony trójkąt)?",
+      "hash": "fc32877c267a7025758bac862edde4e40d41e468c84fed7877d96527ee5608c8"
+    },
+    "pytania.Q022.wyjasnienie": {
+      "text": "A-7 — ustąp pierwszeństwa jadącym drogą, na którą wjeżdżasz.",
+      "hash": "a7cf9707db56a30a7e50f41a0a49bd32914d78a3a97b513c63a805e2cccf68ee"
+    },
+    "pytania.Q023.pytanie": {
+      "text": "Co oznacza żółty romb w białej obwódce?",
+      "hash": "16dbcd9d4fe669f9db8f68d6eb1eb164b324d6f1813d8ed07b8469af4f679f6d"
+    },
+    "pytania.Q023.wyjasnienie": {
+      "text": "D-1 — jesteś na drodze z pierwszeństwem. Mimo to obserwuj, czy inni Cię przepuszczają.",
+      "hash": "8e620cb86ae6e860c2d5b96f3a5515ba8841af7d6326dfe93a361441094ed0c3"
+    },
+    "pytania.Q024.pytanie": {
+      "text": "Pod znakiem „zakaz wjazdu” jest tabliczka z rowerem i napisem „nie dotyczy”. Co to znaczy?",
+      "hash": "0f7ef5e1f8dbd1c27733e08268a6fb0fe135ae353bba9bb1ca40ac796016bcef"
+    },
+    "pytania.Q024.wyjasnienie": {
+      "text": "Tabliczka T-22 zwalnia rowery z zakazu — to tzw. kontraruch rowerowy.",
+      "hash": "728018e44148b58b68ae3506305a385694b1d415cc92be398ef9f23bf069b0f4"
+    },
+    "pytania.Q025.pytanie": {
+      "text": "Co oznacza niebieskie koło z białym rowerem?",
+      "hash": "5d643cf3eaddf80f638dad7b24d2fc874da597772f0866d0d3c0f35176cb01a6"
+    },
+    "pytania.Q025.wyjasnienie": {
+      "text": "C-13 — droga dla rowerów. Niebieskie koła to znaki nakazu.",
+      "hash": "08cc90d960a57db6f680fe3ec4a514f7bb071031b39ab1e055a1cb39d3d97d3f"
+    },
+    "pytania.Q026.pytanie": {
+      "text": "Co oznacza rower w czerwonym kółku na białym tle?",
+      "hash": "a4892842b8f60db118cc6ce7220c61e21e4d1c3c710d6e4c06995c4a146b0160"
+    },
+    "pytania.Q026.wyjasnienie": {
+      "text": "B-9 — zakaz wjazdu rowerów. Czerwona obwódka to znak zakazu.",
+      "hash": "3ad3085b4928f7bfe4909fd6c52e2c3b5fecb46252bd40a97c3cf4412c6bbee6"
+    },
+    "pytania.Q027.pytanie": {
+      "text": "Na przejeździe dla rowerzystów stoi sygnalizator z symbolem roweru. Kogo dotyczy?",
+      "hash": "dcce6c7fd4adff298e0bb715cb2e0c8c6fc71c45816224f00b94f6e419f2c684"
+    },
+    "pytania.Q027.wyjasnienie": {
+      "text": "Sygnalizator z symbolem roweru jest przeznaczony dla rowerzystów.",
+      "hash": "85895bdcdc1464ef1a1946c3493ff0592aeecc5e549ca6a18a4a28ade0d9fe68"
+    },
+    "pytania.Q028.pytanie": {
+      "text": "Co oznacza trójkątny znak z dwójką dzieci?",
+      "hash": "4ce9940553ce8a0311173e27ad42c888c24e4a6b19a9c85c39be9b108e45852f"
+    },
+    "pytania.Q028.wyjasnienie": {
+      "text": "A-17 ostrzega, że dzieci mogą nagle wejść na drogę. Zwolnij.",
+      "hash": "35e9ae2493c6ce2d38d205f20c4f5f5850a29a56abc486a0960ea975e9a20764"
+    },
+    "pytania.Q029.pytanie": {
+      "text": "Skrzyżowanie bez znaków i świateł. Z prawej nadjeżdża samochód. Kto ma pierwszeństwo?",
+      "hash": "2ebc2e59756c57bb3ef3062886ab6163bcfd0be584d789cfdc7bfa7e0ed09186"
+    },
+    "pytania.Q029.wyjasnienie": {
+      "text": "Na skrzyżowaniu równorzędnym ustępujesz temu, kto nadjeżdża z prawej.",
+      "hash": "3faf3bc7b3cfa91d0aab12c45db3c87d763227af6d7067091fdbedb7c3068ed1"
+    },
+    "pytania.Q030.pytanie": {
+      "text": "Skrzyżowanie równorzędne, z lewej nadjeżdża tramwaj. Kto jedzie pierwszy?",
+      "hash": "9e944d90d5db6214982439b4fcd12792629c88acd27a3e13abff78ce155d7332"
+    },
+    "pytania.Q030.wyjasnienie": {
+      "text": "Na skrzyżowaniu równorzędnym tramwaj ma pierwszeństwo przed innymi pojazdami, niezależnie od strony.",
+      "hash": "d04b9752ba873e2d219f28a5dfec36cb11e52add7e522099e252efba54f446d9"
+    },
+    "pytania.Q031.pytanie": {
+      "text": "Skręcasz w lewo. Z naprzeciwka jedzie prosto rowerzysta. Co robisz?",
+      "hash": "10bfed8a0e3d75035a767005836970b81c1592b54d3cd8ac2b0adcf210dd5c8d"
+    },
+    "pytania.Q031.wyjasnienie": {
+      "text": "Skręcając w lewo, ustępujesz pojazdom z naprzeciwka jadącym prosto i w prawo.",
+      "hash": "09a75e4c4af3c07a31418310f3923afb30adfb14b5ea30a25ed62effe229ba43"
+    },
+    "pytania.Q032.pytanie": {
+      "text": "Skręcasz w prawo, a przez jezdnię, w którą wjeżdżasz, przechodzą piesi. Co robisz?",
+      "hash": "6ea85ce81284bbd6ace7c8027c9a875f3b3712b389d78667bbf24e4e586b6cf6"
+    },
+    "pytania.Q032.wyjasnienie": {
+      "text": "Skręcając, ustępujesz pieszym przechodzącym przez jezdnię, na którą wjeżdżasz.",
+      "hash": "74c552db8906acbbc081c7f0f0c115b547b2e1438e4d3dd9e472f20ebb34e9b5"
+    },
+    "pytania.Q033.pytanie": {
+      "text": "Wyjeżdżasz z bramy kamienicy na ulicę. Komu ustępujesz?",
+      "hash": "77177c88653c0995716e07750bc8b20f300aef6d0965e4443bba6c9017427acb"
+    },
+    "pytania.Q033.wyjasnienie": {
+      "text": "Wyjazd z bramy to włączanie się do ruchu — przepuszczasz wszystkich.",
+      "hash": "ff969450c7499b1ac7c4078bccfe8ad5df0fcb6b86ec592c815007f34b90bef8"
+    },
+    "pytania.Q034.pytanie": {
+      "text": "Słyszysz syrenę i widzisz karetkę z niebieskimi światłami. Co robisz?",
+      "hash": "b0981b0387f8cb4fefd4385ad8b86df27f692335f287f801d32f14d81fbe0fa9"
+    },
+    "pytania.Q034.wyjasnienie": {
+      "text": "Pojazdowi uprzywilejowanemu ustępujesz: zjeżdżasz na prawo, a gdy trzeba — zatrzymujesz się.",
+      "hash": "58f641444cc7ae069f01b7c4594096bccaf0bb8d43d48233a088dbf97b7fa9ef"
+    },
+    "pytania.Q035.pytanie": {
+      "text": "Dojeżdżasz do przejazdu dla rowerzystów. Zbliża się samochód. Co jest prawdą?",
+      "hash": "0a78cb1b3159bca7ed522d8d549b32654d952f5d89e81aa04f43c59676d7bcc1"
+    },
+    "pytania.Q035.wyjasnienie": {
+      "text": "Kierowca ustępuje rowerowi na przejeździe, ale rowerzysta nie może wjeżdżać tuż przed nadjeżdżający pojazd.",
+      "hash": "2fee18b53a084ebdaa6d91e5b361683bde1999526ee4dfa5e38313e10b9f52eb"
+    },
+    "pytania.Q036.pytanie": {
+      "text": "Przed rondem stoi znak „ustąp pierwszeństwa”. Kto ma pierwszeństwo?",
+      "hash": "88e15afd7b970194d795c1a3b2c0089957fc361f50cef7224146a92b9acbfd9c"
+    },
+    "pytania.Q036.wyjasnienie": {
+      "text": "Znak A-7 przed rondem oznacza, że przepuszczasz tych, którzy już są na rondzie.",
+      "hash": "11d7f8e96089da333c6a0f1e664cda085d722d80ecfde059ed27cc3e63e357b5"
+    },
+    "pytania.Q037.pytanie": {
+      "text": "Tramwaj zatrzymał się na przystanku bez wysepki, ludzie wysiadają na jezdnię. Co robisz?",
+      "hash": "66ecdda4dabd6efd2dd58cf55f9376407b931594b01cab6e582ca8dd5ee74af9"
+    },
+    "pytania.Q037.wyjasnienie": {
+      "text": "Przy przystanku tramwajowym bez wysepki ustępujesz pieszym idącym do lub od tramwaju.",
+      "hash": "d03709b1bb8692ed73020d3659a2ab0b22f7df2deaee1224a3e5fb60854e498c"
+    },
+    "pytania.Q038.pytanie": {
+      "text": "Jak sygnalizujesz skręt w lewo?",
+      "hash": "1b52627accb137d1c4d4a606043e9d1d423db8a3cad3d8db6857709788e491e0"
+    },
+    "pytania.Q038.wyjasnienie": {
+      "text": "Skręt w lewo: lewa ręka wyciągnięta poziomo w bok. W prawo — prawa ręka.",
+      "hash": "82c232940ca00407c50021d5266a9f783799553bfb28b16779863493e37b2c20"
+    },
+    "pytania.Q039.pytanie": {
+      "text": "Kiedy sygnalizujesz zamiar skrętu?",
+      "hash": "6d80ba1e3495bb148c5f4d0d7c91a9f77000d55c9179d22e36aff3a94b628610"
+    },
+    "pytania.Q039.wyjasnienie": {
+      "text": "Sygnalizujesz wcześniej, żeby inni zdążyli zrozumieć Twój zamiar. W trakcie skrętu możesz trzymać kierownicę obiema rękami.",
+      "hash": "f1b3fa21fda05f7e839614cee5996627c462a3ec23bdf3948bc30798ddffa3dc"
+    },
+    "pytania.Q040.pytanie": {
+      "text": "Na jezdni dwukierunkowej chcesz skręcić w lewo. Jak się ustawiasz?",
+      "hash": "958c96d54606ce017acf927d30b6fc8d9f7deb29ff990feba0d44e6d0a345ab5"
+    },
+    "pytania.Q040.wyjasnienie": {
+      "text": "Przed skrętem w lewo zbliżasz się do osi jezdni — najpierw oglądasz się i sygnalizujesz.",
+      "hash": "f36b4af526e9a86824a7071d446732e99d549c7dcc58a8b04f5fb27681243186"
+    },
+    "pytania.Q041.pytanie": {
+      "text": "Co robisz, zanim ruszysz sprzed domu na jezdnię?",
+      "hash": "0dd1b4bc1da568b5582760320609b4789b30760a6457b65a3f0dda9a74fe8951"
+    },
+    "pytania.Q041.wyjasnienie": {
+      "text": "Przed ruszeniem upewnij się, że z tyłu nic nie jedzie, i pokaż zamiar ręką.",
+      "hash": "4b65821bcc2194ee3a0c97a6689180258e5a865d2ac394e3c56608bc944779d3"
+    },
+    "pytania.Q042.pytanie": {
+      "text": "Co jest zabronione podczas jazdy rowerem?",
+      "hash": "122afea64961f777259d313dc513672b03d66203f680877c05ef3ee37dd4b553"
+    },
+    "pytania.Q042.wyjasnienie": {
+      "text": "Musisz trzymać kierownicę co najmniej jedną ręką i mieć nogi na pedałach. Nie wolno też czepiać się pojazdów.",
+      "hash": "ba44bc7550f53ff62b781308aadb367641373635f1683c8533c1253b1463d631"
+    },
+    "pytania.Q043.pytanie": {
+      "text": "Kolega prosi, żebyś podwiózł go na bagażniku. Co odpowiadasz?",
+      "hash": "f2cc849cd685ca13005a687852267ebb4a62a55da874c7c9c51a5b1f657b668d"
+    },
+    "pytania.Q043.wyjasnienie": {
+      "text": "Na zwykłym rowerze nie wolno przewozić pasażera. Dziecko do 7 lat może wozić tylko dorosły w specjalnym foteliku.",
+      "hash": "3bbb16cadcf42412d8440e14c8b65e8aa572ac550d447797313672fd26ccbf45"
+    },
+    "pytania.Q044.pytanie": {
+      "text": "Dzwoni telefon, gdy jedziesz rowerem. Co robisz?",
+      "hash": "4272a5f9a0285734d5ad8c159d5f410c52dc2e1eb4c3f8939dfcdef5f70cccdf"
+    },
+    "pytania.Q044.wyjasnienie": {
+      "text": "Podczas jazdy nie wolno korzystać z telefonu trzymanego w ręku.",
+      "hash": "1d6a45cfe7c283033866b42bec28201742fecadae58f3b44418200a14724b248"
+    },
+    "pytania.Q045.pytanie": {
+      "text": "Przed przejściem dla pieszych zatrzymał się samochód. Co robisz?",
+      "hash": "7f3b397980af6081e4f00098249efb2d31b1ad5d8cb68f621cc3aefd8e58ff76"
+    },
+    "pytania.Q045.wyjasnienie": {
+      "text": "Nie wolno omijać pojazdu, który zatrzymał się, by przepuścić pieszych. Pieszy może wyjść zza auta.",
+      "hash": "d5654365961f155cab0e921886934b2ea3615c0c51a8a15352428009f47d0654"
+    },
+    "pytania.Q046.pytanie": {
+      "text": "Jedziesz wzdłuż zaparkowanych aut. Dlaczego zachowujesz odstęp?",
+      "hash": "00a6e3bb1d2566a5ddef407e926b3073f36c9ce0e86b2d20a8e4b18e450e9019"
+    },
+    "pytania.Q046.wyjasnienie": {
+      "text": "Nagle otwarte drzwi to częsta przyczyna upadków rowerzystów. Trzymaj odstęp.",
+      "hash": "58d82fcd6d2a65b6e6e834486362fb8d02c701a1a1963bfb122e0f459393c19b"
+    },
+    "pytania.Q047.pytanie": {
+      "text": "Na przejeździe kolejowym migają czerwone światła, a zapory zaczynają się opuszczać. Co robisz?",
+      "hash": "8eb38d0067d4f4490cdb31cb6107c59c112f230b9225700d79b7d2982e8f9929"
+    },
+    "pytania.Q047.wyjasnienie": {
+      "text": "Gdy migają czerwone światła lub zapory się ruszają — nie wjeżdżasz. Pociąg jedzie szybciej, niż się wydaje.",
+      "hash": "b4b8bb522c4184417e4232ad31c833e5d57f7af708d8c0f78f06d3efe1b716fe"
+    },
+    "pytania.Q048.pytanie": {
+      "text": "Ile rowerów może liczyć jedna kolumna rowerzystów?",
+      "hash": "732e8c5204a08358993c4f790b597104614d33f7542cda07ef12e9891b58d738"
+    },
+    "pytania.Q048.wyjasnienie": {
+      "text": "Kolumna rowerów to najwyżej 15 rowerów, a między kolumnami musi być co najmniej 200 m odstępu.",
+      "hash": "a4f2e953a407c914094a3370246352ae39d0865ead7b0293017723bb0dce8267"
+    },
+    "pytania.Q049.pytanie": {
+      "text": "Co najbardziej pomaga, żeby kierowcy zobaczyli Cię wieczorem?",
+      "hash": "c0575d43b565033bbdf63a7771baefd44e512d35dcccd615084e9d8f22bfd192"
+    },
+    "pytania.Q049.wyjasnienie": {
+      "text": "Światła i odblaski sprawiają, że kierowca zauważy Cię z dużo większej odległości.",
+      "hash": "a643bb475d82ee283fa6a482c5571341435a70aeec9a8c037b144132f7c5f537"
+    },
+    "pytania.Q050.pytanie": {
+      "text": "Jaki jest numer alarmowy, pod który dzwonisz po pomoc?",
+      "hash": "8c25c894ecf3b6c5f29c0e6ef901baa2460abf03c4da1566a1fa359673d2912f"
+    },
+    "pytania.Q050.wyjasnienie": {
+      "text": "112 to numer alarmowy w całej Polsce i Unii Europejskiej.",
+      "hash": "a6e35a8048f4caee01298ff6550613163bf519d6f48a6cc7d2de7b3ca20f4b63"
+    },
+    "pytania.Q051.pytanie": {
+      "text": "Co najważniejsze musisz powiedzieć dyspozytorowi 112?",
+      "hash": "9bfa8a41c8a858cf45fa3de92c7520abe5e0d3fa4db2ed1b4c93559c51ff69a5"
+    },
+    "pytania.Q051.wyjasnienie": {
+      "text": "Podaj miejsce, co się stało i ile osób potrzebuje pomocy. Odpowiadaj na pytania i nie rozłączaj się pierwszy.",
+      "hash": "452e3ca7ca4ec50d7c15fa71cefe45b080482aff4c5b134fb10b16b482ccd133"
+    },
+    "pytania.Q052.pytanie": {
+      "text": "Kolega przewrócił się na jezdni. Co robisz najpierw?",
+      "hash": "bea3e3c8c4ebbdf32941a7667cd378fea98650f2e903d4eb32db2c79a8960730"
+    },
+    "pytania.Q052.wyjasnienie": {
+      "text": "Najpierw bezpieczeństwo — Twoje i miejsca zdarzenia. Dopiero potem pomoc.",
+      "hash": "462b068dbb9df5a26c97115dba6d29df993886327aca1e1e44a39d822333cd34"
+    },
+    "pytania.Q053.pytanie": {
+      "text": "Poszkodowany nie odpowiada, ale oddycha. Co robisz z pomocą dorosłego?",
+      "hash": "590f76bbb4a02a49a0abad9c203d99697b986a59f96481b9f3947f308af686d7"
+    },
+    "pytania.Q053.wyjasnienie": {
+      "text": "Osobę nieprzytomną, która oddycha, układa się w pozycji bezpiecznej i wzywa pomoc (112).",
+      "hash": "665792a388be28fc059f0c465b867061cd84cd3a244d91f86c4bac3b6da7c968"
+    },
+    "pytania.Q054.pytanie": {
+      "text": "Na placu manewrowym jedziesz ósemkę. Co jest błędem?",
+      "hash": "4cf4474c63a90b10419ec948ed2e1f1f6b15c38feb07e282437d763e2daf8057"
+    },
+    "pytania.Q054.wyjasnienie": {
+      "text": "Na egzaminie błędem jest podparcie się nogą, najechanie na linię lub potrącenie pachołka.",
+      "hash": "870ea2df5b6c8769da6048d9e93444c3aeefff6f0cd1cc21e95c8d9bda8f2115"
+    },
+    "pytania.Q055.pytanie": {
+      "text": "Na jezdni widzisz pas rowerowy wyznaczony w Twoim kierunku. Jak z niego korzystasz?",
+      "hash": "d6ad57276a688f828e7a0f025ddc0145b90b61348bc883060fe7a9f99c97e0df"
+    },
+    "pytania.Q055.wyjasnienie": {
+      "text": "Pasem rowerowym jedź w kierunku wyznaczonym na jezdni.",
+      "hash": "e9154f40852893d63bb6e83ba140734fdae4972fecc237d15e0cd9c2f3a2a069"
+    },
+    "pytania.Q056.pytanie": {
+      "text": "Jedziesz prostą, pustą jezdnią i niczego nie omijasz. Gdzie jest Twoje miejsce?",
+      "hash": "a80f49903d436c019b82001ff9fa65a9c8ebd38aa9f387919b418bd852c5ba59"
+    },
+    "pytania.Q056.wyjasnienie": {
+      "text": "Na prostej jedź możliwie blisko prawej krawędzi jezdni.",
+      "hash": "946ecda58cd88e71127699f7e685f39f43e767705b7245e5538dca600188de0e"
+    },
+    "pytania.Q057.pytanie": {
+      "text": "Przed ulicą stoi białe koło z czerwoną obwódką i bez dodatkowej tabliczki. Co robisz?",
+      "hash": "76e367160097adc6450fb3157daf8e79d9106244d77f5129b2bc283eae928ea3"
+    },
+    "pytania.Q057.wyjasnienie": {
+      "text": "Znak B-1 oznacza zakaz ruchu także dla rowerów, chyba że tabliczka wskazuje wyjątek.",
+      "hash": "10fd437da5d208fd9b5f0816e1345c9a66495f378e74ef6cff83d79c8aaa546d"
+    },
+    "pytania.Q058.pytanie": {
+      "text": "Przed skrzyżowaniem masz znak A-7, a drogą główną nadjeżdża samochód. Kto przejeżdża pierwszy?",
+      "hash": "6444ded06bbcd96d0bcceb1d316b0a4563e83f98c893217f2aebc48edf787904"
+    },
+    "pytania.Q058.wyjasnienie": {
+      "text": "Wyjeżdżając z drogi podporządkowanej, przepuść pojazdy na drodze z pierwszeństwem.",
+      "hash": "988dcc4925af104363698b6e1a23b87bd11cb9c30f5fb1025448078ce92a02f8"
+    },
+    "pytania.Q059.pytanie": {
+      "text": "Skręcasz w prawo na pustym skrzyżowaniu. Którędy poprowadzisz rower?",
+      "hash": "6e3c8c0bd047f2ae770b9114390a9c2e7bf6bde1cf660b6a172f442ab20c9b56"
+    },
+    "pytania.Q059.wyjasnienie": {
+      "text": "Przy skręcie w prawo trzymaj się blisko prawej krawędzi i jedź łagodnym łukiem.",
+      "hash": "26c09a63a2cfa5a8a765a4c789d32bbf98f0981ec27d30ade7fa6b44d6f73a94"
+    },
+    "pytania.Q060.pytanie": {
+      "text": "Chcesz ominąć stojący samochód i zmienić tor w lewo. Co robisz przed manewrem?",
+      "hash": "0b643c50e0fd3ae4e0c6a7b9369bfde82fe177e58c865ef5db2cdd1f1f607797"
+    },
+    "pytania.Q060.wyjasnienie": {
+      "text": "Przed ominięciem obejrzyj się, zasygnalizuj zmianę toru i zostaw bezpieczny odstęp.",
+      "hash": "215c3186bf57ea600f219499488fb107a25acbb1c012a20941681d5b59fc8a27"
+    },
+    "pytania.Q061.pytanie": {
+      "text": "Powoli jadący pojazd obok Ciebie zaczyna skręcać w prawo. Jak najbezpieczniej zareagujesz?",
+      "hash": "cf58f07859c3384e1dd3e466da0452ecdfa6268239efe34f2e96e92ab6d263b2"
+    },
+    "pytania.Q061.wyjasnienie": {
+      "text": "Zwolnij i zostaw miejsce, gdy pojazd zaczyna skręcać lub odstęp jest mały.",
+      "hash": "d62711720fd19bb6fe60316195c1f8085a0d4335daad0826c12710234a6ec487"
+    },
+    "pytania.Q062.pytanie": {
+      "text": "Co wskazuje biały symbol roweru namalowany na jezdni?",
+      "hash": "e2b787b8c832d057c660c9b1ebc002a0b896b745158a0062894da29d8102711c"
+    },
+    "pytania.Q062.wyjasnienie": {
+      "text": "Biały symbol roweru wskazuje miejsce przeznaczone dla rowerzystów.",
+      "hash": "27ede10bf13b7272fd13a45c7fe64d25ae360641e0a98d022bbe235036028b41"
+    }
+  },
+  "recorded": {}
+}

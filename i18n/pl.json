@@ -350,9 +350,7 @@
     "medium": "Standardowy",
     "large": "Duży",
     "largest": "Bardzo duży",
-    "withGlory": "Misja ukończona z wynikiem {points} punktów, a dobry nawyk trafia do momentu chwały.",
-    "completed": "Misja ukończona z wynikiem {points} punktów.",
-    "failed": "Twój wynik to {points} punktów, a wskazówka pomoże w kolejnej próbie."
+    "gloryVoice": "Misja ukończona. Zobacz swój dobry nawyk w momencie chwały!"
   },
   "misje": {
     "WRO-T-01": {

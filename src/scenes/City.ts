@@ -1,3 +1,10 @@
+import {
+  localizedVoiceLine,
+  resultVoiceIds,
+  ruleFeedbackLine,
+  type VoiceLine,
+  type voiceNoticeIds,
+} from '../audio/voiceLines';
 import { rankingSeed, RideEvidence } from '../rankings/evidence';
 import { showBreakReminder } from '../ui/BreakReminder';
 import { verdictHaptics } from '../platform/haptics';
@@ -168,7 +175,7 @@ export class City extends Scene {
   private companions: GameObjects.Image[] = [];
   private phone!: MissionPhone;
   private dialogue!: DialogueWindow;
-  private phoneFeedback!: string;
+  private phoneFeedback!: VoiceLine;
   private missionHud?: MissionHud;
   private missionHudAt = -Infinity;
   private photoPending = false;
@@ -297,9 +304,11 @@ export class City extends Scene {
       cached.data,
       this.content.balans.silnik.kafel_m,
     );
-    this.phoneFeedback = this.content.przepisy.przepisy.find(
-      ({ id }) => id === 'MAN-11',
-    )!.feedback;
+    this.phoneFeedback = ruleFeedbackLine(
+      'przepisy.MAN-11.feedback',
+      this.content.przepisy.przepisy.find(({ id }) => id === 'MAN-11')!
+        .feedback,
+    );
     this.mission = definition ? this.createMission(definition) : undefined;
     Object.assign(this.environment, missionEnvironment(this.world, definition));
     Object.assign(this.renderEnvironment, this.environment);
@@ -984,12 +993,12 @@ export class City extends Scene {
       verdict ??
       result.verdicts[0];
     const tip = lesson
-      ? this.feedback.explanation(lesson)
+      ? this.feedback.explanation(lesson).text
       : (definitions.find(({ id }) => id === definition.reguly_cwiczone[0])
           ?.feedback ?? '');
     audio.setActivity(false);
     audio.stopReading('feedback');
-    const summary = results.show(
+    results.show(
       result,
       definition.tytul,
       tokens,
@@ -1001,7 +1010,18 @@ export class City extends Scene {
     );
     if (result.stars > 0) audio.play('stars');
     if (unlocked) audio.play('unlock', 1, result.stars > 0 ? 0.75 : 0);
-    audio.read('results', summary);
+    audio.read(
+      'results',
+      localizedVoiceLine(
+        resultVoiceIds[
+          result.status === 'completed'
+            ? habit
+              ? 'glory'
+              : 'completed'
+            : 'failed'
+        ],
+      ),
+    );
     this.resultsElapsed =
       result.status === 'completed' && !this.reducedEffects ? 0 : undefined;
     this.drawGlory(this.resultsElapsed);
@@ -1070,6 +1090,7 @@ export class City extends Scene {
         pytanie: translate(goal.pytanie),
         odpowiedzi: goal.odpowiedzi.map((key) => translate(key)),
         wyjasnienie: translate(goal.wyjasnienie),
+        voiceKeys: goal,
       },
       (index) => {
         const answer = mission.answerChoice(index);
@@ -1140,10 +1161,12 @@ export class City extends Scene {
     return true;
   }
 
-  private message(text: string) {
+  private message(line: (typeof voiceNoticeIds)[number] | VoiceLine) {
+    const voice = typeof line === 'string' ? localizedVoiceLine(line) : line;
+    const { text } = voice;
     if (this.controls.notice.textContent !== text) {
       if (text === ui.driving.collision) audio.play('oops');
-      audio.read('feedback', text);
+      audio.read('feedback', voice);
     }
     this.controls.notice.textContent = text;
     this.messageUntil = this.time.now + 2600;
@@ -1158,17 +1181,17 @@ export class City extends Scene {
     )
       return;
     if (this.rider.speed > 5) {
-      this.message(ui.driving.slowDown);
+      this.message('driving.slowDown');
       return;
     }
     if (this.rider.walking && !canRide(this.rider, this.obstacles)) {
-      this.message(ui.driving.blocked);
+      this.message('driving.blocked');
       return;
     }
     this.rider.walking = !this.rider.walking;
     this.rider.speed = 0;
     this.controls.setWalking(this.rider.walking);
-    if (this.rider.walking) this.message(ui.driving.walkingHint);
+    if (this.rider.walking) this.message('driving.walkingHint');
   }
   private startRankingRide(mission: boolean) {
     const consent = this.progress.rankings?.consent;
@@ -1373,7 +1396,7 @@ export class City extends Scene {
       this.content.balans.album.zasieg_zdjecia_m,
     );
     if (sign) this.captureSign(sign);
-    else if (showHint || walking) this.message(ui.m5c.noPhoto);
+    else if (showHint || walking) this.message('m5c.noPhoto');
     return Boolean(sign);
   }
 
@@ -1405,10 +1428,10 @@ export class City extends Scene {
           controls.root.isConnected
         ) {
           audio.play('unlock');
-          this.message(ui.m5c.photoSaved);
+          this.message('m5c.photoSaved');
         }
       } else if (controls.root.isConnected) {
-        this.message(ui.m5c.photoFailed);
+        this.message('m5c.photoFailed');
       }
     });
   }
@@ -1628,12 +1651,12 @@ export class City extends Scene {
     }
     if (effects?.respawn) {
       this.returnToCheckpoint(effects.respawn);
-      const hint = effects.missingHabit;
-      this.checkpointHint = hint?.hintKey
-        ? translate(hint.hintKey)
-        : ui.missionUi.checkpointHint;
+      const hint = localizedVoiceLine(
+        effects.missingHabit?.hintKey ?? 'missionUi.checkpointHint',
+      );
+      this.checkpointHint = hint.text;
       this.missionInterrupted = true;
-      audio.read('lesson', this.checkpointHint);
+      audio.read('lesson', hint);
     }
   }
 
@@ -1696,7 +1719,7 @@ export class City extends Scene {
       const explanation = this.feedback.explanation(review.verdict);
       audio.read('lesson', explanation);
       this.replayDialog.show(
-        explanation,
+        explanation.text,
         review.verdict.kind === 'minor',
         this.replay.size > 1,
         Boolean(this.mission?.result || this.mission?.waitingForQuestion),
@@ -1791,7 +1814,7 @@ export class City extends Scene {
           FIXED_STEP,
           this.rider.walking ? undefined : this.weatherTuning,
         );
-      if (collided) this.message(ui.driving.collision);
+      if (collided) this.message('driving.collision');
       const meters =
         this.rankingRide && !walking
           ? Math.hypot(this.rider.x - x, this.rider.y - y) *

@@ -1,3 +1,4 @@
+import { localizedVoiceLine } from '../audio/voiceLines';
 import { audio } from '../audio/GameAudio';
 import type { ProgressStore } from '../core/progressStore';
 import { setAudio } from './AudioControls';
@@ -231,6 +232,6 @@ export class DialogueWindow {
       String(this.progress.profile.audio.readAloud),
     );
     const { tekst, lektor } = this.lines[this.index]!;
-    audio.read('dialogue', translate(lektor ?? tekst));
+    audio.read('dialogue', localizedVoiceLine(lektor ?? tekst));
   }
 }

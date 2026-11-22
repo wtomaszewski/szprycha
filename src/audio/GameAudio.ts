@@ -1,6 +1,6 @@
 import { bicycleBells, sampleRate, synthesize, type Effect } from './effects';
 import { Narrator, type Reading } from './Narrator';
-import { nativeSpeech } from '../platform/nativeSpeech';
+import { localizedVoiceLine, type VoiceLine } from './voiceLines';
 import { Radio } from './Radio';
 import {
   channelLevel,
@@ -8,7 +8,7 @@ import {
   type AudioSettings,
   type Station,
 } from './settings';
-import { translate, ui } from '../core/presentation';
+import { ui } from '../core/presentation';
 
 class GameAudio {
   private settings: Readonly<AudioSettings> = defaultAudio;
@@ -22,6 +22,7 @@ class GameAudio {
   private activated = false;
   private riding = false;
   private ducked = false;
+  private reading = false;
   private tipIndex = 0;
   private tipTimer?: number;
   private caption?: (text: string) => void;
@@ -148,8 +149,8 @@ class GameAudio {
     );
   }
 
-  read(owner: Reading, text: string) {
-    if (this.activated && !document.hidden) this.narrator?.read(owner, text);
+  read(owner: Reading, line: VoiceLine) {
+    if (this.activated && !document.hidden) this.narrator?.read(owner, line);
   }
 
   stopReading(owner: Reading) {
@@ -159,14 +160,6 @@ class GameAudio {
   private activate() {
     if (!this.activated) {
       this.activated = true;
-      this.narrator = new Narrator(
-        typeof SpeechSynthesisUtterance === 'undefined'
-          ? undefined
-          : window.speechSynthesis,
-        this.lifetime.signal,
-        nativeSpeech,
-      );
-      this.narrator.setVolume(channelLevel(this.settings, 'voice'));
       if (typeof AudioContext === 'undefined') return;
       try {
         const context = (this.context = new AudioContext());
@@ -175,6 +168,10 @@ class GameAudio {
         this.music.connect(context.destination);
         this.effects.connect(context.destination);
         this.radio = new Radio(context, this.music);
+        this.narrator = new Narrator(context, (playing) => {
+          this.reading = playing;
+          this.updateMusic();
+        });
         context.addEventListener('statechange', () => this.syncRadio(), {
           signal: this.lifetime.signal,
         });
@@ -191,7 +188,11 @@ class GameAudio {
     if (!this.music) return;
     const gain = this.music.gain;
     const now = this.context!.currentTime;
-    const target = channelLevel(this.settings, 'music', this.ducked);
+    const target = channelLevel(
+      this.settings,
+      'music',
+      this.ducked || this.reading,
+    );
     gain.cancelScheduledValues(now);
     if (target) gain.setTargetAtTime(target, now, 0.08);
     else gain.setValueAtTime(0, now);
@@ -216,8 +217,8 @@ class GameAudio {
     if (this.ducked) return;
     const tips = ui.audio.tips;
     const { text } = tips[this.tipIndex++ % tips.length]!;
-    const line = translate(text);
-    this.caption?.(line);
+    const line = localizedVoiceLine(text);
+    this.caption?.(line.text);
     this.read('radio', line);
     this.tipTimer = window.setTimeout(() => this.endTip(), 6500);
   }

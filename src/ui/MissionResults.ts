@@ -218,12 +218,6 @@ export class MissionResults {
 
     this.dialog.showModal();
     this.heading.focus();
-    const narration = completed
-      ? hasReplay
-        ? labels.withGlory
-        : labels.completed
-      : labels.failed;
-    return narration.replace('{points}', String(result.points));
   }
 
   stopAnimation() {

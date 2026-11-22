@@ -7,7 +7,7 @@ type AudioLog = {
   effects: number;
   notes: number;
   levels: number[];
-  lines: { text: string; lang: string; voice: string; volume: number }[];
+  speechCalls: number;
 };
 
 declare global {
@@ -16,14 +16,14 @@ declare global {
   }
 }
 
-async function observeAudio(page: Page, speech: 'absent' | 'local' | 'remote') {
-  await page.addInitScript((available) => {
+async function observeAudio(page: Page) {
+  await page.addInitScript(() => {
     const log: AudioLog = {
       contexts: 0,
       effects: 0,
       notes: 0,
       levels: [],
-      lines: [],
+      speechCalls: 0,
     };
     window.audioLog = log;
     window.AudioContext = class extends AudioContext {
@@ -47,38 +47,13 @@ async function observeAudio(page: Page, speech: 'absent' | 'local' | 'remote') {
       log.levels.push(value);
       return gainTarget.call(this, value, time, constant);
     };
-    if (available === 'absent') {
-      Object.defineProperty(window, 'speechSynthesis', { value: undefined });
-      Object.defineProperty(window, 'SpeechSynthesisUtterance', {
-        value: undefined,
-      });
-    } else {
-      const system = new EventTarget();
-      const voice = { lang: 'pl-PL', localService: available === 'local' };
-      Object.assign(system, {
-        getVoices: () => [voice],
-        cancel: () => {},
-        speak: (line: SpeechSynthesisUtterance) => {
-          log.lines.push({
-            text: line.text,
-            lang: line.lang,
-            voice: line.voice!.lang,
-            volume: line.volume,
-          });
-          queueMicrotask(() =>
-            line.onend?.call(line, {} as SpeechSynthesisEvent),
-          );
-        },
-      });
-      Object.defineProperty(window, 'speechSynthesis', { value: system });
-      class Utterance {
-        constructor(readonly text: string) {}
-      }
-      Object.defineProperty(window, 'SpeechSynthesisUtterance', {
-        value: Utterance,
-      });
-    }
-  }, speech);
+    Object.defineProperty(window, 'speechSynthesis', {
+      get() {
+        log.speechCalls++;
+        throw new Error('Game narration accessed Web Speech');
+      },
+    });
+  });
 }
 
 const log = (page: Page) => page.evaluate(() => window.audioLog);
@@ -92,7 +67,7 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     page,
   }) => {
     await page.emulateMedia({ reducedMotion });
-    await observeAudio(page, 'local');
+    await observeAudio(page);
     await page.goto('/');
     await chooseCity(page, 'warszawa', 'campaign');
     const canvas = page.locator('canvas');
@@ -126,15 +101,7 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     await expect(result).toContainText(`${pl.progression.tokens} +35`);
     await expect(result).toContainText(`${pl.missionResults.mastery}`);
     await expect(result).toContainText('10% (+10)');
-    const narration = pl.missionResults.withGlory.replace('{points}', '1550');
-    await expect
-      .poll(async () =>
-        (await log(page)).lines
-          .slice(before.lines.length)
-          .map(({ text }) => text),
-      )
-      .toEqual([narration]);
-    expect(narration.length).toBeLessThanOrEqual(140);
+    expect((await log(page)).speechCalls).toBe(0);
     expect((await log(page)).effects).toBeGreaterThan(before.effects);
 
     const skip = result.getByRole('button', { name: pl.missionResults.skip });
@@ -185,10 +152,10 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
   });
 }
 
-test('unlocks audio with a gesture, saves channel levels and station, and rides muted without Web Speech', async ({
+test('unlocks audio with a gesture, saves channel levels and station, and rides muted', async ({
   page,
 }) => {
-  await observeAudio(page, 'absent');
+  await observeAudio(page);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
@@ -266,7 +233,7 @@ test('unlocks audio with a gesture, saves channel levels and station, and rides 
   expect(await log(page)).toMatchObject({
     notes: mutedAudio.notes,
     effects: mutedAudio.effects,
-    lines: [],
+    speechCalls: 0,
   });
 
   await page.reload();
@@ -280,25 +247,18 @@ test('unlocks audio with a gesture, saves channel levels and station, and rides 
   expect(errors).toEqual([]);
 });
 
-test('ducks radio during a dialogue and reads with the Polish system voice at the saved level', async ({
+test('ducks radio during a dialogue and preserves captions without recordings', async ({
   page,
 }) => {
-  await observeAudio(page, 'local');
+  await observeAudio(page);
   await page.goto('/');
-  await openSettings(page);
-  await settings(page).getByRole('slider', { name: pl.audio.voice }).fill('40');
-  await page.getByRole('button', { name: pl.m5c.close, exact: true }).click();
   await chooseCity(page, 'warszawa', 'campaign');
   const dialogue = page.getByRole('dialog', { name: pl.dialogueUi.title });
   await expect(dialogue).toBeVisible();
-  await expect
-    .poll(async () => (await log(page)).lines.length)
-    .toBeGreaterThan(0);
-  expect((await log(page)).lines[0]).toMatchObject({
-    lang: 'pl-PL',
-    voice: 'pl-PL',
-    volume: 0.4,
-  });
+  await expect(
+    dialogue.getByText(pl.dialogi['WAW-T-01'].powitanie),
+  ).toBeVisible();
+  expect((await log(page)).speechCalls).toBe(0);
   await expect.poll(async () => (await log(page)).levels).toContain(0.6 * 0.26);
   await dialogue.getByRole('button', { name: pl.dialogueUi.skip }).click();
   await expect.poll(async () => (await log(page)).levels.at(-1)).toBe(0.6);
@@ -311,26 +271,5 @@ test('ducks radio during a dialogue and reads with the Polish system voice at th
   await expect(page.locator('.radio-caption')).toHaveText(
     pl.audio.tipText.stop,
   );
-  await expect
-    .poll(async () => (await log(page)).lines.at(-1))
-    .toEqual({
-      text: pl.audio.tipText.stop,
-      lang: 'pl-PL',
-      voice: 'pl-PL',
-      volume: 0.4,
-    });
-});
-
-test('displays a dialogue with only a remote Polish voice available', async ({
-  page,
-}) => {
-  await observeAudio(page, 'remote');
-  await page.goto('/');
-  await chooseCity(page, 'warszawa', 'campaign');
-  const dialogue = page.getByRole('dialog', { name: pl.dialogueUi.title });
-  await expect(dialogue).toBeVisible();
-  await dialogue.getByRole('button', { name: pl.dialogueUi.next }).click();
-  expect((await log(page)).lines).toEqual([]);
-  await dialogue.getByRole('button', { name: pl.dialogueUi.skip }).click();
-  await expect(dialogue).not.toBeVisible();
+  expect((await log(page)).speechCalls).toBe(0);
 });

@@ -24,7 +24,7 @@ M10d korzysta z wbudowanego `node:crypto` do haszowania haseł i generowania kod
 
 - Grafikę, efekty, muzykę i inne zasoby tworzymy sami. Domyślnym źródłem zasobów jest generator w repozytorium. Wyjątki to fonty na SIL Open Font License 1.1 i materiały CC0 z udokumentowanym źródłem. Materiał CC-BY wymaga wpisu do [#7](https://github.com/wtomaszewski/szprycha/issues/7) i uprzedniej zgody Wojtka.
 - Każdy zasób pobrany z zewnątrz wymaga przed użyciem wpisu do [assets/LICENSES.md](../assets/LICENSES.md) z nazwą źródła, autorem, licencją, datą pozyskania i URL. Zachowujemy wymagane noty i treści licencji.
-- W M8 muzykę, dżingle i efekty dźwiękowe syntetyzujemy własnym kodem, używając Web Audio albo generatora w `tools/`, który tworzy pliki OGG podczas budowania. Lektor używa wyłącznie głosów systemowych urządzenia przez Web Speech lub natywne TTS. Do paczki nie dołączamy nagrań lektora ani sampli z zewnętrznych bibliotek.
+- W M8 muzykę, dżingle i efekty dźwiękowe syntetyzujemy własnym kodem, używając Web Audio albo generatora w `tools/`, który tworzy pliki OGG podczas budowania.
 - Wykluczamy logotypy i charakterystyczne oznaczenia firm oraz instytucji, w tym Rockstar/GTA, Metro Warszawskiego, MZA, Tramwajów Warszawskich, MPK Wrocław, PKP, Policji, PSP i Pogotowia, klubów sportowych oraz marek samochodów. Pojazdy uprzywilejowane wyróżniamy kolorami i sygnałami.
 - Używamy nazw miejsc jako nazw geograficznych, np. PKiN, Stadion Narodowy i Hala Stulecia. Charakterystyczne budynki przedstawiamy we własnej interpretacji graficznej, bez kopiowania zdjęć i ilustracji.
 - Akty prawne nie podlegają ochronie prawnoautorskiej. Zasady opisujemy własnymi słowami i tworzymy własne pytania oraz ilustracje. Cudze podręczniki, testy na kartę rowerową i grafiki WORD-u lub Policji mogą podlegać ochronie.
@@ -32,3 +32,10 @@ M10d korzysta z wbudowanego `node:crypto` do haszowania haseł i generowania kod
 W M10a listy słów do generatora nicków i szablony w `legal/` są treściami własnymi. Zrzuty Strefy Rodzica pochodzą z testów Playwright. [Pochodzenie zasobów](../assets/LICENSES.md)
 
 Kwestie do rozstrzygnięcia przed wydaniem są w [NOTES_FOR_HUMAN.md](../NOTES_FOR_HUMAN.md).
+
+
+## Nagrania lektora
+
+Nagrania mogą pochodzić z płatnego planu ElevenLabs lub Azure Speech, którego warunki obejmują komercyjną dystrybucję plików w grze offline. Używamy polskiego głosu z biblioteki dostawcy, bez klonowania głosu realnej osoby. Zanim pliki trafią do repozytorium, Wojtek zatwierdzi dostawcę, plan lub SKU i jego licencję, nazwę i identyfikator głosu, datę pozyskania i wersję lub datę regulaminu. Dane te trafią tutaj oraz do rejestru zasobów. Na etapie #93 wybór i wpis licencyjny czekają na decyzję, a w paczce są wyłącznie teksty. [Rejestr zasobów](../assets/LICENSES.md) · [ElevenLabs](https://elevenlabs.io/terms-of-use) · [Azure Speech](https://www.microsoft.com/licensing/terms/productoffering/MicrosoftAzure/all).
+
+Przed zatwierdzeniem trzeba sprawdzić prawo do używania nagrań po zakończeniu subskrypcji, dystrybucję w PWA i sklepach mobilnych, warunki dla treści kierowanych do dzieci oraz ewentualne oznaczenia. FFmpeg z enkoderami libopus i AAC jest narzędziem do lokalnego przygotowania plików. Gra odtwarza zapisane pliki przez Web Audio. [Instrukcja dla Wojtka](../NOTES_FOR_HUMAN.md#93--nagrania-lektora-wojtek).

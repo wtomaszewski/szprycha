@@ -1,4 +1,5 @@
 import { audio } from '../audio/GameAudio';
+import { questionVoiceLine, quizExplanationLine } from '../audio/voiceLines';
 import portrait from '../../assets/generated/portraits/sierzant_ola.png?url';
 import { moduleId, type GameContent } from '../content/schemas';
 import { illustratedSigns } from '../content/signIllustrations';
@@ -15,7 +16,6 @@ import { signIllustration } from './SignIllustration';
 import { progressNotice } from './SkillMap';
 
 const labels = ui.quiz;
-const sentences = new Intl.Segmenter('pl', { granularity: 'sentence' });
 
 function button(text: string, action: () => void) {
   const element = document.createElement('button');
@@ -160,8 +160,8 @@ export function quizPanel(progress: MissionProgress, content: GameContent) {
         );
         if (!correct)
           feedback.append(paragraph(question.odpowiedzi[question.poprawna]!));
-        const detail = explanation(question);
-        feedback.append(paragraph(detail));
+        const detail = quizExplanationLine(rules.get(question.przepisy[0]!)!);
+        feedback.append(paragraph(detail.text));
         audio.read('lesson', detail);
         if (result.achievements.length) audio.play('unlock');
         for (const achievement of result.achievements)
@@ -172,6 +172,7 @@ export function quizPanel(progress: MissionProgress, content: GameContent) {
         return feedback;
       },
       finish(correct) {
+        audio.stopReading('lesson');
         const result = heading(labels.finished);
         body.replaceChildren(
           result,
@@ -185,15 +186,6 @@ export function quizPanel(progress: MissionProgress, content: GameContent) {
         result.focus();
       },
     });
-  }
-
-  function explanation(question: QuizQuestion) {
-    const rule = rules.get(question.przepisy[0]!)!;
-    const [plain] = sentences.segment(rule.dla_dziecka);
-    const brief = plain?.segment.trim();
-    if (brief && brief.length <= 140) return brief;
-    const [fallback] = sentences.segment(rule.feedback);
-    return fallback?.segment.trim() ?? rule.feedback;
   }
 
   const open = button(labels.title, () => {
@@ -282,6 +274,7 @@ export function quizQuestions({
     body.append(answers);
     dialog.scrollTop = 0;
     prompt.focus();
+    if (answer) audio.read('lesson', questionVoiceLine(question, 'pytanie'));
   }
   showQuestion(0);
 }
