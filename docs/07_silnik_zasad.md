@@ -42,7 +42,7 @@ interface RiderState {
 ```
 
 ## 3. Kontekst środowiskowy
-`EnvState { time: 'day'|'dusk'|'night', weather: 'clear'|'rain_heavy'|'snow'|'wind_strong'|'fog'|'ice', visibilityLow: boolean }` — wpływa na WYP-04/05, MSC-04, GDZIE-04.
+`EnvState { time: 'day'|'dusk'|'night', weather: 'clear'|'rain_light'|'rain_heavy'|'snow'|'wind_strong'|'fog'|'fog_dense'|'ice', visibilityLow: boolean }` — wpływa na WYP-04/05, MSC-04, GDZIE-04.
 
 ## 4. Detektor — kontrakt
 ```ts
@@ -90,7 +90,7 @@ Ważność (`kind`) domyślnie z `przepisy.yaml` (`waga_bledu`), detektor może 
 
 **Gdzie jechać (GDZIE-*):**
 - ZoneTracker zna strefę pod kołami. Reguła GDZIE-01: jeśli gracz jedzie `roadway` równolegle do istniejącego `bike_path` lub `bike_lane` przypisanego do tego kierunku (atrybut `parallelBikeInfra` pasa w Tiled) przez > 3 s → `minor`.
-- GDZIE-04 (chodnik): `sidewalk` + `mode='riding'` → sprawdź wyjątki: jawna opieka dorosłego nad jadącym dzieckiem <10 lat; `weather` ∈ {rain_heavy, snow, wind_strong, fog, ice}; atrybuty chodnika `width_m ≥ 2` i sąsiednia jezdnia `speedLimit > 50` i brak DDR/pasa. Brak wyjątku → `minor`. Z wyjątkiem → sprawdzaj GDZIE-05 (prędkość ≤ 2,5 m/s przy pieszych w promieniu 3 m, ustępowanie pieszym).
+- GDZIE-04 (chodnik): `sidewalk` + `mode='riding'` → sprawdź wyjątki: jawna opieka dorosłego nad jadącym dzieckiem <10 lat; `weather` ∈ {rain_heavy, snow, wind_strong, fog_dense, ice}; atrybuty chodnika `width_m ≥ 2` i sąsiednia jezdnia `speedLimit > 50` i brak DDR/pasa. Brak wyjątku → `minor`. Z wyjątkiem → sprawdzaj GDZIE-05 (prędkość ≤ 2,5 m/s przy pieszych w promieniu 3 m, ustępowanie pieszym).
 - GDZIE-06: wjazd na `crossing.pedestrian` w trybie `riding` → `minor`; jeśli pieszy na przejściu w promieniu 4 m → `major`. Przejście w trybie `walking_bike` → `good`.
 
 **Sygnalizacja świetlna (SYG-01):** przekroczenie linii zatrzymania (P-12 / linia z danych) przy czerwonym → `major`; przy żółtym, gdy gracz miał dość miejsca na bezpieczne zatrzymanie (droga hamowania < odległość do linii) → `minor`. Zatrzymanie przed linią na czerwonym → `good`.
@@ -103,7 +103,7 @@ Ważność (`kind`) domyślnie z `przepisy.yaml` (`waga_bledu`), detektor może 
 
 **Ustępowanie poza skrzyżowaniem.** PIER-06 sprawdza włączanie się po postoju przy krawędzi i przy wyjazdach zaznaczonych warstwą `driveways`; kierunek wyjazdu jest zapisany w `direction`. MSC-03 wymaga postoju przed przecięciem chodnika i przepuszczenia uczestników ruchu. MSC-02 korzysta z aktywnego przystanku bez wysepki zgłaszanego przez tramwaj. PIER-07 ocenia zjazd w prawo i hamowanie ochronne pojazdu nadjeżdżającego z tyłu z aktywnymi sygnałami.
 
-**Stan roweru i nawyki.** MAN-06 mierzy boczny odstęp od obrysów pojazdów w warstwie `parked_cars`. Światła oceniają WYP-04, WYP-05 i MSC-04. Ich działanie można sprawdzić po zmroku, ustawianym przez `dusk_at_s` mapy oraz przełącznik świateł w sterowaniu. MAN-09, MAN-10 i MAN-11 odczytują stan rąk i nóg, przytrzymanie pojazdu, pasażera na jednoosobowym rowerze i telefon w ręku. Scenariusze mogą podać te stany bezpośrednio. Zdarzenia z propozycją podwózki i telefonem będą dostarczane przez misje.
+**Stan roweru i nawyki.** MAN-06 mierzy boczny odstęp od obrysów pojazdów w warstwie `parked_cars`. Światła oceniają WYP-04, WYP-05 i MSC-04. Pora dnia i pogoda wynikają z danych misji, a w wolnej jeździe zmrok ustawia także parametr mapy `dusk_at_s`. Mnożniki hamowania z `balans.yaml` stosują się do jazdy i oceny drogi hamowania. WYP-06 przyznaje raz na przejazd premię za kamizelkę podczas jazdy po ciemku z obiema lampkami. MAN-09, MAN-10 i MAN-11 odczytują stan rąk i nóg, przytrzymanie pojazdu, pasażera na jednoosobowym rowerze i telefon w ręku. Scenariusze mogą podać te stany bezpośrednio. Zdarzenia z propozycją podwózki i telefonem będą dostarczane przez misje.
 
 **Jazda i dostęp w M3c, część 2.** GDZIE-02 sprawdza kierunek oznaczonego pasa, a GDZIE-01 nadal ocenia wybór infrastruktury przypisanej do kierunku. GDZIE-03 ocenia jazdę na prostym, czytelnym obrysie jezdni. Wykrywa jazdę ponad 2 m od prawej krawędzi po sekundzie obserwacji poza skrzyżowaniem, przejściem i rozpoznanym manewrem. Próg jest tolerancją ćwiczenia. GDZIE-03b używa pary `lanes.parallelShoulder` i `zones.shoulderUsable`, z uwzględnieniem kierunku, ciągłości pobocza, pogody i uczestników na poboczu. Pierwszeństwo ma przypisana droga lub pas dla rowerów. GDZIE-07 ocenia limit 20 km/h i konflikt z pieszym w obrębie `living_zone`, również gdy strefa pokrywa jezdnię. Przy jeździe obok siebie GDZIE-08 wykrywa hamowanie ochronne pojazdu jadącego za parą. `shared_path` obejmuje wspólną drogę, a opcjonalne `sharedSide: pedestrian | bike` oznacza wydzieloną część. GDZIE-11 sprawdza wybór części i zachowanie wobec pieszych.
 

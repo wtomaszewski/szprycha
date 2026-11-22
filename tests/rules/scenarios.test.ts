@@ -105,6 +105,7 @@ const simGood = new Set([
   'MSC-03',
   'MSC-04',
   'WYP-04',
+  'WYP-06',
 ]);
 const envDefaults: EnvState = {
   time: 'day',
@@ -213,6 +214,7 @@ function run(scenario: Scenario, ruleContent = content) {
         maneuver: current.maneuver,
         shoulderCheck: current.shoulderCheck,
         lights: current.lights,
+        reflectiveVest: current.reflectiveVest,
         handsOnBar: current.handsOnBar,
         feetOnPedals: current.feetOnPedals,
         holdingVehicle: current.holdingVehicle,

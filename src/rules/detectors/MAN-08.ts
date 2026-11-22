@@ -1,21 +1,9 @@
 import { BRAKE_DECELERATION } from '../../gameplay/bicycle';
 import { distanceInto, timeToConflict } from '../priority/ConflictGeometry';
-import {
-  verdict,
-  type AgentState,
-  type EnvState,
-  type RiderState,
-  type Vec2,
-} from '../types';
+import { verdict, type AgentState, type RiderState, type Vec2 } from '../types';
 import { contains, type WorldModel, type Zone } from '../world/WorldModel';
 
-function stoppingDistance(world: WorldModel, rider: RiderState, env: EnvState) {
-  const grip =
-    env.weather === 'ice'
-      ? 0.35
-      : env.weather === 'clear' || env.weather === 'fog'
-        ? 1
-        : 0.65;
+function stoppingDistance(world: WorldModel, rider: RiderState, grip: number) {
   const brake = BRAKE_DECELERATION * world.metersPerPixel * grip;
   return rider.speed * 0.75 + rider.speed ** 2 / (2 * brake);
 }
@@ -33,10 +21,10 @@ export function encounterSpeed(
   rider: RiderState,
   hazards: readonly RoadHazard[],
   at: number,
-  env: EnvState,
+  grip: number,
 ) {
   if (rider.mode !== 'riding' || rider.speed <= 0.1) return;
-  const timeToStop = stoppingDistance(world, rider, env) / rider.speed;
+  const timeToStop = stoppingDistance(world, rider, grip) / rider.speed;
   const hazard = hazards.find(
     (candidate) =>
       !candidate.warned && timeToConflict(rider, candidate, 0.8) < timeToStop,
@@ -59,9 +47,9 @@ export function safeSpeed(
   rider: RiderState,
   agents: readonly AgentState[],
   at: number,
-  env: EnvState,
+  grip: number,
 ) {
-  const stopping = stoppingDistance(world, rider, env);
+  const stopping = stoppingDistance(world, rider, grip);
   const hazard = agents.find((agent) => {
     if (
       agent.kind !== 'pedestrian' ||

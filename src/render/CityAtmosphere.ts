@@ -1,5 +1,6 @@
 import type { Cameras, Scene } from 'phaser';
 import type { Rider } from '../gameplay/bicycle';
+import type { Weather } from '../rules/types';
 import { artHash } from './artFrames';
 import type { Blocks } from './Blocks';
 import type { readProps } from './CityProps';
@@ -8,7 +9,8 @@ import { EFFECT_TILE, effectFrame, sceneDepth } from './effectFrames';
 const trailLength = 8;
 
 export class CityAtmosphere {
-  private readonly rain;
+  private readonly precipitation;
+  private readonly fog;
   private readonly puddles;
   private readonly ambient;
   private readonly trail;
@@ -22,7 +24,9 @@ export class CityAtmosphere {
   private track = 0;
   private tick = -1;
   private staticEffects = false;
-  private wet = false;
+  private reduced = false;
+  private weather: Weather = 'clear';
+  private precipitationFrame = effectFrame.rain;
 
   constructor(
     scene: Scene,
@@ -30,10 +34,13 @@ export class CityAtmosphere {
     props: ReturnType<typeof readProps>,
     private readonly onPigeon: (at: number) => void,
   ) {
-    this.rain = scene.add
+    this.precipitation = scene.add
       .tileSprite(0, 0, 1, 1, 'city-effects', effectFrame.rain)
-      .setDepth(sceneDepth.rain)
-      .setAlpha(0.9)
+      .setDepth(sceneDepth.weather)
+      .setVisible(false);
+    this.fog = scene.add
+      .image(0, 0, 'city-effects', effectFrame.fog)
+      .setDepth(sceneDepth.weather)
       .setVisible(false);
     this.puddles = scene.add
       .graphics()
@@ -68,7 +75,7 @@ export class CityAtmosphere {
     rider: Rider,
     at: number,
     night: boolean,
-    wet: boolean,
+    weather: Weather,
     lite: boolean,
     reduced: boolean,
     showTrail: boolean,
@@ -80,33 +87,54 @@ export class CityAtmosphere {
     const update =
       tick !== this.tick ||
       staticEffects !== this.staticEffects ||
-      wet !== this.wet;
-    this.rain.setVisible(wet);
+      reduced !== this.reduced ||
+      weather !== this.weather;
+    const wet = weather === 'rain_light' || weather === 'rain_heavy';
+    const snow = weather === 'snow';
+    const fog = weather === 'fog' || weather === 'fog_dense';
+    const x = camera.scrollX + camera.width / 2;
+    const y = camera.scrollY + camera.height / 2;
+    const width = Math.ceil(camera.width / camera.zoom) + 4;
+    const height = Math.ceil(camera.height / camera.zoom) + 4;
+    this.precipitation.setVisible(wet || snow);
     this.puddles.setVisible(wet);
-    if (wet) {
-      const width = Math.ceil(camera.width / camera.zoom) + 4;
-      const height = Math.ceil(camera.height / camera.zoom) + 4;
-      this.rain.setPosition(
-        camera.scrollX + camera.width / 2,
-        camera.scrollY + camera.height / 2,
-      );
-      if (this.rain.width !== width || this.rain.height !== height)
-        this.rain.setSize(width, height);
+    this.fog.setVisible(fog);
+    if (fog)
+      this.fog
+        .setPosition(x, y)
+        .setDisplaySize(width, height)
+        .setAlpha(
+          (weather === 'fog_dense' ? 0.88 : 0.43) * (reduced ? 0.65 : 1),
+        );
+    if (wet || snow) {
+      this.precipitation.setPosition(x, y);
+      if (
+        this.precipitation.width !== width ||
+        this.precipitation.height !== height
+      )
+        this.precipitation.setSize(width, height);
       if (update) {
+        const frame = snow ? effectFrame.snow : effectFrame.rain;
+        if (this.precipitationFrame !== frame) {
+          this.precipitation.setFrame(frame);
+          this.precipitationFrame = frame;
+        }
         const phase = staticEffects
           ? 0
-          : Math.floor(at * 90) % (EFFECT_TILE * 2);
-        this.rain
-          .setTileScale(lite ? 1.5 : 1)
-          .setTilePosition(-Math.floor(phase / 2), -phase);
-        this.drawPuddles(camera, night);
+          : (tick * (snow ? 2 : 10)) % (EFFECT_TILE * (snow ? 4 : 2));
+        this.precipitation
+          .setAlpha(reduced ? 0.35 : weather === 'rain_light' ? 0.53 : 0.92)
+          .setTileScale(lite || reduced ? 1.5 : 1)
+          .setTilePosition(-Math.floor(phase / (snow ? 4 : 2)), -phase);
+        if (wet) this.drawPuddles(camera, night);
       }
     }
     if (update) {
       this.drawAmbient(camera, rider, at, staticEffects, lite, reviewing);
       this.tick = tick;
       this.staticEffects = staticEffects;
-      this.wet = wet;
+      this.reduced = reduced;
+      this.weather = weather;
     }
     this.drawTrail(rider, at, showTrail && !reviewing, staticEffects, update);
   }

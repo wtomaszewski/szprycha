@@ -12,7 +12,14 @@ export function sidewalkException(
   agents: readonly AgentState[],
   env: EnvState,
 ) {
-  if (env.weather !== 'clear') return 'weather';
+  if (
+    env.weather === 'rain_heavy' ||
+    env.weather === 'snow' ||
+    env.weather === 'wind_strong' ||
+    env.weather === 'fog_dense' ||
+    env.weather === 'ice'
+  )
+    return 'weather';
   if (
     (zone.width_m ?? 0) >= 2 &&
     (zone.speedLimit ?? 0) > 50 &&

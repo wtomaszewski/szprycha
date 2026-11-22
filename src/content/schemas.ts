@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { weatherKinds } from '../rules/types.ts';
 import { placBalanceSchema, placSchema } from './plac.ts';
 import { missionCity, missionsSchema } from './missions.ts';
 import { dialogueFileSchema } from './dialogues.ts';
@@ -252,6 +253,7 @@ export const balanceSchema = z.strictObject({
       chodnik_predkosc_przy_pieszych_ms: positive,
       odstep_od_zaparkowanych_m: positive,
       kafel_m: positive,
+      przyczepnosc: z.record(z.enum(weatherKinds), positive.max(1)),
     })
     .refine(
       (s) => s.ttc_major_s < s.ttc_minor_s,

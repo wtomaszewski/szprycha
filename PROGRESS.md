@@ -12,9 +12,15 @@ Stan na 22.11.2026. Gałąź `feat/61-m7c-licencja`.
 | M5     | Punktacja, progresja, zapis                 | M5a (#44), M5b (#46) i M5c (#54) w `main`.                                                   |
 | M6     | Mapy Warszawy i Wrocławia                   | M6a–d: dwie mapy, dwie kampanie i wybór miasta. Raport strict obejmuje oba miasta.           |
 | M7     | Plac, quiz, egzamin                         | Ukończony. Plac (M7a), quiz (M7b) i egzamin z Licencją (M7c).                                |
-| M8     | Audio i szlif                               | Nierozpoczęty                                                                                |
+| M8     | Audio i szlif                               | M8a w `main`. M8b w PR do #69. Ekran wyników (M8c) przed realizacją.                         |
 | M9     | PWA, Capacitor, Android/iOS                 | Nierozpoczęty                                                                                |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Nierozpoczęty                                                                                |
+
+## M8b — noc i pogoda
+
+- Nocny kurs korzysta z przyciemnienia, stożka lampki i czerwonego odblasku reagującego na reflektory. Opcjonalna kamizelka daje premię WYP-06 podczas bezpiecznej jazdy po ciemku.
+- Misje rozróżniają lekki deszcz, ulewę, śnieg i gęstą mgłę. W GDZIE-04 obowiązują wyjątki z danych przepisu, a GDZIE-05 nadal chroni pierwszeństwo pieszych. Hamowanie roweru korzysta z mnożników przyczepności w `content/balans.yaml`.
+- Ustawienie „Mniej efektów” ogranicza ruch i kontrast efektów pogodowych. [Noc](docs/screenshots/69-noc.webp) · [Ulewa](docs/screenshots/69-ulewa.webp)
 
 ## M6d — kampania Wrocławia i wybór miasta
 

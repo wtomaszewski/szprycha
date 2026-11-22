@@ -192,7 +192,10 @@ export class IntersectionVisit {
       // Kinematics at the onset of yellow, with the bicycle's service brake.
       this.yellowCanStop =
         (rider.speed * rider.speed) /
-          (2 * BRAKE_DECELERATION * this.world.metersPerPixel) <
+          (2 *
+            BRAKE_DECELERATION *
+            this.world.metersPerPixel *
+            this.settings.przyczepnosc[env.weather]) <
         distance;
     }
     const lightChangedToGreen =

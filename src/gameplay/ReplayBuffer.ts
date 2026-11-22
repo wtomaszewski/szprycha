@@ -1,5 +1,9 @@
 import type { Rider, RiderState } from './bicycle';
-import { TICKS_PER_SECOND, type AgentState } from '../rules/types';
+import {
+  TICKS_PER_SECOND,
+  type AgentState,
+  type EnvState,
+} from '../rules/types';
 
 export const REPLAY_SECONDS = 5;
 // Include the first and last sample so a full replay spans exactly five seconds.
@@ -23,9 +27,12 @@ export interface ReplayActor extends ReplayProp {
   tramRear: number;
 }
 
+type ReplayEnvironment = Pick<EnvState, 'time' | 'weather' | 'visibilityLow'>;
+
 export interface ReplayFrame {
   at: number;
-  dusk: boolean;
+  environment: ReplayEnvironment;
+  reflectiveVest: boolean;
   rider: Rider;
   riderStride: number;
   dismountAt: number;
@@ -49,7 +56,8 @@ export class ReplayBuffer {
     const pose = () => ({ x: 0, y: 0, heading: 0, active: false });
     this.frames = Array.from({ length: REPLAY_CAPACITY }, () => ({
       at: 0,
-      dusk: false,
+      environment: { time: 'day', weather: 'clear', visibilityLow: false },
+      reflectiveVest: false,
       rider: { x: 0, y: 0, heading: 0, speed: 0, walking: false },
       riderStride: 0,
       dismountAt: -Infinity,
@@ -78,12 +86,13 @@ export class ReplayBuffer {
 
   record(
     at: number,
-    dusk: boolean,
+    environment: ReplayEnvironment,
     rider: Rider,
     actions: RiderState,
     actors: readonly TrafficActor[],
     props: readonly ReplayProp[] = [],
     signal = actions.signal,
+    reflectiveVest = false,
   ) {
     const frame = this.frames[this.next]!;
     const previous = this.frame(this.count - 1);
@@ -99,7 +108,10 @@ export class ReplayBuffer {
         (rider.speed * elapsed) / (rider.walking ? 5 : 8)) %
       4;
     frame.at = at;
-    frame.dusk = dusk;
+    frame.environment.time = environment.time;
+    frame.environment.weather = environment.weather;
+    frame.environment.visibilityLow = environment.visibilityLow;
+    frame.reflectiveVest = reflectiveVest;
     frame.rider.x = rider.x;
     frame.rider.y = rider.y;
     frame.rider.heading = rider.heading;

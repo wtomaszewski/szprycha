@@ -17,7 +17,9 @@ export function useShoulder(
   if (
     lane.parallelBikeInfra ||
     !shoulder?.shoulderUsable ||
-    env.weather !== 'clear'
+    (env.weather !== 'clear' &&
+      env.weather !== 'rain_light' &&
+      env.weather !== 'fog')
   )
     return;
   const horizontal = Math.abs(lane.forward.x) > Math.abs(lane.forward.y);

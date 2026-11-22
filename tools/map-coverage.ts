@@ -36,7 +36,7 @@ const signRules: Readonly<Partial<Record<string, string>>> = {
   'D-1': 'ZNAK-D1',
 };
 
-const nightRules = ['MSC-04', 'WYP-04', 'WYP-05'];
+const nightRules = ['MSC-04', 'WYP-04', 'WYP-05', 'WYP-06'];
 
 function mapFeatures(world?: WorldModel) {
   const signs = world?.signs.filter(({ displayOnly }) => !displayOnly) ?? [];
@@ -151,7 +151,9 @@ function mapSituations(
     night: [
       [
         ...f.night,
-        ...missions.filter(({ start }) => start.zmrok).map(({ id }) => id),
+        ...missions
+          .filter(({ start }) => start.zmrok || start.noc)
+          .map(({ id }) => id),
       ],
     ],
   };
@@ -192,7 +194,8 @@ function mapRules(world: WorldModel, f: ReturnType<typeof mapFeatures>) {
 function missionRules(mission: MissionDefinition, world: WorldModel) {
   const rules = new Set(mission.reguly_cwiczone);
   const locations = new Set([mission.start.poi, ...mission.checkpointy]);
-  if (mission.start.zmrok) for (const id of nightRules) rules.add(id);
+  if (mission.start.zmrok || mission.start.noc)
+    for (const id of nightRules) rules.add(id);
   for (const goal of mission.cele) {
     if (goal.wymagany_nawyk) rules.add(goal.wymagany_nawyk);
     if ('poi' in goal && goal.poi) locations.add(goal.poi);

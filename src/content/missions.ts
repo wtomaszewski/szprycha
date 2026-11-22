@@ -74,6 +74,18 @@ export const missionSchema = z
       poi: id,
       kask_zapiety: z.boolean().optional(),
       zmrok: z.boolean().optional(),
+      noc: z.literal(true).optional(),
+      pogoda: z
+        .enum([
+          'lekki_deszcz',
+          'ulewa',
+          'snieg',
+          'silny_wiatr',
+          'mgla',
+          'gesta_mgla',
+          'gololedz',
+        ])
+        .optional(),
       ulewa: z.boolean().optional(),
       awaria_swiatel: z.boolean().optional(),
     }),
@@ -115,6 +127,17 @@ export const missionSchema = z
         path: ['id'],
         message: 'Mission ID must match its city and act',
       });
+
+    if (
+      (mission.start.zmrok && mission.start.noc) ||
+      (mission.start.ulewa && mission.start.pogoda)
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['start'],
+        message: 'Use one field per environment condition',
+      });
+    }
 
     const timed =
       mission.limit_s !== undefined ||

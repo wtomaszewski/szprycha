@@ -88,3 +88,7 @@ Scenariusze w `tests/plac/scenarios.test.ts` ćwiczą detektory `plac` niezależ
 | PLAC-06 | Sygnalizowanie na całym odcinku, brak sygnału, dotknięcie linii, wyjazd z toru |
 
 Testy w `tests/plac/records.test.ts` obejmują progi medali, kolejność czasów, odtwarzanie przejazdu i zapis w IndexedDB.
+
+### M8b — noc i pogoda
+
+`m8b.yaml` sprawdza rozróżnienie między lekkim deszczem i ulewą oraz zwykłą i gęstą mgłą, wyjątki dla śniegu i silnego wiatru, a także pierwszeństwo pieszego w ulewie (GDZIE-04/05). W `m2.yaml` są scenariusze dobrej pogody, ulewy, gołoledzi, opieki nad dzieckiem i wymagań dotyczących chodnika. Scenariusze oświetlenia pokrywają noc, deszcz i mgłę. WYP-06 ma scenariusze z premią za kamizelkę, bez kamizelki, z brakującą lampką i za dnia.

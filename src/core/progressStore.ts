@@ -116,10 +116,16 @@ const m7cProfileSchema = m7bProfileSchema.extend({
     .optional(),
 });
 
-const profileVersion = 6;
-const profileSchema = m7cProfileSchema.extend({
-  version: z.literal(profileVersion),
+const m8aProfileSchema = m7cProfileSchema.extend({
+  version: z.literal(6),
   audio: audioSettingsSchema.catch(() => ({ ...defaultAudio })),
+});
+
+const profileVersion = 7;
+const profileSchema = m8aProfileSchema.extend({
+  version: z.literal(profileVersion),
+  reducedEffects: z.boolean().catch(false).default(false),
+  reflectiveVest: z.boolean().catch(false).default(false),
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
@@ -161,8 +167,23 @@ class RideBatch {
   }
 }
 
+function addRidePreferences(
+  profile: z.infer<typeof m8aProfileSchema>,
+): ProgressProfile {
+  return {
+    ...profile,
+    version: profileVersion,
+    reducedEffects: false,
+    reflectiveVest: false,
+  };
+}
+
 function addAudio(profile: z.infer<typeof m7cProfileSchema>): ProgressProfile {
-  return { ...profile, version: profileVersion, audio: { ...defaultAudio } };
+  return addRidePreferences({
+    ...profile,
+    version: 6,
+    audio: { ...defaultAudio },
+  });
 }
 
 function addQuiz(profile: z.infer<typeof m5cProfileSchema>): ProgressProfile {
@@ -204,6 +225,9 @@ function createProfile(legacy?: z.infer<typeof legacySchema>): ProgressProfile {
 function decodeProfile(raw: unknown) {
   const current = profileSchema.safeParse(raw);
   if (current.success) return { profile: current.data, reset: false };
+  const m8a = m8aProfileSchema.safeParse(raw);
+  if (m8a.success)
+    return { profile: addRidePreferences(m8a.data), reset: false };
   const m7c = m7cProfileSchema.safeParse(raw);
   if (m7c.success) return { profile: addAudio(m7c.data), reset: false };
   const m7b = m7bProfileSchema.safeParse(raw);
