@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan: 21.11.2026. Gałąź: `feat/24-m4c-stopklatka-zdarzenia`.
+Stan na 22.11.2026. Gałąź `feat/25-m4d-akt1-czesc2`.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -8,7 +8,7 @@ Stan: 21.11.2026. Gałąź: `feat/24-m4c-stopklatka-zdarzenia`.
 | M1     | Jazda, testowa mapa, kamera, bloki 2.5D     | Grywalny prototyp; lokalne kontrole zielone, test fizycznego Androida pozostaje do wykonania |
 | M2     | Silnik zasad v1                             | Scalony w `main` w PR #13                                                                    |
 | M3     | Ruch drogowy AI i pozostałe detektory       | Scalony w `main`. Ostatni PR to #21.                                                         |
-| M4     | Misje i fabuła                              | M4a i M4b w `main`. M4c gotowy do recenzji. M4d w kolejce.                                   |
+| M4     | Misje i fabuła                              | Akt 1 Warszawy grywalny od samouczka do finału M4d (#25).                                    |
 | M5     | Punktacja, progresja, zapis                 | Nierozpoczęty                                                                                |
 | M6     | Mapy Warszawy i Wrocławia                   | Nierozpoczęty                                                                                |
 | M7     | Plac, quiz, egzamin                         | Nierozpoczęty                                                                                |
@@ -152,3 +152,10 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Osiem zdarzeń drogowych i wymuszane ćwiczenie STOP w WAW-T-01. Losowanie jest deterministyczne i ma interfejs wag dla M5. Wymuszone zdarzenia działają także w misjach z wyłączonym ruchem tła.
 - Testy pokrywają zawijanie i odtwarzanie historii, wszystkie zdarzenia headless, walidację powiązań z regułami, obsługę kolejki wymuszonej oraz przejazd WAW-T-01 w Chromium.
 - Pomiar jak w M3a w Chromium headless (WebGL, 1280×720, CPU 4×, trzy przejazdy na wariant). Mediany średniej liczby klatek wyniosły 39,49 FPS na `main`, 39,12 FPS z historią 5 s i 38,79 FPS z pojedynczą próbką w tej samej implementacji. 95. percentyl czasu klatki wyniósł 33,4 ms dla wszystkich wariantów. Pomiar obejmował jazdę z pominięciem pauzy na lekcję i nie wykazał spadku FPS od zapisu historii. Wynik dotyczy środowiska headless.
+
+## M4d — akt 1 Warszawy (#25)
+
+- SzprychaApp prowadzi od WAW-T-01 do WAW-A1-06. Przegląd roweru i pierwsze kursy na Pradze pochodzą z PR #29. Most z DDR i Starówka dodają wyścig punktowy z Turbo, dostawę z paskiem wstrząsów oraz zdjęcie znaku prowadzące do pierwszej wskazówki Zakłócacza.
+- Skróty są w dwóch z siedmiu zleceń: B-1 w WAW-A1-03 i B-2 w WAW-A1-04. Test na `content/balans.yaml` porównuje wyniki i maksymalny możliwy zysk czasowy po karze. Naruszenia są obsługiwane przez standardowe stop-klatki.
+- Przejazdy headless obejmują cały akt. Playwright sprawdza kolejność odblokowania, stop-klatkę i wznowienie po B-1, wynik wyścigu, premię za płynność, zdjęcie i zapis ukończenia po przeładowaniu.
+- Misje na fragmencie mapy są krótsze niż 2–5 min z docs/03. Trasy zostaną wydłużone w M6. Pełny Album Znaków, gwiazdki i progresja punktowa pozostają w M5.

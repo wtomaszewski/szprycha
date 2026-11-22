@@ -85,7 +85,12 @@ export function tiledMap(
     });
   }
 
-  async function write(name: string, trafficCars: number, duskAt?: number) {
+  async function write(
+    name: string,
+    trafficCars: number,
+    duskAt?: number,
+    tileCount = 8,
+  ) {
     const mapProperties = [
       { name: 'trafficCars', type: 'int', value: trafficCars },
     ];
@@ -116,10 +121,10 @@ export function tiledMap(
               name: 'training',
               tilewidth: 32,
               tileheight: 32,
-              tilecount: 8,
-              columns: 8,
+              tilecount: tileCount,
+              columns: tileCount,
               image: '../assets/generated/tiles.png',
-              imagewidth: 256,
+              imagewidth: tileCount * 32,
               imageheight: 32,
               margin: 0,
               spacing: 0,

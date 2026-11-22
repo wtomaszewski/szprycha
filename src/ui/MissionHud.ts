@@ -19,6 +19,9 @@ export class MissionHud {
   private readonly bearing = document.createElement('span');
   private readonly distance = document.createElement('span');
   private readonly equip = document.createElement('button');
+  private readonly parcel = document.createElement('label');
+  private readonly shocks = document.createElement('progress');
+  private readonly photo = document.createElement('button');
   private readonly lights = document.createElement('button');
   private readonly resume = document.createElement('button');
   private readonly summary = document.createElement('section');
@@ -32,18 +35,27 @@ export class MissionHud {
     equipHelmet: () => void,
     turnOnLights: () => void,
     resumeFromCheckpoint: () => void,
+    photograph: () => void,
     retry: () => void,
     menu: () => void,
   ) {
     const panel = document.createElement('section');
     panel.className = 'mission-panel';
     this.instruction.setAttribute('role', 'status');
+    this.parcel.className = 'mission-parcel';
+    this.shocks.max = 1;
+    this.parcel.append(ui.missionUi.shocks, this.shocks);
+    this.photo.type = 'button';
+    this.photo.textContent = ui.missionUi.photograph;
+    this.photo.addEventListener('click', photograph);
     panel.append(
       this.title,
       this.instruction,
       this.equip,
       this.lights,
       this.resume,
+      this.parcel,
+      this.photo,
     );
 
     this.timer.className = 'mission-timer';
@@ -100,7 +112,8 @@ export class MissionHud {
     helmetFastened: boolean,
     lightsOn: boolean,
     interrupted: boolean,
-    checkpointHint?: string,
+    checkpointHint: string | undefined,
+    speed: number,
   ) {
     const { target, result, remainingSeconds, elapsedSeconds } = mission;
     setText(this.title, translate(mission.definition.tytul));
@@ -111,6 +124,12 @@ export class MissionHud {
     this.timer.hidden = !!result;
     this.navigation.hidden = !!result || mission.preparingBike;
     this.summary.hidden = !result;
+    this.parcel.hidden = !!result || mission.shakeLevel === undefined;
+    if (mission.shakeLevel !== undefined)
+      this.shocks.value = mission.shakeLevel;
+    this.photo.hidden = target?.goal.typ !== 'sfotografuj';
+    this.photo.disabled =
+      interrupted || !mission.canPhotograph(position, speed);
 
     if (result && this.displayedResult !== result) {
       const label =
@@ -126,10 +145,25 @@ export class MissionHud {
         details.push(
           result.reason === 'czas_minal'
             ? ui.missionUi.timeExpired
-            : ui.missionUi.threeMajor,
+            : result.reason === 'wynik_wyscigu'
+              ? ui.missionUi.raceScoreRequired
+              : ui.missionUi.threeMajor,
         );
       else if (!result.timeBonusEligible)
         details.push(ui.missionUi.noTimeBonus);
+      if (result.opponentScore !== undefined)
+        details.push(
+          `${ui.missionUi.yourPoints} ${result.points}`,
+          `${ui.missionUi.turboPoints} ${result.opponentScore}`,
+        );
+      if (result.shocks !== undefined)
+        details.push(
+          `${ui.missionUi.shocks} ${Math.round(result.shocks * 100)}%`,
+        );
+      if (result.smoothBonus)
+        details.push(`${ui.missionUi.smoothBonus} +${result.smoothBonus}`);
+      if (result.photos)
+        details.push(`${ui.missionUi.photos} ${result.photos}`);
       if (result.illegalShortcut) details.push(ui.missionUi.illegalShortcut);
       setText(this.resultText, details.join(' · '));
       this.displayedResult = result;

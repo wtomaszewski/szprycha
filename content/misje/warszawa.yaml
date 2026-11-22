@@ -129,3 +129,85 @@
   nagrody: { zetony: 30, xp: 400, odblokuj: [naklejka_pierogi] }
   dialog_start: dialogi.WAW-A1-03.start
   dialog_koniec: dialogi.WAW-A1-03.koniec
+
+- id: WAW-A1-04
+  miasto: warszawa
+  akt: 1
+  tytul: misje.WAW-A1-04.tytul
+  opis: misje.WAW-A1-04.opis
+  zleceniodawca: turbo
+  typ: wyscig
+  wymagania: { misje_ukonczone: [WAW-A1-03] }
+  start: { poi: start_turbo }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: most_ddr, opis: misje.WAW-A1-04.cel1 }
+    - { typ: dojedz, poi: przyczolek_mostu, opis: misje.WAW-A1-04.cel2 }
+    - { typ: dojedz, poi: kolumna, opis: misje.WAW-A1-04.cel3 }
+  limit_s: 90
+  warunki_porazki: [czas_minal, major_x3]
+  checkpointy: [most_ddr, przyczolek_mostu]
+  reguly_cwiczone: [MAN-04, GDZIE-06, PIER-04]
+  zdarzenia_wymuszone:
+    - { typ: rowerzysta_na_moscie, przy: przed_mostem, regula: MAN-04 }
+    - { typ: pieszy_na_pasach, przy: przyczolek_mostu, regula: PIER-04 }
+  skrot: { odcinek: uliczka-jednokierunkowa }
+  wyscig: { trasa_rywala: turbo-most }
+  par_s: 38
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 30, xp: 450 }
+  dialog_start: dialogi.WAW-A1-04.start
+  dialog_koniec: dialogi.WAW-A1-04.koniec
+
+- id: WAW-A1-05
+  miasto: warszawa
+  akt: 1
+  tytul: misje.WAW-A1-05.tytul
+  opis: misje.WAW-A1-05.opis
+  zleceniodawca: lena_mapa
+  typ: delikatna_przesylka
+  wymagania: { misje_ukonczone: [WAW-A1-04] }
+  start: { poi: lodziarnia }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, przedmiot: syrenka, opis: misje.WAW-A1-05.cel1 }
+    - { typ: dojedz, poi: kamienny_rynek, opis: misje.WAW-A1-05.cel2 }
+    - { typ: dojedz, poi: przed_deptakiem, opis: misje.WAW-A1-05.cel3 }
+    - { typ: oddaj, poi: przewodnik, przedmiot: syrenka, opis: misje.WAW-A1-05.cel4 }
+  przesylka: { delikatna: true }
+  warunki_porazki: [major_x3]
+  checkpointy: [kamienny_rynek, przed_deptakiem]
+  reguly_cwiczone: [GDZIE-07, GDZIE-05, MAN-08]
+  zdarzenia_wymuszone:
+    - { typ: turysci_na_starowce, przy: kamienny_rynek, regula: MAN-08 }
+  par_s: 34
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 25, xp: 350 }
+  dialog_start: dialogi.WAW-A1-05.start
+  dialog_koniec: dialogi.WAW-A1-05.koniec
+
+- id: WAW-A1-06
+  miasto: warszawa
+  akt: 1
+  tytul: misje.WAW-A1-06.tytul
+  opis: misje.WAW-A1-06.opis
+  zleceniodawca: sierzant_ola
+  typ: detektyw_znakow
+  wymagania: { misje_ukonczone: [WAW-A1-05] }
+  start: { poi: patrol_start }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: posterunek_oli, opis: misje.WAW-A1-06.cel1 }
+    - { typ: dojedz, poi: za_skrzyzowaniem, opis: misje.WAW-A1-06.cel2 }
+    - { typ: sfotografuj, poi: foto_znak, znak: znak-przestawiony, opis: misje.WAW-A1-06.cel3 }
+    - { typ: dojedz, poi: podpis_zakloczacza, opis: misje.WAW-A1-06.cel4 }
+  warunki_porazki: [major_x3]
+  checkpointy: [posterunek_oli, za_skrzyzowaniem]
+  reguly_cwiczone: [SYG-03, ZNAK-A7]
+  zdarzenia_wymuszone:
+    - { typ: polecenie_oli, przy: posterunek_oli, regula: SYG-03 }
+  par_s: 25
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 500 }
+  dialog_start: dialogi.WAW-A1-06.start
+  dialog_koniec: dialogi.WAW-A1-06.koniec

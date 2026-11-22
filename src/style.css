@@ -320,6 +320,15 @@ button[aria-pressed='true'] {
   left: max(8px, env(safe-area-inset-left));
   max-width: min(380px, calc(100% - 125px));
 }
+.mission-parcel:not([hidden]) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mission-parcel progress {
+  width: 7rem;
+  accent-color: #ffcd75;
+}
 .mission-panel strong,
 .mission-timer {
   color: #ffcd75;

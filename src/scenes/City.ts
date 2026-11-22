@@ -16,6 +16,7 @@ import { drawMapGround } from '../render/MapGround';
 import { DrivingControls } from '../ui/DrivingControls';
 import { showError, translate, ui } from '../core/presentation';
 
+import { MissionRace } from '../gameplay/MissionRace';
 import { MissionSystem, type MissionSpawn } from '../gameplay/MissionSystem';
 import {
   canOpenPhone,
@@ -48,7 +49,10 @@ import { ReplayDialog } from '../ui/ReplayDialog';
 import { TrafficEventNotice } from '../ui/TrafficEventNotice';
 import { EventArt } from '../render/EventArt';
 import { ReplayHighlight } from '../render/ReplayHighlight';
-import type { ForcedMissionEvent } from '../content/missions';
+import type {
+  ForcedMissionEvent,
+  MissionDefinition,
+} from '../content/missions';
 import type { Box } from '../rules/world/WorldModel';
 
 const drivingZoom = 0.75;
@@ -92,6 +96,8 @@ export class City extends Scene {
   private feedback!: RuleFeedback;
   private content!: GameContent;
   private mission?: MissionSystem;
+  private rivalSprite?: GameObjects.Image;
+  private rivalLabel?: GameObjects.Text;
   private phone!: MissionPhone;
   private dialogue!: DialogueWindow;
   private phoneFeedback!: string;
@@ -172,13 +178,7 @@ export class City extends Scene {
     this.phoneFeedback = this.content.przepisy.przepisy.find(
       ({ id }) => id === 'MAN-11',
     )!.feedback;
-    this.mission = definition
-      ? new MissionSystem(
-          definition,
-          this.world,
-          this.content.balans.misja.major_do_porazki,
-        )
-      : undefined;
+    this.mission = definition ? this.createMission(definition) : undefined;
     const ambientTraffic = definition?.ruch_ai !== false;
     this.review = undefined;
     this.phoneAnsweredSafely = false;
@@ -188,7 +188,6 @@ export class City extends Scene {
     this.missionMarker = undefined;
     this.displayedTarget = undefined;
     this.rulesRider.helmet.fastened = definition?.start.kask_zapiety ?? true;
-    this.road = new TrainingRoad(this, this.world);
     this.intersectionManager = new IntersectionManager(this.world);
     this.traffic = new TrafficParticipants(
       this.world,
@@ -214,8 +213,27 @@ export class City extends Scene {
       tilemap.createLayer('ground', tiles);
       tilemap.createLayer('markings', tiles)?.setDepth(1);
     }
+    for (const { x = 0, y = 0 } of tilemap.getObjectLayer('map_decorations')
+      ?.objects ?? []) {
+      const bridge = this.add.graphics().setDepth(4);
+      const top = { x: x - 40, y: y - 168 };
+      bridge.lineStyle(2, 0xc0cbdc, 0.85);
+      for (const offset of [-240, -156, -78, 78, 156, 240]) {
+        bridge.lineBetween(top.x, top.y + Math.abs(offset) / 9, x + offset, y);
+      }
+      bridge.lineStyle(10, 0xf4f4f4).lineBetween(x, y, top.x, top.y);
+      bridge.lineStyle(3, 0x94b0c2).lineBetween(x + 4, y, top.x + 4, top.y);
+      bridge.lineStyle(4, 0xc0cbdc).lineBetween(x - 296, y, x + 278, y);
+    }
     this.worldWidth = tilemap.widthInPixels;
     this.worldHeight = tilemap.heightInPixels;
+    this.road = new TrainingRoad(
+      this,
+      this.world,
+      mapId === 'warszawa'
+        ? { key: mapId, width: this.worldWidth, height: this.worldHeight }
+        : undefined,
+    );
     const spawn = tilemap
       .getObjectLayer('spawns')
       ?.objects.find((o) => o.name === 'player');
@@ -321,6 +339,20 @@ export class City extends Scene {
     this.obstacles.push(...this.actorObstacles, ...this.eventObstacles);
     trafficTextures(this);
     this.actors = this.agents.map(({ kind }) => trafficSprite(this, kind));
+    this.rivalSprite = this.mission?.race
+      ? trafficSprite(this, 'cyclist').setTint(0xef7d57)
+      : undefined;
+    this.rivalLabel = this.mission?.race
+      ? this.add
+          .text(0, 0, ui.dialogi.postacie.turbo, {
+            color: '#ffd4ae',
+            fontSize: '14px',
+            backgroundColor: '#1a1c2c',
+          })
+          .setOrigin(0.5, 1)
+          .setDepth(24)
+      : undefined;
+    this.updateRival();
     this.sirenArt = this.add.graphics().setDepth(23);
     this.eventArt = new EventArt(this);
     this.highlight = new ReplayHighlight(this, this.world, this.agents);
@@ -425,6 +457,7 @@ export class City extends Scene {
           this.controls.clear();
           this.updateMissionHud();
         },
+        () => this.takePhoto(),
         () => this.reset(),
         () => this.scene.start('MainMenu'),
       );
@@ -454,6 +487,11 @@ export class City extends Scene {
       delete c.dataset.y;
       delete c.dataset.speed;
       delete c.dataset.walking;
+      delete c.dataset.stopReady;
+      delete c.dataset.drivewayStopReady;
+      delete c.dataset.signalReady;
+      delete c.dataset.trafficEvent;
+      delete c.dataset.officerCleared;
     };
     this.events.once('shutdown', onShutdown);
     this.game.canvas.dataset.scene = 'City';
@@ -461,6 +499,7 @@ export class City extends Scene {
     if (definition) this.game.canvas.dataset.mission = definition.id;
     this.game.canvas.setAttribute('aria-label', areaTitle);
     this.controls.speed.textContent = `0 ${ui.driving.unit}`;
+    this.publishRiderPosition(this.rider);
     this.blocks.update(
       this.cameras.main,
       this.controls.lite,
@@ -503,6 +542,10 @@ export class City extends Scene {
       return true;
     }
     if (event.altKey || event.ctrlKey || event.metaKey) return false;
+    if (event.code === 'KeyP' && !event.repeat && this.takePhoto()) {
+      event.preventDefault();
+      return true;
+    }
     const onControl =
       event.target instanceof Element &&
       event.target.matches('button,input,select,textarea,a[href]');
@@ -543,7 +586,7 @@ export class City extends Scene {
       this.togglePhone();
       return true;
     }
-    if (!this.phone.open) return false;
+    if (!this.phone.open) return justPressed(0) && this.takePhoto();
     if (justPressed(1)) this.phone.close();
     else if (justPressed(0)) this.phone.activate();
     else if (justPressed(12)) this.phone.focusOrder(-1);
@@ -601,11 +644,7 @@ export class City extends Scene {
       walking: false,
     });
     if (this.mission) {
-      this.mission = new MissionSystem(
-        this.mission.definition,
-        this.world,
-        this.content.balans.misja.major_do_porazki,
-      );
+      this.mission = this.createMission(this.mission.definition);
       this.missionInterrupted = false;
       this.checkpointHint = undefined;
       this.controls.notice.textContent = '';
@@ -616,6 +655,8 @@ export class City extends Scene {
     }
     this.traffic.reset();
     this.trafficEvents.reset();
+    this.environment.officerOrders = undefined;
+    this.updateRival();
     this.phoneAnsweredSafely = false;
     this.eventNotice.update(undefined, false);
     this.siren.update(0, 0);
@@ -685,6 +726,50 @@ export class City extends Scene {
     });
   }
 
+  private createMission(definition: MissionDefinition) {
+    return new MissionSystem(
+      definition,
+      this.world,
+      this.content.balans.misja.major_do_porazki,
+      this.content.balans,
+      definition.wyscig &&
+        new MissionRace(
+          definition.wyscig.trasa_rywala,
+          definition,
+          this.world,
+          this.content,
+        ),
+    );
+  }
+
+  private takePhoto() {
+    if (
+      this.dialogue.open ||
+      this.review ||
+      this.phone.open ||
+      this.controls.paused ||
+      this.missionInterrupted
+    )
+      return false;
+    const scale = this.world.metersPerPixel;
+    const captured = this.mission?.photograph(
+      { x: this.rider.x * scale, y: this.rider.y * scale },
+      this.rider.speed,
+    );
+    if (captured) this.updateMissionHud();
+    return Boolean(captured);
+  }
+
+  private updateRival() {
+    const rival = this.mission?.race?.rider;
+    if (!rival) return;
+    const scale = 1 / this.world.metersPerPixel;
+    const x = rival.pos.x * scale;
+    const y = rival.pos.y * scale;
+    this.rivalSprite?.setPosition(x, y).setRotation(rival.heading);
+    this.rivalLabel?.setPosition(x, y - 12);
+  }
+
   private updateMissionHud() {
     if (!this.mission) return;
     const scale = this.world.metersPerPixel;
@@ -709,6 +794,7 @@ export class City extends Scene {
       this.controls.actions.lights,
       this.missionInterrupted,
       this.checkpointHint,
+      this.rider.speed,
     );
   }
 
@@ -775,6 +861,7 @@ export class City extends Scene {
         ? 'dusk'
         : 'day';
     this.trafficEvents.step(rider);
+    this.environment.officerOrders = this.trafficEvents.officerOrders;
     const cyclist = this.trafficEvents.wrongWayCyclist;
     this.traffic.step(this.environment, rider, cyclist);
     this.activeAgents.length = 0;
@@ -805,7 +892,9 @@ export class City extends Scene {
             lights: rider.lights!.front && rider.lights!.rear,
           }
         : undefined,
+      rider.speed,
     );
+    this.updateRival();
     this.syncActorObstacles();
     this.recordFrame();
 
@@ -984,6 +1073,7 @@ export class City extends Scene {
       this.phoneAnsweredSafely,
     );
     this.updateMissionHud();
+    this.publishRiderPosition(this.rider);
     if (
       time - this.hudAt > 100 ||
       this.missionInterrupted ||
@@ -1011,10 +1101,7 @@ export class City extends Scene {
     }
   }
 
-  private updateDrivingHud(r: Rider, actions: typeof this.controls.actions) {
-    const speed = `${Math.round(r.speed * METERS_PER_PIXEL * 3.6)} ${ui.driving.unit}`;
-    if (this.controls.speed.textContent !== speed)
-      this.controls.speed.textContent = speed;
+  private publishRiderPosition(r: Rider) {
     const canvas = this.game.canvas;
     const x = String(Math.round(r.x));
     const y = String(Math.round(r.y));
@@ -1023,14 +1110,37 @@ export class City extends Scene {
     if (canvas.dataset.y !== y) canvas.dataset.y = y;
     if (canvas.dataset.speed !== pxPerSecond)
       canvas.dataset.speed = pxPerSecond;
+    const walking = String(r.walking);
+    if (canvas.dataset.walking !== walking) canvas.dataset.walking = walking;
+  }
+
+  private updateDrivingHud(r: Rider, actions: typeof this.controls.actions) {
+    const speed = `${Math.round(r.speed * METERS_PER_PIXEL * 3.6)} ${ui.driving.unit}`;
+    if (this.controls.speed.textContent !== speed)
+      this.controls.speed.textContent = speed;
+    const canvas = this.game.canvas;
+    const signalReady = String(this.rules.signalReady);
+    if (canvas.dataset.signalReady !== signalReady)
+      canvas.dataset.signalReady = signalReady;
+    const drivewayStopReady = String(this.rules.drivewayStopReady);
+    if (canvas.dataset.drivewayStopReady !== drivewayStopReady)
+      canvas.dataset.drivewayStopReady = drivewayStopReady;
+    const stopReady = String(this.rules.stopReady);
+    if (canvas.dataset.stopReady !== stopReady)
+      canvas.dataset.stopReady = stopReady;
+    const notice = this.trafficEvents.notice;
+    const trafficEvent = notice?.id ?? '';
+    if (canvas.dataset.trafficEvent !== trafficEvent)
+      canvas.dataset.trafficEvent = trafficEvent;
+    const officerCleared = String(Boolean(notice?.officerCleared));
+    if (canvas.dataset.officerCleared !== officerCleared)
+      canvas.dataset.officerCleared = officerCleared;
     const signal = this.rules.signal;
     const inputs = JSON.stringify({
       ...actions,
       signal: signal === 'none' ? null : signal,
     });
-    const walking = String(r.walking);
     if (canvas.dataset.actions !== inputs) canvas.dataset.actions = inputs;
-    if (canvas.dataset.walking !== walking) canvas.dataset.walking = walking;
   }
 
   private renderFrame(frame: ReplayFrame, delta: number, reviewing = false) {

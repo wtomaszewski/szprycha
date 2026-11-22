@@ -1,4 +1,5 @@
 import type { GameObjects, Scene } from 'phaser';
+import { cacheMapGraphics } from './MapGround';
 import { FONT, ui } from '../core/presentation';
 import type { EnvState, SignalPhase } from '../rules/types';
 import type { Box, WorldModel } from '../rules/world/WorldModel';
@@ -18,6 +19,7 @@ export class TrainingRoad {
   constructor(
     scene: Scene,
     private readonly world: WorldModel,
+    staticMap?: { key: string; width: number; height: number },
   ) {
     this.lights = scene.add.graphics().setDepth(7);
     const marks = scene.add.graphics().setDepth(3);
@@ -142,6 +144,17 @@ export class TrainingRoad {
       const x = sign.x * scale;
       const y = sign.y * scale;
       signs.fillStyle(0x1a1c2c).fillRect(x - 2, y, 4, 19);
+      if (sign.displayOnly) {
+        const graffiti = scene.add.graphics().setDepth(7);
+        graffiti
+          .lineStyle(2, 0x29366f)
+          .beginPath()
+          .moveTo(x + 3, y - 7)
+          .lineTo(x - 4, y)
+          .lineTo(x + 2, y)
+          .lineTo(x - 2, y + 6)
+          .strokePath();
+      }
       if (sign.code === 'A-7') {
         signs
           .fillStyle(0xe43b44)
@@ -167,6 +180,46 @@ export class TrainingRoad {
           .text(x, y, 'STOP', { fontFamily: FONT, fontSize: '12px' })
           .setOrigin(0.5)
           .setDepth(7);
+      } else if (sign.code === 'B-2') {
+        signs
+          .fillStyle(0xe43b44)
+          .fillCircle(x, y, 14)
+          .fillStyle(0xf4f4f4)
+          .fillRect(x - 9, y - 2, 18, 4);
+      } else if (sign.code === 'C-13' || sign.code === 'B-9') {
+        const cyclePath = sign.code === 'C-13';
+        signs
+          .fillStyle(cyclePath ? 0xf4f4f4 : 0xe43b44)
+          .fillCircle(x, y, 14)
+          .fillStyle(cyclePath ? 0x3b5dc9 : 0xf4f4f4)
+          .fillCircle(x, y, 11)
+          .lineStyle(1.5, cyclePath ? 0xf4f4f4 : 0x1a1c2c)
+          .strokeCircle(x - 5, y + 3, 3)
+          .strokeCircle(x + 5, y + 3, 3)
+          .lineBetween(x - 5, y + 3, x, y - 3)
+          .lineBetween(x, y - 3, x + 5, y + 3)
+          .lineBetween(x - 5, y + 3, x + 5, y + 3)
+          .lineBetween(x + 2, y - 4, x + 5, y + 3);
+      } else if (sign.code === 'D-40' || sign.code === 'D-41') {
+        signs
+          .fillStyle(0xf4f4f4)
+          .fillRect(x - 20, y - 12, 40, 24)
+          .fillStyle(0x3b5dc9)
+          .fillRect(x - 18, y - 10, 36, 20)
+          .fillStyle(0xf4f4f4)
+          .fillRect(x - 15, y, 13, 4)
+          .fillRect(x - 12, y - 3, 7, 4)
+          .fillCircle(x, y - 4, 2)
+          .fillTriangle(x + 6, y - 2, x + 11, y - 8, x + 16, y - 2)
+          .fillRect(x + 7, y - 2, 8, 7)
+          .lineStyle(1.5, 0xf4f4f4)
+          .lineBetween(x, y - 1, x, y + 2)
+          .lineBetween(x, y + 2, x - 2, y + 6)
+          .lineBetween(x, y + 2, x + 2, y + 6);
+        if (sign.code === 'D-41')
+          signs
+            .lineStyle(3, 0xe43b44)
+            .lineBetween(x - 18, y + 9, x + 18, y - 9);
       } else if (sign.code === 'B-1') {
         signs
           .fillStyle(0xe43b44)
@@ -249,6 +302,11 @@ export class TrainingRoad {
           true,
         );
       }
+    }
+    if (staticMap) {
+      const { key, width, height } = staticMap;
+      cacheMapGraphics(scene, marks, `${key}-marks`, width, height);
+      cacheMapGraphics(scene, signs, `${key}-signs`, width, height);
     }
   }
 

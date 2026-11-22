@@ -2,7 +2,9 @@ import { tiledMap } from './tiled-map.ts';
 import { sides, otherSide } from '../src/rules/world/LaneGraph.ts';
 import { sideVector, type Side } from '../src/rules/world/WorldModel.ts';
 
-const width = 70;
+const width = 124;
+const pragaEdge = 2240;
+const riverWest = 2816;
 const height = 48;
 const tile = 32;
 const mapWidth = width * tile;
@@ -21,7 +23,7 @@ type Junction = {
   id: string;
   x: number;
   y: number;
-  kind: 'equal' | 'priority' | 'roundabout';
+  kind: 'equal' | 'priority' | 'roundabout' | 'signals';
 };
 const equalWest: Junction = { id: 'kamienice', x: 448, y: 448, kind: 'equal' };
 const stop: Junction = { id: 'stop', x: 1088, y: 448, kind: 'priority' };
@@ -35,7 +37,16 @@ const merges = sides.map((side): Junction => ({
   y: island.y + 144 * sideVector[side].y,
   kind: 'roundabout',
 }));
-const junctions = [equalWest, stop, equalEast, equalSouth, bazaar, ...merges];
+const castle: Junction = { id: 'zamek', x: 3456, y: 448, kind: 'signals' };
+const junctions = [
+  equalWest,
+  stop,
+  equalEast,
+  equalSouth,
+  bazaar,
+  ...merges,
+  castle,
+];
 
 const zones = [
   rect('prog_osiedle', 384, 1280, 128, 32, {
@@ -43,7 +54,9 @@ const zones = [
     surface: 'rough',
   }),
   ...[448, 1088].map((y) =>
-    rect(`road-ew-${y}`, 0, y - 64, mapWidth, street, { kind: 'roadway' }),
+    rect(`road-ew-${y}`, 0, y - 64, y === 448 ? mapWidth : pragaEdge, street, {
+      kind: 'roadway',
+    }),
   ),
   ...[448, 1088, 1856].map((x) =>
     rect(`road-ns-${x}`, x - 64, 0, street, mapHeight, { kind: 'roadway' }),
@@ -53,6 +66,21 @@ const zones = [
   rect('gate-walk-south', 512, 992, 512, 32, { kind: 'sidewalk' }),
   rect('bazar-walk-north', 1152, 992, 480, 32, { kind: 'sidewalk' }),
   rect('bazar-walk-south', 1152, 1152, 480, 32, { kind: 'sidewalk' }),
+  rect('ddr-most', 1920, 320, 1328, 64, { kind: 'bike_path' }),
+  rect('ddr-zamek-zachod', 3248, 320, 144, 40, { kind: 'bike_path' }),
+  rect('ddr-zamek-wschod', 3520, 320, 64, 40, { kind: 'bike_path' }),
+  rect('road-nabrzeze', 2112, 1024, 128, 512, { kind: 'roadway' }),
+  rect('jezdnia-zamkowa', 3392, 0, 128, mapHeight, { kind: 'roadway' }),
+  rect('chodnik-zebra-polnoc', 3152, 288, 64, 96, { kind: 'sidewalk' }),
+  rect('chodnik-zebra-poludnie', 3152, 512, 64, 64, { kind: 'sidewalk' }),
+  rect('uliczka-jednokierunkowa', 2880, 384, 64, 192, { kind: 'park_path' }),
+  rect('kocie-lby', 3200, 640, 320, 128, {
+    kind: 'living_zone',
+    surface: 'rough',
+  }),
+  rect('starowka-d40', 2976, 640, 928, 448, { kind: 'living_zone' }),
+  rect('deptak', 3552, 704, 352, 192, { kind: 'pedestrian_zone' }),
+  rect('spacer-turystow', 3264, 704, 288, 192, { kind: 'sidewalk' }),
   rect('pasaz_pierogi', 1152, 280, 128, 72, { kind: 'park_path' }),
 ];
 const hasTile = (
@@ -64,7 +92,9 @@ const hasTile = (
   x < area.x + area.width &&
   y >= area.y &&
   y < area.y + area.height;
-const streetTiles = zones.filter(({ name }) => name.startsWith('road-'));
+const streetTiles = zones.filter(
+  ({ name }) => name.startsWith('road-') || name === 'jezdnia-zamkowa',
+);
 const hump = zones[0]!;
 const paved = [
   ...zones.filter(({ name }) => name.includes('-walk-')),
@@ -93,6 +123,35 @@ for (let row = 0; row < height; row++)
     const verge =
       [448, 1088].some((mid) => Math.abs(y - mid) < 96) ||
       [448, 1088, 1856].some((mid) => Math.abs(x - mid) < 96);
+    if (x >= pragaEdge) {
+      const water = x < riverWest;
+      const deck = y >= 310 && y < 529;
+      const cobbles = y >= 544 && y < 1024 && x >= 2848 && x < 3904;
+      ground.push(
+        water && !deck
+          ? 10
+          : onStreet
+            ? 2
+            : cobbles
+              ? 9
+              : deck || (x >= riverWest && y < 640)
+                ? 3
+                : 1,
+      );
+      markings.push(
+        onStreet &&
+          !junctions.some(
+            (j) => Math.abs(j.x - x) < 64 && Math.abs(j.y - y) < 64,
+          )
+          ? col * 32 === castle.x
+            ? 7
+            : row * 32 === castle.y
+              ? 8
+              : 0
+          : 0,
+      );
+      continue;
+    }
     ground.push(
       hasTile(x, y, hump)
         ? 3
@@ -200,10 +259,13 @@ function connectStreet(
   const start = upstream
     ? linePoint(upstream, opposite, false)
     : boundary(end, side);
+  const embankment = junction.id === 'rondo-E' && side === 'E';
   const id = approach(
     junction,
     side,
-    [start, end],
+    embankment
+      ? [[2208, mapHeight], [2208, 1080], [2184, 1056], end]
+      : [start, end],
     priority,
     turns,
     upstream && `${upstream.id}-${opposite}`,
@@ -211,12 +273,18 @@ function connectStreet(
   if (!upstream) {
     const out = linePoint(junction, side, false);
     lanes.push(
-      polyline(`${id}-out`, [out, boundary(out, side)], {
-        role: 'exit',
-        intersection: junction.id,
-        side,
-        speedLimit: 30,
-      }),
+      polyline(
+        `${id}-out`,
+        embankment
+          ? [out, [2120, 1120], [2144, 1144], [2144, mapHeight]]
+          : [out, boundary(out, side)],
+        {
+          role: 'exit',
+          intersection: junction.id,
+          side,
+          speedLimit: 30,
+        },
+      ),
     );
   }
   for (const [i, code] of codes.entries())
@@ -229,9 +297,15 @@ for (const junction of junctions) {
     connectStreet(
       junction,
       side,
-      junction.kind === 'equal' ? 'equal' : minor ? 'minor' : 'main',
+      junction.kind === 'signals'
+        ? 'signal'
+        : junction.kind === 'equal'
+          ? 'equal'
+          : minor
+            ? 'minor'
+            : 'main',
       'straight,left,right',
-      junction.kind === 'equal'
+      junction.kind === 'equal' || junction.kind === 'signals'
         ? []
         : [
             minor
@@ -302,7 +376,56 @@ signs.push(
     facing: 'S',
   }),
 );
+signs.push(
+  rect('most-c13', 2160, 328, 0, 0, {
+    code: 'C-13',
+    affects: 'ddr-most',
+    facing: 'W',
+  }),
+  rect('uliczka-b2', 2880, 395, 0, 0, {
+    code: 'B-2',
+    affects: 'uliczka-jednokierunkowa',
+    facing: 'N',
+  }),
+  rect('starowka-wjazd', 3088, 632, 0, 0, {
+    code: 'D-40',
+    affects: 'starowka-d40',
+    facing: 'W',
+  }),
+  rect('starowka-wyjazd', 3870, 652, 0, 0, {
+    code: 'D-41',
+    affects: 'starowka-d40',
+    facing: 'E',
+  }),
+  rect('deptak-b9', 3552, 726, 0, 0, {
+    code: 'B-9',
+    affects: 'deptak',
+    facing: 'W',
+  }),
+  rect('znak-przestawiony', 3712, 373, 0, 0, {
+    code: 'A-7',
+    affects: 'zamek-E',
+    facing: 'E',
+    displayOnly: true,
+  }),
+);
 objectLayer('zones', zones);
+objectLayer(
+  'signals',
+  sides.map((side) => {
+    const [x, y] = linePoint(castle, side, true);
+    const group = side === 'E' || side === 'W' ? 'ew' : 'ns';
+    return rect(`zamek-${side}-s1`, x, y, 0, 0, {
+      code: 'S-1',
+      affects: `zamek-${side}`,
+      group,
+      offset_s: group === 'ew' ? 0 : 27,
+      cycle_s: 54,
+      green_s: 24,
+      yellow_s: 2,
+    });
+  }),
+);
 objectLayer(
   'intersections',
   junctions.map(({ id, x, y, kind }) =>
@@ -333,6 +456,35 @@ objectLayer('pois', [
   rect('przez_stop', 1101, 322, 51, 56),
   rect('blok_haliny', 1268, 217, 64, 62),
   rect('kiosk_zapiekanki', 1490, 943, 0, 0),
+  rect('start_turbo', 1968, 355, 0, 0, { heading: 0 }),
+  rect('przed_mostem', 2220, 324, 64, 60),
+  rect('most_ddr', 2552, 324, 72, 60, { heading: 0 }),
+  rect('przyczolek_mostu', 2848, 324, 104, 60),
+  rect('pod_zebra', 3120, 326, 80, 54),
+  rect('za_zebra', 3152, 524, 64, 44),
+  rect('kolumna', 3000, 553, 85, 66),
+  rect('lodziarnia', 3067, 674, 0, 0, { heading: 0 }),
+  rect('kamienny_rynek', 3160, 649, 78, 58),
+  rect('przed_deptakiem', 3490, 650, 80, 60),
+  rect('przewodnik', 3750, 746, 70, 52),
+  rect('patrol_start', 3248, 480, 0, 0, { heading: 0 }),
+  rect('posterunek_oli', 3300, 456, 51, 54, { heading: 0 }),
+  rect('za_skrzyzowaniem', 3540, 452, 60, 58),
+  rect('foto_znak', 3678, 366, 62, 18),
+  rect('podpis_zakloczacza', 3798, 316, 72, 62),
+]);
+objectLayer('race_routes', [
+  polyline(
+    'turbo-most',
+    [
+      [1968, 334],
+      [2885, 342],
+      [2914, 391],
+      [2914, 540],
+      [3030, 580],
+    ],
+    { speed: 7.5 },
+  ),
 ]);
 objectLayer('traffic_routes', [
   polyline(
@@ -364,6 +516,38 @@ objectLayer('traffic_routes', [
     { kind: 'pedestrian', speed: 1.65, event_only: true },
   ),
   polyline(
+    'rowerzysta-most',
+    [
+      [2480, 374],
+      [2808, 374],
+    ],
+    { kind: 'cyclist', speed: 2, event_only: true },
+  ),
+  polyline(
+    'pieszy-zamkowy',
+    [
+      [3195, 366],
+      [3195, 543],
+    ],
+    { kind: 'pedestrian', speed: 1.65 },
+  ),
+  polyline(
+    'turysci-rynek',
+    [
+      [3266, 727],
+      [3539, 727],
+    ],
+    { kind: 'pedestrian', speed: 1.65, event_only: true },
+  ),
+  polyline(
+    'spacer-deptak',
+    [
+      [3570, 805],
+      [3875, 805],
+    ],
+    { kind: 'pedestrian', speed: 1.5 },
+  ),
+  polyline(
     'pieszy-bazar',
     [
       [1542, 997],
@@ -391,6 +575,14 @@ objectLayer('traffic_controls', [
 objectLayer('crossings', [
   rect('zebra-pasaz', 1259, 384, 43, 128, { kind: 'pedestrian', axis: 'y' }),
   rect('zebra-bazar', 1520, 1024, 44, 128, { kind: 'pedestrian', axis: 'y' }),
+  rect('zebra-targowa', 2888, 503, 52, 42, { kind: 'pedestrian', axis: 'y' }),
+  rect('zebra-rynek', 3392, 704, 128, 48, { kind: 'pedestrian', axis: 'x' }),
+  rect('zebra-za-zamkiem', 3678, 384, 64, 128, {
+    kind: 'pedestrian',
+    axis: 'y',
+  }),
+  rect('zebra-zamek', 3152, 384, 64, 128, { kind: 'pedestrian', axis: 'y' }),
+  rect('przejazd-przy-moscie', 3392, 320, 128, 40, { kind: 'bike', axis: 'x' }),
 ]);
 objectLayer('parked_cars', [
   rect('parking-bazar', 1404, 967, 58, 24),
@@ -412,6 +604,18 @@ const buildings = [
   ['bazar-kwiaty', 1391, 900, 57, 48, 1, 0xe98b95],
   ['bazar-pierogi', 1461, 900, 55, 48, 1, 0xfad88e],
   ['kiosk', 1532, 915, 44, 35, 1, 0x8dc6ad],
+  ['pylon-mostu', 2528, 519, 18, 18, 5, 0xc0cbdc],
+  ['kolumna-cokol', 3068, 534, 38, 32, 1, 0xc0cbdc],
+  ['kolumna-trzon', 3081, 543, 12, 13, 5, 0xf4e4ce],
+  ['zamek', 3596, 252, 184, 105, 4, 0xd78b62],
+  ['wieza-zamkowa', 3601, 316, 32, 38, 7, 0xb96557],
+  ['lodziarnia', 2993, 717, 99, 65, 2, 0xe98b95],
+  ['kamienica-rynek-1', 3205, 818, 65, 96, 3, 0xe8c39e],
+  ['kamienica-rynek-2', 3275, 810, 77, 105, 4, 0x8dc6ad],
+  ['kamienica-rynek-3', 3357, 828, 77, 95, 3, 0xf1a15e],
+  ['kamienica-rynek-4', 3445, 814, 66, 114, 4, 0xd0a4a8],
+  ['barbakan-baszta', 3762, 908, 76, 80, 4, 0xb96557],
+  ['barbakan-mur', 3684, 929, 78, 45, 3, 0xdc9a73],
 ] as const;
 objectLayer(
   'blocks',
@@ -419,9 +623,19 @@ objectLayer(
     rect(id, x, y, w, h, { height: floors, tint }),
   ),
 );
-objectLayer(
-  'collisions',
-  Array.from({ length: 11 }, (_, i) => {
+objectLayer('collisions', [
+  rect('wisla-polnoc', pragaEdge, 0, riverWest - pragaEdge, 310, {
+    kind: 'wall',
+  }),
+  rect(
+    'wisla-poludnie',
+    pragaEdge,
+    532,
+    riverWest - pragaEdge,
+    mapHeight - 532,
+    { kind: 'wall' },
+  ),
+  ...Array.from({ length: 11 }, (_, i) => {
     const y = 16 * (i - 5);
     const halfWidth = Math.floor(Math.sqrt(88 ** 2 - y ** 2));
     return rect(
@@ -433,9 +647,16 @@ objectLayer(
       { kind: 'wall' },
     );
   }),
-);
+]);
 objectLayer('traffic_islands', [
   rect('wyspa-ronda', island.x - 93, island.y - 93, 186, 186),
 ]);
-objectLayer('districts', [rect('praga', 0, 0, mapWidth, mapHeight)]);
-await write('warszawa', 9);
+objectLayer('districts', [
+  rect('praga', 0, 0, pragaEdge, mapHeight),
+  rect('wisla', pragaEdge, 0, riverWest - pragaEdge, mapHeight),
+  rect('stare-miasto', riverWest, 0, mapWidth - riverWest, mapHeight),
+]);
+objectLayer('map_decorations', [
+  rect('pylon', 2537, 529, 0, 0, { kind: 'bridge' }),
+]);
+await write('warszawa', 9, undefined, 10);

@@ -18,6 +18,10 @@ export class DrivewayDetector {
   private onRoad = false;
   private onSidewalk = false;
 
+  get stopReady() {
+    return this.stopped;
+  }
+
   evaluate(
     rider: RiderState,
     agents: readonly AgentState[],

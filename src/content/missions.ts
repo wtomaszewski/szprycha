@@ -17,6 +17,12 @@ const missionGoal = z.discriminatedUnion('typ', [
   z.strictObject({ ...goalFields, typ: z.literal('dojedz'), poi: id }),
   z.strictObject({
     ...goalFields,
+    typ: z.literal('sfotografuj'),
+    poi: id,
+    znak: id,
+  }),
+  z.strictObject({
+    ...goalFields,
     typ: z.literal('odbierz'),
     poi: id.optional(),
     przedmiot: id,
@@ -53,6 +59,7 @@ export const missionSchema = z
     cele: z.array(missionGoal).min(1),
     limit_s: seconds.optional(),
     przesylka: z.strictObject({ delikatna: z.boolean() }).optional(),
+    wyscig: z.strictObject({ trasa_rywala: id }).optional(),
     warunki_porazki: z.array(z.enum(['czas_minal', 'major_x3'])).default([]),
     checkpointy: z.array(id).default([]),
     reguly_cwiczone: z.array(id).min(1),
@@ -105,7 +112,7 @@ export const missionSchema = z
 
     const cargo = new Set<string>();
     mission.cele.forEach((goal, index) => {
-      if (goal.typ === 'dojedz' || goal.typ === 'przygotuj_rower') return;
+      if (goal.typ !== 'odbierz' && goal.typ !== 'oddaj') return;
       const { przedmiot } = goal;
       const valid =
         goal.typ === 'odbierz'

@@ -1,4 +1,4 @@
-import type { Scene, Tilemaps } from 'phaser';
+import type { GameObjects, Scene, Tilemaps } from 'phaser';
 
 const chunkTiles = 16;
 
@@ -57,4 +57,31 @@ export function drawMapGround(
       }
       scene.add.image(col * tileWidth, row * tileHeight, name).setOrigin(0);
     }
+}
+
+/** Keep static vector scenery in camera-cullable textures, like the tile layers. */
+export function cacheMapGraphics(
+  scene: Scene,
+  source: GameObjects.Graphics,
+  key: string,
+  width: number,
+  height: number,
+) {
+  const chunkSize = chunkTiles * 32;
+  const depth = source.depth;
+  source.setScrollFactor(0);
+  for (let y = 0; y < height; y += chunkSize)
+    for (let x = 0; x < width; x += chunkSize) {
+      const name = `${key}-${x}-${y}`;
+      if (!scene.textures.exists(name))
+        source
+          .setPosition(-x, -y)
+          .generateTexture(
+            name,
+            Math.min(chunkSize, width - x),
+            Math.min(chunkSize, height - y),
+          );
+      scene.add.image(x, y, name).setOrigin(0).setDepth(depth);
+    }
+  source.destroy();
 }
