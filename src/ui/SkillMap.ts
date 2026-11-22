@@ -1,5 +1,5 @@
 import { moduleId, type GameContent } from '../content/schemas';
-import { playerNickname, translate, ui } from '../core/presentation';
+import { translate, ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 import { masteryBadge } from '../progression/mastery';
 
@@ -30,9 +30,24 @@ export function skillMapButton(
     const header = document.createElement('header');
     header.append(title, close);
 
-    const { nicknameSeed } = progress.store.profile;
+    const { ageBand, nickname } = progress.store.profile;
     const nick = document.createElement('strong');
-    nick.textContent = playerNickname(nicknameSeed);
+    nick.textContent = nickname;
+    const ruleIds =
+      ageBand === 'under10'
+        ? ['KASK-01', 'GDZIE-10']
+        : ageBand === '10to15'
+          ? ['KASK-01']
+          : [];
+    const tips = content.przepisy.przepisy
+      .filter(({ id }) => ruleIds.includes(id))
+      .map(({ dla_dziecka }) => dla_dziecka);
+    if (ageBand === '16plus') tips.push(ui.skillMap.helmetTip);
+    const tipParagraphs = tips.map((tip) => {
+      const paragraph = document.createElement('p');
+      paragraph.textContent = tip;
+      return paragraph;
+    });
     const reputation = document.createElement('p');
     const rank = progress.rank(content);
     reputation.textContent = `${ui.skillMap.rank} ${rank ? translate(`skillMap.ranks.${rank.id}`) : '—'} · ${ui.skillMap.xp} ${number.format(progress.xp)}`;
@@ -79,6 +94,7 @@ export function skillMapButton(
       nick,
       reputation,
       notice,
+      ...tipParagraphs,
       modules,
       scoresHeading,
       scores.childElementCount ? scores : empty,

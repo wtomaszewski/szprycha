@@ -3,7 +3,8 @@ export interface Vec2 {
   y: number;
 }
 
-export type AgeBand = 'under10' | '10to15' | '16plus';
+export const ageBands = ['under10', '10to15', '16plus'] as const;
+export type AgeBand = (typeof ageBands)[number];
 export type Maneuver = 'straight' | 'left' | 'right';
 export type SignalPhase = 'off' | 'red' | 'yellow' | 'green' | 'arrow';
 

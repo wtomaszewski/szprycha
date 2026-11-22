@@ -18,8 +18,3 @@ export function showError(error: unknown) {
     status.setAttribute('role', 'alert');
   }
 }
-
-export function playerNickname(seed: number) {
-  const { nicknames } = ui.skillMap;
-  return `${nicknames[seed % nicknames.length]} ${Math.floor(seed / nicknames.length) + 1}`;
-}

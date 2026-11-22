@@ -31,3 +31,13 @@ Edukacyjna gra akcji w stylu GTA2 (widok z góry, pixel-art) przygotowująca dzi
 | `content/osiagniecia.yaml` | 20 osiągnięć |
 
 Stan prawny: 21.11.2026. Zastrzeżenie: Licencja Szprychy w grze to trening — kartę rowerową wydaje szkoła po egzaminie.
+
+### Konfiguracja Strefy Rodzica
+
+Zmienne Vite ustawia się przed budowaniem gry. Pusta wartość ukrywa odpowiedni element.
+
+- `VITE_RANKING_URL` — adres usługi rankingów (HTTPS lub HTTP na localhost do testów). W M10a przełącznik zapisuje wybór lokalnie.
+- `VITE_PRIVACY_POLICY_URL` — adres opublikowanej polityki prywatności (HTTPS).
+- `VITE_PROJECT_URL` — adres strony projektu (HTTPS).
+
+Szablony do przygotowania wydania są w [legal/](legal/).

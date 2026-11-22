@@ -1,3 +1,4 @@
+import { showBreakReminder } from '../ui/BreakReminder';
 import { verdictHaptics } from '../platform/haptics';
 import { Scene, GameObjects } from 'phaser';
 import { drawMapDecorations } from '../render/MapDecorations';
@@ -72,7 +73,6 @@ import type { RoadTrafficAgent } from '../sim/TrafficSimulation';
 import { Gnomes } from '../render/Gnomes';
 import { drawCyclist, loadTrafficArt, TrafficArt } from '../render/TrafficArt';
 import { RiderArt } from '../render/RiderArt';
-import { readHelmetColor } from '../core/helmetColor';
 import { audio } from '../audio/GameAudio';
 import { CitySound } from '../audio/CitySound';
 import { radioControls } from '../ui/AudioControls';
@@ -169,7 +169,7 @@ export class City extends Scene {
   private missionHud?: MissionHud;
   private missionHudAt = -Infinity;
   private photoPending = false;
-  private breakMinutes = 0;
+  private breakMinutes: number | null = null;
   private missionMarker?: GameObjects.Graphics;
   private displayedTarget?: MissionSystem['target'];
   private missionInterrupted = false;
@@ -484,7 +484,7 @@ export class City extends Scene {
     if (this.mission) this.placeRider(this.mission.start);
     this.riderArt = new RiderArt(
       this,
-      readHelmetColor(),
+      this.progress.store.profile.avatarId,
       this.progress.store.profile.licencePassed,
     );
     this.cameras.main
@@ -1357,22 +1357,6 @@ export class City extends Scene {
     });
   }
 
-  private showBreakReminder() {
-    const reminder = document.createElement('aside');
-    reminder.className = 'break-reminder';
-    const speaker = document.createElement('strong');
-    speaker.textContent = ui.m5c.kazik;
-    const message = document.createElement('p');
-    message.setAttribute('role', 'status');
-    const close = document.createElement('button');
-    close.type = 'button';
-    close.textContent = ui.m5c.dismiss;
-    close.addEventListener('click', () => reminder.remove());
-    reminder.append(speaker, message, close);
-    this.controls.root.append(reminder);
-    message.textContent = ui.m5c.breakMessage;
-  }
-
   private updateRival() {
     const rival = this.mission?.race?.rider;
     if (!rival) return;
@@ -1719,7 +1703,7 @@ export class City extends Scene {
     this.citySound.input(this.rider, input, this.controls.actions.bell);
     const seconds = Math.min(delta / 1000, 0.1);
     if (this.progress.playFor(seconds, this.breakMinutes))
-      this.showBreakReminder();
+      showBreakReminder(this.controls.root);
     this.accumulator += seconds;
     while (this.accumulator >= FIXED_STEP) {
       const collided =

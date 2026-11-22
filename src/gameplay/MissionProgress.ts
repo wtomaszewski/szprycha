@@ -97,22 +97,23 @@ export class MissionProgress {
 
   breakMinutes(balance: GameContent['balans']['zdrowe_granie']) {
     const minutes = this.store.profile.breakMinutes;
-    return minutes !== undefined && balance.opcje_min.includes(minutes)
+    return minutes === null ||
+      (minutes !== undefined && balance.opcje_min.includes(minutes))
       ? minutes
       : balance.przypomnienie_po_min;
   }
 
   setBreakMinutes(
-    minutes: number,
+    minutes: number | null,
     balance: GameContent['balans']['zdrowe_granie'],
   ) {
-    if (balance.opcje_min.includes(minutes))
+    if (minutes === null || balance.opcje_min.includes(minutes))
       this.store.change((profile) => {
         profile.breakMinutes = minutes;
       });
   }
 
-  playFor(seconds: number, minutes: number) {
+  playFor(seconds: number, minutes: number | null) {
     return this.breakReminder.advance(seconds, minutes);
   }
 

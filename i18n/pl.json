@@ -255,7 +255,7 @@
     "noScores": "Ukończ misję, aby zapisać wynik.",
     "reset": "Zapis postępu był uszkodzony. Zaczynasz od nowa.",
     "sessionOnly": "Zapis jest niedostępny. Postęp pozostanie w tej sesji.",
-    "nicknames": ["Szybki Jeż", "Dzielna Szprycha", "Czujna Sroka"],
+    "helmetTip": "Przed jazdą dopasuj kask i zapnij pasek.",
     "ranks": {
       "zoltodziob": "Żółtodziób",
       "kurier": "Kurier",
@@ -1231,7 +1231,6 @@
     "album": "Album Znaków",
     "achievements": "Osiągnięcia",
     "daily": "Wyzwania dzienne",
-    "breakSettings": "Ustawienia przerwy",
     "close": "Zamknij",
     "albumProgress": "Zdjęcia w albumie",
     "albumHint": "Zsiądź z roweru, zatrzymaj się w bezpiecznym miejscu obok znaku i zrób zdjęcie.",
@@ -1253,11 +1252,36 @@
       "kolo": "Koło",
       "szprycha": "Szprycha"
     },
-    "breakAfter": "Przypomnij o przerwie po",
     "minutes": "min",
     "kazik": "Pan Kazik",
     "breakMessage": "Czas na prawdziwy rower! Kask na głowę!",
     "dismiss": "Schowaj przypomnienie"
+  },
+  "parentZone": {
+    "title": "Strefa Rodzica",
+    "gateTitle": "Sprawdzenie dla rodzica",
+    "gateInstruction": "Poproś dorosłego o rozwiązanie działania. Wybierz cyfry i zatwierdź wynik.",
+    "answer": "Wybrany wynik",
+    "confirm": "Sprawdź wynik",
+    "clear": "Wyczyść",
+    "tryAgain": "Spróbuj rozwiązać nowe działanie.",
+    "nickname": "Nick gracza",
+    "reroll": "Losuj ponownie",
+    "age": "Przedział wieku",
+    "ageUnset": "Nie podano",
+    "ageHelp": "Wiek zostaje na urządzeniu i dopasowuje wskazówki w Mapie Umiejętności.",
+    "ages": {
+      "under10": "Mniej niż 10 lat",
+      "10to15": "10–15 lat",
+      "16plus": "16 lat i więcej"
+    },
+    "breakReminder": "Przypomnienie o przerwie",
+    "breakOff": "Wyłączone",
+    "rankings": "Rankingi online",
+    "rankingsHelp": "Ustawienie jest zapisywane lokalnie. W tej wersji gra nie wysyła wyników.",
+    "removeProfile": "Usuń profil z serwera",
+    "privacy": "Polityka prywatności",
+    "project": "Strona projektu"
   },
   "exam": {
     "menu": "Egzamin",
@@ -1296,9 +1320,6 @@
     "earned": "Za ukończenie egzaminu próbnego",
     "date": "Data wydania",
     "disclaimer": "Certyfikat gry „Licencja Szprychy” nie zastępuje karty rowerowej.",
-    "firstName": "Imię (opcjonalnie)",
-    "localName": "Imię pojawi się tylko w tym podglądzie i na wydruku.",
-    "invalidName": "Wpisz tylko imię, używając liter i ewentualnie łącznika.",
     "print": "Drukuj / zapisz PDF"
   },
   "quiz": {

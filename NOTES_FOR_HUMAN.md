@@ -1,5 +1,13 @@
 # Notatki dla człowieka
 
+## M10a — Strefa Rodzica
+
+- Przed wydaniem uzupełnić dane administratora i kontaktu, daty oraz osobę i zakres recenzji. Przekazać szablony z `legal/` prawnikowi i wybrać wariant odpowiadający wydaniu. Ustawić zatwierdzone adresy polityki prywatności i strony projektu w konfiguracji wydania.
+- Sprawdzić bramkę na urządzeniach przed zgłoszeniem do Apple Kids Category i Google Play Families. Oświadczenia o prywatności i bezpieczeństwie danych wypełnić zgodnie z działaniem publikowanej wersji i jej hostingu.
+- Wiek dobiera wskazówki z KASK-01 i GDZIE-10 w Mapie Umiejętności. Wariant 16+ pokazuje poradę o dopasowaniu i zapięciu kasku. Scenariusze nadal określają rolę i warunki jazdy bohatera. Brzmienie i zakres GDZIE-10 wymagają potwierdzenia konsultanta.
+- Certyfikat używa nicku z generatora. Pole opcjonalnego imienia z M7c usunięto zgodnie z wymaganiem M10a dotyczącym wolnego tekstu.
+- M10c wymaga ustalenia operatora i regionu hostingu w UE, podstawy przetwarzania, czasu przechowywania danych, treści zgody oraz obsługi usuwania profilu. Przed aktywacją rankingów sprawdzić, jakie dane zapisuje infrastruktura. M10a zapisuje wybór rankingu na urządzeniu, a usuwanie profilu z serwera pozostaje nieaktywne.
+
 ## Podsumowanie M8
 
 - **M8a.** Radio, efekty i fanfara powstają w Web Audio. Lektor wybiera lokalny polski głos. Na urządzeniach bez takiego głosu wynik i wskazówka nadal są dostępne jako tekst.
@@ -210,7 +218,7 @@ Poniżej zestawienie zmian do przejrzenia przez konsultanta merytorycznego (pier
 
 - Z aktualnym rozporządzeniem i konsultantem porównać bank i rozkład 25 pytań, progi gry (80% teorii i 90% placu), sześć elementów placu, klasyfikację błędów i punktację 1 / 0,5 / 0. Przejazd kontrolny z progiem dwóch drobnych i zera poważnych błędów jest częścią finału gry. Sprawdzić, jak opisać zakres treningu dziecku i rodzicowi. Parametry są w `content/balans.yaml`.
 - Test i przejazd kontrolny oceniają gracza bez przyznawania XP ani zmiany mastery czy kart powtórek. Trening placu używa limitu dziennego mastery dla dobrych nawyków. Przy dwóch ukończonych kampaniach egzamin wybiera ostatnio wybrane miasto.
-- Profil v5 przechowuje pierwszą datę wydania i wyniki teorii oraz placu. Imię istnieje w otwartym podglądzie i trafia na wydruk lub do pliku PDF zapisanego przez gracza. Przed publikacją sprawdzić brzmienie klauzuli o karcie rowerowej.
+- Profil v5 przechowuje pierwszą datę wydania i wyniki teorii oraz placu. Przed publikacją sprawdzić brzmienie klauzuli o karcie rowerowej.
 
 ## M9c — przygotowanie wydania mobilnego przez Wojtka
 

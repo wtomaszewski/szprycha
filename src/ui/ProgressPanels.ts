@@ -51,8 +51,6 @@ export function progressPanels(
     audioSettings(progress.store),
     heading(ui.settings.equipment),
     ridePreference(progress.store, 'reflectiveVest'),
-    heading(ui.m5c.breakSettings),
-    breakSettings(progress, content),
     about,
   ];
 
@@ -214,20 +212,4 @@ function daily(progress: MissionProgress, content: GameContent) {
     heading(ui.m5c.stickers),
     stickers.childElementCount ? stickers : paragraph(ui.m5c.noStickers),
   ];
-}
-
-function breakSettings(progress: MissionProgress, content: GameContent) {
-  const balance = content.balans.zdrowe_granie;
-  const label = document.createElement('label');
-  const select = document.createElement('select');
-  for (const minutes of balance.opcje_min)
-    select.add(new Option(`${minutes} ${ui.m5c.minutes}`, String(minutes)));
-  select.value = String(progress.breakMinutes(balance));
-  select.addEventListener('change', () =>
-    progress.setBreakMinutes(Number(select.value), balance),
-  );
-  label.append(ui.m5c.breakAfter, ' ', select);
-  const p = document.createElement('p');
-  p.append(label);
-  return p;
 }
