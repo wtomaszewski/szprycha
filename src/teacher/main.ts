@@ -310,18 +310,29 @@ function setup(client: TeacherClient) {
     }
     const table = node('table');
     table.setAttribute('aria-label', copy.board);
-    const head = table.createTHead().insertRow();
-    const columns = [
+    const headings = table.createTHead();
+    const group = headings.insertRow();
+    for (const title of [
       ui.rankings.place,
       ui.rankings.player,
       copy.label,
       classCopy.xp,
-      ...moduleId.options.map((module) => ui.skillMap.modules[module]),
-    ];
-    for (const title of columns) {
+    ]) {
       const cell = node('th', title);
       cell.scope = 'col';
-      head.append(cell);
+      cell.rowSpan = 2;
+      group.append(cell);
+    }
+    const masteryHeading = node('th', classCopy.mastery);
+    masteryHeading.scope = 'colgroup';
+    masteryHeading.colSpan = moduleId.options.length;
+    masteryHeading.className = 'mastery-heading';
+    group.append(masteryHeading);
+    const modules = headings.insertRow();
+    for (const module of moduleId.options) {
+      const cell = node('th', ui.skillMap.modules[module]);
+      cell.scope = 'col';
+      modules.append(cell);
     }
     const body = table.createTBody();
     for (const { nickname, memberId, position, xp, mastery } of rows) {

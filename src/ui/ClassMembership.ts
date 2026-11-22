@@ -79,7 +79,7 @@ export function classMembership(client: RankingClient) {
   form.append(label, join);
   section.append(title, help, form, leave, status);
   refresh();
-  if (client.enabled || client.classJoined) {
+  if (client.enabled && client.classJoined) {
     void client
       .refreshClassMembership()
       .then(refresh)
