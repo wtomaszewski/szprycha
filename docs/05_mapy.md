@@ -85,7 +85,7 @@
 
 SzprychaApp odblokowuje zadania w kolejności WAW-T-01 → WAW-T-02 → WAW-A1-01 → WAW-A1-02 → WAW-A1-03 → WAW-A1-04 → WAW-A1-05 → WAW-A1-06. Przegląd i próbna jazda odbywają się w Miasteczku. Zlecenia na Pradze używają wymuszonych uczestników ruchu, a wolna jazda uruchamia ruch po całym grafie. W WAW-A1-03 za skrzyżowaniem ze STOP-em jest skrót oznaczony B-1. Jazda rowerem przez pasaż wywołuje werdykt ZNAK-B1.
 
-Pomiar fragmentu w Chromium z ograniczeniem CPU 4× można powtórzyć podczas działania Vite poleceniem `BENCH_MAP=warszawa npm run benchmark:driving`. Wynik zapisuje się w `test-results/performance-praga.json`. Ustaw `BENCH_FRAGMENT=most` lub `BENCH_FRAGMENT=starowka` razem z `BENCH_MAP=warszawa`, żeby zmierzyć jazdę w tych częściach mapy.
+Pomiar fragmentu w Chromium z ograniczeniem CPU 4× można powtórzyć podczas działania Vite poleceniem `BENCH_MAP=warszawa npm run benchmark:driving`. Wynik zapisuje się w `test-results/performance-praga.json`. Ustaw `BENCH_FRAGMENT=most` lub `BENCH_FRAGMENT=starowka` razem z `BENCH_MAP=warszawa`, żeby zmierzyć jazdę w tych częściach mapy. Opcja `BENCH_VIEWPORT=640x360` ustawia natywną rozdzielczość gry. Domyślny viewport to 1280 × 720.
 
 ### 5. Łazienki i Mokotów — „Park i przedmieścia”
 - **Landmarki:** Pałac na Wodzie (biały pałac nad stawem, kolumny), pawie, wiewiórki, pomnik w parku (własny, bez kopiowania pomnika Chopina — „pianista pod wierzbą”, uproszczony), domki jednorodzinne, stacja kolejki podmiejskiej.

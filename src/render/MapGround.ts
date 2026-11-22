@@ -11,7 +11,7 @@ export function drawMapGround(
 ) {
   const ground = map.getLayer('ground');
   const markings = map.getLayer('markings');
-  const source = scene.textures.get('training').getSourceImage();
+  const source = scene.textures.get(tiles.name).getSourceImage();
   if (!(source instanceof HTMLImageElement))
     throw new Error('Missing map tilesheet image');
   const { tileWidth, tileHeight } = map;

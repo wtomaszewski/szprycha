@@ -89,7 +89,7 @@ export function tiledMap(
     name: string,
     trafficCars: number,
     duskAt?: number,
-    tileCount = 8,
+    tileset = { name: 'training', file: 'tiles.png', count: 8 },
   ) {
     const mapProperties = [
       { name: 'trafficCars', type: 'int', value: trafficCars },
@@ -118,13 +118,13 @@ export function tiledMap(
           tilesets: [
             {
               firstgid: 1,
-              name: 'training',
+              name: tileset.name,
               tilewidth: 32,
               tileheight: 32,
-              tilecount: tileCount,
-              columns: tileCount,
-              image: '../assets/generated/tiles.png',
-              imagewidth: tileCount * 32,
+              tilecount: tileset.count,
+              columns: tileset.count,
+              image: `../assets/generated/${tileset.file}`,
+              imagewidth: tileset.count * 32,
               imageheight: 32,
               margin: 0,
               spacing: 0,

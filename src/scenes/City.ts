@@ -2,6 +2,7 @@ import { Scene, GameObjects } from 'phaser';
 import trainingUrl from '../../maps/miasteczko.tmj?url';
 import warsawUrl from '../../maps/warszawa.tmj?url';
 import tilesUrl from '../../assets/generated/tiles.png?url';
+import warsawTilesUrl from '../../assets/generated/warsaw-tiles.png?url';
 import riderUrl from '../../assets/generated/rider.png?url';
 import {
   canRide,
@@ -155,6 +156,8 @@ export class City extends Scene {
     }
     if (!this.textures.exists('training'))
       this.load.image('training', tilesUrl);
+    if (!this.textures.exists('warsaw'))
+      this.load.image('warsaw', warsawTilesUrl);
     if (!this.textures.exists('rider')) this.load.image('rider', riderUrl);
     this.load.on('loaderror', showError);
     this.load.once('complete', () => this.load.off('loaderror', showError));
@@ -206,7 +209,8 @@ export class City extends Scene {
     );
     this.siren = new EmergencySiren();
     const tilemap = this.make.tilemap({ key: mapId });
-    const tiles = tilemap.addTilesetImage('training', 'training');
+    const tileset = mapId === 'warszawa' ? 'warsaw' : 'training';
+    const tiles = tilemap.addTilesetImage(tileset, tileset);
     if (!tiles) throw new Error('Missing training tiles');
     if (mapId === 'warszawa') drawMapGround(this, tilemap, tiles, mapId);
     else {

@@ -659,4 +659,8 @@ objectLayer('districts', [
 objectLayer('map_decorations', [
   rect('pylon', 2537, 529, 0, 0, { kind: 'bridge' }),
 ]);
-await write('warszawa', 9, undefined, 10);
+await write('warszawa', 9, undefined, {
+  name: 'warsaw',
+  file: 'warsaw-tiles.png',
+  count: 10,
+});

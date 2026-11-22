@@ -2,6 +2,10 @@ import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import pl from '../i18n/pl.json' with { type: 'json' };
 
+const viewport = /^(\d+)x(\d+)$/.exec(process.env.BENCH_VIEWPORT ?? '1280x720');
+if (!viewport || !Number(viewport[1]) || !Number(viewport[2]))
+  throw new Error('BENCH_VIEWPORT must use WIDTHxHEIGHT in pixels');
+const [, width, height] = viewport;
 const warsaw = process.env.BENCH_MAP === 'warszawa';
 const fragment = warsaw ? process.env.BENCH_FRAGMENT : undefined;
 const orders = [
@@ -26,7 +30,7 @@ const browser = await chromium.launch({
 });
 try {
   const page = await browser.newPage({
-    viewport: { width: 1280, height: 720 },
+    viewport: { width: Number(width), height: Number(height) },
   });
   if (mission) {
     const completed = mission === 'WAW-A1-04' ? orders.slice(0, -1) : orders;
@@ -116,8 +120,7 @@ try {
   frames.sort((a, b) => a - b);
   const report = {
     date: new Date().toISOString(),
-    environment:
-      'Chromium headless, 1280x720, CPU 4x; not a physical Android measurement',
+    environment: `Chromium headless, ${width}x${height}, CPU 4x`,
     renderer,
     map: warsaw ? 'warszawa' : 'miasteczko',
     fragment,

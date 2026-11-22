@@ -18279,12 +18279,12 @@
   "tilesets": [
     {
       "firstgid": 1,
-      "name": "training",
+      "name": "warsaw",
       "tilewidth": 32,
       "tileheight": 32,
       "tilecount": 10,
       "columns": 10,
-      "image": "../assets/generated/tiles.png",
+      "image": "../assets/generated/warsaw-tiles.png",
       "imagewidth": 320,
       "imageheight": 32,
       "margin": 0,

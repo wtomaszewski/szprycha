@@ -3,13 +3,24 @@
     {
       "id": "training",
       "file": "generated/tiles.png",
+      "width": 256,
+      "height": 32,
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "frames": 8,
+      "directions": 1,
+      "description": "Tymczasowe kafle: trawa, asfalt, chodnik, DDR, dach, woda, linie pionowe i poziome."
+    },
+    {
+      "id": "warsaw",
+      "file": "generated/warsaw-tiles.png",
       "width": 320,
       "height": 32,
       "frameWidth": 32,
       "frameHeight": 32,
       "frames": 10,
       "directions": 1,
-      "description": "Tymczasowe kafle: trawa, asfalt, chodnik, DDR, dach, woda, linie pionowe i poziome, kocie łby."
+      "description": "Kafle Miasteczka, bruk Starówki i Wisła pod mostem."
     },
     {
       "id": "rider",

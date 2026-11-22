@@ -44,7 +44,19 @@ for (let t = 0; t < colors.length; t++)
       }
       pixel(tiles, t * 32 + x, y, color);
     }
-await writeFile('assets/generated/tiles.png', PNG.sync.write(tiles));
+const trainingTiles = new PNG({ width: 256, height: 32 });
+PNG.bitblt(
+  tiles,
+  trainingTiles,
+  0,
+  0,
+  trainingTiles.width,
+  trainingTiles.height,
+  0,
+  0,
+);
+await writeFile('assets/generated/tiles.png', PNG.sync.write(trainingTiles));
+await writeFile('assets/generated/warsaw-tiles.png', PNG.sync.write(tiles));
 const rider = new PNG({ width: 24, height: 24 });
 for (let y = 2; y < 23; y++)
   for (let x = 0; x < 24; x++) {
