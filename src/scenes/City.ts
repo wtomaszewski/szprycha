@@ -1090,7 +1090,7 @@ export class City extends Scene {
         this.feedback.explanation(review.verdict),
         review.verdict.kind === 'minor',
         this.replay.size > 1,
-        Boolean(this.mission?.result),
+        Boolean(this.mission?.result || this.mission?.waitingForQuestion),
       );
     }
     const duration = this.replay.durationMs;
