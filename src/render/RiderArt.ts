@@ -17,7 +17,11 @@ export class RiderArt {
   private readonly helmet: number;
   private hadEffects = false;
 
-  constructor(scene: Scene, helmet: HelmetColor) {
+  constructor(
+    scene: Scene,
+    helmet: HelmetColor,
+    private readonly goldenBell = false,
+  ) {
     this.helmet = helmetColors.indexOf(helmet);
     this.image = scene.add.image(0, 0, 'rider', 0).setDepth(20);
     this.lights = scene.add
@@ -66,9 +70,11 @@ export class RiderArt {
     if (!actions.bell && !this.hadEffects) return;
     this.hadEffects = actions.bell;
     const art = this.effects.clear().setPosition(x, y);
-    if (actions.bell)
-      art
-        .lineStyle(2, 0xffcd75)
-        .strokeCircle(0, 0, 28 + (Math.floor(Math.max(at, 0) * 10) % 6));
+    if (actions.bell) {
+      const radius = 28 + (Math.floor(Math.max(at, 0) * 10) % 6);
+      art.lineStyle(2, 0xffcd75).strokeCircle(0, 0, radius);
+      if (this.goldenBell)
+        art.lineStyle(1, 0xfff1c1, 0.8).strokeCircle(0, 0, radius + 4);
+    }
   }
 }

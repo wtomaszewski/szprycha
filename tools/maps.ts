@@ -1,5 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { missionCity } from '../src/content/missions.ts';
+import { examRoute } from '../src/gameplay/exam/route.ts';
 import type { GameContent } from '../src/content/schemas.ts';
 import { MissionSystem } from '../src/gameplay/MissionSystem.ts';
 import {
@@ -30,7 +32,10 @@ export async function readMaps(root: string, metersPerTile: number) {
 export async function validateMaps(root: string, content: GameContent) {
   const worlds = await readMaps(root, content.balans.silnik.kafel_m);
   const signCodes = new Set(content.znaki.znaki.map(({ kod }) => kod));
-  for (const mission of content.misje) {
+  const examRoutes = missionCity.options.map((city) =>
+    examRoute(city, content.balans.licencja),
+  );
+  for (const mission of [...content.misje, ...examRoutes]) {
     const map = mission.mapa ?? mission.miasto;
     const world = worlds.get(map);
     if (!world) throw new Error(`Mission ${mission.id}: unknown map ${map}`);

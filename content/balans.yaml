@@ -47,6 +47,13 @@ licencja:
   plac_prog: 0.90        # zweryfikować z aktualnym rozporządzeniem
   przejazd_max_minor: 2
   przejazd_max_major: 0
+  przejazdy:
+    warszawa:
+      start: bazar_praga
+      punkty: [cp_bazar, podejscie_do_stop, przez_stop, blok_haliny]
+    wroclaw:
+      start: hala-rondo-zachod
+      punkty: [hala-rondo-poludnie, hala-rondo-wschod, hala-dojazd, wejscie-hala]
 silnik:
   ttc_minor_s: 2.0
   ttc_major_s: 1.0

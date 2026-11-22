@@ -2,6 +2,8 @@ import { Scene } from 'phaser';
 import type { GameContent } from '../content/schemas';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 import { progressPanels } from '../ui/ProgressPanels';
+import { examPanel } from '../ui/ExamPanel';
+import type { ExamResult } from '../gameplay/exam/exam';
 import { quizPanel } from '../ui/QuizPanel';
 import { progressNotice, skillMapButton } from '../ui/SkillMap';
 import { FONT, ui } from '../core/presentation';
@@ -11,16 +13,22 @@ export class MainMenu extends Scene {
   constructor() {
     super('MainMenu');
   }
-  create(content: GameContent) {
+  create(data?: GameContent | { examResult?: ExamResult }) {
     // Data has passed the same schema at build time and at the loading boundary.
-    if (content?.przepisy) this.registry.set('content', content);
+    if (data && 'przepisy' in data) this.registry.set('content', data);
     const gameContent = this.registry.get('content') as GameContent;
     const progress = this.registry.get('missionProgress') as MissionProgress;
     const skills = skillMapButton(progress, gameContent);
     const panels = progressPanels(progress, gameContent);
     const quiz = quizPanel(progress, gameContent);
+    const exam = examPanel(progress, gameContent, (attempt) =>
+      this.scene.start('Plac', { attempt, rehearsal: !attempt }),
+    );
     const menuDialogOpen = () =>
-      skills.dialog.open || panels.dialog.open || quiz.dialog.open;
+      skills.dialog.open ||
+      panels.dialog.open ||
+      quiz.dialog.open ||
+      exam.dialog.open;
     const notice = document.createElement('p');
     notice.className = 'menu-save-notice';
     notice.setAttribute('role', 'status');
@@ -42,10 +50,10 @@ export class MainMenu extends Scene {
     const plac = document.createElement('button');
     plac.type = 'button';
     plac.textContent = ui.plac.title;
-    plac.addEventListener('click', () => this.scene.start('Plac'));
+    plac.addEventListener('click', () => this.scene.start('Plac', {}));
     const training = document.createElement('div');
     training.className = 'menu-training';
-    training.append(plac, quiz.button);
+    training.append(plac, quiz.button, exam.button);
     const helmetLabel = document.createElement('label');
     helmetLabel.className = 'menu-helmet';
     helmetLabel.textContent = ui.helmet.label;
@@ -63,6 +71,7 @@ export class MainMenu extends Scene {
       freeRide,
       training,
       quiz.dialog,
+      exam.dialog,
       helmetLabel,
       skills.button,
       skills.dialog,
@@ -139,6 +148,7 @@ export class MainMenu extends Scene {
         event.target !== freeRide &&
         event.target !== plac &&
         event.target !== quiz.button &&
+        event.target !== exam.button &&
         event.target !== helmet &&
         event.target !== skills.button &&
         !menuDialogOpen() &&
@@ -157,6 +167,7 @@ export class MainMenu extends Scene {
       freeRide.remove();
       training.remove();
       quiz.dialog.remove();
+      exam.dialog.remove();
       helmetLabel.remove();
       skills.button.remove();
       skills.dialog.remove();
@@ -172,5 +183,10 @@ export class MainMenu extends Scene {
     canvas.setAttribute('role', 'img');
     canvas.dataset.scene = this.scene.key;
     canvas.dataset.pangram = ui.pangram;
+    if (data && 'examResult' in data && data.examResult) {
+      // Phaser otherwise reuses the previous payload on a normal menu visit.
+      this.sys.settings.data = {};
+      exam.showResult(data.examResult);
+    }
   }
 }

@@ -20,6 +20,7 @@ import {
   scorePlac,
   type PlacResult,
 } from '../../src/gameplay/plac/PlacRun';
+import { cleanPlacInput } from './clean-course';
 import { readContent } from '../../tools/content';
 
 let course: PlacCourse;
@@ -335,70 +336,7 @@ it('can drive a clean full course on fixed ticks and reproduce the time and ghos
     do {
       state.looking = false;
       state.signal = null;
-      while (!run.result) {
-        const { x, y, heading } = run.ride.rider;
-        const steerTo = (angle: number) => {
-          const error = angle - heading;
-          return Math.max(
-            -1,
-            Math.min(1, Math.atan2(Math.sin(error), Math.cos(error)) * 10),
-          );
-        };
-        switch (run.id) {
-          case 'PLAC-01': {
-            const point =
-              course.exercises['PLAC-01'].path[run.detector.nextMarker]!;
-            run.step({
-              ...drive,
-              y: -0.62,
-              x: steerTo(Math.atan2(point.y - y, point.x - x)),
-            });
-            break;
-          }
-          case 'PLAC-02': {
-            const { gates, start, finishX } = course.exercises['PLAC-02'];
-            const targetX = x + 10;
-            const targetY =
-              targetX < gates[0]!.x - 34 || targetX > finishX - 42
-                ? start.y
-                : start.y -
-                  26 *
-                    Math.cos(
-                      ((targetX - gates[0]!.x) * Math.PI) /
-                        (gates[1]!.x - gates[0]!.x),
-                    );
-            run.step({
-              ...drive,
-              y: -0.55,
-              x: steerTo(Math.atan2(targetY - y, targetX - x)),
-            });
-            break;
-          }
-          case 'PLAC-04':
-            run.step(x < 431 ? { ...drive, y: -0.7 } : brake);
-            break;
-          case 'PLAC-05':
-            state.looking = run.ride.ticks === 0;
-            state.signal =
-              run.ride.ticks === 1 || run.ride.ticks === 2 ? 'left' : null;
-            run.step(run.ride.ticks < 2 ? coast : drive);
-            break;
-          case 'PLAC-06': {
-            const { start, signal, signalFromX } = course.exercises['PLAC-06'];
-            state.signal = x >= signalFromX - 8 ? signal : null;
-            const compensatingHeading = state.signal
-              ? (balance.physics.one_hand_degrees * Math.PI) / 180
-              : 0;
-            run.step({
-              ...drive,
-              x: steerTo(compensatingHeading + (start.y - y) / 18),
-            });
-            break;
-          }
-          default:
-            run.step(drive);
-        }
-      }
+      while (!run.result) run.step(cleanPlacInput(run, state, course, balance));
     } while (run.advance());
     return {
       summary: scorePlac(run.results, balance, pass),

@@ -1,5 +1,5 @@
 import { moduleId, type GameContent } from '../content/schemas';
-import { translate, ui } from '../core/presentation';
+import { playerNickname, translate, ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 import { masteryBadge } from '../progression/mastery';
 
@@ -31,9 +31,8 @@ export function skillMapButton(
     header.append(title, close);
 
     const { nicknameSeed } = progress.store.profile;
-    const { nicknames } = ui.skillMap;
     const nick = document.createElement('strong');
-    nick.textContent = `${nicknames[nicknameSeed % nicknames.length]} ${Math.floor(nicknameSeed / nicknames.length) + 1}`;
+    nick.textContent = playerNickname(nicknameSeed);
     const reputation = document.createElement('p');
     const rank = progress.rank(content);
     reputation.textContent = `${ui.skillMap.rank} ${rank ? translate(`skillMap.ranks.${rank.id}`) : '—'} · ${ui.skillMap.xp} ${number.format(progress.xp)}`;

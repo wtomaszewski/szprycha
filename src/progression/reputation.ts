@@ -31,15 +31,12 @@ export function rankUnlocks(
   ranks: Ranks,
   xp: number,
   licencePassed: boolean,
-  licenceMasteryMet: boolean,
+  licenceEligible: boolean,
 ) {
   return new Set(
     ranks
       .filter((rank) => (rank.xp === null ? licencePassed : xp >= rank.xp))
       .flatMap((rank) => rank.odblokuj)
-      .filter(
-        (flag) =>
-          flag !== 'egzamin_licencji' || licenceMasteryMet || licencePassed,
-      ),
+      .filter((flag) => flag !== 'egzamin_licencji' || licenceEligible),
   );
 }

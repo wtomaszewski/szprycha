@@ -38,7 +38,7 @@ it.each([
   expect(reputationRank(balans.rangi, xp, false)?.id).toBe(rank);
 });
 
-it('accumulates unlock flags and gates the licence exam on mastery of all eight modules', () => {
+it('accumulates unlock flags and gates the licence exam on campaign progress and mastery', () => {
   const progress = new MissionProgress();
   expect([...progress.unlocks(content)]).toEqual(['miasteczko', 'akt_1']);
   progress.awardAchievement('seria_5', 2_000);
@@ -55,16 +55,18 @@ it('accumulates unlock flags and gates the licence exam on mastery of all eight 
   for (const { id } of content.przepisy.przepisy)
     for (let i = 0; i < 5; i++)
       progress.recordQuizAnswer(id, true, balans.mastery);
+  expect(progress.unlocks(content)).not.toContain('egzamin_licencji');
+  for (const mission of misje.filter(
+    ({ miasto, poboczna }) => miasto === 'warszawa' && !poboczna,
+  ))
+    progress.complete(mission);
   expect(progress.unlocks(content)).toContain('egzamin_licencji');
   expect(progress.unlocks(content)).not.toContain('zloty_dzwonek');
-  progress.recordLicencePassed();
-  expect(progress.rank(content)?.id).toBe('legenda');
-  expect(progress.unlocks(content)).toContain('zloty_dzwonek');
 });
 
-it('keeps the configured future quiz and exam thresholds from docs/04', () => {
+it('keeps the configured quiz and exam thresholds from docs/04', () => {
   expect(balans.leitner_odstepy_dni).toEqual([0, 1, 3, 7, 14]);
-  expect(balans.licencja).toEqual({
+  expect(balans.licencja).toMatchObject({
     mastery_min_modul: 70,
     teoria_pytan: 25,
     teoria_prog: 0.8,

@@ -4,12 +4,14 @@ import type { GameContent } from '../content/schemas';
 import { readHelmetColor } from '../core/helmetColor';
 import { showError, translate, ui } from '../core/presentation';
 import { FIXED_STEP, METERS_PER_PIXEL } from '../gameplay/bicycle';
+import type { ExamAttempt, ExamRide } from '../gameplay/exam/exam';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 import {
   PlacRun,
   placIds,
   scorePlac,
   type GhostPose,
+  type PlacResult,
 } from '../gameplay/plac/PlacRun';
 import {
   placCourseKey,
@@ -34,6 +36,7 @@ const text = (tag: string, value: string) =>
 export class Plac extends Scene {
   private course!: PlacCourse;
   private balance!: PlacBalance;
+  private mastery!: GameContent['balans']['mastery'];
   private progress!: MissionProgress;
   private passThreshold = 0;
   private courseKey = '';
@@ -52,6 +55,8 @@ export class Plac extends Scene {
   private sequence!: HTMLElement;
   private run?: PlacRun;
   private arcade = false;
+  private attempt?: ExamAttempt;
+  private rehearsal = false;
   private origin: 'MainMenu' | 'City' = 'MainMenu';
   private accumulator = 0;
   private completedAt = 0;
@@ -69,7 +74,18 @@ export class Plac extends Scene {
     this.load.once('complete', () => this.load.off('loaderror', showError));
   }
 
-  create({ origin = 'MainMenu' }: { origin?: 'MainMenu' | 'City' } = {}) {
+  create({
+    origin = 'MainMenu',
+    attempt,
+    rehearsal = false,
+  }: {
+    origin?: 'MainMenu' | 'City';
+    attempt?: ExamAttempt;
+    rehearsal?: boolean;
+  } = {}) {
+    this.run = undefined;
+    this.attempt = attempt;
+    this.rehearsal = rehearsal;
     const content = this.registry.get('content') as GameContent;
     this.progress = this.registry.get('missionProgress') as MissionProgress;
     this.titles = new Map(
@@ -79,6 +95,7 @@ export class Plac extends Scene {
     );
     this.course = content.plac;
     this.balance = content.balans.plac;
+    this.mastery = content.balans.mastery;
     this.passThreshold = content.balans.licencja.plac_prog;
     this.courseKey = placCourseKey(this.course, this.balance);
     this.origin = origin;
@@ -94,11 +111,13 @@ export class Plac extends Scene {
       ui.plac.title,
       { lite: false, rain: false },
       () => {},
-      () => {
-        if (this.run && !this.dialog.open)
-          this.start(this.run.ids, this.arcade);
-      },
-      () => this.showLobby(),
+      attempt
+        ? undefined
+        : () => {
+            if (this.run && !this.dialog.open)
+              this.start(this.run.ids, this.arcade);
+          },
+      () => this.leaveRun(),
       () => {
         this.accumulator = 0;
       },
@@ -112,7 +131,7 @@ export class Plac extends Scene {
     this.dialog.setAttribute('aria-labelledby', 'plac-dialog-title');
     this.dialog.addEventListener('cancel', (event) => {
       event.preventDefault();
-      if (this.run) this.showLobby();
+      if (this.run) this.leaveRun();
       else this.leave();
     });
     this.hud = document.createElement('header');
@@ -153,16 +172,23 @@ export class Plac extends Scene {
     this.events.once('shutdown', () => {
       this.scale.off('resize', resize);
       this.controls.destroy();
+      this.attempt = undefined;
       this.dialog.remove();
       delete canvas.dataset.placExercise;
       delete canvas.dataset.placGrade;
       void this.progress.store.flush();
     });
-    this.showLobby();
+    if (attempt || rehearsal) this.start(placIds, false);
+    else this.showLobby();
   }
 
   private leave() {
     this.scene.start(this.origin);
+  }
+
+  private leaveRun() {
+    if (this.attempt || this.rehearsal) this.leave();
+    else this.showLobby();
   }
 
   private get exitLabel() {
@@ -236,7 +262,7 @@ export class Plac extends Scene {
   }
 
   private start(ids: readonly PlacId[], arcade: boolean) {
-    this.dialog.close();
+    if (this.dialog.open) this.dialog.close();
     this.controls.focus();
     this.arcade = arcade;
     this.finishedTicks = 0;
@@ -313,11 +339,30 @@ export class Plac extends Scene {
     }
     const actions = document.createElement('div');
     actions.className = 'plac-actions';
-    actions.append(
-      this.button(ui.plac.retry, () => this.start(run.ids, this.arcade)),
-      this.button(ui.plac.return, () => this.showLobby()),
-      this.button(this.exitLabel, () => this.leave()),
-    );
+    if (this.attempt) {
+      const result: ExamRide = { ...this.attempt, plac: run.results };
+      actions.append(
+        score.passed
+          ? this.button(ui.exam.startRide, () =>
+              this.scene.start('City', { examRide: result }),
+            )
+          : this.button(ui.exam.showResult, () =>
+              this.scene.start('MainMenu', { examResult: result }),
+            ),
+      );
+      if (score.passed)
+        actions.append(this.button(this.exitLabel, () => this.leave()));
+    } else if (this.rehearsal) {
+      actions.append(
+        this.button(ui.plac.retry, () => this.start(placIds, false)),
+        this.button(this.exitLabel, () => this.leave()),
+      );
+    } else
+      actions.append(
+        this.button(ui.plac.retry, () => this.start(run.ids, this.arcade)),
+        this.button(ui.plac.return, () => this.showLobby()),
+        this.button(this.exitLabel, () => this.leave()),
+      );
     this.dialog.replaceChildren(
       this.dialogTitle(title),
       text('p', summary.join(' · ')),
@@ -325,7 +370,24 @@ export class Plac extends Scene {
       actions,
     );
     if (this.arcade) this.dialog.append(this.ranking());
-    this.dialog.append(text('p', ui.plac.practiceOutside));
+    if (!this.attempt) this.dialog.append(text('p', ui.plac.practiceOutside));
+    if (!this.dialog.open) this.dialog.showModal();
+  }
+
+  private explainExercise(run: PlacRun, result: PlacResult, comment: string) {
+    const score = `${ui.plac.grades[result.grade]} · ${pointsFormat.format(this.balance.points[result.grade])} / ${pointsFormat.format(this.balance.points.good)}`;
+    this.dialog.replaceChildren(
+      this.dialogTitle(this.heading.textContent!),
+      text('p', comment),
+      text('p', score),
+      this.button(ui.exam.nextExercise, () => {
+        if (run.advance()) {
+          this.dialog.close();
+          this.controls.focus();
+          this.prepare(run);
+        } else this.results(run);
+      }),
+    );
     this.dialog.showModal();
   }
 
@@ -353,9 +415,20 @@ export class Plac extends Scene {
           ([, grade]) => grade === result.grade,
         )?.[0];
         this.game.canvas.dataset.placGrade = result.grade;
-        this.coach.textContent = fault
-          ? `${ui.plac.coach} · ${ui.plac.faults[fault]}`
-          : ui.plac.grades.good;
+        const comment = `${ui.plac.coach} · ${fault ? ui.plac.faults[fault] : ui.exam.cleanExercise}`;
+        this.coach.textContent = comment;
+        if (!this.attempt)
+          this.progress.recordRide(
+            [{ ruleId: result.id, kind: result.grade }],
+            0,
+            this.mastery,
+          );
+        if (this.attempt || this.rehearsal) {
+          this.render(run);
+          this.controls.clear();
+          this.explainExercise(run, result, comment);
+          return;
+        }
       }
     }
     this.render(run);

@@ -12,7 +12,7 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   void navigator.serviceWorker
     .register(`${import.meta.env.BASE_URL}quiz-worker.js`)
     .catch((error: unknown) =>
-      console.warn('Quiz offline cache unavailable', error),
+      console.warn('Offline cache unavailable', error),
     );
 }
 

@@ -136,94 +136,50 @@ export function quizPanel(progress: MissionProgress, content: GameContent) {
       return;
     }
 
-    let correct = 0;
-    function showQuestion(index: number) {
-      const question = questions[index]!;
-      const prompt = heading(question.pytanie);
-      prompt.className = 'quiz-prompt';
-      const step = paragraph(
-        `${mode} · ${labels.question} ${index + 1} / ${questions.length}`,
-        'quiz-meta',
-      );
-      const meter = document.createElement('progress');
-      meter.max = questions.length;
-      meter.value = index;
-      meter.setAttribute('aria-label', step.textContent);
-      const answers = document.createElement('div');
-      answers.className = 'quiz-answers';
-      let answered = false;
-      for (const answer of answerOrder(question, seed)) {
-        answers.append(
-          button(question.odpowiedzi[answer]!, () => {
-            if (answered) return;
-            answered = true;
-            const result = progress.answerPracticeQuestion(
-              content,
-              question,
-              answer,
-            );
-            if (result.correct) correct++;
-            meter.value = index + 1;
-            const feedback = document.createElement('div');
-            feedback.className = 'quiz-feedback';
-            feedback.append(
-              paragraph(
-                result.correct ? labels.correct : labels.incorrect,
-                'quiz-feedback-title',
-              ),
-            );
-            if (!result.correct)
-              feedback.append(
-                paragraph(question.odpowiedzi[question.poprawna]!),
-              );
-            feedback.append(paragraph(explanation(question)));
-            for (const achievement of result.achievements)
-              feedback.append(
-                paragraph(`${labels.achievement} · ${achievement.nazwa}`),
-              );
-            const last = index + 1 === questions.length;
-            const next = button(last ? labels.result : labels.next, () => {
-              if (last) {
-                const result = heading(labels.finished);
-                body.replaceChildren(
-                  result,
-                  paragraph(
-                    `${labels.score} · ${correct} / ${questions.length}`,
-                    'quiz-score',
-                  ),
-                  paragraph(streak(), 'quiz-meta'),
-                  button(labels.repeat, showModes),
-                );
-                result.focus();
-              } else showQuestion(index + 1);
-            });
-            next.className = 'quiz-primary';
-            answers.replaceChildren(feedback, next);
-            next.setAttribute('aria-describedby', 'quiz-answer-feedback');
-            feedback.id = 'quiz-answer-feedback';
-            next.focus();
-            void store.flush().then(updateNotice);
-          }),
+    quizQuestions({
+      body,
+      dialog,
+      mode,
+      questions,
+      seed,
+      answer(question, answer, correct) {
+        const result = progress.answerPracticeQuestion(
+          content,
+          question,
+          answer,
         );
-      }
-      body.replaceChildren(step, meter, prompt);
-      if (question.obrazek) {
-        const figure = document.createElement('div');
-        figure.className = 'quiz-signs';
-        for (const code of illustratedSigns(question.obrazek)) {
-          const image = signIllustration(
-            code,
-            translate(`quiz.signAlt.${code}`),
+        const feedback = document.createElement('div');
+        feedback.className = 'quiz-feedback';
+        feedback.append(
+          paragraph(
+            correct ? labels.correct : labels.incorrect,
+            'quiz-feedback-title',
+          ),
+        );
+        if (!correct)
+          feedback.append(paragraph(question.odpowiedzi[question.poprawna]!));
+        feedback.append(paragraph(explanation(question)));
+        for (const achievement of result.achievements)
+          feedback.append(
+            paragraph(`${labels.achievement} · ${achievement.nazwa}`),
           );
-          if (image) figure.append(image);
-        }
-        body.append(figure);
-      }
-      body.append(answers);
-      dialog.scrollTop = 0;
-      prompt.focus();
-    }
-    showQuestion(0);
+        void store.flush().then(updateNotice);
+        return feedback;
+      },
+      finish(correct) {
+        const result = heading(labels.finished);
+        body.replaceChildren(
+          result,
+          paragraph(
+            `${labels.score} · ${correct} / ${questions.length}`,
+            'quiz-score',
+          ),
+          paragraph(streak(), 'quiz-meta'),
+          button(labels.repeat, showModes),
+        );
+        result.focus();
+      },
+    });
   }
 
   function explanation(question: QuizQuestion) {
@@ -242,4 +198,85 @@ export function quizPanel(progress: MissionProgress, content: GameContent) {
   });
   open.setAttribute('aria-haspopup', 'dialog');
   return { button: open, dialog };
+}
+
+export function quizQuestions({
+  body,
+  dialog,
+  mode,
+  questions,
+  seed,
+  answer,
+  finish,
+}: {
+  body: HTMLElement;
+  dialog: HTMLDialogElement;
+  mode: string;
+  questions: readonly QuizQuestion[];
+  seed: number;
+  answer?: (
+    question: QuizQuestion,
+    index: number,
+    correct: boolean,
+  ) => HTMLElement;
+  finish: (correct: number) => void;
+}) {
+  let correct = 0;
+  function showQuestion(index: number) {
+    const question = questions[index]!;
+    const prompt = heading(question.pytanie);
+    prompt.className = 'quiz-prompt';
+    const step = paragraph(
+      `${mode} · ${labels.question} ${index + 1} / ${questions.length}`,
+      'quiz-meta',
+    );
+    const meter = document.createElement('progress');
+    meter.max = questions.length;
+    meter.value = index;
+    meter.setAttribute('aria-label', step.textContent);
+    const answers = document.createElement('div');
+    answers.className = 'quiz-answers';
+    let answered = false;
+    for (const option of answerOrder(question, seed)) {
+      answers.append(
+        button(question.odpowiedzi[option]!, () => {
+          if (answered) return;
+          answered = true;
+          const isCorrect = option === question.poprawna;
+          if (isCorrect) correct++;
+          const last = index + 1 === questions.length;
+          const advance = () => {
+            if (last) finish(correct);
+            else showQuestion(index + 1);
+          };
+          const feedback = answer?.(question, option, isCorrect);
+          if (!feedback) {
+            advance();
+            return;
+          }
+          meter.value = index + 1;
+          const next = button(last ? labels.result : labels.next, advance);
+          next.className = 'quiz-primary';
+          next.setAttribute('aria-describedby', 'quiz-answer-feedback');
+          feedback.id = 'quiz-answer-feedback';
+          answers.replaceChildren(feedback, next);
+          next.focus();
+        }),
+      );
+    }
+    body.replaceChildren(step, meter, prompt);
+    if (question.obrazek) {
+      const figure = document.createElement('div');
+      figure.className = 'quiz-signs';
+      for (const code of illustratedSigns(question.obrazek)) {
+        const image = signIllustration(code, translate(`quiz.signAlt.${code}`));
+        if (image) figure.append(image);
+      }
+      body.append(figure);
+    }
+    body.append(answers);
+    dialog.scrollTop = 0;
+    prompt.focus();
+  }
+  showQuestion(0);
 }

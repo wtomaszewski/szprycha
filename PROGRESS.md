@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan na 22.11.2026. Gałąź `feat/52-m6d-misje-wroclawia`.
+Stan na 22.11.2026. Gałąź `feat/61-m7c-licencja`.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -11,7 +11,7 @@ Stan na 22.11.2026. Gałąź `feat/52-m6d-misje-wroclawia`.
 | M4     | Misje i fabuła                              | Akt 1 Warszawy grywalny od samouczka do finału M4d (#25).                                    |
 | M5     | Punktacja, progresja, zapis                 | M5a (#44), M5b (#46) i M5c (#54) w `main`.                                                   |
 | M6     | Mapy Warszawy i Wrocławia                   | M6a–d: dwie mapy, dwie kampanie i wybór miasta. Raport strict obejmuje oba miasta.           |
-| M7     | Plac, quiz, egzamin                         | M7a wdrożony, quiz i egzamin w kolejnych częściach                                           |
+| M7     | Plac, quiz, egzamin                         | Ukończony. Plac (M7a), quiz (M7b) i egzamin z Licencją (M7c).                                |
 | M8     | Audio i szlif                               | Nierozpoczęty                                                                                |
 | M9     | PWA, Capacitor, Android/iOS                 | Nierozpoczęty                                                                                |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Nierozpoczęty                                                                                |
@@ -217,4 +217,10 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Plac dostępny z menu głównego i Miasteczka Ruchu Drogowego. Trening obejmuje wybrane ćwiczenie lub wszystkie sześć. W Arcade czyste przejazdy walczą o medale, a profil przechowuje czasy i odtwarza na torze najlepszy przejazd.
 - PLAC-01…06 mają osobne detektory i testy scenariuszowe. Wynik to suma punktów ułamkowych z progiem 90%. Geometria, porady Sierżant Oli i balans są w danych, a po sesji gra zachęca do ćwiczeń na rowerze.
 - `npm run benchmark:plac` mierzy płynność jazdy w Chromium z CPU 4× przy uruchomionym serwerze gry. Test Playwright zapisuje zrzut w `test-results/plac.png`. Raport pokrycia zawiera reguły typu `plac`.
-- Weryfikacja kryteriów szkolnego egzaminu pozostaje otwarta. Quiz i próbna Licencja Szprychy należą do następnych części M7.
+- Weryfikacja kryteriów szkolnego egzaminu pozostaje otwarta.
+
+## M7c — egzamin próbny i Licencja Szprychy (#61)
+
+- Egzamin w menu łączy 25 pytań z quizu M7b, sześć elementów placu i trasę kontrolną w mieście ukończonej kampanii. W próbie generalnej Sierżant Ola omawia każdy element placu. Trening placu rozwija opanowanie M08.
+- Po zaliczeniu finał odblokowuje rangę Legenda Szprychy i złoty dzwonek. Certyfikat można ponownie otworzyć z menu egzaminu, wydrukować lub zapisać jako PDF przez przeglądarkę. [Certyfikat](docs/screenshots/61-m7c-certyfikat.png)
+- Build wykorzystuje pamięć offline M7b. Po pierwszym pobraniu zasobów test Playwright odcina sieć, przeładowuje stronę i sprawdza teorię, plac, przejazd, przyznanie nagrody, wydruk i ponowne otwarcie certyfikatu. Instalowalna PWA i platformy mobilne pozostają w M9.
