@@ -3,6 +3,7 @@ import { chooseCity } from './city-picker';
 import type { GameContent } from '../../src/content/schemas';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import questions from '../../content/pytania.json' with { type: 'json' };
+import { findDisplayedQuestion } from './question-dialog';
 import {
   warsawRoutes,
   type WarsawMissionId,
@@ -312,8 +313,13 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
           const prompt = await control
             .locator('.control-question-prompt')
             .textContent();
-          const question = questions.pytania.find(
-            ({ pytanie }) => pytanie === prompt,
+          const options = await control
+            .locator('.control-question-answers button')
+            .allTextContents();
+          const question = findDisplayedQuestion(
+            questions.pytania,
+            prompt,
+            options,
           )!;
           await control
             .getByRole('button', {

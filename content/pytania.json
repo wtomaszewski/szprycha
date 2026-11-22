@@ -302,7 +302,8 @@
     "GDZIE-11"
    ],
    "poziom": 2,
-   "pytanie": "Jedziesz wspólną drogą dla pieszych i rowerów (symbole jeden nad drugim). Przed Tobą idą piesi. Co robisz?",
+   "obrazek": "C-13/C-16",
+   "pytanie": "Jedziesz drogą oznaczoną tym znakiem. Przed Tobą idą piesi. Co robisz?",
    "odpowiedzi": [
     "Dzwonię i jadę dalej",
     "Zwalniam i ustępuję pieszym",
@@ -339,7 +340,8 @@
     "SYG-01"
    ],
    "poziom": 1,
-   "pytanie": "Co oznacza żółte światło (bez migania) na sygnalizatorze?",
+   "obrazek": "S-1",
+   "pytanie": "Co oznacza światło pokazane na tym sygnalizatorze?",
    "odpowiedzi": [
     "Przyspiesz, żeby zdążyć",
     "Nie wjeżdżaj, chyba że zatrzymanie byłoby niebezpieczne",
@@ -357,7 +359,8 @@
     "ZNAK-S2"
    ],
    "poziom": 2,
-   "pytanie": "Pali się czerwone światło i obok zielona strzałka w prawo. Chcesz skręcić w prawo. Co robisz?",
+   "obrazek": "S-2",
+   "pytanie": "Widzisz ten sygnalizator i chcesz skręcić w prawo. Co robisz?",
    "odpowiedzi": [
     "Skręcam bez zatrzymania",
     "Zatrzymuję się, przepuszczam pieszych i pojazdy, potem skręcam",
@@ -376,7 +379,7 @@
    ],
    "poziom": 1,
    "obrazek": "B-20",
-   "pytanie": "Co musisz zrobić przy znaku STOP?",
+   "pytanie": "Co musisz zrobić, gdy widzisz ten znak?",
    "odpowiedzi": [
     "Zwolnić",
     "Zatrzymać się tylko, gdy coś jedzie",
@@ -395,7 +398,7 @@
    ],
    "poziom": 1,
    "obrazek": "A-7",
-   "pytanie": "Co oznacza ten znak (odwrócony trójkąt)?",
+   "pytanie": "Co oznacza ten znak?",
    "odpowiedzi": [
     "Droga z pierwszeństwem",
     "Ustąp pierwszeństwa",
@@ -414,7 +417,7 @@
    ],
    "poziom": 1,
    "obrazek": "D-1",
-   "pytanie": "Co oznacza żółty romb w białej obwódce?",
+   "pytanie": "Co oznacza ten znak?",
    "odpowiedzi": [
     "Koniec drogi z pierwszeństwem",
     "Drogę z pierwszeństwem",
@@ -433,7 +436,7 @@
    ],
    "poziom": 3,
    "obrazek": "B-2+T-22",
-   "pytanie": "Pod znakiem „zakaz wjazdu” jest tabliczka z rowerem i napisem „nie dotyczy”. Co to znaczy?",
+   "pytanie": "Co oznacza ten znak z tabliczką?",
    "odpowiedzi": [
     "Rowerem też nie wolno wjechać",
     "Rowerem wolno wjechać pod prąd, trzymając się prawej strony",
@@ -452,7 +455,7 @@
    ],
    "poziom": 1,
    "obrazek": "C-13",
-   "pytanie": "Co oznacza niebieskie koło z białym rowerem?",
+   "pytanie": "Co oznacza ten znak?",
    "odpowiedzi": [
     "Zakaz wjazdu rowerów",
     "Wypożyczalnię rowerów",
@@ -471,7 +474,7 @@
    ],
    "poziom": 1,
    "obrazek": "B-9",
-   "pytanie": "Co oznacza rower w czerwonym kółku na białym tle?",
+   "pytanie": "Co oznacza ten znak?",
    "odpowiedzi": [
     "Drogę dla rowerów",
     "Zakaz wjazdu rowerów",
@@ -489,7 +492,8 @@
     "SYG-02"
    ],
    "poziom": 2,
-   "pytanie": "Na przejeździe dla rowerzystów stoi sygnalizator z symbolem roweru. Kogo dotyczy?",
+   "obrazek": "S-6",
+   "pytanie": "Kogo dotyczy ten sygnalizator?",
    "odpowiedzi": [
     "Tylko samochodów",
     "Rowerzystów",
@@ -509,7 +513,7 @@
    ],
    "poziom": 2,
    "obrazek": "A-17",
-   "pytanie": "Co oznacza trójkątny znak z dwójką dzieci?",
+   "pytanie": "Co oznacza ten znak?",
    "odpowiedzi": [
     "Plac zabaw dla rowerów",
     "Uwaga, dzieci — w pobliżu szkoła lub plac zabaw",
@@ -656,7 +660,8 @@
     "PIER-08"
    ],
    "poziom": 2,
-   "pytanie": "Przed rondem stoi znak „ustąp pierwszeństwa”. Kto ma pierwszeństwo?",
+   "obrazek": "A-7",
+   "pytanie": "Przed wjazdem na rondo widzisz ten znak. Kto ma pierwszeństwo?",
    "odpowiedzi": [
     "Ja, bo wjeżdżam",
     "Pojazdy, które już jadą po rondzie",
@@ -1036,7 +1041,8 @@
    "ZNAK-B1"
   ],
   "poziom": 1,
-  "pytanie": "Przed ulicą stoi białe koło z czerwoną obwódką i bez dodatkowej tabliczki. Co robisz?",
+  "obrazek": "B-1",
+  "pytanie": "Przed ulicą widzisz ten znak. Co robisz?",
   "odpowiedzi": [
    "Wjeżdżam, bo znak dotyczy tylko samochodów",
    "Wjeżdżam, jeśli ulica jest pusta",
@@ -1053,10 +1059,11 @@
    "PIER-02"
   ],
   "poziom": 1,
-  "pytanie": "Przed skrzyżowaniem masz znak A-7, a drogą główną nadjeżdża samochód. Kto przejeżdża pierwszy?",
+  "obrazek": "A-7",
+  "pytanie": "Przed skrzyżowaniem widzisz ten znak, a z lewej nadjeżdża samochód. Kto przejeżdża pierwszy?",
   "odpowiedzi": [
-   "Samochód na drodze głównej",
-   "Rowerzysta przed znakiem A-7",
+   "Samochód z lewej",
+   "Rowerzysta przed pokazanym znakiem",
    "Ten, kto pierwszy zacznie skręcać"
   ],
   "poprawna": 0,
@@ -1121,7 +1128,7 @@
   "przepisy": ["ZNAK-P23"],
   "poziom": 1,
   "obrazek": "P-23",
-  "pytanie": "Co wskazuje biały symbol roweru namalowany na jezdni?",
+  "pytanie": "Co oznacza ten znak?",
   "odpowiedzi": [
    "Miejsce przeznaczone dla rowerzystów, na przykład pas ruchu dla rowerów",
    "Miejsce zatrzymania autobusu",

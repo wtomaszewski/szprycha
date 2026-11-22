@@ -1461,17 +1461,34 @@ button[aria-pressed='true'] {
   color: var(--ui-text);
 }
 
-.quiz-signs {
-  display: grid;
-  justify-items: center;
+.question-prompt:has(> .question-signs) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.question-prompt:has(> .question-signs) > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.question-signs {
+  flex: none;
   padding: 6px;
-  margin-bottom: 12px;
   background: #29366f;
 }
 
-.quiz-signs img {
-  width: 96px;
+.question-signs img {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
   image-rendering: pixelated;
+}
+
+.question-signs img + img {
+  height: auto;
 }
 
 .quiz-feedback {
@@ -2116,32 +2133,13 @@ html[data-reduced-effects]
     grid-template-columns: 1fr auto;
     padding-bottom: 4px;
   }
-  .quiz-panel :has(> .quiz-signs) {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 4px 8px;
-  }
-  .quiz-panel :has(> .quiz-signs) > .quiz-meta {
-    margin-block: 2px;
-  }
-  .quiz-panel :has(> .quiz-signs) > progress {
-    grid-area: 1 / 2;
-  }
-  .quiz-panel :has(> .quiz-signs) > .quiz-answers {
-    grid-column: 1 / -1;
-  }
   .quiz-panel .quiz-prompt {
     font-size: calc(17px * var(--text-scale));
     line-height: 1.1;
     margin-block: 3px;
   }
-  .quiz-signs {
+  .question-signs {
     padding: 2px;
-    margin: 0;
-  }
-  .quiz-signs img {
-    width: 48px;
   }
   .quiz-modules,
   .quiz-answers {

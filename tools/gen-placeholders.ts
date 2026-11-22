@@ -5,6 +5,7 @@ import { cityArt } from './city-art.ts';
 import { encodeSprite, spriteArt } from './sprite-art.ts';
 import { signArt } from './sign-art.ts';
 import { portraitEmotions } from '../src/content/dialogues.ts';
+import { signImageFile } from '../src/content/signIllustrations.ts';
 
 await mkdir('assets/generated', { recursive: true });
 await writeFile(
@@ -19,7 +20,10 @@ for (const [id, image] of Object.entries(spriteArt()))
 
 await mkdir('assets/generated/signs', { recursive: true });
 for (const [code, image] of signArt())
-  await writeFile(`assets/generated/signs/${code}.png`, PNG.sync.write(image));
+  await writeFile(
+    `assets/generated/signs/${signImageFile(code)}`,
+    PNG.sync.write(image),
+  );
 
 function pixel(p: PNG, x: number, y: number, hex: string) {
   const n = parseInt(hex.slice(1), 16),

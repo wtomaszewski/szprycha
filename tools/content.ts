@@ -96,12 +96,12 @@ export async function readContent(root = process.cwd()) {
   const translations: unknown = JSON.parse(
     await readFile(resolve(root, 'i18n/pl.json'), 'utf8'),
   );
-  const quizSigns = new Set(
+  const questionSigns = new Set(
     content.pytania.pytania.flatMap(({ obrazek }) =>
       obrazek ? illustratedSigns(obrazek) : [],
     ),
   );
-  for (const code of quizSigns) {
+  for (const code of questionSigns) {
     if (!textAt(translations, `quiz.signAlt.${code}`))
       throw new Error(`Missing sign illustration description: ${code}`);
     await readFile(

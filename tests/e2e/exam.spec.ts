@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { findDisplayedQuestion } from './question-dialog';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import {
   progressDatabase,
@@ -151,8 +152,13 @@ test('earns, prints and reopens the licence entirely offline', async ({
       `${exam.theory} · ${quiz.question} ${i} / 25`,
     );
     const prompt = await panel.getByRole('heading', { level: 3 }).textContent();
-    const question = content.pytania.pytania.find(
-      ({ pytanie }) => pytanie === prompt,
+    const options = await panel
+      .locator('.quiz-answers button')
+      .allTextContents();
+    const question = findDisplayedQuestion(
+      content.pytania.pytania,
+      prompt,
+      options,
     )!;
     expect(question).toBeDefined();
     expect(seen.has(question.id)).toBe(false);
