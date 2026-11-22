@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { chooseCity } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { legacyProgressKey } from '../../src/core/progressStore';
 
@@ -30,7 +31,7 @@ test('opens missions with IndexedDB disabled and communicates that progress is t
   });
   await page.goto('/');
   await expect(page.getByRole('status')).toContainText(pl.skillMap.sessionOnly);
-  await page.getByRole('button', { name: pl.misje['WAW-T-01'].tytul }).click();
+  await chooseCity(page, 'warszawa', 'campaign');
   await expect(page.locator('canvas')).toHaveAttribute(
     'data-mission',
     'WAW-T-01',

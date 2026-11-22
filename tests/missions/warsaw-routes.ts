@@ -19,10 +19,14 @@ export interface Waypoint extends Vec2 {
     | 'rail-open'
     | 'rail-south-open'
     | 'rail-closed'
-    | 'tram-stopped';
+    | 'tram-stopped'
+    | 'tram-cleared';
   answer?: number;
   coast?: boolean;
   lights?: boolean;
+  helmet?: boolean;
+  crossingGreen?: string;
+  railOpen?: string;
 }
 
 const pragaLoop: Waypoint[] = [

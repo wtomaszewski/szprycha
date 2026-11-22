@@ -66,11 +66,9 @@ export class ControlQuestionDialog {
   show(
     question: Pick<ControlQuestion, 'pytanie' | 'odpowiedzi' | 'wyjasnienie'>,
     choice?: (index: number) => { correct: boolean } | undefined,
+    label = choice ? ui.missionUi.choice : ui.progression.questionTitle,
   ) {
-    this.panel.setAttribute(
-      'aria-label',
-      choice ? ui.missionUi.choice : ui.progression.questionTitle,
-    );
+    this.panel.setAttribute('aria-label', label);
     this.intro.hidden = Boolean(choice);
     this.prompt.textContent = question.pytanie;
     this.answers.hidden = false;

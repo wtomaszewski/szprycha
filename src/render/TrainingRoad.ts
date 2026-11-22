@@ -86,6 +86,7 @@ export class TrainingRoad {
     const signs = scene.add.graphics().setDepth(6);
     const signCenters: Vec2[] = [];
     for (const sign of world.signs) {
+      if (sign.code === 'P-23') continue; // Surface paint is drawn by GroundPaint.
       const x = sign.x * scale;
       const y = sign.y * scale;
       signCenters.push({ x, y });

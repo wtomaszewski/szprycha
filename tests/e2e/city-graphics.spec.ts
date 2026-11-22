@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test';
+import { chooseCity } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 
 test('desktop HUD uses the mission timer, goal arrow and compact pause menu', async ({
   page,
 }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: pl.misje['WAW-T-01'].tytul }).click();
+  await chooseCity(page, 'warszawa', 'campaign');
   await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
 
   const left = page.locator('.ride-hud-left');
@@ -47,7 +48,7 @@ test.describe('touch HUD', () => {
     page,
   }) => {
     await page.goto('/');
-    await page.getByRole('button', { name: pl.driving.praga }).tap();
+    await chooseCity(page, 'warszawa');
     const joystick = page.getByLabel(pl.driving.joystick);
     await expect(joystick).toBeVisible();
     const [stick, dock, actions] = await Promise.all([
@@ -112,7 +113,7 @@ test('rain freezes with reduced motion and night preview leaves the rules in day
   });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
-  await page.getByRole('button', { name: pl.driving.praga }).click();
+  await chooseCity(page, 'warszawa');
   const canvas = page.locator('canvas');
   await expect(canvas).toHaveAttribute('data-lighting', 'day');
   await page.keyboard.press('Escape');

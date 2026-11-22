@@ -4,7 +4,7 @@
 
 Sytuacje odpowiadają tabeli pokrycia w [dokumentacji map](05_mapy.md). Wiersz z kilkoma wymaganymi elementami jest pokryty, gdy występuje każdy z nich.
 
-Moduł jest pokryty, gdy wykryto co najmniej jedną jego regułę. Raport przypisuje misje do mapy, na której się odbywają. Kolumna mapy obejmuje reguły powiązane z wykrytymi obiektami, a kolumna misji obejmuje reguły deklarowane i wykryte w celach, zdarzeniach oraz miejscach misji.
+W każdym mieście moduł jest pokryty, gdy wykryto co najmniej jedną jego regułę w misjach. Moduły wspólnego hubu są liczone informacyjnie, także z obiektów mapy. Raport przypisuje misje do mapy, na której się odbywają. Kolumna mapy obejmuje reguły powiązane z wykrytymi obiektami, a kolumna misji obejmuje reguły deklarowane i wykryte w celach, zdarzeniach oraz miejscach misji.
 
 Aby odtworzyć raport, uruchom `npm run coverage:maps`. Opcja `--strict` (po separatorze `--`) zapisuje raport i kończy się błędem, jeśli w którymkolwiek mieście brakuje mapy, sytuacji lub całego modułu.
 
@@ -46,7 +46,7 @@ Mapa [warszawa.tmj](../maps/warszawa.tmj)
 
 Mapa [wroclaw.tmj](../maps/wroclaw.tmj)
 
-**Misje na mapie** —
+**Misje na mapie** `WRO-A1-01`, `WRO-A1-02`, `WRO-A1-03`, `WRO-A1-04`, `WRO-A1-05`, `WRO-A1-06`, `WRO-A2-01`, `WRO-A2-02`, `WRO-A2-03`, `WRO-A2-04`, `WRO-A2-05`, `WRO-A2-06`, `WRO-A3-01`, `WRO-A3-02`, `WRO-A3-03`, `WRO-A3-04`, `WRO-A3-05`, `WRO-A3-06`, `WRO-B-01`, `WRO-B-02`, `WRO-B-03`, `WRO-B-04`, `WRO-B-05`, `WRO-B-06`, `WRO-B-07`
 
 | Sytuacja drogowa | Pokrycie | Wykryte obiekty lub misje | Brakujące elementy |
 | --- | :---: | --- | --- |
@@ -62,25 +62,25 @@ Mapa [wroclaw.tmj](../maps/wroclaw.tmj)
 | Przejazd kolejowy | ✓ | `zachod-kolej-bez-zapor`, `zachod-kolej-zapory` | — |
 | Pobocze, zakaz wjazdu rowerów | ✓ | `pobocze-zachod`, `pobocze-zachod-powrot`, `zakaz-obwodnica`, `zakaz-obwodnica-B-9` | — |
 | Kontraruch | ✓ | `ulica-nadodrze-B-2` | — |
-| Nocna jazda | ✓ | `dusk_at_s` | — |
+| Nocna jazda | ✓ | `WRO-A1-05`, `WRO-B-01`, `dusk_at_s` | — |
 
 | Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
 | --- | :---: | --- | --- |
-| M01 | ✓ | `WYP-04`, `WYP-05` | — |
-| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | — |
-| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | — |
-| M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | — |
-| M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-06`, `MAN-08` | — |
-| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | — |
-| M07 | ✗ | — | — |
+| M01 | ✓ | `WYP-04`, `WYP-05` | `KASK-01`, `WYP-04`, `WYP-05` |
+| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-05`, `GDZIE-06`, `GDZIE-07`, `GDZIE-08`, `GDZIE-09`, `GDZIE-11` |
+| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `SYG-01`, `SYG-03`, `ZNAK-A7`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-D1`, `ZNAK-P23` |
+| M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | `PIER-02`, `PIER-03`, `PIER-04`, `PIER-05`, `PIER-08`, `PIER-09` |
+| M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-06`, `MAN-08` | `MAN-01`, `MAN-03`, `MAN-04`, `MAN-05`, `MAN-08`, `MAN-10` |
+| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | `MSC-01`, `MSC-02`, `MSC-04`, `MSC-05` |
+| M07 | ✓ | — | `PP-01`, `PP-02`, `PP-03`, `PP-04` |
 
-**Pokrycie** 13/13 sytuacji, 6/7 modułów.
+**Pokrycie** 13/13 sytuacji, 7/7 modułów.
 
 ## Miasteczko (wspólny hub)
 
 Mapa [miasteczko.tmj](../maps/miasteczko.tmj)
 
-**Misje na mapie** `WAW-T-01`, `WAW-T-02`
+**Misje na mapie** `WAW-T-01`, `WAW-T-02`, `WRO-T-01`, `WRO-T-02`
 
 | Sytuacja drogowa | Pokrycie | Wykryte obiekty lub misje | Brakujące elementy |
 | --- | :---: | --- | --- |
@@ -96,12 +96,12 @@ Mapa [miasteczko.tmj](../maps/miasteczko.tmj)
 | Przejazd kolejowy | ✓ | `rail-crossing` | — |
 | Pobocze, zakaz wjazdu rowerów | ✗ | — | pobocze, zakaz wjazdu rowerów |
 | Kontraruch | ✗ | — | B-2 z wyjątkiem dla rowerów |
-| Nocna jazda | ✓ | `WAW-T-02`, `dusk_at_s` | — |
+| Nocna jazda | ✓ | `WAW-T-02`, `WRO-T-02`, `dusk_at_s` | — |
 
 | Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
 | --- | :---: | --- | --- |
 | M01 | ✓ | `WYP-04`, `WYP-05` | `KASK-01`, `WYP-04`, `WYP-05` |
-| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-04`, `GDZIE-06` | — |
+| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-04`, `GDZIE-06` | `GDZIE-06` |
 | M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `ZNAK-STOP` |
 | M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-07`, `PIER-09` | — |
 | M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-06` | — |

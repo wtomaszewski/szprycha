@@ -56,13 +56,11 @@
     "look": "Obejrzyj się",
     "bell": "Dzwonek",
     "lights": "Światła",
-    "praga": "Wolna jazda po Warszawie",
     "warsawTitle": "Warszawa",
-    "developer": "Menu deweloperskie",
-    "wroclaw": "Wolna jazda po Wrocławiu",
     "wroclawTitle": "Wrocław",
     "gnomes": "Krasnale",
-    "gnomesHint": "Zsiądź z roweru, żeby zebrać krasnala.",
+    "gnomesHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać krasnala.",
+    "gnomeQuestion": "Zagadka krasnala",
     "internalRoadSign": "Droga wewnętrzna"
   },
   "rideHud": {
@@ -141,6 +139,8 @@
     "resume": "Rozumiem"
   },
   "trafficEvents": {
+    "czytaj_oznakowanie": "Rozejrzyj się i sprawdź oznakowanie.",
+    "cwiczenie_trasy": "Zwolnij i uważnie obserwuj drogę.",
     "cwiczenie_stop": "Próba przed znakiem STOP",
     "pojazd_uprzywilejowany": "Pojazd uprzywilejowany na sygnale",
     "pieszy_na_pasach": "Pieszy zbliża się do przejścia",
@@ -238,6 +238,7 @@
     "retry": "Powtórz misję",
     "timeExpired": "Czas minął.",
     "threeMajor": "Trzy poważne błędy zakończyły przejazd.",
+    "failedClean": "Do zaliczenia przejedź całą trasę bez błędu.",
     "goodHabits": "Dobre nawyki",
     "penalties": "Kary",
     "noTimeBonus": "Przejazd z poważnym błędem nie kwalifikuje się do premii za czas.",
@@ -245,6 +246,7 @@
       "dojedz": "Jedź do zaznaczonego miejsca.",
       "odbierz": "Odbierz przesyłkę w zaznaczonym miejscu.",
       "oddaj": "Oddaj przesyłkę w zaznaczonym miejscu.",
+      "zbierz_krasnala": "Zsiądź z roweru i podejdź do krasnala.",
       "przygotuj_rower": "Załóż kask i włącz światła.",
       "sfotografuj": "Zrób zdjęcie znaku",
       "wybor": "Zatrzymaj się i odpowiedz."
@@ -261,7 +263,291 @@
     "choice": "Co zrobisz?",
     "noShortcutBonus": "Przejazd przez oznaczony nielegalny skrót wyklucza premię za czas."
   },
+  "cityPicker": {
+    "title": "Wybierz miasto",
+    "map": "Mapa Polski",
+    "campaign": "Kampania",
+    "freeRide": "Wolna jazda",
+    "back": "Wróć",
+    "soon": "Wkrótce",
+    "warszawa": "Warszawa",
+    "wroclaw": "Wrocław",
+    "gdansk": "Gdańsk",
+    "poznan": "Poznań",
+    "krakow": "Kraków"
+  },
   "misje": {
+    "WRO-T-01": {
+      "tytul": "Krasnal, który mówi",
+      "opis": "Jestem Dzwoneczek i szukam ekipy na wrocławski festiwal. Zapnij kask i pokaż mi, jak zatrzymujesz się na STOP-ie.",
+      "cel1": "Zapnij kask i rusz prosto.",
+      "cel2": "Podjedź do linii STOP.",
+      "cel3": "Zatrzymaj się przed linią STOP, a potem jedź do mety."
+    },
+    "WRO-T-02": {
+      "tytul": "Przegląd u Kazika (Wrocław)",
+      "opis": "Sprawdź kask i obie lampki, a potem zrób krótką rundę.",
+      "cel1": "Zapnij kask i włącz obie lampki.",
+      "cel2": "Sprawdź lampki na próbnym odcinku.",
+      "cel3": "Wróć do Kazika."
+    },
+    "WRO-A1-01": {
+      "tytul": "Pierwsze krasnale",
+      "opis": "Dwóch krasnali nie ma na próbie parady. Na deptaku zejdź z roweru i rozejrzyj się przy Rynku.",
+      "cel1": "Zsiądź z roweru i podejdź do Dzwoneczka.",
+      "cel2": "Odszukaj krasnala na zachód od Ratusza.",
+      "cel3": "Odszukaj kolejnego krasnala przy Ratuszu."
+    },
+    "WRO-A1-02": {
+      "tytul": "Kwiaty z placu Solnego",
+      "opis": "Zawieź kwiaty Dzwoneczkowi. Na kostce zwolnij i uważaj na spacerowiczów.",
+      "cel1": "Odbierz kwiaty na placu Solnym.",
+      "cel2": "Poprowadź rower przez plac Solny.",
+      "cel3": "Oddaj kwiaty Dzwoneczkowi."
+    },
+    "WRO-A1-03": {
+      "tytul": "Gołębi alarm",
+      "opis": "Gołębie rozniosły karteczki o paradzie. Zanieś ocalałą kopertę Latarnikowi po drugiej stronie Odry.",
+      "cel1": "Zabierz kopertę.",
+      "cel2": "Zatrzymaj się przy zebrze i zsiądź.",
+      "cel3": "Przeprowadź rower przez zebrę, gdy piesi mogą przejść.",
+      "cel4": "Wjedź na drogę dla rowerów przy Moście Tumskim.",
+      "cel5": "Zwolnij na Ostrowie Tumskim.",
+      "cel6": "Oddaj kopertę Latarnikowi."
+    },
+    "WRO-A1-04": {
+      "tytul": "Zapałki dla Latarnika",
+      "opis": "Moje zapasowe zapałki zostały po drugiej stronie skrzyżowania; rozejrzyj się, zanim je przewieziesz.",
+      "cel1": "Zabierz zapałki po północnej stronie Ostrowa.",
+      "cel2": "Przejedź ostrożnie przez skrzyżowanie do wjazdu na DDR.",
+      "cel3": "Jedź do zakrętu przy katedrze.",
+      "cel4": "Oddaj zapałki Latarnikowi."
+    },
+    "WRO-A1-05": {
+      "tytul": "Kiedy zgasną latarnie",
+      "opis": "Za chwilę zapadnie zmrok. Włącz lampki i sprawdź ostatnie latarnie przed mostem.",
+      "cel1": "Włącz przednią i tylną lampkę.",
+      "cel2": "Przejedź z włączonymi lampkami do środka mostu.",
+      "cel3": "Zakończ obchód przy południowym brzegu."
+    },
+    "WRO-A1-06": {
+      "tytul": "Most Tumski i kłódki",
+      "opis": "Ślad z kartki prowadzi w stronę Rynku. Zrób zdjęcia znaku ustąpienia i znaku drogi z pierwszeństwem.",
+      "cel1": "Zatrzymaj się i sfotografuj znak drogi z pierwszeństwem.",
+      "cel2": "Zatrzymaj się i sfotografuj znak ustąpienia pierwszeństwa.",
+      "cel3": "Zawieź zdjęcia pod Ratusz."
+    },
+    "WRO-A2-01": {
+      "tytul": "Wokół Hali Stulecia",
+      "opis": "Dostarcz plan parady pod Halę Stulecia. Na rondzie prowadź trasę zgodnie ze znakami i strzałkami.",
+      "cel1": "Odbierz plan parady.",
+      "cel2": "Ustąp na wlocie i przejedź południową stroną ronda.",
+      "cel3": "Zjedź z ronda w kierunku Hali.",
+      "cel4": "Dojedź do placu koło Iglicy.",
+      "cel5": "Oddaj plan przy Hali Stulecia."
+    },
+    "WRO-A2-02": {
+      "tytul": "Karma dla pingwinów",
+      "opis": "Jedź z karmą do Afrykarium. Na wspólnej drodze zostaw miejsce pieszym i wieź paczkę płynnie.",
+      "cel1": "Odbierz karmę przy drodze dla rowerów.",
+      "cel2": "Jedź drogą dla rowerów w kierunku Zoo.",
+      "cel3": "Wjedź na ciąg pieszo-rowerowy.",
+      "cel4": "Jedź powoli w kierunku bramy.",
+      "cel5": "Oddaj karmę przy wejściu do Afrykarium."
+    },
+    "WRO-A2-03": {
+      "tytul": "Pociąg o 12:05",
+      "opis": "Zawieź bilet na Dworzec Główny. Na przejeździe czekaj na zielone, a przy tramwaju przepuść pasażerów.",
+      "cel1": "Odbierz bilet.",
+      "cel2": "Dojedź przed przejazd z sygnalizatorem rowerowym.",
+      "cel3": "Przejedź na zielonym świetle.",
+      "cel4": "Uważaj na pasażerów przy przystanku bez wysepki.",
+      "cel5": "Oddaj bilet przed Dworcem Głównym."
+    },
+    "WRO-A2-04": {
+      "tytul": "W cieniu Sky Tower",
+      "opis": "Pod Sky Tower przećwicz zmianę pasa. Obejrzyj się, zasygnalizuj manewr i przepuść pojazdy na pasie, na który wjeżdżasz.",
+      "cel1": "Dojedź do wlotu alei.",
+      "cel2": "Skorzystaj z właściwego pasa za skrzyżowaniem.",
+      "cel3": "Zakończ ćwiczenie na pasie dla rowerów."
+    },
+    "WRO-A2-05": {
+      "tytul": "Pas dla rowerów",
+      "opis": "Wypatrz symbol roweru namalowany na pasie i sfotografuj go po zatrzymaniu.",
+      "cel1": "Zatrzymaj się i sfotografuj symbol P-23.",
+      "cel2": "Zakończ patrol pasem rowerowym."
+    },
+    "WRO-A2-06": {
+      "tytul": "Ślady gangu",
+      "opis": "Jedź po tropie w stronę zachodniego magazynu. Obserwuj drogę i wyprzedzaj tylko wtedy, gdy masz miejsce.",
+      "cel1": "Jedź na Zachód główną aleją.",
+      "cel2": "Skręć na północ przy przejeździe.",
+      "cel3": "Zaczekaj przed torem na wiadomość od Oli."
+    },
+    "WRO-A3-01": {
+      "tytul": "Za przejazdem",
+      "opis": "Zawieź wiadomość do stróża. Po drodze są dwa przejazdy: przed każdym sprawdź, czy nie nadjeżdża pociąg.",
+      "cel1": "Zabierz wiadomość dla stróża.",
+      "cel2": "Przejedź przez tor bez zapór, gdy jest wolny.",
+      "cel3": "Przejedź przez tor z zaporami, gdy przejazd jest otwarty.",
+      "cel4": "Oddaj wiadomość przy poboczu."
+    },
+    "WRO-A3-02": {
+      "tytul": "Obwodnica? Nie tędy!",
+      "opis": "Przy obwodnicy stoi zakaz wjazdu rowerów. Znajdź znak i wybierz boczną drogę.",
+      "cel1": "Sfotografuj zakaz wjazdu rowerów.",
+      "cel2": "Wybierz dalszą trasę.",
+      "cel2_pytanie": "Gdzie możesz pojechać rowerem?",
+      "cel2_wyjasnienie": "B-9 oznacza zakaz wjazdu rowerów, więc wybierz inną drogę.",
+      "cel2_odp1": "Boczną drogą, na której wolno jeździć rowerem.",
+      "cel2_odp2": "Za znak B-9, jeśli droga jest pusta.",
+      "cel3": "Jedź boczną drogą do punktu kontrolnego."
+    },
+    "WRO-A3-03": {
+      "tytul": "Wiatr od Odry",
+      "opis": "Wieje i pada ulewny deszcz. Na bulwarze jest droga dla rowerów; jedź uważnie i zwolnij na mokrej nawierzchni.",
+      "cel1": "Przejedź mokry odcinek drogi dla rowerów.",
+      "cel2": "Zwolnij przed przejazdem przy moście.",
+      "cel3": "Dotrzyj do punktu kontrolnego na bulwarze."
+    },
+    "WRO-A3-04": {
+      "tytul": "Wielki Wyścig Odrzański",
+      "opis": "Wyścig zaczyna się przy Wyspach. Liczą się punkty za bezpieczną jazdę, nawet jeśli Turbo dotrze pierwszy.",
+      "cel1": "Rusz na zachód drogą dla rowerów.",
+      "cel2": "Przejedź przez przejazd rowerowy przy moście.",
+      "cel3": "Zobacz, czy masz miejsce na bezpieczne wyprzedzenie.",
+      "cel4": "Jedź dalej do mety na bulwarze."
+    },
+    "WRO-A3-05": {
+      "tytul": "Upadek na bulwarze",
+      "opis": "Na bulwarze przewrócił się rowerzysta. Zwolnij, zatrzymaj się w bezpiecznym miejscu i sprawdź, co się stało.",
+      "cel1": "Dojedź do bezpiecznego miejsca przy zdarzeniu.",
+      "cel2": "Zadbaj o bezpieczeństwo.",
+      "cel2_pytanie": "Gdzie zostawisz swój rower?",
+      "cel2_wyjasnienie": "Zatrzymaj się w bezpiecznym miejscu i nie blokuj drogi.",
+      "cel2_odp1": "Na środku drogi dla rowerów.",
+      "cel2_odp2": "Na uboczu, aby nie blokować przejazdu.",
+      "cel2_odp3": "Tuż przed nadjeżdżającymi rowerami.",
+      "cel3": "Zawołaj dorosłego i sprawdź reakcję.",
+      "cel3_pytanie": "Jak sprawdzisz, czy rowerzysta jest przytomny?",
+      "cel3_wyjasnienie": "Zawołaj dorosłego i sprawdź, czy osoba reaguje na głos.",
+      "cel3_odp1": "Podasz mu wodę.",
+      "cel3_odp2": "Postawisz go na nogi.",
+      "cel3_odp3": "Zawołasz dorosłego i zapytasz rowerzystę, czy cię słyszy.",
+      "cel4": "Wybierz odpowiedź dla dyspozytora 112.",
+      "cel4_pytanie": "Co powiesz podczas symulowanej rozmowy z 112?",
+      "cel4_wyjasnienie": "Podaj miejsce, rodzaj zdarzenia i liczbę osób; czekaj na polecenia dyspozytora.",
+      "cel4_odp1": "Na bulwarach Odry we Wrocławiu upadł rowerzysta i nie odpowiada. Poszkodowana jest jedna osoba.",
+      "cel4_odp2": "Ktoś upadł, do widzenia.",
+      "cel4_odp3": "Nie pamiętam miejsca, zadzwonię później.",
+      "cel5": "Zostań przy rowerzyście.",
+      "cel5_pytanie": "Rowerzysta oddycha, lecz nie odpowiada. Jak pomożesz?",
+      "cel5_wyjasnienie": "Słuchaj dyspozytora i z dorosłym obserwuj oddech, aż przyjedzie pomoc.",
+      "cel5_odp1": "Dasz mu coś do picia.",
+      "cel5_odp2": "Z dorosłym wykonasz polecenia dyspozytora i będziesz obserwować oddech.",
+      "cel5_odp3": "Spróbujesz go posadzić."
+    },
+    "WRO-A3-06": {
+      "tytul": "Parada Krasnali",
+      "opis": "Krasnale wracają na Rynek! Poprowadź grupę w bezpiecznym odstępie i słuchaj poleceń Oli.",
+      "cel1": "Przygotuj grupę do startu.",
+      "cel1_pytanie": "Ile rowerów może jechać w jednej zorganizowanej kolumnie?",
+      "cel1_wyjasnienie": "W zorganizowanej kolumnie może jechać najwyżej 15 rowerów.",
+      "cel1_odp1": "Najwyżej 15.",
+      "cel1_odp2": "Najwyżej 30.",
+      "cel1_odp3": "Tyle, ile się zmieści.",
+      "cel2": "Poprowadź grupę drogą dla rowerów.",
+      "cel3": "Zatrzymaj się przed skrzyżowaniem i poczekaj na polecenie Oli.",
+      "cel3a": "Przejedź przez skrzyżowanie, gdy Ola pozwoli ruszyć.",
+      "cel4": "Przejedź bezpiecznie w stronę Rynku.",
+      "cel5": "Zakończ paradę przed Ratuszem."
+    },
+    "WRO-B-01": {
+      "tytul": "Fontanna o zmroku",
+      "opis": "Po zmroku zabierz lampkę na objazd przy Hali i fontannie.",
+      "cel1": "Włącz obie lampki.",
+      "cel2": "Odwiedź plac przy Hali Stulecia.",
+      "cel3": "Dojedź do punktu przy fontannie."
+    },
+    "WRO-B-02": {
+      "tytul": "Mostowy maraton",
+      "opis": "Przejedź dwanaście razy przez przeprawy w czterech częściach miasta.",
+      "cel1": "Kolejny punkt trasy — Most Tumski.",
+      "cel2": "Kolejny punkt trasy — północny brzeg.",
+      "cel3": "Kolejny punkt trasy — Most Tumski.",
+      "cel4": "Kolejny punkt trasy — bulwar.",
+      "cel5": "Kolejny punkt trasy — kładka na Wyspę Słodową.",
+      "cel6": "Kolejny punkt trasy — Wyspa Słodowa.",
+      "cel7": "Kolejny punkt trasy — bulwar.",
+      "cel8": "Kolejny punkt trasy — most przy Hali.",
+      "cel9": "Kolejny punkt trasy — północny brzeg przy Hali.",
+      "cel10": "Kolejny punkt trasy — południowy brzeg przy Hali.",
+      "cel11": "Kolejny punkt trasy — most na Zachodzie.",
+      "cel12": "Kolejny punkt trasy — północny brzeg na Zachodzie.",
+      "cel13": "Kolejny punkt trasy — południowy brzeg na Zachodzie.",
+      "powrot1": "Wróć Mostem Tumskim na północny brzeg.",
+      "powrot2": "Przejedź z powrotem na bulwar.",
+      "powrot3": "Przejedź jeszcze raz kładką na Wyspę Słodową.",
+      "powrot4": "Wróć z wyspy na bulwar."
+    },
+    "WRO-B-03": {
+      "tytul": "Dworcowy kurier",
+      "opis": "Dwie przesyłki jadą na Dworzec. Zbierz je po drodze i dostarcz na plac przed wejściem.",
+      "cel1": "Odbierz pierwszą przesyłkę.",
+      "cel2": "Odbierz drugą przesyłkę przy przystanku.",
+      "cel3": "Oddaj dokumenty przed Dworcem.",
+      "cel4": "Zostaw drugą przesyłkę przy wejściu."
+    },
+    "WRO-B-04": {
+      "tytul": "Kontraruch na Nadodrzu",
+      "opis": "Sprawdź tabliczkę pod zakazem wjazdu i przejedź oznaczonym kontrapasem.",
+      "cel1": "Przeczytaj znak i tabliczkę.",
+      "cel1_pytanie": "Kiedy możesz wjechać pod B-2?",
+      "cel1_wyjasnienie": "Wyjątek dla rowerów pod znakiem pozwala wjechać zgodnie z oznakowaniem.",
+      "cel1_odp1": "Gdy pod znakiem jest tabliczka z wyjątkiem dla rowerów.",
+      "cel1_odp2": "Gdy ulica wydaje się pusta.",
+      "cel2": "Przejedź oznaczonym kontrapasem.",
+      "cel3": "Zakończ przejazd przed skrzyżowaniem."
+    },
+    "WRO-B-05": {
+      "tytul": "Lody na Wyspie Słodowej",
+      "opis": "Dowieź lody na wyspę, zanim się rozpuszczą. Na wspólnej kładce uważaj na spacerowiczów.",
+      "cel1": "Odbierz lody na bulwarze.",
+      "cel2": "Dojedź do kładki.",
+      "cel3": "Przejedź przez kładkę.",
+      "cel4": "Oddaj lody na Wyspie Słodowej."
+    },
+    "WRO-B-06": {
+      "tytul": "Japoński Ogród",
+      "opis": "Zabierz delikatne sadzonki przez mostek przy Ogrodzie Japońskim.",
+      "cel1": "Odbierz sadzonki przy Zoo.",
+      "cel2": "Dojedź do południowego końca mostku.",
+      "cel3": "Oddaj sadzonki po drugiej stronie mostku."
+    },
+    "WRO-B-07": {
+      "tytul": "Wyzwanie: Rondo ×5 bez błędu",
+      "opis": "Zrób pięć pełnych okrążeń ronda przy Hali, zgodnie z kierunkiem ruchu i bez błędu.",
+      "cel1": "Okrążenie 1/5. Jedź południową stroną ronda.",
+      "cel2": "Okrążenie 1/5. Kontynuuj jazdę wschodnią stroną.",
+      "cel3": "Okrążenie 1/5. Przejedź północnym łukiem.",
+      "cel4": "Okrążenie 1/5. Domknij okrążenie po zachodniej stronie.",
+      "cel5": "Okrążenie 2/5. Jedź południową stroną ronda.",
+      "cel6": "Okrążenie 2/5. Kontynuuj jazdę wschodnią stroną.",
+      "cel7": "Okrążenie 2/5. Przejedź północnym łukiem.",
+      "cel8": "Okrążenie 2/5. Domknij okrążenie po zachodniej stronie.",
+      "cel9": "Okrążenie 3/5. Jedź południową stroną ronda.",
+      "cel10": "Okrążenie 3/5. Kontynuuj jazdę wschodnią stroną.",
+      "cel11": "Okrążenie 3/5. Przejedź północnym łukiem.",
+      "cel12": "Okrążenie 3/5. Domknij okrążenie po zachodniej stronie.",
+      "cel13": "Okrążenie 4/5. Jedź południową stroną ronda.",
+      "cel14": "Okrążenie 4/5. Kontynuuj jazdę wschodnią stroną.",
+      "cel15": "Okrążenie 4/5. Przejedź północnym łukiem.",
+      "cel16": "Okrążenie 4/5. Domknij okrążenie po zachodniej stronie.",
+      "cel17": "Okrążenie 5/5. Jedź południową stroną ronda.",
+      "cel18": "Okrążenie 5/5. Kontynuuj jazdę wschodnią stroną.",
+      "cel19": "Okrążenie 5/5. Przejedź północnym łukiem.",
+      "cel20": "Okrążenie 5/5. Domknij okrążenie po zachodniej stronie."
+    },
     "WAW-T-01": {
       "tytul": "Witaj w Szprysze",
       "opis": "Próba w miasteczku ruchu: zapnij kask, jedź za strzałką i zatrzymaj się przed znakiem STOP.",
@@ -586,6 +872,127 @@
     "readMore": "Przewiń tekst"
   },
   "dialogi": {
+    "wroclaw_zapowiedzi": {
+      "MAN-03": "Przed zmianą pasa rozejrzyj się, zasygnalizuj i ustąp tym, którzy już jadą tym pasem.",
+      "ZNAK-D1": "Żółty romb D-1 oznacza drogę z pierwszeństwem.",
+      "PIER-08": "Przed wjazdem na rondo patrz na znaki i ustąp zgodnie z oznakowaniem.",
+      "GDZIE-11": "Na wspólnej drodze pieszych i rowerów zwolnij i daj pieszym pierwszeństwo.",
+      "PIER-03": "Przed skrętem w lewo przepuść jadących z naprzeciwka prosto lub w prawo.",
+      "ZNAK-P23": "Symbol roweru na nawierzchni może oznaczać pas dla rowerów.",
+      "MAN-05": "Przed ominięciem przeszkody sprawdź, czy masz bezpieczny odstęp.",
+      "GDZIE-03b": "Korzystaj z pobocza, gdy nadaje się do jazdy i nie utrudnisz ruchu pieszym.",
+      "ZNAK-B9": "Znak B-9 to zakaz wjazdu rowerów, więc poszukaj innej drogi.",
+      "PIER-05": "Przed przejazdem rowerowym upewnij się, że masz czas na spokojny przejazd.",
+      "ZNAK-B2T22": "Pod znakiem B-2 szukaj tabliczki, która dopuszcza wjazd rowerów."
+    },
+    "WRO-T-01": {
+      "start_tekst": "Jestem Dzwoneczek i szukam ekipy na wrocławski festiwal. Zapnij kask i pokaż mi, jak zatrzymujesz się na STOP-ie.",
+      "koniec_tekst": "Dzwonek w górę! Zanim ruszymy na Rynek, odwiedź Kazika."
+    },
+    "WRO-T-02": {
+      "start_tekst": "Sprawdź kask i obie lampki, a potem zrób krótką rundę.",
+      "koniec_tekst": "Rower gotowy. Dzwoneczek czeka na Rynku."
+    },
+    "WRO-A1-01": {
+      "start_tekst": "Dwóch krasnali nie ma na próbie parady. Na deptaku zejdź z roweru i rozejrzyj się przy Rynku.",
+      "koniec_tekst": "Są wszyscy! Kwiaciarka widziała kogoś, kto chował krasnale także przy placu Solnym."
+    },
+    "WRO-A1-02": {
+      "start_tekst": "Zawieź kwiaty Dzwoneczkowi. Na kostce zwolnij i uważaj na spacerowiczów.",
+      "koniec_tekst": "Bukiet cały! Te kwiaty są dla Latarnika, który pilnuje naszego festiwalu."
+    },
+    "WRO-A1-03": {
+      "start_tekst": "Gołębie rozniosły karteczki o paradzie. Zanieś ocalałą kopertę Latarnikowi po drugiej stronie Odry.",
+      "koniec_tekst": "Zaproszenie dotarło. Latarnik wie, gdzie widziano następne krasnale."
+    },
+    "WRO-A1-04": {
+      "start_tekst": "Moje zapasowe zapałki zostały po drugiej stronie skrzyżowania; rozejrzyj się, zanim je przewieziesz.",
+      "koniec_tekst": "Dziękuję! Kiedy zapalę latarnie, sprawdzimy, czy w świetle nie widać śladów gangu."
+    },
+    "WRO-A1-05": {
+      "start_tekst": "Za chwilę zapadnie zmrok. Włącz lampki i sprawdź ostatnie latarnie przed mostem.",
+      "koniec_tekst": "W blasku lampy widziałem kartkę z mapą mostów. Zabierz ją do Oli."
+    },
+    "WRO-A1-06": {
+      "start_tekst": "Ślad z kartki prowadzi w stronę Rynku. Zrób zdjęcia znaku ustąpienia i znaku drogi z pierwszeństwem.",
+      "koniec_tekst": "Oba zdjęcia są w Albumie. Na kartce został jeszcze rysunek Hali Stulecia."
+    },
+    "WRO-A2-01": {
+      "start_tekst": "Dostarcz plan parady pod Halę Stulecia. Na rondzie prowadź trasę zgodnie ze znakami i strzałkami.",
+      "koniec_tekst": "Plan dotarł, a pani Doktor prosi o kurs do Zoo."
+    },
+    "WRO-A2-02": {
+      "start_tekst": "Jedź z karmą do Afrykarium. Na wspólnej drodze zostaw miejsce pieszym i wieź paczkę płynnie.",
+      "koniec_tekst": "Pingwiny dostały obiad. Dostawca na Dworcu widział rowery gangu."
+    },
+    "WRO-A2-03": {
+      "start_tekst": "Zawieź bilet na Dworzec Główny. Na przejeździe czekaj na zielone, a przy tramwaju przepuść pasażerów.",
+      "koniec_tekst": "Bilet dotarł na czas. Ślady gangu biegną dalej w stronę Sky Tower."
+    },
+    "WRO-A2-04": {
+      "start_tekst": "Pod Sky Tower przećwicz zmianę pasa. Obejrzyj się, zasygnalizuj manewr i przepuść pojazdy na pasie, na który wjeżdżasz.",
+      "koniec_tekst": "Świetnie. Sprawdźmy jeszcze oznakowanie pasa rowerowego na alei."
+    },
+    "WRO-A2-05": {
+      "start_tekst": "Wypatrz symbol roweru namalowany na pasie i sfotografuj go po zatrzymaniu.",
+      "koniec_tekst": "Symbol jest w Albumie. Został nam jeszcze trop do magazynu na zachodzie."
+    },
+    "WRO-A2-06": {
+      "start_tekst": "Jedź po tropie w stronę zachodniego magazynu. Obserwuj drogę i wyprzedzaj tylko wtedy, gdy masz miejsce.",
+      "koniec_tekst": "Trop skręca za tory. Powiedzmy o tym Oli."
+    },
+    "WRO-A3-01": {
+      "start_tekst": "Zawieź wiadomość do stróża. Po drodze są dwa przejazdy: przed każdym sprawdź, czy nie nadjeżdża pociąg.",
+      "koniec_tekst": "Stróż potwierdza trop i pokazuje bezpieczną drogę w stronę stadionu."
+    },
+    "WRO-A3-02": {
+      "start_tekst": "Przy obwodnicy stoi zakaz wjazdu rowerów. Znajdź znak i wybierz boczną drogę.",
+      "koniec_tekst": "Dobra decyzja. Turbo rozstawia już trasę wyścigu nad Odrą."
+    },
+    "WRO-A3-03": {
+      "start_tekst": "Wieje i pada ulewny deszcz. Na bulwarze jest droga dla rowerów; jedź uważnie i zwolnij na mokrej nawierzchni.",
+      "koniec_tekst": "Próba trasy zaliczona. Turbo czeka już na starcie."
+    },
+    "WRO-A3-04": {
+      "start_tekst": "Wyścig zaczyna się przy Wyspach. Liczą się punkty za bezpieczną jazdę, nawet jeśli Turbo dotrze pierwszy.",
+      "koniec_tekst": "Dobra jazda! Na końcu bulwaru ktoś z gangu się przewrócił. Pomóżmy mu."
+    },
+    "WRO-A3-05": {
+      "start_tekst": "Na bulwarze przewrócił się rowerzysta. Zwolnij, zatrzymaj się w bezpiecznym miejscu i sprawdź, co się stało.",
+      "koniec_tekst": "Pomoc jest w drodze. Gang oddaje krasnale i chce pomóc przygotować paradę."
+    },
+    "WRO-A3-06": {
+      "start_tekst": "Krasnale wracają na Rynek! Poprowadź grupę w bezpiecznym odstępie i słuchaj poleceń Oli.",
+      "koniec_tekst": "Parada dotarła pod Ratusz! Mam już swoje miejsce w warsztacie Kazika, a ty jesteś naszym Pilotem Miejskim."
+    },
+    "WRO-B-01": {
+      "start_tekst": "Po zmroku zabierz lampkę na objazd przy Hali i fontannie.",
+      "koniec_tekst": "Lampki świeciły przez całą trasę."
+    },
+    "WRO-B-02": {
+      "start_tekst": "Przejedź dwanaście razy przez przeprawy w czterech częściach miasta.",
+      "koniec_tekst": "Przeprawy zaliczone. Odra zostaje za tobą!"
+    },
+    "WRO-B-03": {
+      "start_tekst": "Dwie przesyłki jadą na Dworzec. Zbierz je po drodze i dostarcz na plac przed wejściem.",
+      "koniec_tekst": "Przesyłki przekazane przed odjazdem."
+    },
+    "WRO-B-04": {
+      "start_tekst": "Sprawdź tabliczkę pod zakazem wjazdu i przejedź oznaczonym kontrapasem.",
+      "koniec_tekst": "Kontrapas zaliczony. Wyjątek był oznaczony tabliczką."
+    },
+    "WRO-B-05": {
+      "start_tekst": "Dowieź lody na wyspę, zanim się rozpuszczą. Na wspólnej kładce uważaj na spacerowiczów.",
+      "koniec_tekst": "Lody dotarły w samą porę."
+    },
+    "WRO-B-06": {
+      "start_tekst": "Zabierz delikatne sadzonki przez mostek przy Ogrodzie Japońskim.",
+      "koniec_tekst": "Sadzonki dotarły całe."
+    },
+    "WRO-B-07": {
+      "start_tekst": "Zrób pięć pełnych okrążeń ronda przy Hali, zgodnie z kierunkiem ruchu i bez błędu.",
+      "koniec_tekst": "Pięć czystych okrążeń. Dobra jazda!"
+    },
     "postacie": {
       "gracz": "Kurier Szprychy",
       "pan_kazik": "Pan Kazik",

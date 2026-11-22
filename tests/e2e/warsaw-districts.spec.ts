@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { chooseCity } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 
 const views = [
@@ -48,7 +49,7 @@ for (const view of views)
     });
 
     await page.goto('/');
-    await page.getByRole('button', { name: pl.driving.praga }).click();
+    await chooseCity(page, 'warszawa');
     const canvas = page.locator('canvas[data-map="warszawa"]');
     await expect(canvas).toHaveAttribute('data-lighting', 'day');
     if (dusk) {

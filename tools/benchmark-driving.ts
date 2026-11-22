@@ -135,11 +135,14 @@ async function runTrial() {
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
     await page.goto(process.env.BENCH_URL ?? 'http://127.0.0.1:5173/');
     await page.locator('canvas[data-scene="MainMenu"]').waitFor();
-    if (warsaw)
-      await page.getByRole('button', { name: pl.driving.praga }).click();
-    else if (wroclaw) {
-      await page.getByText(pl.driving.developer, { exact: true }).click();
-      await page.getByRole('button', { name: pl.driving.wroclaw }).click();
+    if (warsaw || wroclaw) {
+      await page.getByRole('button', { name: pl.cityPicker.freeRide }).click();
+      await page
+        .getByRole('button', {
+          name: warsaw ? pl.cityPicker.warszawa : pl.cityPicker.wroclaw,
+          exact: true,
+        })
+        .click();
     } else await page.keyboard.press('Enter');
     await page.locator('canvas[data-scene="City"]').waitFor();
     if (mission) {

@@ -3,6 +3,7 @@ import { otherSide, sides } from '../src/rules/world/LaneGraph.ts';
 import { sideVector, type Side } from '../src/rules/world/WorldModel.ts';
 import { tiledMap } from './tiled-map.ts';
 import { tileTerrain, type Surface } from './tile-terrain.ts';
+import { wroclawMissionSites } from './wroclaw-missions.ts';
 import { wroclawScenery } from './wroclaw-scenery.ts';
 
 type Point = [number, number];
@@ -174,13 +175,13 @@ zone('pobocze-zachod-powrot', west - 96, 1824, 32, 992, 'shoulder', 'gravel', {
 zone('zjazd-obwodnica', 640, 3072, 96, 128, 'roadway', 'asphalt');
 zone('zakaz-obwodnica', 0, 3136, 704, 64, 'no_bikes', 'asphalt');
 sign('B-9', 'zakaz-obwodnica', 'E', 702, 3210);
-zone('ulica-nadodrze', 3264, 1504, 96, 192, 'roadway', 'asphalt', {
+zone('ulica-nadodrze', 3264, 1568, 96, 128, 'roadway', 'asphalt', {
   direction: 'N',
 });
-zone('kontrapas-nadodrze', 3328, 1504, 32, 192, 'bike_lane', 'bike', {
+zone('kontrapas-nadodrze', 3328, 1568, 32, 128, 'bike_lane', 'bike', {
   direction: 'S',
 });
-sign('B-2', 'ulica-nadodrze', 'N', 3374, 1516, { exceptBicycles: true });
+sign('B-2', 'ulica-nadodrze', 'N', 3374, 1578, { exceptBicycles: true });
 
 zone('ddr-bulwary', 0, 1504, mapWidth, 64, 'bike_path', 'bike');
 zone('ddr-most-tumski', 2592, 832, 64, 864, 'bike_path', 'bike');
@@ -213,6 +214,7 @@ sign('C-13', 'ddr-most-tumski', 'S', 2578, 1490);
 sign('C-13', 'ddr-bulwary', 'W', 2340, 1496);
 sign('C-13/C-16', 'ciag-zoo', 'S', 4944, 2210);
 sign('C-13/C-16', 'ciag-bulwary', 'W', 1356, 1612);
+sign('P-23', 'pas-rowerowy-poludnie', 'E', 3304, 3056);
 sign('D-40', 'ostrow-d40', 'E', 2770, 1240);
 sign('D-41', 'ostrow-d40', 'W', 2790, 1268);
 
@@ -585,8 +587,8 @@ trafficRoutes.push(
   polyline(
     'piesi-rynek',
     [
-      [3448, 1674],
       [3448, 1846],
+      [3448, 1674],
     ],
     { kind: 'pedestrian', speed: 1.5 },
   ),
@@ -673,6 +675,9 @@ for (let x = 0; x < mapWidth; x += tile)
       mark(x, y, tiles.dashHorizontal);
 
 const scenery = wroclawScenery(map);
+const missions = wroclawMissionSites(map);
+scenery.pois.push(...missions.pois);
+trafficRoutes.push(...missions.trafficRoutes);
 const collisions = [...scenery.collisions];
 const waterRuns = new Map<
   string,
@@ -757,6 +762,7 @@ objectLayer('districts', [
   rect('bulwary-odry', 0, 1504, 5632, 128),
 ]);
 objectLayer('triggers', []);
+objectLayer('race_routes', missions.raceRoutes);
 for (const [name, objects] of Object.entries(scenery))
   if (name !== 'collisions') objectLayer(name, objects);
 objectLayer('collisions', collisions);

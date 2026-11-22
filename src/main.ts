@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { Boot } from './scenes/Boot';
 import { Preload } from './scenes/Preload';
 import { MainMenu } from './scenes/MainMenu';
+import { CityPicker } from './scenes/CityPicker';
 import { City } from './scenes/City';
 import { ui } from './core/presentation';
 import './style.css';
@@ -57,7 +58,7 @@ function syncViewport() {
     pixelArt: true,
     roundPixels: true,
     scale: { mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.NO_CENTER },
-    scene: [Boot, Preload, MainMenu, City],
+    scene: [Boot, Preload, MainMenu, CityPicker, City],
     callbacks: {
       postBoot(game) {
         booted = true;

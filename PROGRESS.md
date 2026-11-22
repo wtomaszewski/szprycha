@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan na 22.11.2026. Gałąź `feat/51-m6c-wroclaw`.
+Stan na 22.11.2026. Gałąź `feat/52-m6d-misje-wroclawia`.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -10,11 +10,18 @@ Stan na 22.11.2026. Gałąź `feat/51-m6c-wroclaw`.
 | M3     | Ruch drogowy AI i pozostałe detektory       | Scalony w `main`. Ostatni PR to #21.                                                         |
 | M4     | Misje i fabuła                              | Akt 1 Warszawy grywalny od samouczka do finału M4d (#25).                                    |
 | M5     | Punktacja, progresja, zapis                 | M5a (#44), M5b (#46) i M5c (#54) w `main`.                                                   |
-| M6     | Mapy Warszawy i Wrocławia                   | M6a–b: mapa i kampania Warszawy. M6c: mapa Wrocławia i 13/13 sytuacji.                       |
+| M6     | Mapy Warszawy i Wrocławia                   | M6a–d: dwie mapy, dwie kampanie i wybór miasta. Raport strict obejmuje oba miasta.           |
 | M7     | Plac, quiz, egzamin                         | Nierozpoczęty                                                                                |
 | M8     | Audio i szlif                               | Nierozpoczęty                                                                                |
 | M9     | PWA, Capacitor, Android/iOS                 | Nierozpoczęty                                                                                |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Nierozpoczęty                                                                                |
+
+## M6d — kampania Wrocławia i wybór miasta
+
+- Kampania prowadzi od dwóch samouczków przez trzy akty do Parady Krasnali. SzprychaApp zawiera siedem zleceń pobocznych, a w wolnej jeździe można zebrać 100 krasnali po rozwiązaniu ich zagadek.
+- Menu Kampania i Wolna jazda otwierają mapę Polski z Warszawą i Wrocławiem. Profil w IndexedDB zapamiętuje ostatnie miasto i zachowuje wyniki obu kampanii.
+- CI sprawdza `npm run coverage:maps -- --strict`. Oba miasta mają 13/13 sytuacji na mapie i 7/7 modułów ćwiczonych w misjach. [Raport](docs/coverage.md)
+- Przejazdy testowe obejmują wszystkie zlecenia Wrocławia, a test przeglądarkowy sprawdza zmianę miasta, zapis po odświeżeniu i listę zleceń. [Mapa wyboru miasta](docs/screenshots/52-wybor-miasta.webp)
 
 ## M6c — Wrocław
 

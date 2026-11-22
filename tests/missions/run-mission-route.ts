@@ -39,7 +39,7 @@ interface TiledMap {
   }[];
 }
 
-export function runWarsawRoute(
+export function runMissionRoute(
   id: string,
   route: readonly Waypoint[],
   afterViolation?: readonly Waypoint[],
@@ -138,6 +138,8 @@ export function runWarsawRoute(
   let waited = 0;
   let collision = false;
   let prepTicks = 0;
+  let tramStopped = false;
+  const foundGnomes = new Set<string>();
   for (let tick = 0; tick < 310 * TICKS_PER_SECOND && !mission.result; tick++) {
     const point = route[attempt];
     if (point?.walking !== undefined && rider.speed === 0)
@@ -162,6 +164,7 @@ export function runWarsawRoute(
       if (++prepTicks === 10) player.helmet.fastened = true;
       if (prepTicks === 30) player.lights!.front = player.lights!.rear = true;
     }
+    if (point?.helmet !== undefined) player.helmet.fastened = point.helmet;
     if (point?.lights !== undefined)
       player.lights!.front = player.lights!.rear = point.lights;
     player.signal = point?.signal ?? 'none';
@@ -190,6 +193,15 @@ export function runWarsawRoute(
     for (const { id } of active) seenAgents.add(id);
     verdicts.length = 0;
     engine.step(player, active, env, events.hazards);
+    const gnome = mission.gnomeTarget;
+    if (gnome && rider.walking) {
+      const area = world.pois.get(gnome)!;
+      if (
+        Math.hypot(area.x - player.pos.x, area.y - player.pos.y) <=
+        16 * scale
+      )
+        foundGnomes.add(gnome);
+    }
     const effects = mission.step(
       player.pos,
       verdicts,
@@ -200,6 +212,8 @@ export function runWarsawRoute(
         lights: player.lights!.front && player.lights!.rear,
       },
       player.speed,
+      false,
+      gnome !== undefined && foundGnomes.has(gnome),
     );
     fired.push(...(effects?.events?.map(({ typ }) => typ) ?? []));
     if (effects?.respawn) {
@@ -228,6 +242,10 @@ export function runWarsawRoute(
         `${id} rewound at ${rider.x.toFixed(0)},${rider.y.toFixed(0)} after ${mission.elapsedSeconds}s: ${JSON.stringify(engine.recent)}`,
       );
     }
+    const tramAtStop = active.some(
+      ({ kind, stopId }) => kind === 'tram' && stopId,
+    );
+    tramStopped ||= tramAtStop;
     if (
       point &&
       !preparing &&
@@ -236,6 +254,18 @@ export function runWarsawRoute(
           Math.hypot(point.x - rider.x, point.y - rider.y) < 11)) &&
       (point.until !== 'driveway-stop' || engine.drivewayStopReady) &&
       (point.until !== 'signaled' || engine.signalReady) &&
+      (!point.crossingGreen ||
+        world.crossingAllowsEntry(
+          world.crossings.find(({ id }) => id === point.crossingGreen)!,
+          engine.at,
+          env,
+        )) &&
+      (!point.railOpen ||
+        !world.railState(
+          world.crossings.find(({ id }) => id === point.railOpen)!,
+          engine.at,
+          env,
+        )?.flashing) &&
       (point.until !== 'officer-go' || events.notice?.officerCleared) &&
       (point.until !== 'traffic-ended' ||
         (fired.length > 0 && !events.notice)) &&
@@ -274,8 +304,8 @@ export function runWarsawRoute(
           engine.at,
           env,
         )?.flashing) &&
-      (point.until !== 'tram-stopped' ||
-        active.some(({ kind, stopId }) => kind === 'tram' && stopId)) &&
+      (point.until !== 'tram-stopped' || tramAtStop) &&
+      (point.until !== 'tram-cleared' || (tramStopped && !tramAtStop)) &&
       (point.answer === undefined || mission.pendingChoice) &&
       ++waited >= Math.max(1, (point.wait ?? 0) * TICKS_PER_SECOND)
     ) {

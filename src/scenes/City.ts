@@ -37,6 +37,7 @@ import {
   missionLines,
   type MissionProgress,
 } from '../gameplay/MissionProgress';
+import type { MissionCity } from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { RuleDebugOverlay } from '../render/RuleDebugOverlay';
 import { TrainingRoad } from '../render/TrainingRoad';
@@ -120,6 +121,7 @@ export class City extends Scene {
   private actorObstacles!: Obstacle[][];
   private actors!: TrafficArt[];
   private gnomes?: Gnomes;
+  private askedGnome?: string;
   private road!: TrainingRoad;
   private debug!: RuleDebugOverlay;
   private feedback!: RuleFeedback;
@@ -130,6 +132,7 @@ export class City extends Scene {
   private series!: SafetySeries;
   private attention!: RoadAttention;
   private questionDialog!: ControlQuestionDialog;
+  private campaignCity!: MissionCity;
   private freeRidePoints = 0;
   private missionTokens = 0;
   private resultPresented = false;
@@ -216,18 +219,24 @@ export class City extends Scene {
     this.load.once('complete', () => this.load.off('loaderror', showError));
   }
 
-  create({ missionId, map }: { missionId?: string; map?: string } = {}) {
+  create({
+    missionId,
+    map,
+    city,
+  }: { missionId?: string; map?: string; city?: MissionCity } = {}) {
     this.obstacles = [];
     this.accumulator = 0;
     this.hudAt = 0;
     this.messageUntil = 0;
     this.content = this.registry.get('content') as GameContent;
     this.progress = this.registry.get('missionProgress') as MissionProgress;
+    this.campaignCity = city ?? this.progress.selectedCity;
     this.progress.milestones(this.content);
     this.breakMinutes = this.progress.breakMinutes(
       this.content.balans.zdrowe_granie,
     );
     this.photoPending = false;
+    this.askedGnome = undefined;
     this.progress.store.prepareRide(this.content.przepisy.przepisy);
     this.series ??= new SafetySeries(
       this.content.balans.combo,
@@ -508,7 +517,7 @@ export class City extends Scene {
           (!this.mission || this.mission.result) &&
           this.availableOrders().some((order) => order.id === id)
         )
-          this.scene.restart({ missionId: id });
+          this.scene.restart({ missionId: id, city: this.campaignCity });
       },
     );
     this.replayDialog = new ReplayDialog(
@@ -636,6 +645,7 @@ export class City extends Scene {
   private availableOrders() {
     return this.content.misje.filter(
       (mission) =>
+        mission.miasto === this.campaignCity &&
         this.cache.tilemap.exists(mission.mapa ?? mission.miasto) &&
         this.progress.isAvailable(mission, this.content),
     );
@@ -804,6 +814,45 @@ export class City extends Scene {
         this.updateProgressionHud();
         return answer;
       },
+    );
+    return true;
+  }
+
+  private showGnomeQuestion() {
+    const { x, y, walking } = this.rider;
+    const gnomes = this.gnomes;
+    const nearby = walking ? gnomes?.nearby(x, y) : undefined;
+    if (!nearby) {
+      this.askedGnome = undefined;
+      return false;
+    }
+    if (
+      nearby.id === this.askedGnome ||
+      (this.mission && nearby.id !== this.mission.gnomeTarget)
+    )
+      return false;
+
+    const questions = this.content.pytania.pytania;
+    const question = questions[nearby.questionIndex % questions.length]!;
+    this.askedGnome = nearby.id;
+    this.rider.speed = 0;
+    this.controls.clear();
+    this.publishRiderPosition(this.rider);
+    this.updateDrivingHud(this.rider, this.controls.actions);
+    this.questionDialog.show(
+      question,
+      (index) => {
+        const correct = index === question.poprawna;
+        for (const rule of question.przepisy)
+          this.progress.recordQuizAnswer(
+            rule,
+            correct,
+            this.content.balans.mastery,
+          );
+        if (correct) gnomes?.collect(nearby.id);
+        return { correct };
+      },
+      ui.driving.gnomeQuestion,
     );
     return true;
   }
@@ -1183,8 +1232,8 @@ export class City extends Scene {
       this.series.longest,
       this.content.balans.mastery,
     );
-    if (source.walking) this.gnomes?.collect(source.x, source.y);
     this.attention.step(this.tickVerdicts, rider.speed > 0);
+    const gnome = this.mission?.gnomeTarget;
     const effects = this.mission?.step(
       rider.pos,
       this.tickVerdicts,
@@ -1198,6 +1247,9 @@ export class City extends Scene {
         : undefined,
       rider.speed,
       Boolean(this.attention.pending),
+      source.walking &&
+        gnome !== undefined &&
+        this.progress.store.profile.gnomes?.includes(gnome),
     );
     this.updateRival();
     this.syncActorObstacles();
@@ -1381,6 +1433,10 @@ export class City extends Scene {
           !this.showMissionChoice()
         )
           this.presentMissionResult();
+        break;
+      }
+      if (this.showGnomeQuestion()) {
+        this.accumulator = 0;
         break;
       }
     }

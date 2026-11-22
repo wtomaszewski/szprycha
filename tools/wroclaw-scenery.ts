@@ -387,7 +387,9 @@ export function wroclawScenery({
     map_decorations: decorations,
     collectibles,
     pois: [
-      rect('dzwoneczek', 3024, 2016, 0, 0),
+      ...collectibles
+        .slice(0, 3)
+        .map(({ name, x, y }) => rect(name, x, y, 0, 0)),
       rect('kwiaciarnia-solny', 3032, 2386, 0, 0),
       rect('latarnik', 2775, 1336, 0, 0),
       rect('wejscie-hala', 4930, 670, 0, 0),

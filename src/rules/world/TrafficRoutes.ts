@@ -97,7 +97,10 @@ export function buildTrafficRoutes(
         (kind === 'shared_path' && sharedSide !== 'bike'),
     );
     const bikeZones = zones.filter(
-      ({ kind }) => kind === 'bike_lane' || kind === 'bike_path',
+      ({ kind, sharedSide }) =>
+        kind === 'bike_lane' ||
+        kind === 'bike_path' ||
+        (kind === 'shared_path' && sharedSide !== 'pedestrian'),
     );
     const allowed = crossings.filter(
       ({ kind }) =>

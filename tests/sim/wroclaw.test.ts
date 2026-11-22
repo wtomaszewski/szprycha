@@ -140,7 +140,10 @@ it.each([1403, 17, 51])(
     expect(
       Math.min(...passed.map(({ junctions }) => junctions)),
     ).toBeGreaterThan(10);
-    for (const participant of traffic.routed)
-      expect(participant.trips, participant.id).toBeGreaterThan(2);
+    for (const participant of traffic.routed) {
+      const route = world.trafficRoutes.find(({ id }) => id === participant.id);
+      if (route?.event_only) expect(participant.trips, participant.id).toBe(0);
+      else expect(participant.trips, participant.id).toBeGreaterThan(2);
+    }
   },
 );

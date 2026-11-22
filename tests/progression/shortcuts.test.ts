@@ -8,7 +8,7 @@ import {
   type WarsawMissionId,
   type Waypoint,
 } from '../missions/warsaw-routes';
-import { missionContent, runWarsawRoute } from '../missions/run-warsaw-route';
+import { missionContent, runMissionRoute } from '../missions/run-mission-route';
 
 const shortcuts = missionContent.misje.filter(
   ({ skrot, akt }) => skrot && akt === 1,
@@ -34,8 +34,8 @@ it.each(shortcuts)(
     const rule = missionContent.przepisy.przepisy.find(
       ({ id }) => id === ruleId,
     )!;
-    const legal = runWarsawRoute(id, routes.legal);
-    const shortcut = runWarsawRoute(
+    const legal = runMissionRoute(id, routes.legal);
+    const shortcut = runMissionRoute(
       id,
       routes.shortcut!,
       race ? routes.legal.slice(3) : undefined,

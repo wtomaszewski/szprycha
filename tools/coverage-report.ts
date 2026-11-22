@@ -84,7 +84,7 @@ async function generateCoverageReport(root: string) {
     '',
     'Sytuacje odpowiadają tabeli pokrycia w [dokumentacji map](05_mapy.md). Wiersz z kilkoma wymaganymi elementami jest pokryty, gdy występuje każdy z nich.',
     '',
-    'Moduł jest pokryty, gdy wykryto co najmniej jedną jego regułę. Raport przypisuje misje do mapy, na której się odbywają. Kolumna mapy obejmuje reguły powiązane z wykrytymi obiektami, a kolumna misji obejmuje reguły deklarowane i wykryte w celach, zdarzeniach oraz miejscach misji.',
+    'W każdym mieście moduł jest pokryty, gdy wykryto co najmniej jedną jego regułę w misjach. Moduły wspólnego hubu są liczone informacyjnie, także z obiektów mapy. Raport przypisuje misje do mapy, na której się odbywają. Kolumna mapy obejmuje reguły powiązane z wykrytymi obiektami, a kolumna misji obejmuje reguły deklarowane i wykryte w celach, zdarzeniach oraz miejscach misji.',
     '',
     'Aby odtworzyć raport, uruchom `npm run coverage:maps`. Opcja `--strict` (po separatorze `--`) zapisuje raport i kończy się błędem, jeśli w którymkolwiek mieście brakuje mapy, sytuacji lub całego modułu.',
   ];
@@ -134,7 +134,7 @@ async function generateCoverageReport(root: string) {
     );
     let moduleCount = 0;
     for (const { module, map, missions } of modules) {
-      const covered = map.length > 0 || missions.length > 0;
+      const covered = missions.length > 0 || (id === hub && map.length > 0);
       if (covered) moduleCount++;
       output.push(
         `| ${module} | ${covered ? '✓' : '✗'} | ${codeList(map)} | ${codeList(missions)} |`,

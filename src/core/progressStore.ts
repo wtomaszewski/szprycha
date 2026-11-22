@@ -1,5 +1,6 @@
 import { update, type UseStore } from 'idb-keyval';
 import { z } from 'zod';
+import { missionCity } from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { applyMastery, localDay } from '../progression/mastery';
 import type { Milestones } from '../progression/milestones';
@@ -75,6 +76,7 @@ const profileSchema = m5bProfileSchema.extend({
     .optional(),
   stickers: z.array(id),
   gnomes: z.array(id).optional(),
+  selectedCity: missionCity.optional(),
   breakMinutes: count.positive().optional(),
 });
 

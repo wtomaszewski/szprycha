@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { chooseCity } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
 import {
@@ -68,7 +69,7 @@ test('completes a generated daily challenge by turning on lights before a dusk r
   await expect(goal.getByRole('progressbar')).toHaveAttribute('value', '0');
   await panel.getByRole('button', { name: pl.m5c.close }).click();
 
-  await page.getByRole('button', { name: pl.driving.praga }).click();
+  await chooseCity(page, 'warszawa');
   await expect(page.locator('canvas')).toHaveAttribute('data-scene', 'City');
   await page.keyboard.press('KeyM');
   await page
