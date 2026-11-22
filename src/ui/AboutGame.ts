@@ -39,13 +39,10 @@ export function aboutGame(content: GameContent) {
   const review = document.createElement('section');
   const reviewTitle = document.createElement('h3');
   reviewTitle.textContent = labels.review;
-  review.append(reviewTitle);
-  const { recenzja_merytoryczna } = content['o-grze'];
-  if (recenzja_merytoryczna) {
-    const text = document.createElement('p');
-    text.textContent = recenzja_merytoryczna;
-    review.append(text);
-  }
+  const reviewText = document.createElement('p');
+  reviewText.textContent =
+    content['o-grze'].recenzja_merytoryczna ?? labels.reviewPending;
+  review.append(reviewTitle, reviewText);
 
   const gameVersion = document.createElement('p');
   gameVersion.textContent = `${labels.version} ${version}`;

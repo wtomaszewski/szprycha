@@ -32,7 +32,6 @@ test('opens the educational notice and third-party licenses offline from the men
   await expect(
     panel.getByText(`${labels.version} ${packageJson.version}`),
   ).toBeVisible();
-  await expect(panel.locator('section')).toHaveText(labels.review);
   await expect(
     panel.getByText(
       'Copyright (c) 2026 Wojciech Tomaszewski. All rights reserved.',
@@ -57,6 +56,30 @@ test('opens the educational notice and third-party licenses offline from the men
     'MainMenu',
   );
 });
+
+for (const [scenario, review] of [
+  ['pending', null],
+  ['configured', 'Treść została sprawdzona przez konsultanta.'],
+] as const) {
+  test(`shows the ${scenario} review in About`, async ({ page }) => {
+    await page.route('**/data/content.json', async (route) => {
+      const response = await route.fetch();
+      const content = await response.json();
+      content['o-grze'].recenzja_merytoryczna = review;
+      await route.fulfill({ response, json: content });
+    });
+    await page.goto('/');
+    await page.getByRole('button', { name: labels.title, exact: true }).click();
+
+    const panel = page.getByRole('dialog', { name: labels.title });
+    const section = panel.locator('section').filter({
+      has: page.getByRole('heading', { name: labels.review, exact: true }),
+    });
+    await expect(section.locator('p')).toHaveText(
+      review ?? labels.reviewPending,
+    );
+  });
+}
 
 test('opens About from the parent zone after the gate and restores focus', async ({
   page,

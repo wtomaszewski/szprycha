@@ -1231,6 +1231,7 @@
     "certificate": "Licencja Szprychy nie jest kartą rowerową.",
     "version": "Wersja gry",
     "review": "Recenzja merytoryczna",
+    "reviewPending": "Recenzja merytoryczna treści jest w przygotowaniu.",
     "thirdParty": "Licencje komponentów zewnętrznych"
   },
   "m5c": {
