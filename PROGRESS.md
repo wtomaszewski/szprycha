@@ -19,7 +19,7 @@ Stan na 22.11.2026. Gałąź `feat/70-m8c-moment-chwaly`.
 ## M8 — audio i szlif
 
 - M8a dodało trzy stacje Radia Szprycha FM, proceduralne efekty dźwiękowe oraz polskiego lektora korzystającego z lokalnego głosu systemowego. Muzyka, efekty i lektor mają osobną regulację głośności.
-- M8c zamyka misję ekranem wyników. Pokazuje gwiazdki, żetony, rozbicie punktów, dobre nawyki, opanowanie reguł i jedną wskazówkę. Gracz może powtórzyć misję albo wrócić do mapy miast.
+- M8c zamyka misję ekranem wyników. Pokazuje gwiazdki, żetony, rozbicie punktów, dobre nawyki, opanowanie reguł i jedną wskazówkę. Gracz może powtórzyć misję, otworzyć SzprychaApp lub wrócić do mapy miast.
 - Moment chwały odtwarza maksymalnie dwie sekundy zapamiętanych klatek przed potwierdzonym dobrym nawykiem. Przycisk „Pomiń animację” wyświetla od razu kadr z dobrym nawykiem. Przy ograniczeniu ruchu lub ustawieniu „Mniej efektów” ekran otwiera się ze statycznym kadrem. Ekran obsługuje klawiaturę, pad i dotyk oraz ma trzy rozmiary tekstu i wysoki kontrast. [Zrzut wyniku i momentu chwały](docs/screenshots/70-moment-chwaly.png)
 - M8 korzysta z własnego kodu, grafiki z repozytorium i systemowego lektora. Instalacja PWA oraz paczki mobilne należą do M9.
 

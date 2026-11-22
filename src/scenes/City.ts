@@ -655,6 +655,7 @@ export class City extends Scene {
           this.progress.store,
           () => this.finishResultsAnimation(),
           () => this.reset(),
+          () => this.togglePhone(),
           () => this.scene.start('CityPicker', { mode: 'campaign' }),
         );
       this.updateMissionHud();
@@ -739,19 +740,17 @@ export class City extends Scene {
       this.phone.close();
       return;
     }
-    if (
-      this.dialogue.open ||
-      this.review ||
-      this.questionDialog.open ||
-      this.results?.open
-    )
-      return;
+    if (this.dialogue.open || this.review || this.questionDialog.open) return;
     if (!canOpenPhone(this.rider.speed)) {
       this.message(this.phoneFeedback);
       return;
     }
     this.controls.clear();
     this.controls.notice.textContent = '';
+    if (this.results?.open) {
+      this.finishResultsAnimation();
+      audio.stopReading('results');
+    }
     this.phone.show(
       this.availableOrders(),
       Boolean(this.mission && !this.mission.result),
@@ -764,7 +763,7 @@ export class City extends Scene {
       this.dialogue.open ||
       this.review ||
       this.questionDialog.open ||
-      this.results?.open
+      (this.results?.open && event.code !== 'KeyM')
     )
       return true;
     if (event.code === 'KeyG' && !event.repeat && this.respondToEvent()) {
@@ -792,10 +791,6 @@ export class City extends Scene {
     pressed: (button: number) => boolean,
     justPressed: (button: number) => boolean,
   ) {
-    if (this.results?.open) {
-      this.results.gamepad(justPressed);
-      return true;
-    }
     if (this.review) {
       if (this.review.shown) this.replayDialog.gamepad(justPressed);
       return true;
@@ -822,6 +817,10 @@ export class City extends Scene {
     }
     if (justPressed(8)) {
       this.togglePhone();
+      return true;
+    }
+    if (!this.phone.open && this.results?.open) {
+      this.results.gamepad(justPressed);
       return true;
     }
     if (!this.phone.open)

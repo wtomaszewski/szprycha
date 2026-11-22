@@ -633,7 +633,8 @@ button[aria-pressed='true'] {
 .mission-results[data-glory]::backdrop {
   background: #10132233;
 }
-.driving-ui:has(.mission-results[open]) > :not(.mission-results) {
+.driving-ui:has(.mission-results[open])
+  > :not(.mission-results, .mission-phone[open]) {
   visibility: hidden;
 }
 .mission-results[data-contrast] {

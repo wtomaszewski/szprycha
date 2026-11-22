@@ -166,6 +166,17 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
         path: test.info().outputPath('70-moment-chwaly.png'),
       });
     }
+    const phoneButton = result.getByRole('button', { name: pl.phone.title });
+    await phoneButton.click();
+    const phone = page.getByRole('dialog', { name: pl.phone.title });
+    await expect(
+      phone.getByRole('button', {
+        name: `${pl.phone.start} · ${pl.misje['WAW-T-02'].tytul}`,
+      }),
+    ).toBeEnabled();
+    await page.keyboard.press('KeyM');
+    await expect(phone).toBeHidden();
+    await expect(phoneButton).toBeFocused();
     await result.getByRole('button', { name: pl.missionResults.map }).click();
     await expect(canvas).toHaveAttribute('data-scene', 'CityPicker');
     await expect(

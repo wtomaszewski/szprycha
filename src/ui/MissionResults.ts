@@ -46,6 +46,7 @@ export class MissionResults {
     store: ProgressStore,
     skip: () => void,
     retry: () => void,
+    openPhone: () => void,
     map: () => void,
   ) {
     this.dialog.className = 'game-dialog mission-results';
@@ -95,15 +96,20 @@ export class MissionResults {
     preferences.append(size, contrast, effects);
 
     const actions = document.createElement('footer');
+    const phone = textElement('button', ui.phone.title);
+    phone.setAttribute('aria-keyshortcuts', 'M');
+    phone.setAttribute('aria-haspopup', 'dialog');
+    phone.setAttribute('aria-controls', 'mission-phone');
     for (const [button, action] of [
       [this.skip, skip],
       [this.retry, retry],
+      [phone, openPhone],
       [this.map, map],
     ] as const) {
       button.type = 'button';
       button.addEventListener('click', action);
     }
-    actions.append(this.retry, this.map);
+    actions.append(this.retry, phone, this.map);
     this.dialog.addEventListener('cancel', (event) => {
       event.preventDefault();
       if (!this.skip.hidden) skip();
