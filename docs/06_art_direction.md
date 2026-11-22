@@ -53,7 +53,8 @@ GTA2 renderowało budynki jako bryły widziane z góry z perspektywą względem 
 3. Dach rysowany na samej górze, z cieniem rzucanym w stronę dolnego-prawego rogu (stały kierunek słońca).
 4. Tekstura ściany mapowana pasami pięter; przy niskiej wydajności fallback: dach + jedna „zmiękczona” ściana od strony kamery + cień (tryb `blocks:lite`).
 5. **Landmarki** (PKiN, wieże) składają się z kilku warstw-bloków o rosnącej wysokości (podstawa → kondygnacje → wieża → iglica), wysokość każdej warstwy liczy się od gruntu, a jej ściany zaczynają się na przesuniętym dachu warstwy poniżej.
-6. Kafelki muszą idealnie pasować do siatki pikseli: przesunięcia zaokrąglane do pełnych pikseli logicznych, brak migotania przy ruchu kamery (testuj przy wolnym przesuwaniu).
+6. Testowy Pałac Kultury w Miasteczku ma pięć zwężających się brył (4, 10, 18, 26 i 32 piętra). Dla pojedynczego bloku wysokość zmienia rozmiar widocznych fasad, a dach pozostaje jednym prostokątem.
+7. Kafelki muszą idealnie pasować do siatki pikseli: przesunięcia zaokrąglane do pełnych pikseli logicznych, brak migotania przy ruchu kamery (testuj przy wolnym przesuwaniu).
 
 ## 5. Postacie i pojazdy
 - **Rower gracza:** widok z góry, widoczny kask (kolor/wzór z personalizacji), ręce na kierownicy, nogi pedałujące (4 klatki), **animacja sygnalizowania ręką lewą/prawą** (ręka wyciągnięta w bok — musi być czytelna na pierwszy rzut oka!), obejrzenie się (głowa obraca się), zsiadanie i prowadzenie roweru (postać idzie obok). 16 kierunków prerenderowanych (nie obracaj pixel-artu w czasie rzeczywistym w finalnej wersji; placeholdery mogą).
@@ -62,6 +63,14 @@ GTA2 renderowało budynki jako bryły widziane z góry z perspektywą względem 
 - **Tramwaje:** Warszawa — czerwono-żółte; Wrocław — niebiesko-białe/kremowe. Bez logotypów przewoźników.
 - **Piesi:** 12 wariantów (dzieci, dorośli, seniorzy z laską, osoba z wózkiem dziecięcym, turysta z mapą, biegacz, pies na smyczy), animacja chodu 4 klatki × 8 kierunków.
 - **Portrety dialogowe:** 64×64, 5 emocji, dla wszystkich postaci z `docs/02`.
+
+### Stan sprite’ów uczestników ruchu
+
+- Menu zapisuje lokalnie żółty, błękitny lub różowy kolor kasku. Rowerzysta 24×24 ma 16 gotowych kierunków, po cztery klatki pedałowania i prowadzenia, dwie fazy zsiadania oraz osobne pozy lewego i prawego gestu, także przy obejrzeniu się. Po zmroku włączone przednie światło rzuca stożek, a tylny odblask rozjaśnia się w wiązce nadjeżdżającego pojazdu.
+- Cztery typy mniejszych aut są w atlasie 32×48, a dostawczak i autobus w 32×64. Każdy typ ma trzy malowania. Kierunkowskazy migają na podstawie `maneuver`, a światła stop reagują na hamowanie i zatrzymanie. Karetka, straż i policja mają animowane belki. Pozy i światła korzystają z tej samej próbki symulacji w jeździe i powtórce.
+- Tramwaj ma dwa segmenty 32×80 z przegubem, który pozwala im ustawić się wzdłuż toru niezależnie. Czerwono-żółte malowanie jest używane w Miasteczku. Niebiesko-kremowe jest przygotowane dla map Wrocławia.
+- Osiem wariantów pieszych 16×16 ma po cztery klatki chodu i osiem kierunków. Trzy warianty rowerzystów AI korzystają z 24×24, czterech klatek i 16 kierunków.
+- `npm run assets:generate` odtwarza oryginalne atlasy z palety projektu. `assets/manifest.json` opisuje siatkę PNG oraz kolejność klatek potrzebną przy podmianie grafik.
 
 ## 6. Landmarki — specyfikacja wizualna (również jako prompty dla artysty/narzędzia AI)
 
@@ -114,8 +123,7 @@ warianty. Nazwy dachów i ścian oraz indeksy kafli są opisane w
 liczbę klatek do podmiany plików 1:1. Atlasy odtwarza `npm run assets:generate`,
 Miasteczko `npm run map:generate`, a Pragę `npm run map:generate:warsaw`.
 
-Rowerzyści, piesi, pojazdy, znaki pionowe i portrety korzystają z dotychczasowych
-placeholderów. Osobne warianty mokrej i zimowej nawierzchni, animacje pogody,
+Znaki pionowe i portrety korzystają z dotychczasowych placeholderów. Osobne warianty mokrej i zimowej nawierzchni, animacje pogody,
 nocne oświetlenie oraz pozostałe landmarki należą do kolejnych etapów.
 
 Wzory oznakowania pochodzą z [załącznika nr 2 do rozporządzenia o szczegółowych warunkach technicznych dla znaków i sygnałów drogowych](https://eli.gov.pl/eli/DU/2019/2311/ogl).

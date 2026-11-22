@@ -1,7 +1,7 @@
 import type { GameObjects, Scene } from 'phaser';
 import type { ReplayProp } from '../gameplay/ReplayBuffer';
 import { BALL_FRAME } from './artFrames';
-import { trafficSprite } from './TrafficArt';
+import { drawCyclist } from './TrafficArt';
 
 export class EventArt {
   private readonly graphics: GameObjects.Graphics;
@@ -15,12 +15,13 @@ export class EventArt {
       .setDepth(18)
       .setVisible(false);
     this.graphics = scene.add.graphics().setDepth(18);
-    this.cyclist = trafficSprite(scene, 'cyclist')
-      .setTint(0xffae34)
+    this.cyclist = scene.add
+      .image(0, 0, 'traffic-cyclist', 0)
+      .setDepth(17)
       .setVisible(false);
   }
 
-  draw(props: readonly ReplayProp[], scale: number) {
+  draw(props: readonly ReplayProp[], scale: number, at: number) {
     const [ball, door, cyclist] = props;
     const showBall = Boolean(ball?.active);
     if (this.ball.visible !== showBall) this.ball.setVisible(showBall);
@@ -48,7 +49,13 @@ export class EventArt {
     if (cyclist?.active) {
       const x = cyclist.x * scale;
       const y = cyclist.y * scale;
-      this.cyclist.setPosition(x, y).setRotation(cyclist.heading);
+      this.cyclist.setPosition(Math.round(x), Math.round(y));
+      drawCyclist(
+        this.cyclist,
+        cyclist.heading,
+        Math.floor(Math.max(0, at) * 9) % 4,
+        2,
+      );
       art.lineStyle(2, 0xffcd75).strokeCircle(x, y, 15);
     }
   }

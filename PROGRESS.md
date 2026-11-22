@@ -152,3 +152,9 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Osiem zdarzeń drogowych i wymuszane ćwiczenie STOP w WAW-T-01. Losowanie jest deterministyczne i ma interfejs wag dla M5. Wymuszone zdarzenia działają także w misjach z wyłączonym ruchem tła.
 - Testy pokrywają zawijanie i odtwarzanie historii, wszystkie zdarzenia headless, walidację powiązań z regułami, obsługę kolejki wymuszonej oraz przejazd WAW-T-01 w Chromium.
 - Pomiar jak w M3a w Chromium headless (WebGL, 1280×720, CPU 4×, trzy przejazdy na wariant). Mediany średniej liczby klatek wyniosły 39,49 FPS na `main`, 39,12 FPS z historią 5 s i 38,79 FPS z pojedynczą próbką w tej samej implementacji. 95. percentyl czasu klatki wyniósł 33,4 ms dla wszystkich wariantów. Pomiar obejmował jazdę z pominięciem pauzy na lekcję i nie wykazał spadku FPS od zapisu historii. Wynik dotyczy środowiska headless.
+
+## Grafika 2/3 — sprite’y uczestników ruchu (#31)
+
+- Dodano atlasy rowerzysty i pieszych z gotowymi kierunkami, kolor kasku wybierany w menu, animowane światła pojazdów oraz tramwaj z dwoma segmentami. Wrocław ma przygotowane malowanie tramwaju do użycia na przyszłej mapie.
+- Testy sprawdzają bajtową powtarzalność PNG, zgodność z manifestem, klatki kierunków i świateł oraz piksele obu gestów w scenie jazdy.
+- Sprawdzono testowy Pałac Kultury i pojedyncze bloki o wysokości do 32 pięter. Schodkowa sylweta Pałacu wynika z pięciu brył zadanych w mapie.

@@ -58,13 +58,90 @@
     {
       "id": "rider",
       "file": "generated/rider.png",
-      "width": 24,
-      "height": 24,
+      "width": 768,
+      "height": 1080,
       "frameWidth": 24,
       "frameHeight": 24,
-      "frames": 1,
+      "frames": 1440,
+      "directions": 16,
+      "description": "Trzy kolory kasku w kolejności żółty, błękitny, różowy. Dla każdego: jazda bez gestu, lewy gest i prawy gest (po 4 klatki), powtórzone z obejrzeniem się; 4 klatki prowadzenia i 2 zsiadania. Po 16 kierunków od północy zgodnie z ruchem wskazówek. Dwie pozy w rzędzie PNG."
+    },
+    {
+      "id": "rider-lights",
+      "file": "generated/rider-lights.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "frames": 256,
+      "directions": 16,
+      "description": "Nakładki 24×24 dla jazdy, prowadzenia i dwóch faz zsiadania. Po cztery stany: zgaszone, lampki, odblask, lampki z odblaskiem."
+    },
+    {
+      "id": "traffic-cyclist",
+      "file": "generated/traffic-cyclist.png",
+      "width": 384,
+      "height": 288,
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "frames": 192,
+      "directions": 16,
+      "description": "Trzy zestawy stroju i kasku, po cztery klatki pedałowania i 16 kierunków."
+    },
+    {
+      "id": "traffic-pedestrian",
+      "file": "generated/traffic-pedestrian.png",
+      "width": 128,
+      "height": 512,
+      "frameWidth": 16,
+      "frameHeight": 16,
+      "frames": 256,
+      "directions": 8,
+      "description": "Dziecko, dorosły, senior z laską, osoba z wózkiem, turysta z mapą, biegacz, spacer z psem, uczeń. Każdy ma cztery klatki chodu i osiem kierunków."
+    },
+    {
+      "id": "traffic-car",
+      "file": "generated/traffic-car.png",
+      "width": 192,
+      "height": 576,
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frames": 72,
       "directions": 1,
-      "description": "Tymczasowy rowerzysta z kaskiem. Obrót w runtime; docelowo 16 kierunków i animacje."
+      "description": "Hatchback, sedan, kombi, taksówka; po trzy malowania. Kolumny: bez kierunkowskazu, lewy, prawy, potem te same trzy ze światłami stop. Kierunek źródłowy: północ."
+    },
+    {
+      "id": "traffic-large",
+      "file": "generated/traffic-large.png",
+      "width": 192,
+      "height": 384,
+      "frameWidth": 32,
+      "frameHeight": 64,
+      "frames": 36,
+      "directions": 1,
+      "description": "Dostawczak i autobus; po trzy malowania. Układ świateł jak w atlasie aut. Kierunek źródłowy: północ."
+    },
+    {
+      "id": "traffic-emergency",
+      "file": "generated/traffic-emergency.png",
+      "width": 96,
+      "height": 192,
+      "frameWidth": 32,
+      "frameHeight": 64,
+      "frames": 9,
+      "directions": 1,
+      "description": "Karetka, straż, policja. Kolumny: belka zgaszona, lewa, prawa. Kierunek źródłowy: północ."
+    },
+    {
+      "id": "traffic-tram",
+      "file": "generated/traffic-tram.png",
+      "width": 64,
+      "height": 160,
+      "frameWidth": 32,
+      "frameHeight": 80,
+      "frames": 4,
+      "directions": 1,
+      "description": "Rzędy: Warszawa czerwono-żółta, Wrocław niebiesko-kremowy; kolumny: przód i tył, przegub przy stykających się krawędziach. Kierunek źródłowy: północ."
     },
     {
       "id": "portrait-gracz",
