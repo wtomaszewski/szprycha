@@ -1487,8 +1487,8 @@
       "hash": "75a4aba31fc4b9d47850390b23a071c88bdfeef0b542d3363f2b8f4ac58bdf0a"
     },
     "pytania.Q017.pytanie": {
-      "text": "Jedziesz wspólną drogą dla pieszych i rowerów (symbole jeden nad drugim). Przed Tobą idą piesi. Co robisz?",
-      "hash": "19b56cbfc2efcae288c1c27aa3b5963f486ea75b91d683b9743bea49d42d50a6"
+      "text": "Jedziesz drogą oznaczoną tym znakiem. Przed Tobą idą piesi. Co robisz?",
+      "hash": "83c67d45eb01c3e5594bfd22b57e00f48b77353b4464a5257292a3465c9555a7"
     },
     "pytania.Q017.wyjasnienie": {
       "text": "Na wspólnej drodze dla pieszych i rowerów rowerzysta uważa i ustępuje pieszym.",
@@ -1503,80 +1503,80 @@
       "hash": "2ba0df3517fbca070dbb72156195deaeb477a11a23ba76fc1b69ddc46000e0f7"
     },
     "pytania.Q019.pytanie": {
-      "text": "Co oznacza żółte światło (bez migania) na sygnalizatorze?",
-      "hash": "061e2443c6236f8bf11e811c213d788c01fb035b2376064ff80ef23633927a95"
+      "text": "Co oznacza światło pokazane na tym sygnalizatorze?",
+      "hash": "82ebb4825f7e47023469a67538075efa095949a90919bce58ae0b7a56efe0455"
     },
     "pytania.Q019.wyjasnienie": {
       "text": "Żółte to zakaz wjazdu za sygnalizator — chyba że jesteś już tak blisko, że bezpieczne zatrzymanie nie jest możliwe.",
       "hash": "1ef95fc566739ed859219109f645848361e7616fc6634fa44bb96a1129754d50"
     },
     "pytania.Q020.pytanie": {
-      "text": "Pali się czerwone światło i obok zielona strzałka w prawo. Chcesz skręcić w prawo. Co robisz?",
-      "hash": "229d385336669cd89d4d5ff216d921df82255e75eace22a98dcff4a58c0e8486"
+      "text": "Widzisz ten sygnalizator i chcesz skręcić w prawo. Co robisz?",
+      "hash": "7b4de7861ae2302956473aac00214b8e2b6097b7288e4ffe5e3ddfbe2c660632"
     },
     "pytania.Q020.wyjasnienie": {
       "text": "Zielona strzałka pozwala skręcić dopiero po zatrzymaniu i ustąpieniu pierwszeństwa.",
       "hash": "c8ede14137120d1e7b33006600241b833d85dcc281b2fb076e839331d62c0a00"
     },
     "pytania.Q021.pytanie": {
-      "text": "Co musisz zrobić przy znaku STOP?",
-      "hash": "79bd881c40394a99256cc61fc4b839ee75a94da4cae97943a8f44211009d5972"
+      "text": "Co musisz zrobić, gdy widzisz ten znak?",
+      "hash": "d145a14009751831fae4bba38c28f456f3a7e9cc745aad0c7270af89891db5c4"
     },
     "pytania.Q021.wyjasnienie": {
       "text": "Przy STOP zatrzymujesz się zawsze, nawet gdy droga jest pusta.",
       "hash": "7121b80a11c26c85512f1ff80560ce9bbd96718361ec13181a6d29d9e3a5c200"
     },
     "pytania.Q022.pytanie": {
-      "text": "Co oznacza ten znak (odwrócony trójkąt)?",
-      "hash": "fc32877c267a7025758bac862edde4e40d41e468c84fed7877d96527ee5608c8"
+      "text": "Co oznacza ten znak?",
+      "hash": "762d62ff8f95bb09c317f671a0038cb812ba11f94786e7433ce62849926ba424"
     },
     "pytania.Q022.wyjasnienie": {
       "text": "A-7 — ustąp pierwszeństwa jadącym drogą, na którą wjeżdżasz.",
       "hash": "a7cf9707db56a30a7e50f41a0a49bd32914d78a3a97b513c63a805e2cccf68ee"
     },
     "pytania.Q023.pytanie": {
-      "text": "Co oznacza żółty romb w białej obwódce?",
-      "hash": "16dbcd9d4fe669f9db8f68d6eb1eb164b324d6f1813d8ed07b8469af4f679f6d"
+      "text": "Co oznacza ten znak?",
+      "hash": "762d62ff8f95bb09c317f671a0038cb812ba11f94786e7433ce62849926ba424"
     },
     "pytania.Q023.wyjasnienie": {
       "text": "D-1 — jesteś na drodze z pierwszeństwem. Mimo to obserwuj, czy inni Cię przepuszczają.",
       "hash": "8e620cb86ae6e860c2d5b96f3a5515ba8841af7d6326dfe93a361441094ed0c3"
     },
     "pytania.Q024.pytanie": {
-      "text": "Pod znakiem „zakaz wjazdu” jest tabliczka z rowerem i napisem „nie dotyczy”. Co to znaczy?",
-      "hash": "0f7ef5e1f8dbd1c27733e08268a6fb0fe135ae353bba9bb1ca40ac796016bcef"
+      "text": "Co oznacza ten znak z tabliczką?",
+      "hash": "2df7d4fae662e0c835c602dfdced2b3d706c49f5cfcec131fdf4835691100412"
     },
     "pytania.Q024.wyjasnienie": {
       "text": "Tabliczka T-22 zwalnia rowery z zakazu — to tzw. kontraruch rowerowy.",
       "hash": "728018e44148b58b68ae3506305a385694b1d415cc92be398ef9f23bf069b0f4"
     },
     "pytania.Q025.pytanie": {
-      "text": "Co oznacza niebieskie koło z białym rowerem?",
-      "hash": "5d643cf3eaddf80f638dad7b24d2fc874da597772f0866d0d3c0f35176cb01a6"
+      "text": "Co oznacza ten znak?",
+      "hash": "762d62ff8f95bb09c317f671a0038cb812ba11f94786e7433ce62849926ba424"
     },
     "pytania.Q025.wyjasnienie": {
       "text": "C-13 — droga dla rowerów. Niebieskie koła to znaki nakazu.",
       "hash": "08cc90d960a57db6f680fe3ec4a514f7bb071031b39ab1e055a1cb39d3d97d3f"
     },
     "pytania.Q026.pytanie": {
-      "text": "Co oznacza rower w czerwonym kółku na białym tle?",
-      "hash": "a4892842b8f60db118cc6ce7220c61e21e4d1c3c710d6e4c06995c4a146b0160"
+      "text": "Co oznacza ten znak?",
+      "hash": "762d62ff8f95bb09c317f671a0038cb812ba11f94786e7433ce62849926ba424"
     },
     "pytania.Q026.wyjasnienie": {
       "text": "B-9 — zakaz wjazdu rowerów. Czerwona obwódka to znak zakazu.",
       "hash": "3ad3085b4928f7bfe4909fd6c52e2c3b5fecb46252bd40a97c3cf4412c6bbee6"
     },
     "pytania.Q027.pytanie": {
-      "text": "Na przejeździe dla rowerzystów stoi sygnalizator z symbolem roweru. Kogo dotyczy?",
-      "hash": "dcce6c7fd4adff298e0bb715cb2e0c8c6fc71c45816224f00b94f6e419f2c684"
+      "text": "Kogo dotyczy ten sygnalizator?",
+      "hash": "75bf565537d608e4294436ccf2b62138a93e7a83ac2b3e1259b93424e7cda39d"
     },
     "pytania.Q027.wyjasnienie": {
       "text": "Sygnalizator z symbolem roweru jest przeznaczony dla rowerzystów.",
       "hash": "85895bdcdc1464ef1a1946c3493ff0592aeecc5e549ca6a18a4a28ade0d9fe68"
     },
     "pytania.Q028.pytanie": {
-      "text": "Co oznacza trójkątny znak z dwójką dzieci?",
-      "hash": "4ce9940553ce8a0311173e27ad42c888c24e4a6b19a9c85c39be9b108e45852f"
+      "text": "Co oznacza ten znak?",
+      "hash": "762d62ff8f95bb09c317f671a0038cb812ba11f94786e7433ce62849926ba424"
     },
     "pytania.Q028.wyjasnienie": {
       "text": "A-17 ostrzega, że dzieci mogą nagle wejść na drogę. Zwolnij.",
@@ -1639,8 +1639,8 @@
       "hash": "2fee18b53a084ebdaa6d91e5b361683bde1999526ee4dfa5e38313e10b9f52eb"
     },
     "pytania.Q036.pytanie": {
-      "text": "Przed rondem stoi znak „ustąp pierwszeństwa”. Kto ma pierwszeństwo?",
-      "hash": "88e15afd7b970194d795c1a3b2c0089957fc361f50cef7224146a92b9acbfd9c"
+      "text": "Przed wjazdem na rondo widzisz ten znak. Kto ma pierwszeństwo?",
+      "hash": "0678034bdeb4376ab3dbfc26370ec49ed1fe270b9a8db34a5bf2d175bae80bbb"
     },
     "pytania.Q036.wyjasnienie": {
       "text": "Znak A-7 przed rondem oznacza, że przepuszczasz tych, którzy już są na rondzie.",
@@ -1807,16 +1807,16 @@
       "hash": "946ecda58cd88e71127699f7e685f39f43e767705b7245e5538dca600188de0e"
     },
     "pytania.Q057.pytanie": {
-      "text": "Przed ulicą stoi białe koło z czerwoną obwódką i bez dodatkowej tabliczki. Co robisz?",
-      "hash": "76e367160097adc6450fb3157daf8e79d9106244d77f5129b2bc283eae928ea3"
+      "text": "Przed ulicą widzisz ten znak. Co robisz?",
+      "hash": "615ec895fe966c266002f94255b773d253d2ff1e288ad59562f37bd031845527"
     },
     "pytania.Q057.wyjasnienie": {
       "text": "Znak B-1 oznacza zakaz ruchu także dla rowerów, chyba że tabliczka wskazuje wyjątek.",
       "hash": "10fd437da5d208fd9b5f0816e1345c9a66495f378e74ef6cff83d79c8aaa546d"
     },
     "pytania.Q058.pytanie": {
-      "text": "Przed skrzyżowaniem masz znak A-7, a drogą główną nadjeżdża samochód. Kto przejeżdża pierwszy?",
-      "hash": "6444ded06bbcd96d0bcceb1d316b0a4563e83f98c893217f2aebc48edf787904"
+      "text": "Przed skrzyżowaniem widzisz ten znak, a z lewej nadjeżdża samochód. Kto przejeżdża pierwszy?",
+      "hash": "77683c474cefebb3b6eb2b8781467319312a1999af9392aeca4fc5caaeb97db1"
     },
     "pytania.Q058.wyjasnienie": {
       "text": "Wyjeżdżając z drogi podporządkowanej, przepuść pojazdy na drodze z pierwszeństwem.",
@@ -1847,8 +1847,8 @@
       "hash": "d62711720fd19bb6fe60316195c1f8085a0d4335daad0826c12710234a6ec487"
     },
     "pytania.Q062.pytanie": {
-      "text": "Co wskazuje biały symbol roweru namalowany na jezdni?",
-      "hash": "e2b787b8c832d057c660c9b1ebc002a0b896b745158a0062894da29d8102711c"
+      "text": "Co oznacza ten znak?",
+      "hash": "762d62ff8f95bb09c317f671a0038cb812ba11f94786e7433ce62849926ba424"
     },
     "pytania.Q062.wyjasnienie": {
       "text": "Biały symbol roweru wskazuje miejsce przeznaczone dla rowerzystów.",

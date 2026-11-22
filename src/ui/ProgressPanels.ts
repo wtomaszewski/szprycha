@@ -1,5 +1,3 @@
-import copyright from '../../LICENSE?raw';
-import notices from 'virtual:third-party-notices';
 import type { GameContent } from '../content/schemas';
 import { translate, ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
@@ -23,6 +21,7 @@ function heading(text: string) {
 export function progressPanels(
   progress: MissionProgress,
   content: GameContent,
+  about: HTMLButtonElement,
 ) {
   const dialog = document.createElement('dialog');
   dialog.className = 'game-dialog progress-panel';
@@ -40,9 +39,6 @@ export function progressPanels(
   const body = document.createElement('div');
   dialog.append(header, body);
 
-  const about = document.createElement('button');
-  about.type = 'button';
-  about.textContent = ui.settings.about;
   const editor = touchLayoutEditor(progress.store);
   const settings = () => [
     heading(ui.settings.accessibility),
@@ -77,26 +73,6 @@ export function progressPanels(
     navigation.append(button);
   }
 
-  about.addEventListener('click', () => {
-    const back = document.createElement('button');
-    back.type = 'button';
-    back.textContent = ui.settings.back;
-    back.addEventListener('click', () => {
-      showPanel(ui.settings.title, ...settings());
-      about.focus();
-    });
-    const text = document.createElement('pre');
-    text.className = 'third-party-notices';
-    text.textContent = notices;
-    showPanel(
-      ui.settings.about,
-      back,
-      paragraph(copyright.trim()),
-      heading(ui.settings.thirdParty),
-      text,
-    );
-    back.focus();
-  });
   dialog.append(editor.dialog);
   return { dialog, navigation };
 }

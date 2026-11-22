@@ -3,6 +3,7 @@ import { chooseCity, cityPin } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import questions from '../../content/pytania.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
+import { expectQuestionSign } from './question-dialog';
 
 const tutorial = pl.misje['WAW-T-01'];
 const dialogue = (page: Page) =>
@@ -203,11 +204,11 @@ test('recovers from a helmet mistake and keeps XP, mastery and mission progress 
   ).toBeEnabled();
 });
 
-test('raises Road Attention for missed STOPs, explains the answer and grants stars', async ({
-  page,
-}) => {
-  test.setTimeout(45_000);
-  const press = await mockGamepad(page);
+async function reachStopQuestion(
+  page: Page,
+  accelerate: 'ArrowUp' | 'ArrowDown',
+  highlightPath?: string,
+) {
   await page.goto('/');
   await chooseCity(page, 'warszawa', 'campaign');
   await skipDialogue(page);
@@ -215,16 +216,16 @@ test('raises Road Attention for missed STOPs, explains the answer and grants sta
 
   const canvas = page.locator('canvas');
   const resume = page.getByRole('button', { name: pl.missionUi.continue });
-  await page.keyboard.down('ArrowUp');
+  await page.keyboard.down(accelerate);
   const lesson = page.getByRole('dialog', { name: pl.replay.title });
   await expect(lesson).toBeVisible({ timeout: 10_000 });
-  await page.keyboard.up('ArrowUp');
+  await page.keyboard.up(accelerate);
   await expect(lesson).toContainText(/STOP/);
-  await page.screenshot({ path: 'test-results/m4c-stop-highlight.png' });
+  if (highlightPath) await page.screenshot({ path: highlightPath });
   await lesson.getByRole('button', { name: pl.replay.resume }).click();
-  await page.keyboard.down('ArrowUp');
+  await page.keyboard.down(accelerate);
   await expect(resume).toBeVisible({ timeout: 10_000 });
-  await page.keyboard.up('ArrowUp');
+  await page.keyboard.up(accelerate);
   await expect(
     page.getByText(tutorial.powrot_stop, { exact: true }),
   ).toBeVisible();
@@ -236,19 +237,33 @@ test('raises Road Attention for missed STOPs, explains the answer and grants sta
   const attention = page.getByLabel(pl.progression.attention);
   await expect(attention).toContainText('1/3');
 
-  await page.keyboard.down('ArrowUp');
+  await page.keyboard.down(accelerate);
   await expect(resume).toBeVisible();
-  await page.keyboard.up('ArrowUp');
+  await page.keyboard.up(accelerate);
   await expect(attention).toContainText('2/3');
   await resume.click();
 
-  await page.keyboard.down('ArrowUp');
+  await page.keyboard.down(accelerate);
   const question = questionDialog(page);
   await expect(question).toBeVisible();
-  await page.keyboard.up('ArrowUp');
+  await page.keyboard.up(accelerate);
   const stop = questionFor('ZNAK-STOP');
   await expect(question).toContainText(stop.pytanie);
   await expect(attention).toContainText('3/3');
+  return { canvas, resume, attention, question, stop };
+}
+
+test('raises Road Attention for missed STOPs, explains the answer and grants stars', async ({
+  page,
+}) => {
+  test.setTimeout(45_000);
+  const press = await mockGamepad(page);
+  const { canvas, resume, attention, question, stop } = await reachStopQuestion(
+    page,
+    'ArrowUp',
+    'test-results/m4c-stop-highlight.png',
+  );
+  await expectQuestionSign(question, 'B-20');
   const clock = await page.getByLabel(pl.missionUi.timer).textContent();
   await press(0);
   await expect(question.getByRole('button').first()).not.toBeFocused();
@@ -418,6 +433,21 @@ test('uses Select and A on a gamepad without passing A through to the bicycle', 
 
 test.describe('touch dialogue controls', () => {
   test.use({ viewport: { width: 844, height: 390 }, hasTouch: true });
+
+  test('shows the STOP sign in a Road Attention question', async ({ page }) => {
+    // The touch profile uses screen directions. The tutorial heads south.
+    const { question, stop } = await reachStopQuestion(page, 'ArrowDown');
+    await expectQuestionSign(question, 'B-20');
+    await question
+      .getByRole('button', {
+        name: stop.odpowiedzi[stop.poprawna],
+        exact: true,
+      })
+      .tap();
+    await expect(question.getByRole('status')).toHaveText(
+      `${pl.progression.wiseHead} +100`,
+    );
+  });
 
   test('opens the phone and skips the dialogue with a long press', async ({
     page,

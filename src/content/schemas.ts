@@ -87,10 +87,22 @@ export const questionsSchema = z.strictObject({
         .refine((q) => q.poprawna < q.odpowiedzi.length, {
           path: ['poprawna'],
           message: 'Answer index out of range',
+        })
+        .refine((q) => q.obrazek !== undefined || !describesSign(q.pytanie), {
+          path: ['obrazek'],
+          message: 'Question about a sign requires an illustration (obrazek)',
         }),
     )
     .min(1),
 });
+
+function describesSign(prompt: string) {
+  // An unsigned junction describes a traffic situation without a sign to show.
+  const text = prompt.replace(/(?<!\p{L})bez znaków(?!\p{L})/giu, '');
+  return /(?<!\p{L})(?:(?:znak|tablic|sygnalizator|strzałk)\p{L}*|[ABCDGPST]-\d+[a-z]?)(?![\p{L}\d])/iu.test(
+    text,
+  );
+}
 const leafCondition = z.union([
   z.strictObject({ good: id, ile: positive.int() }),
   z.strictObject({ good_modul: moduleId, ile: positive.int() }),
@@ -296,6 +308,9 @@ export const contentSchema = z
     plac: placSchema,
     osiagniecia: achievementsSchema,
     wyzwania: challengesSchema,
+    'o-grze': z.strictObject({
+      recenzja_merytoryczna: z.string().trim().min(1).nullable(),
+    }),
     misje: missionsSchema,
     dialogi: dialogueFileSchema,
   })

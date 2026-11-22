@@ -3,6 +3,7 @@ import { Tile } from './sprite-art.ts';
 const paper = 0xf4f4f4;
 const red = 0xe43b44;
 const amber = 0xfeae34;
+const green = 0x63c74d;
 const blue = 0x3b5dc9;
 const ink = 0x1a1c2c;
 const road = 0x566c86;
@@ -103,6 +104,11 @@ function child(tile: Tile, x: number, y: number, facing: number) {
   tile.line(x, y + 10, x + 3, y + 15, ink, 2);
 }
 
+function signalHousing(tile: Tile) {
+  tile.rect(21, 3, 22, 58, road);
+  tile.rect(23, 5, 18, 54, ink);
+}
+
 export function signArt() {
   const designs: Record<string, (tile: Tile) => void> = {
     'A-7': (tile) => {
@@ -118,6 +124,10 @@ export function signArt() {
     'B-2': (tile) => {
       disc(tile, 32, 32, 27, red);
       tile.rect(12, 27, 41, 11, paper);
+    },
+    'B-1': (tile) => {
+      disc(tile, 32, 32, 27, red);
+      disc(tile, 32, 32, 21, paper);
     },
     'B-9': (tile) => {
       disc(tile, 32, 32, 27, red);
@@ -143,6 +153,17 @@ export function signArt() {
       disc(tile, 32, 32, 25, blue);
       bicycle(tile, 32, paper, blue);
     },
+    'C-13/C-16': (tile) => {
+      disc(tile, 32, 32, 27, paper);
+      disc(tile, 32, 32, 25, blue);
+      bicycle(tile, 20, paper, blue, 0.65);
+      tile.rect(8, 30, 49, 3, paper);
+      disc(tile, 32, 38, 3, paper);
+      tile.line(32, 41, 31, 48, paper, 3);
+      tile.line(33, 42, 37, 46, paper, 2);
+      tile.line(31, 48, 27, 53, paper, 2);
+      tile.line(31, 48, 34, 53, paper, 2);
+    },
     'D-1': (tile) => {
       diamond(tile, 29, ink);
       diamond(tile, 28, paper);
@@ -151,6 +172,33 @@ export function signArt() {
     'P-23': (tile) => {
       tile.rect(4, 4, 56, 56, road);
       bicycle(tile, 32, paper, road, 1.2);
+    },
+    'S-1': (tile) => {
+      signalHousing(tile);
+      disc(tile, 32, 14, 7, road);
+      disc(tile, 32, 32, 7, amber);
+      disc(tile, 32, 50, 7, road);
+    },
+    'S-2': (tile) => {
+      signalHousing(tile);
+      disc(tile, 32, 14, 7, red);
+      disc(tile, 32, 32, 7, road);
+      disc(tile, 32, 50, 7, road);
+      tile.rect(43, 41, 20, 18, road);
+      tile.rect(43, 43, 18, 14, ink);
+      tile.line(45, 50, 57, 50, green, 2);
+      tile.line(52, 46, 57, 50, green, 2);
+      tile.line(57, 50, 52, 54, green, 2);
+    },
+    'S-6': (tile) => {
+      tile.rect(16, 3, 32, 58, road);
+      tile.rect(18, 5, 28, 54, ink);
+      for (const [y, color] of [
+        [15, red],
+        [32, road],
+        [49, road],
+      ] as const)
+        bicycle(tile, y, color, ink, 0.6);
     },
     'T-22': (tile) => {
       tile.rect(4, 0, 56, 30, paper);

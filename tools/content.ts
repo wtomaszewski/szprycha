@@ -14,6 +14,7 @@ import {
   signImageFile,
 } from '../src/content/signIllustrations.ts';
 import { validateMaps } from './maps.ts';
+import { storeCopySchema } from './store-copy.ts';
 
 export const contentFiles = [
   'przepisy.yaml',
@@ -23,6 +24,7 @@ export const contentFiles = [
   'plac.yaml',
   'osiagniecia.yaml',
   'wyzwania.yaml',
+  'o-grze.yaml',
 ] as const;
 export async function readMissions(root: string) {
   const directory = resolve(root, 'content/misje');
@@ -96,12 +98,12 @@ export async function readContent(root = process.cwd()) {
   const translations: unknown = JSON.parse(
     await readFile(resolve(root, 'i18n/pl.json'), 'utf8'),
   );
-  const quizSigns = new Set(
+  const questionSigns = new Set(
     content.pytania.pytania.flatMap(({ obrazek }) =>
       obrazek ? illustratedSigns(obrazek) : [],
     ),
   );
-  for (const code of quizSigns) {
+  for (const code of questionSigns) {
     if (!textAt(translations, `quiz.signAlt.${code}`))
       throw new Error(`Missing sign illustration description: ${code}`);
     await readFile(
@@ -185,6 +187,8 @@ export async function readContent(root = process.cwd()) {
   return content;
 }
 export async function buildContent(root = process.cwd()) {
+  const storeCopy = await readFile(resolve(root, 'content/sklep.yaml'), 'utf8');
+  storeCopySchema.parse(parse(storeCopy));
   const content = await readContent(root);
   await validateMaps(root, content);
   const output = resolve(root, 'public/data');

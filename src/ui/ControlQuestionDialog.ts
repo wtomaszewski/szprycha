@@ -3,10 +3,12 @@ import { localizedVoiceLine, questionVoiceLine } from '../audio/voiceLines';
 import olaPortrait from '../../assets/generated/portraits/sierzant_ola.png?url';
 import { ui } from '../core/presentation';
 import type { ControlQuestion } from '../progression/RoadAttention';
+import { questionPrompt } from './SignIllustration';
 
 export class ControlQuestionDialog {
   private readonly panel = document.createElement('dialog');
   private readonly prompt = document.createElement('p');
+  private readonly question = document.createElement('div');
   private readonly answers = document.createElement('div');
   private readonly feedback = document.createElement('p');
   private readonly resume = document.createElement('button');
@@ -46,7 +48,7 @@ export class ControlQuestionDialog {
       if (!event.repeat && this.resume.hidden)
         this.focusAnswer(event.code === 'ArrowUp' ? -1 : 1);
     });
-    speech.append(speaker, this.intro, this.prompt);
+    speech.append(speaker, this.intro, this.question);
     line.append(portrait, speech);
 
     this.answers.className = 'control-question-answers';
@@ -66,7 +68,10 @@ export class ControlQuestionDialog {
   }
 
   show(
-    question: Pick<ControlQuestion, 'pytanie' | 'odpowiedzi' | 'wyjasnienie'> &
+    question: Pick<
+      ControlQuestion,
+      'pytanie' | 'odpowiedzi' | 'wyjasnienie' | 'obrazek'
+    > &
       (
         { id: string } | { voiceKeys: { pytanie: string; wyjasnienie: string } }
       ),
@@ -80,6 +85,11 @@ export class ControlQuestionDialog {
     this.panel.setAttribute('aria-label', label);
     this.intro.hidden = Boolean(choice);
     this.prompt.textContent = question.pytanie;
+    const { element, illustrationReady } = questionPrompt(
+      this.prompt,
+      question.obrazek,
+    );
+    this.question.replaceChildren(element);
     this.answers.hidden = false;
     this.feedback.textContent = '';
     this.feedback.hidden = true;
@@ -110,7 +120,21 @@ export class ControlQuestionDialog {
     });
     this.answers.replaceChildren(...this.buttons);
     this.panel.showModal();
-    audio.read('lesson', voiceLine('pytanie'));
+    this.panel.scrollTop = 0;
+    if (!illustrationReady) {
+      audio.read('lesson', voiceLine('pytanie'));
+    } else {
+      void illustrationReady.then((ready) => {
+        if (!ready) return;
+        // Allow the visible question to paint before starting the narrator.
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            if (this.open && element.isConnected && !this.answers.hidden)
+              audio.read('lesson', voiceLine('pytanie'));
+          }),
+        );
+      });
+    }
   }
 
   gamepad(justPressed: (button: number) => boolean) {
