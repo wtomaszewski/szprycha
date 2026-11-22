@@ -189,20 +189,21 @@
    "id": "Q011",
    "modul": "M02",
    "przepisy": [
-    "GDZIE-04",
-    "GDZIE-10"
+    "GDZIE-10",
+    "GDZIE-04"
    ],
    "poziom": 2,
-   "pytanie": "Jedziesz z 7-letnim bratem, który też jest na rowerze. Gdzie możesz jechać?",
+   "pytanie": "Dorosły opiekuje się 7-letnim dzieckiem i oboje jadą na rowerach. Gdzie mogą jechać?",
    "odpowiedzi": [
     "Tylko jezdnią",
-    "Chodnikiem obok brata, opiekując się nim",
-    "Brat jezdnią, Ty chodnikiem",
-    "Nigdzie, brat nie może jeździć rowerem"
+    "Oboje chodnikiem, dziecko pod opieką dorosłego",
+    "Dziecko jezdnią, dorosły chodnikiem",
+    "Nigdzie, dziecko nie może jeździć na rowerze"
    ],
    "poprawna": 1,
-   "wyjasnienie": "Dziecko do 10 lat jedzie chodnikiem pod opieką, a opiekun może jechać obok niego chodnikiem.",
-   "zrodlo": "wlasne"
+   "wyjasnienie": "Dziecko przed 10. urodzinami jedzie chodnikiem pod opieką dorosłego, który może jechać obok niego.",
+   "zrodlo": "wlasne",
+   "weryfikacja": true
   },
   {
    "id": "Q012",
@@ -1112,6 +1113,26 @@
   ],
   "poprawna": 0,
   "wyjasnienie": "Zwolnij i zostaw miejsce, gdy pojazd zaczyna skręcać lub odstęp jest mały.",
+  "zrodlo": "wlasne",
+  "weryfikacja": true
+ },
+ {
+  "id": "Q062",
+  "modul": "M03",
+  "przepisy": [
+   "ZNAK-P23"
+  ],
+  "poziom": 1,
+  "obrazek": "P-23",
+  "pytanie": "Co wskazuje taki symbol roweru namalowany na jezdni?",
+  "odpowiedzi": [
+   "Miejsce przeznaczone dla rowerzystów",
+   "Zakaz jazdy rowerem",
+   "Parking dla samochodów",
+   "Przejście dla pieszych"
+  ],
+  "poprawna": 0,
+  "wyjasnienie": "Symbol roweru wskazuje pas lub miejsce przeznaczone dla rowerzystów.",
   "zrodlo": "wlasne",
   "weryfikacja": true
  }

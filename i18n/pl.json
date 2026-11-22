@@ -188,6 +188,38 @@
     "wiseHead": "Mądra Głowa",
     "continue": "Ruszaj dalej"
   },
+  "quiz": {
+    "title": "Quiz Mądra Głowa",
+    "mentor": "Sierżant Ola",
+    "quick": "Szybki quiz",
+    "study": "Nauka modułu",
+    "locked": "Quiz odblokujesz po zdobyciu rangi Kurier.",
+    "choose": "Wybierz quiz",
+    "empty": "Wszystkie pytania w tej serii są już przećwiczone. Powtórki pojawią się w następnych dniach gry.",
+    "question": "Pytanie",
+    "answers": "Odpowiedzi",
+    "correct": "Dobra odpowiedź!",
+    "incorrect": "Poprawna odpowiedź",
+    "next": "Następne pytanie",
+    "result": "Zobacz wynik",
+    "finished": "Seria ukończona",
+    "score": "Poprawne odpowiedzi",
+    "streak": "Poprawne odpowiedzi z rzędu",
+    "signReference": "Ilustracja znaku",
+    "stopLegend": "STOP",
+    "exceptionLegend": "Nie dotyczy",
+    "signDescriptions": {
+      "A-7": "Odwrócony żółty trójkąt z czerwoną obwódką",
+      "A-17": "Żółty trójkąt z czerwoną obwódką i sylwetkami dwojga dzieci",
+      "B-2": "Czerwone koło z białym poziomym pasem",
+      "B-9": "Czarny rower na białym kole z czerwoną obwódką",
+      "B-20": "Czerwony ośmiokąt z napisem STOP",
+      "C-13": "Biały rower na niebieskim kole",
+      "D-1": "Żółty romb z białą obwódką",
+      "P-23": "Biały symbol roweru namalowany na jezdni",
+      "T-22": "Biała tabliczka z napisem Nie dotyczy i symbolem roweru"
+    }
+  },
   "skillMap": {
     "title": "Mapa Umiejętności",
     "close": "Wróć do menu",

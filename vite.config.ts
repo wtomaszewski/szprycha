@@ -1,14 +1,26 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 import { buildContent } from './tools/content.ts';
 
 export default defineConfig({
   base: './',
   plugins: [
+    VitePWA({
+      manifest: false,
+      injectRegister: 'script-defer',
+      workbox: {
+        globPatterns: [
+          'index.html',
+          'assets/*.{js,css,ttf}',
+          'data/content.json',
+        ],
+      },
+    }),
     {
       name: 'validated-game-content',
-      async buildStart() {
-        await buildContent();
+      async config(_config, { isPreview }) {
+        if (!isPreview) await buildContent();
       },
       configureServer(server) {
         const watched = [resolve('content'), resolve('maps'), resolve('i18n')];

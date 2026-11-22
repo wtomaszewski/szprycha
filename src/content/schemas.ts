@@ -198,12 +198,15 @@ export const balanceSchema = z.strictObject({
       ),
   }),
   leitner_odstepy_dni: z
-    .array(count)
-    .length(5)
+    .tuple([z.literal(0), count, count, count, count])
     .refine(
       (a) => a.every((v, i) => i === 0 || v > a[i - 1]!),
       'Intervals must increase',
     ),
+  quiz: z.strictObject({
+    szybkie_pytania: positive.int(),
+    xp_za_odpowiedz: count,
+  }),
   gwiazdki: z.strictObject({
     zetony: z
       .tuple([count, count, count])
@@ -292,7 +295,7 @@ export const contentSchema = z
     dialogi: dialogueFileSchema,
   })
   .superRefine((data, ctx) => {
-    function unique(values: string[], path: string[]) {
+    function unique(values: string[], path: (string | number)[]) {
       const seen = new Set<string>();
       for (const value of values) {
         if (seen.has(value))
@@ -328,7 +331,7 @@ export const contentSchema = z
       data.misje.map((mission) => mission.id),
       ['misje'],
     );
-    const rules = new Set(data.przepisy.przepisy.map((r) => r.id));
+    const rules = new Map(data.przepisy.przepisy.map((r) => [r.id, r]));
     function reference(value: string, path: (string | number)[]) {
       if (!rules.has(value))
         ctx.addIssue({
@@ -342,16 +345,60 @@ export const contentSchema = z
         reference(r, ['znaki', 'znaki', i, 'reguly', j]),
       ),
     );
-    data.pytania.pytania.forEach((q, i) =>
-      q.przepisy.forEach((r, j) =>
-        reference(r, ['pytania', 'pytania', i, 'przepisy', j]),
-      ),
-    );
-    const questionRules = new Set(
-      data.pytania.pytania.flatMap((q) => q.przepisy),
-    );
+    const signs = new Map(data.znaki.znaki.map((s) => [s.kod, s]));
+    const questionRules = new Set<string>();
+    const questionModules = new Set<z.infer<typeof moduleId>>();
+    data.pytania.pytania.forEach((q, i) => {
+      const path = ['pytania', 'pytania', i];
+      const signCodes = q.obrazek?.split('+') ?? [];
+      const linkedSigns = signCodes.every((code) => {
+        const sign = signs.get(code);
+        return sign?.reguly.some((rule) => q.przepisy.includes(rule));
+      });
+      if (!linkedSigns || new Set(signCodes).size !== signCodes.length)
+        ctx.addIssue({
+          code: 'custom',
+          path: [...path, 'obrazek'],
+          message: 'Expected distinct Album signs linked to the question rules',
+        });
+      unique(q.przepisy, [...path, 'przepisy']);
+      q.przepisy.forEach((rule, j) =>
+        reference(rule, [...path, 'przepisy', j]),
+      );
+      // Sign recognition belongs in M03 even when the sign illustrates a
+      // rule taught in another module (e.g. A-17 and safe speed).
+      if (
+        !(q.modul === 'M03' && signCodes.length && linkedSigns) &&
+        !q.przepisy.some((rule) => rules.get(rule)?.modul === q.modul)
+      )
+        ctx.addIssue({
+          code: 'custom',
+          path: [...path, 'modul'],
+          message:
+            'Question module must match its rules or teach an Album sign',
+        });
+      questionModules.add(q.modul);
+      for (const rule of q.przepisy) {
+        // A quiz-only rule needs a question in its own study module.
+        if (
+          rules.get(rule)?.detektor !== 'quiz-only' ||
+          rules.get(rule)?.modul === q.modul
+        )
+          questionRules.add(rule);
+      }
+    });
+    for (const module of moduleId.options)
+      if (!questionModules.has(module))
+        ctx.addIssue({
+          code: 'custom',
+          path: ['pytania', 'pytania'],
+          message: `Missing study question for ${module}`,
+        });
     for (const { id, detektor } of data.przepisy.przepisy) {
-      if ((detektor === 'sim' || id === 'KASK-01') && !questionRules.has(id))
+      if (
+        (detektor === 'sim' || detektor === 'quiz-only' || id === 'KASK-01') &&
+        !questionRules.has(id)
+      )
         ctx.addIssue({
           code: 'custom',
           path: ['pytania', 'pytania'],
@@ -508,6 +555,12 @@ export const contentSchema = z
         code: 'custom',
         path: ['balans', 'licencja', 'teoria_pytan'],
         message: 'Question bank too small',
+      });
+    if (data.balans.quiz.szybkie_pytania > data.pytania.pytania.length)
+      ctx.addIssue({
+        code: 'custom',
+        path: ['balans', 'quiz', 'szybkie_pytania'],
+        message: 'Question bank too small for quick quiz',
       });
   });
 export type GameContent = z.infer<typeof contentSchema>;

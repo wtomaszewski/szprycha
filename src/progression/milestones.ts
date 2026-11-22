@@ -8,7 +8,7 @@ import { seriesMultiplier } from './SafetySeries';
 type Template = GameContent['wyzwania']['wyzwania'][number];
 type Challenge = Template & { module: ModuleId };
 type DailyBalance = GameContent['balans']['wyzwania_dzienne'];
-type Trigger = 'ride' | 'photo' | 'mission';
+type Trigger = 'ride' | 'photo' | 'mission' | 'quiz';
 type Day = NonNullable<ProgressProfile['daily']>;
 
 function seededOrder(id: string, seed: string) {
@@ -61,6 +61,7 @@ function respondsTo(condition: Condition, trigger: Trigger): boolean {
       'zleceniodawca' in condition ||
       'scenka_pp' in condition
     );
+  if (trigger === 'quiz') return 'quiz_seria' in condition;
   return 'album' in condition;
 }
 
@@ -97,6 +98,7 @@ export class Milestones {
       ride: active.filter(({ warunek }) => respondsTo(warunek, 'ride')),
       photo: active.filter(({ warunek }) => respondsTo(warunek, 'photo')),
       mission: active.filter(({ warunek }) => respondsTo(warunek, 'mission')),
+      quiz: active.filter(({ warunek }) => respondsTo(warunek, 'quiz')),
     };
     this.dailyRanks = content.balans.rangi.filter(({ odblokuj }) =>
       odblokuj.includes('wyzwania_dzienne'),
@@ -167,6 +169,11 @@ export class Milestones {
     return true;
   }
 
+  studyAnswer(profile: ProgressProfile, correct: boolean) {
+    profile.quiz.streak = correct ? profile.quiz.streak + 1 : 0;
+    if (correct) this.awardAchievements(profile, 'quiz');
+  }
+
   private awardAchievements(profile: ProgressProfile, trigger: Trigger) {
     for (const { id, zetony, warunek } of this.achievements[trigger]) {
       if (
@@ -206,6 +213,8 @@ export class Milestones {
       );
     if ('seria' in condition)
       return profile.achievementSeries >= condition.seria;
+    if ('quiz_seria' in condition)
+      return profile.quiz.streak >= condition.quiz_seria;
     if ('scenka_pp' in condition)
       return this.content.misje.some(
         ({ id, typ }) =>

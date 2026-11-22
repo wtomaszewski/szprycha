@@ -9,6 +9,7 @@ import {
 import { missionsSchema } from '../src/content/missions.ts';
 import { eventIds, eventRules } from '../src/gameplay/TrafficEvents.ts';
 import { textAt } from '../src/content/translation.ts';
+import { hasSignIllustration } from '../src/ui/SignIllustration.ts';
 import { validateMaps } from './maps.ts';
 
 export const contentFiles = [
@@ -92,6 +93,15 @@ export async function readContent(root = process.cwd()) {
   const translations: unknown = JSON.parse(
     await readFile(resolve(root, 'i18n/pl.json'), 'utf8'),
   );
+  for (const { obrazek } of content.pytania.pytania)
+    for (const code of obrazek?.split('+') ?? [])
+      if (
+        !hasSignIllustration(code) ||
+        !textAt(translations, `quiz.signDescriptions.${code}`)
+      )
+        throw new Error(
+          `Missing quiz sign illustration or description: ${code}`,
+        );
   for (const mission of content.misje) {
     const keys = [
       mission.tytul,

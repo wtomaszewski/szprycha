@@ -118,7 +118,7 @@ describe('docs/04 §8 — achievements and collection', () => {
     expect(progress.store.profile.achievementXp).toHaveProperty('seria_5');
   });
 
-  it('counts only clean completions and keeps future or violation-triggered systems inactive', () => {
+  it('counts clean completions and excludes violation-triggered questions from quiz awards', () => {
     const progress = configured();
     const mission = content.misje.find(
       ({ zleceniodawca }) => zleceniodawca === 'pani_halina',
@@ -137,7 +137,8 @@ describe('docs/04 §8 — achievements and collection', () => {
     for (let i = 0; i < 10; i++)
       progress.complete(mission, { ...reward, clean: true });
     expect(progress.store.profile.achievementXp).toEqual({ dobry_sasiad: 60 });
-    for (const id of ['zloty_plac', 'dwa_miasta', 'krasnologia', 'madra_glowa'])
+    expect(progress.store.profile.quiz.streak).toBe(0);
+    for (const id of ['zloty_plac', 'dwa_miasta', 'krasnologia'])
       expect(
         content.osiagniecia.osiagniecia.find((a) => a.id === id)?.aktywne,
       ).toBe(false);

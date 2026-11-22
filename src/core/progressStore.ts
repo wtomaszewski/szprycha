@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { missionCity } from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { placRecordsSchema } from '../gameplay/plac/placRecords';
+import { emptyQuizProgress, quizProgressSchema } from '../gameplay/quiz';
 import { applyMastery, localDay } from '../progression/mastery';
 import type { Milestones } from '../progression/milestones';
 import { TICKS_PER_SECOND, type Verdict } from '../rules/types';
@@ -52,7 +53,7 @@ const m5bProfileSchema = z.strictObject({
   ),
 });
 
-const profileSchema = m5bProfileSchema.extend({
+const v3ProfileSchema = m5bProfileSchema.extend({
   version: z.literal(3),
   goodHabits: z.record(id, count),
   achievementSeries: count,
@@ -80,6 +81,12 @@ const profileSchema = m5bProfileSchema.extend({
   selectedCity: missionCity.optional(),
   plac: placRecordsSchema.optional(),
   breakMinutes: count.positive().optional(),
+});
+
+const profileVersion = 4;
+const profileSchema = v3ProfileSchema.extend({
+  version: z.literal(profileVersion),
+  quiz: quizProgressSchema,
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
@@ -124,7 +131,8 @@ class RideBatch {
 function upgrade(profile: z.infer<typeof m5bProfileSchema>): ProgressProfile {
   return {
     ...profile,
-    version: 3,
+    version: profileVersion,
+    quiz: emptyQuizProgress(),
     goodHabits: {},
     achievementSeries: 0,
     cleanMissions: {},
@@ -153,9 +161,22 @@ function createProfile(legacy?: z.infer<typeof legacySchema>): ProgressProfile {
   });
 }
 
-function decodeProfile(raw: unknown) {
+function decodeProfile(raw: unknown): {
+  profile: ProgressProfile;
+  reset: boolean;
+} {
   const current = profileSchema.safeParse(raw);
   if (current.success) return { profile: current.data, reset: false };
+  const v3 = v3ProfileSchema.safeParse(raw);
+  if (v3.success)
+    return {
+      profile: {
+        ...v3.data,
+        version: profileVersion,
+        quiz: emptyQuizProgress(),
+      },
+      reset: false,
+    };
   const m5b = m5bProfileSchema.safeParse(raw);
   if (m5b.success) return { profile: upgrade(m5b.data), reset: false };
   const legacy = legacySchema.safeParse(raw);
@@ -171,7 +192,7 @@ function hasFutureVersion(raw: unknown) {
     raw !== null &&
     'version' in raw &&
     typeof raw.version === 'number' &&
-    raw.version > 3
+    raw.version > profileVersion
   );
 }
 
@@ -361,7 +382,7 @@ export class ProgressStore {
     const write = update<ProgressProfile | undefined>(
       progressRecordKey,
       (profile) => {
-        if (this.sessionOnly || profile?.version !== 3)
+        if (this.sessionOnly || profile?.version !== profileVersion)
           throw new Error('Progress record unavailable');
         batch?.apply(profile);
         edit?.(profile);

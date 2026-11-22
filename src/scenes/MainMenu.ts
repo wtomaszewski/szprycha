@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import type { GameContent } from '../content/schemas';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 import { progressPanels } from '../ui/ProgressPanels';
+import { quizDialog } from '../ui/QuizDialog';
 import { progressNotice, skillMapButton } from '../ui/SkillMap';
 import { FONT, ui } from '../core/presentation';
 import { readHelmetColor, setHelmetColor } from '../core/helmetColor';
@@ -17,6 +18,7 @@ export class MainMenu extends Scene {
     const progress = this.registry.get('missionProgress') as MissionProgress;
     const skills = skillMapButton(progress, gameContent);
     const panels = progressPanels(progress, gameContent);
+    const quiz = quizDialog(progress, gameContent);
     const notice = document.createElement('p');
     notice.className = 'menu-save-notice';
     notice.setAttribute('role', 'status');
@@ -56,6 +58,8 @@ export class MainMenu extends Scene {
       campaign,
       freeRide,
       plac,
+      quiz.open,
+      quiz.dialog,
       helmetLabel,
       skills.button,
       skills.dialog,
@@ -103,10 +107,14 @@ export class MainMenu extends Scene {
       .lineBetween(541, 183, 537, 170)
       .lineBetween(537, 170, 550, 170);
     label(433, 284, ui.footer, 12, '#c0cbdc');
+    const modalOpen = () =>
+      skills.dialog.open || panels.dialog.open || quiz.dialog.open;
     this.add
       .zone(180, 219, 272, 39)
       .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => this.scene.start('City'));
+      .on('pointerdown', () => {
+        if (!modalOpen()) this.scene.start('City');
+      });
     const center = () => {
       this.cameras.main.setScroll(
         -Math.floor((this.scale.width - 640) / 2),
@@ -116,6 +124,7 @@ export class MainMenu extends Scene {
         campaign,
         freeRide,
         plac,
+        quiz.open,
         helmetLabel,
         skills.button,
         panels.navigation,
@@ -124,19 +133,10 @@ export class MainMenu extends Scene {
     };
     center();
     this.scale.on('resize', center);
-    const startDrive = (event: KeyboardEvent) => {
+    const startDrive = ({ target }: KeyboardEvent) => {
       if (
-        event.target !== campaign &&
-        event.target !== freeRide &&
-        event.target !== plac &&
-        event.target !== helmet &&
-        event.target !== skills.button &&
-        !skills.dialog.open &&
-        !panels.dialog.open &&
-        !(
-          event.target instanceof Node &&
-          panels.navigation.contains(event.target)
-        )
+        !modalOpen() &&
+        (target === document.body || target === this.game.canvas)
       )
         this.scene.start('City');
     };
@@ -147,6 +147,8 @@ export class MainMenu extends Scene {
       campaign.remove();
       freeRide.remove();
       plac.remove();
+      quiz.open.remove();
+      quiz.dialog.remove();
       helmetLabel.remove();
       skills.button.remove();
       skills.dialog.remove();

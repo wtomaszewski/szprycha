@@ -1127,8 +1127,15 @@ button[aria-pressed='true'] {
   gap: 4px 12px;
 }
 
-.album-cards img {
+.album-figures {
   grid-row: span 2;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+
+.album-cards img,
+.sign-illustration {
   image-rendering: pixelated;
 }
 
@@ -1337,7 +1344,8 @@ button[aria-pressed='true'] {
   outline-offset: 2px;
 }
 
-.menu-plac {
+.menu-plac,
+.menu-quiz {
   position: fixed;
   left: calc(50% + 23px * var(--menu-zoom, 1));
   top: calc(50% - 55px * var(--menu-zoom, 1));
@@ -1345,6 +1353,103 @@ button[aria-pressed='true'] {
   min-height: calc(38px * var(--menu-zoom, 1));
   border-color: #73eff7;
   font-size: calc(16px * var(--menu-zoom, 1));
+}
+
+.menu-quiz {
+  top: calc(50% - 12px * var(--menu-zoom, 1));
+  border-color: #ffcd75;
+}
+
+.quiz-dialog {
+  inset: 0;
+  width: min(670px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  margin: auto;
+  padding: clamp(12px, 4vw, 24px);
+  overflow: auto;
+}
+
+.quiz-dialog header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #566c86;
+  padding-bottom: 10px;
+}
+
+.quiz-dialog h2 {
+  margin: 0;
+  color: #ffcd75;
+}
+
+.quiz-dialog h3 {
+  margin: 12px 0 6px;
+  font-size: clamp(18px, 4vw, 24px);
+}
+
+.quiz-modules,
+.quiz-answers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.quiz-answers button,
+.quiz-modules button {
+  text-align: left;
+  padding: 8px 12px;
+}
+
+.quiz-count {
+  margin: 0 0 10px;
+  color: #c0cbdc;
+}
+
+.quiz-signs:not(:empty) {
+  display: grid;
+  justify-items: center;
+  width: max-content;
+  margin: 0 auto 10px;
+  padding: 6px 12px;
+  background: #333c57;
+}
+
+.quiz-feedback:not(:empty) {
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-left: 3px solid #73eff7;
+  background: #333c57;
+  font-size: 17px;
+}
+
+.quiz-feedback p {
+  margin: 4px 0 0;
+}
+
+.quiz-answers button:disabled {
+  cursor: default;
+  color: #f4f4f4;
+  outline: none;
+}
+
+.quiz-answers button.quiz-answer-correct {
+  border-color: #73eff7;
+}
+
+.quiz-answers button.quiz-answer-incorrect {
+  border-color: #f58a8a;
+}
+
+@media (max-width: 480px) {
+  .quiz-modules,
+  .quiz-answers {
+    grid-template-columns: 1fr;
+  }
 }
 
 .ride-plac {

@@ -47,6 +47,23 @@ describe('canonical content', () => {
     first.good = 'PP-01';
     expect(() => contentSchema.parse(c)).toThrow('Expected a simulated rule');
   });
+  it('checks the module, rule coverage and Album signs for quiz questions', async () => {
+    const content = await readContent();
+    const questions = content.pytania.pytania;
+    questions[0]!.modul = 'M08';
+    expect(() => contentSchema.parse(content)).toThrow(
+      'Question module must match',
+    );
+    questions[0]!.modul = 'M01';
+    const composite = questions.find(({ id }) => id === 'Q024')!;
+    composite.obrazek = 'B-2+C-13';
+    expect(() => contentSchema.parse(content)).toThrow('Album signs linked');
+    composite.obrazek = 'B-2+T-22';
+    content.pytania.pytania = questions.filter(({ id }) => id !== 'Q062');
+    expect(() => contentSchema.parse(content)).toThrow(
+      'Missing control question for ZNAK-P23',
+    );
+  });
   it('rejects duplicate rules, invalid answer indexes, bad balance and unknown fields', async () => {
     const c = await readContent();
     c.przepisy.przepisy.push(c.przepisy.przepisy[0]!);

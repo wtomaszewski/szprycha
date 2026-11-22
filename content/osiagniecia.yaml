@@ -14,7 +14,7 @@ osiagniecia:
   - { id: tramwajarz, nazwa: "Tramwajowy Spokój", opis: "Przepuść 20 tramwajów i 10 razy pasażerów na przystanku", warunek: { all: [ { good: PIER-09, ile: 20 }, { good: MSC-02, ile: 10 } ] }, zetony: 30 }
   - { id: pierwsza_pomoc, nazwa: "Ratownik", opis: "Ukończ bezbłędnie scenkę pierwszej pomocy", warunek: { scenka_pp: bezblednie }, aktywne: true, zetony: 40 }
   - { id: turbo_nawrocony, nazwa: "Turbo nawrócony", opis: "Ukończ akt 3 w dowolnym mieście", warunek: { akt: 3 }, aktywne: false, zetony: 50 }
-  - { id: madra_glowa, nazwa: "Mądra Głowa", opis: "Odpowiedz poprawnie na 20 pytań Sierżant Oli z rzędu", warunek: { quiz_seria: 20 }, aktywne: false, zetony: 40 }
+  - { id: madra_glowa, nazwa: "Mądra Głowa", opis: "Odpowiedz poprawnie na 20 pytań Sierżant Oli z rzędu", warunek: { quiz_seria: 20 }, zetony: 40 }
   - { id: dwa_miasta, nazwa: "Obywatel Dwóch Miast", opis: "Ukończ kampanię Warszawy i Wrocławia", warunek: { kampanie: [warszawa, wroclaw] }, aktywne: false, zetony: 100 }
   - { id: legenda, nazwa: "Legenda Szprychy", opis: "Zdaj egzamin Licencji Szprychy", warunek: { licencja: true }, aktywne: false, zetony: 200 }
   - { id: dobry_sasiad, nazwa: "Dobry Sąsiad", opis: "Zrób 10 kursów dla Pani Haliny", warunek: { zleceniodawca: pani_halina, ile: 10 }, zetony: 30 }

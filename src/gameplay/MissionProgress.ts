@@ -5,6 +5,13 @@ import { BreakReminder } from '../progression/breakReminder';
 import { Milestones } from '../progression/milestones';
 import { ProgressStore, type RideVerdict } from '../core/progressStore';
 import {
+  advanceQuizDay,
+  drawQuizQuestions,
+  isQuizCardDue,
+  reviewQuizCard,
+  type QuizQuestion,
+} from './quiz';
+import {
   applyMastery,
   localDay,
   masteryWeight,
@@ -201,6 +208,56 @@ export class MissionProgress {
     });
   }
 
+  visitQuizDay(date = localDay(new Date())) {
+    const { quiz } = this.store.profile;
+    if (!quiz.lastDay || date > quiz.lastDay)
+      this.store.change((profile) => advanceQuizDay(profile.quiz, date));
+  }
+
+  quizQuestions(content: GameContent, seed: number, module?: ModuleId) {
+    this.visitQuizDay();
+    return drawQuizQuestions(
+      content,
+      this.store.profile.quiz,
+      (id) => this.ruleMastery(id),
+      seed,
+      module,
+    );
+  }
+
+  recordStudyAnswer(
+    content: GameContent,
+    question: QuizQuestion,
+    correct: boolean,
+    date = localDay(new Date()),
+  ) {
+    const { balans } = content;
+    const milestones = this.milestones(content);
+    this.store.change((profile) => {
+      const { quiz } = profile;
+      advanceQuizDay(quiz, date);
+      // Another tab may have already moved this card out of today's review.
+      if (!isQuizCardDue(quiz, question.id)) return;
+      quiz.cards[question.id] = reviewQuizCard(
+        quiz.cards[question.id],
+        correct,
+        quiz.day,
+        balans.leitner_odstepy_dni,
+      );
+      for (const rule of question.przepisy)
+        applyMastery(
+          profile.mastery,
+          rule,
+          correct ? 'quiz_ok' : 'quiz_zle',
+          balans.mastery,
+          date,
+        );
+      if (correct) profile.quizXp += balans.quiz.xp_za_odpowiedz;
+      milestones.studyAnswer(profile, correct);
+    });
+    return this.store.flush();
+  }
+
   awardAchievement(id: string, xp: number) {
     this.store.change((profile) => {
       if (!Object.hasOwn(profile.achievementXp, id))
@@ -290,7 +347,10 @@ export async function loadMissionProgress() {
   } catch {
     // The IndexedDB profile can still load without localStorage.
   }
-  return new MissionProgress(
+  const progress = new MissionProgress(
     await ProgressStore.open(indexedDb, legacyStorage),
   );
+  // Count distinct days when the game is played, including days spent driving.
+  if (progress.store.profile.quiz.lastDay) progress.visitQuizDay();
+  return progress;
 }

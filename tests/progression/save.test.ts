@@ -61,7 +61,7 @@ it('migrates the M5a localStorage profile and retires it after the commit', asyn
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 3,
+    version: 4,
     missionPoints: 0,
     mastery: {},
   });
@@ -93,7 +93,7 @@ it('upgrades an IndexedDB v1 record and prefers it over remaining localStorage',
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 3,
+    version: 4,
     bestScores: {},
     quizXp: 0,
   });
@@ -116,7 +116,7 @@ it.each(['legacy', 'indexeddb'])(
     const store = await ProgressStore.open(factory, storage);
     expect(store).toMatchObject({ reset: true, sessionOnly: false });
     expect(store.profile).toMatchObject({
-      version: 3,
+      version: 4,
       completed: [],
       missionPoints: 0,
     });
@@ -167,13 +167,41 @@ it('preserves M5b progress when adding the album and milestone counters', async 
   expect(store.reset).toBe(false);
   expect(store.profile).toMatchObject({
     ...profile,
-    version: 3,
+    version: 4,
     signPhotos: {},
     goodHabits: {},
     cleanMissions: {},
     stickers: [],
   });
   expect((await ProgressStore.open(factory)).profile).toEqual(store.profile);
+});
+
+it('migrates a v3 game profile and saves quiz progress through a reload', async () => {
+  const factory = new IDBFactory();
+  const { quiz, ...existing } = new ProgressStore().profile;
+  const v3 = { ...existing, version: 3, selectedCity: 'wroclaw', quizXp: 12 };
+  await seed(factory, v3);
+
+  const store = await ProgressStore.open(factory);
+  expect(store.reset).toBe(false);
+  expect(store.profile).toEqual({ ...v3, version: 4, quiz });
+  const progress = new MissionProgress(store);
+  const content = await readContent();
+  const question = content.pytania.pytania.find(({ id }) => id === 'Q011')!;
+  await progress.recordStudyAnswer(content, question, true, '2026-11-22');
+
+  const reloaded = new MissionProgress(await ProgressStore.open(factory));
+  expect(reloaded.selectedCity).toBe('wroclaw');
+  expect(reloaded.store.profile.quiz).toEqual({
+    day: 1,
+    lastDay: '2026-11-22',
+    cards: { Q011: { box: 2, dueDay: 2 } },
+    streak: 1,
+  });
+  expect(reloaded.xp).toBe(12 + balans.quiz.xp_za_odpowiedz);
+  expect(reloaded.ruleMastery('GDZIE-10')).toBe(balans.mastery.quiz_ok);
+  expect(reloaded.ruleMastery('GDZIE-04')).toBe(balans.mastery.quiz_ok);
+  expect(reloaded.moduleMastery('M02', content)).toBeGreaterThan(0);
 });
 
 it('adds the city choice to an existing profile and preserves the rest of the save', async () => {
@@ -194,7 +222,7 @@ it('adds the city choice to an existing profile and preserves the rest of the sa
 
 it('preserves an unsupported future save', async () => {
   const factory = new IDBFactory();
-  const future = { version: 4, data: 'future' };
+  const future = { version: 5, data: 'future' };
   await seed(factory, future);
   const store = await ProgressStore.open(factory);
   expect(store).toMatchObject({ reset: false, sessionOnly: true });
@@ -260,4 +288,28 @@ it('keeps concurrent tab writes and pays each star or achievement only once on d
   expect(progress.tokens).toBe(35);
   expect(progress.xp).toBe(1061);
   expect(progress.ruleMastery('ZNAK-STOP')).toBe(20);
+});
+
+it('merges quiz reviews across tabs and counts a promoted card only once', async () => {
+  const factory = new IDBFactory();
+  const [first, second] = await Promise.all(
+    [1, 2].map(
+      async () => new MissionProgress(await ProgressStore.open(factory)),
+    ),
+  );
+  const content = await readContent();
+  const [a, b] = content.pytania.pytania;
+  const date = '2026-11-22';
+  await Promise.all([
+    first!.recordStudyAnswer(content, a!, true, date),
+    second!.recordStudyAnswer(content, a!, true, date),
+    second!.recordStudyAnswer(content, b!, true, date),
+  ]);
+  const reloaded = new MissionProgress(await ProgressStore.open(factory));
+  expect(reloaded.store.profile.quiz.streak).toBe(2);
+  expect(reloaded.xp).toBe(2 * balans.quiz.xp_za_odpowiedz);
+  expect(Object.keys(reloaded.store.profile.quiz.cards)).toEqual([
+    a!.id,
+    b!.id,
+  ]);
 });
