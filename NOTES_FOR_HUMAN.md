@@ -227,6 +227,12 @@ Poniżej zestawienie zmian do przejrzenia przez konsultanta merytorycznego (pier
 - Wypełnić Google Play Data safety i Apple App Privacy zgodnie z działaniem wersji offline. Wybrać grupę wiekową Google Play Families i przedział 9–11 w Apple Kids Category oraz potwierdzić bramkę rodzicielską przed linkami.
 - Sprawdzić uruchomienie w trybie samolotowym, zapis po restarcie, wibracje, zgodność UI z safe-area i dostępność polskiego lektora na urządzeniach zgodnie z [BUILD_MOBILE.md](docs/BUILD_MOBILE.md).
 
+## M10b — przed uruchomieniem rankingów (Wojtek)
+
+- Wybrać dostawcę hostingu w UE i region przechowywania bazy oraz kopii zapasowych. Potwierdzić wyłączenie zapisu IP i nagłówków również w proxy oraz zasady usuwania kopii.
+- Wybrać domenę API, ustawić HTTPS i originy z rzeczywistych buildów web i mobile. Instrukcja jest w [BUILD_SERVER.md](docs/BUILD_SERVER.md).
+- Zaktualizować Google Play Data safety, Apple App Privacy i politykę prywatności przed udostępnieniem wersji z rankingami.
+
 ## Do przeglądu prawnika
 
 Lista przed wydaniem komercyjnym. Decyzje i zgody odnotować w [#7](https://github.com/wtomaszewski/szprycha/issues/7).

@@ -30,6 +30,8 @@ Listy słów w `content/nicki.json` są autorskie. Strefa Rodzica korzysta z ist
 
 Wytwory projektu podlegają [LICENSE](../LICENSE). W bieżącej wersji gra nie dystrybuuje nagrań, sampli ani muzyki z zewnętrznych bibliotek.
 
+Serwer M10b korzysta z istniejących list nicków i identyfikatorów awatarów. Licencje kodu i środowiska serwera opisano w [docs/LICENCJE.md](../docs/LICENCJE.md#serwer-rankingów).
+
 ## Audyt oznaczeń w #63
 
 Przejrzano arkusze PNG i font w `assets/`, procedury rysowania w `src/render/`, generatory i definicje scenerii w `tools/` oraz warstwę tekstową w `content/` i `i18n/`.

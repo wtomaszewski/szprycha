@@ -1,0 +1,17 @@
+{
+  "name": "@szprycha/rankings",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && vite build --config vite.config.ts && tsx src/buildRules.ts",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  }
+}
