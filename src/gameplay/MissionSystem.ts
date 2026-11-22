@@ -89,6 +89,8 @@ export class MissionSystem {
   private readonly shortcutSign?: { id: string; ruleId: string };
   private readonly roughSurfaces: readonly Zone[];
   private readonly photos = new Set<string>();
+  private choice?: { position: Vec2; correct: boolean };
+  private readonly evaluatedChoices = new Set<number>();
   private previousSpeed = 0;
   private shocks = 0;
   private readonly failureConditions: ReadonlySet<Failure>;
@@ -202,6 +204,43 @@ export class MissionSystem {
     return this.goalTarget?.goal.typ === 'przygotuj_rower';
   }
 
+  get pendingChoice() {
+    const goal = this.goalTarget?.goal;
+    return this.choice && !this.choice.correct && goal?.typ === 'wybor'
+      ? goal
+      : undefined;
+  }
+
+  answerChoice(index: number) {
+    const goal = this.pendingChoice;
+    const choice = this.choice;
+    if (
+      !goal ||
+      !choice ||
+      choice.correct ||
+      !Number.isInteger(index) ||
+      index < 0 ||
+      index >= goal.odpowiedzi.length
+    )
+      return;
+    const correct = index === goal.poprawna;
+    if (!this.evaluatedChoices.has(this.goalIndex)) {
+      this.evaluatedChoices.add(this.goalIndex);
+      const kind = correct ? 'good' : 'minor';
+      this.score.receive(kind);
+      this.verdicts.push({
+        kind,
+        ruleId: goal.regula,
+        at: this.elapsedSeconds,
+        pos: choice.position,
+        evidence: { answer: index },
+        feedbackKey: `przepisy.${goal.regula}.feedback`,
+      });
+    }
+    choice.correct = correct;
+    return { correct, ruleId: goal.regula };
+  }
+
   get shakeLevel() {
     return this.definition.przesylka?.delikatna ? this.shocks : undefined;
   }
@@ -242,6 +281,7 @@ export class MissionSystem {
 
   rewindCheckpoint() {
     this.goalIndex = this.checkpoint.goalIndex;
+    this.choice = undefined;
     this.requiredHabitSeen = false;
     this.previousSpeed = 0;
     return this.checkpoint.spawn;
@@ -325,7 +365,15 @@ export class MissionSystem {
       ? Boolean(equipment?.helmet && equipment.lights)
       : target.goal.typ === 'sfotografuj'
         ? this.photos.has(target.goal.znak)
-        : reached(target.area, position);
+        : target.goal.typ === 'wybor'
+          ? Boolean(this.choice?.correct)
+          : reached(target.area, position);
+    if (
+      target.goal.typ === 'wybor' &&
+      speed === 0 &&
+      reached(target.area, position)
+    )
+      this.choice ??= { position: { ...position }, correct: false };
     const missingHabit =
       atTarget && target.goal.wymagany_nawyk && !this.requiredHabitSeen;
     let effects: TickEffects | undefined;
@@ -338,6 +386,7 @@ export class MissionSystem {
     }
     if (major || missingHabit) {
       this.goalIndex = this.checkpoint.goalIndex;
+      this.choice = undefined;
       this.requiredHabitSeen = false;
       this.previousSpeed = 0;
       return {
@@ -357,6 +406,7 @@ export class MissionSystem {
           (!this.race || this.race.opponentScore !== undefined)))
     ) {
       this.goalIndex++;
+      this.choice = undefined;
       this.requiredHabitSeen = false;
       if (this.goalIndex === this.goals.length)
         this.finish({ status: 'completed' }, questionPending);
@@ -390,11 +440,18 @@ export class MissionSystem {
       this.delayedOutcome = outcome;
       return;
     }
+    const illegalShortcut = this.verdicts.some(
+      ({ kind, ruleId, highlight }) =>
+        kind !== 'good' &&
+        ruleId === this.shortcutSign?.ruleId &&
+        highlight?.signId === this.shortcutSign?.id,
+    );
     const score = this.score.result(
       this.definition,
       this.elapsedSeconds,
       outcome.status === 'completed',
       this.shakeLevel,
+      !illegalShortcut,
     );
     const opponent = this.race?.opponentScore;
     if (
@@ -428,14 +485,11 @@ export class MissionSystem {
         smoothBonus: score.smoothBonus,
       }),
       ...(this.photos.size > 0 && { photos: this.photos.size }),
-      illegalShortcut: this.verdicts.some(
-        ({ kind, ruleId, highlight }) =>
-          kind !== 'good' &&
-          ruleId === this.shortcutSign?.ruleId &&
-          highlight?.signId === this.shortcutSign?.id,
-      ),
+      illegalShortcut,
       timeBonusEligible:
-        outcome.status === 'completed' && this.score.major === 0,
+        outcome.status === 'completed' &&
+        this.score.major === 0 &&
+        !illegalShortcut,
     };
   }
 }

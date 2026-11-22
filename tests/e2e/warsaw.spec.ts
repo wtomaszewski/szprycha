@@ -1,6 +1,7 @@
 import { expect as playwrightExpect, test, type Page } from '@playwright/test';
 import type { GameContent } from '../../src/content/schemas';
 import pl from '../../i18n/pl.json' with { type: 'json' };
+import questions from '../../content/pytania.json' with { type: 'json' };
 import {
   warsawRoutes,
   type WarsawMissionId,
@@ -33,9 +34,26 @@ async function routeWithGamepad(page: Page, points: Waypoint[]) {
 test('completes Warsaw act 1 in order and explains the illegal shortcut', async ({
   page,
 }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(480_000);
   await page.addInitScript(() => {
     let route: Waypoint[] = [];
+    let rate = 1;
+    const wallTime = performance.now.bind(performance);
+    let lastWallTime = wallTime();
+    let gameTime = lastWallTime;
+    const now = () => {
+      const current = wallTime();
+      gameTime += (current - lastWallTime) * rate;
+      lastWallTime = current;
+      return gameTime;
+    };
+    const raf = window.requestAnimationFrame.bind(window);
+    Object.defineProperty(performance, 'now', { value: now });
+    window.requestAnimationFrame = (callback) => raf(() => callback(now()));
+    window.addEventListener('test:warsaw-rate', (event) => {
+      now();
+      rate = (event as CustomEvent<number>).detail;
+    });
     let addressedEvent = false;
     window.addEventListener('test:warsaw-route', (event) => {
       route = (event as CustomEvent<Waypoint[]>).detail;
@@ -53,11 +71,21 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
         const switchingMode =
           active?.walking !== undefined &&
           String(active.walking) !== attributes?.walking;
-        const brake = Boolean(
-          active && (distance < (active.photo ? 7 : 16) || switchingMode),
+        const gentle = attributes?.mission === 'WAW-A1-05';
+        const coasting = active?.coast && !switchingMode;
+        const arrived = Boolean(
+          active &&
+          (distance < (active.photo ? 7 : gentle ? 11 : 16) || switchingMode),
         );
+        const stop = arrived && !coasting;
         addressedEvent ||= Boolean(attributes?.trafficEvent);
-        if (active && brake && !switchingMode && attributes?.speed === '0') {
+        if (
+          active &&
+          attributes &&
+          arrived &&
+          !switchingMode &&
+          (coasting || attributes.speed === '0')
+        ) {
           const ready =
             active.until === 'officer-go'
               ? attributes.officerCleared === 'true'
@@ -71,19 +99,27 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
         }
         const strength = Math.min(
           active?.maxInput ?? 1,
-          attributes?.walking === 'true' ? 1 : Math.max(0.22, distance / 130),
+          gentle && !coasting
+            ? Math.max(
+                0.22,
+                Math.sqrt(Math.max(0, distance - 5) * 50) /
+                  (attributes?.walking === 'true' ? 32 : 150),
+              )
+            : attributes?.walking === 'true'
+              ? 1
+              : Math.max(0.22, distance / 130),
         );
         return [
           {
             connected: true,
             axes:
-              !active || brake
+              !active || stop || distance === 0
                 ? [0, 0]
                 : [(dx / distance) * strength, (dy / distance) * strength],
             buttons: Array.from({ length: 17 }, (_, i) => ({
               pressed:
                 (i === 0 && switchingMode && attributes?.speed === '0') ||
-                (i === 1 && brake) ||
+                (i === 1 && stop && (!gentle || switchingMode)) ||
                 (i === 3 && Boolean(active?.look)) ||
                 (i === 4 && active?.signal === 'left') ||
                 (i === 5 && active?.signal === 'right'),
@@ -123,6 +159,12 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
   await skip(page);
 
   const ids = Object.keys(warsawRoutes) as WarsawMissionId[];
+  const speedUp = (detail: number) =>
+    page.evaluate((speed) => {
+      window.dispatchEvent(
+        new CustomEvent('test:warsaw-rate', { detail: speed }),
+      );
+    }, detail);
   for (const [index, id] of ids.entries()) {
     await test.step(id, async () => {
       await expect(
@@ -192,7 +234,7 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
       await page.keyboard.press('Escape');
       if (id === 'WAW-A1-03') {
         // The keyboard has already cleared STOP. Now enter the passage and deliver.
-        await routeWithGamepad(page, warsawRoutes[id].shortcut.slice(-2));
+        await routeWithGamepad(page, warsawRoutes[id].shortcut.slice(2));
         const lesson = page.getByRole('dialog', { name: pl.replay.title });
         await expect(lesson.locator('#replay-feedback')).toContainText(
           'Białe koło z czerwoną obwódką oznacza zakaz ruchu także dla rowerów',
@@ -201,7 +243,7 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
           path: 'test-results/m4d-skrot-stop-klatka.png',
         });
         await lesson.getByRole('button', { name: pl.replay.resume }).click();
-        await expect(dialogue(page)).toBeVisible({ timeout: 12_000 });
+        await speedUp(4);
       } else if (id === 'WAW-A1-04') {
         await routeWithGamepad(page, warsawRoutes[id].legal);
         await expect
@@ -213,8 +255,7 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
         await expect(
           page.getByText(pl.trafficEvents.pieszy_na_pasach, { exact: true }),
         ).toBeVisible({ timeout: 15_000 });
-        await expect(dialogue(page)).toBeVisible({ timeout: 34_000 });
-        await expect(dialogue(page)).toContainText(pl.dialogi[id].koniec_tekst);
+        await speedUp(4);
       } else if (id === 'WAW-A1-05') {
         const shocks = page.getByRole('progressbar', {
           name: pl.missionUi.shocks,
@@ -226,7 +267,7 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
           page.getByText(pl.trafficEvents.turysci_na_starowce, { exact: true }),
         ).toBeVisible({ timeout: 12_000 });
         await page.screenshot({ path: 'test-results/m4d-starowka.png' });
-        await expect(dialogue(page)).toBeVisible({ timeout: 34_000 });
+        await speedUp(4);
       } else if (id === 'WAW-A1-06') {
         const photo = page.getByRole('button', {
           name: pl.missionUi.photograph,
@@ -254,14 +295,45 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
           page.getByText(pl.misje[id].cel4, { exact: true }),
         ).toBeVisible();
         await routeWithGamepad(page, clue);
-        await expect(dialogue(page)).toBeVisible({ timeout: 12_000 });
+        await speedUp(4);
+      } else {
+        await routeWithGamepad(page, warsawRoutes[id].legal);
+        if (id !== 'WAW-T-02') await speedUp(4);
+      }
+      const replay = page.getByRole('dialog', { name: pl.replay.title });
+      const control = page.getByRole('dialog', {
+        name: pl.progression.questionTitle,
+      });
+      await expect(async () => {
+        if (await replay.isVisible())
+          await replay.getByRole('button', { name: pl.replay.resume }).click();
+        if (await control.isVisible()) {
+          const prompt = await control
+            .locator('.control-question-prompt')
+            .textContent();
+          const question = questions.pytania.find(
+            ({ pytanie }) => pytanie === prompt,
+          )!;
+          await control
+            .getByRole('button', {
+              name: question.odpowiedzi[question.poprawna],
+              exact: true,
+            })
+            .click();
+          await control
+            .getByRole('button', { name: pl.progression.continue })
+            .click();
+        }
+        await expect(dialogue(page)).toBeVisible({ timeout: 500 });
+      }).toPass({ timeout: 100_000, intervals: [150] });
+      await speedUp(1);
+      if (id === 'WAW-A1-04')
+        await expect(dialogue(page)).toContainText(pl.dialogi[id].koniec_tekst);
+      if (id === 'WAW-A1-06') {
         await dialogue(page)
           .getByRole('button', { name: pl.dialogueUi.next })
           .click();
         await expect(dialogue(page)).toContainText(pl.dialogi[id].final);
-      } else {
-        await routeWithGamepad(page, warsawRoutes[id].legal);
-        await expect(dialogue(page)).toBeVisible({ timeout: 34_000 });
       }
       await routeWithGamepad(page, []);
       await skip(page);

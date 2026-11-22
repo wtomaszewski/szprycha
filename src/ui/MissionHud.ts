@@ -224,7 +224,11 @@ export class MissionHud {
               : ui.missionUi.threeMajor,
         );
       else if (!result.timeBonusEligible)
-        details.push(ui.missionUi.noTimeBonus);
+        details.push(
+          result.illegalShortcut
+            ? ui.missionUi.noShortcutBonus
+            : ui.missionUi.noTimeBonus,
+        );
       if (result.opponentScore !== undefined)
         details.push(`${ui.missionUi.turboPoints} ${result.opponentScore}`);
       if (result.shocks !== undefined)

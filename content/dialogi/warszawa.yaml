@@ -88,6 +88,91 @@ dialogi:
       - postac: sierzant_ola
         emocja: proud
         tekst: dialogi.WAW-A1-06.final
+  - id: dialogi.WAW-A2-01.start
+    linie:
+      - { postac: lena_mapa, emocja: neutral, tekst: dialogi.WAW-A2-01.start_tekst }
+  - id: dialogi.WAW-A2-01.koniec
+    linie:
+      - { postac: lena_mapa, emocja: happy, tekst: dialogi.WAW-A2-01.koniec_tekst }
+
+  - id: dialogi.WAW-A2-02.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WAW-A2-02.start_tekst }
+  - id: dialogi.WAW-A2-02.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WAW-A2-02.koniec_tekst }
+
+  - id: dialogi.WAW-A2-03.start
+    linie:
+      - { postac: lena_mapa, emocja: neutral, tekst: dialogi.WAW-A2-03.start_tekst }
+  - id: dialogi.WAW-A2-03.koniec
+    linie:
+      - { postac: lena_mapa, emocja: happy, tekst: dialogi.WAW-A2-03.koniec_tekst }
+
+  - id: dialogi.WAW-A2-04.start
+    linie:
+      - { postac: profesor_kwant, emocja: neutral, tekst: dialogi.WAW-A2-04.start_tekst }
+  - id: dialogi.WAW-A2-04.koniec
+    linie:
+      - { postac: profesor_kwant, emocja: happy, tekst: dialogi.WAW-A2-04.koniec_tekst }
+
+  - id: dialogi.WAW-A2-05.start
+    linie:
+      - { postac: pan_kazik, emocja: neutral, tekst: dialogi.WAW-A2-05.start_tekst }
+  - id: dialogi.WAW-A2-05.koniec
+    linie:
+      - { postac: pan_kazik, emocja: happy, tekst: dialogi.WAW-A2-05.koniec_tekst }
+
+  - id: dialogi.WAW-A2-06.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WAW-A2-06.start_tekst }
+  - id: dialogi.WAW-A2-06.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WAW-A2-06.koniec_tekst }
+
+  - id: dialogi.WAW-A3-01.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WAW-A3-01.start_tekst }
+  - id: dialogi.WAW-A3-01.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WAW-A3-01.koniec_tekst }
+
+  - id: dialogi.WAW-A3-02.start
+    linie:
+      - { postac: maly_franek, emocja: neutral, tekst: dialogi.WAW-A3-02.start_tekst }
+  - id: dialogi.WAW-A3-02.koniec
+    linie:
+      - { postac: maly_franek, emocja: happy, tekst: dialogi.WAW-A3-02.koniec_tekst }
+
+  - id: dialogi.WAW-A3-03.start
+    linie:
+      - { postac: profesor_kwant, emocja: neutral, tekst: dialogi.WAW-A3-03.start_tekst }
+  - id: dialogi.WAW-A3-03.koniec
+    linie:
+      - { postac: profesor_kwant, emocja: happy, tekst: dialogi.WAW-A3-03.koniec_tekst }
+
+  - id: dialogi.WAW-A3-04.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WAW-A3-04.start_tekst }
+  - id: dialogi.WAW-A3-04.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WAW-A3-04.koniec_tekst }
+
+  - id: dialogi.WAW-A3-05.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WAW-A3-05.start_tekst }
+  - id: dialogi.WAW-A3-05.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WAW-A3-05.koniec_tekst }
+
+  - id: dialogi.WAW-A3-06.start
+    linie:
+      - { postac: turbo, emocja: neutral, tekst: dialogi.WAW-A3-06.start_tekst }
+  - id: dialogi.WAW-A3-06.koniec
+    linie:
+      - { postac: inzynier_zawila, emocja: surprised, tekst: dialogi.WAW-A3-06.swieto }
+      - { postac: inzynier_zawila, emocja: happy, tekst: dialogi.WAW-A3-06.koniec_tekst }
+      - { postac: pan_kazik, emocja: proud, tekst: dialogi.WAW-A3-06.epilog }
 zapowiedzi:
   - regula: KASK-01
     emocja: neutral
@@ -144,3 +229,23 @@ zapowiedzi:
   - regula: ZNAK-A7
     emocja: neutral
     tekst: dialogi.reguly.ZNAK-A7
+  - { regula: SYG-01, emocja: neutral, tekst: dialogi.reguly.SYG-01 }
+  - { regula: SYG-02, emocja: neutral, tekst: dialogi.reguly.SYG-02 }
+  - { regula: PIER-09, emocja: neutral, tekst: dialogi.reguly.PIER-09 }
+  - { regula: ZNAK-S2, emocja: neutral, tekst: dialogi.reguly.ZNAK-S2 }
+  - { regula: MSC-02, emocja: neutral, tekst: dialogi.reguly.MSC-02 }
+  - { regula: GDZIE-01, emocja: neutral, tekst: dialogi.reguly.GDZIE-01 }
+  - { regula: GDZIE-02, emocja: neutral, tekst: dialogi.reguly.GDZIE-02 }
+  - { regula: GDZIE-08, emocja: neutral, tekst: dialogi.reguly.GDZIE-08 }
+  - { regula: MSC-04, emocja: neutral, tekst: dialogi.reguly.MSC-04 }
+  - { regula: ZNAK-C13, emocja: neutral, tekst: dialogi.reguly.ZNAK-C13 }
+  - { regula: GDZIE-04, emocja: neutral, tekst: dialogi.reguly.GDZIE-04 }
+  - { regula: GDZIE-09, emocja: neutral, tekst: dialogi.reguly.GDZIE-09 }
+  - { regula: GDZIE-10, emocja: neutral, tekst: dialogi.reguly.GDZIE-10 }
+  - { regula: MSC-01, emocja: neutral, tekst: dialogi.reguly.MSC-01 }
+  - { regula: PP-01, emocja: neutral, tekst: dialogi.reguly.PP-01 }
+  - { regula: PP-02, emocja: neutral, tekst: dialogi.reguly.PP-02 }
+  - { regula: PP-03, emocja: neutral, tekst: dialogi.reguly.PP-03 }
+  - { regula: PP-04, emocja: neutral, tekst: dialogi.reguly.PP-04 }
+  - { regula: MSC-05, emocja: neutral, tekst: dialogi.reguly.MSC-05 }
+  - { regula: PIER-07, emocja: neutral, tekst: dialogi.reguly.PIER-07 }

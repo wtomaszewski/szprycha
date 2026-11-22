@@ -15,6 +15,22 @@ const goalFields = {
 const missionGoal = z.discriminatedUnion('typ', [
   z.strictObject({ ...goalFields, typ: z.literal('przygotuj_rower') }),
   z.strictObject({ ...goalFields, typ: z.literal('dojedz'), poi: id }),
+  z
+    .strictObject({
+      ...goalFields,
+      typ: z.literal('wybor'),
+      poi: id,
+      opis: key,
+      regula: id,
+      pytanie: key,
+      odpowiedzi: z.array(key).min(2),
+      poprawna: count,
+      wyjasnienie: key,
+    })
+    .refine(({ poprawna, odpowiedzi }) => poprawna < odpowiedzi.length, {
+      path: ['poprawna'],
+      message: 'Answer index out of range',
+    }),
   z.strictObject({
     ...goalFields,
     typ: z.literal('sfotografuj'),
@@ -55,6 +71,8 @@ export const missionSchema = z
       poi: id,
       kask_zapiety: z.boolean().optional(),
       zmrok: z.boolean().optional(),
+      ulewa: z.boolean().optional(),
+      awaria_swiatel: z.boolean().optional(),
     }),
     cele: z.array(missionGoal).min(1),
     limit_s: seconds.optional(),
@@ -76,6 +94,7 @@ export const missionSchema = z
     dialog_start: dialogueId.optional(),
     dialog_koniec: dialogueId.optional(),
     ruch_ai: z.boolean().optional(),
+    towarzysze: z.number().int().min(1).max(14).optional(),
     skrot: z.strictObject({ odcinek: id }).optional(),
   })
   .superRefine((mission, ctx) => {

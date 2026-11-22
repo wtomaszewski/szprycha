@@ -25,6 +25,7 @@ export class MissionRace {
   private readonly route: NonNullable<
     ReturnType<WorldModel['raceRoutes']['get']>
   >;
+  private readonly shortcutSign?: string;
   opponentScore?: number;
 
   constructor(
@@ -36,6 +37,16 @@ export class MissionRace {
     const route = world.raceRoutes.get(routeId);
     if (!route) throw new Error(`Unknown race route: ${routeId}`);
     this.route = route;
+    const shortcut = definition.skrot?.odcinek;
+    this.shortcutSign = shortcut
+      ? world.signs.find(
+          ({ affects, code, displayOnly, exceptBicycles }) =>
+            affects === shortcut &&
+            (code === 'B-1' || code === 'B-2') &&
+            !displayOnly &&
+            !exceptBicycles,
+        )?.id
+      : undefined;
     this.rider = {
       id: definition.zleceniodawca,
       pos: { ...this.route.path.start },
@@ -73,6 +84,13 @@ export class MissionRace {
       this.ticks / TICKS_PER_SECOND,
       this.verdicts,
       true,
+      undefined,
+      !this.verdicts.some(
+        ({ kind, highlight }) =>
+          kind !== 'good' &&
+          highlight?.signId === this.shortcutSign &&
+          this.shortcutSign !== undefined,
+      ),
     ).points;
     this.rider.speed = 0;
   }

@@ -462,9 +462,16 @@ export const contentSchema = z
           message:
             'Mission opening including introductions can have at most four lines',
         });
-      mission.cele.forEach(({ wymagany_nawyk }, j) => {
-        if (wymagany_nawyk)
-          reference(wymagany_nawyk, [...path, 'cele', j, 'wymagany_nawyk']);
+      mission.cele.forEach((goal, j) => {
+        if (goal.wymagany_nawyk)
+          reference(goal.wymagany_nawyk, [
+            ...path,
+            'cele',
+            j,
+            'wymagany_nawyk',
+          ]);
+        if (goal.typ === 'wybor')
+          reference(goal.regula, [...path, 'cele', j, 'regula']);
       });
       mission.zdarzenia_wymuszone.forEach(({ regula }, j) =>
         reference(regula, [...path, 'zdarzenia_wymuszone', j, 'regula']),

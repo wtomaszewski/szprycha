@@ -156,7 +156,17 @@
     "rowerzysta_na_moscie": "Przed tobą wolniejszy rowerzysta. Przed wyprzedzaniem obejrzyj się i zostaw odstęp.",
     "turysci_na_starowce": "Turyści na rynku. Zwolnij i zostaw im miejsce.",
     "polecenie_oli": "Sierżant Ola: stój przed linią, niezależnie od światła.",
-    "olaRusza": "Sierżant Ola: możesz ruszyć."
+    "olaRusza": "Sierżant Ola: możesz ruszyć.",
+    "swiatla_palac": "Spójrz na sygnalizator, który obowiązuje na przejeździe dla rowerów.",
+    "zielona_strzalka": "Strzałka pozwala skręcić po zatrzymaniu i ustąpieniu pierwszeństwa.",
+    "delikatny_czujnik": "Na nierównym odcinku zwolnij, żeby ochronić czujnik.",
+    "wskazowka_na_moscie": "Zatrzymaj się przy niebieskim znaku i dodaj zdjęcie do Albumu.",
+    "ulewa": "Ulewa ogranicza widoczność, na chodniku jedź powoli i ustępuj pieszym.",
+    "eskorta_franka": "Franek jedzie z Kazikiem, pokaż im, jak bezpiecznie dotrzeć do parku.",
+    "przejazd_kolejowy": "Przed torami obserwuj zapory i czerwone światła.",
+    "po_zdarzeniu": "Turbo się przewrócił, zatrzymaj się w bezpiecznym miejscu.",
+    "start_kolumny": "Jedziemy jeden za drugim i zostawiamy miejsce innym.",
+    "start_finalu": "O wygranej decydują punkty za bezpieczną jazdę."
   },
   "progression": {
     "points": "Punkty",
@@ -231,7 +241,8 @@
       "odbierz": "Odbierz przesyłkę w zaznaczonym miejscu.",
       "oddaj": "Oddaj przesyłkę w zaznaczonym miejscu.",
       "przygotuj_rower": "Załóż kask i włącz światła.",
-      "sfotografuj": "Zrób zdjęcie znaku"
+      "sfotografuj": "Zrób zdjęcie znaku",
+      "wybor": "Zatrzymaj się i odpowiedz."
     },
     "turnOnLights": "Włącz przednie i tylne światła",
     "illegalShortcut": "Jazda rowerem tym skrótem była niezgodna z przepisami.",
@@ -241,7 +252,9 @@
     "yourPoints": "Twoje punkty",
     "turboPoints": "Punkty Turbo",
     "smoothBonus": "Premia za płynną jazdę",
-    "photos": "Zdjęcia znaków"
+    "photos": "Zdjęcia znaków",
+    "choice": "Co zrobisz?",
+    "noShortcutBonus": "Przejazd przez oznaczony nielegalny skrót wyklucza premię za czas."
   },
   "misje": {
     "WAW-T-01": {
@@ -264,14 +277,30 @@
       "opis": "Odbierz klucze od Kazika i zawieź je sąsiadowi po drugiej stronie skrzyżowania.",
       "cel1": "Odbierz klucze u Kazika.",
       "cel2": "Zatrzymaj się przed chodnikiem, a po wyjeździe z bramy skręć w prawo.",
-      "cel3": "Na skrzyżowaniu przepuść pojazd z prawej i dowieź klucze sąsiadowi."
+      "cel3": "Na skrzyżowaniu przepuść pojazd z prawej i dowieź klucze sąsiadowi.",
+      "objazd1": "Jedź w stronę szkoły.",
+      "objazd2": "Zjedź na osiedlową trasę rowerową.",
+      "objazd3": "Sprawdź punkt przy południowym skwerze.",
+      "objazd4": "Jedź trasą rowerową do drugiego końca skweru.",
+      "objazd5": "Wróć osiedlową trasą w stronę bazaru.",
+      "objazd6": "Przejedź do przystanku przy szkole.",
+      "objazd7": "Zamelduj się na północnym końcu osiedla.",
+      "objazd8": "Oddaj pokwitowanie Kazikowi od strony osiedla."
     },
     "WAW-A1-02": {
       "tytul": "Bazar i bramy",
       "opis": "Wyjedź z praskiego podwórka i zawieź zamówienie na bazar.",
       "cel1": "Odbierz zamówienie na podwórku.",
       "cel2": "Przepuść pieszego przed bramą, rozejrzyj się i zasygnalizuj skręt w lewo.",
-      "cel3": "Jedź drogą z pierwszeństwem i oddaj zamówienie przy bazarze."
+      "cel3": "Jedź drogą z pierwszeństwem i oddaj zamówienie przy bazarze.",
+      "objazd1": "Jedź w stronę szkoły.",
+      "objazd2": "Zjedź na osiedlową trasę rowerową.",
+      "objazd3": "Sprawdź punkt przy południowym skwerze.",
+      "objazd4": "Jedź trasą rowerową do drugiego końca skweru.",
+      "objazd5": "Wróć osiedlową trasą w stronę bazaru.",
+      "objazd6": "Przejedź do przystanku przy szkole.",
+      "objazd7": "Zamelduj się na północnym końcu osiedla.",
+      "objazd8": "Wróć do bazaru po potwierdzenie odbioru."
     },
     "WAW-A1-03": {
       "tytul": "Pierogi dla Pani Haliny",
@@ -280,14 +309,29 @@
       "cel2": "Jedź prosto do znaku STOP.",
       "cel4": "Za STOP-em jedź prosto do wjazdu pod blok. Zasygnalizuj skręt w prawo i dowieź pierogi.",
       "stop": "Zatrzymaj się przed linią i przepuść samochód na drodze z pierwszeństwem.",
-      "powrot": "Wróć przed linię i zatrzymaj się całkowicie przed znakiem STOP."
+      "powrot": "Wróć przed linię i zatrzymaj się całkowicie przed znakiem STOP.",
+      "objazd1": "Jedź w stronę szkoły.",
+      "objazd2": "Zjedź na osiedlową trasę rowerową.",
+      "objazd3": "Sprawdź punkt przy południowym skwerze.",
+      "objazd4": "Jedź trasą rowerową do drugiego końca skweru.",
+      "objazd5": "Wróć osiedlową trasą w stronę bazaru.",
+      "objazd6": "Przejedź do przystanku przy szkole.",
+      "objazd7": "Zamelduj się na północnym końcu osiedla.",
+      "objazd8": "Oddaj Kazikowi potwierdzenie od Pani Haliny."
     },
     "WAW-A1-04": {
       "tytul": "Turbo rzuca wyzwanie",
       "opis": "Przepraw się przez Wisłę i zdobądź więcej punktów niż Turbo.",
       "cel1": "Jedź drogą dla rowerów przez most.",
       "cel2": "Dojedź do zachodniego przyczółka.",
-      "cel3": "Jedź prosto do zebry przy zamku, przeprowadź rower i kieruj się do Kolumny Zygmunta."
+      "cel3": "Jedź prosto do zebry przy zamku, przeprowadź rower i kieruj się do Kolumny Zygmunta.",
+      "objazd1": "Dojedź do łącznika Starówki i bulwarów.",
+      "objazd2": "Zamelduj się na wysokości Centrum Nauki.",
+      "objazd3": "Jedź drogą rowerową wzdłuż Wisły.",
+      "objazd4": "Dojedź do punktu na południowym krańcu bulwarów.",
+      "objazd5": "Zawróć po stronie bulwarów.",
+      "objazd6": "Wróć na wysokość fontann.",
+      "objazd7": "Wróć rowerowym łącznikiem do Starówki."
     },
     "WAW-A1-05": {
       "tytul": "Turyści na Starówce",
@@ -295,7 +339,15 @@
       "cel1": "Odbierz figurkę z lodziarni.",
       "cel2": "Wjedź powoli na kocie łby.",
       "cel3": "Jedź płynnie przez rynek i zostaw miejsce pieszym.",
-      "cel4": "Zejdź z roweru i przeprowadź go deptakiem do przewodnika."
+      "cel4": "Zejdź z roweru i przeprowadź go deptakiem do przewodnika.",
+      "objazd1": "Dojedź do łącznika Starówki i bulwarów.",
+      "objazd2": "Zamelduj się na wysokości Centrum Nauki.",
+      "objazd3": "Jedź drogą rowerową wzdłuż Wisły.",
+      "objazd4": "Dojedź do punktu na południowym krańcu bulwarów.",
+      "objazd5": "Zawróć po stronie bulwarów.",
+      "objazd6": "Wróć na wysokość fontann.",
+      "objazd7": "Wróć rowerowym łącznikiem do Starówki.",
+      "objazd8": "Wróć do przewodnika od strony bulwarów."
     },
     "WAW-A1-06": {
       "tytul": "Błyskawica na znaku",
@@ -303,7 +355,211 @@
       "cel1": "Jedź do posterunku Sierżant Oli.",
       "cel2": "Zatrzymaj się przed linią i rusz dopiero na polecenie Oli.",
       "cel3": "Przeprowadź rower przez zebrę, zatrzymaj się przy znaku i zrób zdjęcie.",
-      "cel4": "Poszukaj podpisu za zamkiem."
+      "cel4": "Poszukaj podpisu za zamkiem.",
+      "objazd1": "Dojedź do łącznika Starówki i bulwarów.",
+      "objazd2": "Zamelduj się na wysokości Centrum Nauki.",
+      "objazd3": "Jedź drogą rowerową wzdłuż Wisły.",
+      "objazd4": "Dojedź do punktu na południowym krańcu bulwarów.",
+      "objazd5": "Zawróć po stronie bulwarów.",
+      "objazd6": "Wróć na wysokość fontann.",
+      "objazd7": "Wróć rowerowym łącznikiem do Starówki.",
+      "objazd8": "Wróć do Oli i pokaż jej podpis Zakłócacza."
+    },
+    "WAW-A2-01": {
+      "tytul": "Części dla sygnalizacji",
+      "opis": "Lena wysyła Cię z częściami do sygnalizacji pod Pałacem Kultury. Sprawdź po kolei punkty kontrolne, żeby serwis mógł potwierdzić działanie świateł.",
+      "cel1": "Odbierz części w Centrum Nauki Kopernik.",
+      "cel2": "Wjedź na drogę dla rowerów.",
+      "cel3": "Dojedź do sygnalizatora rowerowego.",
+      "cel4": "Przejedź na zielonym.",
+      "cel5": "Oddaj części przy serwisie na alei.",
+      "objazd1": "Dołącz do łącznika ze Starówką.",
+      "objazd2": "Jedź drogą rowerową w stronę fontann.",
+      "objazd3": "Sprawdź punkt przy fontannach.",
+      "objazd4": "Dojedź do końca drogi rowerowej.",
+      "objazd5": "Wróć na bulwary od strony południowej.",
+      "objazd6": "Zamelduj się na punkcie przy Wiśle.",
+      "objazd7": "Zamelduj się przy sterowniku po objeździe punktów kontrolnych.",
+      "s1Przed": "Podjedź od wschodu do świateł na jezdni.",
+      "s1Za": "Poczekaj na zielone przed wjazdem na skrzyżowanie."
+    },
+    "WAW-A2-02": {
+      "tytul": "Zielona strzałka",
+      "opis": "Sprawdźmy, czy sygnalizacja pozwala bezpiecznie skręcić w stronę bulwarów. Ola prosi też o sprawdzenie objazdu wzdłuż Wisły przed naprawą sygnalizacji.",
+      "cel1": "Dojedź do zielonej strzałki.",
+      "cel2": "Zatrzymaj się przed linią i skręć w prawo przy zielonej strzałce.",
+      "cel3": "Zamelduj się przy zejściu na bulwary.",
+      "objazd1": "Dołącz do łącznika ze Starówką.",
+      "objazd2": "Jedź drogą rowerową w stronę fontann.",
+      "objazd3": "Sprawdź punkt przy fontannach.",
+      "objazd4": "Dojedź do końca drogi rowerowej.",
+      "objazd5": "Wróć na bulwary od strony południowej.",
+      "objazd6": "Zamelduj się na punkcie przy Wiśle.",
+      "objazd7": "Zanieś Oli meldunek o drodze objazdowej.",
+      "powrot": "Wróć przed sygnalizator i zatrzymaj się przed skrętem na zielonej strzałce."
+    },
+    "WAW-A2-03": {
+      "tytul": "Przystanek bez wysepki",
+      "opis": "Zawieź rozkład jazdy do punktu obsługi przy alei. Zawiadom też punkty przesiadkowe o zmianie rozkładu.",
+      "cel1": "Zabierz rozkład jazdy.",
+      "cel2": "Zbliż się do przystanku i obserwuj tramwaj.",
+      "cel3": "Poczekaj przed przystankiem, aż pasażerowie zejdą z jezdni.",
+      "cel4": "Oddaj rozkład przy punkcie obsługi.",
+      "objazd1": "Dołącz do łącznika ze Starówką.",
+      "objazd2": "Jedź drogą rowerową w stronę fontann.",
+      "objazd3": "Sprawdź punkt przy fontannach.",
+      "objazd4": "Dojedź do końca drogi rowerowej.",
+      "objazd5": "Wróć na bulwary od strony południowej.",
+      "objazd6": "Zamelduj się na punkcie przy Wiśle.",
+      "objazd7": "Zamelduj się przy węźle przesiadkowym."
+    },
+    "WAW-A2-04": {
+      "tytul": "Delikatna przesyłka Profesora",
+      "opis": "Czujnik wykryje zakłócenia, jeśli dowieziesz go bez wstrząsów. Po pomiarze zawieź odczyt Profesorowi, żeby mógł porównać sygnały z obu końców bulwarów.",
+      "cel1": "Odbierz czujnik od Profesora Kwanta.",
+      "cel2": "Wjedź na drogę rowerową na bulwarach.",
+      "cel3": "Jedź płynnie w kierunku fontann.",
+      "cel4": "Zawieź czujnik do punktu pomiarowego.",
+      "objazd1": "Wróć bulwarami z odczytem czujnika.",
+      "objazd2": "Sprawdź pomiar przy północnym końcu bulwarów.",
+      "objazd3": "Wróć do punktu z wynikami dla Profesora."
+    },
+    "WAW-A2-05": {
+      "tytul": "Nocny kurs bulwarami",
+      "opis": "Po zmroku trzeba dostarczyć Profesorowi wyniki pomiarów. Sprawdź światła na trasie od fontann aż po łącznik ze Starówką.",
+      "cel1": "Zapnij kask i włącz obie lampki.",
+      "cel2": "Jedź oświetloną drogą dla rowerów.",
+      "cel3": "Zawieź wyniki do punktu przy Centrum Nauki.",
+      "objazd1": "Dołącz do łącznika ze Starówką.",
+      "objazd2": "Jedź drogą rowerową w stronę fontann.",
+      "objazd3": "Sprawdź punkt przy fontannach.",
+      "objazd4": "Dojedź do końca drogi rowerowej.",
+      "objazd5": "Wróć na bulwary od strony południowej.",
+      "objazd6": "Zamelduj się na punkcie przy Wiśle.",
+      "objazd7": "Przekaż nocne pomiary Profesorowi."
+    },
+    "WAW-A2-06": {
+      "tytul": "Detektyw na moście",
+      "opis": "Ktoś namalował swój znak przy wjeździe na most, sprawdź prawdziwe oznakowanie. Po zdjęciu sprawdź, dokąd prowadzi prawidłowo oznaczona droga, i wróć z meldunkiem.",
+      "cel1": "Przejedź przez most po oznaczonej drodze rowerowej.",
+      "cel2": "Zatrzymaj się i zrób zdjęcie znaku C-13.",
+      "cel3": "Zanieś zdjęcie do punktu na bulwarach.",
+      "objazd1": "Dołącz do łącznika ze Starówką.",
+      "objazd2": "Jedź drogą rowerową w stronę fontann.",
+      "objazd3": "Sprawdź punkt przy fontannach.",
+      "objazd4": "Dojedź do końca drogi rowerowej.",
+      "objazd5": "Wróć na bulwary od strony południowej.",
+      "objazd6": "Zamelduj się na punkcie przy Wiśle.",
+      "objazd7": "Zamelduj Oli, gdzie zaczyna się prawidłowo oznaczona trasa."
+    },
+    "WAW-A3-01": {
+      "tytul": "Ulewa w Łazienkach",
+      "opis": "Zawieź ostrzeżenie o zakłóceniach do Pawilonu w Łazienkach. Pawilon prosi też o bezpieczny objazd parku od strony Wisły.",
+      "cel1": "Odbierz ostrzeżenie od Sierżant Oli.",
+      "cel2": "W ulewie jedź chodnikiem powoli i ustępuj pieszym.",
+      "cel3": "Omiń alejkę objętą zakazem wjazdu.",
+      "cel4": "Dostarcz ostrzeżenie do pawilonu.",
+      "objazd1": "Wróć do alejki parkowej.",
+      "objazd2": "Dojedź do drogi pieszo-rowerowej.",
+      "objazd3": "Zjedź do południowego wyjścia z parku.",
+      "objazd4": "Na wyjeździe skieruj się do drogi nad Wisłą.",
+      "objazd5": "Wróć drogą rowerową w stronę fontann.",
+      "objazd6": "Zjedź z głównej drogi przy wejściu do parku.",
+      "objazd7": "Wróć do pawilonu.",
+      "bulwarNawrot": "Dojedź do punktu nawrotu na północnym odcinku bulwarów."
+    },
+    "WAW-A3-02": {
+      "tytul": "Z Frankiem do parku",
+      "opis": "Kazik idzie ze mną, pokaż nam bezpieczną drogę do parku! Kazik proponuje wrócić z Frankiem spokojną trasą wzdłuż Wisły.",
+      "cel1": "Zatrzymaj się i ustal z Kazikiem, którędy pojedzie Franek.",
+      "cel1Pytanie": "Gdzie siedmioletni Franek jedzie razem z dorosłym Kazikiem?",
+      "cel1Odp1": "Po jezdni za kurierem.",
+      "cel1Odp2": "Po chodniku pod opieką Kazika.",
+      "cel1Odp3": "Sam po pasie dla rowerów.",
+      "cel1Feedback": "Franek ma siedem lat i jedzie chodnikiem pod opieką Kazika.",
+      "cel2": "Poprowadź grupę po wspólnej drodze pieszo-rowerowej.",
+      "cel3": "Zostaw miejsce innym i zasygnalizuj skręt.",
+      "cel4": "Doprowadź grupę do pawilonu.",
+      "objazd1": "Wróć do alejki parkowej.",
+      "objazd2": "Dojedź do drogi pieszo-rowerowej.",
+      "objazd3": "Zjedź do południowego wyjścia z parku.",
+      "objazd4": "Na wyjeździe skieruj się do drogi nad Wisłą.",
+      "objazd5": "Wróć drogą rowerową w stronę fontann.",
+      "objazd6": "Zjedź z głównej drogi przy wejściu do parku.",
+      "objazd7": "Wróć do pawilonu.",
+      "bulwarNawrot": "Dojedź do punktu nawrotu na północnym odcinku bulwarów."
+    },
+    "WAW-A3-03": {
+      "tytul": "Pociąg do kryjówki",
+      "opis": "Nadajnik przy stacji na Mokotowie nagrał wiadomość Zakłócacza. Profesor prosi o sprawdzenie również dojazdu od strony południowej.",
+      "cel1": "Zbliż się do przejazdu z zaporami.",
+      "cel2": "Przejedź dopiero po pełnym otwarciu zapór i zgaśnięciu świateł.",
+      "cel3": "Odbierz nagranie przy stacji.",
+      "cel4": "Dostarcz nagranie do punktu odsłuchu.",
+      "objazd1": "Sprawdź punkt odsłuchu na wschodnim końcu Mokotowa.",
+      "objazd2": "Dojedź do przejazdu od południowej strony stacji.",
+      "objazd3": "Zatrzymaj się przed torami, jeśli migają światła.",
+      "objazd4": "Przejedź dopiero po zgaśnięciu czerwonych świateł.",
+      "objazd5": "Wróć do stacji z odszyfrowanym nagraniem."
+    },
+    "WAW-A3-04": {
+      "tytul": "Turbo na czerwonym",
+      "opis": "Turbo ruszył w stronę Pałacu Kultury, sprawdź, czy dojechał bezpiecznie.",
+      "cel1": "Podjedź do zatoki przy Pałacu Kultury.",
+      "cel2": "Zatrzymaj się i zabezpiecz miejsce.",
+      "cel2Pytanie": "Turbo przewrócił się za przejściem, gdzie zatrzymasz rower?",
+      "cel2Odp1": "Na środku jezdni.",
+      "cel2Odp2": "Poza jezdnią, w bezpiecznym miejscu.",
+      "cel2Odp3": "Na pasach, tuż za Turbo.",
+      "cel2Feedback": "Zostań w bezpiecznym miejscu poza jezdnią i ostrzeż innych.",
+      "cel3": "Sprawdź, czy Turbo Cię słyszy.",
+      "cel3Pytanie": "Ola jest obok, a Turbo nie odpowiada na Twoje wołanie, co robisz?",
+      "cel3Odp1": "Podnoszę go na siłę.",
+      "cel3Odp2": "Daję mu pić.",
+      "cel3Odp3": "Wołam Olę i sprawdzamy przytomność oraz oddech.",
+      "cel3Feedback": "Zawołaj dorosłego i sprawdź przytomność oraz oddech bez zbędnego przenoszenia.",
+      "cel4": "Przećwicz rozmowę z dyspozytorem 112.",
+      "cel4Pytanie": "Dyspozytor 112 pyta o miejsce zdarzenia, co mu powiesz?",
+      "cel4Odp1": "Pod Pałacem Kultury w Warszawie, jeden rowerzysta się przewrócił i nie odpowiada.",
+      "cel4Odp2": "Przy dworcu, nie wiem, co się stało.",
+      "cel4Odp3": "Gdzieś w Warszawie, muszę się rozłączyć.",
+      "cel4Feedback": "Podaj miejsce, opisz zdarzenie, powiedz, ilu osobom trzeba pomóc, i poczekaj na pytania.",
+      "cel5": "Zostań z Turbo i Olą do przyjazdu pomocy.",
+      "cel5Pytanie": "Turbo oddycha prawidłowo, ale nie odpowiada, a dyspozytor mówi, jak pomóc.",
+      "cel5Odp1": "Odchodzę, bo już dzwoniłem na 112.",
+      "cel5Odp2": "Z Olą wykonuję polecenia dyspozytora i obserwuję oddech.",
+      "cel5Odp3": "Daję Turbo coś do picia.",
+      "cel5Feedback": "Z dorosłym wykonuj polecenia dyspozytora, ułóż Turbo w pozycji bezpiecznej i obserwuj oddech."
+    },
+    "WAW-A3-05": {
+      "tytul": "Klucz systemu",
+      "opis": "Zawieźcie klucz z Łazienek na Stadion, a na skrzyżowaniu patrzcie na moje polecenia.",
+      "cel1": "Odbierz klucz sterownika w Łazienkach.",
+      "cel2": "Zatrzymaj się i ustal z Olą zasady kolumny.",
+      "cel2Pytanie": "Ilu rowerzystów może jechać w jednej kolumnie?",
+      "cel2Odp1": "Najwyżej 15.",
+      "cel2Odp2": "Najwyżej 25.",
+      "cel2Odp3": "Dowolnie wielu.",
+      "cel2Feedback": "Jedna kolumna może liczyć najwyżej 15 rowerów.",
+      "cel3": "Prowadź grupę jeden za drugim.",
+      "cel4": "Poprowadź kolumnę do Śródmieścia.",
+      "cel5": "Zatrzymaj się przed skrzyżowaniem i patrz na Olę.",
+      "cel6": "Rusz dopiero na polecenie Oli.",
+      "cel7": "Kieruj kolumnę drogą rowerową do mostu.",
+      "cel8": "Przeprowadź kolumnę przez most.",
+      "cel9": "Oddaj klucz pod Stadionem Narodowym.",
+      "stadionPrzed": "Doprowadź kolumnę do bramy i wybierz oznakowaną drogę do mety."
+    },
+    "WAW-A3-06": {
+      "tytul": "Rowerowe Święto",
+      "opis": "Czas na finałowy wyścig punktowy do Stadionu Narodowego!",
+      "cel1": "Wjedź na pętlę rowerową przy stadionie.",
+      "cel2": "Po drugim okrążeniu wróć do bramy i wybierz drogę do mety.",
+      "cel3": "Dojedź do mety i zdobądź więcej punktów niż Turbo.",
+      "trening1": "Dojedź drogą rowerową do zachodniej chorągiewki.",
+      "trening2": "Przejedź pętlą do wschodniej chorągiewki.",
+      "trening3": "Dojedź do linii kończącej okrążenie.",
+      "trening4": "Wjedź na drugie okrążenie."
     }
   },
   "phone": {
@@ -364,7 +620,27 @@
       "GDZIE-05": "Jeśli wyjątkowo wolno ci jechać po chodniku, jedź powoli i ustępuj pieszym.",
       "MAN-08": "Zwolnij na kocich łbach i tam, gdzie w każdej chwili może pojawić się pieszy.",
       "SYG-03": "Polecenie osoby kierującej ruchem jest ważniejsze niż światła i znaki.",
-      "ZNAK-A7": "Odwrócony trójkąt oznacza „ustąp pierwszeństwa”."
+      "ZNAK-A7": "Odwrócony trójkąt oznacza „ustąp pierwszeństwa”.",
+      "SYG-01": "Na czerwonym świetle zatrzymaj się przed linią i poczekaj na zielone.",
+      "SYG-02": "Patrz na sygnalizator z rowerem, gdy jedziesz przez przejazd rowerowy.",
+      "PIER-09": "Gdy tory przecinają Twój tor jazdy, zwolnij i obserwuj tramwaj, znaki oraz światła.",
+      "ZNAK-S2": "Przy zielonej strzałce najpierw stań, a potem ustąp pieszym i pojazdom.",
+      "MSC-02": "Stój przed przystankiem bez wysepki, aż pasażerowie zejdą z jezdni.",
+      "GDZIE-01": "Jeśli droga dla rowerów biegnie w Twoim kierunku, korzystaj z niej.",
+      "GDZIE-02": "Na pasie rowerowym jedź w wyznaczonym kierunku.",
+      "GDZIE-08": "Jedźcie jeden za drugim, gdy jazda obok siebie przeszkadza innym.",
+      "MSC-04": "Po zmroku włącz przednią i tylną lampkę.",
+      "ZNAK-C13": "Biały rower na niebieskim kole wskazuje drogę dla rowerów.",
+      "GDZIE-04": "W ulewie możesz jechać chodnikiem, ale jedź powoli i ustępuj pieszym.",
+      "GDZIE-09": "Gdy znak zabrania wjazdu rowerem, wybierz inną trasę.",
+      "GDZIE-10": "Siedmioletni Franek jedzie po chodniku pod opieką dorosłego.",
+      "MSC-01": "Gdy zapory są w ruchu lub miga czerwone światło, zatrzymaj się przed torami.",
+      "PP-01": "Po zdarzeniu najpierw zadbaj o bezpieczeństwo swoje i innych.",
+      "PP-02": "Dzwoniąc na 112, podaj miejsce, opisz zdarzenie i powiedz, ilu osobom trzeba pomóc.",
+      "PP-03": "Zawołaj dorosłego i zapytaj poszkodowanego, czy Cię słyszy.",
+      "PP-04": "Jeśli ktoś nie odpowiada, ale oddycha, poproś dorosłego o pomoc w ułożeniu go w pozycji bezpiecznej.",
+      "MSC-05": "W jednej kolumnie może jechać najwyżej piętnaście rowerów.",
+      "PIER-07": "Zostaw bezpieczne miejsce dla pojazdu z syreną i niebieskimi światłami."
     },
     "lektor": {
       "ZNAK-STOP": "Przed linią stop zatrzymaj się całkowicie i ustąp pierwszeństwa."
@@ -398,6 +674,56 @@
       "start_tekst": "Kieruję ruchem przy zamku. Zatrzymaj się na mój znak, nawet jeśli światło będzie zielone.",
       "koniec_tekst": "Błyskawica i podpis „Zakłócacz”! Ktoś celowo przestawia znaki.",
       "final": "Akt 1 ukończony! Mamy pierwszą wskazówkę i wiemy, gdzie szukać dalej."
+    },
+    "WAW-A2-01": {
+      "start_tekst": "Lena wysyła Cię z częściami do sygnalizacji pod Pałacem Kultury.",
+      "koniec_tekst": "Części na miejscu, ale ktoś znów przestawił sterownik."
+    },
+    "WAW-A2-02": {
+      "start_tekst": "Sprawdźmy, czy sygnalizacja pozwala bezpiecznie skręcić w stronę bulwarów.",
+      "koniec_tekst": "Strzałka działa, ale ten ślad błyskawicy wygląda znajomo."
+    },
+    "WAW-A2-03": {
+      "start_tekst": "Zawieź rozkład jazdy do punktu obsługi przy alei.",
+      "koniec_tekst": "Rozkład dotarł, a pasażerowie mieli czas bezpiecznie zejść z jezdni."
+    },
+    "WAW-A2-04": {
+      "start_tekst": "Czujnik wykryje zakłócenia, jeśli dowieziesz go bez wstrząsów.",
+      "koniec_tekst": "Czujnik działa i odbiera sygnał znad Wisły."
+    },
+    "WAW-A2-05": {
+      "start_tekst": "Po zmroku trzeba dostarczyć Profesorowi wyniki pomiarów.",
+      "koniec_tekst": "W świetle lampki widać na wydruku kolejny ślad błyskawicy."
+    },
+    "WAW-A2-06": {
+      "start_tekst": "Ktoś namalował swój znak przy wjeździe na most, sprawdź prawdziwe oznakowanie.",
+      "koniec_tekst": "Błyskawica to ślad Zawiły, a nadajnik wskazuje Pałac Kultury."
+    },
+    "WAW-A3-01": {
+      "start_tekst": "Zawieź ostrzeżenie o zakłóceniach do Pawilonu w Łazienkach.",
+      "koniec_tekst": "Ostrzeżenie dotarło, a przy parku ktoś widział Turbo."
+    },
+    "WAW-A3-02": {
+      "start_tekst": "Kazik idzie ze mną, pokaż nam bezpieczną drogę do parku!",
+      "koniec_tekst": "Dzięki za wspólną drogę, Kazik i ja widzieliśmy Twój znak przed skrętem!"
+    },
+    "WAW-A3-03": {
+      "start_tekst": "Nadajnik przy stacji na Mokotowie nagrał wiadomość Zakłócacza.",
+      "koniec_tekst": "Nagranie mówi, że Zawiła wyłączy światła w dniu święta."
+    },
+    "WAW-A3-04": {
+      "start_tekst": "Turbo ruszył w stronę Pałacu Kultury, sprawdź, czy dojechał bezpiecznie.",
+      "koniec_tekst": "Turbo jest pod opieką dorosłych i chce pomóc odzyskać klucz systemu."
+    },
+    "WAW-A3-05": {
+      "start_tekst": "Zawieźcie klucz z Łazienek na Stadion, a na skrzyżowaniu patrzcie na moje polecenia.",
+      "koniec_tekst": "Klucz dotarł na Stadion, czas pokazać Zawile, jak jeździ Szprycha."
+    },
+    "WAW-A3-06": {
+      "start_tekst": "Czas na finałowy wyścig punktowy do Stadionu Narodowego!",
+      "koniec_tekst": "Oddaję sterownik Szprysze i pomogę Kazikowi zbudować plac manewrowy.",
+      "swieto": "Tyle rowerów i każdy zostawia innym miejsce, przywracam światła na całej trasie!",
+      "epilog": "Witaj w ekipie, Klemensie, czeka na nas nowy plac manewrowy."
     }
   },
   "m5c": {

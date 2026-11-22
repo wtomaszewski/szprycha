@@ -95,9 +95,12 @@ export async function readContent(root = process.cwd()) {
     const keys = [
       mission.tytul,
       mission.opis,
-      ...mission.cele.flatMap(({ opis, wskazowka_powrotu }) => [
-        opis,
-        wskazowka_powrotu,
+      ...mission.cele.flatMap((goal) => [
+        goal.opis,
+        goal.wskazowka_powrotu,
+        ...(goal.typ === 'wybor'
+          ? [goal.pytanie, ...goal.odpowiedzi, goal.wyjasnienie]
+          : []),
       ]),
     ];
     for (const key of keys) {

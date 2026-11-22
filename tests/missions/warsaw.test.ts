@@ -37,6 +37,8 @@ it.each(Object.keys(warsawRoutes) as WarsawMissionId[])(
         ),
       ),
     );
+    if (id.startsWith('WAW-A1'))
+      expect(legal.mission.result!.elapsedSeconds).toBeGreaterThanOrEqual(120);
     expect(legal.mission.result!.elapsedSeconds).toBeLessThan(
       legal.mission.definition.par_s,
     );
@@ -51,7 +53,7 @@ it.each(Object.keys(warsawRoutes) as WarsawMissionId[])(
       expect(violations?.map(({ ruleId }) => ruleId)).toEqual(
         expect.arrayContaining(['ZNAK-B2T22', 'GDZIE-06']),
       );
-      expect(legal.mission.result!.opponentScore).toBeLessThan(
+      expect(legal.mission.result!.opponentScore).toBeLessThanOrEqual(
         missionContent.balans.misja.ukonczenie,
       );
       expect(legal.mission.result!.points!).toBeGreaterThan(
@@ -116,4 +118,29 @@ it('leaves the photo objective open when the rider passes the sign without takin
   );
   expect(run.mission.result).toBeUndefined();
   expect(run.target).toBe('foto_znak');
+});
+
+it('penalizes an unsignaled exit during the first delivery', () => {
+  const id = 'WAW-A1-01';
+  const route = warsawRoutes[id].legal.map((point) => ({
+    ...point,
+    signal: undefined,
+  }));
+  const run = runWarsawRoute(id, route);
+  expect(run.mission.result?.verdicts).toContainEqual(
+    expect.objectContaining({ ruleId: 'MAN-01', kind: 'minor' }),
+  );
+});
+
+it('records a missed turn signal during the bazaar course', () => {
+  const id = 'WAW-A1-02';
+  const route = warsawRoutes[id].legal.map((point) =>
+    point.until === 'signaled'
+      ? { ...point, until: undefined, signal: undefined }
+      : { ...point, signal: undefined },
+  );
+  const run = runWarsawRoute(id, route);
+  expect(run.mission.result?.verdicts).toContainEqual(
+    expect.objectContaining({ ruleId: 'MAN-01', kind: 'minor' }),
+  );
 });

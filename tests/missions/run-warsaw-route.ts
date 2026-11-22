@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { readContent } from '../../tools/content';
+import { missionEnvironment } from '../../src/gameplay/missionEnvironment';
 import { MissionRace } from '../../src/gameplay/MissionRace';
 import { MissionSystem } from '../../src/gameplay/MissionSystem';
 import { TrafficEvents } from '../../src/gameplay/TrafficEvents';
@@ -12,7 +13,6 @@ import { RuleEngine } from '../../src/rules/RuleEngine';
 import { IntersectionManager } from '../../src/rules/priority/IntersectionManager';
 import {
   TICKS_PER_SECOND,
-  type EnvState,
   type RiderState,
   type Verdict,
 } from '../../src/rules/types';
@@ -22,11 +22,7 @@ import {
   createTrafficObstacles,
   placeTrafficObstacles,
 } from '../../src/gameplay/trafficObstacles';
-import {
-  approachWaypoint,
-  type WarsawMissionId,
-  type Waypoint,
-} from './warsaw-routes';
+import { approachWaypoint, type Waypoint } from './warsaw-routes';
 
 export const missionContent = await readContent();
 
@@ -44,9 +40,10 @@ interface TiledMap {
 }
 
 export function runWarsawRoute(
-  id: WarsawMissionId,
+  id: string,
   route: readonly Waypoint[],
   afterViolation?: readonly Waypoint[],
+  stopOnRewind = false,
 ) {
   const definition = missionContent.misje.find((mission) => mission.id === id)!;
   const map = JSON.parse(
@@ -103,11 +100,7 @@ export function runWarsawRoute(
     lights: { front: false, rear: false },
     shoulderCheck: { lastLeftAt: -Infinity },
   };
-  const env: EnvState = {
-    time: definition.start.zmrok ? 'dusk' : 'day',
-    weather: 'clear',
-    visibilityLow: false,
-  };
+  const env = missionEnvironment(world, definition);
   const obstacles: Obstacle[] = map.layers.flatMap(({ name, objects }) =>
     name === 'blocks' || name === 'collisions'
       ? (objects ?? []).map((box) => ({
@@ -145,7 +138,7 @@ export function runWarsawRoute(
   let waited = 0;
   let collision = false;
   let prepTicks = 0;
-  for (let tick = 0; tick < 90 * TICKS_PER_SECOND && !mission.result; tick++) {
+  for (let tick = 0; tick < 310 * TICKS_PER_SECOND && !mission.result; tick++) {
     const point = route[attempt];
     if (point?.walking !== undefined && rider.speed === 0)
       rider.walking = point.walking;
@@ -153,12 +146,24 @@ export function runWarsawRoute(
     const preparing = mission.preparingBike;
     const drive =
       point && !preparing
-        ? approachWaypoint(rider, point)
-        : { x: 0, y: 0, brake: true, scheme: 'simple' as const };
+        ? approachWaypoint(
+            rider,
+            point,
+            definition.przesylka?.delikatna && point.maxInput !== 1,
+          )
+        : {
+            x: 0,
+            y: 0,
+            brake: true,
+            arrived: false,
+            scheme: 'simple' as const,
+          };
     if (preparing) {
       if (++prepTicks === 10) player.helmet.fastened = true;
       if (prepTicks === 30) player.lights!.front = player.lights!.rear = true;
     }
+    if (point?.lights !== undefined)
+      player.lights!.front = player.lights!.rear = point.lights;
     player.signal = point?.signal ?? 'none';
     if (point?.look) player.shoulderCheck!.lastLeftAt = engine.at;
     for (const { agent, parts } of dynamic)
@@ -218,6 +223,7 @@ export function runWarsawRoute(
         observe();
         continue;
       }
+      if (stopOnRewind) break;
       throw new Error(
         `${id} rewound at ${rider.x.toFixed(0)},${rider.y.toFixed(0)} after ${mission.elapsedSeconds}s: ${JSON.stringify(engine.recent)}`,
       );
@@ -225,16 +231,56 @@ export function runWarsawRoute(
     if (
       point &&
       !preparing &&
-      drive.brake &&
-      rider.speed === 0 &&
+      ((drive.arrived && rider.speed === 0) ||
+        (point.coast &&
+          Math.hypot(point.x - rider.x, point.y - rider.y) < 11)) &&
       (point.until !== 'driveway-stop' || engine.drivewayStopReady) &&
       (point.until !== 'signaled' || engine.signalReady) &&
       (point.until !== 'officer-go' || events.notice?.officerCleared) &&
       (point.until !== 'traffic-ended' ||
         (fired.length > 0 && !events.notice)) &&
+      (point.until !== 'bike-green' ||
+        world.crossingAllowsEntry(
+          world.crossings.find(({ id }) => id === 'pod-palacem-przejazd')!,
+          engine.at,
+          env,
+        )) &&
+      ((point.until !== 'main-east-red' && point.until !== 'main-east-green') ||
+        world.phase(
+          world.lanes.find(({ id }) => id === 'pod-palacem-E')!,
+          engine.at,
+          env,
+        ) === (point.until === 'main-east-red' ? 'red' : 'green')) &&
+      (point.until !== 'arrow' ||
+        world.phase(
+          world.lanes.find(({ id }) => id === 'pod-palacem-N')!,
+          engine.at,
+          env,
+        ) === 'arrow') &&
+      ((point.until !== 'rail-open' && point.until !== 'rail-closed') ||
+        world.railState(
+          world.crossings.find(
+            ({ id }) => id === 'mokotow-przejazd-z-zaporami',
+          )!,
+          engine.at,
+          env,
+        )?.flashing ===
+          (point.until === 'rail-closed')) &&
+      (point.until !== 'rail-south-open' ||
+        !world.railState(
+          world.crossings.find(
+            ({ id }) => id === 'mokotow-przejazd-bez-zapor',
+          )!,
+          engine.at,
+          env,
+        )?.flashing) &&
+      (point.until !== 'tram-stopped' ||
+        active.some(({ kind, stopId }) => kind === 'tram' && stopId)) &&
+      (point.answer === undefined || mission.pendingChoice) &&
       ++waited >= Math.max(1, (point.wait ?? 0) * TICKS_PER_SECOND)
     ) {
       if (point.photo) mission.photograph(player.pos, player.speed);
+      if (point.answer !== undefined) mission.answerChoice(point.answer);
       attempt++;
       waited = 0;
     }
