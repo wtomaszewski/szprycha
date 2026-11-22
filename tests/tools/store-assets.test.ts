@@ -1,6 +1,6 @@
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, relative, sep } from 'node:path';
 import { PNG } from 'pngjs';
 import { expect, it } from 'vitest';
 import { drawAppArt } from '../../tools/app-icons';
@@ -37,6 +37,37 @@ it('uses stable screenshot names and landscape sizes for all five device slots',
       names.map((name) => ({ path: `${folder}/${name}`, width, height })),
     ),
   );
+});
+
+it('ships every store PNG with the dimensions and color type used by the generator', async () => {
+  const root = 'store';
+  const assets = [
+    ...storeDevices.flatMap((device) =>
+      storeScenes.map((scene) => ({
+        ...storeScreenshot(device, scene),
+        alpha: false,
+      })),
+    ),
+    { ...storeFeatureGraphic, alpha: false },
+    storeIcon,
+  ];
+  const files = await readdir(root, { recursive: true, withFileTypes: true });
+  expect(
+    files
+      .filter((file) => file.isFile())
+      .map((file) =>
+        relative(root, join(file.parentPath, file.name)).split(sep).join('/'),
+      )
+      .sort(),
+  ).toEqual(assets.map(({ path }) => path).sort());
+
+  for (const { path, width, height, alpha } of assets) {
+    const png = await readFile(join(root, path));
+    expect(png.toString('ascii', 12, 16), path).toBe('IHDR');
+    expect([png.readUInt32BE(16), png.readUInt32BE(20), png[25]], path).toEqual(
+      [width, height, alpha ? 6 : 2],
+    );
+  }
 });
 
 it('checks PNG dimensions and writes the feature graphic in RGB and the M9 icon in RGBA', async () => {

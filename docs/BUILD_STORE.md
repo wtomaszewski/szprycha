@@ -12,7 +12,7 @@ npx playwright install chromium
 npm run store:assets
 ```
 
-Przygotowanie zależności i Chromium może wymagać sieci. Sam generator buduje lokalnie wariant `mobile` w katalogu tymczasowym. Wyłącza konfigurację rankingów i linków zewnętrznych, a Playwright dopuszcza tylko połączenia z lokalnym serwerem na `127.0.0.1`. Każde urządzenie ma osobną, świeżą sesję. W CI workflow **Web quality** udostępnia pełny zestaw jako artefakt **store-assets**. Katalog `store/` jest ignorowany przez Git.
+Przygotowanie zależności i Chromium może wymagać sieci. Sam generator buduje lokalnie wariant `mobile` w katalogu tymczasowym. Wyłącza konfigurację rankingów i linków zewnętrznych, a Playwright dopuszcza tylko połączenia z lokalnym serwerem na `127.0.0.1`. Każde urządzenie ma osobną, świeżą sesję. Pełny zestaw jest wersjonowany w katalogu [`store/`](../store/). Po ponownym wygenerowaniu przejrzyj kadry i zatwierdź zmiany obrazów razem ze zmianą, która wymagała ich aktualizacji.
 
 W każdym katalogu urządzenia powstaje pięć poziomych zrzutów PNG. Kolejność w sklepie odpowiada kolejności nazw plików.
 
@@ -42,7 +42,7 @@ Przepisz nazwę, opis i kategorię z [`content/sklep.yaml`](../content/sklep.yam
 - [ ] Ustal wersję gry w `package.json` i odpowiednim wpisie `package-lock.json`. Ustaw tę samą wersję jako Android `versionName` w `android/app/build.gradle` i iOS `MARKETING_VERSION` w ustawieniach Xcode (`CFBundleShortVersionString`). Zwiększ Android `versionCode` oraz iOS `CURRENT_PROJECT_VERSION` (`CFBundleVersion`) względem ostatnio wgranego buildu.
 - [ ] Konsultant potwierdza stan prawny w `content/przepisy.yaml` i `content/pytania.json`. Po recenzji i zgodzie na publikację wpisz jej autora oraz zakres w `content/o-grze.yaml`.
 - [ ] Uzupełnij i zatwierdź politykę prywatności oraz dane wydawcy z `legal/`. Dodaj adres polityki w obu sklepach. Jeśli adres jest widoczny w grze, sprawdź dostęp przez bramkę w Strefie Rodzica.
-- [ ] Uruchom `npm run licenses:check`, `npm run lint`, `npm run format:check`, `npm test`, `npm run test:e2e` i `npm run store:assets`. Zweryfikuj noty licencyjne w paczce oraz kadry w artefakcie CI.
+- [ ] Uruchom `npm run licenses:check`, `npm run lint`, `npm run format:check`, `npm test`, `npm run test:e2e` i `npm run store:assets`. Zweryfikuj noty licencyjne w paczce oraz kadry w `store/`.
 - [ ] Zbuduj paczkę poleceniem `VITE_RANKING_URL='' npm run build -- --mode mobile`. Wykonaj `npx cap sync` dla docelowych platform. Sprawdź na fizycznym telefonie i tablecie start w trybie samolotowym, ekran „O grze” oraz brak funkcji rankingów i klas w Strefie Rodzica.
 - [ ] **Android, krok wydawcy.** Skonfiguruj Play App Signing oraz klucz przesyłania. Zbuduj i podpisz AAB z konfiguracją release w Gradle lub Android Studio. Prześlij do testów zamkniętych. Klucz i hasła przechowuj poza repozytorium.
 - [ ] **iOS, krok wydawcy.** Skonfiguruj Team, certyfikaty i profile w Xcode na macOS. Utwórz podpisane archiwum Release dla urządzenia i prześlij je do App Store Connect. Sprawdź paczkę przez TestFlight.

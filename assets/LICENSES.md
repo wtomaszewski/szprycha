@@ -36,7 +36,7 @@ Ekran rankingów M10c używa klatek rowerzysty z istniejącego generatora i loka
 
 Panel nauczyciela M10d używa systemowego fontu przeglądarki. Zrzuty `docs/screenshots/83-*.png` wygenerował Playwright z lokalnym serwerem i danymi testowymi.
 
-Zrzuty sklepowe i podglądy `docs/screenshots/90-*` pochodzą z lokalnego buildu gry w Playwright. Grafika promocyjna korzysta ze zrzutu gry, ikony z `tools/app-icons.ts` i lokalnego fontu Pixelify Sans (OFL 1.1). Ikona sklepowa powstaje z tego samego generatora M9.
+Zrzuty sklepowe w `store/` i podglądy `docs/screenshots/90-*` pochodzą z lokalnego buildu gry w Playwright. Grafika promocyjna korzysta ze zrzutu gry, ikony z `tools/app-icons.ts` i lokalnego fontu Pixelify Sans (OFL 1.1). Ikona sklepowa powstaje z tego samego generatora M9.
 
 ## Audyt oznaczeń w #63
 
