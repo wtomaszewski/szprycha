@@ -1,21 +1,12 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { PNG } from 'pngjs';
+import { cityArt } from './city-art.ts';
 import { portraitEmotions } from '../src/content/dialogues.ts';
 
 await mkdir('assets/generated', { recursive: true });
-const colors = [
-  '#257179',
-  '#333c57',
-  '#94b0c2',
-  '#b13e53',
-  '#566c86',
-  '#29366f',
-  '#333c57',
-  '#333c57',
-  '#ad9083',
-  '#29366f',
-];
-const tiles = new PNG({ width: colors.length * 32, height: 32 });
+for (const [file, image] of Object.entries(cityArt(30)))
+  await writeFile(`assets/generated/${file}`, PNG.sync.write(image));
+
 function pixel(p: PNG, x: number, y: number, hex: string) {
   const n = parseInt(hex.slice(1), 16),
     i = (y * p.width + x) * 4;
@@ -24,39 +15,6 @@ function pixel(p: PNG, x: number, y: number, hex: string) {
   p.data[i + 2] = n & 255;
   p.data[i + 3] = 255;
 }
-for (let t = 0; t < colors.length; t++)
-  for (let y = 0; y < 32; y++)
-    for (let x = 0; x < 32; x++) {
-      let color = colors[t]!;
-      if (t === 0 && (x * 7 + y * 11) % 41 === 0) color = '#3e8948';
-      if (t === 2 && (x === 0 || y === 0)) color = '#566c86';
-      if (t === 4 && (x % 16 === 0 || y % 16 === 0)) color = '#333c57';
-      if (t === 6 && x >= 14 && x <= 17 && y < 20) color = '#f0dca8';
-      if (t === 7 && y >= 14 && y <= 17 && x < 20) color = '#f0dca8';
-      if (t === 9 && y % 8 === 2 && (x + y * 2) % 22 < 10) color = '#3b5dc9';
-      if (t === 8) {
-        const row = Math.floor(y / 8);
-        const offsetX = (x + (row % 2) * 8) % 16;
-        if (y % 8 === 0 || offsetX === 0) color = '#705f65';
-        else if (y % 8 === 1) color = '#c7ada1';
-        else if ((row + Math.floor((x + (row % 2) * 8) / 16)) % 3 === 0)
-          color = '#96818a';
-      }
-      pixel(tiles, t * 32 + x, y, color);
-    }
-const trainingTiles = new PNG({ width: 256, height: 32 });
-PNG.bitblt(
-  tiles,
-  trainingTiles,
-  0,
-  0,
-  trainingTiles.width,
-  trainingTiles.height,
-  0,
-  0,
-);
-await writeFile('assets/generated/tiles.png', PNG.sync.write(trainingTiles));
-await writeFile('assets/generated/warsaw-tiles.png', PNG.sync.write(tiles));
 const rider = new PNG({ width: 24, height: 24 });
 for (let y = 2; y < 23; y++)
   for (let x = 0; x < 24; x++) {
@@ -271,4 +229,6 @@ for (const [id, design] of Object.entries(portraits)) {
     PNG.sync.write(sheet),
   );
 }
-console.log('Generated placeholder tiles, rider and dialogue portraits');
+console.log(
+  'Generated terrain, building and street art, rider and dialogue portraits',
+);

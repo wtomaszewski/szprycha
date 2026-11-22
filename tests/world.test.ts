@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';
+import { TILE_COUNT } from '../src/render/artFrames';
 import {
   MAX_FACTOR,
   projectionFactor,
@@ -41,7 +42,7 @@ it('training Tiled map has complete tile layers, spawn and collision objects', (
   expect([map.width, map.height]).toEqual([80, 60]);
   for (const layer of map.layers.filter((l) => l.type === 'tilelayer')) {
     expect(layer.data).toHaveLength(map.width * map.height);
-    expect(layer.data!.every((t) => t >= 0 && t <= 8)).toBe(true);
+    expect(layer.data!.every((t) => t >= 0 && t <= TILE_COUNT)).toBe(true);
   }
   expect(
     map.layers

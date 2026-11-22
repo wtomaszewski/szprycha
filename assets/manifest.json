@@ -3,30 +3,65 @@
     {
       "id": "training",
       "file": "generated/tiles.png",
-      "width": 256,
-      "height": 32,
+      "width": 512,
+      "height": 192,
       "frameWidth": 32,
       "frameHeight": 32,
-      "frames": 8,
+      "frames": 96,
       "directions": 1,
-      "description": "Tymczasowe kafle: trawa, asfalt, chodnik, DDR, dach, woda, linie pionowe i poziome."
+      "description": "Kafle 32×32. Nawierzchnie, warianty i maski krawężników, cztery klatki wody oraz przezroczyste oznakowanie. Identyfikatory GID określa src/render/artFrames.ts."
     },
     {
-      "id": "warsaw",
-      "file": "generated/warsaw-tiles.png",
-      "width": 320,
+      "id": "block-walls",
+      "file": "generated/walls.png",
+      "width": 128,
+      "height": 144,
+      "frameWidth": 32,
+      "frameHeight": 12,
+      "frames": 48,
+      "directions": 1,
+      "description": "Ściany 32×12 na piętro. Cztery materiały w pionie, po trzy rzędy: dwa piętra mieszkalne i parter. Cztery warianty w poziomie."
+    },
+    {
+      "id": "block-roofs",
+      "file": "generated/roofs.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "frames": 16,
+      "directions": 1,
+      "description": "Kafle dachu. Rzędy: papa, dachówka, miedź, piaskowiec. Cztery warianty w poziomie."
+    },
+    {
+      "id": "roof-details",
+      "file": "generated/roof-details.png",
+      "width": 128,
       "height": 32,
       "frameWidth": 32,
       "frameHeight": 32,
-      "frames": 10,
+      "frames": 4,
       "directions": 1,
-      "description": "Kafle Miasteczka, bruk Starówki i Wisła pod mostem."
+      "description": "Przezroczyste detale dachów od lewej: komin, wywietrznik, klimatyzator, świetlik."
+    },
+    {
+      "id": "props",
+      "file": "generated/props.png",
+      "width": 336,
+      "height": 48,
+      "frameWidth": 48,
+      "frameHeight": 48,
+      "frames": 7,
+      "directions": 1,
+      "description": "Przezroczyste sprite’y od lewej: korona drzewa, latarnia, ławka, kosz, słupek, wiata, piłka."
     },
     {
       "id": "rider",
       "file": "generated/rider.png",
       "width": 24,
       "height": 24,
+      "frameWidth": 24,
+      "frameHeight": 24,
       "frames": 1,
       "directions": 1,
       "description": "Tymczasowy rowerzysta z kaskiem. Obrót w runtime; docelowo 16 kierunków i animacje."

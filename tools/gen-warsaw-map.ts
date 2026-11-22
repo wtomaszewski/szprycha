@@ -1,4 +1,6 @@
 import { tiledMap } from './tiled-map.ts';
+import { tileTerrain, type Surface } from './tile-terrain.ts';
+import { tiles } from '../src/render/artFrames.ts';
 import { sides, otherSide } from '../src/rules/world/LaneGraph.ts';
 import { sideVector, type Side } from '../src/rules/world/WorldModel.ts';
 
@@ -10,14 +12,9 @@ const tile = 32;
 const mapWidth = width * tile;
 const mapHeight = height * tile;
 const street = 128;
-const ground: number[] = [];
+const surfaces: Surface[] = [];
 const markings: number[] = [];
-const { rect, polyline, objectLayer, write } = tiledMap(
-  width,
-  height,
-  ground,
-  markings,
-);
+const { rect, polyline, objectLayer, write } = tiledMap(width, height);
 type Point = [number, number];
 type Junction = {
   id: string;
@@ -119,7 +116,6 @@ for (let row = 0; row < height; row++)
     const inRoundabout =
       Math.abs(x - island.x) < 224 && Math.abs(y - island.y) < 224;
     const onStreet = streetTiles.some((area) => hasTile(x, y, area));
-    const circle = inRoundabout && distance < 247;
     const verge =
       [448, 1088].some((mid) => Math.abs(y - mid) < 96) ||
       [448, 1088, 1856].some((mid) => Math.abs(x - mid) < 96);
@@ -127,41 +123,43 @@ for (let row = 0; row < height; row++)
       const water = x < riverWest;
       const deck = y >= 310 && y < 529;
       const cobbles = y >= 544 && y < 1024 && x >= 2848 && x < 3904;
-      ground.push(
+      surfaces.push(
         water && !deck
-          ? 10
+          ? 'water'
           : onStreet
-            ? 2
+            ? 'asphalt'
             : cobbles
-              ? 9
-              : deck || (x >= riverWest && y < 640)
-                ? 3
-                : 1,
+              ? 'cobble'
+              : deck || (!water && y < 640)
+                ? 'sidewalk'
+                : 'grass',
       );
       markings.push(
         onStreet &&
           !junctions.some(
             (j) => Math.abs(j.x - x) < 64 && Math.abs(j.y - y) < 64,
           )
-          ? col * 32 === castle.x
-            ? 7
-            : row * 32 === castle.y
-              ? 8
+          ? col * tile === castle.x
+            ? tiles.dashVertical
+            : row * tile === castle.y
+              ? tiles.dashHorizontal
               : 0
           : 0,
       );
       continue;
     }
-    ground.push(
+    surfaces.push(
       hasTile(x, y, hump)
-        ? 3
-        : distance < 94
-          ? 1
-          : circle || onStreet
-            ? 2
-            : verge || paved.some((area) => hasTile(x, y, area))
-              ? 3
-              : 1,
+        ? 'cobble'
+        : distance < 24
+          ? 'water'
+          : inRoundabout || onStreet
+            ? 'asphalt'
+            : paved.some((area) => hasTile(x, y, area))
+              ? 'cobble'
+              : verge
+                ? 'sidewalk'
+                : 'grass',
     );
     const junction = junctions.some(
       ({ x: cx, y: cy }) => Math.abs(x - cx) < 64 && Math.abs(y - cy) < 64,
@@ -169,9 +167,9 @@ for (let row = 0; row < height; row++)
     markings.push(
       !junction && !inRoundabout && onStreet
         ? [448, 1088, 1856].includes(col * 32)
-          ? 7
+          ? tiles.dashVertical
           : [448, 1088].includes(row * 32)
-            ? 8
+            ? tiles.dashHorizontal
             : 0
         : 0,
     );
@@ -620,7 +618,16 @@ const buildings = [
 objectLayer(
   'blocks',
   buildings.map(([id, x, y, w, h, floors, tint]) =>
-    rect(id, x, y, w, h, { height: floors, tint }),
+    rect(id, x, y, w, h, {
+      height: floors,
+      tint,
+      ...(id.startsWith('kamienica')
+        ? { roof: 'tile', wall: id.endsWith('lewa') ? 'sand' : 'brick' }
+        : {}),
+      ...(id.startsWith('fabryka')
+        ? { roof: 'felt', wall: 'brick', landmarkId: 'fabryka' }
+        : {}),
+    }),
   ),
 );
 objectLayer('collisions', [
@@ -649,7 +656,10 @@ objectLayer('collisions', [
   }),
 ]);
 objectLayer('traffic_islands', [
-  rect('wyspa-ronda', island.x - 93, island.y - 93, 186, 186),
+  rect('wyspa-ronda', island.x - 93, island.y - 93, 186, 186, {
+    road_radius: 224,
+    corner_radius: 76,
+  }),
 ]);
 objectLayer('districts', [
   rect('praga', 0, 0, pragaEdge, mapHeight),
@@ -659,8 +669,38 @@ objectLayer('districts', [
 objectLayer('map_decorations', [
   rect('pylon', 2537, 529, 0, 0, { kind: 'bridge' }),
 ]);
-await write('warszawa', 9, undefined, {
-  name: 'warsaw',
-  file: 'warsaw-tiles.png',
-  count: 10,
-});
+objectLayer(
+  'props',
+  (
+    [
+      ['tree', 594, 322],
+      ['tree', 824, 320],
+      ['tree', 987, 303],
+      ['tree', 578, 533],
+      ['tree', 903, 563],
+      ['tree', 1201, 308],
+      ['tree', 1316, 370],
+      ['tree', 1364, 348],
+      ['tree', 995, 839],
+      ['tree', 1224, 780],
+      ['lamp', 554, 379],
+      ['lamp', 805, 379],
+      ['lamp', 994, 379],
+      ['lamp', 1168, 518, 2],
+      ['lamp', 882, 518, 2],
+      ['bench', 692, 536],
+      ['bench', 1246, 321, 1],
+      ['bin', 720, 535],
+      ['bollard', 782, 369],
+      ['bollard', 843, 369],
+      ['shelter', 1472, 530],
+      ['bin', 1505, 529],
+      ['lamp', 1290, 1008],
+      ['bench', 1204, 1006],
+      ['bin', 1233, 1006],
+    ] as const
+  ).map(([kind, x, y, turn = 0]) =>
+    rect(`prop-${kind}-${x}-${y}`, x, y, 0, 0, { kind, turn }),
+  ),
+);
+await write('warszawa', 9, tileTerrain(width, height, surfaces), markings);
