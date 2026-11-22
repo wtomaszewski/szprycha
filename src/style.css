@@ -1103,6 +1103,12 @@ button[aria-pressed='true'] {
   margin-top: 12px;
 }
 
+.third-party-notices {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 14px/1.5 monospace;
+}
+
 .album-cards,
 .progress-cards {
   display: grid;
