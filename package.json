@@ -25,7 +25,8 @@
     "map:generate:warsaw": "tsx tools/gen-warsaw-map.ts",
     "coverage:maps": "tsx tools/coverage-report.ts",
     "map:generate:wroclaw": "tsx tools/gen-wroclaw-map.ts",
-    "benchmark:plac": "tsx tools/benchmark-plac.ts"
+    "benchmark:plac": "tsx tools/benchmark-plac.ts",
+    "benchmark:mobile": "tsx tools/benchmark-mobile.ts"
   },
   "dependencies": {
     "idb-keyval": "6.3.0",

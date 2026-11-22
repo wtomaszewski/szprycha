@@ -37,7 +37,18 @@ export class RoadVisit {
   private readonly episodes = new Map<
     string,
     { section?: string; tick: number; reported: boolean }
-  >();
+  >(
+    [
+      'GDZIE-02',
+      'GDZIE-03b',
+      'GDZIE-03',
+      'GDZIE-07',
+      'GDZIE-08',
+      'GDZIE-11',
+      'MAN-08',
+      'access',
+    ].map((id) => [id, { tick: -Infinity, reported: false }]),
+  );
   private clearRoad?: Zone;
   private clearSince = 0;
 
@@ -72,7 +83,7 @@ export class RoadVisit {
     const { zone, roadway, lane, crossing } = zones;
     if (rider.mode !== 'riding') {
       this.clearRoad = undefined;
-      this.episodes.clear();
+      for (const episode of this.episodes.values()) episode.tick = -Infinity;
       return;
     }
     if (!env.officerOrders?.[approach?.id ?? ''] && crossing?.kind === 'bike')
@@ -112,7 +123,7 @@ export class RoadVisit {
       !living &&
       !lane?.parallelBikeInfra &&
       !lane?.shoulder?.shoulderUsable &&
-      !this.world.parkedCars.some((car) => contains(car, rider.pos, 3))
+      !this.nearParkedCar(rider.pos)
         ? roadway
         : undefined;
     if (this.clearRoad !== clearRoad) {
@@ -190,10 +201,15 @@ export class RoadVisit {
     }
   }
 
+  private nearParkedCar(pos: Vec2) {
+    for (const car of this.world.parkedCars)
+      if (contains(car, pos, 3)) return true;
+    return false;
+  }
+
   private findZone(kind: Zone['kind'], pos: Vec2) {
-    return this.world.zones.find(
-      (zone) => zone.kind === kind && contains(zone, pos),
-    );
+    for (const zone of this.world.zones)
+      if (zone.kind === kind && contains(zone, pos)) return zone;
   }
 
   private accessSign(
@@ -218,12 +234,14 @@ export class RoadVisit {
   }
 
   private canReport(ruleId: string, section: string | undefined, tick: number) {
-    const state = this.episodes.get(ruleId);
-    if (state && state.section === section && tick - state.tick <= EXIT_TICKS) {
+    const state = this.episodes.get(ruleId)!;
+    if (state.section === section && tick - state.tick <= EXIT_TICKS) {
       state.tick = tick;
       return !state.reported;
     }
-    this.episodes.set(ruleId, { section, tick, reported: false });
+    state.section = section;
+    state.tick = tick;
+    state.reported = false;
     return true;
   }
 
