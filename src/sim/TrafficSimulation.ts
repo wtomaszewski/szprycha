@@ -8,6 +8,12 @@ import {
   type SignalPhase,
   type Vec2,
 } from '../rules/types';
+import {
+  footprintReachesBox,
+  footprintsOverlap,
+  trafficFootprints,
+  type Footprint,
+} from '../rules/world/Footprint';
 import type { LaneEdge, Movement } from '../rules/world/LaneGraph';
 import { RoadPath } from '../rules/world/RoadPath';
 import {
@@ -23,16 +29,17 @@ import {
 const STEP = 1 / TICKS_PER_SECOND;
 const ACCELERATION = 2.2;
 const BRAKING = 4;
-const STOP_MARGIN = 0.85;
+const STOP_CLEARANCE = 0.15;
 const REQUEST_RANGE = 3.5;
-const SPACING = 2.5;
+const FOLLOWING_GAP = 0.65;
+const CYCLE_OFFSET = 1.64;
+const EMERGENCY_OFFSET = 1.05;
 const HEADWAY = 0.65;
 const CRUISE_SPEED = 7;
 const TURN_SPEED = 4.5;
 const EPSILON = 1e-8;
 const PLAYER_LOOKAHEAD = 0.65;
 const DEFAULT_SEED = 1403;
-export const CAR_RADIUS_PX = 14;
 
 export type TrafficIntent =
   | 'driving'
@@ -56,6 +63,7 @@ interface Car {
   edge: LaneEdge;
   distance: number;
   cruiseFactor: number;
+  footprint: Footprint;
   entry?: LaneEdge;
   pullOver: number;
   route?: Movement;
@@ -85,19 +93,19 @@ export interface TrafficConditions {
   occupiedJunctions: ReadonlySet<Intersection>;
   clearingAreas: readonly ClearingArea[];
   emergency: readonly AgentState[];
+  routed: readonly (AgentState & { active: boolean })[];
 }
 
 type Settings = GameContent['balans']['silnik'];
 
 export class TrafficSimulation {
   readonly agents: readonly RoadTrafficAgent[];
-  readonly radius: number;
   private readonly cars: Car[];
   private readonly junctions = new Map<Intersection, Car>();
   private readonly approaches: LaneEdge[];
   private readonly crossingIntervals = new Map<
     LaneEdge,
-    { entry: number; exit: number }[]
+    Record<RoadTrafficAgent['kind'], { entry: number; exit: number }[]>
   >();
   private readonly playerAgent: AgentState = {
     id: 'player',
@@ -110,6 +118,13 @@ export class TrafficSimulation {
   private readonly walkingCrossings: (Crossing | undefined)[] = [];
   private playerLane?: Lane;
   private readonly playerAhead = { x: 0, y: 0 };
+  private readonly spawnProbe: AgentState = {
+    id: 'spawn',
+    kind: 'car',
+    pos: { x: 0, y: 0 },
+    heading: 0,
+    speed: 0,
+  };
   private tick = 0;
   private randomState = 0;
 
@@ -123,7 +138,6 @@ export class TrafficSimulation {
     count = world.trafficCarCount,
     roadwayCyclists = false,
   ) {
-    this.radius = CAR_RADIUS_PX * world.metersPerPixel;
     this.approaches = world.laneGraph.edges.filter(({ lane }) => lane);
     const areas = new Set<Box>(
       world.crossings.map((crossing) => crossing.trafficArea ?? crossing),
@@ -133,15 +147,22 @@ export class TrafficSimulation {
     for (const edge of world.laneGraph.edges) {
       const path = edge.path;
       const reverse = new RoadPath(edge.id, [...path.points].reverse());
-      const intervals = [];
-      for (const area of areas) {
-        const entry = path.boxAhead(0, area, this.radius + 0.02);
-        const exit =
-          path.length - reverse.boxAhead(0, area, this.radius - 0.05);
-        if (entry > 0 && entry < exit && exit < path.length)
-          intervals.push({ entry, exit });
-      }
-      this.crossingIntervals.set(edge, intervals);
+      const intervals = (kind: RoadTrafficAgent['kind'], lateral: number) => {
+        const footprint = trafficFootprints[kind];
+        const result = [];
+        for (const area of areas) {
+          const entry = path.boxAhead(0, area, 0.08, footprint, lateral);
+          const exit =
+            path.length - reverse.boxAhead(0, area, 0, footprint, -lateral);
+          if (entry > 0 && entry < exit && exit < path.length)
+            result.push({ entry, exit });
+        }
+        return result;
+      };
+      this.crossingIntervals.set(edge, {
+        car: intervals('car', 0),
+        cyclist: intervals('cyclist', CYCLE_OFFSET),
+      });
     }
     if (!Number.isInteger(count) || count < 0 || count > this.approaches.length)
       throw new RangeError(
@@ -170,6 +191,7 @@ export class TrafficSimulation {
           entry,
           distance: 0,
           cruiseFactor: 1,
+          footprint: trafficFootprints[entry ? 'cyclist' : 'car'],
           pullOver: 0,
           crossing: false,
           committed: false,
@@ -258,7 +280,7 @@ export class TrafficSimulation {
     for (const car of this.cars) this.advance(car);
     for (const car of this.cars) {
       if (!car.edge.lane && car.distance >= car.edge.path.length)
-        this.reenter(car, player);
+        this.reenter(car, player, conditions);
     }
     this.tick++;
   }
@@ -315,30 +337,55 @@ export class TrafficSimulation {
       (player.signal === 'none' ? 'straight' : player.signal);
   }
 
+  private lateralOffset(car: Car) {
+    return car.pullOver + (car.entry ? CYCLE_OFFSET : 0);
+  }
+
+  private stopDistance(car: Car) {
+    return car.edge.path.length - car.footprint.halfLength - STOP_CLEARANCE;
+  }
+
   private gapAhead(car: Car) {
     let gap = Infinity;
     for (const other of this.cars) {
       if (other === car) continue;
+      const reach = car.footprint.halfLength + other.footprint.halfLength;
+      if (
+        Math.abs(this.lateralOffset(car) - this.lateralOffset(other)) >=
+        car.footprint.halfWidth + other.footprint.halfWidth
+      )
+        continue;
       if (car.edge === other.edge && !car.crossing) {
         const distance = other.crossing
           ? car.edge.path.length + other.distance
           : other.distance;
         if (distance > car.distance)
-          gap = Math.min(gap, distance - car.distance);
+          gap = Math.min(gap, distance - car.distance - reach);
       }
       if (car.crossing && other.edge === car.route!.to && !other.crossing)
         gap = Math.min(
           gap,
-          car.route!.path.length - car.distance + other.distance,
+          car.route!.path.length - car.distance + other.distance - reach,
         );
     }
     return gap;
   }
 
-  private entryGap(edge: LaneEdge) {
-    let gap = edge.path.length - STOP_MARGIN;
+  private entryGap(edge: LaneEdge, entering: Car) {
+    let gap = edge.lane
+      ? edge.path.length - entering.footprint.halfLength - STOP_CLEARANCE
+      : Infinity;
     for (const car of this.cars) {
-      if (car.edge === edge && !car.crossing) gap = Math.min(gap, car.distance);
+      if (
+        car !== entering &&
+        car.edge === edge &&
+        !car.crossing &&
+        Math.abs(
+          (entering.entry ? CYCLE_OFFSET : 0) - this.lateralOffset(car),
+        ) <
+          car.footprint.halfWidth + entering.footprint.halfWidth
+      )
+        gap = Math.min(gap, car.distance - car.footprint.halfLength);
     }
     return gap;
   }
@@ -350,7 +397,7 @@ export class TrafficSimulation {
     car.reason = undefined;
     if (!lane || car.committed) return;
     const phase = this.world.trafficPhase(lane, at, env);
-    const toStop = car.edge.path.length - STOP_MARGIN - car.distance;
+    const toStop = this.stopDistance(car) - car.distance;
     const stopped =
       toStop <= 0.06 && car.agent.speed < this.settings.stop_predkosc_ms;
     if (stopped) {
@@ -377,8 +424,9 @@ export class TrafficSimulation {
     } else if (
       toStop <=
         Math.max(REQUEST_RANGE, car.agent.speed * this.settings.ttc_minor_s) &&
-      car.gap > SPACING + toStop &&
-      this.entryGap(car.route!.to) >= SPACING * 2
+      car.gap > FOLLOWING_GAP + toStop &&
+      this.entryGap(car.route!.to, car) >=
+        car.footprint.halfLength * 2 + FOLLOWING_GAP
     ) {
       car.approaching = true;
       car.request = toStop <= REQUEST_RANGE;
@@ -490,26 +538,44 @@ export class TrafficSimulation {
     }
   }
 
-  private obstacleGap(car: Car, pos: Vec2, radius: number) {
-    if (car.crossing) {
-      const { path, to } = car.route!;
-      return Math.min(
-        path.obstacleAhead(car.distance, pos, radius),
-        path.length - car.distance + to.path.obstacleAhead(0, pos, radius),
-      );
-    }
-    const { path } = car.edge;
+  private obstacleGap(
+    car: Car,
+    pos: Vec2,
+    clearance: number,
+    other: AgentState | RiderState,
+  ) {
+    const path = car.crossing ? car.route!.path : car.edge.path;
+    const next = car.crossing ? car.route!.to.path : car.route?.path;
+    const footprint =
+      trafficFootprints['kind' in other ? other.kind : 'cyclist'];
+    const lateral = this.lateralOffset(car);
     return Math.min(
-      path.obstacleAhead(car.distance, pos, radius),
-      car.route
+      path.obstacleAhead(
+        car.distance,
+        pos,
+        clearance,
+        car.footprint,
+        lateral,
+        footprint,
+        other.heading,
+      ),
+      next
         ? path.length -
             car.distance +
-            car.route.path.obstacleAhead(0, pos, radius)
+            next.obstacleAhead(
+              0,
+              pos,
+              clearance,
+              car.footprint,
+              lateral,
+              footprint,
+              other.heading,
+            )
         : Infinity,
     );
   }
 
-  private crossingGap(car: Car, crossing: Box, margin = this.radius + 0.55) {
+  private crossingGap(car: Car, crossing: Box, margin = 0.15) {
     const { pos, heading } = car.agent;
     const dx =
       pos.x -
@@ -517,18 +583,21 @@ export class TrafficSimulation {
     const dy =
       pos.y -
       Math.max(crossing.y, Math.min(pos.y, crossing.y + crossing.height));
-    // The car's rear may still touch the safety margin after clearing a crossing.
+    // A vehicle whose rear still touches the crossing can continue to clear it.
     if (
-      Math.hypot(dx, dy) <= margin + EPSILON &&
+      footprintReachesBox(car.agent, crossing, margin) &&
       dx * Math.cos(heading) + dy * Math.sin(heading) > EPSILON
     )
       return Infinity;
     const path = car.crossing ? car.route!.path : car.edge.path;
     const next = car.crossing ? car.route!.to.path : car.route?.path;
+    const lateral = this.lateralOffset(car);
     return Math.min(
-      path.boxAhead(car.distance, crossing, margin),
+      path.boxAhead(car.distance, crossing, margin, car.footprint, lateral),
       next
-        ? path.length - car.distance + next.boxAhead(0, crossing, margin)
+        ? path.length -
+            car.distance +
+            next.boxAhead(0, crossing, margin, car.footprint, lateral)
         : Infinity,
     );
   }
@@ -550,16 +619,18 @@ export class TrafficSimulation {
         car.reserved === car.edge.lane?.intersection);
     const toStop =
       car.edge.lane && !hasRightOfEntry
-        ? car.edge.path.length - STOP_MARGIN - car.distance
+        ? this.stopDistance(car) - car.distance
         : Infinity;
-    const following = car.gap - SPACING;
+    const following = car.gap - FOLLOWING_GAP;
     let room = Math.min(toStop, following);
     for (const crossing of this.closedRail)
-      if (!contains(crossing, car.agent.pos))
+      if (!footprintReachesBox(car.agent, crossing))
         room = Math.min(room, this.crossingGap(car, crossing));
     if (!car.crossing) {
       // Leave crossings clear even when the next signal has queued traffic.
-      for (const { entry, exit } of this.crossingIntervals.get(car.edge)!) {
+      for (const { entry, exit } of this.crossingIntervals.get(car.edge)![
+        car.agent.kind
+      ]) {
         if (car.distance <= entry + EPSILON && car.distance + room < exit)
           room = Math.min(room, entry - car.distance);
       }
@@ -578,8 +649,8 @@ export class TrafficSimulation {
 
     const playerGap = player
       ? Math.min(
-          this.obstacleGap(car, player.pos, this.radius + 0.85),
-          this.obstacleGap(car, this.playerAhead, this.radius + 0.85),
+          this.obstacleGap(car, player.pos, 0.22, player),
+          this.obstacleGap(car, this.playerAhead, 0.22, player),
         )
       : Infinity;
     let pedestrianGap = Infinity;
@@ -589,7 +660,7 @@ export class TrafficSimulation {
       const crossing = this.walkingCrossings[index];
       const gap = crossing
         ? this.crossingGap(car, crossing.trafficArea ?? crossing)
-        : this.obstacleGap(car, pedestrian.pos, this.radius + 0.55);
+        : this.obstacleGap(car, pedestrian.pos, 0.12, pedestrian);
       pedestrianGap = Math.min(pedestrianGap, gap);
       if (crossing?.kind === 'pedestrian' || crossing?.kind === 'combined')
         markedCrossingGap = Math.min(markedCrossingGap, gap);
@@ -599,8 +670,13 @@ export class TrafficSimulation {
       occupiedMargin,
       stopMargin,
     } of conditions?.clearingAreas ?? []) {
-      // Vehicles already there keep moving until the crossing is empty.
-      if (!contains(area, car.agent.pos, occupiedMargin))
+      // Finish a reserved crossing before yielding to a waiting walker. A car
+      // blocking the walker's gate may need this junction to clear the area.
+      if (
+        !car.committed &&
+        !(car.reserved && car.edge.lane?.intersection !== car.reserved) &&
+        !footprintReachesBox(car.agent, area, occupiedMargin)
+      )
         pedestrianGap = Math.min(
           pedestrianGap,
           this.crossingGap(car, area, stopMargin),
@@ -609,11 +685,12 @@ export class TrafficSimulation {
     const yieldingToEmergency =
       !car.committed &&
       !car.crossing &&
-      (car.edge.from.kind === 'boundary' || car.distance > SPACING * 2) &&
+      (car.edge.from.kind === 'boundary' ||
+        car.distance > car.footprint.halfLength + FOLLOWING_GAP) &&
       conditions?.emergency.some((agent) =>
         this.emergencyApproaching(car, agent),
       );
-    const offset = yieldingToEmergency ? 22 * this.world.metersPerPixel : 0;
+    const offset = yieldingToEmergency ? EMERGENCY_OFFSET : 0;
     const shift = Math.max(-STEP, Math.min(STEP, offset - car.pullOver));
     const shiftX = -Math.sin(car.agent.heading) * shift;
     const shiftY = Math.cos(car.agent.heading) * shift;
@@ -623,7 +700,7 @@ export class TrafficSimulation {
         player.pos.x - car.agent.pos.x - shiftX,
         player.pos.y - car.agent.pos.y - shiftY,
       ) >=
-        this.radius + 0.85
+        car.footprint.halfWidth + 0.55
     )
       car.pullOver += shift;
     if (yieldingToEmergency) target = 0;
@@ -668,10 +745,10 @@ export class TrafficSimulation {
     const side = dy * Math.cos(h) - dx * Math.sin(h);
     return (
       Math.cos(car.agent.heading - h) > 0.98 &&
-      ahead > -2 &&
+      ahead > -14 &&
       ahead < 16 &&
       side >= 0 &&
-      side < 54 * this.world.metersPerPixel
+      side < 2.55
     );
   }
 
@@ -686,7 +763,7 @@ export class TrafficSimulation {
       !car.crossing &&
       car.edge.lane &&
       car.reserved === car.edge.lane.intersection &&
-      car.distance > car.edge.path.length - STOP_MARGIN
+      car.distance > this.stopDistance(car)
     )
       car.committed = true;
     if (car.crossing) {
@@ -704,7 +781,7 @@ export class TrafficSimulation {
     if (
       car.reserved &&
       car.edge.lane?.intersection !== car.reserved &&
-      car.distance >= this.radius + 0.05
+      car.distance >= car.footprint.halfLength + 0.05
     ) {
       this.junctions.delete(car.reserved);
       car.reserved = undefined;
@@ -718,8 +795,7 @@ export class TrafficSimulation {
       car.distance,
       car.agent.pos,
     ));
-    const offset =
-      car.pullOver + (car.entry ? 24 * this.world.metersPerPixel : 0);
+    const offset = this.lateralOffset(car);
     car.agent.pos.x -= Math.sin(heading) * offset;
     car.agent.pos.y += Math.cos(heading) * offset;
     car.agent.junctionProgress = car.crossing
@@ -727,17 +803,46 @@ export class TrafficSimulation {
       : car.distance - path.length;
   }
 
-  private reenter(car: Car, player?: RiderState) {
+  private reenter(
+    car: Car,
+    player?: RiderState,
+    conditions?: TrafficConditions,
+  ) {
     const entries = car.entry ? [car.entry] : this.world.laneGraph.entries;
     const first = this.draw(entries.length);
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[(first + i) % entries.length]!;
-      if (this.entryGap(entry) < SPACING * 2) continue;
+      if (this.entryGap(entry, car) < car.footprint.halfLength + FOLLOWING_GAP)
+        continue;
       if (
         player &&
-        entry.path.obstacleAhead(0, player.pos, this.radius + 0.85) < SPACING
+        entry.path.obstacleAhead(
+          0,
+          player.pos,
+          0.22,
+          car.footprint,
+          car.entry ? CYCLE_OFFSET : 0,
+          trafficFootprints.cyclist,
+          player.heading,
+        ) < FOLLOWING_GAP
       )
         continue;
+      if (conditions) {
+        const probe = this.spawnProbe;
+        probe.kind = car.agent.kind;
+        probe.heading = entry.path.place(0, probe.pos);
+        if (car.entry) {
+          probe.pos.x -= Math.sin(probe.heading) * CYCLE_OFFSET;
+          probe.pos.y += Math.cos(probe.heading) * CYCLE_OFFSET;
+        }
+        if (
+          conditions.routed.some(
+            (agent) => agent.active && footprintsOverlap(probe, agent, 0.05),
+          )
+        )
+          continue;
+      }
+      car.pullOver = 0;
       this.setEdge(car, entry, 0);
       car.agent.speed = 0;
       this.place(car);

@@ -5,6 +5,7 @@ export interface Obstacle {
   width: number;
   height: number;
   kind: 'wall' | 'curb';
+  rotation?: { cos: number; sin: number };
 }
 export interface RiderState {
   signal: 'left' | 'right' | null;
@@ -35,6 +36,20 @@ const approach = (value: number, target: number, amount: number) =>
     ? Math.min(target, value + amount)
     : Math.max(target, value - amount);
 export function overlaps(x: number, y: number, radius: number, o: Obstacle) {
+  if (o.rotation) {
+    const halfWidth = o.width / 2;
+    const halfHeight = o.height / 2;
+    const cx = o.x + halfWidth;
+    const cy = o.y + halfHeight;
+    const rx = x - cx;
+    const ry = y - cy;
+    // Broad phase before testing the rider against the oriented obstacle.
+    const reach = halfWidth + halfHeight + radius;
+    if (Math.abs(rx) >= reach || Math.abs(ry) >= reach) return false;
+    const { cos, sin } = o.rotation;
+    x = cx + rx * cos + ry * sin;
+    y = cy + ry * cos - rx * sin;
+  }
   const dx = x - Math.max(o.x, Math.min(x, o.x + o.width));
   const dy = y - Math.max(o.y, Math.min(y, o.y + o.height));
   return dx * dx + dy * dy < radius * radius;

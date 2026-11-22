@@ -8,9 +8,13 @@ import {
   type EnvState,
   type RiderState,
 } from '../../src/rules/types';
+import {
+  footprintReachesBox,
+  footprintsOverlap,
+  trafficFootprints,
+} from '../../src/rules/world/Footprint';
 import { contains, WorldModel } from '../../src/rules/world/WorldModel';
 import {
-  actorRadiusPx,
   TrafficParticipants,
   type RoutedAgent,
 } from '../../src/sim/TrafficParticipants';
@@ -120,23 +124,6 @@ it.each(scenarios)('$name', ({ actor, stages }) => {
   }
 });
 
-function overlaps(a: AgentState, b: AgentState, scale: number) {
-  // The body of the tram is long and narrow. Passengers step out through its side.
-  if (b.kind === 'tram') return overlaps(b, a, scale);
-  const x = (b.pos.x - a.pos.x) / scale;
-  const y = (b.pos.y - a.pos.y) / scale;
-  if (a.kind !== 'tram')
-    return (
-      Math.hypot(x, y) < actorRadiusPx[a.kind] + actorRadiusPx[b.kind] - 1e-6
-    );
-  const along = Math.abs(x * Math.cos(a.heading) + y * Math.sin(a.heading));
-  const across = Math.abs(y * Math.cos(a.heading) - x * Math.sin(a.heading));
-  return (
-    Math.hypot(Math.max(0, along - 25), Math.max(0, across - 10)) <
-    actorRadiusPx[b.kind] - 1e-6
-  );
-}
-
 it.each([1403, 17])(
   'all participant types keep moving for ten minutes without collisions (seed %i)',
   (seed) => {
@@ -162,7 +149,7 @@ it.each([1403, 17])(
           throw new Error(`${a.id} stationary for 90 seconds at tick ${tick}`);
         for (let j = i + 1; j < agents.length; j++) {
           const b = agents[j]!;
-          if (overlaps(a, b, world.metersPerPixel))
+          if (footprintsOverlap(a, b))
             throw new Error(`${a.id} collided with ${b.id} at tick ${tick}`);
         }
       }
@@ -174,13 +161,13 @@ it.each([1403, 17])(
         )
           emergencyYield = true;
         if (!passenger.active) continue;
-        if (contains(stop, car.pos))
+        if (footprintReachesBox(car, stop))
           throw new Error(`${car.id} entered the stop during alighting`);
         if (
           car.laneId === 'yield-W' &&
           car.speed === 0 &&
           car.intent === 'yield' &&
-          Math.abs(stop.x - car.pos.x) < 2
+          Math.abs(stop.x - car.pos.x - trafficFootprints.car.halfLength) < 0.5
         )
           stopYield = true;
       }
@@ -311,7 +298,9 @@ it('rejects an AI road route where assigned cycle infrastructure exists', () => 
 });
 
 it('holds the bike lane cyclist at the bike signal and keeps roadway cyclists to the right', () => {
-  const { world, sim } = simulate();
+  const { world, sim } = simulate(undefined, (data) => {
+    data.properties.find(({ name }) => name === 'trafficCars')!.value = 0;
+  });
   const onBikeLane = sim.routed.find(({ id }) => id === 'cyclist-bike-lane')!;
   const onRoad = sim.road.agents.find(({ kind }) => kind === 'cyclist')!;
   const crossing = world.crossings.find(
@@ -330,7 +319,7 @@ it('holds the bike lane cyclist at the bike signal and keeps roadway cyclists to
     ...clear,
     signalOverrides: { [crossing.id]: 'red' },
   };
-  for (let tick = 0; tick < 720; tick++) sim.step(held);
+  for (let tick = 0; tick < 20 * TICKS_PER_SECOND; tick++) sim.step(held);
   expect(onBikeLane.intent).toBe('signal');
   expect(onBikeLane.speed).toBe(0);
   expect(onBikeLane.pos.x).toBeGreaterThan(crossing.x + crossing.width);

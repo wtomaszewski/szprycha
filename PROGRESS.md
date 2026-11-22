@@ -165,3 +165,9 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Dodano atlasy rowerzysty i pieszych z gotowymi kierunkami, kolor kasku wybierany w menu, animowane światła pojazdów oraz tramwaj z dwoma segmentami. Wrocław ma przygotowane malowanie tramwaju do użycia na przyszłej mapie.
 - Testy sprawdzają bajtową powtarzalność PNG, zgodność z manifestem, klatki kierunków i świateł oraz piksele obu gestów w scenie jazdy.
 - Sprawdzono testowy Pałac Kultury i pojedyncze bloki o wysokości do 32 pięter. Schodkowa sylweta Pałacu wynika z pięciu brył zadanych w mapie.
+
+## #37 — skala pojazdów i tramwaju
+
+- Sprite’y ruchu korzystają z klatek atlasu w skali 1:1. Symulacja liczy obrysy, odstępy i zatrzymania z wymiarów w metrach, a kolizje z graczem wykorzystują skalę bieżącej mapy.
+- Przesunięto przystanek bez wysepki w Miasteczku, przejście przy światłach na tej mapie oraz przejście przy bazarze w Warszawie, aby pojazdy mogły je zwolnić przed linią zatrzymania.
+- Po dołączeniu #34 wyłagodzono łuki wjazdu i zjazdu z nasypu przy rondzie, żeby obrysy aut mieściły się na osobnych pasach.

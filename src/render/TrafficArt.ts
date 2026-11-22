@@ -54,6 +54,7 @@ export function drawCyclist(
 }
 
 export class TrafficArt {
+  readonly reach: number;
   private readonly image: GameObjects.Image;
   private readonly rear?: GameObjects.Image;
   private readonly row: number;
@@ -65,7 +66,6 @@ export class TrafficArt {
     mapId: string,
   ) {
     let key: SpriteSheet = `traffic-${kind}`;
-    let scale = 1;
     switch (kind) {
       case 'car': {
         const types = smallVehicleTypes.length + largeVehicleTypes.length;
@@ -76,21 +76,17 @@ export class TrafficArt {
         this.row =
           (large ? type - smallVehicleTypes.length : type) * vehiclePaints +
           paint;
-        scale = 0.65;
         break;
       }
       case 'emergency':
         this.row = variant % emergencyTypes.length;
-        scale = 0.57;
         break;
       case 'tram':
         this.row = mapId.startsWith(tramCities[1]) ? 1 : 0;
-        scale = 0.65;
         this.rear = scene.add
           .image(0, 0, key, this.row * 2 + 1)
           .setOrigin(0.5, 0)
-          .setDepth(17)
-          .setScale(scale, 0.325);
+          .setDepth(17);
         break;
       case 'pedestrian':
         this.row = variant % pedestrianTypes.length;
@@ -99,12 +95,12 @@ export class TrafficArt {
         this.row = variant % cyclistVariants;
         break;
     }
+    const [width, height] = spriteSheets[key];
+    this.reach = Math.hypot(width / 2, this.rear ? height : height / 2);
     this.image = scene.add
       .image(0, 0, key, kind === 'tram' ? this.row * 2 : 0)
-      .setScale(scale)
       .setDepth(17);
-    // Keep the original footprint on the rails while both sections pivot at the joint.
-    if (this.rear) this.image.setOrigin(0.5, 1).setScale(scale, 0.325);
+    if (this.rear) this.image.setOrigin(0.5, 1);
   }
 
   draw(x: number, y: number, visible: boolean, pose: ReplayActor, at: number) {

@@ -12,16 +12,16 @@ import { RuleEngine } from '../../src/rules/RuleEngine';
 import { IntersectionManager } from '../../src/rules/priority/IntersectionManager';
 import {
   TICKS_PER_SECOND,
-  type AgentState,
   type EnvState,
   type RiderState,
   type Verdict,
 } from '../../src/rules/types';
 import { WorldModel } from '../../src/rules/world/WorldModel';
+import { TrafficParticipants } from '../../src/sim/TrafficParticipants';
 import {
-  TrafficParticipants,
-  actorRadiusPx,
-} from '../../src/sim/TrafficParticipants';
+  createTrafficObstacles,
+  placeTrafficObstacles,
+} from '../../src/gameplay/trafficObstacles';
 import {
   approachWaypoint,
   type WarsawMissionId,
@@ -131,6 +131,11 @@ export function runWarsawRoute(
       height: car.height / scale,
       kind: 'wall',
     });
+  const dynamic = [...traffic.road.agents, ...traffic.routed].map((agent) => ({
+    agent,
+    parts: createTrafficObstacles(agent, scale),
+  }));
+  obstacles.push(...dynamic.flatMap(({ parts }) => parts));
   const verdicts: Verdict[] = [];
   const fired: string[] = [];
   const seenAgents = new Set<string>();
@@ -157,27 +162,13 @@ export function runWarsawRoute(
     }
     player.signal = point?.signal ?? 'none';
     if (point?.look) player.shoulderCheck!.lastLeftAt = engine.at;
-    const agents: AgentState[] = [
-      ...traffic.road.agents,
-      ...traffic.routed.filter(({ active }) => active),
-    ];
+    for (const { agent, parts } of dynamic)
+      placeTrafficObstacles(parts, agent, scale);
     collision =
       stepRider(
         rider,
         drive,
-        [
-          ...obstacles,
-          ...agents.map(({ pos, kind }) => {
-            const radius = actorRadiusPx[kind];
-            return {
-              x: pos.x / scale - radius,
-              y: pos.y / scale - radius,
-              width: radius * 2,
-              height: radius * 2,
-              kind: 'wall' as const,
-            };
-          }),
-        ],
+        obstacles,
         map.width * map.tilewidth,
         map.height * map.tileheight,
       ) || collision;

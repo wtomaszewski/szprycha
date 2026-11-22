@@ -304,10 +304,10 @@ type Body =
   | (typeof largeVehicleTypes)[number]
   | (typeof emergencyTypes)[number];
 const bodyStyles = {
-  hatchback: [10, 34, 11, 8, 1],
-  sedan: [9, 35, 11, 11, 5],
-  estate: [8, 38, 11, 15, 2],
-  taxi: [9, 35, 11, 11, 5],
+  hatchback: [4, 41, 11, 8, 1],
+  sedan: [3, 42, 11, 11, 5],
+  estate: [2, 44, 11, 15, 2],
+  taxi: [3, 42, 11, 11, 5],
   van: [6, 51, 12, 31, 2],
   bus: [5, 54, 13, 38, 2],
   ambulance: [9, 46, 11, 25, 2],

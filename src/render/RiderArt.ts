@@ -18,10 +18,9 @@ export class RiderArt {
 
   constructor(scene: Scene, helmet: HelmetColor) {
     this.helmet = helmetColors.indexOf(helmet);
-    this.image = scene.add.image(0, 0, 'rider', 0).setScale(2).setDepth(20);
+    this.image = scene.add.image(0, 0, 'rider', 0).setDepth(20);
     this.lights = scene.add
       .image(0, 0, 'rider-lights', 0)
-      .setScale(2)
       .setDepth(21)
       .setVisible(false);
     this.effects = scene.add.graphics().setDepth(19);
@@ -65,10 +64,10 @@ export class RiderArt {
       .setPosition(x, y)
       .setRotation(rider.heading);
     if (beam) {
-      const side = rider.walking ? -7 : 0;
+      const side = rider.walking ? -4 : 0;
       art
         .fillStyle(0xf4f4f4, 0.28)
-        .fillTriangle(17, side, 66, side - 19, 66, side + 19);
+        .fillTriangle(9, side, 66, side - 19, 66, side + 19);
     }
     if (actions.bell)
       art

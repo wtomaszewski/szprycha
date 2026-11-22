@@ -262,7 +262,15 @@ function connectStreet(
     junction,
     side,
     embankment
-      ? [[2208, mapHeight], [2208, 1080], [2184, 1056], end]
+      ? [
+          [2208, mapHeight],
+          [2208, 1104],
+          [2204, 1086],
+          [2194, 1070],
+          [2178, 1060],
+          [2160, 1056],
+          end,
+        ]
       : [start, end],
     priority,
     turns,
@@ -274,7 +282,15 @@ function connectStreet(
       polyline(
         `${id}-out`,
         embankment
-          ? [out, [2120, 1120], [2144, 1144], [2144, mapHeight]]
+          ? [
+              out,
+              [2088, 1120],
+              [2109, 1124],
+              [2128, 1136],
+              [2140, 1155],
+              [2144, 1176],
+              [2144, mapHeight],
+            ]
           : [out, boundary(out, side)],
         {
           role: 'exit',
@@ -548,8 +564,8 @@ objectLayer('traffic_routes', [
   polyline(
     'pieszy-bazar',
     [
-      [1542, 997],
-      [1542, 1182],
+      [1518, 997],
+      [1518, 1182],
     ],
     { kind: 'pedestrian', speed: 1.5 },
   ),
@@ -572,7 +588,7 @@ objectLayer('traffic_controls', [
 ]);
 objectLayer('crossings', [
   rect('zebra-pasaz', 1259, 384, 43, 128, { kind: 'pedestrian', axis: 'y' }),
-  rect('zebra-bazar', 1520, 1024, 44, 128, { kind: 'pedestrian', axis: 'y' }),
+  rect('zebra-bazar', 1496, 1024, 44, 128, { kind: 'pedestrian', axis: 'y' }),
   rect('zebra-targowa', 2888, 503, 52, 42, { kind: 'pedestrian', axis: 'y' }),
   rect('zebra-rynek', 3392, 704, 128, 48, { kind: 'pedestrian', axis: 'x' }),
   rect('zebra-za-zamkiem', 3678, 384, 64, 128, {
