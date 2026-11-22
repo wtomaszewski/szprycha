@@ -27,6 +27,8 @@ Na tabletach przyciski większe (min. 56 dp), układ konfigurowalny (przeciągni
 - Ikony stanu: kask (zielony = zapięty), światła, pogoda, pora dnia.
 - Podpowiedzi kontekstowe (pierwsze wystąpienia): mała ikonka nad graczem, np. dłoń przy zbliżaniu się do skrzyżowania z planowanym skrętem.
 
+W czasie jazdy na ekranie są dwie ikony menu. Telefon otwiera SzprychaApp po zatrzymaniu. Pauza zawiera zmianę schematu sterowania, powrót na start, wyjście, jakość grafiki i deszcz. Na desktopie pasek skrótów jest dostępny w pauzie, a joystick i przyciski jazdy pojawiają się tylko na urządzeniach z dotykiem. Wskaźniki mają opisy dostępne dla czytników ekranu. Deszcz w pauzie jest ustawieniem oprawy.
+
 ## Ekrany i przepływ
 Boot → wybór profilu (do 4 profili lokalnych, avatar + nick z generatora) → Menu główne (Kampania / Wolna jazda / Plac / Mądra Głowa / Licencja / Warsztat / Album / Osiągnięcia / Ustawienia / Dla rodzica) → CityPicker (mapa Polski) → Miasto.
 **Ekran wyników misji:** gwiazdki (animacja), punkty z rozbiciem (dobre nawyki, błędy, czas), 1 przepis „do zapamiętania”, przycisk „Jeszcze raz po 3 gwiazdki”.
@@ -46,7 +48,7 @@ Dymki z portretem 64×64, maks. 2 linijki, tap/klawisz = dalej, przytrzymanie = 
 - Rozmiar tekstu (3 poziomy), lektor, wysoki kontrast HUD.
 - Spowolnienie gry (75% / 50%) dla młodszych lub mniej sprawnych graczy — bez kary w punktach lokalnych; rankingi online liczą się tylko przy 100%.
 - Wszystkie informacje dźwiękowe mają odpowiednik wizualny (ikona syreny przy krawędzi ekranu z kierunkiem).
-- Brak migających efektów > 3 Hz (bezpieczeństwo fotosensytywne).
+- Brak migających efektów > 3 Hz (bezpieczeństwo fotosensytywne). Systemowe ograniczenie ruchu zatrzymuje animacje dekoracyjne deszczu, dymu, gołębi, konfetti i śladu. Stan ruchu drogowego oraz informacje w HUD pozostają dostępne.
 
 ## Wydajność i platformy
 Docelowo 60 FPS na: Chromebook szkolny, Android średniej klasy sprzed 3–4 lat, iPad 9. generacji. Ekran w poziomie; na telefonie w pionie komunikat „obróć urządzenie”.
