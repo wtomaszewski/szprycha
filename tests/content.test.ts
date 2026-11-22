@@ -97,6 +97,12 @@ describe('canonical content', () => {
   });
   it.each([
     {
+      file: 'sklep.yaml',
+      from: 'Ruszaj w miasto',
+      to: 'GTA2',
+      message: 'Store copy contains a forbidden name',
+    },
+    {
       file: 'znaki.yaml',
       from: '[MAN-08]',
       to: '[MISSING-01]',
