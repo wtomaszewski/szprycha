@@ -13,6 +13,9 @@ export function loadCityEffects(scene: Scene) {
     });
 }
 
+export type Neon = Vec2 & { color?: number; cycling?: boolean };
+const neonPalette = [0x73eff7, 0xff77a8, 0xa7f070, 0xffcd75];
+
 export class NightLighting {
   private readonly ambient;
   private readonly bike;
@@ -26,7 +29,7 @@ export class NightLighting {
   constructor(
     private readonly scene: Scene,
     props: CityProps,
-    neons: readonly (Vec2 & { color?: number })[],
+    neons: readonly Neon[],
   ) {
     this.ambient = scene.add
       .rectangle(0, 0, 1, 1, 0x29366f, 0.64)
@@ -38,10 +41,10 @@ export class NightLighting {
       lamp,
       glow: this.image(effectFrame.lamp),
     }));
-    this.neons = neons.map(({ x, y, color }) => {
+    this.neons = neons.map(({ x, y, color, cycling }) => {
       const glow = this.image(effectFrame.neon).setPosition(x, y);
       if (color !== undefined) glow.setTint(color);
-      return glow;
+      return { glow, cycling };
     });
   }
 
@@ -110,7 +113,7 @@ export class NightLighting {
     this.bike.setVisible(night && bikeLight);
     if (!night) {
       for (const { glow } of this.lamps) glow.setVisible(false);
-      for (const neon of this.neons) neon.setVisible(false);
+      for (const { glow } of this.neons) glow.setVisible(false);
       return false;
     }
 
@@ -136,14 +139,23 @@ export class NightLighting {
       const visible =
         Math.abs(lamp.x - x) < halfWidth + 64 &&
         Math.abs(lamp.y - y) < halfHeight + 64;
-      glow.setVisible(visible);
-      if (visible) glow.setPosition(lamp.x, lamp.y);
+      if (glow.visible !== visible) glow.setVisible(visible);
+      if (visible && (glow.x !== lamp.x || glow.y !== lamp.y))
+        glow.setPosition(lamp.x, lamp.y);
     }
-    for (const neon of this.neons)
-      neon.setVisible(
-        Math.abs(neon.x - x) < halfWidth + 64 &&
-          Math.abs(neon.y - y) < halfHeight + 64,
-      );
+    for (const [index, { glow, cycling }] of this.neons.entries()) {
+      const visible =
+        Math.abs(glow.x - x) < halfWidth + 64 &&
+        Math.abs(glow.y - y) < halfHeight + 64;
+      if (glow.visible !== visible) glow.setVisible(visible);
+      if (visible && cycling) {
+        const color =
+          neonPalette[
+            (Math.max(0, Math.floor(at)) + index) % neonPalette.length
+          ]!;
+        if (glow.tintTopLeft !== color) glow.setTint(color);
+      }
+    }
 
     return at - this.lastReflection <= 0.35;
   }

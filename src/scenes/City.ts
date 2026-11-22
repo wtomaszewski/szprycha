@@ -2,6 +2,7 @@ import { Scene, GameObjects } from 'phaser';
 import { drawMapDecorations } from '../render/MapDecorations';
 import trainingUrl from '../../maps/miasteczko.tmj?url';
 import warsawUrl from '../../maps/warszawa.tmj?url';
+import wroclawUrl from '../../maps/wroclaw.tmj?url';
 import blockWallsUrl from '../../assets/generated/walls.png?url';
 import blockRoofsUrl from '../../assets/generated/roofs.png?url';
 import roofDetailsUrl from '../../assets/generated/roof-details.png?url';
@@ -54,6 +55,7 @@ import {
   type RoutedAgent,
 } from '../sim/TrafficParticipants';
 import type { RoadTrafficAgent } from '../sim/TrafficSimulation';
+import { Gnomes } from '../render/Gnomes';
 import { drawCyclist, loadTrafficArt, TrafficArt } from '../render/TrafficArt';
 import { RiderArt } from '../render/RiderArt';
 import { readHelmetColor } from '../core/helmetColor';
@@ -117,6 +119,7 @@ export class City extends Scene {
   private agents!: readonly (RoadTrafficAgent | RoutedAgent)[];
   private actorObstacles!: Obstacle[][];
   private actors!: TrafficArt[];
+  private gnomes?: Gnomes;
   private road!: TrainingRoad;
   private debug!: RuleDebugOverlay;
   private feedback!: RuleFeedback;
@@ -187,12 +190,27 @@ export class City extends Scene {
   constructor() {
     super('City');
   }
+  private requestedMap: string = defaultMap;
+
+  init({ missionId, map }: { missionId?: string; map?: string } = {}) {
+    const content = this.registry.get('content') as GameContent;
+    const mission =
+      missionId && content.misje.find(({ id }) => id === missionId);
+    this.requestedMap =
+      (mission ? (mission.mapa ?? mission.miasto) : map) ?? defaultMap;
+  }
+
   preload() {
     for (const [id, url] of [
       [defaultMap, trainingUrl],
       ['warszawa', warsawUrl],
+      ['wroclaw', wroclawUrl],
     ] as const) {
-      if (!this.cache.tilemap.exists(id)) this.load.tilemapTiledJSON(id, url);
+      if (
+        (id === defaultMap || id === this.requestedMap) &&
+        !this.cache.tilemap.exists(id)
+      )
+        this.load.tilemapTiledJSON(id, url);
     }
     for (const [key, url] of [
       ['training', tilesUrl],
@@ -267,7 +285,11 @@ export class City extends Scene {
       this.intersectionManager,
       this.content.balans.silnik,
       undefined,
-      ambientTraffic ? 'scheduled' : 'mission-only',
+      !ambientTraffic
+        ? 'mission-only'
+        : mapId === 'wroclaw' && !definition
+          ? 'ambient'
+          : 'scheduled',
     );
     this.trafficEvents = new TrafficEvents(
       this.world,
@@ -291,7 +313,7 @@ export class City extends Scene {
     this.road = new TrainingRoad(
       this,
       this.world,
-      mapId === 'warszawa'
+      mapId !== defaultMap
         ? { key: mapId, width: this.worldWidth, height: this.worldHeight }
         : undefined,
     );
@@ -426,7 +448,11 @@ export class City extends Scene {
       .centerOn(this.rider.x, this.rider.y);
     cullMapChunks(this.mapChunks, this.cameras.main);
     const areaTitle =
-      mapId === 'warszawa' ? ui.driving.warsawTitle : ui.driving.title;
+      mapId === 'warszawa'
+        ? ui.driving.warsawTitle
+        : mapId === 'wroclaw'
+          ? ui.driving.wroclawTitle
+          : ui.driving.title;
     this.controls = new DrivingControls(
       areaTitle,
       this.graphics,
@@ -460,6 +486,15 @@ export class City extends Scene {
           this.overlayGamepad(pressed, justPressed),
       },
     );
+    const collectibles = tilemap.getObjectLayer('collectibles')?.objects;
+    this.gnomes = collectibles?.length
+      ? new Gnomes(
+          this,
+          collectibles,
+          this.progress.store,
+          this.controls.details,
+        )
+      : undefined;
     if (!this.mission) {
       const camera = document.createElement('button');
       camera.type = 'button';
@@ -585,6 +620,7 @@ export class City extends Scene {
       this.eventNotice.destroy();
       this.phone.close();
       this.controls.destroy();
+      this.gnomes = undefined;
       const c = this.game.canvas;
       delete c.dataset.map;
       delete c.dataset.mission;
@@ -1161,6 +1197,7 @@ export class City extends Scene {
       this.series.longest,
       this.content.balans.mastery,
     );
+    if (source.walking) this.gnomes?.collect(source.x, source.y);
     this.attention.step(this.tickVerdicts, rider.speed > 0);
     const effects = this.mission?.step(
       rider.pos,
@@ -1492,6 +1529,7 @@ export class City extends Scene {
       Math.round(camera.scrollY + (targetY - camera.scrollY) * blend),
     );
     cullMapChunks(this.mapChunks, camera);
+    this.gnomes?.update(camera);
     this.blocks.update(
       camera,
       this.controls.lite,

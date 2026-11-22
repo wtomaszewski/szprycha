@@ -44,37 +44,37 @@ Mapa [warszawa.tmj](../maps/warszawa.tmj)
 
 ## Wrocław
 
-**Brak mapy** `maps/wroclaw.tmj`
+Mapa [wroclaw.tmj](../maps/wroclaw.tmj)
 
 **Misje na mapie** —
 
 | Sytuacja drogowa | Pokrycie | Wykryte obiekty lub misje | Brakujące elementy |
 | --- | :---: | --- | --- |
-| Skrzyżowanie równorzędne | ✗ | — | skrzyżowanie równorzędne |
-| Droga z pierwszeństwem + STOP | ✗ | — | D-1 i B-20 na tym samym skrzyżowaniu |
-| Sygnalizacja + S-2 + S-6/S-7 | ✗ | — | S-1, S-2, sygnał dla rowerzystów |
-| Rondo | ✗ | — | rondo |
-| Tramwaj + przystanek bez wysepki | ✗ | — | trasa tramwaju, przystanek bez wysepki |
-| DDR, pas rowerowy, ciąg pieszo-rowerowy | ✗ | — | DDR, pas rowerowy, ciąg pieszo-rowerowy |
-| Przejazd dla rowerzystów | ✗ | — | przejazd dla rowerzystów |
-| Strefa zamieszkania / pieszych | ✗ | — | strefa zamieszkania lub pieszych |
-| Wyjazd z drogi wewnętrznej | ✗ | — | wyjazd oznaczony D-47 |
-| Przejazd kolejowy | ✗ | — | przejazd kolejowy |
-| Pobocze, zakaz wjazdu rowerów | ✗ | — | pobocze, zakaz wjazdu rowerów |
-| Kontraruch | ✗ | — | B-2 z wyjątkiem dla rowerów |
-| Nocna jazda | ✗ | — | zmrok na mapie lub w misji |
+| Skrzyżowanie równorzędne | ✓ | `dworzec`, `ostrow`, `stadion` | — |
+| Droga z pierwszeństwem + STOP | ✓ | `zachod-stop` | — |
+| Sygnalizacja + S-2 + S-6/S-7 | ✓ | `poludnie-E-s1`, `poludnie-N-s1`, `poludnie-S-s1`, `poludnie-W-s1`, `poludnie-przejazd`, `poludnie-s2`, `poludnie-tram-E-s1`, `rondo-zoo-E-E-s1`, `rondo-zoo-E-S-s1`, `rondo-zoo-N-E-s1`, `rondo-zoo-N-N-s1`, `rondo-zoo-S-S-s1`, `rondo-zoo-S-W-s1`, `rondo-zoo-W-N-s1`, `rondo-zoo-W-W-s1`, `rynek-przejazd` | — |
+| Rondo | ✓ | `rondo-hala-E`, `rondo-hala-N`, `rondo-hala-S`, `rondo-hala-W`, `rondo-zoo-E`, `rondo-zoo-N`, `rondo-zoo-S`, `rondo-zoo-W` | — |
+| Tramwaj + przystanek bez wysepki | ✓ | `poludnie-przystanek-bez-wysepki`, `tramwaj-poludnie`, `tramwaj-stare-miasto` | — |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | ✓ | `ciag-bulwary`, `ciag-zoo`, `ddr-bulwary`, `ddr-bulwary-hala`, `ddr-hala-wschod`, `ddr-hala-zachod`, `ddr-lacznik-hala`, `ddr-most-tumski`, `ddr-poludnie`, `ddr-poludnie-wschod`, `ddr-rynek-polnoc`, `ddr-rynek-poludnie`, `kladka-slodowa`, `kontrapas-nadodrze`, `mostek-japonski`, `pas-rowerowy-poludnie`, `sluza-poludnie` | — |
+| Przejazd dla rowerzystów | ✓ | `bulwary-przejazd-hala`, `bulwary-przejazd-ostrow`, `bulwary-przejazd-zachod`, `hala-przejazd`, `hala-przejazd-bulwary`, `poludnie-przejazd`, `rynek-przejazd`, `rynek-przejazd-zachodni` | — |
+| Strefa zamieszkania / pieszych | ✓ | `ostrow-d40`, `plac-solny`, `rynek-deptak` | — |
+| Wyjazd z drogi wewnętrznej | ✓ | `wyjazd-magazyn` | — |
+| Przejazd kolejowy | ✓ | `zachod-kolej-bez-zapor`, `zachod-kolej-zapory` | — |
+| Pobocze, zakaz wjazdu rowerów | ✓ | `pobocze-zachod`, `pobocze-zachod-powrot`, `zakaz-obwodnica`, `zakaz-obwodnica-B-9` | — |
+| Kontraruch | ✓ | `ulica-nadodrze-B-2` | — |
+| Nocna jazda | ✓ | `dusk_at_s` | — |
 
 | Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
 | --- | :---: | --- | --- |
-| M01 | ✗ | — | — |
-| M02 | ✗ | — | — |
-| M03 | ✗ | — | — |
-| M04 | ✗ | — | — |
-| M05 | ✗ | — | — |
-| M06 | ✗ | — | — |
+| M01 | ✓ | `WYP-04`, `WYP-05` | — |
+| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | — |
+| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | — |
+| M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | — |
+| M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-06`, `MAN-08` | — |
+| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | — |
 | M07 | ✗ | — | — |
 
-**Pokrycie** 0/13 sytuacji, 0/7 modułów.
+**Pokrycie** 13/13 sytuacji, 6/7 modułów.
 
 ## Miasteczko (wspólny hub)
 

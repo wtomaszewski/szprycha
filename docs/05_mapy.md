@@ -136,6 +136,33 @@ Zrzuty z wolnej jazdy pokazują [Śródmieście](screenshots/49-srodmiescie.webp
 ### Bulwary Odry (pas łączący dzielnice 2–5)
 Trasa Wielkiego Wyścigu Odrzańskiego: DDR wzdłuż rzeki, kładki, ciąg pieszo-rowerowy, mosty.
 
+### Mapa po M6c
+
+`npm run map:generate:wroclaw` odtwarza mapę Tiled o wymiarach 176 × 120 kafli. W menu głównym otwórz **Menu deweloperskie → Wolna jazda po Wrocławiu**. Gra zaczyna się przy Rynku. Po 90 sekundach zapada zmrok. Lampki włącza się klawiszem `L`. Krasnale zbiera się po zejściu z roweru (`X`). Licznik zapisuje odkrycia w profilu. W mieście jest 100 znajdziek, w tym 30 na Rynku. [Plik mapy](../maps/wroclaw.tmj)
+
+| Miejsce | Sytuacje w wolnej jeździe |
+| --- | --- |
+| Rynek i Nadodrze | Deptak, S-5 na zebrze i sygnał rowerowy obok, B-2 z T-22 na uliczce przy bulwarze oraz pętla tramwaju wokół Rynku. |
+| Ostrów i Wyspy | Wloty równorzędne, kocie łby, D-40/D-41, zielony most z DDR i kładka na Wyspę Słodową. Latarnie świecą po zmroku. |
+| Hala i Zoo | Dwa ronda, w tym jedno z S-1, P-11 przy parku oraz ciąg pieszo-rowerowy. |
+| Południe | Aleja z S-2, osobną fazą przejazdu rowerowego, pasem P-23, śluzą rowerową i przystankiem bez wysepki. Niebiesko-kremowy tramwaj zatrzymuje się, a pasażer przechodzi na chodnik. |
+| Zachód | D-1 i B-20, wyjazd z drogi wewnętrznej, pobocza, zakaz rowerowy przy zjeździe oraz dwa czynne przejazdy kolejowe, z zaporami i bez. |
+| Bulwary Odry | DDR wzdłuż południowego brzegu łączy dzielnice, a AI korzysta z trzech przejazdów rowerowych po drodze. |
+
+Polecenie `npm run coverage:maps` odtwarza raport z wynikiem 13/13. Symulację ruchu można powtórzyć poleceniem `npm test -- tests/sim/wroclaw.test.ts`. Trasa tramwaju wokół Rynku używa właściwości `loop: true` i kończy się w punkcie startowym. Moduł M07 będzie ćwiczony w misjach M6d. [Raport pokrycia](coverage.md#wrocław) · [Zgłoszenie M6d](https://github.com/wtomaszewski/szprycha/issues/52)
+
+Zrzuty z wolnej jazdy pokazują [Rynek](screenshots/51-rynek.webp), [Ostrów po zmroku](screenshots/51-ostrow.webp), [Halę i rondo](screenshots/51-hala.webp), [Zoo](screenshots/51-zoo.webp), [Dworzec](screenshots/51-poludnie.webp), [Sky Tower](screenshots/51-sky-tower.webp), [Stadion](screenshots/51-zachod.webp) oraz [Bulwary Odry](screenshots/51-bulwary.webp).
+
+Podczas działania Vite uruchom `BENCH_MAP=wroclaw npm run benchmark:driving`. Trasę ustawia `BENCH_FRAGMENT` (`rynek`, `ostrow`, `hala`, `poludnie`, `zachod`, `bulwary`), a `BENCH_LIGHT=night` uruchamia pomiar po zmroku. Wynik trafia do `test-results/performance-wroclaw-*.json`. Parametr `BENCH_RENDERER=canvas` uruchamia pomiar w Canvas.
+
+Pomiary wykonano w Chromium 156 headless, w rozdzielczości 1280 × 720, z ograniczeniem CPU 4× i pełną grafiką.
+
+| Trasa | Renderer | Średnie FPS | p95 klatki |
+| --- | --- | ---: | ---: |
+| Rynek w dzień | WebGL | 59,10 | 16,8 ms |
+| Ostrów po zmroku | WebGL | 58,91 | 16,8 ms |
+| Ostrów po zmroku | Canvas | 59,82 | 16,7 ms |
+
 ---
 
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)

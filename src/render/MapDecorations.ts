@@ -1,22 +1,35 @@
 import type { Scene, Tilemaps } from 'phaser';
 import { cacheMapGraphics } from './MapGround';
+import type { Neon } from './NightLighting';
 
 export function drawMapDecorations(
   scene: Scene,
   map: Tilemaps.Tilemap,
   mapId: string,
 ) {
-  const neons: { x: number; y: number; color?: number }[] = [];
+  const neons: Neon[] = [];
   const scenery = scene.add.graphics().setDepth(4);
   const centers: { x: number; y: number }[] = [];
-  for (const { x = 0, y = 0, properties } of map.getObjectLayer(
-    'map_decorations',
-  )?.objects ?? []) {
+  for (const {
+    x = 0,
+    y = 0,
+    width = 0,
+    height = 0,
+    properties,
+  } of map.getObjectLayer('map_decorations')?.objects ?? []) {
     const kind = properties?.find(
       (p: { name: string; value: unknown }) => p.name === 'kind',
     )?.value;
+    const tint = properties?.find(
+      (p: { name: string }) => p.name === 'color',
+    )?.value;
+    const color = typeof tint === 'number' ? tint : undefined;
     if (kind === 'neon') {
-      neons.push({ x, y });
+      const cycling = properties?.some(
+        (p: { name: string; value: unknown }) =>
+          p.name === 'cycling' && p.value === true,
+      );
+      neons.push({ x, y, color, cycling });
       continue;
     }
     if (kind === 'bridge') {
@@ -31,13 +44,36 @@ export function drawMapDecorations(
       continue;
     }
     centers.push({ x, y });
-    if (kind === 'fountain') {
-      const color = Number(
-        properties?.find(
-          (p: { name: string; value: unknown }) => p.name === 'color',
-        )?.value ?? 0x73eff7,
-      );
-      neons.push({ x, y, color });
+    if (kind === 'truss-bridge') {
+      const steel = color ?? 0x3e8948;
+      for (const edge of [x, x + width]) {
+        scenery
+          .fillStyle(0x29366f)
+          .fillRect(edge - 4, y, 8, height)
+          .fillStyle(steel)
+          .fillRect(edge - 3, y, 6, height);
+        for (let dy = 8; dy < height - 14; dy += 20) {
+          const outer = edge === x ? edge - 8 : edge + 8;
+          scenery
+            .lineStyle(2, steel)
+            .lineBetween(edge, y + dy, outer, y + dy + 10)
+            .lineBetween(outer, y + dy + 10, edge, y + dy + 20)
+            .fillStyle(dy % 40 === 8 ? 0xffcd75 : 0xd98a5a)
+            .fillRect(edge - 1, y + dy + 10, 3, 4);
+          centers.push({ x: edge, y: y + dy });
+        }
+      }
+    } else if (kind === 'penguin') {
+      scenery
+        .fillStyle(0x1a1c2c)
+        .fillEllipse(x, y, 15, 22)
+        .fillStyle(0xf4f4f4)
+        .fillEllipse(x, y + 3, 9, 12)
+        .fillStyle(0xfeae34)
+        .fillRect(x - 2, y - 5, 4, 3);
+    } else if (kind === 'fountain') {
+      const water = color ?? 0x73eff7;
+      neons.push({ x, y, color: water });
       scenery
         .fillStyle(0x94b0c2)
         .fillCircle(x, y, 27)
@@ -45,7 +81,7 @@ export function drawMapDecorations(
         .fillCircle(x, y, 22)
         .fillStyle(0x41a6f6)
         .fillCircle(x, y, 18)
-        .lineStyle(2, color)
+        .lineStyle(2, water)
         .lineBetween(x, y + 4, x, y - 17)
         .lineBetween(x, y + 4, x - 12, y - 6)
         .lineBetween(x, y + 4, x + 12, y - 6)

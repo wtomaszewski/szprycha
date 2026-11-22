@@ -15,28 +15,43 @@ if (light !== 'day' && light !== 'night')
   throw new Error('BENCH_LIGHT must be day or night');
 const lite = process.env.BENCH_QUALITY === 'lite';
 const rain = process.env.BENCH_RAIN === '1';
-const warsaw = process.env.BENCH_MAP === 'warszawa';
-const map = warsaw ? 'warszawa' : 'miasteczko';
-const fragment = process.env.BENCH_FRAGMENT ?? 'praga';
+const map = process.env.BENCH_MAP ?? 'miasteczko';
+if (map !== 'miasteczko' && map !== 'warszawa' && map !== 'wroclaw')
+  throw new Error(`Unknown benchmark map: ${map}`);
+const warsaw = map === 'warszawa';
+const wroclaw = map === 'wroclaw';
+const fragment = process.env.BENCH_FRAGMENT ?? (wroclaw ? 'rynek' : 'praga');
 const missions = { most: 'WAW-A1-04', starowka: 'WAW-A1-05' } as const;
-const freeSpawns = {
-  most: { x: 2255, y: 352, heading: 0 },
-  starowka: { x: 3110, y: 688, heading: 0 },
-  srodmiescie: { x: 3570, y: 1808, heading: 0 },
-  powisle: { x: 2930, y: 1690, heading: Math.PI / 2 },
-  mokotow: { x: 3536, y: 3550, heading: -Math.PI / 2 },
+const warsawSpawns: Record<string, { x: number; y: number; heading: number }> =
+  {
+    most: { x: 2255, y: 352, heading: 0 },
+    starowka: { x: 3110, y: 688, heading: 0 },
+    srodmiescie: { x: 3570, y: 1808, heading: 0 },
+    powisle: { x: 2930, y: 1690, heading: Math.PI / 2 },
+    mokotow: { x: 3536, y: 3550, heading: -Math.PI / 2 },
+  };
+const wroclawSpawns: typeof warsawSpawns = {
+  rynek: { x: 2976, y: 1792, heading: 0 },
+  ostrow: { x: 2608, y: 1434, heading: -Math.PI / 2 },
+  hala: { x: 4920, y: 2144, heading: Math.PI },
+  poludnie: { x: 3030, y: 3056, heading: 0 },
+  zachod: { x: 300, y: 800, heading: 0 },
+  bulwary: { x: 1440, y: 1536, heading: 0 },
 };
+const freeSpawns = wroclaw ? wroclawSpawns : warsawSpawns;
 if (
-  (fragment !== 'praga' && !Object.hasOwn(freeSpawns, fragment)) ||
-  (!warsaw && process.env.BENCH_FRAGMENT)
+  (map === 'miasteczko' && process.env.BENCH_FRAGMENT) ||
+  (map !== 'miasteczko' &&
+    !(warsaw && fragment === 'praga') &&
+    !Object.hasOwn(freeSpawns, fragment))
 )
   throw new Error(`Unknown benchmark fragment: ${fragment}`);
 const mode =
   process.env.BENCH_MODE ??
-  (Object.hasOwn(missions, fragment) ? 'mission' : 'free');
+  (warsaw && Object.hasOwn(missions, fragment) ? 'mission' : 'free');
 if (
   mode !== 'free' &&
-  (mode !== 'mission' || !Object.hasOwn(missions, fragment))
+  (mode !== 'mission' || !warsaw || !Object.hasOwn(missions, fragment))
 )
   throw new Error(`Unsupported benchmark mode: ${mode} (${fragment})`);
 const orders = [
@@ -49,11 +64,12 @@ const orders = [
 ] as const;
 const mission =
   mode === 'mission' ? missions[fragment as keyof typeof missions] : undefined;
-const spawn = !warsaw
-  ? { x: 624, y: 1120, heading: -Math.PI / 2 }
-  : mode === 'free'
-    ? freeSpawns[fragment as keyof typeof freeSpawns]
-    : undefined;
+const spawn =
+  map === 'miasteczko'
+    ? { x: 624, y: 1120, heading: -Math.PI / 2 }
+    : mode === 'free'
+      ? freeSpawns[fragment]
+      : undefined;
 const heading = spawn?.heading ?? 0;
 const horizontal = Math.abs(Math.cos(heading)) > 0.5;
 const direction = horizontal
@@ -121,7 +137,10 @@ async function runTrial() {
     await page.locator('canvas[data-scene="MainMenu"]').waitFor();
     if (warsaw)
       await page.getByRole('button', { name: pl.driving.praga }).click();
-    else await page.keyboard.press('Enter');
+    else if (wroclaw) {
+      await page.getByText(pl.driving.developer, { exact: true }).click();
+      await page.getByRole('button', { name: pl.driving.wroclaw }).click();
+    } else await page.keyboard.press('Enter');
     await page.locator('canvas[data-scene="City"]').waitFor();
     if (mission) {
       await page.keyboard.press('KeyM');
@@ -193,7 +212,7 @@ async function runTrial() {
       environment: `Chromium ${browser.version()} headless, ${width}x${height}, CPU 4x`,
       renderer,
       map,
-      fragment: warsaw ? fragment : undefined,
+      fragment: map !== 'miasteczko' ? fragment : undefined,
       mode,
       light,
       quality: lite ? 'lite' : 'full',
@@ -238,7 +257,9 @@ if (runs > 1)
 await mkdir('test-results', { recursive: true });
 const route = warsaw
   ? `-${fragment}${mode === 'free' && fragment !== 'praga' ? '-free' : ''}`
-  : '';
+  : wroclaw
+    ? `-wroclaw-${fragment}`
+    : '';
 await writeFile(
   `test-results/performance${route}${light === 'night' ? '-night' : ''}${lite ? '-lite' : ''}${rain ? '-rain' : ''}.json`,
   JSON.stringify(runs === 1 ? trials[0] : summary, null, 2),

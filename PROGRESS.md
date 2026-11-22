@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan na 22.11.2026. Gałąź `feat/49-m6a-warszawa`.
+Stan na 22.11.2026. Gałąź `feat/51-m6c-wroclaw`.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -10,11 +10,17 @@ Stan na 22.11.2026. Gałąź `feat/49-m6a-warszawa`.
 | M3     | Ruch drogowy AI i pozostałe detektory       | Scalony w `main`. Ostatni PR to #21.                                                         |
 | M4     | Misje i fabuła                              | Akt 1 Warszawy grywalny od samouczka do finału M4d (#25).                                    |
 | M5     | Punktacja, progresja, zapis                 | M5a (#44), M5b (#46) i M5c (#54) w `main`.                                                   |
-| M6     | Mapy Warszawy i Wrocławia                   | M6a (#49) dodaje trzy dzielnice oraz pełne pokrycie sytuacji drogowych Warszawy.             |
+| M6     | Mapy Warszawy i Wrocławia                   | M6a–b: mapa i kampania Warszawy. M6c: mapa Wrocławia i 13/13 sytuacji.                       |
 | M7     | Plac, quiz, egzamin                         | Nierozpoczęty                                                                                |
 | M8     | Audio i szlif                               | Nierozpoczęty                                                                                |
 | M9     | PWA, Capacitor, Android/iOS                 | Nierozpoczęty                                                                                |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Nierozpoczęty                                                                                |
+
+## M6c — Wrocław
+
+- Kolaż pięciu dzielnic połączonych Bulwarami Odry jest dostępny w menu deweloperskim. Stan kolekcji 100 krasnali zapisuje się w profilu.
+- Pokrycie wynosi 13/13 sytuacji i 6/7 modułów. Trzy symulacje ruchu po 10 minut obejmują dzień i noc, oba ronda oraz przejazdy tramwajów. [Raport](docs/coverage.md#wrocław)
+- Misje Wrocławia, wybór miasta i wymaganie pełnego pokrycia modułów w CI są opisane w [M6d](https://github.com/wtomaszewski/szprycha/issues/52).
 
 ## Przygotowanie
 
