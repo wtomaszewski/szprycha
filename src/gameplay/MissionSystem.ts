@@ -33,7 +33,11 @@ export type MissionResult = Outcome & {
   timeBonusEligible: boolean;
   illegalShortcut: boolean;
   points: number;
+  completionPoints: number;
+  habitPoints: number;
   penaltyPoints: number;
+  questionPoints: number;
+  timeBonus: number;
   stars: Stars;
   longestSeries: number;
   opponentScore?: number;
@@ -306,7 +310,7 @@ export class MissionSystem {
 
   answerQuestion(points: number) {
     if (this.outcome) return;
-    this.score.points += points;
+    this.score.answerQuestion(points);
     if (this.delayedOutcome) {
       const outcome = this.delayedOutcome;
       this.delayedOutcome = undefined;
@@ -463,7 +467,7 @@ export class MissionSystem {
         ruleId === this.shortcutSign?.ruleId &&
         highlight?.signId === this.shortcutSign?.id,
     );
-    const score = this.score.result(
+    const { smoothBonus, ...score } = this.score.result(
       this.definition,
       this.elapsedSeconds,
       outcome.status === 'completed',
@@ -484,10 +488,7 @@ export class MissionSystem {
       par_s: this.definition.par_s,
       goodHabits: this.score.goodHabits,
       verdicts: this.verdicts,
-      points: score.points,
-      penaltyPoints:
-        this.score.minor * this.balance.misja.kara_minor +
-        this.score.major * this.balance.misja.kara_major,
+      ...score,
       stars: missionStars(
         this.balance.gwiazdki,
         this.definition,
@@ -499,7 +500,7 @@ export class MissionSystem {
       ...(opponent !== undefined && { opponentScore: opponent }),
       ...(this.shakeLevel !== undefined && {
         shocks: this.shakeLevel,
-        smoothBonus: score.smoothBonus,
+        smoothBonus,
       }),
       ...(this.photos.size > 0 && { photos: this.photos.size }),
       illegalShortcut,

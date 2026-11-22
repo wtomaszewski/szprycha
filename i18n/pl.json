@@ -327,6 +327,26 @@
     "poznan": "Poznań",
     "krakow": "Kraków"
   },
+  "missionResults": {
+    "glory": "Moment chwały",
+    "noGlory": "W tej misji nie ma bezpiecznego fragmentu do powtórki.",
+    "skip": "Pomiń animację",
+    "map": "Wróć do mapy",
+    "score": "Punktacja",
+    "completion": "Ukończenie trasy",
+    "timeBonus": "Premia za czas",
+    "remember": "Do zapamiętania",
+    "mastery": "Opanowanie zasad",
+    "masteryEmpty": "Brak ocenionych zasad w tej misji.",
+    "highContrast": "Wysoki kontrast",
+    "textSize": "Rozmiar tekstu",
+    "medium": "Standardowy",
+    "large": "Duży",
+    "largest": "Bardzo duży",
+    "withGlory": "Misja ukończona z wynikiem {points} punktów, a dobry nawyk trafia do momentu chwały.",
+    "completed": "Misja ukończona z wynikiem {points} punktów.",
+    "failed": "Twój wynik to {points} punktów, a wskazówka pomoże w kolejnej próbie."
+  },
   "misje": {
     "WRO-T-01": {
       "tytul": "Krasnal, który mówi",

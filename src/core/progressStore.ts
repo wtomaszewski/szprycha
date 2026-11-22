@@ -126,6 +126,11 @@ const profileSchema = m8aProfileSchema.extend({
   version: z.literal(profileVersion),
   reducedEffects: z.boolean().catch(false).default(false),
   reflectiveVest: z.boolean().catch(false).default(false),
+  resultsTextSize: z
+    .enum(['medium', 'large', 'largest'])
+    .optional()
+    .catch(undefined),
+  resultsHighContrast: z.boolean().optional().catch(undefined),
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;

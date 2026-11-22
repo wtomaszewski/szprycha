@@ -22,6 +22,10 @@ export class DrivewayDetector {
     return this.stopped;
   }
 
+  get hasPendingViolation() {
+    return this.candidate !== undefined && this.candidate.kind !== 'good';
+  }
+
   evaluate(
     rider: RiderState,
     agents: readonly AgentState[],

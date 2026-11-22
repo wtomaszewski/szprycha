@@ -5,6 +5,10 @@ export const ui = pl;
 export function translate(key: string): string {
   return textAt(pl, key) ?? key;
 }
+
+export function missionClock(seconds: number) {
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+}
 export function showError(error: unknown) {
   console.error(error);
   const status = document.getElementById('status');

@@ -136,6 +136,16 @@ export class RuleEngine {
     return this.junction.stopReady;
   }
 
+  get unsafeForReplay() {
+    return (
+      this.sidewalkPenalized ||
+      this.crossingPenalized ||
+      this.pedestrianCandidate?.kind === 'minor' ||
+      this.driveway.hasPendingViolation ||
+      this.road.hasActiveViolation(this.tick - 1)
+    );
+  }
+
   get signalReady() {
     return this.maneuver.signalingFor(this.tick);
   }

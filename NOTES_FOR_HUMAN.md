@@ -1,4 +1,13 @@
-# Notatki dla człowieka — M0
+# Notatki dla człowieka
+
+## Podsumowanie M8
+
+- **M8a.** Radio, efekty i fanfara powstają w Web Audio. Lektor wybiera lokalny polski głos. Na urządzeniach bez takiego głosu wynik i wskazówka nadal są dostępne jako tekst.
+- **M8b.** W misjach pogoda wpływa na hamowanie oraz warunki oceny GDZIE-04 i GDZIE-05. Nocne kursy pokazują światło lampki i odblaski. Brzmienie porady WYP-06 pozostaje do konsultacji, jak opisano niżej.
+- **M8c.** Pierwszeństwo w wyborze momentu chwały mają ustąpienie innym uczestnikom i wyraźne zatrzymanie. Kolejność reguł jest stała, a przy powtórzeniu tej samej reguły wygrywa wcześniejszy bezpieczny fragment. System odrzuca fragmenty powiązane z wykrytym błędem, hamowaniem ochronnym, kolizją lub powrotem do punktu kontrolnego. Jeśli brak bezpiecznego kadru, ekran pokazuje podsumowanie tekstowe.
+- Opanowanie reguł pokazuje stan po misji i faktyczną różnicę względem startu. Uwzględnia dzienne limity i skutki błędów. Premia czasowa widnieje w rozbiciu punktów zgodnie z `docs/04`. Kryteria momentu chwały opierają się na potwierdzonych dobrych nawykach.
+
+## Notatki z M0
 
 Stan: 21.11.2026. Przeczytano AGENTS.md, dokumenty w kolejności §1, wszystkie moduły dydaktyczne i pięć plików content (także balans.yaml). Pliki paczki pozostały niezmienione. To analiza dokumentacji projektu, nie recenzja prawna ani medyczna.
 
