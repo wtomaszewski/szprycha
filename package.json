@@ -34,7 +34,8 @@
     "store:assets": "tsx tools/gen-store-assets.ts",
     "build:server": "npm run build --workspace @szprycha/rankings",
     "start:server": "npm run start --workspace @szprycha/rankings",
-    "test:server": "vitest run server/tests"
+    "test:server": "vitest run server/tests",
+    "screenshots:audit": "playwright test --config playwright.audit.config.ts"
   },
   "dependencies": {
     "@capacitor/android": "8.6.2",

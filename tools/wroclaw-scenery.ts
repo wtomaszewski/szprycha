@@ -282,6 +282,10 @@ export function wroclawScenery({
 
   for (const [kind, x, y] of [
     ['bench', 3004, 1908],
+    ['bike-rack', 3064, 1909],
+    ['cafe', 3230, 1950],
+    ['kiosk', 3312, 1921],
+    ['bike-rack', 5084, 682],
     ['bench', 3374, 1920],
     ['bench', 3524, 2345],
     ['bin', 3024, 1908],

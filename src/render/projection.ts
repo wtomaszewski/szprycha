@@ -36,3 +36,18 @@ export function roofOffset(
     : Math.round((block.y + block.height / 2 - cy) * factor) + 0;
   return out;
 }
+
+export function supportingTier(block: Block, lowerTiers: readonly Block[]) {
+  for (let i = lowerTiers.length - 1; i >= 0; i--) {
+    const tier = lowerTiers[i]!;
+    if (
+      tier.floors < block.floors &&
+      tier.x <= block.x &&
+      tier.y <= block.y &&
+      tier.x + tier.width >= block.x + block.width &&
+      tier.y + tier.height >= block.y + block.height
+    )
+      return tier;
+  }
+  return undefined;
+}

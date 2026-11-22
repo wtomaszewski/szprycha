@@ -33,8 +33,12 @@ export const tiles = {
   arrowStraightLeft: 44,
   arrowStraightRight: 45,
   arrowLeftRight: 46,
+  asphaltDrain: 47,
   curbMask: 48,
   vergeMask: 64,
+  sidewalkLeaves: 80,
+  snowGrass: [81, 82, 83, 84],
+  snowSidewalk: [85, 86, 87, 88],
 } as const;
 
 // clockwise from north; corners start at north-west
@@ -61,6 +65,9 @@ export const propKinds = [
   'bin',
   'bollard',
   'shelter',
+  'bike-rack',
+  'cafe',
+  'kiosk',
 ] as const;
 export const BALL_FRAME = propKinds.length;
 export type PropKind = (typeof propKinds)[number];
@@ -69,4 +76,16 @@ export function artHash(x: number, y: number, salt = 0) {
   let n = Math.imul(x ^ salt, 0x45d9f3b) ^ Math.imul(y + salt, 0x119de1f3);
   n = Math.imul(n ^ (n >>> 16), 0x45d9f3b);
   return (n ^ (n >>> 16)) >>> 0;
+}
+
+const snowTiles = new Map<number, number>([
+  ...tiles.grassVariants.map((gid, i) => [gid, tiles.snowGrass[i]!] as const),
+  ...tiles.sidewalkVariants.map(
+    (gid, i) => [gid, tiles.snowSidewalk[i]!] as const,
+  ),
+  [tiles.sidewalkLeaves, tiles.snowSidewalk[3]],
+]);
+
+export function winterTile(gid: number) {
+  return snowTiles.get(gid) ?? gid;
 }

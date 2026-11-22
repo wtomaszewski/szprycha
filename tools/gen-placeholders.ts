@@ -2,6 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { PNG } from 'pngjs';
 import { effectArt } from './effect-art.ts';
 import { cityArt } from './city-art.ts';
+import { uiArt } from './ui-art.ts';
 import { encodeSprite, spriteArt } from './sprite-art.ts';
 import { signArt } from './sign-art.ts';
 import { portraitEmotions } from '../src/content/dialogues.ts';
@@ -12,6 +13,7 @@ await writeFile(
   'assets/generated/city-effects.png',
   PNG.sync.write(effectArt()),
 );
+await writeFile('assets/generated/ui-icons.png', PNG.sync.write(uiArt()));
 for (const [file, image] of Object.entries(cityArt(30)))
   await writeFile(`assets/generated/${file}`, PNG.sync.write(image));
 

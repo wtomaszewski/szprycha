@@ -577,6 +577,9 @@ for (const [kind, x, y, turn = 0] of [
   ['shelter', 1050, 719],
   ['lamp', 1020, 719],
   ['bin', 1080, 720],
+  ['bike-rack', 647, 724],
+  ['cafe', 663, 950],
+  ['kiosk', 709, 974],
 ] as const)
   props.push(rect(`prop-${kind}-${x}-${y}`, x, y, 0, 0, { kind, turn }));
 await write('miasteczko', 14, tileTerrain(width, height, surfaces), markings, {

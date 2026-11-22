@@ -886,6 +886,13 @@ objectLayer('blocks', [
     rect(id, x, y, w, h, {
       height: floors,
       tint,
+      ...(id === 'zamek' || id === 'wieza-zamkowa'
+        ? {
+            landmarkId: 'zamek-krolewski',
+            roof: id === 'zamek' ? 'tile' : 'copper',
+            wall: 'plaster',
+          }
+        : {}),
       ...(id.startsWith('kamienica')
         ? { roof: 'tile', wall: id.endsWith('lewa') ? 'sand' : 'brick' }
         : {}),
@@ -958,6 +965,10 @@ objectLayer('props', [
       ['lamp', 1168, 518, 2],
       ['lamp', 882, 518, 2],
       ['bench', 692, 536],
+      ['bike-rack', 1020, 549, 1],
+      ['kiosk', 965, 546],
+      ['cafe', 3100, 749],
+      ['bike-rack', 3356, 735],
       ['bench', 1246, 321, 1],
       ['bin', 720, 535],
       ['bollard', 782, 369],

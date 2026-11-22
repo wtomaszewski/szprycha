@@ -1,6 +1,7 @@
 import type { Cameras, GameObjects, Scene, Types } from 'phaser';
 import { propKinds, type PropKind } from './artFrames';
 import { projectionFactor } from './projection';
+import { shadowColor, shadowRise } from './shadows';
 
 const height: Record<PropKind, number> = {
   tree: 4,
@@ -9,6 +10,9 @@ const height: Record<PropKind, number> = {
   bin: 1,
   bollard: 0,
   bench: 0,
+  'bike-rack': 0,
+  cafe: 1,
+  kiosk: 2,
 };
 
 type Prop = {
@@ -36,32 +40,54 @@ export function readProps(
   });
 }
 
+const footprint: Record<PropKind, readonly [number, number]> = {
+  tree: [19, 13],
+  shelter: [20, 9],
+  bench: [15, 5],
+  lamp: [5, 4],
+  bin: [6, 5],
+  bollard: [4, 4],
+  'bike-rack': [18, 12],
+  cafe: [18, 14],
+  kiosk: [18, 13],
+};
+
 /** Shadows and footings belong to the baked ground; caps slide with the camera. */
 export function paintPropShadows(
   ctx: CanvasRenderingContext2D,
   props: readonly Prop[],
+  left: number,
+  top: number,
+  width: number,
+  chunkHeight: number,
 ) {
   for (const { x, y, kind, turn } of props) {
-    const wide =
-      kind === 'tree'
-        ? 19
-        : kind === 'shelter'
-          ? 20
-          : kind === 'bench'
-            ? 15
-            : 5;
-    const tall = kind === 'tree' ? 13 : kind === 'shelter' ? 9 : 5;
+    const [wide, tall] = footprint[kind];
     const rotated = turn % 2 !== 0;
     const rx = rotated ? tall : wide;
     const ry = rotated ? wide : tall;
-    const shift = height[kind] * 3;
-    for (let row = -ry; row <= ry; row++) {
-      const span = Math.round(rx * Math.sqrt(1 - (row / (ry + 1)) ** 2));
-      const lineY = y + row + Math.round(shift * 0.7);
-      ctx.fillStyle = 'rgba(26, 28, 44, 0.16)';
-      ctx.fillRect(x - span + shift - 1, lineY, span * 2 + 2, 1);
-      ctx.fillStyle = 'rgba(26, 28, 44, 0.18)';
-      ctx.fillRect(x - span + shift + 1, lineY, span * 2 - 2, 1);
+    const shift = height[kind] * 3 + 2;
+    const rise = shadowRise(shift);
+    const sx = x + shift;
+    const sy = y + rise;
+    if (
+      x - rx - 1 > left + width ||
+      y - ry > top + chunkHeight ||
+      sx + rx + 1 < left ||
+      sy + ry < top
+    )
+      continue;
+
+    for (const [outer, alpha] of [
+      [1, 0.12],
+      [-1, 0.2],
+    ] as const) {
+      ctx.fillStyle = shadowColor(alpha);
+      for (let row = -ry; row <= ry; row++) {
+        const span =
+          Math.round(rx * Math.sqrt(1 - (row / (ry + 1)) ** 2)) + outer;
+        ctx.fillRect(sx - span, sy + row, span * 2, 1);
+      }
     }
     if (height[kind] >= 2) {
       ctx.fillStyle = kind === 'tree' ? '#5a3a2e' : '#333c57';

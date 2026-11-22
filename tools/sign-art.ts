@@ -138,6 +138,7 @@ export function signArt() {
       for (const [radius, color] of [
         [27, paper],
         [24, red],
+        [19, 0xb13e53],
       ] as const)
         for (let y = -radius; y <= radius; y++) {
           const half = Math.min(

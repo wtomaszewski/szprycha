@@ -13,7 +13,12 @@ import {
   wallTexture,
 } from './BlockArt';
 import { sceneDepth } from './effectFrames';
-import { CAMERA_HEIGHT_PX, roofOffset, type Block } from './projection';
+import {
+  CAMERA_HEIGHT_PX,
+  roofOffset,
+  supportingTier,
+  type Block,
+} from './projection';
 export type { Block } from './projection';
 
 // Daylight and emissive façades use the same projected quad.
@@ -140,14 +145,17 @@ export class Blocks {
   private night = false;
 
   constructor(scene: Scene, blocks: Block[], mapId: string) {
-    const landmarkTiers = new Map<string, Block>();
+    const landmarkTiers = new Map<string, Block[]>();
     this.items = [...blocks]
       .sort((a, b) => a.floors - b.floors)
       .map((block, i) => {
-        const support = block.landmarkId
-          ? landmarkTiers.get(block.landmarkId)
-          : undefined;
-        if (block.landmarkId) landmarkTiers.set(block.landmarkId, block);
+        let support: Block | undefined;
+        if (block.landmarkId) {
+          const tiers = landmarkTiers.get(block.landmarkId) ?? [];
+          support = supportingTier(block, tiers);
+          tiers.push(block);
+          landmarkTiers.set(block.landmarkId, tiers);
+        }
         let id = 0;
         for (const ch of block.id ?? String(i))
           id = Math.imul(id, 31) + ch.charCodeAt(0);

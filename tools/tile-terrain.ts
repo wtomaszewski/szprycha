@@ -44,8 +44,12 @@ export function tileTerrain(
     }
     const choices = variants[surface];
     const sample = artHash(x, y);
-    if (surface === 'asphalt')
-      return choices[sample % 8 === 0 ? 1 + ((sample >>> 8) % 3) : 0]!;
+    if (surface === 'asphalt') {
+      if (sample % 61 === 0 && adjacent.some(paved)) return tiles.asphaltDrain;
+      return choices[sample % 4 === 0 ? 1 + ((sample >>> 8) % 3) : 0]!;
+    }
+    if (surface === 'sidewalk' && verge[index] && sample % 5 === 0)
+      return tiles.sidewalkLeaves;
     if (surface === 'grass')
       return choices[sample % 7 === 0 ? 3 : (sample >>> 8) % 3]!;
     return choices[sample % choices.length]!;

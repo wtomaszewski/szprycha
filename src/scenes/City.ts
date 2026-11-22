@@ -420,7 +420,15 @@ export class City extends Scene {
     }
     const props = readProps(tilemap.getObjectLayer('props')?.objects ?? []);
     this.mapChunks = [
-      ...drawMapGround(this, tilemap, mapId, this.world, buildings, props),
+      ...drawMapGround(
+        this,
+        tilemap,
+        mapId,
+        this.world,
+        buildings,
+        props,
+        this.environment.weather === 'snow',
+      ),
       ...this.road.staticChunks,
       ...scenery.chunks,
     ];
