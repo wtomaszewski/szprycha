@@ -263,6 +263,8 @@ test('raises Road Attention for missed STOPs, explains the answer and grants sta
   await expect(attention).toContainText('1/3');
   await expect(page.getByLabel(pl.missionUi.timer)).toHaveText(clock!);
   await question.getByRole('button', { name: pl.progression.continue }).click();
+  await expect(question).toBeHidden();
+  await expect(page.getByLabel(pl.missionUi.timer)).not.toHaveText(clock!);
   await page.keyboard.down('ArrowUp');
   await expect(resume).toBeVisible();
   await page.keyboard.up('ArrowUp');
