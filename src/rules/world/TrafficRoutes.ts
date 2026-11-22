@@ -22,6 +22,7 @@ export const routeProperties = z.object({
   event_only: z.boolean().default(false),
   start_s: z.number().nonnegative().default(0),
   repeat_s: z.number().positive().optional(),
+  loop: z.literal(true).optional(),
 });
 export const routeControlProperties = z.discriminatedUnion('kind', [
   z.object({
@@ -90,7 +91,10 @@ export function buildTrafficRoutes(
     const foot = kind === 'pedestrian';
     const bike = kind === 'cyclist';
     const walkZones = zones.filter(
-      ({ kind }) => kind === 'sidewalk' || kind === 'pedestrian_zone',
+      ({ kind, sharedSide }) =>
+        kind === 'sidewalk' ||
+        kind === 'pedestrian_zone' ||
+        (kind === 'shared_path' && sharedSide !== 'bike'),
     );
     const bikeZones = zones.filter(
       ({ kind }) => kind === 'bike_lane' || kind === 'bike_path',
@@ -138,8 +142,16 @@ export function buildTrafficRoutes(
     const onBoundary = ({ x, y }: Vec2) =>
       x === 0 || y === 0 || x === width || y === height;
     if (
+      input.loop &&
+      (kind !== 'tram' ||
+        path.start.x !== path.end.x ||
+        path.start.y !== path.end.y)
+    )
+      throw new Error(`Invalid tram loop: ${id}`);
+    if (
       (kind === 'tram' || kind === 'emergency') &&
-      (!input.repeat_s || !onBoundary(path.start) || !onBoundary(path.end))
+      (!input.repeat_s ||
+        (!input.loop && (!onBoundary(path.start) || !onBoundary(path.end))))
     )
       throw new Error(
         `Repeating traffic route needs boundary endpoints and repeat_s: ${id}`,

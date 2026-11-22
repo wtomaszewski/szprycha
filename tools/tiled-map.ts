@@ -75,6 +75,7 @@ export function tiledMap(width: number, height: number) {
     terrain: ReturnType<typeof tileTerrain>,
     markings: number[],
     lighting?: { duskAt: number; freeRideOnly?: boolean },
+    format: 'pretty' | 'compact' = 'pretty',
   ) {
     const mapLayers = [
       tileLayer(1, 'ground', terrain.ground),
@@ -136,7 +137,7 @@ export function tiledMap(width: number, height: number) {
           ],
         },
         null,
-        2,
+        format === 'pretty' ? 2 : undefined,
       ) + '\n',
     );
   }

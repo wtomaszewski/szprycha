@@ -19,3 +19,7 @@ Układ klatek i wymiary są zapisane w `assets/manifest.json`.
 
 Atlas efektów (`generated/city-effects.png`) powstaje w `tools/effect-art.ts`
 z własnych wzorów i kolorów palety projektu.
+
+Bryły, dekoracje i figurki krasnali z mapy Wrocławia to własna grafika
+proceduralna projektu. Powstaje z danych `tools/wroclaw-scenery.ts` oraz kodu
+`BlockArt.ts`, `MapDecorations.ts` i `Gnomes.ts` w `src/render/`.

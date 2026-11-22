@@ -42,6 +42,17 @@ export class MainMenu extends Scene {
     pragaButton.addEventListener('click', () =>
       this.scene.start('City', { map: 'warszawa' }),
     );
+    const developerMenu = document.createElement('details');
+    developerMenu.className = 'menu-developer';
+    const developerSummary = document.createElement('summary');
+    developerSummary.textContent = ui.driving.developer;
+    const wroclawButton = document.createElement('button');
+    wroclawButton.type = 'button';
+    wroclawButton.textContent = ui.driving.wroclaw;
+    wroclawButton.addEventListener('click', () =>
+      this.scene.start('City', { map: 'wroclaw' }),
+    );
+    developerMenu.append(developerSummary, wroclawButton);
     const helmetLabel = document.createElement('label');
     helmetLabel.className = 'menu-helmet';
     helmetLabel.textContent = ui.helmet.label;
@@ -56,6 +67,7 @@ export class MainMenu extends Scene {
     helmetLabel.append(helmet);
     document.body.append(
       pragaButton,
+      developerMenu,
       helmetLabel,
       skills.button,
       skills.dialog,
@@ -115,6 +127,7 @@ export class MainMenu extends Scene {
       for (const button of [
         missionButton,
         pragaButton,
+        developerMenu,
         helmetLabel,
         skills.button,
         panels.navigation,
@@ -133,7 +146,8 @@ export class MainMenu extends Scene {
         !panels.dialog.open &&
         !(
           event.target instanceof Node &&
-          panels.navigation.contains(event.target)
+          (panels.navigation.contains(event.target) ||
+            developerMenu.contains(event.target))
         )
       )
         this.scene.start('City');
@@ -144,6 +158,7 @@ export class MainMenu extends Scene {
       this.input.keyboard?.off('keydown-ENTER', startDrive);
       missionButton.remove();
       pragaButton.remove();
+      developerMenu.remove();
       helmetLabel.remove();
       skills.button.remove();
       skills.dialog.remove();

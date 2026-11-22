@@ -51,7 +51,11 @@ export function visitRoofDetails(
     b.landmarkId === 'planetarium' ||
     b.landmarkId === 'rotunda' ||
     b.landmarkId === 'metro' ||
-    b.landmarkId === 'palac-na-wodzie'
+    b.landmarkId === 'palac-na-wodzie' ||
+    b.landmarkId === 'hala-stulecia' ||
+    b.landmarkId === 'stadion-wroclaw' ||
+    b.landmarkId === 'ratusz-wroclawski' ||
+    b.landmarkId?.startsWith('katedra-wieza-')
   )
     return;
   const material = roofMaterial(b, hash);
@@ -146,6 +150,75 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
         ctx.fillRect(26, 14, b.width - 52, b.height - 32);
         ctx.fillRect(64, b.height - 22, b.width - 128, 16);
         return;
+      }
+      if (b.landmarkId === 'hala-stulecia') {
+        const radius = b.width / 2;
+        for (let y = 0; y < b.height; y += 2) {
+          const half = Math.floor(
+            Math.sqrt(radius ** 2 - (y + 1 - radius) ** 2),
+          );
+          ctx.clearRect(0, y, radius - half, 2);
+          ctx.clearRect(radius + half, y, radius - half, 2);
+        }
+        for (const [inset, color] of [
+          [8, '#566c86'],
+          [14, '#c0cbdc'],
+        ] as const) {
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.arc(radius, radius, radius - inset, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.fillStyle = '#94b0c2';
+        for (let i = 0; i < 24; i++) {
+          const angle = (i * Math.PI) / 12;
+          ctx.fillRect(
+            Math.round(radius + Math.cos(angle) * (radius - 22)),
+            Math.round(radius + Math.sin(angle) * (radius - 22)),
+            6,
+            4,
+          );
+        }
+      } else if (b.landmarkId === 'ratusz-wroclawski' && b.floors === 4) {
+        for (let x = 14; x < b.width - 10; x += 32) {
+          ctx.fillStyle = '#5a3a2e';
+          ctx.fillRect(x, b.height - 30, 20, 27);
+          ctx.fillStyle = '#d98a5a';
+          for (let i = 0; i < 4; i++)
+            ctx.fillRect(x + i * 2, b.height - 6 - i * 5, 19 - i * 4, 5);
+        }
+      } else if (
+        b.landmarkId?.startsWith('katedra-wieza-') &&
+        b.floors === 16
+      ) {
+        ctx.clearRect(0, 0, b.width, b.height);
+        for (let y = 0; y < b.height; y++) {
+          const inset = Math.floor((b.width / 2) * (1 - y / b.height));
+          ctx.fillStyle = '#6ab08a';
+          ctx.fillRect(inset, y, b.width - inset * 2, 1);
+          ctx.fillStyle = '#3e8948';
+          ctx.fillRect(b.width / 2, y, b.width / 2 - inset, 1);
+        }
+      } else if (b.landmarkId === 'afrykarium') {
+        ctx.fillStyle = '#94b0c2';
+        for (let x = 8; x < b.width - 10; x += 4) {
+          const wave = Math.round(8 * Math.sin(x / 18));
+          ctx.fillRect(x, 16 + wave, 4, b.height - 32);
+          ctx.clearRect(x, 0, 4, 7 + Math.floor((wave + 8) / 2));
+        }
+      } else if (b.landmarkId === 'stadion-wroclaw') {
+        ctx.fillStyle = '#333c57';
+        ctx.fillRect(15, 15, b.width - 30, b.height - 30);
+        ctx.fillStyle = '#3e8948';
+        ctx.fillRect(61, 57, b.width - 122, b.height - 114);
+        ctx.strokeStyle = '#f4f4f4';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(72, 69, b.width - 144, b.height - 138);
+        ctx.fillRect(b.width / 2 - 1, 69, 2, b.height - 138);
+        ctx.beginPath();
+        ctx.arc(b.width / 2, b.height / 2, 26, 0, Math.PI * 2);
+        ctx.stroke();
       }
       const details = sheetImage(scene, 'roof-details');
       visitRoofDetails(b, hash, (kind, x, y) =>
@@ -259,6 +332,30 @@ export function wallTexture(
       ctx.fillStyle = '#1a1c2c';
       ctx.fillRect(x, 7, 1, 5);
       ctx.fillRect(x, 10, 3, 1);
+    }
+    if (b.landmarkId === 'ratusz-wroclawski' && b.floors === 10) {
+      const x = Math.round(width / 2);
+      ctx.fillStyle = '#ffcd75';
+      ctx.beginPath();
+      ctx.arc(x, 13, 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#29366f';
+      ctx.beginPath();
+      ctx.arc(x, 13, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#f0dca8';
+      ctx.fillRect(x - 1, 8, 2, 6);
+      ctx.fillRect(x, 13, 5, 2);
+    }
+    if (b.landmarkId === 'dworzec-glowny') {
+      ctx.fillStyle = '#f0dca8';
+      for (let x = 4; x < width; x += 16) ctx.fillRect(x, 0, 9, 6);
+    }
+    if (b.landmarkId === 'stadion-wroclaw') {
+      for (let x = 1; x < width; x += 9) {
+        ctx.fillStyle = x % 3 === 1 ? '#c0cbdc' : '#94b0c2';
+        ctx.fillRect(x, 4, 4, height - 8);
+      }
     }
     if (!sunny) {
       ctx.fillStyle = 'rgba(26, 28, 44, 0.28)';

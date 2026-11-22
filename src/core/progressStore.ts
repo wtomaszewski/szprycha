@@ -74,6 +74,7 @@ const profileSchema = m5bProfileSchema.extend({
     })
     .optional(),
   stickers: z.array(id),
+  gnomes: z.array(id).optional(),
   breakMinutes: count.positive().optional(),
 });
 

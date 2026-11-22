@@ -21,7 +21,8 @@
     "map:generate": "tsx tools/gen-training-map.ts",
     "benchmark:driving": "tsx tools/benchmark-driving.ts",
     "map:generate:warsaw": "tsx tools/gen-warsaw-map.ts",
-    "coverage:maps": "tsx tools/coverage-report.ts"
+    "coverage:maps": "tsx tools/coverage-report.ts",
+    "map:generate:wroclaw": "tsx tools/gen-wroclaw-map.ts"
   },
   "dependencies": {
     "idb-keyval": "6.3.0",

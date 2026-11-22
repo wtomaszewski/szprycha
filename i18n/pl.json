@@ -58,6 +58,11 @@
     "lights": "Światła",
     "praga": "Wolna jazda po Warszawie",
     "warsawTitle": "Warszawa",
+    "developer": "Menu deweloperskie",
+    "wroclaw": "Wolna jazda po Wrocławiu",
+    "wroclawTitle": "Wrocław",
+    "gnomes": "Krasnale",
+    "gnomesHint": "Zsiądź z roweru, żeby zebrać krasnala.",
     "internalRoadSign": "Droga wewnętrzna"
   },
   "rideHud": {
