@@ -129,14 +129,14 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
       }
       if (b.landmarkId === 'metro') {
         const x = Math.floor(b.width / 2);
-        ctx.fillStyle = '#e43b44';
+        ctx.fillStyle = '#257179';
         ctx.fillRect(x - 12, 4, 24, 20);
+        // An entrance pictogram drawn as descending steps.
         ctx.fillStyle = '#f4f4f4';
-        ctx.fillRect(x - 8, 8, 3, 12);
-        ctx.fillRect(x + 5, 8, 3, 12);
-        ctx.fillRect(x - 5, 10, 3, 4);
-        ctx.fillRect(x - 2, 13, 4, 4);
-        ctx.fillRect(x + 2, 10, 3, 4);
+        ctx.fillRect(x - 8, 8, 5, 3);
+        ctx.fillRect(x - 3, 11, 5, 3);
+        ctx.fillRect(x + 2, 14, 5, 3);
+        ctx.fillRect(x + 7, 17, 3, 3);
         return;
       }
       if (b.landmarkId === 'glass-spire') {

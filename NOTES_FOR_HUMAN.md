@@ -202,3 +202,16 @@ Poniżej zestawienie zmian do przejrzenia przez konsultanta merytorycznego (pier
 - Z aktualnym rozporządzeniem i konsultantem porównać bank i rozkład 25 pytań, progi gry (80% teorii i 90% placu), sześć elementów placu, klasyfikację błędów i punktację 1 / 0,5 / 0. Przejazd kontrolny z progiem dwóch drobnych i zera poważnych błędów jest częścią finału gry. Sprawdzić, jak opisać zakres treningu dziecku i rodzicowi. Parametry są w `content/balans.yaml`.
 - Test i przejazd kontrolny oceniają gracza bez przyznawania XP ani zmiany mastery czy kart powtórek. Trening placu używa limitu dziennego mastery dla dobrych nawyków. Przy dwóch ukończonych kampaniach egzamin wybiera ostatnio wybrane miasto.
 - Profil v5 przechowuje pierwszą datę wydania i wyniki teorii oraz placu. Imię istnieje w otwartym podglądzie i trafia na wydruk lub do pliku PDF zapisanego przez gracza. Przed publikacją sprawdzić brzmienie klauzuli o karcie rowerowej.
+
+## Do przeglądu prawnika
+
+Lista przed wydaniem komercyjnym. Decyzje i zgody odnotować w [#7](https://github.com/wtomaszewski/szprycha/issues/7).
+
+- Sprawdzić nazwę „SZPRYCHA” i pełny tytuł gry w EUIPO, UPRP, App Store i Google Play. Ocenić ryzyko kolizji oraz potrzebę zgłoszenia znaku.
+- Ustalić podmiot wydawcy, właściciela praw i stronę umów z platformami. Założyć lub zweryfikować konta deweloperskie, w tym dane wydawcy publikowane w sklepach.
+- Przygotować i zweryfikować politykę prywatności dla rodziców i dzieci oraz regulamin. Sprawdzić zgodność opisów z zachowaniem aplikacji i deklaracjami sklepowymi.
+- Potwierdzić spełnienie Google Play Families i Apple Kids Category wg `docs/09_prywatnosc_sklepy.md`. Zweryfikować grupę docelową, formularze Data safety i App Privacy, bramkę rodzicielską oraz lokalizację linków i ewentualnych zakupów.
+- Potwierdzić podstawę użycia wizerunków budynków według art. 33 pkt 1 pr. aut. (swoboda panoramy), także przy stylizacjach budynków współczesnych i w materiałach promocyjnych. Sprawdzić m.in. PKiN, Stadion Narodowy, Halę Stulecia, Rotundę, Sky Tower i Centrum Nauki Kopernik. Osobno zweryfikować użycie nazw obiektów w dialogach i opisie sklepowym.
+- Ocenić podobieństwo czerwono-żółtego i niebiesko-kremowego malowania tramwajów do oznaczeń przewoźników oraz kolorystyki pojazdów i stroju fikcyjnej Sierżant Oli do oznaczeń służb. Przy przeglądzie pełnej scenerii uwzględnić też stylizacje mostów i figurki krasnali.
+- Potwierdzić brzmienie i miejsca wyświetlania klauzuli „Licencja Szprychy nie jest kartą rowerową” w grze, na certyfikacie i w materiałach sprzedażowych.
+- Potwierdzić warunki i kompletność atrybucji dla adaptacji PNPOLY i JSTS oraz pozostałych fragmentów osadzonych w dystrybucji Arcade Physics Phasera. Części tych nie wykrywa automatyczna kontrola manifestów npm. Spis potwierdzonych not i odnośniki do źródeł zawiera `assets/licenses/phaser-3.90.0.txt`.
