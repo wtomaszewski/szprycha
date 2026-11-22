@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { classId } from '../content/classes';
 import { rankingScore, rankingWeek } from '../content/rankings';
 
 export const rankingQueueLimit = 50;
@@ -18,6 +19,7 @@ export const rankingState = z.strictObject({
   queue: z.array(rankingScore).max(rankingQueueLimit),
   weekly: weekly.optional(),
   deleting: z.boolean().optional(),
+  classMemberId: classId.optional().catch(undefined),
 });
 export type RankingState = z.infer<typeof rankingState>;
 export type WeeklyXp = z.infer<typeof weekly>;

@@ -18,6 +18,8 @@ Ekran rankingów M10c używa istniejącego arkusza rowerzysty i fontu. [Pochodze
 
 Dockerfile używa etapu budowania z Docker Official Image Node (repozytorium na MIT) oraz obrazu wykonawczego Distroless Node.js 24 (repozytorium na Apache-2.0). Składniki systemowe i biblioteki w obrazach zachowują własne licencje i noty dystrybucji. [Docker Official Image Node](https://github.com/nodejs/docker-node/blob/main/LICENSE) · [Distroless](https://github.com/GoogleContainerTools/distroless/blob/main/LICENSE)
 
+M10d korzysta z wbudowanego `node:crypto` do haszowania haseł i generowania kodów klas oraz z istniejących zależności. Panel web używa systemowego fontu i autorskiego CSS. [Pochodzenie zasobów](../assets/LICENSES.md)
+
 ## Grafika, audio, fonty i teksty
 
 - Grafikę, efekty, muzykę i inne zasoby tworzymy sami. Domyślnym źródłem zasobów jest generator w repozytorium. Wyjątki to fonty na SIL Open Font License 1.1 i materiały CC0 z udokumentowanym źródłem. Materiał CC-BY wymaga wpisu do [#7](https://github.com/wtomaszewski/szprycha/issues/7) i uprzedniej zgody Wojtka.

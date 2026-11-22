@@ -20,7 +20,23 @@ async function checkPrecache(dist: string) {
     .filter((file) => !['_headers', 'quiz-worker.js'].includes(file))
     .sort();
   expect(precache.version).toMatch(/^[0-9a-f]{16}$/);
-  expect(precache.files).toEqual(published);
+  const teacherFiles = published.filter(
+    (file) =>
+      file === 'nauczyciel.html' || file.startsWith('assets/nauczyciel-'),
+  );
+  expect(teacherFiles).toEqual(
+    expect.arrayContaining([
+      'nauczyciel.html',
+      expect.stringMatching(/^assets\/nauczyciel-.*\.js$/),
+      expect.stringMatching(/^assets\/nauczyciel-.*\.css$/),
+    ]),
+  );
+  expect(precache.files).toEqual(
+    published.filter((file) => !teacherFiles.includes(file)),
+  );
+  const teacherHtml = await readFile(join(dist, 'nauczyciel.html'), 'utf8');
+  expect(teacherHtml).not.toContain('app.webmanifest');
+  expect(teacherHtml).not.toContain('pwa-splash');
   expect(published).toEqual(
     expect.arrayContaining([
       'index.html',

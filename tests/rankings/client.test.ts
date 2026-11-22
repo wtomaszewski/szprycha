@@ -252,3 +252,40 @@ it('limits timed boards to eligible results and measures series and clean distan
   expect(qualifies(mission)).toBe(true);
   expect(qualifies({ ...mission, major: 1 })).toBe(false);
 });
+
+it('requires consent to join, publishes only class totals and can leave after opt-out', async () => {
+  const { client, store, db, fetcher } = await fixture();
+  const memberId = crypto.randomUUID();
+  const signal = new AbortController().signal;
+  const code = '23456789AC';
+  await expect(client.joinClass(code)).rejects.toThrow('Rankings disabled');
+  await expect(client.classBoard(signal)).rejects.toThrow('Rankings disabled');
+  expect(fetcher).not.toHaveBeenCalled();
+  store.change((profile) => {
+    profile.quizXp = 15;
+    profile.ageBand = '10to15';
+  });
+  client.setEnabled(true);
+  fetcher.mockResolvedValueOnce(Response.json({ memberId }, { status: 201 }));
+  await client.joinClass(code.toLowerCase());
+  expect(client.classJoined).toBe(true);
+  expect((await ProgressStore.open(db)).profile.rankings?.classMemberId).toBe(
+    memberId,
+  );
+  expect(JSON.parse(String(fetcher.mock.calls[0]![1]!.body))).toEqual({
+    code,
+    nickname: store.profile.nickname,
+    xp: 15,
+    mastery: { M01: 0, M02: 0, M03: 0, M04: 0, M05: 0, M06: 0, M07: 0, M08: 0 },
+  });
+  fetcher.mockResolvedValueOnce(new Response(null, { status: 404 }));
+  expect(await client.classBoard(signal)).toBeNull();
+  client.setEnabled(false);
+  await client.leaveClass();
+  expect(fetcher.mock.calls[2]![1]!.method).toBe('DELETE');
+  expect(client.classJoined).toBe(false);
+  expect(
+    (await ProgressStore.open(db)).profile.rankings?.classMemberId,
+  ).toBeUndefined();
+  expect(store.profile.quizXp).toBe(15);
+});

@@ -74,7 +74,6 @@ export const rankingQuery = z.discriminatedUnion('board', [
   z.strictObject({ board: z.literal('safety') }),
   z.strictObject({ board: z.literal('plac') }),
   z.strictObject({ board: z.literal('cities') }),
-  // A class board can add its own scoped query and membership in M10d.
 ]);
 
 export type RankingSubmission = z.infer<typeof rankingSubmission>;

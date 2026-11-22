@@ -5,6 +5,7 @@ import { ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 import { parentZoneConfig } from '../platform/parentZoneConfig';
 import { ageBands } from '../rules/types';
+import { classMembership } from './ClassMembership';
 
 const labels = ui.parentZone;
 const config = parentZoneConfig({
@@ -195,10 +196,11 @@ function settings(
   const preferences = document.createElement('div');
   preferences.className = 'parent-zone-preferences';
   preferences.append(ageLabel, ageHelp, breakLabel);
-  const parts = [identity, preferences];
+  const parts: HTMLElement[] = [identity, preferences];
 
   const client = progress.rankings;
   if (client) {
+    const classroom = classMembership(client);
     const online = document.createElement('div');
     online.className = 'parent-zone-preferences';
     const label = document.createElement('label');
@@ -228,6 +230,7 @@ function settings(
       rankings.disabled =
         store.sessionOnly || client!.deletionPending || !confirmation.hidden;
       remove.disabled = !client!.canDelete || !confirmation.hidden;
+      classroom.refresh();
     }
 
     rankings.addEventListener('change', () => {
@@ -265,7 +268,7 @@ function settings(
     confirmation.append(explanation, cancel, accept);
     online.append(label, help, remove, confirmation, status);
     refresh();
-    parts.push(online);
+    parts.push(online, classroom.section);
   }
 
   const links = document.createElement('div');

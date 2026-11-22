@@ -1,4 +1,5 @@
 import { ui } from '../core/presentation';
+import { moduleId } from '../content/schemas';
 import type { MissionDefinition } from '../content/missions';
 import { missionCity, type MissionCity } from '../content/missions';
 import {
@@ -92,7 +93,13 @@ export function rankingsPanel(
   const heading = node('tr');
   const nameHeading = node('th');
   const valueHeading = node('th');
-  heading.append(node('th', copy.place), nameHeading, valueHeading);
+  const masteryHeading = node('th', ui.classMembership.mastery);
+  heading.append(
+    node('th', copy.place),
+    nameHeading,
+    valueHeading,
+    masteryHeading,
+  );
   for (const cell of heading.cells) cell.scope = 'col';
   table.createTHead().append(heading);
   const rows = table.createTBody();
@@ -109,6 +116,9 @@ export function rankingsPanel(
   for (const id of rankingLeague.options)
     league.add(new Option(copy.leagues[id], id));
   const leagueNote = node('small');
+  const module = node('select');
+  for (const id of moduleId.options)
+    module.add(new Option(ui.skillMap.modules[id], id));
   let chosenLeague = false;
   let board: Board = 'mission';
   let request: AbortController | undefined;
@@ -160,7 +170,10 @@ export function rankingsPanel(
       );
     } else if (id === 'weekly-xp') {
       filters.append(labelled(copy.league, league), leagueNote);
+    } else if (id === 'class') {
+      filters.append(labelled(ui.classMembership.module, module));
     }
+    masteryHeading.hidden = id !== 'class';
     filters.hidden = !filters.childElementCount;
     rules.textContent =
       id === 'cities'
@@ -186,6 +199,7 @@ export function rankingsPanel(
     value: string,
     color?: HelmetColor,
     own?: boolean,
+    mastery?: number,
   ) {
     const row = rows.insertRow();
     row.toggleAttribute('data-own', Boolean(own));
@@ -194,6 +208,8 @@ export function rankingsPanel(
     if (color) who.append(avatar(color));
     who.append(name);
     row.insertCell().textContent = value;
+    if (mastery !== undefined)
+      row.insertCell().textContent = number.format(mastery);
   }
 
   async function load() {
@@ -203,13 +219,33 @@ export function rankingsPanel(
     self.replaceChildren();
     period.textContent = leagueNote.textContent = '';
     retry.hidden = table.hidden = self.hidden = true;
-    if (board === 'class') {
-      status.textContent = copy.classSoon;
-      return;
-    }
     if (!client?.enabled) return;
     status.textContent = copy.loading;
     try {
+      if (board === 'class') {
+        const data = await client.classBoard(signal);
+        if (signal.aborted) return;
+        status.textContent = data ? '' : ui.classMembership.noMembership;
+        if (data) {
+          nameHeading.textContent = copy.player;
+          valueHeading.textContent = ui.classMembership.xp;
+          const selected = moduleId.parse(module.value);
+          for (const entry of data.top)
+            addRow(
+              entry.position,
+              entry.nickname,
+              number.format(entry.xp),
+              undefined,
+              data.self.position === entry.position,
+              entry.mastery[selected],
+            );
+          self.textContent = copy.yourPlace
+            .replace('{position}', String(data.self.position))
+            .replace('{value}', number.format(data.self.xp) + ' XP');
+          table.hidden = self.hidden = false;
+        }
+        return;
+      }
       let query: RankingQuery;
       if (board === 'mission') {
         query = {
@@ -283,6 +319,7 @@ export function rankingsPanel(
     }
   }
 
+  module.addEventListener('change', () => void load());
   city.addEventListener('change', () => {
     setMissions();
     void load();

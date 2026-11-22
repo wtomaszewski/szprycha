@@ -234,6 +234,14 @@ Poniżej zestawienie zmian do przejrzenia przez konsultanta merytorycznego (pier
 - Wybrać domenę API, ustawić HTTPS i originy z rzeczywistych buildów web i mobile. Instrukcja jest w [BUILD_SERVER.md](docs/BUILD_SERVER.md).
 - Zaktualizować Google Play Data safety, Apple App Privacy i politykę prywatności przed udostępnieniem wersji z rankingami.
 
+## M10d — przed wydaniem panelu nauczyciela (Wojtek)
+
+- Wybrać hosting w UE dla API, bazy klas i kopii zapasowych oraz domeny panelu i API. Skonfigurować HTTPS i CORS, sprawdzić retencję oraz sposób usuwania danych z kopii. Zweryfikować limity dla połączeń współdzielonych przez szkołę lub reverse proxy. [Instrukcja wdrożenia](docs/BUILD_SERVER.md)
+- Ustalić sposób potwierdzania adresu e-mail nauczyciela oraz odzyskiwania konta. Zabezpieczyć domenę nadawcy i dobrać usługę wysyłki e-maili zgodną z wymaganiami hostingu i przetwarzania danych w UE. Obecna wersja rejestruje dorosłego na podstawie oświadczenia, a sesję otwiera po podaniu hasła. Weryfikacja adresu, reset hasła i wysyłka e-maili czekają na decyzję wydawcy.
+- Zaktualizować Google Play Data safety i Apple App Privacy dla wydań z rankingami. Uwzględnić pseudonimowy profil gracza, wyniki i członkostwo w klasie oraz zakres danych dostępnych w panelu web.
+- Przekazać prawnikowi szablony polityki prywatności dla rodzica i dziecka oraz regulamin. Potwierdzić zasady dobrowolnego udziału w klasie, podstawy i retencję danych uczniów oraz dorosłych, obowiązki szkoły i używanie lokalnych etykiet. [Szablony](legal/)
+- Panel pokazuje XP do 1 mln i opanowanie modułów zaokrąglone do pełnych punktów. Dane klasy pochodzą z postępu zapisanego w grze i mają zastosowanie dydaktyczne. Po resecie postęp zdobyty offline wpływa na ranking przy najbliższej synchronizacji. Etykiety są przypisane do członkostwa w danej przeglądarce i należy je usunąć także z innych używanych przeglądarek, jeśli nadal je przechowują.
+
 ## Do przeglądu prawnika
 
 Lista przed wydaniem komercyjnym. Decyzje i zgody odnotować w [#7](https://github.com/wtomaszewski/szprycha/issues/7).

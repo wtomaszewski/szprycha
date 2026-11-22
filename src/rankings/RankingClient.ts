@@ -8,7 +8,7 @@ import {
 import {
   newProfileId,
   type ProgressStore,
-  type RankingProfile,
+  type ProgressProfile,
 } from '../core/progressStore';
 import {
   inputHash,
@@ -20,18 +20,20 @@ import { cityBoard, leagues, playerBoard } from './responses';
 import { rankingQueueLimit, rankingWeekStart } from './state';
 import { rankingVersions, versionFor, type RankingVersions } from './versions';
 
-const timeoutMs = 5_000;
-const retryMs = 5_000;
+import { classCode, membership, studentBoard } from '../content/classes';
+import { moduleId, type GameContent } from '../content/schemas';
+import { moduleMastery } from '../progression/mastery';
+import { reputationXp } from '../progression/reputation';
+import { RankingHttpError, rankingRequest } from './request';
 
-class HttpError extends Error {
-  constructor(readonly status: number) {
-    super(`Ranking API returned ${status}`);
-  }
-}
+type ClassRules = ReadonlyArray<
+  Pick<GameContent['przepisy']['przepisy'][number], 'id' | 'modul'>
+>;
+const retryMs = 5_000;
 
 function retryable(error: unknown) {
   return (
-    !(error instanceof HttpError) ||
+    !(error instanceof RankingHttpError) ||
     error.status >= 500 ||
     [408, 425, 429].includes(error.status)
   );
@@ -48,6 +50,8 @@ export class RankingClient {
   private removing = false;
   private nextAttempt = 0;
   private backoff = retryMs;
+  private classRules: ClassRules = [];
+  private lastClassSync?: string;
 
   constructor(
     private readonly store: ProgressStore,
@@ -79,7 +83,15 @@ export class RankingClient {
     return Boolean(this.store.profile.rankings);
   }
 
-  start() {
+  get classJoined() {
+    return (
+      Boolean(this.store.profile.rankings?.classMemberId) &&
+      !this.deletionPending
+    );
+  }
+
+  start(classRules: ClassRules) {
+    this.classRules = classRules;
     window.addEventListener('online', () => {
       this.nextAttempt = 0;
       void this.flush();
@@ -160,6 +172,7 @@ export class RankingClient {
         const first = await this.store.rankingProfile();
         const consent = this.activeConsent(first);
         if (consent === undefined) return;
+        await this.syncClass(first);
         const weekly = first.rankings?.weekly;
         const hasWeekly =
           weekly &&
@@ -241,6 +254,141 @@ export class RankingClient {
     return this.read('/v1/leagues', leagues, await this.activeId(), signal);
   }
 
+  async refreshClassMembership() {
+    return this.exclusive(async () => {
+      const profile = await this.store.rankingProfile();
+      if (
+        !profile.rankings ||
+        this.store.sessionOnly ||
+        profile.rankings.deleting ||
+        this.removing
+      )
+        return false;
+      const response = await this.request(
+        '/v1/class/membership',
+        {},
+        profile.profileId,
+      );
+      const memberId =
+        response.status === 204
+          ? undefined
+          : membership.parse(await response.json()).memberId;
+      this.rememberClass(profile, memberId);
+      return Boolean(memberId);
+    });
+  }
+
+  async joinClass(value: string) {
+    const code = classCode.parse(value.trim().toUpperCase());
+    await this.exclusive(async () => {
+      const profile = await this.store.rankingProfile();
+      if (this.activeConsent(profile) === undefined)
+        throw new Error('Rankings disabled');
+      const progress = this.classProgress(profile);
+      const response = await this.request(
+        '/v1/class/join',
+        {
+          method: 'POST',
+          body: JSON.stringify({ code, ...progress }),
+        },
+        profile.profileId,
+      );
+      const { memberId } = membership.parse(await response.json());
+      this.rememberClass(profile, memberId);
+      if (response.status === 201)
+        this.lastClassSync = JSON.stringify({ memberId, ...progress });
+      await this.store.flush();
+    });
+  }
+
+  async leaveClass() {
+    await this.exclusive(async () => {
+      const profile = await this.store.rankingProfile();
+      if (!profile.rankings || profile.rankings.deleting || this.removing)
+        return;
+      await this.request(
+        '/v1/class/membership',
+        { method: 'DELETE' },
+        profile.profileId,
+      );
+      this.rememberClass(profile, undefined);
+      this.lastClassSync = undefined;
+      await this.store.flush();
+    });
+  }
+
+  async classBoard(signal: AbortSignal) {
+    const id = await this.activeId();
+    try {
+      return await this.read('/v1/class/board', studentBoard, id, signal);
+    } catch (error) {
+      if (error instanceof RankingHttpError && error.status === 404)
+        return null;
+      throw error;
+    }
+  }
+
+  private rememberClass(
+    current: ProgressProfile,
+    memberId: string | undefined,
+  ) {
+    if (
+      current.rankings?.classMemberId === memberId &&
+      this.store.profile.rankings?.classMemberId === memberId
+    )
+      return;
+    this.store.change((profile) => {
+      if (
+        profile.profileId === current.profileId &&
+        profile.rankings &&
+        !profile.rankings.deleting
+      )
+        profile.rankings.classMemberId = memberId;
+    });
+  }
+
+  private classProgress(profile: ProgressProfile) {
+    const values = moduleId.options.map((module) => {
+      const rules = this.classRules
+        .filter(({ modul }) => modul === module)
+        .map(({ id }) => id);
+      return [
+        module,
+        Math.round(moduleMastery(profile.mastery, rules)),
+      ] as const;
+    });
+    return {
+      nickname: profile.nickname,
+      xp: Math.min(reputationXp(profile), 1_000_000),
+      mastery: Object.fromEntries(values),
+    };
+  }
+
+  private async syncClass(profile: ProgressProfile) {
+    const memberId = profile.rankings?.classMemberId;
+    if (
+      !memberId ||
+      !this.classRules.length ||
+      this.activeConsent(profile) === undefined
+    )
+      return;
+    const body = JSON.stringify({ memberId, ...this.classProgress(profile) });
+    if (body === this.lastClassSync) return;
+    try {
+      await this.request(
+        '/v1/class/progress',
+        { method: 'PUT', body },
+        profile.profileId,
+      );
+      this.lastClassSync = body;
+    } catch (error) {
+      if (!(error instanceof RankingHttpError) || error.status !== 404)
+        throw error;
+      this.rememberClass(profile, undefined);
+      this.lastClassSync = undefined;
+    }
+  }
+
   async deleteProfile() {
     if (!this.canDelete || this.removing) return false;
     this.removing = true;
@@ -274,7 +422,7 @@ export class RankingClient {
     }
   }
 
-  private activeConsent(profile: RankingProfile) {
+  private activeConsent(profile: ProgressProfile) {
     const consent = this.consent;
     if (
       profile.onlineRankings &&
@@ -293,7 +441,7 @@ export class RankingClient {
   }
 
   private async post(
-    profile: RankingProfile,
+    profile: ProgressProfile,
     score: RankingScore,
     remote: RankingVersions,
   ) {
@@ -311,7 +459,7 @@ export class RankingClient {
     }
   }
 
-  private submission(profile: RankingProfile, score: RankingScore) {
+  private submission(profile: ProgressProfile, score: RankingScore) {
     return rankingSubmission.safeParse({
       nickname: profile.nickname,
       avatarId: profile.avatarId,
@@ -342,22 +490,7 @@ export class RankingClient {
     return schema.parse(await response.json());
   }
 
-  private async request(path: string, init: RequestInit, id?: string) {
-    const headers = new Headers();
-    if (id) headers.set('Authorization', 'Bearer ' + id);
-    if (init.body) headers.set('Content-Type', 'application/json');
-    const timeout = AbortSignal.timeout(timeoutMs);
-    const url = new URL(path.slice(1), this.base);
-    const response = await this.fetcher(url, {
-      ...init,
-      headers,
-      signal: init.signal ? AbortSignal.any([timeout, init.signal]) : timeout,
-      cache: 'no-store',
-      credentials: 'omit',
-      redirect: 'error',
-      referrerPolicy: 'no-referrer',
-    });
-    if (!response.ok) throw new HttpError(response.status);
-    return response;
+  private request(path: string, init: RequestInit, id?: string) {
+    return rankingRequest(this.base, path, init, id, this.fetcher);
   }
 }

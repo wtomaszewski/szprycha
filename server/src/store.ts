@@ -7,6 +7,7 @@ import {
   type RankingSubmission,
 } from '../../src/content/rankings.ts';
 import { missionCity, type MissionCity } from '../../src/content/missions.ts';
+import { ClassStore } from './classes.ts';
 import type { RankingCalendar } from './calendar.ts';
 import type { RankingRules } from './rules.ts';
 
@@ -19,6 +20,7 @@ interface Placement {
 
 export class RankingStore {
   private readonly db: DatabaseSync;
+  readonly classes: ClassStore;
 
   constructor(file: string) {
     this.db = new DatabaseSync(file);
@@ -59,6 +61,7 @@ export class RankingStore {
       ) STRICT;
       CREATE INDEX IF NOT EXISTS xp_profile ON weekly_xp (profile_id);
     `);
+    this.classes = new ClassStore(this.db, (op) => this.transaction(op));
   }
 
   close() {
@@ -162,6 +165,7 @@ export class RankingStore {
   deleteProfile(profileId: string, week: string) {
     this.transaction(() => {
       this.settleWeeks(week);
+      this.classes.leave(profileId);
       this.db.prepare('DELETE FROM profiles WHERE id = ?').run(profileId);
     });
   }

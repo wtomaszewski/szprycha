@@ -1,4 +1,3 @@
-import { createHmac, randomBytes } from 'node:crypto';
 import {
   createServer,
   type IncomingMessage,
@@ -6,13 +5,20 @@ import {
 } from 'node:http';
 import {
   rankingLeague,
-  rankingProfileId,
   rankingQuery,
   rankingSubmission,
 } from '../../src/content/rankings.ts';
 import { rankingCalendar, type SeasonSettings } from './calendar.ts';
 import { validateScore, type RankingRules } from './rules.ts';
 import type { RankingStore } from './store.ts';
+import {
+  HttpError,
+  json,
+  profileIdOf,
+  rateLimit,
+  send,
+} from './httpSupport.ts';
+import { classRoutes } from './classHttp.ts';
 
 const methods = new Map([
   ['/v1/health', 'GET'],
@@ -22,87 +28,6 @@ const methods = new Map([
   ['/v1/leagues', 'GET'],
   ['/v1/profile', 'DELETE'],
 ]);
-const maxBody = 4096;
-
-class HttpError extends Error {
-  constructor(
-    readonly status: number,
-    readonly code: string,
-  ) {
-    super(code);
-  }
-}
-
-function send(res: ServerResponse, status: number, value?: unknown) {
-  res.statusCode = status;
-  if (value === undefined) res.end();
-  else {
-    res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.end(JSON.stringify(value));
-  }
-}
-
-function profileIdOf(req: IncomingMessage) {
-  if (req.headers.authorization === undefined) return null;
-  const parsed = rankingProfileId.safeParse(
-    /^Bearer (\S+)$/i.exec(req.headers.authorization)?.[1],
-  );
-  if (!parsed.success) throw new HttpError(401, 'invalid_profile');
-  return parsed.data;
-}
-
-async function json(req: IncomingMessage) {
-  if (
-    req.headers['content-type']?.split(';')[0]?.trim().toLowerCase() !==
-    'application/json'
-  )
-    throw new HttpError(415, 'json_required');
-  if (Number(req.headers['content-length']) > maxBody)
-    throw new HttpError(413, 'body_too_large');
-  const chunks: Buffer[] = [];
-  let length = 0;
-  for await (const chunk of req.iterator({
-    destroyOnReturn: false,
-  }) as AsyncIterable<Buffer>) {
-    length += chunk.length;
-    if (length > maxBody) throw new HttpError(413, 'body_too_large');
-    chunks.push(chunk);
-  }
-  try {
-    return JSON.parse(
-      new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)),
-    ) as unknown;
-  } catch {
-    throw new HttpError(400, 'invalid_json');
-  }
-}
-
-function rateLimit(limit: number) {
-  let key = randomBytes(32);
-  let windowEnd = 0;
-  const counts = new Map<string, number>();
-  return (address: string, now: number) => {
-    if (now >= windowEnd) {
-      counts.clear();
-      key = randomBytes(32);
-      windowEnd = now + 60_000;
-      const expires = windowEnd;
-      setTimeout(() => {
-        if (windowEnd === expires) {
-          counts.clear();
-          key = randomBytes(32);
-        }
-      }, 60_000).unref();
-    }
-    const bucket = createHmac('sha256', key).update(address).digest('hex');
-    const count = counts.get(bucket) ?? 0;
-    if (count >= limit || (count === 0 && counts.size >= 10_000))
-      return Math.max(1, Math.ceil((windowEnd - now) / 1000));
-    counts.set(bucket, count + 1);
-    return 0;
-  };
-}
-
 interface Options {
   store: RankingStore;
   rules: RankingRules;
@@ -122,6 +47,7 @@ export function createRankingServer({
 }: Options) {
   const allowedOrigins = new Set(origins);
   const throttle = rateLimit(requestsPerMinute);
+  const classes = classRoutes(store.classes, now);
 
   async function handle(req: IncomingMessage, res: ServerResponse) {
     res.setHeader('Cache-Control', 'no-store');
@@ -135,12 +61,15 @@ export function createRankingServer({
     }
 
     const url = new URL('http://rankings.local' + req.url);
-    const method = methods.get(url.pathname);
-    if (!method) throw new HttpError(404, 'not_found');
+    const rankingsMethod = methods.get(url.pathname);
+    const route = classes(url.pathname);
+    const allowed = rankingsMethod ? [rankingsMethod] : route?.methods;
+    if (!allowed) throw new HttpError(404, 'not_found');
     if (req.method === 'OPTIONS') {
-      if (!origin || req.headers['access-control-request-method'] !== method)
+      const requested = req.headers['access-control-request-method'];
+      if (!origin || !allowed.some((value) => value === requested))
         throw new HttpError(403, 'preflight_denied');
-      res.setHeader('Access-Control-Allow-Methods', method);
+      res.setHeader('Access-Control-Allow-Methods', allowed.join(', '));
       res.setHeader(
         'Access-Control-Allow-Headers',
         'Authorization, Content-Type',
@@ -148,8 +77,9 @@ export function createRankingServer({
       res.setHeader('Vary', 'Origin, Access-Control-Request-Method');
       return send(res, 204);
     }
-    if (req.method !== method) {
-      res.setHeader('Allow', method + ', OPTIONS');
+    const method = req.method;
+    if (!method || !allowed.includes(method)) {
+      res.setHeader('Allow', allowed.join(', ') + ', OPTIONS');
       throw new HttpError(405, 'method_not_allowed');
     }
 
@@ -159,6 +89,8 @@ export function createRankingServer({
       res.setHeader('Retry-After', retry);
       throw new HttpError(429, 'rate_limited');
     }
+
+    if (route) return route.handle(req, res);
 
     const profileId = profileIdOf(req);
     if ((method === 'POST' || method === 'DELETE') && profileId === null)
