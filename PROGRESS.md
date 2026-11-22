@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan na 22.11.2026. Gałąź `feat/70-m8c-moment-chwaly`.
+Stan na 22.11.2026. Gałąź `feat/74-m9a-pwa`.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -12,9 +12,16 @@ Stan na 22.11.2026. Gałąź `feat/70-m8c-moment-chwaly`.
 | M5     | Punktacja, progresja, zapis                 | M5a (#44), M5b (#46) i M5c (#54) w `main`.                                                   |
 | M6     | Mapy Warszawy i Wrocławia                   | M6a–d: dwie mapy, dwie kampanie i wybór miasta. Raport strict obejmuje oba miasta.           |
 | M7     | Plac, quiz, egzamin                         | Ukończony. Plac (M7a), quiz (M7b) i egzamin z Licencją (M7c).                                |
-| M8     | Audio i szlif                               | M8a (#71) i M8b (#72) w `main`. M8c (#70) kończy kamień milowy.                              |
-| M9     | PWA, Capacitor, Android/iOS                 | Nierozpoczęty                                                                                |
+| M8     | Audio i szlif                               | Ukończony. M8a (#71), M8b (#72) i M8c (#73) w `main`.                                        |
+| M9     | PWA, Capacitor, Android/iOS                 | M9a (#74): instalacja PWA, gra offline i bezpieczne aktualizacje.                            |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Nierozpoczęty                                                                                |
+
+## M9a — PWA
+
+- Manifest i service worker obejmują pełny build, w tym treści, mapy, atlasy i font. Proceduralne audio działa z kodu w pamięci podręcznej. Generator tworzy ikony i ekrany startowe z palety projektu.
+- Po wykryciu nowej wersji gra wyświetla komunikat. Przejazd trwa dalej, a wersja zmienia się po zamknięciu wszystkich okien gry. Profil pozostaje w IndexedDB.
+- Playwright w CI sprawdza warunki instalacji Chromium, przejazd offline i zapis po aktualizacji. Instrukcja instalacji jest w [BUILD_WEB.md](docs/BUILD_WEB.md).
+- Buildy mobilne Capacitor oraz dalsze dostosowania układu do telefonu i tabletu należą do kolejnych części M9.
 
 ## M8 — audio i szlif
 

@@ -3,9 +3,90 @@ import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
+import { PNG } from 'pngjs';
 import { expect, it } from 'vitest';
 
-it('writes the noindex header and third-party notices to the web build', async () => {
+async function checkPrecache(dist: string) {
+  const worker = await readFile(join(dist, 'quiz-worker.js'), 'utf8');
+  const header = /^const manifest = (.+);/m.exec(worker);
+  expect(header).not.toBeNull();
+  const precache: { files: string[]; version: string } = JSON.parse(
+    header![1]!,
+  );
+  const files = await readdir(dist, { recursive: true, withFileTypes: true });
+  const published = files
+    .filter((file) => file.isFile())
+    .map((file) => join(file.parentPath, file.name).slice(dist.length + 1))
+    .filter((file) => !['_headers', 'quiz-worker.js'].includes(file))
+    .sort();
+  expect(precache.version).toMatch(/^[0-9a-f]{16}$/);
+  expect(precache.files).toEqual(published);
+  expect(published).toEqual(
+    expect.arrayContaining([
+      'index.html',
+      'data/content.json',
+      'app.webmanifest',
+      expect.stringMatching(/^assets\/index-.*\.js$/),
+      expect.stringMatching(/^assets\/index-.*\.css$/),
+      expect.stringMatching(/^assets\/rider-.*\.png$/),
+      expect.stringMatching(/^assets\/PixelifySans-.*\.ttf$/),
+      ...['miasteczko', 'warszawa', 'wroclaw'].map((city) =>
+        expect.stringMatching(new RegExp(`^assets/${city}-.*\\.tmj$`)),
+      ),
+    ]),
+  );
+
+  const manifest = JSON.parse(
+    await readFile(join(dist, 'app.webmanifest'), 'utf8'),
+  );
+  expect(manifest).toMatchObject({
+    name: 'SZPRYCHA: Miejscy Kurierzy',
+    short_name: 'SZPRYCHA',
+    display: 'standalone',
+    orientation: 'landscape',
+    lang: 'pl',
+    start_url: './',
+    scope: './',
+  });
+  const palette = (await readFile('assets/palette.hex', 'utf8'))
+    .trim()
+    .split(/\s+/);
+  expect(palette).toContain(manifest.theme_color);
+  expect(palette).toContain(manifest.background_color);
+  expect(manifest.icons).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ sizes: '192x192', purpose: 'any' }),
+      expect.objectContaining({ sizes: '512x512', purpose: 'any' }),
+      expect.objectContaining({ sizes: '512x512', purpose: 'maskable' }),
+    ]),
+  );
+  const html = await readFile(join(dist, 'index.html'), 'utf8');
+  expect(html).toContain('rel="manifest" href="./app.webmanifest"');
+  expect(html).toContain(
+    'rel="apple-touch-icon" href="./pwa/apple-touch-icon.png"',
+  );
+  expect(html).toContain('id="pwa-splash" src="./pwa/splash-1280x720.png"');
+  const splashes = Array.from(
+    html.matchAll(
+      /rel="apple-touch-startup-image" href="\.\/(pwa\/splash-(\d+x\d+)\.png)"/g,
+    ),
+    ([, src, sizes]) => ({ src, sizes }),
+  );
+  expect(splashes).toHaveLength(6);
+  const images: { src: string; sizes: string }[] = [
+    ...manifest.icons,
+    ...splashes,
+    { src: 'pwa/apple-touch-icon.png', sizes: '180x180' },
+    { src: 'pwa/splash-1280x720.png', sizes: '1280x720' },
+  ];
+  for (const { src, sizes } of images) {
+    expect(precache.files).toContain(src);
+    const { width, height } = PNG.sync.read(await readFile(join(dist, src)));
+    expect(`${width}x${height}`).toBe(sizes);
+  }
+}
+
+it('writes the noindex header, third-party notices and complete PWA cache to the web build', async () => {
   const root = await mkdtemp(join(tmpdir(), 'szprycha-web-'));
   const dist = join(root, 'dist');
 
@@ -37,6 +118,7 @@ it('writes the noindex header and third-party notices to the web build', async (
     expect(phaser).toBeDefined();
     const bundle = await readFile(join(assets, phaser!), 'utf8');
     expect(bundle).not.toContain('pathToVertices');
+    await checkPrecache(dist);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
