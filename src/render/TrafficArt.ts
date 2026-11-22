@@ -1,48 +1,157 @@
 import type { GameObjects, Scene } from 'phaser';
+import type { ReplayActor } from '../gameplay/ReplayBuffer';
 import type { AgentState } from '../rules/types';
+import { emergencyLightPhase } from './emergencyLights';
+import {
+  cyclistVariants,
+  emergencyTypes,
+  largeVehicleTypes,
+  pedestrianDirections,
+  pedestrianTypes,
+  riderDirections,
+  smallVehicleTypes,
+  spriteDirection,
+  spriteSheets,
+  strideFrames,
+  tramCities,
+  vehicleFrame,
+  vehiclePaints,
+  type SpriteSheet,
+} from './spriteFrames';
 
-export function trafficTextures(scene: Scene) {
-  if (scene.textures.exists('traffic-car')) return;
-  const art = scene.make.graphics({});
-  art.fillStyle(0x1a1c2c).fillRoundedRect(0, 0, 26, 16, 3);
-  art.fillStyle(0x41a6f6).fillRoundedRect(1, 2, 24, 12, 3);
-  art.fillStyle(0x29366f).fillRect(8, 4, 10, 8);
-  art.fillStyle(0x73eff7).fillRect(16, 4, 2, 8);
-  art.fillStyle(0xffcd75).fillRect(23, 3, 2, 3).fillRect(23, 10, 2, 3);
-  art.fillStyle(0xe43b44).fillRect(1, 3, 2, 3).fillRect(1, 10, 2, 3);
-  art.generateTexture('traffic-car', 26, 16);
-  art.clear().fillStyle(0x1a1c2c).fillRoundedRect(0, 0, 50, 20, 4);
-  art.fillStyle(0xe43b44).fillRoundedRect(1, 2, 48, 16, 3);
-  art.fillStyle(0xffcd75).fillRect(2, 5, 46, 10);
-  art.fillStyle(0x29366f).fillRect(38, 5, 8, 10).fillRect(6, 5, 7, 10);
-  art.fillStyle(0x566c86).fillRect(16, 4, 5, 12).fillRect(25, 4, 5, 12);
-  art.fillStyle(0xf4f4f4).fillRect(47, 4, 2, 4).fillRect(47, 12, 2, 4);
-  art.generateTexture('traffic-tram', 50, 20);
-  art.clear().fillStyle(0x1a1c2c).fillRoundedRect(0, 0, 26, 17, 3);
-  art.fillStyle(0xf4f4f4).fillRoundedRect(1, 1, 24, 15, 2);
-  art.fillStyle(0xe43b44).fillRect(1, 2, 17, 3).fillRect(1, 12, 17, 3);
-  art.fillStyle(0x29366f).fillRect(17, 4, 5, 9);
-  art.fillStyle(0x3b5dc9).fillRect(13, 3, 3, 11);
-  art.generateTexture('traffic-emergency', 26, 17);
-  art
-    .clear()
-    .fillStyle(0x1a1c2c)
-    .fillRoundedRect(0, 4, 7, 6, 2)
-    .fillRoundedRect(14, 4, 7, 6, 2);
-  art.fillStyle(0xa7f070).fillRect(5, 6, 12, 3);
-  art.fillStyle(0x38b764).fillCircle(10, 7, 5);
-  art.fillStyle(0xf4f4f4).fillCircle(13, 7, 3);
-  art.generateTexture('traffic-cyclist', 21, 14);
-  art.clear().fillStyle(0x1a1c2c).fillCircle(7, 7, 7);
-  art.fillStyle(0xff77a8).fillCircle(6, 7, 5);
-  art.fillStyle(0xffcd75).fillCircle(9, 7, 4);
-  art.generateTexture('traffic-pedestrian', 14, 14);
-  art.destroy();
+const urls = import.meta.glob<string>('../../assets/generated/*.png', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+});
+
+export function loadTrafficArt(scene: Scene) {
+  for (const key of Object.keys(spriteSheets) as SpriteSheet[]) {
+    const [frameWidth, frameHeight] = spriteSheets[key];
+    if (!scene.textures.exists(key))
+      scene.load.spritesheet(key, urls[`../../assets/generated/${key}.png`]!, {
+        frameWidth,
+        frameHeight,
+      });
+  }
 }
 
-export function trafficSprite(
-  scene: Scene,
-  kind: AgentState['kind'],
-): GameObjects.Image {
-  return scene.add.image(0, 0, `traffic-${kind}`).setDepth(17);
+function useFrame(image: GameObjects.Image, frame: number) {
+  if (Number(image.frame.name) !== frame) image.setFrame(frame);
+}
+
+export function drawCyclist(
+  image: GameObjects.Image,
+  heading: number,
+  stride: number,
+  variant: number,
+) {
+  useFrame(
+    image,
+    (variant * strideFrames + stride) * riderDirections +
+      spriteDirection(heading, riderDirections),
+  );
+}
+
+export class TrafficArt {
+  private readonly image: GameObjects.Image;
+  private readonly rear?: GameObjects.Image;
+  private readonly row: number;
+
+  constructor(
+    scene: Scene,
+    private readonly kind: AgentState['kind'],
+    variant: number,
+    mapId: string,
+  ) {
+    let key: SpriteSheet = `traffic-${kind}`;
+    let scale = 1;
+    switch (kind) {
+      case 'car': {
+        const types = smallVehicleTypes.length + largeVehicleTypes.length;
+        const type = variant % types;
+        const paint = Math.floor(variant / types) % vehiclePaints;
+        const large = type >= smallVehicleTypes.length;
+        key = large ? 'traffic-large' : 'traffic-car';
+        this.row =
+          (large ? type - smallVehicleTypes.length : type) * vehiclePaints +
+          paint;
+        scale = 0.65;
+        break;
+      }
+      case 'emergency':
+        this.row = variant % emergencyTypes.length;
+        scale = 0.57;
+        break;
+      case 'tram':
+        this.row = mapId.startsWith(tramCities[1]) ? 1 : 0;
+        scale = 0.65;
+        this.rear = scene.add
+          .image(0, 0, key, this.row * 2 + 1)
+          .setOrigin(0.5, 0)
+          .setDepth(17)
+          .setScale(scale, 0.325);
+        break;
+      case 'pedestrian':
+        this.row = variant % pedestrianTypes.length;
+        break;
+      case 'cyclist':
+        this.row = variant % cyclistVariants;
+        break;
+    }
+    this.image = scene.add
+      .image(0, 0, key, kind === 'tram' ? this.row * 2 : 0)
+      .setScale(scale)
+      .setDepth(17);
+    // Keep the original footprint on the rails while both sections pivot at the joint.
+    if (this.rear) this.image.setOrigin(0.5, 1).setScale(scale, 0.325);
+  }
+
+  draw(x: number, y: number, visible: boolean, pose: ReplayActor, at: number) {
+    const { image, rear } = this;
+    if (image.visible !== visible) {
+      image.setVisible(visible);
+      rear?.setVisible(visible);
+    }
+    if (!visible) return;
+    image.setPosition(x, y);
+    switch (this.kind) {
+      case 'tram':
+        image.setRotation(pose.tramFront + Math.PI / 2);
+        rear!.setPosition(x, y).setRotation(pose.tramRear + Math.PI / 2);
+        break;
+      case 'cyclist':
+        drawCyclist(image, pose.heading, Math.floor(pose.stride), this.row);
+        break;
+      case 'pedestrian':
+        useFrame(
+          image,
+          (((this.row + pose.trips) % pedestrianTypes.length) * strideFrames +
+            Math.floor(pose.stride)) *
+            pedestrianDirections +
+            spriteDirection(pose.heading, pedestrianDirections),
+        );
+        break;
+      case 'emergency':
+        image.setRotation(pose.heading + Math.PI / 2);
+        useFrame(
+          image,
+          ((this.row + pose.trips) % emergencyTypes.length) * 3 +
+            (!pose.signalActive ? 0 : emergencyLightPhase(at) ? 1 : 2),
+        );
+        break;
+      case 'car':
+        image.setRotation(pose.heading + Math.PI / 2);
+        useFrame(
+          image,
+          vehicleFrame(
+            this.row,
+            pose.braking,
+            pose.maneuver,
+            Math.floor(at * 3) % 2 === 0,
+          ),
+        );
+        break;
+    }
+  }
 }

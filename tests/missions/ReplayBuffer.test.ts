@@ -84,3 +84,44 @@ describe('five-second replay', () => {
     expect(first.durationMs).toBe(0);
   });
 });
+
+it('records traffic lamps and both tram section headings for playback', () => {
+  const buffer = new ReplayBuffer(2);
+  const player = { x: 0, y: 0, speed: 0, heading: 0, walking: false };
+  const actions = { signal: null, looking: false, bell: false, lights: false };
+  const car: AgentState = {
+    id: 'turning',
+    kind: 'car',
+    pos: { x: 0, y: 0 },
+    speed: 3,
+    heading: 0,
+    maneuver: 'left',
+  };
+  const tram = {
+    ...car,
+    kind: 'tram' as const,
+    tramHeadings: { front: 0.4, rear: 0.1 },
+  };
+  buffer.record(0, false, player, actions, [car, tram]);
+  car.speed = 2.5;
+  car.maneuver = 'right';
+  tram.tramHeadings.front = 0.6;
+  buffer.record(FIXED_STEP, false, player, actions, [car, tram]);
+
+  expect(buffer.frame(0)?.actors[0]).toMatchObject({
+    braking: false,
+    maneuver: 'left',
+  });
+  expect(buffer.frame(1)?.actors[0]).toMatchObject({
+    braking: true,
+    maneuver: 'right',
+  });
+  expect(buffer.frame(0)?.actors[1]).toMatchObject({
+    tramFront: 0.4,
+    tramRear: 0.1,
+  });
+  expect(buffer.frame(1)?.actors[1]).toMatchObject({
+    tramFront: 0.6,
+    tramRear: 0.1,
+  });
+});

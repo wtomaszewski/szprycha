@@ -2,6 +2,8 @@ import { Scene } from 'phaser';
 import type { GameContent } from '../content/schemas';
 import { missionProgress } from '../gameplay/MissionProgress';
 import { FONT, translate, ui } from '../core/presentation';
+import { readHelmetColor, setHelmetColor } from '../core/helmetColor';
+import { helmetColors } from '../render/spriteFrames';
 export class MainMenu extends Scene {
   constructor() {
     super('MainMenu');
@@ -32,7 +34,19 @@ export class MainMenu extends Scene {
     pragaButton.addEventListener('click', () =>
       this.scene.start('City', { map: 'warszawa' }),
     );
-    document.body.append(pragaButton);
+    const helmetLabel = document.createElement('label');
+    helmetLabel.className = 'menu-helmet';
+    helmetLabel.textContent = ui.helmet.label;
+    const helmet = document.createElement('select');
+    for (const color of helmetColors)
+      helmet.add(new Option(ui.helmet[color], color));
+    helmet.value = readHelmetColor();
+    helmet.addEventListener('change', () => {
+      const selected = helmetColors.find((color) => color === helmet.value);
+      if (selected) setHelmetColor(selected);
+    });
+    helmetLabel.append(helmet);
+    document.body.append(pragaButton, helmetLabel);
     const g = this.add.graphics();
     g.fillStyle(0x1a1c2c).fillRect(0, 0, 640, 360);
     g.fillStyle(0x257179).fillRect(0, 0, 8, 360);
@@ -82,13 +96,17 @@ export class MainMenu extends Scene {
         -Math.floor((this.scale.width - 640) / 2),
         -Math.floor((this.scale.height - 360) / 2),
       );
-      for (const button of [missionButton, pragaButton])
+      for (const button of [missionButton, pragaButton, helmetLabel])
         button.style.setProperty('--menu-zoom', String(this.scale.zoom));
     };
     center();
     this.scale.on('resize', center);
     const startDrive = (event: KeyboardEvent) => {
-      if (event.target !== missionButton && event.target !== pragaButton)
+      if (
+        event.target !== missionButton &&
+        event.target !== pragaButton &&
+        event.target !== helmet
+      )
         this.scene.start('City');
     };
     this.input.keyboard?.on('keydown-ENTER', startDrive);
@@ -97,6 +115,7 @@ export class MainMenu extends Scene {
       this.input.keyboard?.off('keydown-ENTER', startDrive);
       missionButton.remove();
       pragaButton.remove();
+      helmetLabel.remove();
     });
     const canvas = this.game.canvas;
     canvas.setAttribute(

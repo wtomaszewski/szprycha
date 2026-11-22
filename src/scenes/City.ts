@@ -6,7 +6,6 @@ import blockRoofsUrl from '../../assets/generated/roofs.png?url';
 import roofDetailsUrl from '../../assets/generated/roof-details.png?url';
 import propsUrl from '../../assets/generated/props.png?url';
 import tilesUrl from '../../assets/generated/tiles.png?url';
-import riderUrl from '../../assets/generated/rider.png?url';
 import {
   canRide,
   FIXED_STEP,
@@ -41,8 +40,9 @@ import {
   type RoutedAgent,
 } from '../sim/TrafficParticipants';
 import type { RoadTrafficAgent } from '../sim/TrafficSimulation';
-import { trafficSprite, trafficTextures } from '../render/TrafficArt';
-import { emergencyLightPhase } from '../render/emergencyLights';
+import { drawCyclist, loadTrafficArt, TrafficArt } from '../render/TrafficArt';
+import { RiderArt } from '../render/RiderArt';
+import { readHelmetColor } from '../core/helmetColor';
 import { EmergencySiren } from '../audio/EmergencySiren';
 import { RuleFeedback } from '../ui/RuleFeedback';
 import { MissionHud } from '../ui/MissionHud';
@@ -73,9 +73,7 @@ export class City extends Scene {
   };
   private readonly renderEnvironment = { ...this.environment };
   private rider!: Rider;
-  private sprite!: GameObjects.Image;
-  private actionArt!: GameObjects.Graphics;
-  private pedestrian!: GameObjects.Arc;
+  private riderArt!: RiderArt;
   private controls!: DrivingControls;
   private blocks!: Blocks;
   private props!: CityProps;
@@ -96,7 +94,7 @@ export class City extends Scene {
   private readonly activeAgents: AgentState[] = [];
   private agents!: readonly (RoadTrafficAgent | RoutedAgent)[];
   private actorObstacles!: Obstacle[];
-  private actors!: GameObjects.Image[];
+  private actors!: TrafficArt[];
   private road!: TrainingRoad;
   private debug!: RuleDebugOverlay;
   private feedback!: RuleFeedback;
@@ -173,7 +171,7 @@ export class City extends Scene {
         frameWidth: 48,
         frameHeight: 48,
       });
-    if (!this.textures.exists('rider')) this.load.image('rider', riderUrl);
+    loadTrafficArt(this);
     this.load.on('loaderror', showError);
     this.load.once('complete', () => this.load.off('loaderror', showError));
   }
@@ -328,10 +326,21 @@ export class City extends Scene {
       return { x: -1000, y: -1000, width: size, height: size, kind: 'wall' };
     });
     this.obstacles.push(...this.actorObstacles, ...this.eventObstacles);
-    trafficTextures(this);
-    this.actors = this.agents.map(({ kind }) => trafficSprite(this, kind));
+    const variants = {
+      car: 0,
+      tram: 0,
+      pedestrian: 0,
+      cyclist: 0,
+      emergency: 0,
+    };
+    this.actors = this.agents.map(
+      ({ kind }) => new TrafficArt(this, kind, variants[kind]++, mapId),
+    );
     this.rivalSprite = this.mission?.race
-      ? trafficSprite(this, 'cyclist').setTint(0xef7d57)
+      ? this.add
+          .image(0, 0, 'traffic-cyclist', 0)
+          .setDepth(17)
+          .setTint(0xef7d57)
       : undefined;
     this.rivalLabel = this.mission?.race
       ? this.add
@@ -354,15 +363,7 @@ export class City extends Scene {
       walking: false,
     };
     if (this.mission) this.placeRider(this.mission.start);
-    this.sprite = this.add
-      .image(this.rider.x, this.rider.y, 'rider')
-      .setScale(2)
-      .setDepth(20);
-    this.pedestrian = this.add
-      .circle(0, 0, 8, 0xffcd75)
-      .setStrokeStyle(2, 0x1a1c2c)
-      .setDepth(21)
-      .setVisible(false);
+    this.riderArt = new RiderArt(this, readHelmetColor());
     this.cameras.main
       .setZoom(drivingZoom)
       .setBounds(0, 0, this.worldWidth, this.worldHeight)
@@ -458,7 +459,6 @@ export class City extends Scene {
     this.resetRules();
     this.recordFrame(-FIXED_STEP);
     this.debug = new RuleDebugOverlay(this, this.world, this.controls.root);
-    this.actionArt = this.add.graphics().setDepth(22);
     this.controls.setWalking(false);
     const onShutdown = () => {
       this.missionHud?.destroy();
@@ -493,12 +493,7 @@ export class City extends Scene {
     this.game.canvas.setAttribute('aria-label', areaTitle);
     this.controls.speed.textContent = `0 ${ui.driving.unit}`;
     this.publishRiderPosition(this.rider);
-    this.blocks.update(
-      this.cameras.main,
-      this.controls.lite,
-      this.rider.x,
-      this.rider.y,
-    );
+    this.renderFrame(this.replay.frame(0)!, 0);
     this.openMissionDialogue();
   }
 
@@ -759,7 +754,10 @@ export class City extends Scene {
     const scale = 1 / this.world.metersPerPixel;
     const x = rival.pos.x * scale;
     const y = rival.pos.y * scale;
-    this.rivalSprite?.setPosition(x, y).setRotation(rival.heading);
+    if (this.rivalSprite) {
+      this.rivalSprite.setPosition(x, y);
+      drawCyclist(this.rivalSprite, rival.heading, 1, 2);
+    }
     this.rivalLabel?.setPosition(x, y - 12);
   }
 
@@ -1145,34 +1143,7 @@ export class City extends Scene {
   }
 
   private renderFrame(frame: ReplayFrame, delta: number, reviewing = false) {
-    const { rider: r, actions: a, at, dusk } = frame;
-    const signal = a.signal;
-    const art = this.actionArt
-      .clear()
-      .setPosition(Math.round(r.x), Math.round(r.y))
-      .setRotation(r.heading);
-    if (signal)
-      art
-        .lineStyle(5, 0xffcd75)
-        .lineBetween(0, 0, 0, signal === 'left' ? -30 : 30);
-    if (a.looking) art.fillStyle(0x73eff7).fillCircle(-12, -8, 5);
-    if (a.bell)
-      art
-        .lineStyle(2, 0xffcd75)
-        .strokeCircle(0, 0, 28 + (Math.floor(Math.max(at, 0) * 10) % 6));
-    if (a.lights) {
-      art.fillStyle(0xffcd75, 0.3).fillTriangle(16, 0, 65, -20, 65, 20);
-      art.fillStyle(0xe43b44).fillRect(-23, -3, 5, 6);
-    }
-    this.sprite
-      .setPosition(Math.round(r.x), Math.round(r.y))
-      .setRotation(r.heading + Math.PI / 2);
-    this.pedestrian
-      .setVisible(r.walking)
-      .setPosition(
-        Math.round(r.x + Math.cos(r.heading + Math.PI / 2) * 24),
-        Math.round(r.y + Math.sin(r.heading + Math.PI / 2) * 24),
-      );
+    const { rider: r, at, dusk } = frame;
     const camera = this.cameras.main,
       look = r.speed * 0.5;
     const targetX = r.x + Math.cos(r.heading) * look - camera.width / 2,
@@ -1192,7 +1163,7 @@ export class City extends Scene {
     const halfHeight =
       camera.height / (2 * camera.zoom) + actorRadiusPx.tram + 2;
     const sirenArt = this.sirenArt.clear();
-    const flash = emergencyLightPhase(Math.max(at, 0));
+    let reflected = false;
     let sirenVolume = 0;
     let bearing = 0;
     for (let index = 0; index < this.agents.length; index++) {
@@ -1204,14 +1175,28 @@ export class City extends Scene {
         pose.active &&
         Math.abs(x - centerX) <= halfWidth &&
         Math.abs(y - centerY) <= halfHeight;
-      const actor = this.actors[index]!.setVisible(visible);
-      if (visible) actor.setPosition(x, y).setRotation(pose.heading);
+      this.actors[index]!.draw(x, y, visible, pose, at);
+      if (
+        dusk &&
+        visible &&
+        !reflected &&
+        (agent.kind === 'car' ||
+          agent.kind === 'emergency' ||
+          agent.kind === 'tram')
+      ) {
+        const dx = r.x - x;
+        const dy = r.y - y;
+        if (Math.abs(dx) < 85 && Math.abs(dy) < 85) {
+          const distance = Math.hypot(dx, dy);
+          reflected =
+            distance <= 85 &&
+            dx * Math.cos(pose.heading) + dy * Math.sin(pose.heading) >
+              distance * 0.94 &&
+            dx * Math.cos(r.heading) + dy * Math.sin(r.heading) >
+              distance * 0.7;
+        }
+      }
       if (pose.active && agent.kind === 'emergency' && pose.signalActive) {
-        if (visible)
-          sirenArt
-            .fillStyle(flash ? 0x41a6f6 : 0x73eff7)
-            .fillCircle(x - 1, y, 4)
-            .fillCircle(x - 1, y + (flash ? -7 : 7), 3);
         const volume = Math.max(0, 1 - Math.hypot(x - r.x, y - r.y) / 560);
         if (volume > sirenVolume) {
           sirenVolume = volume;
@@ -1236,7 +1221,8 @@ export class City extends Scene {
           y + dx * 5,
         );
     }
-    this.eventArt.draw(frame.props, scale);
+    this.riderArt.draw(frame, reflected);
+    this.eventArt.draw(frame.props, scale, at);
     const lighting = this.renderEnvironment;
     const time = dusk ? 'dusk' : 'day';
     if (lighting.time !== time) {

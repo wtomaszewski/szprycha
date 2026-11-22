@@ -159,3 +159,9 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Skróty są w dwóch z siedmiu zleceń: B-1 w WAW-A1-03 i B-2 w WAW-A1-04. Test na `content/balans.yaml` porównuje wyniki i maksymalny możliwy zysk czasowy po karze. Naruszenia są obsługiwane przez standardowe stop-klatki.
 - Przejazdy headless obejmują cały akt. Playwright sprawdza kolejność odblokowania, stop-klatkę i wznowienie po B-1, wynik wyścigu, premię za płynność, zdjęcie i zapis ukończenia po przeładowaniu.
 - Misje na fragmencie mapy są krótsze niż 2–5 min z docs/03. Trasy zostaną wydłużone w M6. Pełny Album Znaków, gwiazdki i progresja punktowa pozostają w M5.
+
+## Grafika 2/3 — sprite’y uczestników ruchu (#31)
+
+- Dodano atlasy rowerzysty i pieszych z gotowymi kierunkami, kolor kasku wybierany w menu, animowane światła pojazdów oraz tramwaj z dwoma segmentami. Wrocław ma przygotowane malowanie tramwaju do użycia na przyszłej mapie.
+- Testy sprawdzają bajtową powtarzalność PNG, zgodność z manifestem, klatki kierunków i świateł oraz piksele obu gestów w scenie jazdy.
+- Sprawdzono testowy Pałac Kultury i pojedyncze bloki o wysokości do 32 pięter. Schodkowa sylweta Pałacu wynika z pięciu brył zadanych w mapie.
