@@ -39,7 +39,7 @@ Przepisz nazwę, opis i kategorię z [`content/sklep.yaml`](../content/sklep.yam
 ## Checklista wydania
 
 - [ ] Wydawca potwierdza dane kont Google Play Console i Apple Developer / App Store Connect, identyfikatory paczek i dostęp do podpisywania.
-- [ ] Ustal wersję gry w `package.json` i odpowiednim wpisie `package-lock.json`. Ustaw tę samą wersję jako Android `versionName` w `android/app/build.gradle` i iOS `MARKETING_VERSION` w ustawieniach Xcode (`CFBundleShortVersionString`). Zwiększ Android `versionCode` oraz iOS `CURRENT_PROJECT_VERSION` (`CFBundleVersion`) względem ostatnio wgranego buildu.
+- [ ] Ustal wersję gry w `package.json` i odpowiednim wpisie `package-lock.json`. Ustaw tę samą wersję jako Android `versionName` w `android/app/build.gradle` i iOS `MARKETING_VERSION` w ustawieniach Xcode (`CFBundleShortVersionString`). `npm test` sprawdza zgodność wersji. Zwiększ Android `versionCode` oraz iOS `CURRENT_PROJECT_VERSION` (`CFBundleVersion`) względem ostatnio wgranego buildu.
 - [ ] Konsultant potwierdza stan prawny w `content/przepisy.yaml` i `content/pytania.json`. Po recenzji i zgodzie na publikację wpisz jej autora oraz zakres w `content/o-grze.yaml`.
 - [ ] Uzupełnij i zatwierdź politykę prywatności oraz dane wydawcy z `legal/`. Dodaj adres polityki w obu sklepach. Jeśli adres jest widoczny w grze, sprawdź dostęp przez bramkę w Strefie Rodzica.
 - [ ] Uruchom `npm run licenses:check`, `npm run lint`, `npm run format:check`, `npm test`, `npm run test:e2e` i `npm run store:assets`. Zweryfikuj noty licencyjne w paczce oraz kadry w `store/`.
