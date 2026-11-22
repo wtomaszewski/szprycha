@@ -2,6 +2,7 @@ import type { GameObjects, Scene } from 'phaser';
 import { FONT, ui } from '../core/presentation';
 import type { EnvState, SignalPhase } from '../rules/types';
 import type { Box, WorldModel } from '../rules/world/WorldModel';
+import { vehicleFrame } from './spriteFrames';
 
 const lightColor: Record<SignalPhase, number> = {
   red: 0xe43b44,
@@ -36,7 +37,8 @@ export class TrainingRoad {
         marks.fillStyle(0x29366f).fillRect(x - 3, y - 4, 6, 3);
       }
     }
-    for (const car of world.parkedCars) this.drawParkedCar(marks, car, scale);
+    for (const [index, car] of world.parkedCars.entries())
+      this.drawParkedCar(scene, car, scale, index);
     const signs = scene.add.graphics().setDepth(6);
     for (const sign of world.signs) {
       const x = sign.x * scale;
@@ -213,18 +215,23 @@ export class TrainingRoad {
     }
   }
 
-  private drawParkedCar(marks: GameObjects.Graphics, car: Box, scale: number) {
-    const x = car.x * scale;
-    const y = car.y * scale;
+  private drawParkedCar(scene: Scene, car: Box, scale: number, index: number) {
     const width = car.width * scale;
     const height = car.height * scale;
-    marks.fillStyle(0x1a1c2c).fillRoundedRect(x, y, width, height, 6);
-    marks
-      .fillStyle(0x41a6f6)
-      .fillRoundedRect(x + 2, y + 2, width - 4, height - 4, 4);
-    marks
-      .fillStyle(0x29366f)
-      .fillRect(x + width * 0.35, y + 4, width * 0.32, height - 8);
+    const horizontal = width > height;
+    scene.add
+      .image(
+        (car.x + car.width / 2) * scale,
+        (car.y + car.height / 2) * scale,
+        'traffic-car',
+        vehicleFrame(3 + (index % 3), false, undefined, false),
+      )
+      .setDepth(3)
+      .setDisplaySize(
+        ((horizontal ? height : width) * 32) / 25,
+        ((horizontal ? width : height) * 48) / 38,
+      )
+      .setRotation(horizontal ? Math.PI / 2 : 0);
   }
 
   private drawRailSignals(

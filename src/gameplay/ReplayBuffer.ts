@@ -15,18 +15,30 @@ export interface ReplayProp {
 export interface ReplayActor extends ReplayProp {
   speed: number;
   signalActive: boolean;
+  stride: number;
+  trips: number;
+  braking: boolean;
+  maneuver?: AgentState['maneuver'];
+  tramFront: number;
+  tramRear: number;
 }
 
 export interface ReplayFrame {
   at: number;
   dusk: boolean;
   rider: Rider;
+  riderStride: number;
+  dismountAt: number;
   actions: RiderState;
   actors: readonly ReplayActor[];
   props: readonly ReplayProp[];
 }
 
-type TrafficActor = AgentState & { active?: boolean };
+type TrafficActor = AgentState & {
+  active?: boolean;
+  trips?: number;
+  tramHeadings?: { front: number; rear: number };
+};
 
 export class ReplayBuffer {
   private readonly frames: readonly ReplayFrame[];
@@ -39,11 +51,18 @@ export class ReplayBuffer {
       at: 0,
       dusk: false,
       rider: { x: 0, y: 0, heading: 0, speed: 0, walking: false },
+      riderStride: 0,
+      dismountAt: -Infinity,
       actions: { signal: null, looking: false, bell: false, lights: false },
       actors: Array.from({ length: actorCount }, () => ({
         ...pose(),
         speed: 0,
         signalActive: false,
+        stride: 0,
+        trips: 0,
+        braking: false,
+        tramFront: 0,
+        tramRear: 0,
       })),
       props: Array.from({ length: propCount }, pose),
     }));
@@ -67,6 +86,18 @@ export class ReplayBuffer {
     signal = actions.signal,
   ) {
     const frame = this.frames[this.next]!;
+    const previous = this.frame(this.count - 1);
+    const elapsed = previous ? Math.max(0, at - previous.at) : 0;
+    const modeChanged = previous && previous.rider.walking !== rider.walking;
+    frame.dismountAt = modeChanged
+      ? rider.walking
+        ? at
+        : -Infinity
+      : (previous?.dismountAt ?? -Infinity);
+    frame.riderStride =
+      ((modeChanged ? 0 : (previous?.riderStride ?? 0)) +
+        (rider.speed * elapsed) / (rider.walking ? 5 : 8)) %
+      4;
     frame.at = at;
     frame.dusk = dusk;
     frame.rider.x = rider.x;
@@ -87,6 +118,26 @@ export class ReplayBuffer {
       pose.active = source.active !== false;
       pose.speed = source.speed;
       pose.signalActive = source.signalActive === true;
+      const was = previous?.actors[i];
+      const movingBefore = pose.active && was?.active;
+      pose.trips = source.trips ?? 0;
+      if (
+        pose.active &&
+        (source.kind === 'pedestrian' || source.kind === 'cyclist')
+      ) {
+        const strideRate = source.kind === 'pedestrian' ? 5 : 2.5;
+        pose.stride =
+          ((movingBefore ? was.stride : 0) +
+            source.speed * elapsed * strideRate) %
+          4;
+      }
+      pose.braking =
+        source.speed < 0.15 ||
+        source.protectiveBrake === true ||
+        (movingBefore === true && was.speed - source.speed > 0.02);
+      pose.maneuver = source.maneuver;
+      pose.tramFront = source.tramHeadings?.front ?? source.heading;
+      pose.tramRear = source.tramHeadings?.rear ?? source.heading;
     }
     for (let i = 0; i < props.length; i++) {
       const source = props[i]!;

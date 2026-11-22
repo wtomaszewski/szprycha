@@ -621,3 +621,27 @@ button[aria-pressed='true'] {
     max-width: 34vw;
   }
 }
+
+.menu-helmet {
+  position: fixed;
+  left: calc(50% + 110px * var(--menu-zoom, 1));
+  top: calc(50% - 134px * var(--menu-zoom, 1));
+  display: flex;
+  align-items: center;
+  gap: calc(6px * var(--menu-zoom, 1));
+  color: #f4f4f4;
+  font-size: max(12px, calc(13px * var(--menu-zoom, 1)));
+}
+
+.menu-helmet select {
+  font: inherit;
+  color: #f4f4f4;
+  background: #333c57;
+  border: 1px solid #94b0c2;
+  border-radius: 2px;
+  padding: 2px 4px;
+}
+
+.menu-helmet select:focus-visible {
+  outline: 2px solid #ffcd75;
+}

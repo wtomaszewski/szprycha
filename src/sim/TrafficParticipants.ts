@@ -53,6 +53,7 @@ export interface RoutedAgent extends AgentState {
   trips: number;
   signalActive: boolean;
   stopId?: string;
+  tramHeadings?: { front: number; rear: number };
 }
 interface CrossingGate {
   crossing: Crossing;
@@ -123,6 +124,7 @@ export class TrafficParticipants {
     clearingAreas: this.clearingAreas,
     emergency: this.activeEmergency,
   };
+  private readonly tramSample = { x: 0, y: 0 };
   private readonly playerAhead = { x: 0, y: 0 };
   private readonly playerAgent: AgentState = {
     id: 'player',
@@ -164,6 +166,7 @@ export class TrafficParticipants {
           speed: 0,
           active: false,
           signalActive: false,
+          tramHeadings: kind === 'tram' ? { front: 0, rear: 0 } : undefined,
           trips: 0,
           intent: 'driving',
         },
@@ -345,10 +348,27 @@ export class TrafficParticipants {
   }
 
   private place(actor: RouteActor) {
-    actor.agent.heading = actor.journey.path.place(
-      actor.distance,
-      actor.agent.pos,
-    );
+    const {
+      agent,
+      distance,
+      journey: { path },
+    } = actor;
+    agent.heading = path.place(distance, agent.pos);
+    const headings = agent.tramHeadings;
+    if (headings) {
+      const sample = this.tramSample;
+      const half = actorRadiusPx.tram * this.world.metersPerPixel;
+      path.place(distance + half, sample);
+      headings.front = Math.atan2(
+        sample.y - agent.pos.y,
+        sample.x - agent.pos.x,
+      );
+      path.place(distance - half, sample);
+      headings.rear = Math.atan2(
+        agent.pos.y - sample.y,
+        agent.pos.x - sample.x,
+      );
+    }
   }
 
   private clearOfRoadUsers(

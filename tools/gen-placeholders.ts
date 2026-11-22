@@ -1,11 +1,15 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { PNG } from 'pngjs';
 import { cityArt } from './city-art.ts';
+import { encodeSprite, spriteArt } from './sprite-art.ts';
 import { portraitEmotions } from '../src/content/dialogues.ts';
 
 await mkdir('assets/generated', { recursive: true });
 for (const [file, image] of Object.entries(cityArt(30)))
   await writeFile(`assets/generated/${file}`, PNG.sync.write(image));
+
+for (const [id, image] of Object.entries(spriteArt()))
+  await writeFile(`assets/generated/${id}.png`, encodeSprite(image));
 
 function pixel(p: PNG, x: number, y: number, hex: string) {
   const n = parseInt(hex.slice(1), 16),
@@ -15,18 +19,6 @@ function pixel(p: PNG, x: number, y: number, hex: string) {
   p.data[i + 2] = n & 255;
   p.data[i + 3] = 255;
 }
-const rider = new PNG({ width: 24, height: 24 });
-for (let y = 2; y < 23; y++)
-  for (let x = 0; x < 24; x++) {
-    let c = '';
-    if (x >= 10 && x <= 13) c = '#1a1c2c';
-    if (y >= 7 && y <= 9 && x >= 3 && x <= 20) c = '#c0cbdc';
-    if (y >= 10 && y <= 17 && x >= 8 && x <= 15) c = '#ef7d57';
-    if (y >= 9 && y <= 14 && (x === 6 || x === 17)) c = '#f0dca8';
-    if (y >= 5 && y <= 10 && x >= 9 && x <= 14) c = '#ffcd75';
-    if (c) pixel(rider, x, y, c);
-  }
-await writeFile('assets/generated/rider.png', PNG.sync.write(rider));
 const ink = '#1a1c2c';
 const paper = '#f4f4f4';
 const gold = '#ffcd75';
@@ -230,5 +222,5 @@ for (const [id, design] of Object.entries(portraits)) {
   );
 }
 console.log(
-  'Generated terrain, building and street art, rider and dialogue portraits',
+  'Generated terrain, building and street art, traffic sprites and dialogue portraits',
 );
