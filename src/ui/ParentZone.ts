@@ -25,6 +25,7 @@ export function parentZone(
   progress: MissionProgress,
   balance: GameContent['balans']['zdrowe_granie'],
   rankingChanged: () => void,
+  aboutButton: () => HTMLButtonElement,
 ) {
   const open = button(labels.title);
   open.setAttribute('aria-haspopup', 'dialog');
@@ -45,7 +46,10 @@ export function parentZone(
 
   function showSettings() {
     title.textContent = labels.title;
-    body.replaceChildren(...settings(progress, balance, rankingChanged));
+    body.replaceChildren(
+      ...settings(progress, balance, rankingChanged),
+      aboutButton(),
+    );
     dialog.scrollTop = 0;
     title.focus();
   }

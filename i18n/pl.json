@@ -1222,9 +1222,16 @@
     "reducedEffects": "Mniej efektów",
     "haptics": "Wibracje po błędzie i dobrym nawyku",
     "equipment": "Wyposażenie",
-    "reflectiveVest": "Załóż kamizelkę odblaskową",
-    "about": "O grze / Licencje",
-    "back": "Wróć do ustawień",
+    "reflectiveVest": "Załóż kamizelkę odblaskową"
+  },
+  "aboutGame": {
+    "title": "O grze",
+    "educationalMaterial": "Gra stanowi materiał edukacyjny pomocniczy w przygotowaniu do egzaminu na kartę rowerową.",
+    "legalDate": "Stan prawny na dzień:",
+    "certificate": "Licencja Szprychy nie jest kartą rowerową.",
+    "version": "Wersja gry",
+    "review": "Recenzja merytoryczna",
+    "reviewPending": "Recenzja merytoryczna treści jest w przygotowaniu.",
     "thirdParty": "Licencje komponentów zewnętrznych"
   },
   "m5c": {

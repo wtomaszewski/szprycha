@@ -1,5 +1,11 @@
 # Notatki dla człowieka
 
+## Wydanie sklepowe 1/2
+
+- Właściciel potwierdza dostęp do kont Google Play Console i Apple Developer / App Store Connect, dane wydawcy i identyfikatory aplikacji.
+- Wydawca przygotowuje podpisane paczki Android i iOS, przechowuje klucze poza repozytorium oraz wypełnia Families, Kids Category, IARC, Data safety i App Privacy dla wariantu offline bez rankingów. [Checklista wydania](docs/BUILD_STORE.md)
+- Konsultant potwierdza stan prawny przyjęty w treściach (21 listopada 2026 r.). Po weryfikacji należy uaktualnić zgodnie daty w `content/przepisy.yaml`, `content/pytania.json` i `docs/zrodla_i_stan_prawny.md`, a następnie uzupełnić `recenzja_merytoryczna` w `content/o-grze.yaml` za zgodą konsultanta.
+
 ## M10a — Strefa Rodzica
 
 - Przed wydaniem uzupełnić dane administratora i kontaktu, daty oraz osobę i zakres recenzji. Przekazać szablony z `legal/` prawnikowi i wybrać wariant odpowiadający wydaniu. Ustawić zatwierdzone adresy polityki prywatności i strony projektu w konfiguracji wydania.

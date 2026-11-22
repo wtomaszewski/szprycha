@@ -8,7 +8,7 @@ SZPRYCHA jest oprogramowaniem własnościowym. Prawa do projektu są zastrzeżon
 - W paczce gry zabronione są GPL, LGPL, AGPL, MPL, EPL, CC-BY-SA, SSPL, wszystkie warianty NC i ND oraz licencje nieznane lub własne bez przeglądu. MPL-2.0 jest dopuszczalne w narzędziach używanych wyłącznie do budowania, np. w Lightning CSS.
 - Każdy PR dodający lub aktualizujący zależność sprawdza także zależności przechodnie, kod już osadzony w paczce i obowiązki dotyczące not. Klasyfikacja jako `devDependency` jest właściwa dla narzędzi używanych tylko w środowisku deweloperskim. Bibliotekę importowaną przez grę deklarujemy w `dependencies`.
 - `npm run licenses:check` sprawdza metadane zainstalowanych pakietów osiągalnych z `dependencies`, w tym zainstalowane zależności opcjonalne i peer. Odrzuca brak licencji lub identyfikator spoza listy. Złożone wyrażenia SPDX i wpisy odsyłające do innego pliku wymagają indywidualnego przeglądu. Raport dla zależności wyłącznie deweloperskich pokazuje odstępstwa jako ostrzeżenia.
-- Build tworzy `dist/THIRD_PARTY_NOTICES` z tekstami licencji, informacjami o prawach autorskich, plikami `NOTICE` i licencją fontu. Pełny tekst Apache 2.0 jest dołączany do not, również gdy paczka zawiera skróconą notę. Gracz znajdzie te same informacje w **Ustawieniach → O grze / Licencje**. Build korzysta z dystrybucji Arcade Physics Phasera, która pomija Matter.js i jego pomocniczy kod na niestandardowej licencji. Przy aktualizacji Phasera przejrzyj osadzone komponenty tej dystrybucji i zaktualizuj plik `assets/licenses/phaser-<wersja>.txt`.
+- Build tworzy `dist/THIRD_PARTY_NOTICES` z tekstami licencji, informacjami o prawach autorskich, plikami `NOTICE` i licencją fontu. Pełny tekst Apache 2.0 jest dołączany do not, również gdy paczka zawiera skróconą notę. Gracz znajdzie te same informacje w **O grze → Licencje komponentów zewnętrznych**. Build korzysta z dystrybucji Arcade Physics Phasera, która pomija Matter.js i jego pomocniczy kod na niestandardowej licencji. Przy aktualizacji Phasera przejrzyj osadzone komponenty tej dystrybucji i zaktualizuj plik `assets/licenses/phaser-<wersja>.txt`.
 
 Ekran rankingów M10c używa istniejącego arkusza rowerzysty i fontu. [Pochodzenie zasobów](../assets/LICENSES.md)
 
@@ -30,5 +30,7 @@ M10d korzysta z wbudowanego `node:crypto` do haszowania haseł i generowania kod
 - Akty prawne nie podlegają ochronie prawnoautorskiej. Zasady opisujemy własnymi słowami i tworzymy własne pytania oraz ilustracje. Cudze podręczniki, testy na kartę rowerową i grafiki WORD-u lub Policji mogą podlegać ochronie.
 
 W M10a listy słów do generatora nicków i szablony w `legal/` są treściami własnymi. Zrzuty Strefy Rodzica pochodzą z testów Playwright. [Pochodzenie zasobów](../assets/LICENSES.md)
+
+Generator materiałów do sklepów korzysta z istniejących narzędzi deweloperskich i zasobów lokalnego buildu. Grafika promocyjna i ikona są pochodnymi własnych zasobów gry oraz fontu na OFL 1.1. [Pochodzenie zasobów](../assets/LICENSES.md)
 
 Kwestie do rozstrzygnięcia przed wydaniem są w [NOTES_FOR_HUMAN.md](../NOTES_FOR_HUMAN.md).
