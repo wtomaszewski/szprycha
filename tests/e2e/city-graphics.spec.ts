@@ -58,6 +58,18 @@ test.describe('touch HUD', () => {
     ]);
     expect(stick!.x + stick!.width).toBeLessThan(dock!.x);
     expect(dock!.x + dock!.width).toBeLessThan(actions!.x);
+    const radio = page.getByRole('button', {
+      name: `${pl.audio.changeStation} · ${pl.audio.stations.hits}`,
+    });
+    await expect(radio).toBeVisible();
+    const radioBox = (await radio.boundingBox())!;
+    expect(radioBox.y + radioBox.height).toBeLessThan(dock!.y);
+    await radio.tap();
+    await expect(
+      page.getByRole('button', {
+        name: `${pl.audio.changeStation} · ${pl.audio.stations.boulevards}`,
+      }),
+    ).toBeVisible();
     const lights = page.getByRole('button', {
       name: pl.driving.lights,
       exact: true,

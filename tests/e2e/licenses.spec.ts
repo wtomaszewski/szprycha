@@ -23,7 +23,9 @@ test('settings opens third-party licenses without a network request', async ({
   await expect(
     panel.getByRole('heading', { name: pl.settings.title, exact: true }),
   ).toBeVisible();
-  await expect(panel.getByRole('combobox')).toBeVisible();
+  await expect(
+    panel.getByRole('combobox', { name: pl.m5c.breakAfter, exact: true }),
+  ).toBeVisible();
   await panel.getByRole('button', { name: pl.settings.about }).click();
   await expect(
     panel.getByRole('heading', { name: pl.settings.about }),

@@ -1842,9 +1842,18 @@ button[aria-pressed='true'] {
   }
 }
 
-@media (any-pointer: coarse) and (max-width: 620px) {
+@media (any-pointer: coarse) and (max-width: 720px) {
+  .radio {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (any-pointer: coarse) and (max-width: 520px) {
   .ride-quick-actions:has(.radio) {
-    bottom: calc(max(8px, env(safe-area-inset-bottom)) + 118px);
+    bottom: calc(max(8px, env(safe-area-inset-bottom)) + 104px);
   }
 }
 
