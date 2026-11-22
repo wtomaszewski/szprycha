@@ -9,6 +9,10 @@ import {
 import { missionsSchema } from '../src/content/missions.ts';
 import { eventIds, eventRules } from '../src/gameplay/TrafficEvents.ts';
 import { textAt } from '../src/content/translation.ts';
+import {
+  illustratedSigns,
+  signImageFile,
+} from '../src/content/signIllustrations.ts';
 import { validateMaps } from './maps.ts';
 
 export const contentFiles = [
@@ -92,6 +96,20 @@ export async function readContent(root = process.cwd()) {
   const translations: unknown = JSON.parse(
     await readFile(resolve(root, 'i18n/pl.json'), 'utf8'),
   );
+  const quizSigns = new Set(
+    content.pytania.pytania.flatMap(({ obrazek }) =>
+      obrazek ? illustratedSigns(obrazek) : [],
+    ),
+  );
+  for (const code of quizSigns) {
+    if (!textAt(translations, `quiz.signAlt.${code}`))
+      throw new Error(`Missing sign illustration description: ${code}`);
+    await readFile(
+      resolve(root, 'assets/generated/signs', signImageFile(code)),
+    ).catch((error: unknown) => {
+      throw new Error(`Missing sign illustration: ${code}`, { cause: error });
+    });
+  }
   for (const mission of content.misje) {
     const keys = [
       mission.tytul,

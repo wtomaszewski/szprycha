@@ -2,6 +2,7 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { buildThirdPartyNotices } from './tools/check-licenses.ts';
 import { buildContent } from './tools/content.ts';
+import { quizOffline } from './tools/offline.ts';
 
 const noticesModule = 'virtual:third-party-notices';
 const noticesId = '\0' + noticesModule;
@@ -54,6 +55,7 @@ export default defineConfig({
         });
       },
     },
+    quizOffline(),
   ],
   build: {
     rolldownOptions: {

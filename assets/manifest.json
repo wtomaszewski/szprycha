@@ -307,6 +307,105 @@
       "frames": 5,
       "directions": 1,
       "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+    },
+    {
+      "id": "znak-A-7",
+      "file": "generated/signs/A-7.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja A-7 do Albumu Znaków i quizu."
+    },
+    {
+      "id": "znak-A-17",
+      "file": "generated/signs/A-17.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja A-17 do Albumu Znaków i quizu."
+    },
+    {
+      "id": "znak-B-2",
+      "file": "generated/signs/B-2.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja B-2 do Albumu Znaków i quizu."
+    },
+    {
+      "id": "znak-B-9",
+      "file": "generated/signs/B-9.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja B-9 do Albumu Znaków i quizu."
+    },
+    {
+      "id": "znak-B-20",
+      "file": "generated/signs/B-20.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja B-20 do Albumu Znaków i quizu."
+    },
+    {
+      "id": "znak-C-13",
+      "file": "generated/signs/C-13.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja C-13 do Albumu Znaków i quizu."
+    },
+    {
+      "id": "znak-D-1",
+      "file": "generated/signs/D-1.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja D-1 do Albumu Znaków i quizu."
+    },
+    {
+      "id": "znak-P-23",
+      "file": "generated/signs/P-23.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja P-23 do Albumu Znaków i quizu."
+    },
+    {
+      "id": "znak-T-22",
+      "file": "generated/signs/T-22.png",
+      "width": 64,
+      "height": 30,
+      "frameWidth": 64,
+      "frameHeight": 30,
+      "frames": 1,
+      "directions": 1,
+      "description": "Ilustracja T-22 do Albumu Znaków i quizu."
     }
   ]
 }

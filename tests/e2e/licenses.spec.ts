@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 
+test.use({ baseURL: 'http://127.0.0.1:4174' });
+
 test('settings opens third-party licenses without a network request', async ({
   page,
   context,

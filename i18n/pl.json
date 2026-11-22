@@ -1176,6 +1176,37 @@
     "breakMessage": "Czas na prawdziwy rower! Kask na głowę!",
     "dismiss": "Schowaj przypomnienie"
   },
+  "quiz": {
+    "title": "Quiz Sierżant Oli",
+    "locked": "Quiz odblokujesz na randze Kurier.",
+    "close": "Wróć do menu",
+    "chooseMode": "Wybierz, co chcesz poćwiczyć",
+    "quick": "Szybki quiz",
+    "modules": "Nauka modułu",
+    "ready": "Pytania na dziś",
+    "question": "Pytanie",
+    "correct": "Dobra odpowiedź!",
+    "incorrect": "Zapamiętaj poprawną odpowiedź",
+    "next": "Następne pytanie",
+    "result": "Zobacz wynik",
+    "finished": "Wynik quizu",
+    "score": "Poprawne odpowiedzi",
+    "streak": "Poprawne z rzędu",
+    "repeat": "Wybierz kolejny quiz",
+    "caughtUp": "W tym zestawie wszystkie powtórki na dziś są już zrobione.",
+    "achievement": "Zdobyte osiągnięcie",
+    "signAlt": {
+      "A-7": "Odwrócony żółty trójkąt w czerwonej obwódce",
+      "A-17": "Żółty trójkąt w czerwonej obwódce z dwiema sylwetkami dzieci",
+      "B-2": "Czerwone koło z białą poziomą kreską",
+      "B-9": "Czarny rower na białym kole w czerwonej obwódce",
+      "B-20": "Czerwony ośmiokąt z białym napisem STOP",
+      "C-13": "Biały rower na niebieskim kole",
+      "D-1": "Żółty romb w białej obwódce",
+      "P-23": "Biały rower namalowany na szarej jezdni",
+      "T-22": "Biała tabliczka z napisem Nie dotyczy i czarnym rowerem"
+    }
+  },
   "plac": {
     "title": "Plac manewrowy",
     "short": "Plac",

@@ -45,7 +45,7 @@ function pixel(png: PNG, x: number, y: number, color: number, alpha: number) {
   png.data[offset + 3] = alpha;
 }
 
-class Tile {
+export class Tile {
   readonly image: PNG;
 
   constructor(width: number, height: number) {

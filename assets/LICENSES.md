@@ -10,15 +10,16 @@ Gra używa lokalnej kopii fontu. W `licenses/` są teksty dołączane do not o k
 
 ## Zasoby własne projektu
 
-| Pliki i elementy                                                                        | Kod źródłowy                                                                                                    |
-| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Paleta i manifest, kafelki, dachy, ściany, detale dachów i rekwizyty w `generated/`     | `palette.hex`, `manifest.json`, `tools/gen-placeholders.ts`, `tools/city-art.ts`                                |
-| Portrety w `generated/portraits/`                                                       | `tools/gen-placeholders.ts`                                                                                     |
-| Rower, oświetlenie roweru, piesi i pojazdy w `generated/`                               | `tools/sprite-art.ts`, `tools/gen-placeholders.ts`                                                              |
-| Atlas `generated/city-effects.png`                                                      | `tools/effect-art.ts`, `tools/gen-placeholders.ts`                                                              |
-| Oprawa menu i mapa wyboru miasta                                                        | `src/scenes/MainMenu.ts`, `src/scenes/CityPicker.ts`                                                            |
-| Sylwetki budynków, dekoracje, oznakowanie drogowe, figurki krasnali i wyposażenie placu | `src/render/`, generatory map w `tools/`                                                                        |
-| Reguły, pytania, dialogi i teksty interfejsu                                            | `content/`, `i18n/`. Przepisy opisane własnymi słowami. Źródła aktów prawnych w `docs/zrodla_i_stan_prawny.md`. |
+| Pliki i elementy                                                                        | Kod źródłowy                                                                                                                                                                             |
+| --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Paleta i manifest, kafelki, dachy, ściany, detale dachów i rekwizyty w `generated/`     | `palette.hex`, `manifest.json`, `tools/gen-placeholders.ts`, `tools/city-art.ts`                                                                                                         |
+| Portrety w `generated/portraits/`                                                       | `tools/gen-placeholders.ts`                                                                                                                                                              |
+| Rower, oświetlenie roweru, piesi i pojazdy w `generated/`                               | `tools/sprite-art.ts`, `tools/gen-placeholders.ts`                                                                                                                                       |
+| Atlas `generated/city-effects.png`                                                      | `tools/effect-art.ts`, `tools/gen-placeholders.ts`                                                                                                                                       |
+| Ilustracje Albumu i quizu w `generated/signs/`                                          | `tools/sign-art.ts`. Własne rysunki oparte na wzorach z załącznika nr 2 do rozporządzenia o szczegółowych warunkach technicznych dla znaków i sygnałów drogowych (Dz.U. 2019 poz. 2311). |
+| Oprawa menu i mapa wyboru miasta                                                        | `src/scenes/MainMenu.ts`, `src/scenes/CityPicker.ts`                                                                                                                                     |
+| Sylwetki budynków, dekoracje, oznakowanie drogowe, figurki krasnali i wyposażenie placu | `src/render/`, generatory map w `tools/`                                                                                                                                                 |
+| Reguły, pytania, dialogi i teksty interfejsu                                            | `content/`, `i18n/`. Przepisy opisane własnymi słowami. Źródła aktów prawnych w `docs/zrodla_i_stan_prawny.md`.                                                                          |
 
 Wytwory projektu podlegają [LICENSE](../LICENSE). W bieżącej wersji gra nie dystrybuuje nagrań, sampli ani muzyki z zewnętrznych bibliotek.
 

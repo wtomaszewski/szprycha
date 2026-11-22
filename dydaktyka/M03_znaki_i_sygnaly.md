@@ -34,7 +34,7 @@ Mylenie C-13 (nakaz — droga dla rowerów) z B-9 (zakaz wjazdu rowerów) · tra
 - „Gdy policjant kieruje ruchem, światła i znaki schodzą na drugi plan.”
 
 ## Pytania
-Q018–Q028.
+Q018–Q027 i Q062. Q028 ćwiczy reakcję na znak A-17 w module M05.
 
 ## Ćwiczenie w realu
 „Bingo znaków” w drodze do szkoły: dziecko szuka 10 znaków z listy i mówi, co znaczą.
