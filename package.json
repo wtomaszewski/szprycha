@@ -20,7 +20,8 @@
     "assets:generate": "tsx tools/gen-placeholders.ts",
     "map:generate": "tsx tools/gen-training-map.ts",
     "benchmark:driving": "tsx tools/benchmark-driving.ts",
-    "map:generate:warsaw": "tsx tools/gen-warsaw-map.ts"
+    "map:generate:warsaw": "tsx tools/gen-warsaw-map.ts",
+    "coverage:maps": "tsx tools/coverage-report.ts"
   },
   "dependencies": {
     "idb-keyval": "6.3.0",

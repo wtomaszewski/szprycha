@@ -18,16 +18,7 @@ export const contentFiles = [
   'balans.yaml',
   'osiagniecia.yaml',
 ] as const;
-export async function readContent(root = process.cwd()) {
-  const entries = await Promise.all(
-    contentFiles.map(async (file) => {
-      const source = await readFile(resolve(root, 'content', file), 'utf8');
-      const value: unknown = file.endsWith('.json')
-        ? JSON.parse(source)
-        : parse(source);
-      return [file.split('.')[0], value];
-    }),
-  );
+export async function readMissions(root: string) {
   const directory = resolve(root, 'content/misje');
   const missionFiles = (await readdir(directory)).filter((file) =>
     file.endsWith('.yaml'),
@@ -51,6 +42,22 @@ export async function readContent(root = process.cwd()) {
       }
     }),
   );
+  return groups.flat();
+}
+
+export async function readContent(root = process.cwd()) {
+  const [entries, missions] = await Promise.all([
+    Promise.all(
+      contentFiles.map(async (file) => {
+        const source = await readFile(resolve(root, 'content', file), 'utf8');
+        const value: unknown = file.endsWith('.json')
+          ? JSON.parse(source)
+          : parse(source);
+        return [file.split('.')[0], value];
+      }),
+    ),
+    readMissions(root),
+  ]);
   const dialogueDirectory = resolve(root, 'content/dialogi');
   const dialogueFiles = (await readdir(dialogueDirectory))
     .filter((file) => file.endsWith('.yaml'))
@@ -73,7 +80,7 @@ export async function readContent(root = process.cwd()) {
   );
   const content = contentSchema.parse({
     ...Object.fromEntries(entries),
-    misje: groups.flat(),
+    misje: missions,
     dialogi: {
       postacie: dialogueGroups.flatMap(({ postacie }) => postacie),
       dialogi: dialogueGroups.flatMap(({ dialogi }) => dialogi),
