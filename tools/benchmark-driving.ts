@@ -2,6 +2,10 @@ import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import pl from '../i18n/pl.json' with { type: 'json' };
 
+const runs = Number(process.env.BENCH_RUNS ?? 1);
+if (!Number.isSafeInteger(runs) || runs < 1)
+  throw new Error('BENCH_RUNS must be a positive integer');
+
 const viewport = /^(\d+)x(\d+)$/.exec(process.env.BENCH_VIEWPORT ?? '1280x720');
 if (!viewport || !Number(viewport[1]) || !Number(viewport[2]))
   throw new Error('BENCH_VIEWPORT must use WIDTHxHEIGHT in pixels');
@@ -44,112 +48,115 @@ const spawn = !warsaw
     : mode === 'free' && fragment === 'starowka'
       ? { x: 3110, y: 688, heading: 0 }
       : undefined;
-const browser = await chromium.launch({
-  executablePath: process.env.BENCH_CHROMIUM_PATH,
-  args: process.env.BENCH_RENDERER === 'canvas' ? ['--disable-webgl'] : [],
-});
-try {
-  const page = await browser.newPage({
-    viewport: { width: Number(width), height: Number(height) },
-    hasTouch: true,
+async function runTrial() {
+  const browser = await chromium.launch({
+    executablePath: process.env.BENCH_CHROMIUM_PATH,
+    args: process.env.BENCH_RENDERER === 'canvas' ? ['--disable-webgl'] : [],
   });
-  if (spawn || light === 'night') {
-    // Start on the route with the complete map and all its traffic.
-    await page.route(
-      new RegExp(`/(maps|assets)/${map}(?:-[^/]+)?\\.tmj(?:\\?|$)`),
-      async (route) => {
-        if (route.request().resourceType() === 'script')
-          return route.continue();
-        const response = await route.fetch();
-        const tiled = await response.json();
-        if (light === 'night') {
-          tiled.properties = [
-            ...(tiled.properties ?? []).filter(
-              ({ name }: { name: string }) => name !== 'dusk_at_s',
+  try {
+    const page = await browser.newPage({
+      viewport: { width: Number(width), height: Number(height) },
+      hasTouch: true,
+    });
+    if (spawn || light === 'night') {
+      // Start on the route with the complete map and all its traffic.
+      await page.route(
+        new RegExp(`/(maps|assets)/${map}(?:-[^/]+)?\\.tmj(?:\\?|$)`),
+        async (route) => {
+          if (route.request().resourceType() === 'script')
+            return route.continue();
+          const response = await route.fetch();
+          const tiled = await response.json();
+          if (light === 'night') {
+            tiled.properties = [
+              ...(tiled.properties ?? []).filter(
+                ({ name }: { name: string }) => name !== 'dusk_at_s',
+              ),
+              { name: 'dusk_at_s', type: 'float', value: 0 },
+            ];
+          }
+          if (!spawn) return route.fulfill({ response, json: tiled });
+          const player = tiled.layers
+            .find(({ name }: { name: string }) => name === 'spawns')
+            .objects.find(({ name }: { name: string }) => name === 'player');
+          player.x = spawn.x;
+          player.y = spawn.y;
+          player.properties = [
+            ...(player.properties ?? []).filter(
+              ({ name }: { name: string }) => name !== 'heading',
             ),
-            { name: 'dusk_at_s', type: 'float', value: 0 },
+            { name: 'heading', type: 'float', value: spawn.heading },
           ];
-        }
-        if (!spawn) return route.fulfill({ response, json: tiled });
-        const player = tiled.layers
-          .find(({ name }: { name: string }) => name === 'spawns')
-          .objects.find(({ name }: { name: string }) => name === 'player');
-        player.x = spawn.x;
-        player.y = spawn.y;
-        player.properties = [
-          ...(player.properties ?? []).filter(
-            ({ name }: { name: string }) => name !== 'heading',
+          await route.fulfill({ response, json: tiled });
+        },
+      );
+    }
+    if (mission) {
+      const completed = mission === 'WAW-A1-04' ? orders.slice(0, -1) : orders;
+      await page.addInitScript(
+        (ids) =>
+          localStorage.setItem(
+            'szprycha.mission-progress.v1',
+            JSON.stringify({ completed: ids }),
           ),
-          { name: 'heading', type: 'float', value: spawn.heading },
-        ];
-        await route.fulfill({ response, json: tiled });
-      },
+        completed,
+      );
+    }
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+    await page.goto(process.env.BENCH_URL ?? 'http://127.0.0.1:5173/');
+    await page.locator('canvas[data-scene="MainMenu"]').waitFor();
+    if (warsaw)
+      await page.getByRole('button', { name: pl.driving.praga }).click();
+    else await page.keyboard.press('Enter');
+    await page.locator('canvas[data-scene="City"]').waitFor();
+    if (mission) {
+      await page.keyboard.press('KeyM');
+      await page
+        .getByRole('button', {
+          name: `${pl.phone.start} · ${pl.misje[mission].tytul}`,
+        })
+        .click();
+      await page.locator(`canvas[data-mission="${mission}"]`).waitFor();
+      await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
+    }
+    const renderer = await page
+      .locator('canvas[data-scene="City"]')
+      .evaluate((canvas: HTMLCanvasElement) =>
+        canvas.getContext('2d') ? 'Canvas' : 'WebGL',
+      );
+    const position = page.locator('canvas[data-x]');
+    await position.waitFor();
+    if (light === 'night') await page.keyboard.press('KeyL');
+    if (lite || rain) {
+      await page.keyboard.press('Escape');
+      if (lite)
+        await page.getByRole('button', { name: pl.driving.full }).click();
+      if (rain)
+        await page.getByRole('button', { name: pl.driving.rain }).click();
+      await page.keyboard.press('Escape');
+    }
+    // Stick slightly off-centre for a continuous ride below the random event speed.
+    const stick = await page.getByLabel(pl.driving.joystick).boundingBox();
+    if (!stick) throw new Error('Missing steering control');
+    await page.mouse.move(
+      stick.x + stick.width * (warsaw ? 0.565 : 0.5),
+      stick.y + stick.height * (warsaw ? 0.5 : 0.435),
     );
-  }
-  if (mission) {
-    const completed = mission === 'WAW-A1-04' ? orders.slice(0, -1) : orders;
-    await page.addInitScript(
-      (ids) =>
-        localStorage.setItem(
-          'szprycha.mission-progress.v1',
-          JSON.stringify({ completed: ids }),
-        ),
-      completed,
-    );
-  }
-  const cdp = await page.context().newCDPSession(page);
-  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
-  await page.goto(process.env.BENCH_URL ?? 'http://127.0.0.1:5173/');
-  await page.locator('canvas[data-scene="MainMenu"]').waitFor();
-  if (warsaw)
-    await page.getByRole('button', { name: pl.driving.praga }).click();
-  else await page.keyboard.press('Enter');
-  await page.locator('canvas[data-scene="City"]').waitFor();
-  if (mission) {
-    await page.keyboard.press('KeyM');
-    await page
-      .getByRole('button', {
-        name: `${pl.phone.start} · ${pl.misje[mission].tytul}`,
-      })
-      .click();
-    await page.locator(`canvas[data-mission="${mission}"]`).waitFor();
-    await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
-  }
-  const renderer = await page
-    .locator('canvas[data-scene="City"]')
-    .evaluate((canvas: HTMLCanvasElement) =>
-      canvas.getContext('2d') ? 'Canvas' : 'WebGL',
-    );
-  const position = page.locator('canvas[data-x]');
-  await position.waitFor();
-  if (light === 'night') await page.keyboard.press('KeyL');
-  if (lite || rain) {
-    await page.keyboard.press('Escape');
-    if (lite) await page.getByRole('button', { name: pl.driving.full }).click();
-    if (rain) await page.getByRole('button', { name: pl.driving.rain }).click();
-    await page.keyboard.press('Escape');
-  }
-  // Stick slightly off-centre for a continuous ride below the random event speed.
-  const stick = await page.getByLabel(pl.driving.joystick).boundingBox();
-  if (!stick) throw new Error('Missing steering control');
-  await page.mouse.move(
-    stick.x + stick.width * (warsaw ? 0.565 : 0.5),
-    stick.y + stick.height * (warsaw ? 0.5 : 0.435),
-  );
-  await page.mouse.down();
-  await page.waitForFunction(
-    () => Number(document.querySelector('canvas')?.dataset.speed) > 0,
-  );
-  if (mission)
+    await page.mouse.down();
     await page.waitForFunction(
-      (x) => Number(document.querySelector('canvas')?.dataset.x) >= x,
-      mission === 'WAW-A1-04' ? 2255 : 3110,
-      { timeout: 60_000 },
+      () => Number(document.querySelector('canvas')?.dataset.speed) > 0,
     );
-  const axis = warsaw ? 'data-x' : 'data-y';
-  const start = Number(await position.getAttribute(axis));
-  // Raw browser source avoids TS runner helper injection into serialized callbacks.
-  const frames = await page.evaluate<number[]>(`new Promise(resolve => {
+    if (mission)
+      await page.waitForFunction(
+        (x) => Number(document.querySelector('canvas')?.dataset.x) >= x,
+        mission === 'WAW-A1-04' ? 2255 : 3110,
+        { timeout: 60_000 },
+      );
+    const axis = warsaw ? 'data-x' : 'data-y';
+    const start = Number(await position.getAttribute(axis));
+    // Raw browser source avoids TS runner helper injection into serialized callbacks.
+    const frames = await page.evaluate<number[]>(`new Promise(resolve => {
     const times = []; let last = 0; let start = 0;
     function frame(t) {
       if (!start) start = t;
@@ -159,37 +166,68 @@ try {
     }
     requestAnimationFrame(frame);
   })`);
-  await page.mouse.up();
-  const end = Number(await position.getAttribute(axis));
-  const travelledPx = warsaw ? end - start : start - end;
-  if (travelledPx < 200 || (await page.locator('dialog[open]').count()))
-    throw new Error(`${map} benchmark interrupted at ${axis}=${end}`);
-  frames.sort((a, b) => a - b);
-  const report = {
-    date: new Date().toISOString(),
-    environment: `Chromium headless, ${width}x${height}, CPU 4x`,
-    renderer,
-    map,
-    fragment: warsaw ? fragment : undefined,
-    mode,
-    light,
-    quality: lite ? 'lite' : 'full',
-    rain,
-    travelledPx,
-    samples: frames.length,
-    meanFps: 1000 / (frames.reduce((a, b) => a + b, 0) / frames.length),
-    p95FrameMs: frames[Math.floor(frames.length * 0.95)],
-    maxFrameMs: frames.at(-1),
-  };
-  await mkdir('test-results', { recursive: true });
-  const route = warsaw
-    ? `-${fragment}${mode === 'free' && fragment !== 'praga' ? '-free' : ''}`
-    : '';
-  await writeFile(
-    `test-results/performance${route}${light === 'night' ? '-night' : ''}${lite ? '-lite' : ''}${rain ? '-rain' : ''}.json`,
-    JSON.stringify(report, null, 2),
-  );
-  console.log(report);
-} finally {
-  await browser.close();
+    await page.mouse.up();
+    const end = Number(await position.getAttribute(axis));
+    const travelledPx = warsaw ? end - start : start - end;
+    if (
+      !frames.length ||
+      travelledPx < 200 ||
+      (await page.locator('dialog[open]').count())
+    )
+      throw new Error(`${map} benchmark interrupted at ${axis}=${end}`);
+    frames.sort((a, b) => a - b);
+    return {
+      date: new Date().toISOString(),
+      environment: `Chromium ${browser.version()} headless, ${width}x${height}, CPU 4x`,
+      renderer,
+      map,
+      fragment: warsaw ? fragment : undefined,
+      mode,
+      light,
+      quality: lite ? 'lite' : 'full',
+      rain,
+      travelledPx,
+      samples: frames.length,
+      meanFps: 1000 / (frames.reduce((a, b) => a + b, 0) / frames.length),
+      p95FrameMs: frames[Math.floor(frames.length * 0.95)]!,
+      maxFrameMs: frames.at(-1)!,
+    };
+  } finally {
+    await browser.close();
+  }
 }
+
+function summarize(values: number[]) {
+  values.sort((a, b) => a - b);
+  const middle = Math.floor(values.length / 2);
+  return {
+    median:
+      values.length % 2
+        ? values[middle]
+        : (values[middle - 1]! + values[middle]!) / 2,
+    min: values[0],
+    max: values.at(-1),
+  };
+}
+
+const trials = [];
+for (let trial = 0; trial < runs; trial++) {
+  const result = await runTrial();
+  trials.push(result);
+  console.log(result);
+}
+const summary = {
+  trials,
+  meanFps: summarize(trials.map(({ meanFps }) => meanFps)),
+  p95FrameMs: summarize(trials.map(({ p95FrameMs }) => p95FrameMs)),
+};
+if (runs > 1)
+  console.log({ meanFps: summary.meanFps, p95FrameMs: summary.p95FrameMs });
+await mkdir('test-results', { recursive: true });
+const route = warsaw
+  ? `-${fragment}${mode === 'free' && fragment !== 'praga' ? '-free' : ''}`
+  : '';
+await writeFile(
+  `test-results/performance${route}${light === 'night' ? '-night' : ''}${lite ? '-lite' : ''}${rain ? '-rain' : ''}.json`,
+  JSON.stringify(runs === 1 ? trials[0] : summary, null, 2),
+);

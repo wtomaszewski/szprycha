@@ -217,10 +217,13 @@ export class Blocks {
     const cy = camera.scrollY + camera.height / 2;
     const halfWidth = camera.width / (2 * camera.zoom);
     const halfHeight = camera.height / (2 * camera.zoom);
-    const left = cx - halfWidth;
-    const right = cx + halfWidth;
-    const top = cy - halfHeight;
-    const bottom = cy + halfHeight;
+    const viewX = camera.clampX(camera.scrollX) + camera.width / 2;
+    const viewY = camera.clampY(camera.scrollY) + camera.height / 2;
+    // Leave room for rounding at the edge of the viewport.
+    const left = viewX - halfWidth - 1;
+    const right = viewX + halfWidth + 1;
+    const top = viewY - halfHeight - 1;
+    const bottom = viewY + halfHeight + 1;
     for (const item of this.items) {
       const { block: b, offset, base, horizontal, vertical, roof } = item;
       roofOffset(b, cx, cy, lite, this.cameraHeight, offset);
@@ -243,8 +246,26 @@ export class Blocks {
         item.visible = visible;
         roof.setVisible(visible);
       }
-      const showX = visible && dx !== 0;
-      const showY = visible && dy !== 0;
+      const x = b.x + offset.x;
+      const y = b.y + offset.y;
+      const wallX = x + (dx > 0 ? 0 : b.width);
+      const wallY = y + (dy > 0 ? 0 : b.height);
+      // Each wall spans the shifted roof edge and its corresponding base edge.
+      // A visible block can still have an entirely offscreen façade.
+      const showX =
+        visible &&
+        dx !== 0 &&
+        wallX + Math.max(0, -dx) > left &&
+        wallX + Math.min(0, -dx) < right &&
+        y + b.height + Math.max(0, -dy) > top &&
+        y + Math.min(0, -dy) < bottom;
+      const showY =
+        visible &&
+        dy !== 0 &&
+        x + b.width + Math.max(0, -dx) > left &&
+        x + Math.min(0, -dx) < right &&
+        wallY + Math.max(0, -dy) > top &&
+        wallY + Math.min(0, -dy) < bottom;
       if (horizontal.visible !== showY) horizontal.setVisible(showY);
       if (vertical.visible !== showX) vertical.setVisible(showX);
       if (!visible) {
@@ -282,19 +303,8 @@ export class Blocks {
       item.dy = offset.y;
       item.baseX = base.x;
       item.baseY = base.y;
-      const x = b.x + offset.x;
-      const y = b.y + offset.y;
-      if (dx !== 0)
-        vertical.project(x + (dx > 0 ? 0 : b.width), y, dx, dy, true, dx > 0);
-      if (dy !== 0)
-        horizontal.project(
-          x,
-          y + (dy > 0 ? 0 : b.height),
-          dx,
-          dy,
-          false,
-          dy > 0,
-        );
+      if (dx !== 0) vertical.project(wallX, y, dx, dy, true, dx > 0);
+      if (dy !== 0) horizontal.project(x, wallY, dx, dy, false, dy > 0);
       roof.setPosition(x, y);
     }
   }

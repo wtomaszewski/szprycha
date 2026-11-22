@@ -1,4 +1,4 @@
-import type { GameObjects, Scene } from 'phaser';
+import type { Cameras, GameObjects, Scene } from 'phaser';
 import { cacheMapGraphics } from './MapGround';
 import { FONT, ui } from '../core/presentation';
 import type { EnvState, SignalPhase, Vec2 } from '../rules/types';
@@ -17,6 +17,13 @@ export class TrainingRoad {
   readonly staticChunks: GameObjects.Image[] = [];
   private readonly lights: GameObjects.Graphics;
   private lastLightFrame = -1;
+  private lightAt = 0;
+  private readonly lightView = {
+    left: Infinity,
+    right: -Infinity,
+    top: Infinity,
+    bottom: -Infinity,
+  };
 
   constructor(
     scene: Scene,
@@ -235,49 +242,92 @@ export class TrainingRoad {
     }
   }
 
-  updateLights(at: number, environment: EnvState) {
+  updateLights(
+    camera: Cameras.Scene2D.Camera,
+    at: number,
+    environment: EnvState,
+  ) {
+    const cx = camera.clampX(camera.scrollX) + camera.width / 2;
+    const cy = camera.clampY(camera.scrollY) + camera.height / 2;
+    const halfW = camera.width / (2 * camera.zoom);
+    const halfH = camera.height / (2 * camera.zoom);
+    const view = this.lightView;
+    const moved =
+      cx - halfW < view.left ||
+      cx + halfW > view.right ||
+      cy - halfH < view.top ||
+      cy + halfH > view.bottom;
     const frame = Math.floor(at * 10);
-    if (this.lastLightFrame === frame) return;
-    this.lastLightFrame = frame;
+    if (!moved && this.lastLightFrame === frame) return;
+    if (frame !== this.lastLightFrame) {
+      this.lastLightFrame = frame;
+      this.lightAt = at;
+    }
+    if (moved) {
+      // The margin keeps the command buffer valid while the camera scrolls.
+      view.left = cx - halfW - 64;
+      view.right = cx + halfW + 64;
+      view.top = cy - halfH - 64;
+      view.bottom = cy + halfH + 64;
+    }
+    const visible = (x: number, y: number, width = 0, height = 0) =>
+      x - 16 <= view.right &&
+      x + width + 16 >= view.left &&
+      y - 16 <= view.bottom &&
+      y + height + 16 >= view.top;
     const scale = 1 / this.world.metersPerPixel;
     this.lights.clear();
     for (const crossing of this.world.crossings) {
-      const rail = this.world.railState(crossing, at, environment);
-      if (rail)
-        this.drawRailSignals(
-          crossing,
-          rail.flashing,
-          rail.barrier === 'closed',
-          scale,
-          at,
-        );
+      if (
+        visible(
+          crossing.x * scale,
+          crossing.y * scale,
+          crossing.width * scale,
+          crossing.height * scale,
+        )
+      ) {
+        const rail = this.world.railState(crossing, this.lightAt, environment);
+        if (rail)
+          this.drawRailSignals(
+            crossing,
+            rail.flashing,
+            rail.barrier === 'closed',
+            scale,
+            this.lightAt,
+          );
+      }
       const { signal } = crossing;
       if (!signal) continue;
-      const open = this.world.crossingAllowsEntry(crossing, at, environment);
-      const color = lightColor[open ? 'green' : 'red'];
-      this.drawCrossingSignal(
-        signal.x * scale,
-        signal.y * scale,
-        color,
-        crossing.kind === 'pedestrian',
-      );
-      if (crossing.kind === 'pedestrian') {
-        const x =
-          crossing.axis === 'x'
-            ? 2 * crossing.x + crossing.width - signal.x
-            : signal.x;
-        const y =
-          crossing.axis === 'y'
-            ? 2 * crossing.y + crossing.height - signal.y
-            : signal.y;
-        this.drawCrossingSignal(x * scale, y * scale, color, true);
-      }
-    }
-    for (const signal of this.world.signals) {
-      const lane = this.world.getLane(signal.affects)!;
-      const phase = this.world.phase(lane, at, environment);
+      const pedestrian = crossing.kind === 'pedestrian';
       const x = signal.x * scale;
       const y = signal.y * scale;
+      const oppositeX =
+        crossing.axis === 'x'
+          ? (2 * crossing.x + crossing.width - signal.x) * scale
+          : x;
+      const oppositeY =
+        crossing.axis === 'y'
+          ? (2 * crossing.y + crossing.height - signal.y) * scale
+          : y;
+      const firstVisible = visible(x, y);
+      const secondVisible = pedestrian && visible(oppositeX, oppositeY);
+      if (!firstVisible && !secondVisible) continue;
+      const open = this.world.crossingAllowsEntry(
+        crossing,
+        this.lightAt,
+        environment,
+      );
+      const color = lightColor[open ? 'green' : 'red'];
+      if (firstVisible) this.drawCrossingSignal(x, y, color, pedestrian);
+      if (secondVisible)
+        this.drawCrossingSignal(oppositeX, oppositeY, color, true);
+    }
+    for (const signal of this.world.signals) {
+      const x = signal.x * scale;
+      const y = signal.y * scale;
+      if (!visible(x, y)) continue;
+      const lane = this.world.getLane(signal.affects)!;
+      const phase = this.world.phase(lane, this.lightAt, environment);
       this.lights.fillStyle(0x1a1c2c).fillRect(x - 8, y - 12, 16, 24);
       if (lane.type === 'tram') {
         this.lights.lineStyle(3, 0xf4f4f4);
