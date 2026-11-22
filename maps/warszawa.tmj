@@ -17,7 +17,7 @@
     }
   ],
   "nextlayerid": 24,
-  "nextobjectid": 235,
+  "nextobjectid": 248,
   "layers": [
     {
       "id": 1,
@@ -18397,6 +18397,60 @@
               "value": "bridge"
             }
           ]
+        },
+        {
+          "id": 245,
+          "name": "neon-brama",
+          "type": "",
+          "x": 746,
+          "y": 984,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "neon"
+            }
+          ]
+        },
+        {
+          "id": 246,
+          "name": "neon-warsztat",
+          "type": "",
+          "x": 921,
+          "y": 215,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "neon"
+            }
+          ]
+        },
+        {
+          "id": 247,
+          "name": "neon-bazar",
+          "type": "",
+          "x": 1419,
+          "y": 946,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "neon"
+            }
+          ]
         }
       ]
     },
@@ -18976,6 +19030,236 @@
               "name": "kind",
               "type": "string",
               "value": "bin"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 235,
+          "name": "prop-tree-759-1221",
+          "type": "",
+          "x": 759,
+          "y": 1221,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "tree"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 236,
+          "name": "prop-lamp-583-1164",
+          "type": "",
+          "x": 583,
+          "y": 1164,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "lamp"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "id": 237,
+          "name": "prop-lamp-720-1011",
+          "type": "",
+          "x": 720,
+          "y": 1011,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "lamp"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 238,
+          "name": "prop-lamp-2204-314",
+          "type": "",
+          "x": 2204,
+          "y": 314,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "lamp"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 239,
+          "name": "prop-lamp-2379-318",
+          "type": "",
+          "x": 2379,
+          "y": 318,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "lamp"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 240,
+          "name": "prop-lamp-2625-318",
+          "type": "",
+          "x": 2625,
+          "y": 318,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "lamp"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 241,
+          "name": "prop-lamp-2744-516",
+          "type": "",
+          "x": 2744,
+          "y": 516,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "lamp"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "id": 242,
+          "name": "prop-lamp-3050-665",
+          "type": "",
+          "x": 3050,
+          "y": 665,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "lamp"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 243,
+          "name": "prop-lamp-3286-655",
+          "type": "",
+          "x": 3286,
+          "y": 655,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "lamp"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 244,
+          "name": "prop-lamp-3545-702",
+          "type": "",
+          "x": 3545,
+          "y": 702,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "lamp"
             },
             {
               "name": "turn",

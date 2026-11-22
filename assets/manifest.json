@@ -1,6 +1,17 @@
 {
   "assets": [
     {
+      "id": "city-effects",
+      "file": "generated/city-effects.png",
+      "width": 640,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 5,
+      "directions": 1,
+      "description": "Przezroczyste klatki od lewej: aureola latarni, stożek roweru, podwójny reflektor pojazdu, neon, zapętlony deseń deszczu. Lewa krawędź stożków wyznacza początek wiązki."
+    },
+    {
       "id": "training",
       "file": "generated/tiles.png",
       "width": 512,

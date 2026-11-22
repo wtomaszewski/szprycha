@@ -1,4 +1,4 @@
-import type { Cameras, Scene, Types } from 'phaser';
+import type { Cameras, GameObjects, Scene, Types } from 'phaser';
 import { propKinds, type PropKind } from './artFrames';
 import { projectionFactor } from './projection';
 
@@ -72,6 +72,7 @@ export function paintPropShadows(
 
 export class CityProps {
   private readonly items;
+  readonly lamps: readonly GameObjects.Image[];
   constructor(scene: Scene, props: readonly Prop[]) {
     this.items = props.map((prop) => ({
       ...prop,
@@ -93,6 +94,9 @@ export class CityProps {
               .setDepth(4)
           : undefined,
     }));
+    this.lamps = this.items
+      .filter(({ kind }) => kind === 'lamp')
+      .map(({ cap }) => cap);
   }
   update(camera: Cameras.Scene2D.Camera, lite: boolean, cameraHeight: number) {
     const cx = camera.scrollX + camera.width / 2;

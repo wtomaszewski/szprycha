@@ -171,3 +171,9 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Sprite’y ruchu korzystają z klatek atlasu w skali 1:1. Symulacja liczy obrysy, odstępy i zatrzymania z wymiarów w metrach, a kolizje z graczem wykorzystują skalę bieżącej mapy.
 - Przesunięto przystanek bez wysepki w Miasteczku, przejście przy światłach na tej mapie oraz przejście przy bazarze w Warszawie, aby pojazdy mogły je zwolnić przed linią zatrzymania.
 - Po dołączeniu #34 wyłagodzono łuki wjazdu i zjazdu z nasypu przy rondzie, żeby obrysy aut mieściły się na osobnych pasach.
+
+## Grafika 3/3 — światło, pogoda i HUD (#32)
+
+- Warstwa nocna z lampami, reflektorami, oknami i neonami, deszcz z kałużami, dym, gołębie, konfetti i ślad serii. Tryb uproszczony i statyczne warianty dla systemowego ograniczenia ruchu.
+- HUD pokazuje punkty, serię, Uwagę Drogówki, stan wyposażenia, zegar i kierunek celu. Sterowanie i jakość grafiki można zmienić w pauzie. Punkty, seria, rekord i Uwaga Drogówki korzystają z progresji z #38. Rekord można sprawdzić w pauzie.
+- Ustawienia deszczu i podgląd nocy działają w warstwie graficznej. Śnieg i mgła pozostają w zakresie późniejszego szlifu.

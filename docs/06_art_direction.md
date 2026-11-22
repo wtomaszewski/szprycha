@@ -127,8 +127,7 @@ warianty. Nazwy dachów i ścian oraz indeksy kafli są opisane w
 liczbę klatek do podmiany plików 1:1. Atlasy odtwarza `npm run assets:generate`,
 Miasteczko `npm run map:generate`, a Pragę `npm run map:generate:warsaw`.
 
-Znaki pionowe i portrety korzystają z dotychczasowych placeholderów. Osobne warianty mokrej i zimowej nawierzchni, animacje pogody,
-nocne oświetlenie oraz pozostałe landmarki należą do kolejnych etapów.
+Znaki pionowe i portrety korzystają z dotychczasowych placeholderów. Osobne warianty mokrej i zimowej nawierzchni oraz pozostałe landmarki należą do kolejnych etapów. Kałuże i oświetlenie są osobnymi warstwami renderera.
 
 Wzory oznakowania pochodzą z [załącznika nr 2 do rozporządzenia o szczegółowych warunkach technicznych dla znaków i sygnałów drogowych](https://eli.gov.pl/eli/DU/2019/2311/ogl).
 
@@ -137,8 +136,19 @@ Sprite'y znaków 16×16 (na mapie) i 64×64 (Album, quiz, stop-klatka). Rysowane
 
 ## 9. UI i font
 - Font: pikselowy, licencja OFL, **z pełnym wsparciem polskich znaków** (kandydat: *Pixelify Sans*; zweryfikuj glify ą ę ć ł ń ó ś ź ż Ą Ę Ć Ł Ń Ó Ś Ź Ż; alternatywa: własny bitmap font 8×8/8×12 wygenerowany w `tools/`).
-- HUD w stylu GTA2 uproszczonym: lewy górny — punkty + combo; prawy górny — Uwaga Drogówki (gwizdki) + timer; strzałka celu przy krawędzi ekranu; minimapa w rogu (opcjonalnie); SzprychaApp — telefon wysuwany z dołu.
+- W lewym górnym rogu są punkty i mnożnik Serii Bezpieczeństwa, w prawym Uwaga Drogówki (trzy gwizdki i odczyt liczbowy) oraz zegar misji. Strzałka przy krawędzi pokazuje kierunek i odległość do celu. Ikony pauzy i SzprychaApp są przy dolnej krawędzi. Minimapa pozostaje opcjonalna.
 - Kolory UI: granat `#1a1c2c` tło paneli, żółć `#ffcd75` akcent, biel tekst. Kontrast min. 4.5:1.
 
 ## 10. Efekty
 Deszcz (ukośne piksele, kałuże odbijające światła), śnieg, mgła (gradient widoczności), noc (patrz §3), konfetti przy sukcesie, „UPS!” w komiksowej chmurce przy błędzie, świecący ślad przy combo ×3+, dym z kominów, gołębie podrywające się do lotu.
+
+
+### Światło i efekty w grze
+
+- Noc ma granatową warstwę multiply (`#29366f`). Atlas efektów ma stopniowane aureole latarni, stożek lampki roweru, podwójny reflektor pojazdu, neon i deseń deszczu. Światła są dodawane po przyciemnieniu sceny. Okna naświetlają osobne maski na tych samych rzutowanych fasadach. Pozycje neonów Pragi pochodzą z dekoracji mapy.
+- Tylny odblask wzmacnia się, gdy rower znajdzie się tyłem w reflektorach, i krótko utrzymuje jasność, żeby uniknąć migotania na brzegu wiązki. Render świateł i powtórki bazuje na próbce symulacji.
+- Pauza pozwala włączyć deszcz ze świetlnymi refleksami w kałużach. Dym ma źródło w kominach, a gołębie startują, kiedy rowerzysta podjeżdża blisko. Konfetti pojawia się przy ukończeniu misji, a ślad świetlny podczas jazdy z serią ×3 lub wyższą.
+- Ograniczenie ruchu w systemie zatrzymuje deseń deszczu i dym, pozostawia gołębie na ziemi, pokazuje statyczne konfetti oraz zastępuje ruchomy ślad poświatą pod rowerem. Tryb uproszczony stosuje te same warianty, ogranicza liczbę detali i pomija emisję fasad. Latarnie, neony i reflektory nadal oświetlają scenę.
+- Podgląd nocy w F3 służy do sprawdzania grafiki. Widoczność, pora symulacji i stan lampek używany przez detektory pochodzą z dotychczasowych danych symulacji.
+
+Praga w dzień, w nocy i podczas deszczu, przed zmianą po lewej i po zmianie po prawej. [Zrzuty porównawcze](graphics-32-before-after.webp)

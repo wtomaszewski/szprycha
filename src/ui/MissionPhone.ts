@@ -10,6 +10,7 @@ export class MissionPhone {
 
   constructor(
     parent: HTMLElement,
+    quickActions: HTMLElement,
     toggle: () => void,
     private readonly start: (id: string) => void,
   ) {
@@ -23,7 +24,7 @@ export class MissionPhone {
     this.button.setAttribute('aria-haspopup', 'dialog');
     this.button.setAttribute('aria-controls', 'mission-phone');
     this.button.setAttribute('aria-expanded', 'false');
-    this.button.append(enter, ui.phone.title);
+    this.button.append(enter);
     this.button.addEventListener('click', toggle);
 
     const header = document.createElement('header');
@@ -57,7 +58,8 @@ export class MissionPhone {
       if (document.activeElement === document.body && this.button.isConnected)
         this.button.focus();
     });
-    parent.append(this.button, this.panel);
+    quickActions.append(this.button);
+    parent.append(this.panel);
   }
 
   get open() {
