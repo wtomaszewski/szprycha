@@ -1,6 +1,7 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { buildContent } from './tools/content.ts';
+import { quizOffline } from './tools/offline.ts';
 
 export default defineConfig({
   base: './',
@@ -23,6 +24,7 @@ export default defineConfig({
         });
       },
     },
+    quizOffline(),
   ],
   build: {
     rolldownOptions: {

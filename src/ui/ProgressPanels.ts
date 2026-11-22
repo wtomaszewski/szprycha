@@ -1,6 +1,7 @@
 import type { GameContent } from '../content/schemas';
 import { translate, ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
+import { signIllustration } from './SignIllustration';
 
 function paragraph(text: string) {
   const p = document.createElement('p');
@@ -70,7 +71,12 @@ function album(progress: MissionProgress, content: GameContent) {
       const image = new Image(64, 64);
       image.src = photo;
       image.alt = nazwa;
-      card.append(image, heading(`${kod} · ${nazwa}`), paragraph(dla_dziecka));
+      const images = document.createElement('div');
+      images.className = 'album-images';
+      images.append(image);
+      const illustration = signIllustration(kod, '');
+      if (illustration) images.append(illustration);
+      card.append(images, heading(`${kod} · ${nazwa}`), paragraph(dla_dziecka));
       found.push(card);
     } else {
       card.className = 'album-missing';

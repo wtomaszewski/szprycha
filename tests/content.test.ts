@@ -47,6 +47,42 @@ describe('canonical content', () => {
     first.good = 'PP-01';
     expect(() => contentSchema.parse(c)).toThrow('Expected a simulated rule');
   });
+  it('validates the primary module, unique rule links and the whole quiz-only curriculum', async () => {
+    const content = await readContent();
+    const crossModule = content.pytania.pytania.find(
+      ({ id }) => id === 'Q006',
+    )!;
+    expect(crossModule.przepisy).toContain('MSC-04');
+    crossModule.modul = 'M06';
+    expect(() => contentSchema.parse(content)).toThrow(
+      'Question module must match its primary rule (M01)',
+    );
+    crossModule.modul = 'M01';
+    crossModule.przepisy.push('MSC-04');
+    expect(() => contentSchema.parse(content)).toThrow('Duplicate ID: MSC-04');
+    crossModule.przepisy.pop();
+    content.pytania.pytania = content.pytania.pytania.filter(
+      ({ id }) => id !== 'Q062',
+    );
+    expect(() => contentSchema.parse(content)).toThrow(
+      'Missing quiz question for ZNAK-P23',
+    );
+  });
+  it('validates each sign and the order of a quiz illustration composition', async () => {
+    const content = await readContent();
+    const composition = content.pytania.pytania.find(
+      ({ id }) => id === 'Q024',
+    )!;
+    expect(composition.obrazek).toBe('B-2+T-22');
+    composition.obrazek = 'B-2+T-99';
+    expect(() => contentSchema.parse(content)).toThrow(
+      'Unknown sign or invalid plate: T-99',
+    );
+    composition.obrazek = 'T-22+B-2';
+    expect(() => contentSchema.parse(content)).toThrow(
+      'Unknown sign or invalid plate: B-2',
+    );
+  });
   it('rejects duplicate rules, invalid answer indexes, bad balance and unknown fields', async () => {
     const c = await readContent();
     c.przepisy.przepisy.push(c.przepisy.przepisy[0]!);

@@ -61,7 +61,7 @@ it('migrates the M5a localStorage profile and retires it after the commit', asyn
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 3,
+    version: 4,
     missionPoints: 0,
     mastery: {},
   });
@@ -93,7 +93,7 @@ it('upgrades an IndexedDB v1 record and prefers it over remaining localStorage',
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 3,
+    version: 4,
     bestScores: {},
     quizXp: 0,
   });
@@ -116,7 +116,7 @@ it.each(['legacy', 'indexeddb'])(
     const store = await ProgressStore.open(factory, storage);
     expect(store).toMatchObject({ reset: true, sessionOnly: false });
     expect(store.profile).toMatchObject({
-      version: 3,
+      version: 4,
       completed: [],
       missionPoints: 0,
     });
@@ -167,7 +167,7 @@ it('preserves M5b progress when adding the album and milestone counters', async 
   expect(store.reset).toBe(false);
   expect(store.profile).toMatchObject({
     ...profile,
-    version: 3,
+    version: 4,
     signPhotos: {},
     goodHabits: {},
     cleanMissions: {},
@@ -192,9 +192,31 @@ it('adds the city choice to an existing profile and preserves the rest of the sa
   );
 });
 
+it('adds empty quiz progress to a v3 profile without changing its existing fields', async () => {
+  const factory = new IDBFactory();
+  const profile = new ProgressStore().profile;
+  const v3 = {
+    ...profile,
+    version: 3,
+    quizXp: 40,
+    selectedCity: 'wroclaw',
+    stickers: ['kolo'],
+  };
+  Reflect.deleteProperty(v3, 'quiz');
+  await seed(factory, v3);
+  const store = await ProgressStore.open(factory);
+  expect(store.reset).toBe(false);
+  expect(store.profile).toEqual({
+    ...v3,
+    version: 4,
+    quiz: { cards: {}, streak: 0 },
+  });
+  expect((await ProgressStore.open(factory)).profile).toEqual(store.profile);
+});
+
 it('preserves an unsupported future save', async () => {
   const factory = new IDBFactory();
-  const future = { version: 4, data: 'future' };
+  const future = { version: 5, data: 'future' };
   await seed(factory, future);
   const store = await ProgressStore.open(factory);
   expect(store).toMatchObject({ reset: false, sessionOnly: true });

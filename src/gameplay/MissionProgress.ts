@@ -3,7 +3,11 @@ import type { MissionCity, MissionDefinition } from '../content/missions';
 import { moduleId, type GameContent } from '../content/schemas';
 import { BreakReminder } from '../progression/breakReminder';
 import { Milestones } from '../progression/milestones';
-import { ProgressStore, type RideVerdict } from '../core/progressStore';
+import {
+  ProgressStore,
+  type ProgressProfile,
+  type RideVerdict,
+} from '../core/progressStore';
 import {
   applyMastery,
   localDay,
@@ -20,6 +24,7 @@ import {
   reputationRank,
   reputationXp,
 } from '../progression/reputation';
+import { reviewCard, type QuizQuestion } from './quiz/leitner';
 
 type MissionReward = {
   points: number;
@@ -29,6 +34,25 @@ type MissionReward = {
 };
 
 export const canOpenPhone = (speed: number) => speed === 0;
+
+function recordAnswer(
+  profile: ProgressProfile,
+  ruleIds: readonly string[],
+  correct: boolean,
+  balance: GameContent['balans']['mastery'],
+  day: string,
+  xpAwarded: number,
+) {
+  for (const id of ruleIds)
+    applyMastery(
+      profile.mastery,
+      id,
+      correct ? 'quiz_ok' : 'quiz_zle',
+      balance,
+      day,
+    );
+  if (correct) profile.quizXp += xpAwarded;
+}
 
 export class MissionProgress {
   private catalog?: Milestones;
@@ -189,15 +213,39 @@ export class MissionProgress {
     xpAwarded = 0,
   ) {
     const day = localDay(new Date());
-    this.store.change((profile) => {
-      applyMastery(
-        profile.mastery,
-        ruleId,
-        correct ? 'quiz_ok' : 'quiz_zle',
-        balance,
+    this.store.change((profile) =>
+      recordAnswer(profile, [ruleId], correct, balance, day, xpAwarded),
+    );
+  }
+
+  answerPracticeQuestion(
+    content: GameContent,
+    question: QuizQuestion,
+    answer: number,
+    day = localDay(new Date()),
+  ) {
+    const correct = answer === question.poprawna;
+    const { balans } = content;
+    const milestones = this.milestones(content);
+    return this.store.change((profile) => {
+      const { quiz } = profile;
+      quiz.cards[question.id] = reviewCard(
+        quiz.cards[question.id],
+        correct,
         day,
+        balans.leitner_odstepy_dni,
       );
-      if (correct) profile.quizXp += xpAwarded;
+      quiz.streak = correct ? quiz.streak + 1 : 0;
+      recordAnswer(
+        profile,
+        question.przepisy,
+        correct,
+        balans.mastery,
+        day,
+        balans.quiz.xp_za_poprawna,
+      );
+      const achievements = milestones.quiz(profile);
+      return { correct, card: quiz.cards[question.id]!, achievements };
     });
   }
 
