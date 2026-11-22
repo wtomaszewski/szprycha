@@ -1,13 +1,19 @@
 import type { GameObjects, Scene } from 'phaser';
 import type { ReplayProp } from '../gameplay/ReplayBuffer';
+import { BALL_FRAME } from './artFrames';
 import { trafficSprite } from './TrafficArt';
 
 export class EventArt {
   private readonly graphics: GameObjects.Graphics;
   private readonly cyclist: GameObjects.Image;
+  private readonly ball: GameObjects.Image;
   private hasArt = false;
 
   constructor(scene: Scene) {
+    this.ball = scene.add
+      .image(0, 0, 'props', BALL_FRAME)
+      .setDepth(18)
+      .setVisible(false);
     this.graphics = scene.add.graphics().setDepth(18);
     this.cyclist = trafficSprite(scene, 'cyclist')
       .setTint(0xffae34)
@@ -16,21 +22,17 @@ export class EventArt {
 
   draw(props: readonly ReplayProp[], scale: number) {
     const [ball, door, cyclist] = props;
-    const visible = Boolean(ball?.active || door?.active || cyclist?.active);
+    const showBall = Boolean(ball?.active);
+    if (this.ball.visible !== showBall) this.ball.setVisible(showBall);
+    if (ball?.active)
+      this.ball.setPosition(
+        Math.round(ball.x * scale),
+        Math.round(ball.y * scale),
+      );
+    const visible = Boolean(door?.active || cyclist?.active);
     if (!visible && !this.hasArt) return;
     this.hasArt = visible;
     const art = this.graphics.clear();
-    if (ball?.active) {
-      const x = ball.x * scale;
-      const y = ball.y * scale;
-      art
-        .fillStyle(0x1a1c2c)
-        .fillCircle(x, y, 7)
-        .fillStyle(0xf4f4f4)
-        .fillCircle(x, y, 5)
-        .fillStyle(0xe43b44)
-        .fillCircle(x + 1, y - 1, 3);
-    }
     if (door?.active) {
       const x = door.x * scale;
       const y = door.y * scale;

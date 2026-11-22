@@ -599,6 +599,10 @@ button[aria-pressed='true'] {
   border: 2px solid #ffcd75;
   padding: 7px 10px;
 }
+.traffic-event[hidden],
+.traffic-event button[hidden] {
+  display: none;
+}
 .traffic-event p {
   margin: 0;
 }

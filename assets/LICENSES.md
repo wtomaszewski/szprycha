@@ -10,3 +10,7 @@ M1: `generated/tiles.png` i `generated/rider.png` są własnymi placeholderami g
 
 M4b: the original dialogue portrait sheets in `generated/portraits/` are drawn by
 `tools/gen-placeholders.ts` using the project's palette.
+
+Grafika terenu, dachów, fasad i elementów ulicy w `generated/` jest rysowana
+przez `tools/gen-placeholders.ts` z użyciem własnych wzorów pikselowych i kolorów
+z `assets/palette.hex`.

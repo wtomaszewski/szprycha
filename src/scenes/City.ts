@@ -1,6 +1,10 @@
 import { Scene, GameObjects } from 'phaser';
 import trainingUrl from '../../maps/miasteczko.tmj?url';
 import warsawUrl from '../../maps/warszawa.tmj?url';
+import blockWallsUrl from '../../assets/generated/walls.png?url';
+import blockRoofsUrl from '../../assets/generated/roofs.png?url';
+import roofDetailsUrl from '../../assets/generated/roof-details.png?url';
+import propsUrl from '../../assets/generated/props.png?url';
 import tilesUrl from '../../assets/generated/tiles.png?url';
 import riderUrl from '../../assets/generated/rider.png?url';
 import {
@@ -12,6 +16,7 @@ import {
   type Rider,
 } from '../gameplay/bicycle';
 import { Blocks, type Block } from '../render/Blocks';
+import { CityProps, readProps } from '../render/CityProps';
 import { drawMapGround } from '../render/MapGround';
 import { DrivingControls } from '../ui/DrivingControls';
 import { showError, translate, ui } from '../core/presentation';
@@ -69,6 +74,8 @@ export class City extends Scene {
   private pedestrian!: GameObjects.Arc;
   private controls!: DrivingControls;
   private blocks!: Blocks;
+  private props!: CityProps;
+  private cullGround!: ReturnType<typeof drawMapGround>;
   private obstacles: Obstacle[] = [];
   private accumulator = 0;
   private worldWidth = 0;
@@ -147,8 +154,18 @@ export class City extends Scene {
     ] as const) {
       if (!this.cache.tilemap.exists(id)) this.load.tilemapTiledJSON(id, url);
     }
-    if (!this.textures.exists('training'))
-      this.load.image('training', tilesUrl);
+    for (const [key, url] of [
+      ['training', tilesUrl],
+      ['block-walls', blockWallsUrl],
+      ['block-roofs', blockRoofsUrl],
+      ['roof-details', roofDetailsUrl],
+    ] as const)
+      if (!this.textures.exists(key)) this.load.image(key, url);
+    if (!this.textures.exists('props'))
+      this.load.spritesheet('props', propsUrl, {
+        frameWidth: 48,
+        frameHeight: 48,
+      });
     if (!this.textures.exists('rider')) this.load.image('rider', riderUrl);
     this.load.on('loaderror', showError);
     this.load.once('complete', () => this.load.off('loaderror', showError));
@@ -207,13 +224,6 @@ export class City extends Scene {
     );
     this.siren = new EmergencySiren();
     const tilemap = this.make.tilemap({ key: mapId });
-    const tiles = tilemap.addTilesetImage('training', 'training');
-    if (!tiles) throw new Error('Missing training tiles');
-    if (mapId === 'warszawa') drawMapGround(this, tilemap, tiles, mapId);
-    else {
-      tilemap.createLayer('ground', tiles);
-      tilemap.createLayer('markings', tiles)?.setDepth(1);
-    }
     this.worldWidth = tilemap.widthInPixels;
     this.worldHeight = tilemap.heightInPixels;
     const spawn = tilemap
@@ -247,12 +257,14 @@ export class City extends Scene {
       buildings.push({
         ...b,
         floors,
-        tint: properties?.find((p) => p.name === 'tint')?.value as
-          number | undefined,
+        id: obj.name || String(obj.id),
+        roof: properties?.find((p) => p.name === 'roof')?.value as
+          string | undefined,
+        wall: properties?.find((p) => p.name === 'wall')?.value as
+          string | undefined,
         landmarkId: typeof landmarkId === 'string' ? landmarkId : undefined,
       });
     }
-    const curbArt = this.add.graphics().setDepth(2).fillStyle(0xc0cbdc);
     for (const o of tilemap.getObjectLayer('collisions')?.objects ?? []) {
       const curb: Obstacle = {
         x: o.x ?? 0,
@@ -267,19 +279,6 @@ export class City extends Scene {
           : 'curb',
       };
       this.obstacles.push(curb);
-      if (curb.kind === 'curb')
-        curbArt.fillRect(curb.x, curb.y, curb.width, curb.height);
-    }
-    for (const {
-      x = 0,
-      y = 0,
-      width = 0,
-      height = 0,
-    } of tilemap.getObjectLayer('traffic_islands')?.objects ?? []) {
-      this.add
-        .ellipse(x + width / 2, y + height / 2, width, height, 0x346856)
-        .setStrokeStyle(5, 0xc0cbdc)
-        .setDepth(2);
     }
     for (const car of this.world.parkedCars) {
       const scale = 1 / this.world.metersPerPixel;
@@ -291,23 +290,17 @@ export class City extends Scene {
         kind: 'wall',
       });
     }
-    // Extract one roof tile so artists can replace the tilesheet without renderer changes.
-    if (!this.textures.exists('roof')) {
-      const roof = this.textures.createCanvas('roof', 32, 32);
-      roof?.context.drawImage(
-        this.textures.get('training').getSourceImage() as HTMLImageElement,
-        128,
-        0,
-        32,
-        32,
-        0,
-        0,
-        32,
-        32,
-      );
-      roof?.refresh();
-    }
-    this.blocks = new Blocks(this, buildings);
+    const props = readProps(tilemap.getObjectLayer('props')?.objects ?? []);
+    this.cullGround = drawMapGround(
+      this,
+      tilemap,
+      mapId,
+      this.world,
+      buildings,
+      props,
+    );
+    this.props = new CityProps(this, props);
+    this.blocks = new Blocks(this, buildings, mapId);
     this.agents = [...this.traffic.road.agents, ...this.traffic.routed];
     this.replay = new ReplayBuffer(this.agents.length, propIds.length);
     this.actorObstacles = this.agents.map(({ kind }) => {
@@ -1071,7 +1064,9 @@ export class City extends Scene {
       Math.round(camera.scrollX + (targetX - camera.scrollX) * blend),
       Math.round(camera.scrollY + (targetY - camera.scrollY) * blend),
     );
+    this.cullGround(camera);
     this.blocks.update(camera, this.controls.lite, r.x, r.y);
+    this.props.update(camera, this.controls.lite, this.blocks.cameraHeight);
     const scale = 1 / this.world.metersPerPixel;
     const centerX = camera.scrollX + camera.width / 2;
     const centerY = camera.scrollY + camera.height / 2;

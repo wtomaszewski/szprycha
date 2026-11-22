@@ -1,9 +1,11 @@
 import { tiledMap } from './tiled-map.ts';
+import { tileTerrain, type Surface } from './tile-terrain.ts';
+import { tiles } from '../src/render/artFrames.ts';
 const columns = [12, 38, 64];
 const rows = [16, 40];
 const width = 80,
   height = 60;
-const ground: number[] = [],
+const surfaces: Surface[] = [],
   markings: number[] = [];
 for (let y = 0; y < height; y++)
   for (let x = 0; x < width; x++) {
@@ -15,35 +17,48 @@ for (let y = 0; y < height; y++)
       (y === 47 && x >= 46 && x < 62);
     const cycleway = x === 19 && y >= 22 && y < 40;
     const workshopYard = x >= 55 && x < 61 && y >= 27 && y < 34;
-    ground.push(
-      vertical || horizontal || cycleway ? 2 : sidewalk || workshopYard ? 3 : 1,
+    const gravelYard = x >= 22 && x < 25 && y >= 27 && y < 29;
+    surfaces.push(
+      vertical || horizontal
+        ? 'asphalt'
+        : cycleway
+          ? 'bike'
+          : workshopYard
+            ? 'cobble'
+            : gravelYard
+              ? 'gravel'
+              : sidewalk
+                ? 'sidewalk'
+                : 'grass',
     );
+    const nearJunction = vertical
+      ? rows.some((row) => y === row - 1 || y === row + 6)
+      : columns.some((col) => x === col - 1 || x === col + 6);
     markings.push(
-      vertical && !horizontal && [14, 40, 66].includes(x)
-        ? 7
-        : horizontal && !vertical && [18, 42].includes(y)
-          ? 8
+      vertical && !horizontal && [15, 41, 67].includes(x)
+        ? nearJunction
+          ? tiles.solidVertical
+          : tiles.dashVertical
+        : horizontal && !vertical && [19, 43].includes(y)
+          ? nearJunction
+            ? tiles.solidHorizontal
+            : tiles.dashHorizontal
           : 0,
     );
   }
-const { rect, polyline, objectLayer, write } = tiledMap(
-  width,
-  height,
-  ground,
-  markings,
-);
+const { rect, polyline, objectLayer, write } = tiledMap(width, height);
 const blocks = [
   rect('workshop', 640, 768, 160, 96, {
     height: 2,
-    roof: 'roof',
-    wall: 'wall',
+    roof: 'felt',
+    wall: 'concrete',
     landmarkId: 'workshop',
   }),
-  rect('school', 736, 192, 256, 160, { height: 4, roof: 'roof', wall: 'wall' }),
+  rect('school', 736, 192, 256, 160, { height: 4, roof: 'tile', wall: 'sand' }),
   rect('block-west', 160, 800, 160, 256, {
     height: 7,
-    roof: 'roof',
-    wall: 'wall',
+    roof: 'felt',
+    wall: 'plaster',
   }),
   rect('block-north', 64, 192, 224, 192, {
     height: 5,
@@ -512,7 +527,9 @@ crossings.push(
   }),
 );
 objectLayer('crossings', crossings);
-for (const name of ['props', 'triggers', 'districts', 'collectibles'])
+const props: ReturnType<typeof rect>[] = [];
+objectLayer('props', props);
+for (const name of ['triggers', 'districts', 'collectibles'])
   objectLayer(name, []);
 objectLayer('driveways', [
   rect('training-driveway', 1112, 1450, 44, 82, { direction: 'N' }),
@@ -532,4 +549,39 @@ pois.push(
 blocks.push(
   rect('garaz-kazika', 1760, 768, 192, 96, { height: 2, tint: 0x8dc6ad }),
 );
-await write('miasteczko', 14, 90);
+for (const [kind, x, y, turn = 0] of [
+  ['tree', 331, 742],
+  ['tree', 718, 723],
+  ['tree', 815, 780],
+  ['tree', 296, 1062],
+  ['tree', 155, 765],
+  ['tree', 708, 472],
+  ['tree', 765, 463],
+  ['tree', 1000, 742],
+  ['tree', 1740, 940],
+  ['tree', 2000, 449],
+  ['tree', 1450, 1534],
+  ['lamp', 691, 707],
+  ['lamp', 590, 485, 2],
+  ['lamp', 579, 787, 2],
+  ['lamp', 326, 713],
+  ['lamp', 1379, 707],
+  ['lamp', 2264, 479, 2],
+  ['bench', 758, 737],
+  ['bench', 699, 948, 1],
+  ['bin', 790, 738],
+  ['bin', 689, 971],
+  ['bollard', 717, 699],
+  ['bollard', 717, 710],
+  ['shelter', 1050, 719],
+  ['lamp', 1020, 719],
+  ['bin', 1080, 720],
+] as const)
+  props.push(rect(`prop-${kind}-${x}-${y}`, x, y, 0, 0, { kind, turn }));
+await write(
+  'miasteczko',
+  14,
+  tileTerrain(width, height, surfaces),
+  markings,
+  90,
+);

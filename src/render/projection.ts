@@ -1,11 +1,13 @@
 export interface Block {
+  id?: string;
+  roof?: string;
+  wall?: string;
   x: number;
   y: number;
   width: number;
   height: number;
   floors: number;
   landmarkId?: string;
-  tint?: number;
 }
 
 export const FLOOR_PX = 12;
@@ -25,11 +27,12 @@ export function roofOffset(
   cy: number,
   lite = false,
   cameraHeight = CAMERA_HEIGHT_PX,
+  out = { x: 0, y: 0 },
 ) {
-  if (lite) return { x: 0, y: -Math.round(block.floors * 4) };
   const factor = projectionFactor(block.floors, cameraHeight);
-  return {
-    x: Math.round((block.x + block.width / 2 - cx) * factor) + 0,
-    y: Math.round((block.y + block.height / 2 - cy) * factor) + 0,
-  };
+  out.x = lite ? 0 : Math.round((block.x + block.width / 2 - cx) * factor) + 0;
+  out.y = lite
+    ? -Math.round(block.floors * 4)
+    : Math.round((block.y + block.height / 2 - cy) * factor) + 0;
+  return out;
 }
