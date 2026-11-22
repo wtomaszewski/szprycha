@@ -5,8 +5,13 @@ import {
   type AgentState,
   type EnvState,
   type RiderState,
-  type Vec2,
 } from '../rules/types';
+import {
+  footprintReachesBox,
+  footprintsOverlap,
+  trafficFootprints,
+  type Footprint,
+} from '../rules/world/Footprint';
 import { RoadPath } from '../rules/world/RoadPath';
 import type {
   RouteJunction,
@@ -14,7 +19,6 @@ import type {
   TramStop,
 } from '../rules/world/TrafficRoutes';
 import {
-  contains,
   distanceToLine,
   type Box,
   type Crossing,
@@ -22,7 +26,6 @@ import {
   type WorldModel,
 } from '../rules/world/WorldModel';
 import {
-  CAR_RADIUS_PX,
   TrafficSimulation,
   type TrafficConditions,
   type ClearingArea,
@@ -31,14 +34,6 @@ import {
 const STEP = 1 / TICKS_PER_SECOND;
 const APPROACH_RANGE = 11;
 const EPSILON = 1e-6;
-
-export const actorRadiusPx = {
-  car: CAR_RADIUS_PX,
-  cyclist: 8,
-  pedestrian: 7,
-  tram: 25,
-  emergency: 13,
-};
 
 export interface RoutedAgent extends AgentState {
   active: boolean;
@@ -67,6 +62,7 @@ interface Journey {
 interface RouteActor {
   agent: RoutedAgent;
   route: TrafficRoute;
+  footprint: Footprint;
   outward: Journey;
   returnLeg?: Journey;
   journey: Journey;
@@ -85,14 +81,15 @@ function journey(
   path: RoadPath,
   reverse: RoadPath,
   route: TrafficRoute,
+  footprint: Footprint,
 ): Journey {
   return {
     path,
     gates: route.crossings
       .map((crossing) => ({
         crossing,
-        entry: path.boxAhead(0, crossing, 0.4),
-        exit: path.length - reverse.boxAhead(0, crossing, 0.4),
+        entry: path.boxAhead(0, crossing, 0.05, footprint),
+        exit: path.length - reverse.boxAhead(0, crossing, 0.05, footprint),
       }))
       .filter(({ entry }) => Number.isFinite(entry))
       .sort((a, b) => a.entry - b.entry),
@@ -118,12 +115,7 @@ export class TrafficParticipants {
   private readonly occupiedJunctions = new Set<Intersection>();
   private readonly clearingAreas: ClearingArea[] = [];
   private readonly activeEmergency: AgentState[] = [];
-  private readonly conditions: TrafficConditions = {
-    priorityAgents: this.priorityAgents,
-    occupiedJunctions: this.occupiedJunctions,
-    clearingAreas: this.clearingAreas,
-    emergency: this.activeEmergency,
-  };
+  private readonly conditions: TrafficConditions;
   private readonly tramSample = { x: 0, y: 0 };
   private readonly playerAhead = { x: 0, y: 0 };
   private readonly playerAgent: AgentState = {
@@ -154,8 +146,9 @@ export class TrafficParticipants {
       const reverse =
         route.reverse ??
         new RoadPath(route.id, [...route.path.points].reverse());
-      const outward = journey(route.path, reverse, route);
       const kind = route.kind === 'passenger' ? 'pedestrian' : route.kind;
+      const footprint = trafficFootprints[kind];
+      const outward = journey(route.path, reverse, route, footprint);
       return {
         agent: {
           id: route.id,
@@ -171,9 +164,10 @@ export class TrafficParticipants {
           intent: 'driving',
         },
         route,
+        footprint,
         outward,
         returnLeg: route.reverse
-          ? journey(reverse, route.path, route)
+          ? journey(reverse, route.path, route, footprint)
           : undefined,
         journey: outward,
         distance: 0,
@@ -186,6 +180,13 @@ export class TrafficParticipants {
       };
     });
     this.routed = this.actors.map(({ agent }) => agent);
+    this.conditions = {
+      priorityAgents: this.priorityAgents,
+      occupiedJunctions: this.occupiedJunctions,
+      clearingAreas: this.clearingAreas,
+      emergency: this.activeEmergency,
+      routed: this.routed,
+    };
     this.emergencyEvents = this.routed.filter(
       ({ kind }) => kind === 'emergency',
     );
@@ -223,8 +224,7 @@ export class TrafficParticipants {
   startEventRoute(route: TrafficRoute, distance: number, player: RiderState) {
     const actor = this.actors.find((candidate) => candidate.route === route);
     if (!actor || actor.agent.active || !this.isEventRoute(route)) return false;
-    const clearance =
-      actorRadiusPx[actor.agent.kind] * this.world.metersPerPixel + 0.3;
+    const clearance = actor.footprint.halfLength + 0.3;
     for (const control of route.junctions) {
       if (
         distance >= control.distance - clearance &&
@@ -232,15 +232,13 @@ export class TrafficParticipants {
       )
         distance = Math.max(0, control.distance - clearance - 0.1);
     }
-    const position = { x: 0, y: 0 };
-    route.path.place(distance, position);
+    const pos = { x: 0, y: 0 };
+    const heading = route.path.place(distance, pos);
+    const candidate = { ...actor.agent, pos, heading };
     if (
-      !this.clearOfRoadUsers(position, actor.agent.kind, player) ||
+      !this.clearOfRoadUsers(candidate, player) ||
       this.actors.some(
-        ({ agent }) =>
-          agent.active &&
-          Math.hypot(agent.pos.x - position.x, agent.pos.y - position.y) <
-            clearance + actorRadiusPx[agent.kind] * this.world.metersPerPixel,
+        ({ agent }) => agent.active && footprintsOverlap(candidate, agent, 0.3),
       )
     )
       return false;
@@ -283,7 +281,7 @@ export class TrafficParticipants {
       if (
         !actor.agent.active &&
         at >= actor.startsAt &&
-        this.clearOfRoadUsers(actor.agent.pos, actor.agent.kind, player)
+        this.clearOfRoadUsers(actor.agent, player)
       )
         this.activate(actor);
       if (!actor.agent.active || actor.route.kind === 'passenger') continue;
@@ -357,7 +355,7 @@ export class TrafficParticipants {
     const headings = agent.tramHeadings;
     if (headings) {
       const sample = this.tramSample;
-      const half = actorRadiusPx.tram * this.world.metersPerPixel;
+      const half = actor.footprint.halfLength;
       path.place(distance + half, sample);
       headings.front = Math.atan2(
         sample.y - agent.pos.y,
@@ -371,40 +369,53 @@ export class TrafficParticipants {
     }
   }
 
-  private clearOfRoadUsers(
-    pos: Vec2,
-    kind: AgentState['kind'],
-    player?: RiderState,
-  ) {
-    const scale = this.world.metersPerPixel;
+  private clearOfRoadUsers(candidate: AgentState, player?: RiderState) {
     for (const agent of this.road.agents) {
-      const range =
-        (actorRadiusPx[agent.kind] + actorRadiusPx[kind] + 4) * scale;
-      if (Math.hypot(agent.pos.x - pos.x, agent.pos.y - pos.y) < range)
-        return false;
+      if (footprintsOverlap(candidate, agent, 0.1)) return false;
     }
-    if (player && Math.hypot(player.pos.x - pos.x, player.pos.y - pos.y) < 1.5)
-      return false;
-    return true;
+    return (
+      !player || !footprintsOverlap(candidate, this.asCyclist(player), 0.3)
+    );
+  }
+
+  private asCyclist(player: RiderState) {
+    const agent = this.playerAgent;
+    agent.pos = player.pos;
+    agent.heading = player.heading;
+    agent.speed = player.speed;
+    return agent;
   }
 
   private roadUserIn(box: Box, margin: number, player?: RiderState) {
     return (
-      Boolean(player && contains(box, player.pos, margin)) ||
-      this.road.agents.some(({ pos }) => contains(box, pos, margin))
+      Boolean(
+        player && footprintReachesBox(this.asCyclist(player), box, margin),
+      ) ||
+      this.road.agents.some((agent) => footprintReachesBox(agent, box, margin))
     );
   }
 
   private playerGap(actor: RouteActor, player?: RiderState) {
     if (!player) return Infinity;
-    const clearance =
-      actorRadiusPx[actor.agent.kind] * this.world.metersPerPixel + 0.85;
+    const { path } = actor.journey;
     return Math.min(
-      actor.journey.path.obstacleAhead(actor.distance, player.pos, clearance),
-      actor.journey.path.obstacleAhead(
+      path.obstacleAhead(
+        actor.distance,
+        player.pos,
+        0.2,
+        actor.footprint,
+        0,
+        trafficFootprints.cyclist,
+        player.heading,
+      ),
+      path.obstacleAhead(
         actor.distance,
         this.playerAhead,
-        clearance,
+        0.2,
+        actor.footprint,
+        0,
+        trafficFootprints.cyclist,
+        player.heading,
       ),
     );
   }
@@ -433,12 +444,12 @@ export class TrafficParticipants {
     ) {
       const open = this.world.crossingAllowsEntry(gate.crossing, at, env);
       const area = gate.crossing.trafficArea ?? gate.crossing;
-      const roadOccupied = this.roadUserIn(area, 0.61, player);
+      const roadOccupied = this.roadUserIn(area, 0.04, player);
       if (open && roadOccupied)
         this.clearingAreas.push({
           area,
-          occupiedMargin: 0.61,
-          stopMargin: 0.68,
+          occupiedMargin: 0.04,
+          stopMargin: 0.13,
         });
       const occupied =
         roadOccupied ||
@@ -450,7 +461,7 @@ export class TrafficParticipants {
               ? overlaps(gate.crossing, other.crossing.crossing)
               : (other.agent.kind === 'tram' ||
                   other.agent.kind === 'emergency') &&
-                contains(gate.crossing, other.agent.pos, 0.84)),
+                footprintReachesBox(other.agent, area, 0.04)),
         );
       if (open && !occupied) {
         actor.crossing = gate;
@@ -486,18 +497,28 @@ export class TrafficParticipants {
     player?: RiderState,
   ) {
     const { agent, route, distance } = actor;
-    const radius = actorRadiusPx[agent.kind] * this.world.metersPerPixel;
+    const { footprint } = actor;
+    // Turning cars can project beyond the end of the perpendicular road.
+    const car = trafficFootprints.car;
+    const junctionClearance =
+      agent.kind === 'tram'
+        ? Math.hypot(car.halfLength, car.halfWidth) + 0.15
+        : 0.15;
     const junction = route.junctions[actor.junctionIndex];
     const emergency = route.kind === 'emergency';
     const stop = route.stops[actor.stopIndex];
     let room = route.path.length - distance;
     agent.intent = 'driving';
     if (emergency) this.activeEmergency.push(agent);
-    if (junction && junction.distance - distance < APPROACH_RANGE) {
+    if (
+      junction &&
+      junction.distance - distance < APPROACH_RANGE + footprint.halfLength
+    ) {
       const { lane } = junction;
       const phase = this.world.trafficPhase(lane, at, env);
       const permitted = emergency || phase === 'green' || phase === 'off';
-      const stopAt = junction.distance - radius - 0.15;
+      const stopAt =
+        junction.distance - footprint.halfLength - junctionClearance;
       const atStopLine = stopAt - distance <= 0.08;
       const needsStop =
         !emergency && phase === 'off' && lane.stopSign?.code === 'B-20';
@@ -515,6 +536,7 @@ export class TrafficParticipants {
       if (
         !emergency &&
         permitted &&
+        stopAt - distance < APPROACH_RANGE &&
         (!stop || stop.distance > junction.distance)
       )
         this.priorityAgents.push(agent);
@@ -547,33 +569,45 @@ export class TrafficParticipants {
       if (box)
         room = Math.min(
           room,
-          route.path.boxAhead(distance, box, radius + 0.45),
+          route.path.boxAhead(distance, box, 0.1, footprint),
         );
       room = Math.min(
         room,
         route.path.obstacleAhead(
           distance,
           walker.pos,
-          radius + actorRadiusPx[walker.kind] * this.world.metersPerPixel + 0.1,
+          0.1,
+          footprint,
+          0,
+          trafficFootprints[walker.kind],
+          walker.heading,
         ),
       );
     }
     if (emergency || route.kind === 'car') {
       for (const car of this.road.agents) {
         if (Math.cos(car.heading - agent.heading) < 0.98) continue;
-        const clearance =
-          (actorRadiusPx[car.kind] + actorRadiusPx[agent.kind] + 3) *
-          this.world.metersPerPixel;
         room = Math.min(
           room,
-          route.path.obstacleAhead(distance, car.pos, clearance),
+          route.path.obstacleAhead(
+            distance,
+            car.pos,
+            0.12,
+            footprint,
+            0,
+            trafficFootprints[car.kind],
+            car.heading,
+          ),
         );
       }
     }
     this.move(actor, route.speed, room, this.playerGap(actor, player));
     if (junction && agent.laneId) {
       agent.junctionProgress = actor.distance - junction.distance;
-      if (actor.distance >= junction.exit + radius + 0.1) {
+      if (
+        actor.distance >=
+        junction.exit + footprint.halfLength + junctionClearance
+      ) {
         actor.holdsJunction = false;
         actor.junctionIndex++;
         actor.stopLineTicks = 0;
@@ -603,10 +637,7 @@ export class TrafficParticipants {
         approach?.intersection === lane.intersection &&
         distanceToLine(approach, player.pos) <= APPROACH_RANGE
       ) {
-        const agent = this.playerAgent;
-        agent.pos = player.pos;
-        agent.heading = player.heading;
-        agent.speed = player.speed;
+        const agent = this.asCyclist(player);
         agent.laneId = approach.id;
         agent.maneuver =
           player.maneuver ??
@@ -633,8 +664,8 @@ export class TrafficParticipants {
     if (remaining < 7)
       this.clearingAreas.push({
         area: stop,
-        occupiedMargin: 0.98,
-        stopMargin: 1.25,
+        occupiedMargin: 0.04,
+        stopMargin: 0.15,
       });
     if (remaining > EPSILON) return Math.min(room, remaining);
     const passenger = this.actors.find(
@@ -643,7 +674,7 @@ export class TrafficParticipants {
     actor.agent.intent = 'boarding';
     actor.agent.stopId = stop.id;
     if (!actor.boarding) {
-      if (this.roadUserIn(stop, 0.98, player)) return 0;
+      if (this.roadUserIn(stop, 0.04, player)) return 0;
       actor.boarding = stop;
       this.activate(passenger);
     }

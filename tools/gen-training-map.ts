@@ -123,7 +123,7 @@ for (const y of [512, 704, 1280, 1472])
     [32, 320],
     [640, 1152],
     [1472, 1984],
-    [2352, 2528],
+    [y <= 704 ? 2392 : 2352, 2528],
   ])
     curbs.push(rect('curb', a!, y - 3, b! - a!, 6, { kind: 'curb' }));
 objectLayer('blocks', blocks);
@@ -352,7 +352,7 @@ const crossings = [
     axis: 'y',
     trafficGroup: 'crossings-west',
   }),
-  rect('zebra-lights', 2304, 512, 32, 192, { kind: 'pedestrian', axis: 'y' }),
+  rect('zebra-lights', 2344, 512, 32, 192, { kind: 'pedestrian', axis: 'y' }),
   rect('ddr-crossing', 608, 512, 32, 192, {
     kind: 'bike',
     axis: 'y',
@@ -360,7 +360,7 @@ const crossings = [
   }),
   rect('ddr-crossing-south', 608, 1280, 32, 192, { kind: 'bike', axis: 'y' }),
   rect('cycle-lane-zebra', 608, 520, 64, 22, { kind: 'bike', axis: 'x' }),
-  rect('cycle-lane-lights-zebra', 2304, 520, 32, 22, {
+  rect('cycle-lane-lights-zebra', 2344, 520, 32, 22, {
     kind: 'bike',
     axis: 'x',
   }),
@@ -370,7 +370,8 @@ const tramPoints: [number, number][] = [
   [0, 608],
   [384, 608],
   [576, 608],
-  [1120, 608],
+  // Leave room for the front of the 15 m tram before the next junction.
+  [1040, 608],
   [1216, 608],
   [1408, 608],
   [2048, 608],
@@ -395,7 +396,7 @@ for (const [index, vertex] of [1, 4, 6].entries()) {
       intersection: name,
       side: 'W',
       type: 'tram',
-      width_px: 28,
+      width_px: 52,
       speedLimit: 35,
       priorityClass: ['equal', 'main', 'signal'][index]!,
     }),
@@ -426,8 +427,8 @@ objectLayer('traffic_routes', [
   polyline(
     'pedestrian-lights',
     [
-      [2320, 721],
-      [2320, 495],
+      [2360, 721],
+      [2360, 495],
     ],
     { kind: 'pedestrian', speed: 1.5 },
   ),
@@ -459,8 +460,8 @@ objectLayer('traffic_routes', [
   polyline(
     'tram-passenger',
     [
-      [1120, 628],
-      [1120, 720],
+      [1040, 639],
+      [1040, 720],
     ],
     { kind: 'passenger', speed: 1.5 },
   ),
@@ -490,7 +491,7 @@ objectLayer('traffic_controls', [
       lane: `${names[1]![index]}-W`,
     }),
   ),
-  rect('stop-without-island', 1096, 620, 48, 84, {
+  rect('stop-without-island', 1016, 634, 48, 70, {
     kind: 'stop',
     route: 'tram-1',
     vertex: 3,
@@ -498,7 +499,7 @@ objectLayer('traffic_controls', [
   }),
 ]);
 objectLayer('crossing_signals', [
-  rect('pedestrian-signal', 2338, 719, 0, 0, {
+  rect('pedestrian-signal', 2378, 719, 0, 0, {
     crossing: 'zebra-lights',
     offset_s: 18,
     cycle_s: 20,

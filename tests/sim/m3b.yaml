@@ -3,7 +3,7 @@ scenarios:
   - name: gracz przepuszcza tramwaj na równorzędnym (PIER-09)
     actor: tram-1
     stages:
-      - seconds: 8
+      - seconds: 10
         player: { x: 432, y: 476, heading: 90 }
         expect: { xAbove: 576, protective: false }
   - name: tramwaj hamuje, gdy gracz blokuje tor, i rusza po jego zwolnieniu
@@ -20,10 +20,10 @@ scenarios:
     stages:
       - seconds: 40
         signalOverrides: { tram-lights-W: red }
-        expect: { xAbove: 1980, xBelow: 2048, stopped: true, intent: signal }
-      - seconds: 7
+        expect: { xAbove: 1830, xBelow: 1835, stopped: true, intent: signal }
+      - seconds: 14
         signalOverrides: { tram-lights-W: green }
-        expect: { xAbove: 2240 }
+        expect: { trips: 1 }
   - name: gracz ustępuje pojazdowi uprzywilejowanemu zjeżdżając na prawo (PIER-07)
     actor: emergency-1
     stages:

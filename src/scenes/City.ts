@@ -14,6 +14,10 @@ import {
   type Obstacle,
   type Rider,
 } from '../gameplay/bicycle';
+import {
+  createTrafficObstacles,
+  placeTrafficObstacles,
+} from '../gameplay/trafficObstacles';
 import { Blocks, type Block } from '../render/Blocks';
 import { CityProps, readProps } from '../render/CityProps';
 import { drawMapGround } from '../render/MapGround';
@@ -34,7 +38,6 @@ import { RuleEngine } from '../rules/RuleEngine';
 import type { AgentState, EnvState, RiderState, Verdict } from '../rules/types';
 import { WorldModel } from '../rules/world/WorldModel';
 import {
-  actorRadiusPx,
   TrafficParticipants,
   type RoutedAgent,
 } from '../sim/TrafficParticipants';
@@ -90,7 +93,7 @@ export class City extends Scene {
   private sirenArt!: GameObjects.Graphics;
   private readonly activeAgents: AgentState[] = [];
   private agents!: readonly (RoadTrafficAgent | RoutedAgent)[];
-  private actorObstacles!: Obstacle[];
+  private actorObstacles!: Obstacle[][];
   private actors!: TrafficArt[];
   private road!: TrainingRoad;
   private debug!: RuleDebugOverlay;
@@ -301,15 +304,14 @@ export class City extends Scene {
     this.blocks = new Blocks(this, buildings, mapId);
     this.agents = [...this.traffic.road.agents, ...this.traffic.routed];
     this.replay = new ReplayBuffer(this.agents.length, propIds.length);
-    this.actorObstacles = this.agents.map(({ kind }) => {
-      const diameter = actorRadiusPx[kind] * 2;
-      return { x: 0, y: 0, width: diameter, height: diameter, kind: 'wall' };
-    });
+    this.actorObstacles = this.agents.map((agent) =>
+      createTrafficObstacles(agent, this.world.metersPerPixel),
+    );
     this.eventObstacles = propIds.map((id) => {
       const size = id === 'rowerzysta_pod_prad' ? 16 : 10;
       return { x: -1000, y: -1000, width: size, height: size, kind: 'wall' };
     });
-    this.obstacles.push(...this.actorObstacles, ...this.eventObstacles);
+    this.obstacles.push(...this.actorObstacles.flat(), ...this.eventObstacles);
     const variants = {
       car: 0,
       tram: 0,
@@ -700,15 +702,11 @@ export class City extends Scene {
   private syncActorObstacles() {
     const scale = 1 / this.world.metersPerPixel;
     for (let i = 0; i < this.agents.length; i++) {
-      const agent = this.agents[i]!;
-      const { pos } = agent;
-      const obstacle = this.actorObstacles[i]!;
-      if ('active' in agent && !agent.active) {
-        obstacle.x = obstacle.y = -1000;
-        continue;
-      }
-      obstacle.x = pos.x * scale - obstacle.width / 2;
-      obstacle.y = pos.y * scale - obstacle.height / 2;
+      placeTrafficObstacles(
+        this.actorObstacles[i]!,
+        this.agents[i]!,
+        this.world.metersPerPixel,
+      );
     }
     for (let i = 0; i < this.eventObstacles.length; i++) {
       const obstacle = this.eventObstacles[i]!;
@@ -1035,9 +1033,8 @@ export class City extends Scene {
     const scale = 1 / this.world.metersPerPixel;
     const centerX = camera.scrollX + camera.width / 2;
     const centerY = camera.scrollY + camera.height / 2;
-    const halfWidth = camera.width / (2 * camera.zoom) + actorRadiusPx.tram + 2;
-    const halfHeight =
-      camera.height / (2 * camera.zoom) + actorRadiusPx.tram + 2;
+    const halfWidth = camera.width / (2 * camera.zoom);
+    const halfHeight = camera.height / (2 * camera.zoom);
     const sirenArt = this.sirenArt.clear();
     let reflected = false;
     let sirenVolume = 0;
@@ -1045,13 +1042,14 @@ export class City extends Scene {
     for (let index = 0; index < this.agents.length; index++) {
       const agent = this.agents[index]!;
       const pose = frame.actors[index]!;
+      const art = this.actors[index]!;
       const x = Math.round(pose.x * scale);
       const y = Math.round(pose.y * scale);
       const visible =
         pose.active &&
-        Math.abs(x - centerX) <= halfWidth &&
-        Math.abs(y - centerY) <= halfHeight;
-      this.actors[index]!.draw(x, y, visible, pose, at);
+        Math.abs(x - centerX) <= halfWidth + art.reach &&
+        Math.abs(y - centerY) <= halfHeight + art.reach;
+      art.draw(x, y, visible, pose, at);
       if (
         dusk &&
         visible &&

@@ -102,10 +102,10 @@ test('simulated maneuvers select the expected front and rear lamp colors', () =>
   };
   const left = vehicleFrame(0, true, 'left', true);
   const right = vehicleFrame(0, false, 'right', true);
-  expect(pixel(left, 7, 15)).toBe('feae34');
-  expect(pixel(left, 23, 40)).toBe('e43b44');
-  expect(pixel(right, 23, 41)).toBe('feae34');
-  expect(pixel(vehicleFrame(0, false, 'right', false), 23, 41)).toBe('b13e53');
+  expect(pixel(left, 7, 9)).toBe('feae34');
+  expect(pixel(left, 23, 41)).toBe('e43b44');
+  expect(pixel(right, 23, 42)).toBe('feae34');
+  expect(pixel(vehicleFrame(0, false, 'right', false), 23, 42)).toBe('b13e53');
 });
 
 test('the two baked hand signals extend beyond the neutral silhouette', () => {

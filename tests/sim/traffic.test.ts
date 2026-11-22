@@ -7,6 +7,10 @@ import {
   type EnvState,
   type RiderState,
 } from '../../src/rules/types';
+import {
+  footprintsOverlap,
+  trafficFootprints,
+} from '../../src/rules/world/Footprint';
 import { WorldModel } from '../../src/rules/world/WorldModel';
 import { TrafficSimulation } from '../../src/sim/TrafficSimulation';
 import { readContent } from '../../tools/content';
@@ -53,7 +57,6 @@ it.each([1403, 17])(
     expect(agents).toHaveLength(14);
     const lastPass = agents.map(() => ({ tick: 0, count: 0 }));
     const duration = 600 * TICKS_PER_SECOND;
-    const diameterSquared = (2 * traffic.radius) ** 2;
     for (let tick = 0; tick < duration; tick++) {
       traffic.step(clear);
       for (let i = 0; i < agents.length; i++) {
@@ -69,9 +72,7 @@ it.each([1403, 17])(
           );
         for (let j = i + 1; j < agents.length; j++) {
           const b = agents[j]!;
-          const distanceSquared =
-            (a.pos.x - b.pos.x) ** 2 + (a.pos.y - b.pos.y) ** 2;
-          if (distanceSquared < diameterSquared)
+          if (footprintsOverlap(a, b))
             throw new Error(
               `${a.id} collided with ${b.id} at ${tick / TICKS_PER_SECOND}s`,
             );
@@ -147,7 +148,7 @@ it('stops on yellow when there is room and continues when braking would be unsaf
   };
   for (const [distance, shouldEnter] of [
     [10, false],
-    [1.25, true],
+    [trafficFootprints.car.halfLength + 0.4, true],
   ] as const) {
     traffic.reset();
     for (let t = 0; t < 480 && car.junctionProgress! < -distance; t++)
@@ -269,7 +270,9 @@ function queueStraightCars(seed: number, laneIds: string[]) {
   for (let tick = 0; tick < 480; tick++) traffic.step(red);
   for (const car of traffic.agents) {
     expect(car.speed).toBe(0);
-    expect(car.junctionProgress).toBeCloseTo(-0.85);
+    expect(car.junctionProgress).toBeCloseTo(
+      -trafficFootprints.car.halfLength - 0.15,
+    );
   }
   return traffic;
 }

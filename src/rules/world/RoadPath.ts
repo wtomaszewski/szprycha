@@ -1,4 +1,5 @@
 import type { Vec2 } from '../types';
+import type { Footprint } from './Footprint';
 import type { Box } from './WorldModel';
 
 interface Segment {
@@ -64,22 +65,52 @@ export class RoadPath {
     return 0;
   }
 
-  boxAhead(progress: number, box: Box, margin: number) {
-    const left = box.x - margin;
-    const right = box.x + box.width + margin;
-    const top = box.y - margin;
-    const bottom = box.y + box.height + margin;
+  boxAhead(
+    progress: number,
+    box: Box,
+    margin: number,
+    footprint?: Footprint,
+    lateral = 0,
+  ) {
+    const halfLength = footprint?.halfLength ?? 0;
+    const halfWidth = footprint?.halfWidth ?? 0;
     for (const { start, end, offset, length, direction } of this.segments) {
+      if (offset + length < progress) continue;
+      const x = direction.x;
+      const y = direction.y;
+      const absX = Math.abs(x);
+      const absY = Math.abs(y);
+      const dx = box.x + box.width / 2 - start.x;
+      const dy = box.y + box.height / 2 - start.y;
+      // The lateral axis is constant while the body moves along this segment.
+      const across = dy * x - dx * y - lateral;
       if (
-        offset + length < progress ||
+        Math.abs(across) >
+        (box.width / 2 + margin) * absY +
+          (box.height / 2 + margin) * absX +
+          halfWidth
+      )
+        continue;
+      const along = dx * x + dy * y;
+      const reach =
+        (box.width / 2 + margin) * absX +
+        (box.height / 2 + margin) * absY +
+        halfLength;
+      let enter = Math.max(0, progress - offset, along - reach);
+      let exit = Math.min(length, along + reach);
+      const extraX = margin + halfLength * absX + halfWidth * absY;
+      const extraY = margin + halfLength * absY + halfWidth * absX;
+      const left = box.x - extraX + y * lateral;
+      const right = box.x + box.width + extraX + y * lateral;
+      const top = box.y - extraY - x * lateral;
+      const bottom = box.y + box.height + extraY - x * lateral;
+      if (
         Math.max(start.x, end.x) < left ||
         Math.min(start.x, end.x) > right ||
         Math.max(start.y, end.y) < top ||
         Math.min(start.y, end.y) > bottom
       )
         continue;
-      let enter = Math.max(0, progress - offset);
-      let exit = length;
       if (direction.x !== 0) {
         const a = (left - start.x) / direction.x;
         const b = (right - start.x) / direction.x;
@@ -97,18 +128,46 @@ export class RoadPath {
     return Infinity;
   }
 
-  /** First distance at which the centre line overlaps the obstacle's safety radius. */
-  obstacleAhead(progress: number, pos: Vec2, radius: number) {
-    for (const { start, offset, length, direction } of this.segments) {
+  /** First distance at which the moving body reaches an obstacle. */
+  obstacleAhead(
+    progress: number,
+    pos: Vec2,
+    clearance: number,
+    footprint?: Footprint,
+    lateral = 0,
+    obstacle?: Footprint,
+    heading = 0,
+  ) {
+    for (const {
+      start,
+      offset,
+      length,
+      direction,
+      heading: segmentHeading,
+    } of this.segments) {
       if (offset + length < progress) continue;
       const dx = pos.x - start.x;
       const dy = pos.y - start.y;
       const along = dx * direction.x + dy * direction.y;
-      const across = dx * direction.y - dy * direction.x;
-      if (Math.abs(across) >= radius) continue;
-      const reach = Math.sqrt(radius * radius - across * across);
-      const first = Math.max(progress, offset, offset + along - reach);
-      if (first <= offset + length && first < offset + along + reach)
+      // On the current segment, moving forward separates an obstacle that is
+      // already behind the centre, even if it is still next to the rear.
+      if (footprint && offset <= progress && offset + along < progress - 1e-6)
+        continue;
+      const across = dy * direction.x - dx * direction.y - lateral;
+      let halfWidth = (footprint?.halfWidth ?? 0) + clearance;
+      let halfLength = (footprint?.halfLength ?? 0) + clearance;
+      if (obstacle) {
+        const angle = heading - segmentHeading;
+        const cos = Math.abs(Math.cos(angle));
+        const sin = Math.abs(Math.sin(angle));
+        halfWidth += obstacle.halfLength * sin + obstacle.halfWidth * cos;
+        halfLength += obstacle.halfLength * cos + obstacle.halfWidth * sin;
+      }
+      if (Math.abs(across) >= halfWidth) continue;
+      if (!footprint)
+        halfLength = Math.sqrt(clearance * clearance - across * across);
+      const first = Math.max(progress, offset, offset + along - halfLength);
+      if (first <= offset + length && first < offset + along + halfLength)
         return first - progress;
     }
     return Infinity;

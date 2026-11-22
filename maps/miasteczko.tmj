@@ -10469,9 +10469,9 @@
           "id": 35,
           "name": "curb",
           "type": "",
-          "x": 2352,
+          "x": 2392,
           "y": 509,
-          "width": 176,
+          "width": 136,
           "height": 6,
           "rotation": 0,
           "visible": true,
@@ -10541,9 +10541,9 @@
           "id": 39,
           "name": "curb",
           "type": "",
-          "x": 2352,
+          "x": 2392,
           "y": 701,
-          "width": 176,
+          "width": 136,
           "height": 6,
           "rotation": 0,
           "visible": true,
@@ -10918,7 +10918,7 @@
           "id": 138,
           "name": "pedestrian-lights",
           "type": "",
-          "x": 2320,
+          "x": 2360,
           "y": 721,
           "width": 0,
           "height": 0,
@@ -11087,7 +11087,7 @@
               "y": 0
             },
             {
-              "x": 1120,
+              "x": 1040,
               "y": 0
             },
             {
@@ -11116,8 +11116,8 @@
           "id": 143,
           "name": "tram-passenger",
           "type": "",
-          "x": 1120,
-          "y": 628,
+          "x": 1040,
+          "y": 639,
           "width": 0,
           "height": 0,
           "rotation": 0,
@@ -11141,7 +11141,7 @@
             },
             {
               "x": 0,
-              "y": 92
+              "y": 81
             }
           ]
         },
@@ -11455,10 +11455,10 @@
           "id": 151,
           "name": "stop-without-island",
           "type": "",
-          "x": 1096,
-          "y": 620,
+          "x": 1016,
+          "y": 634,
           "width": 48,
-          "height": 84,
+          "height": 70,
           "rotation": 0,
           "visible": true,
           "properties": [
@@ -11499,7 +11499,7 @@
           "id": 152,
           "name": "pedestrian-signal",
           "type": "",
-          "x": 2338,
+          "x": 2378,
           "y": 719,
           "width": 0,
           "height": 0,
@@ -13999,7 +13999,7 @@
             {
               "name": "width_px",
               "type": "float",
-              "value": 28
+              "value": 52
             },
             {
               "name": "speedLimit",
@@ -14027,7 +14027,7 @@
           "id": 134,
           "name": "tram-yield-W",
           "type": "",
-          "x": 1120,
+          "x": 1040,
           "y": 608,
           "width": 0,
           "height": 0,
@@ -14052,7 +14052,7 @@
             {
               "name": "width_px",
               "type": "float",
-              "value": 28
+              "value": 52
             },
             {
               "name": "speedLimit",
@@ -14071,7 +14071,7 @@
               "y": 0
             },
             {
-              "x": 96,
+              "x": 176,
               "y": 0
             }
           ]
@@ -14105,7 +14105,7 @@
             {
               "name": "width_px",
               "type": "float",
-              "value": 28
+              "value": 52
             },
             {
               "name": "speedLimit",
@@ -14820,7 +14820,7 @@
           "id": 128,
           "name": "zebra-lights",
           "type": "",
-          "x": 2304,
+          "x": 2344,
           "y": 512,
           "width": 32,
           "height": 192,
@@ -14917,7 +14917,7 @@
           "id": 132,
           "name": "cycle-lane-lights-zebra",
           "type": "",
-          "x": 2304,
+          "x": 2344,
           "y": 520,
           "width": 32,
           "height": 22,

@@ -364,8 +364,8 @@ objectLayer('traffic_routes', [
   polyline(
     'pieszy-bazar',
     [
-      [1542, 997],
-      [1542, 1182],
+      [1518, 997],
+      [1518, 1182],
     ],
     { kind: 'pedestrian', speed: 1.5 },
   ),
@@ -388,7 +388,7 @@ objectLayer('traffic_controls', [
 ]);
 objectLayer('crossings', [
   rect('zebra-pasaz', 1259, 384, 43, 128, { kind: 'pedestrian', axis: 'y' }),
-  rect('zebra-bazar', 1520, 1024, 44, 128, { kind: 'pedestrian', axis: 'y' }),
+  rect('zebra-bazar', 1496, 1024, 44, 128, { kind: 'pedestrian', axis: 'y' }),
 ]);
 objectLayer('parked_cars', [
   rect('parking-bazar', 1404, 967, 58, 24),

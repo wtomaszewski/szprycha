@@ -9,6 +9,10 @@
 - **Kafel bazowy: 32×32 px.** Postacie i rowery: **24×24** (rower z kierowcą), piesi 16×16, auta 32×48–32×64, tramwaj 32×160 (segmenty 32×80, przegubowy).
 - Kamera: domyślne przybliżenie pokazuje ~20×11 kafli; przy szybszej jeździe lekkie oddalenie (jak w GTA2) — max 25%, płynnie, krokami całkowitymi.
 
+Sprite’y ruchu są rysowane w skali **1:1** w pikselach logicznych. Długości klatek rowerzysty, auta osobowego i całego tramwaju wynoszą odpowiednio **24, 48 i 160 px**. Daje to stosunki 2:1 oraz 3,33:1. Klatki dostawczaka, autobusu i pojazdów uprzywilejowanych mają 64 px długości. Przegub łączy dwie klatki tramwaju o długości 80 px każda.
+
+Symulacja używa nominalnych wymiarów w metrach. Obrys auta w ruchu drogowym ma 4,5 × 1,8 m, pojazdu uprzywilejowanego 5,5 × 2,1 m, tramwaju 15 × 2,4 m, rowerzysty 1,8 × 0,64 m, a pieszego 0,5 × 0,5 m. Przy sprawdzaniu kolizji z graczem każdy wymiar jest dzielony przez `world.metersPerPixel`. Hamowanie, odstępy i zwalnianie przejść oraz skrzyżowań korzystają z przodu, tyłu i szerokości pojazdu. Mapy mają umowną skalę, więc fizyczny obrys może sięgać poza sylwetkę sprite’a.
+
 ## 3. Paleta (32 kolory, bazowa — `assets/palette.hex`)
 ```
 #1a1c2c  głęboki granat (kontury, cienie nocne)

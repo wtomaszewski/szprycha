@@ -532,32 +532,32 @@ scenarios:
     evidence: { MSC-01: { stoppedOnTracks: true } }
 
   - name: MSC-02 postój przed przystankiem do zakończenia wysiadania
-    player: { x: 1070, y: 656, heading: 0, speed: 0 }
+    player: { x: 990, y: 656, heading: 0, speed: 0 }
     agents:
       [
         {
           id: tram,
           kind: tram,
-          x: 1120,
+          x: 1040,
           y: 608,
           stopId: stop-without-island,
           leaveAt: 0.6,
         },
       ]
-    inputs: [{ t: 0.65, speed: 3 }, { t: 0.95, x: 1150 }]
+    inputs: [{ t: 0.65, speed: 3 }, { t: 0.95, x: 1070 }]
     expect: { MSC-02: [good] }
 
   - name: MSC-02 wjazd w strefę podczas wysiadania
-    player: { x: 1069, y: 656, heading: 0, speed: 4 }
+    player: { x: 989, y: 656, heading: 0, speed: 4 }
     agents:
-      [{ id: tram, kind: tram, x: 1120, y: 608, stopId: stop-without-island }]
-    inputs: [{ t: 0.8, x: 1150 }]
+      [{ id: tram, kind: tram, x: 1040, y: 608, stopId: stop-without-island }]
+    inputs: [{ t: 0.8, x: 1070 }]
     expect: { MSC-02: [major] }
 
   - name: MSC-02 przejeżdżający tramwaj nie aktywuje przystanku
-    player: { x: 1070, y: 656, heading: 0, speed: 4 }
-    agents: [{ id: tram, kind: tram, x: 1120, y: 608, heading: 0, speed: 5 }]
-    inputs: [{ t: 0.8, x: 1150 }]
+    player: { x: 990, y: 656, heading: 0, speed: 4 }
+    agents: [{ id: tram, kind: tram, x: 1040, y: 608, heading: 0, speed: 5 }]
+    inputs: [{ t: 0.8, x: 1070 }]
     expect: { MSC-02: [] }
 
   - name: MSC-03 postój przed chodnikiem i przepuszczenie pieszego

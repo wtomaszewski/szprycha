@@ -59,6 +59,45 @@ function outwardComponent(side: Side, direction: Vec2) {
   ];
 }
 
+function turnPoints(from: LaneEdge, to: LaneEdge) {
+  const start = from.path.end;
+  const end = to.path.start;
+  const incoming = from.path.segments.at(-1)!.direction;
+  const outgoing = to.path.segments[0]!.direction;
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  // Blend the inlet and outlet tangents to keep the car's body on the bend.
+  const leadIn = 0.55 * Math.max(0, dx * incoming.x + dy * incoming.y);
+  const leadOut = 0.55 * Math.max(0, dx * outgoing.x + dy * outgoing.y);
+  const first = {
+    x: start.x + leadIn * incoming.x,
+    y: start.y + leadIn * incoming.y,
+  };
+  const last = {
+    x: end.x - leadOut * outgoing.x,
+    y: end.y - leadOut * outgoing.y,
+  };
+  const points = [start];
+  for (let step = 1; step < 12; step++) {
+    const t = step / 12;
+    const u = 1 - t;
+    points.push({
+      x:
+        u ** 3 * start.x +
+        3 * u ** 2 * t * first.x +
+        3 * u * t ** 2 * last.x +
+        t ** 3 * end.x,
+      y:
+        u ** 3 * start.y +
+        3 * u ** 2 * t * first.y +
+        3 * u * t ** 2 * last.y +
+        t ** 3 * end.y,
+    });
+  }
+  points.push(end);
+  return points;
+}
+
 export class LaneGraph {
   readonly nodes: LaneNode[] = [];
   readonly edges: LaneEdge[] = [];
@@ -175,7 +214,12 @@ export class LaneGraph {
           from,
           to,
           maneuver,
-          path: new RoadPath(id, [from.to.pos, to.from.pos]),
+          path: new RoadPath(
+            id,
+            maneuver === 'straight'
+              ? [from.to.pos, to.from.pos]
+              : turnPoints(from, to),
+          ),
         };
         from.movements.push(movement);
         this.movements.push(movement);

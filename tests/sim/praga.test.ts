@@ -3,6 +3,7 @@ import { expect, it } from 'vitest';
 import { readContent } from '../../tools/content';
 import { IntersectionManager } from '../../src/rules/priority/IntersectionManager';
 import { TICKS_PER_SECOND, type EnvState } from '../../src/rules/types';
+import { footprintsOverlap } from '../../src/rules/world/Footprint';
 import { WorldModel } from '../../src/rules/world/WorldModel';
 import { TrafficParticipants } from '../../src/sim/TrafficParticipants';
 
@@ -67,7 +68,7 @@ it.each([1403, 17])(
       settings,
       seed,
     );
-    const { agents, radius } = traffic.road;
+    const { agents } = traffic.road;
     expect(agents).toHaveLength(world.trafficCarCount);
     const crossings = new Set<string>();
     const latest = agents.map(() => ({ tick: 0, passed: 0 }));
@@ -86,10 +87,7 @@ it.each([1403, 17])(
           );
         for (let j = i + 1; j < agents.length; j++) {
           const other = agents[j]!;
-          if (
-            Math.hypot(car.pos.x - other.pos.x, car.pos.y - other.pos.y) <
-            2 * radius
-          )
+          if (footprintsOverlap(car, other))
             throw new Error(
               `${car.id} overlapped ${other.id} at second ${tick / TICKS_PER_SECOND}`,
             );
