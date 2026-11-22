@@ -6,12 +6,14 @@ type ScoreBalance = Pick<GameContent['balans'], 'misja' | 'combo'>;
 type Timing = { par_s: number; limit_s?: number };
 
 export class MissionScore {
-  points = 0;
   goodHabits = 0;
   minor = 0;
   major = 0;
   longest = 0;
   private consecutive = 0;
+  private habitPoints = 0;
+  private penaltyPoints = 0;
+  private questionPoints = 0;
   private readonly series: SafetySeries;
 
   constructor(
@@ -27,17 +29,26 @@ export class MissionScore {
       this.goodHabits++;
       this.consecutive++;
       this.longest = Math.max(this.longest, this.consecutive);
-      this.points += misja.dobry_nawyk * this.series.multiplier;
+      this.habitPoints += misja.dobry_nawyk * this.series.multiplier;
     } else {
       this[kind]++;
       this.consecutive = 0;
-      this.points -= kind === 'major' ? misja.kara_major : misja.kara_minor;
+      this.penaltyPoints +=
+        kind === 'major' ? misja.kara_major : misja.kara_minor;
     }
     this.series.receive(kind);
   }
 
   get tooManyMajor() {
     return this.major >= this.balance.misja.major_do_porazki;
+  }
+
+  get points() {
+    return this.habitPoints + this.questionPoints - this.penaltyPoints;
+  }
+
+  answerQuestion(points: number) {
+    this.questionPoints += points;
   }
 
   result(
@@ -66,12 +77,16 @@ export class MissionScore {
       shocks < misja.prog_wstrzasow_plynnosc
         ? misja.bonus_plynnosci
         : 0;
-    const points =
-      this.points +
-      (completed ? misja.ukonczenie : 0) +
-      timeBonus +
-      smoothBonus;
-    return { points, timeBonus, smoothBonus };
+    const completionPoints = completed ? misja.ukonczenie : 0;
+    return {
+      points: this.points + completionPoints + timeBonus + smoothBonus,
+      completionPoints,
+      habitPoints: this.habitPoints,
+      penaltyPoints: this.penaltyPoints,
+      questionPoints: this.questionPoints,
+      timeBonus,
+      smoothBonus,
+    };
   }
 }
 

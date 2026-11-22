@@ -1,9 +1,10 @@
-export type Reading = 'radio' | 'feedback' | 'lesson' | 'dialogue';
+export type Reading = 'radio' | 'feedback' | 'lesson' | 'dialogue' | 'results';
 const priority: Record<Reading, number> = {
   radio: 0,
   feedback: 1,
   lesson: 2,
   dialogue: 2,
+  results: 2,
 };
 
 export function polishVoice(voices: readonly SpeechSynthesisVoice[]) {

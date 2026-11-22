@@ -87,6 +87,104 @@ const settings = (page: Page) =>
 const openSettings = (page: Page) =>
   page.getByRole('button', { name: pl.settings.title, exact: true }).click();
 
+for (const reducedMotion of ['no-preference', 'reduce'] as const) {
+  test(`shows the tutorial results, celebrates a safe STOP and returns to the map (${reducedMotion})`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion });
+    await observeAudio(page, 'local');
+    await page.goto('/');
+    await chooseCity(page, 'warszawa', 'campaign');
+    const canvas = page.locator('canvas');
+    const dialogue = page.getByRole('dialog', { name: pl.dialogueUi.title });
+    const skipDialogue = dialogue.getByRole('button', {
+      name: pl.dialogueUi.skip,
+    });
+    await skipDialogue.click();
+    await page.getByRole('button', { name: pl.missionUi.equip }).click();
+    await page.keyboard.down('ArrowUp');
+    await expect
+      .poll(async () => Number(await canvas.getAttribute('data-y')), {
+        intervals: [25, 50, 75],
+      })
+      .toBeGreaterThanOrEqual(1184);
+    await page.keyboard.up('ArrowUp');
+    await page.keyboard.down('Space');
+    await expect(canvas).toHaveAttribute('data-stop-ready', 'true');
+    await page.keyboard.up('Space');
+    await page.keyboard.down('ArrowUp');
+    await expect(dialogue).toBeVisible();
+    await page.keyboard.up('ArrowUp');
+    const before = await log(page);
+    await skipDialogue.click();
+
+    const result = page.getByRole('region', { name: pl.missionUi.result });
+    await expect(result).toContainText(pl.missionUi.completed);
+    await expect(result).toContainText('Pełne zatrzymanie przy B-20');
+    await expect(result).toContainText(`${pl.missionUi.yourPoints} 1550`);
+    await expect(result).toContainText(`${pl.progression.stars} 3 ★★★`);
+    await expect(result).toContainText(`${pl.progression.tokens} +35`);
+    await expect(result).toContainText(`${pl.missionResults.mastery}`);
+    await expect(result).toContainText('10% (+10)');
+    const narration = pl.missionResults.withGlory.replace('{points}', '1550');
+    await expect
+      .poll(async () =>
+        (await log(page)).lines
+          .slice(before.lines.length)
+          .map(({ text }) => text),
+      )
+      .toEqual([narration]);
+    expect(narration.length).toBeLessThanOrEqual(140);
+    expect((await log(page)).effects).toBeGreaterThan(before.effects);
+
+    const skip = result.getByRole('button', { name: pl.missionResults.skip });
+    if (reducedMotion === 'reduce') {
+      await expect(skip).toBeHidden();
+      await expect(page.locator('.mission-confetti')).toBeHidden();
+      await result
+        .getByText(pl.settings.accessibility, { exact: true })
+        .click();
+      await result
+        .getByRole('checkbox', { name: pl.missionResults.highContrast })
+        .check();
+      await result
+        .getByLabel(pl.missionResults.textSize)
+        .selectOption('largest');
+      const modal = page.getByRole('dialog', { name: pl.missionUi.completed });
+      await expect(modal).toHaveCSS('font-size', '24px');
+      await expect(modal).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+    } else {
+      await expect(skip).toBeVisible();
+      await page.keyboard.press('Tab');
+      await expect(skip).toBeFocused();
+      await page.keyboard.press('Space');
+      await expect(skip).toBeHidden();
+      await expect(
+        result.getByRole('heading', { name: pl.missionUi.completed }),
+      ).toBeFocused();
+      await page.screenshot({
+        path: test.info().outputPath('70-moment-chwaly.png'),
+      });
+    }
+    const phoneButton = result.getByRole('button', { name: pl.phone.title });
+    await phoneButton.click();
+    const phone = page.getByRole('dialog', { name: pl.phone.title });
+    await expect(
+      phone.getByRole('button', {
+        name: `${pl.phone.start} · ${pl.misje['WAW-T-02'].tytul}`,
+      }),
+    ).toBeEnabled();
+    await page.keyboard.press('KeyM');
+    await expect(phone).toBeHidden();
+    await expect(phoneButton).toBeFocused();
+    await result.getByRole('button', { name: pl.missionResults.map }).click();
+    await expect(canvas).toHaveAttribute('data-scene', 'CityPicker');
+    await expect(
+      page.getByRole('button', { name: pl.cityPicker.warszawa }),
+    ).toBeFocused();
+  });
+}
+
 test('unlocks audio with a gesture, saves channel levels and station, and rides muted without Web Speech', async ({
   page,
 }) => {

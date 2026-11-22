@@ -1,10 +1,6 @@
-import { translate, ui } from '../core/presentation';
+import { missionClock, translate, ui } from '../core/presentation';
 import type { MissionSystem } from '../gameplay/MissionSystem';
 import type { Vec2 } from '../rules/types';
-
-function clock(seconds: number): string {
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
-}
 
 function setText(element: HTMLElement, text: string) {
   if (element.textContent !== text) element.textContent = text;
@@ -35,17 +31,9 @@ export class MissionHud {
   private readonly photo = document.createElement('button');
   private readonly lights = document.createElement('button');
   private readonly resume = document.createElement('button');
-  private readonly summary = document.createElement('section');
-  private readonly heading = document.createElement('h2');
-  private readonly rewards = document.createElement('p');
-  private readonly resultText = document.createElement('p');
-  private readonly confetti = document.createElement('div');
-  private readonly retryButton = document.createElement('button');
   private displayedTitle?: string;
   private displayedSeconds?: number;
   private displayedDistance?: number;
-  private displayedResult: MissionSystem['result'];
-  private resultRevealed = false;
 
   constructor(
     parent: HTMLElement,
@@ -54,8 +42,6 @@ export class MissionHud {
     turnOnLights: () => void,
     resumeFromCheckpoint: () => void,
     photograph: () => void,
-    retry: () => void,
-    menu: () => void,
   ) {
     const panel = document.createElement('section');
     panel.className = 'mission-panel';
@@ -98,41 +84,8 @@ export class MissionHud {
     this.equip.addEventListener('click', equipHelmet);
     this.resume.addEventListener('click', resumeFromCheckpoint);
 
-    this.summary.className = 'mission-summary';
-    this.summary.setAttribute('aria-label', ui.missionUi.result);
-    this.heading.setAttribute('role', 'status');
-    const actions = document.createElement('div');
-    for (const [label, action] of [
-      [ui.missionUi.retry, retry],
-      [ui.driving.menu, menu],
-    ] as const) {
-      const button =
-        action === retry ? this.retryButton : document.createElement('button');
-      button.type = 'button';
-      button.textContent = label;
-      button.addEventListener('click', action);
-      actions.append(button);
-    }
-    this.confetti.className = 'mission-confetti';
-    this.confetti.setAttribute('aria-hidden', 'true');
-    for (let index = 0; index < 17; index++) {
-      const piece = document.createElement('i');
-      piece.style.setProperty('--confetti-x', `${index * 6}%`);
-      piece.style.setProperty('--confetti-y', `${(index * 13) % 16}px`);
-      piece.style.setProperty('--confetti-drift', `${(8 - index) * 4}px`);
-      piece.style.setProperty('--confetti-angle', `${(index * 29) % 90}deg`);
-      this.confetti.append(piece);
-    }
-    this.rewards.className = 'mission-rewards';
-    this.summary.append(
-      this.confetti,
-      this.heading,
-      this.rewards,
-      this.resultText,
-      actions,
-    );
     timerSlot.append(this.timer);
-    parent.append(panel, this.navigation, this.summary);
+    parent.append(panel, this.navigation);
   }
 
   destroy() {
@@ -144,12 +97,6 @@ export class MissionHud {
     else if (!this.lights.hidden) this.lights.focus();
   }
 
-  focusResult() {
-    this.resultRevealed = true;
-    this.confetti.hidden = this.displayedResult?.status !== 'completed';
-    this.retryButton.focus();
-  }
-
   update(
     mission: MissionSystem,
     position: Vec2,
@@ -158,8 +105,6 @@ export class MissionHud {
     interrupted: boolean,
     checkpointHint: string | undefined,
     speed: number,
-    tokensAwarded: number,
-    tokenBalance: number,
   ) {
     const { target, result, remainingSeconds, elapsedSeconds, shakeLevel } =
       mission;
@@ -175,12 +120,6 @@ export class MissionHud {
     setHidden(this.resume, !!result || !interrupted);
     setHidden(this.timer, !!result);
     setHidden(this.navigation, !!result || preparing);
-    setHidden(this.summary, !result);
-    if (!result) this.resultRevealed = false;
-    setHidden(
-      this.confetti,
-      !this.resultRevealed || result?.status !== 'completed',
-    );
     setHidden(this.parcel, !!result || shakeLevel === undefined);
     if (shakeLevel !== undefined && this.shocks.value !== shakeLevel)
       this.shocks.value = shakeLevel;
@@ -191,60 +130,6 @@ export class MissionHud {
     if (this.photo.disabled !== photoDisabled)
       this.photo.disabled = photoDisabled;
 
-    if (result && this.displayedResult !== result) {
-      const label =
-        result.status === 'completed'
-          ? ui.missionUi.completed
-          : ui.missionUi.failed;
-      setText(this.heading, label);
-      const { stars, points, longestSeries } = result;
-      const labels = [
-        `${ui.missionUi.yourPoints} ${points}`,
-        `${ui.progression.stars} ${stars} ${'★'.repeat(stars)}`.trim(),
-        `${ui.progression.missionSeries} ${longestSeries}`,
-      ];
-      if (result.status === 'completed')
-        labels.push(
-          `${ui.progression.tokens} +${tokensAwarded}`,
-          `${ui.progression.wallet} ${tokenBalance}`,
-        );
-      setText(this.rewards, labels.join(' · '));
-      const details = [
-        `${ui.missionUi.timer} ${clock(Math.floor(result.elapsedSeconds))}`,
-        `${ui.missionUi.goodHabits} ${result.goodHabits}`,
-      ];
-      if (result.penaltyPoints)
-        details.push(`${ui.missionUi.penalties} −${result.penaltyPoints}`);
-      if (result.status === 'failed')
-        details.push(
-          result.reason === 'czas_minal'
-            ? ui.missionUi.timeExpired
-            : result.reason === 'dowolny_blad'
-              ? ui.missionUi.failedClean
-              : result.reason === 'wynik_wyscigu'
-                ? ui.missionUi.raceScoreRequired
-                : ui.missionUi.threeMajor,
-        );
-      else if (!result.timeBonusEligible)
-        details.push(
-          result.illegalShortcut
-            ? ui.missionUi.noShortcutBonus
-            : ui.missionUi.noTimeBonus,
-        );
-      if (result.opponentScore !== undefined)
-        details.push(`${ui.missionUi.turboPoints} ${result.opponentScore}`);
-      if (result.shocks !== undefined)
-        details.push(
-          `${ui.missionUi.shocks} ${Math.round(result.shocks * 100)}%`,
-        );
-      if (result.smoothBonus)
-        details.push(`${ui.missionUi.smoothBonus} +${result.smoothBonus}`);
-      if (result.photos)
-        details.push(`${ui.missionUi.photos} ${result.photos}`);
-      if (result.illegalShortcut) details.push(ui.missionUi.illegalShortcut);
-      setText(this.resultText, details.join(' · '));
-      this.displayedResult = result;
-    }
     if (!target) return;
 
     setText(
@@ -263,7 +148,7 @@ export class MissionHud {
         ? Math.floor(elapsedSeconds)
         : Math.ceil(remainingSeconds);
     if (this.displayedSeconds !== seconds) {
-      this.timer.textContent = clock(seconds);
+      this.timer.textContent = missionClock(seconds);
       this.displayedSeconds = seconds;
     }
     this.drawArrow(

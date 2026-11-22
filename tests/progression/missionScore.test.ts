@@ -6,6 +6,29 @@ import { readContent } from '../../tools/content';
 
 const { balans } = await readContent();
 const timing = { par_s: 20, limit_s: 60 };
+
+it('itemizes bonuses, the safety combo, penalties and a control answer without changing the total', () => {
+  const score = new MissionScore(balans);
+  for (const kind of ['good', 'good', 'good', 'good', 'minor', 'good'] as const)
+    score.receive(kind);
+  score.answerQuestion(100);
+
+  expect(score.result(timing, 40, true, 0.2)).toEqual({
+    points: 1700,
+    completionPoints: 1000,
+    habitPoints: 300,
+    penaltyPoints: 150,
+    questionPoints: 100,
+    timeBonus: 250,
+    smoothBonus: 200,
+  });
+  score.receive('major');
+  expect(score.result(timing, 40, true, 0.2)).toMatchObject({
+    points: 1150,
+    penaltyPoints: 450,
+    timeBonus: 0,
+  });
+});
 const good: Verdict = {
   kind: 'good',
   ruleId: 'ZNAK-STOP',

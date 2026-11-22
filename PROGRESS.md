@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan na 22.11.2026. Gałąź `feat/61-m7c-licencja`.
+Stan na 22.11.2026. Gałąź `feat/70-m8c-moment-chwaly`.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -12,11 +12,18 @@ Stan na 22.11.2026. Gałąź `feat/61-m7c-licencja`.
 | M5     | Punktacja, progresja, zapis                 | M5a (#44), M5b (#46) i M5c (#54) w `main`.                                                   |
 | M6     | Mapy Warszawy i Wrocławia                   | M6a–d: dwie mapy, dwie kampanie i wybór miasta. Raport strict obejmuje oba miasta.           |
 | M7     | Plac, quiz, egzamin                         | Ukończony. Plac (M7a), quiz (M7b) i egzamin z Licencją (M7c).                                |
-| M8     | Audio i szlif                               | M8a w `main`. M8b w PR do #69. Ekran wyników (M8c) przed realizacją.                         |
+| M8     | Audio i szlif                               | M8a (#71) i M8b (#72) w `main`. M8c (#70) kończy kamień milowy.                              |
 | M9     | PWA, Capacitor, Android/iOS                 | Nierozpoczęty                                                                                |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Nierozpoczęty                                                                                |
 
-## M8b — noc i pogoda
+## M8 — audio i szlif
+
+- M8a dodało trzy stacje Radia Szprycha FM, proceduralne efekty dźwiękowe oraz polskiego lektora korzystającego z lokalnego głosu systemowego. Muzyka, efekty i lektor mają osobną regulację głośności.
+- M8c zamyka misję ekranem wyników. Pokazuje gwiazdki, żetony, rozbicie punktów, dobre nawyki, opanowanie reguł i jedną wskazówkę. Gracz może powtórzyć misję, otworzyć SzprychaApp lub wrócić do mapy miast.
+- Moment chwały odtwarza maksymalnie dwie sekundy zapamiętanych klatek przed potwierdzonym dobrym nawykiem. Przycisk „Pomiń animację” wyświetla od razu kadr z dobrym nawykiem. Przy ograniczeniu ruchu lub ustawieniu „Mniej efektów” ekran otwiera się ze statycznym kadrem. Ekran obsługuje klawiaturę, pad i dotyk oraz ma trzy rozmiary tekstu i wysoki kontrast. [Zrzut wyniku i momentu chwały](docs/screenshots/70-moment-chwaly.png)
+- M8 korzysta z własnego kodu, grafiki z repozytorium i systemowego lektora. Instalacja PWA oraz paczki mobilne należą do M9.
+
+### M8b — noc i pogoda
 
 - Nocny kurs korzysta z przyciemnienia, stożka lampki i czerwonego odblasku reagującego na reflektory. Opcjonalna kamizelka daje premię WYP-06 podczas bezpiecznej jazdy po ciemku.
 - Misje rozróżniają lekki deszcz, ulewę, śnieg i gęstą mgłę. W GDZIE-04 obowiązują wyjątki z danych przepisu, a GDZIE-05 nadal chroni pierwszeństwo pieszych. Hamowanie roweru korzysta z mnożników przyczepności w `content/balans.yaml`.

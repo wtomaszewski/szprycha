@@ -50,6 +50,12 @@ export class RoadVisit {
     >,
   ) {}
 
+  hasActiveViolation(tick: number) {
+    for (const episode of this.episodes.values())
+      if (episode.reported && tick - episode.tick <= EXIT_TICKS) return true;
+    return false;
+  }
+
   evaluate(
     rider: RiderState,
     agents: readonly AgentState[],
