@@ -55,6 +55,7 @@ export function drawCyclist(
 
 export class TrafficArt {
   readonly reach: number;
+  readonly nose: number;
   private readonly image: GameObjects.Image;
   private readonly rear?: GameObjects.Image;
   private readonly row: number;
@@ -96,7 +97,8 @@ export class TrafficArt {
         break;
     }
     const [width, height] = spriteSheets[key];
-    this.reach = Math.hypot(width / 2, this.rear ? height : height / 2);
+    this.nose = this.rear ? height : height / 2;
+    this.reach = Math.hypot(width / 2, this.nose);
     this.image = scene.add
       .image(0, 0, key, kind === 'tram' ? this.row * 2 : 0)
       .setDepth(17);

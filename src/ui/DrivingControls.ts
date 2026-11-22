@@ -21,8 +21,10 @@ export class DrivingControls {
     bell: false,
     lights: false,
   };
-  lite = false;
-  paused = false;
+  previewNight = false;
+  private readonly pauseMenu = document.createElement('dialog');
+  readonly quickActions = document.createElement('div');
+  readonly details = document.createElement('div');
   private x = 0;
   private y = 0;
   private braking = false;
@@ -31,11 +33,12 @@ export class DrivingControls {
   readonly speed = document.createElement('output');
   readonly mode = document.createElement('span');
   readonly notice = document.createElement('p');
-  private pauseButton!: HTMLButtonElement;
+  private readonly pauseButton: HTMLButtonElement;
   private readonly lightButton: HTMLButtonElement;
   private toggleLabel!: HTMLButtonElement;
   constructor(
     areaTitle: string,
+    private readonly visuals: { lite: boolean; rain: boolean },
     private toggle: () => void,
     reset: () => void,
     menu: () => void,
@@ -48,15 +51,22 @@ export class DrivingControls {
     this.padButtons = pad?.buttons.map((button) => button.pressed) ?? [];
     this.root.className = 'driving-ui';
     this.root.setAttribute('aria-label', ui.driving.controls);
-    const bar = document.createElement('div');
-    bar.className = 'drive-bar';
-    const title = document.createElement('strong');
+    const { quickActions, pauseMenu } = this;
+    quickActions.className = 'ride-quick-actions';
+    pauseMenu.className = 'game-dialog ride-pause';
+    pauseMenu.setAttribute('aria-labelledby', 'ride-pause-title');
+    const heading = document.createElement('h2');
+    heading.id = 'ride-pause-title';
+    heading.textContent = ui.driving.paused;
+    const options = document.createElement('div');
+    options.className = 'ride-pause-options';
+    const title = document.createElement('p');
     title.textContent = areaTitle;
     this.speed.setAttribute('aria-label', ui.driving.speed);
     const button = (
       text: string,
       action: () => void,
-      parent: HTMLElement = bar,
+      parent: HTMLElement = options,
     ) => {
       const b = document.createElement('button');
       b.type = 'button';
@@ -65,7 +75,15 @@ export class DrivingControls {
       parent.append(b);
       return b;
     };
-    bar.append(title, this.speed, this.mode);
+    this.details.className = 'ride-details';
+    this.details.append(this.speed, this.mode);
+    this.pauseButton = button('', () => this.togglePause(), quickActions);
+    this.pauseButton.setAttribute('aria-label', ui.driving.pause);
+    this.pauseButton.setAttribute('aria-haspopup', 'dialog');
+    this.pauseButton.setAttribute('aria-keyshortcuts', 'Escape');
+    this.pauseButton.className = 'ride-pause-icon';
+    const resume = button(ui.driving.resume, () => this.togglePause());
+    resume.autofocus = true;
 
     const scheme = button(ui.driving.classic, () => {
       this.scheme = this.scheme === 'simple' ? 'classic' : 'simple';
@@ -73,25 +91,32 @@ export class DrivingControls {
       this.clear();
     });
     scheme.textContent = ui.driving[this.scheme];
-    const pause = button(ui.driving.pause, () => {
-      this.paused = !this.paused;
-      pause.textContent = this.paused ? ui.driving.resume : ui.driving.pause;
-      this.clear();
-    });
-    this.pauseButton = pause;
-    const lite = button(ui.driving.full, () => {
-      this.lite = !this.lite;
+    const applyQuality = () => {
+      this.root.toggleAttribute('data-lite', this.lite);
       lite.textContent = this.lite ? ui.driving.lite : ui.driving.full;
+    };
+    const lite = button('', () => {
+      this.visuals.lite = !this.lite;
+      applyQuality();
     });
-    button(ui.driving.reset, reset);
+    applyQuality();
+    const rain = button(ui.driving.rain, () => {
+      this.visuals.rain = !this.rain;
+      rain.setAttribute('aria-pressed', String(this.rain));
+    });
+    rain.setAttribute('aria-pressed', String(this.rain));
+    button(ui.driving.reset, () => {
+      this.togglePause();
+      reset();
+    });
     button(ui.driving.menu, menu);
     const help = document.createElement('p');
     help.className = 'drive-help';
     help.textContent = ui.driving.help;
     this.notice.className = 'drive-notice';
     this.notice.setAttribute('role', 'status');
-    this.notice.textContent = ui.driving.prototype;
     help.append(' · ', ui.phone.controls);
+    pauseMenu.append(heading, title, options, help);
     const touch = document.createElement('div');
     touch.className = 'touch-controls';
     const stick = document.createElement('div');
@@ -180,10 +205,14 @@ export class DrivingControls {
         },
         { signal },
       );
-    const projection = document.createElement('label');
+    const projection = document.createElement('div');
     projection.className = 'projection-debug';
     projection.hidden = true;
     const cameraHeight = document.createElement('input');
+    const cameraLabel = document.createElement('label');
+    cameraLabel.textContent = ui.driving.cameraHeight;
+    cameraHeight.id = 'drive-camera-height';
+    cameraLabel.htmlFor = cameraHeight.id;
     cameraHeight.type = 'range';
     cameraHeight.min = '400';
     cameraHeight.max = '2400';
@@ -196,13 +225,42 @@ export class DrivingControls {
     };
     heightValue.textContent = `${cameraHeight.value} px`;
     cameraHeight.addEventListener('input', updateCameraHeight, { signal });
-    projection.append(ui.driving.cameraHeight, cameraHeight, heightValue);
-    this.root.append(bar, help, this.notice, touch, projection);
+    projection.append(cameraLabel, cameraHeight, heightValue);
+    const previewNight = button(
+      ui.driving.previewNight,
+      () => {
+        this.previewNight = !this.previewNight;
+        previewNight.setAttribute('aria-pressed', String(this.previewNight));
+      },
+      projection,
+    );
+    previewNight.setAttribute('aria-pressed', 'false');
+    this.root.append(
+      this.details,
+      quickActions,
+      this.notice,
+      touch,
+      projection,
+      pauseMenu,
+    );
     document.body.append(this.root);
     window.addEventListener(
       'keydown',
       (e) => {
-        if (e.defaultPrevented || this.overlays.keyboard(e)) return;
+        if (e.defaultPrevented) return;
+        if (this.paused) {
+          if (e.code === 'Escape' && !e.repeat) {
+            e.preventDefault();
+            this.togglePause();
+          }
+          return;
+        }
+        if (this.overlays.keyboard(e)) return;
+        if (e.code === 'Escape') {
+          e.preventDefault();
+          if (!e.repeat) this.togglePause();
+          return;
+        }
         if (e.code === 'F3') {
           e.preventDefault();
           if (!e.repeat) {
@@ -230,7 +288,6 @@ export class DrivingControls {
         if (e.repeat) return;
         if (e.code === 'KeyL') lights.click();
         if (e.code === 'KeyX') toggle();
-        if (e.code === 'Escape') pause.click();
         if (e.code === 'KeyR') reset();
       },
       { signal },
@@ -242,7 +299,8 @@ export class DrivingControls {
       'blur',
       () => {
         this.clear();
-        if (!this.paused) pause.click();
+        if (!this.paused && !document.querySelector('dialog[open]'))
+          this.togglePause();
       },
       { signal },
     );
@@ -251,12 +309,35 @@ export class DrivingControls {
       () => {
         if (document.hidden) {
           this.clear();
-          if (!this.paused) pause.click();
+          if (!this.paused && !document.querySelector('dialog[open]'))
+            this.togglePause();
         }
       },
       { signal },
     );
   }
+  get lite() {
+    return this.visuals.lite;
+  }
+
+  get rain() {
+    return this.visuals.rain;
+  }
+
+  get paused() {
+    return this.pauseMenu.open;
+  }
+
+  private togglePause() {
+    this.clear();
+    if (this.paused) {
+      this.pauseMenu.close();
+      this.pauseButton.focus();
+    } else {
+      this.pauseMenu.showModal();
+    }
+  }
+
   setLights(on: boolean) {
     this.actions.lights = on;
     this.lightButton.setAttribute('aria-pressed', String(on));
@@ -275,6 +356,10 @@ export class DrivingControls {
     this.padButtons = pad?.buttons.map((button) => button.pressed) ?? [];
     const justPressed = (button: number) =>
       pressed(button) && !previous[button];
+    if (this.paused) {
+      if (justPressed(9)) this.togglePause();
+      return { x: 0, y: 0, brake: false, scheme: this.scheme };
+    }
     if (this.overlays.gamepad(pressed, justPressed))
       return { x: 0, y: 0, brake: false, scheme: this.scheme };
     const has = (...codes: string[]) => codes.some((c) => this.keys.has(c));
@@ -294,7 +379,7 @@ export class DrivingControls {
       brake ||= !!pad.buttons[1]?.pressed || !!pad.buttons[7]?.pressed;
       if (justPressed(0)) this.toggle();
       if (justPressed(9)) {
-        this.pauseButton.click();
+        this.togglePause();
       }
       if (pad.buttons[4]?.pressed) this.actions.signal = 'left';
       if (pad.buttons[5]?.pressed) this.actions.signal = 'right';

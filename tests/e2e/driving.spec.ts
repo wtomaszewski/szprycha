@@ -37,6 +37,7 @@ test('ride, brake, walk, pause and return to menu', async ({ page }) => {
     .getByRole('button', { name: pl.driving.resume, exact: true })
     .click();
   await page.screenshot({ path: 'test-results/driving.png' });
+  await page.keyboard.press('Escape');
   await page
     .getByRole('button', { name: pl.driving.menu, exact: true })
     .click();
@@ -50,32 +51,32 @@ test('ride, brake, walk, pause and return to menu', async ({ page }) => {
   await expect(page.locator('.driving-ui')).toHaveCount(1);
   expect(errors).toEqual([]);
 });
-test('touch joystick moves in simple mode and releases cleanly', async ({
-  page,
-}) => {
-  await page.goto('/');
-  await expect(page.locator('canvas')).toHaveAttribute(
-    'data-scene',
-    'MainMenu',
-  );
-  await page.keyboard.press('Enter');
-  const canvas = page.locator('canvas');
-  await expect(canvas).toHaveAttribute('data-y', /\d+/);
-  await page
-    .getByRole('button', { name: pl.driving.classic, exact: true })
-    .click();
-  const initial = Number(await canvas.getAttribute('data-y'));
-  const stick = page.locator('.joystick');
-  const box = (await stick.boundingBox())!;
-  await page.mouse.move(box.x + box.width / 2, box.y + 8);
-  await page.mouse.down();
-  await expect
-    .poll(async () => Number(await canvas.getAttribute('data-y')), {
-      intervals: [25, 50, 75],
-    })
-    .toBeLessThan(initial - 12);
-  await page.mouse.up();
-  await expect(canvas).toHaveAttribute('data-speed', '0');
+test.describe('touch input', () => {
+  test.use({ hasTouch: true });
+  test('touch joystick moves in simple mode and releases cleanly', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await expect(page.locator('canvas')).toHaveAttribute(
+      'data-scene',
+      'MainMenu',
+    );
+    await page.keyboard.press('Enter');
+    const canvas = page.locator('canvas');
+    await expect(canvas).toHaveAttribute('data-y', /\d+/);
+    const initial = Number(await canvas.getAttribute('data-y'));
+    const stick = page.locator('.joystick');
+    const box = (await stick.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + 8);
+    await page.mouse.down();
+    await expect
+      .poll(async () => Number(await canvas.getAttribute('data-y')), {
+        intervals: [25, 50, 75],
+      })
+      .toBeLessThan(initial - 12);
+    await page.mouse.up();
+    await expect(canvas).toHaveAttribute('data-speed', '0');
+  });
 });
 
 test('gamepad axes, dismount edge and pause are connected to gameplay', async ({
@@ -174,81 +175,87 @@ test('holding W for one second accelerates, including a non-Element event target
   expect(errors).toEqual([]);
 });
 
-test('touch actions set and release rider state', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.locator('canvas')).toHaveAttribute(
-    'data-scene',
-    'MainMenu',
-  );
-  await page.keyboard.press('Enter');
-  const canvas = page.locator('canvas');
-  for (const [label, key, value] of [
-    [pl.driving.signalLeft, 'signal', 'left'],
-    [pl.driving.signalRight, 'signal', 'right'],
-    [pl.driving.look, 'looking', true],
-    [pl.driving.bell, 'bell', true],
-  ] as const) {
-    const b = page.getByRole('button', { name: label, exact: true });
-    const box = (await b.boundingBox())!;
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-    await page.mouse.down();
-    await expect
-      .poll(
-        async () =>
-          JSON.parse((await canvas.getAttribute('data-actions'))!)[key],
-      )
-      .toBe(value);
-    await page.mouse.up();
-    await expect
-      .poll(
-        async () =>
-          JSON.parse((await canvas.getAttribute('data-actions'))!)[key],
-      )
-      .toBe(key === 'signal' ? null : false);
-  }
-  await page
-    .getByRole('button', { name: pl.driving.lights, exact: true })
-    .click();
-  await expect
-    .poll(
-      async () =>
-        JSON.parse((await canvas.getAttribute('data-actions'))!).lights,
-    )
-    .toBe(true);
-});
-
-for (const [width, height] of [
-  [1024, 768],
-  [1920, 1080],
-  [1366, 768],
-  [844, 390],
-]) {
-  test(`viewport fills ${width}×${height} at maximum integer scale`, async ({
-    page,
-  }) => {
-    await page.setViewportSize({ width: width!, height: height! });
+test.describe('touch actions', () => {
+  test.use({ hasTouch: true });
+  test('touch actions set and release rider state', async ({ page }) => {
     await page.goto('/');
+    await expect(page.locator('canvas')).toHaveAttribute(
+      'data-scene',
+      'MainMenu',
+    );
+    await page.keyboard.press('Enter');
     const canvas = page.locator('canvas');
-    await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
-    const metrics = await canvas.evaluate((c: HTMLCanvasElement) => ({
-      w: c.width,
-      h: c.height,
-      rect: c.getBoundingClientRect().toJSON(),
-      scroll: [
-        document.documentElement.scrollWidth,
-        document.documentElement.scrollHeight,
-      ],
-    }));
-    const zoom = Math.max(1, Math.floor(Math.min(width! / 640, height! / 360)));
-    expect(metrics.w).toBe(Math.floor(width! / zoom));
-    expect(metrics.h).toBe(Math.floor(height! / zoom));
-    expect(metrics.rect.width / metrics.w).toBe(zoom);
-    expect(metrics.rect.height / metrics.h).toBe(zoom);
-    expect(metrics.scroll).toEqual([width, height]);
-    expect(metrics.rect.x).toBeLessThan(zoom);
-    expect(metrics.rect.y).toBeLessThan(zoom);
+    for (const [label, key, value] of [
+      [pl.driving.signalLeft, 'signal', 'left'],
+      [pl.driving.signalRight, 'signal', 'right'],
+      [pl.driving.look, 'looking', true],
+      [pl.driving.bell, 'bell', true],
+    ] as const) {
+      const b = page.getByRole('button', { name: label, exact: true });
+      const box = (await b.boundingBox())!;
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.mouse.down();
+      await expect
+        .poll(
+          async () =>
+            JSON.parse((await canvas.getAttribute('data-actions'))!)[key],
+        )
+        .toBe(value);
+      await page.mouse.up();
+      await expect
+        .poll(
+          async () =>
+            JSON.parse((await canvas.getAttribute('data-actions'))!)[key],
+        )
+        .toBe(key === 'signal' ? null : false);
+    }
+    await page
+      .getByRole('button', { name: pl.driving.lights, exact: true })
+      .click();
+    await expect
+      .poll(
+        async () =>
+          JSON.parse((await canvas.getAttribute('data-actions'))!).lights,
+      )
+      .toBe(true);
   });
-}
+
+  for (const [width, height] of [
+    [1024, 768],
+    [1920, 1080],
+    [1366, 768],
+    [844, 390],
+  ]) {
+    test(`viewport fills ${width}×${height} at maximum integer scale`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: width!, height: height! });
+      await page.goto('/');
+      const canvas = page.locator('canvas');
+      await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
+      const metrics = await canvas.evaluate((c: HTMLCanvasElement) => ({
+        w: c.width,
+        h: c.height,
+        rect: c.getBoundingClientRect().toJSON(),
+        scroll: [
+          document.documentElement.scrollWidth,
+          document.documentElement.scrollHeight,
+        ],
+      }));
+      const zoom = Math.max(
+        1,
+        Math.floor(Math.min(width! / 640, height! / 360)),
+      );
+      expect(metrics.w).toBe(Math.floor(width! / zoom));
+      expect(metrics.h).toBe(Math.floor(height! / zoom));
+      expect(metrics.rect.width / metrics.w).toBe(zoom);
+      expect(metrics.rect.height / metrics.h).toBe(zoom);
+      expect(metrics.scroll).toEqual([width, height]);
+      expect(metrics.rect.x).toBeLessThan(zoom);
+      expect(metrics.rect.y).toBeLessThan(zoom);
+    });
+  }
+});
 
 test('phone portrait shows rotation prompt; landscape keeps controls compact', async ({
   browser,
@@ -273,9 +280,13 @@ test('phone portrait shows rotation prompt; landscape keeps controls compact', a
   await page.locator('canvas').tap({ position: { x: 282, y: 234 } });
   await expect(page.locator('canvas')).toHaveAttribute('data-scene', 'City');
   const area = await page.evaluate(() => {
-    const rects = ['.drive-bar', '.joystick', '.touch-actions'].map((s) =>
-      document.querySelector(s)!.getBoundingClientRect(),
-    );
+    const rects = [
+      '.ride-hud-left',
+      '.ride-hud-right',
+      '.ride-quick-actions',
+      '.joystick',
+      '.touch-actions',
+    ].map((s) => document.querySelector(s)!.getBoundingClientRect());
     return (
       rects.reduce((sum, r) => sum + r.width * r.height, 0) /
       (innerWidth * innerHeight)

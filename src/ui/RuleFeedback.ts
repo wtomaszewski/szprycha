@@ -15,12 +15,17 @@ export class RuleFeedback {
       rules.map(({ id, feedback }) => [`przepisy.${id}.feedback`, feedback]),
     );
     this.counts.className = 'rule-counts';
+    this.counts.hidden = true;
     this.counts.setAttribute('aria-label', ui.rules.counts);
     this.counts.setAttribute('aria-live', 'off');
     this.bubble.className = 'rule-feedback';
     this.bubble.setAttribute('role', 'status');
     this.bubble.hidden = true;
     parent.append(this.counts, this.bubble);
+  }
+
+  setDebugVisible(visible: boolean) {
+    this.counts.hidden = !visible;
   }
 
   explanation(verdict: Verdict) {
@@ -53,7 +58,8 @@ export class RuleFeedback {
   }
 
   private showCounts({ good, minor, major }: RuleEngine['counts']) {
-    this.counts.textContent = `${ui.rules.good} ${good} · ${ui.rules.minor} ${minor} · ${ui.rules.major} ${major}`;
+    const text = `${ui.rules.good} ${good} · ${ui.rules.minor} ${minor} · ${ui.rules.major} ${major}`;
+    if (this.counts.textContent !== text) this.counts.textContent = text;
   }
 
   update(at: number) {

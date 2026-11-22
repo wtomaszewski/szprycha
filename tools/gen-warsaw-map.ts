@@ -682,9 +682,8 @@ objectLayer('districts', [
   rect('wisla', pragaEdge, 0, riverWest - pragaEdge, mapHeight),
   rect('stare-miasto', riverWest, 0, mapWidth - riverWest, mapHeight),
 ]);
-objectLayer('map_decorations', [
-  rect('pylon', 2537, 529, 0, 0, { kind: 'bridge' }),
-]);
+const decorations = [rect('pylon', 2537, 529, 0, 0, { kind: 'bridge' })];
+objectLayer('map_decorations', decorations);
 objectLayer(
   'props',
   (
@@ -714,9 +713,24 @@ objectLayer(
       ['lamp', 1290, 1008],
       ['bench', 1204, 1006],
       ['bin', 1233, 1006],
+      ['tree', 759, 1221],
+      ['lamp', 583, 1164, 2],
+      ['lamp', 720, 1011],
+      ['lamp', 2204, 314],
+      ['lamp', 2379, 318],
+      ['lamp', 2625, 318],
+      ['lamp', 2744, 516, 2],
+      ['lamp', 3050, 665],
+      ['lamp', 3286, 655],
+      ['lamp', 3545, 702],
     ] as const
   ).map(([kind, x, y, turn = 0]) =>
     rect(`prop-${kind}-${x}-${y}`, x, y, 0, 0, { kind, turn }),
   ),
+);
+decorations.push(
+  rect('neon-brama', 746, 984, 0, 0, { kind: 'neon' }),
+  rect('neon-warsztat', 921, 215, 0, 0, { kind: 'neon' }),
+  rect('neon-bazar', 1419, 946, 0, 0, { kind: 'neon' }),
 );
 await write('warszawa', 9, tileTerrain(width, height, surfaces), markings);

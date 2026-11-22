@@ -6,6 +6,7 @@ import { expect, test } from 'vitest';
 import manifest from '../assets/manifest.json';
 import { BALL_FRAME, tiles } from '../src/render/artFrames';
 import { cityArt } from '../tools/city-art';
+import { effectArt } from '../tools/effect-art';
 import { tileTerrain } from '../tools/tile-terrain';
 
 const digest = (png: PNG) =>
@@ -34,6 +35,21 @@ test('city atlases reproduce the checked-in PNGs for seed 30', () => {
           throw new Error(`${file}: color ${color} is outside the palette`);
       }
   }
+});
+
+test('the generated effects atlas is reproducible and uses the project palette', () => {
+  const atlas = effectArt();
+  expect(PNG.sync.write(atlas)).toEqual(
+    readFileSync('assets/generated/city-effects.png'),
+  );
+  const palette = new Set(
+    readFileSync('assets/palette.hex', 'utf8').trim().split('\n'),
+  );
+  const colors = new Set<string>();
+  for (let i = 0; i < atlas.data.length; i += 4)
+    if (atlas.data[i + 3])
+      colors.add('#' + atlas.data.subarray(i, i + 3).toString('hex'));
+  expect([...colors].filter((color) => !palette.has(color))).toEqual([]);
 });
 
 test('manifest covers every generated image and the declared frame grid fits', () => {

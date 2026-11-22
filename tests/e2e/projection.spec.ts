@@ -1,5 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 
+// Freeze decorative animation so the snapshots compare the projected geometry.
+test.use({ reducedMotion: 'reduce' });
+
 const hideControls = '.driving-ui { visibility: hidden; }';
 
 interface MapObject {

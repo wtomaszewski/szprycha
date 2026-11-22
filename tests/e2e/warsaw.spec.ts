@@ -184,9 +184,11 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
           page.getByText(pl.misje[id].cel4, { exact: true }),
         ).toBeVisible();
       }
+      await page.keyboard.press('Escape');
       await page
         .getByRole('button', { name: pl.driving.classic, exact: true })
         .click();
+      await page.keyboard.press('Escape');
       if (id === 'WAW-A1-03') {
         // The keyboard has already cleared STOP. Now enter the passage and deliver.
         await routeWithGamepad(page, warsawRoutes[id].shortcut.slice(-2));

@@ -94,6 +94,7 @@ test('recovers from a helmet mistake and finishes after stopping at B-20', async
   await expect(
     page.getByText(pl.missionUi.completed, { exact: true }),
   ).toBeVisible();
+  await expect(page.locator('.mission-confetti')).toBeVisible();
   await expect(
     page.getByText(pl.missionUi.noTimeBonus, { exact: false }),
   ).toBeVisible();
