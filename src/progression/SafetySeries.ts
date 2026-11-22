@@ -3,6 +3,14 @@ import type { Verdict } from '../rules/types';
 
 type ComboBalance = GameContent['balans']['combo'];
 
+export function seriesMultiplier(balance: ComboBalance, consecutive: number) {
+  return Math.min(
+    balance.max_mnoznik,
+    balance.mnoznik_startowy +
+      Math.floor(consecutive / balance.krok_dobrych_nawykow),
+  );
+}
+
 export class SafetySeries {
   constructor(
     private readonly balance: ComboBalance,
@@ -11,11 +19,7 @@ export class SafetySeries {
   ) {}
 
   get multiplier() {
-    return Math.min(
-      this.balance.max_mnoznik,
-      this.balance.mnoznik_startowy +
-        Math.floor(this.consecutive / this.balance.krok_dobrych_nawykow),
-    );
+    return seriesMultiplier(this.balance, this.consecutive);
   }
 
   get glowing() {

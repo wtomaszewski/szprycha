@@ -61,3 +61,15 @@ it('accumulates unlock flags and gates the licence exam on mastery of all eight 
   expect(progress.rank(content)?.id).toBe('legenda');
   expect(progress.unlocks(content)).toContain('zloty_dzwonek');
 });
+
+it('keeps the configured future quiz and exam thresholds from docs/04', () => {
+  expect(balans.leitner_odstepy_dni).toEqual([0, 1, 3, 7, 14]);
+  expect(balans.licencja).toEqual({
+    mastery_min_modul: 70,
+    teoria_pytan: 25,
+    teoria_prog: 0.8,
+    plac_prog: 0.9,
+    przejazd_max_minor: 2,
+    przejazd_max_major: 0,
+  });
+});

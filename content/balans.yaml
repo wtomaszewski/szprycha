@@ -61,5 +61,14 @@ wiek:                    # parametry prawne — do aktualizacji po ewentualnej r
   karta_od_lat: 10
   karta_wymagana_do_lat: 18
   dziecko_jako_pieszy_do_lat: 10
+album:
+  zasieg_zdjecia_m: 6
+osiagniecia:
+  xp_za_zeton: 2
+wyzwania_dzienne:
+  liczba: 3
+  z_najslabszego_modulu: 2
+  zetony: 10
 zdrowe_granie:
   przypomnienie_po_min: 30
+  opcje_min: [15, 30, 45, 60]

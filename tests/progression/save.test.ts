@@ -61,7 +61,7 @@ it('migrates the M5a localStorage profile and retires it after the commit', asyn
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 2,
+    version: 3,
     missionPoints: 0,
     mastery: {},
   });
@@ -93,7 +93,7 @@ it('upgrades an IndexedDB v1 record and prefers it over remaining localStorage',
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 2,
+    version: 3,
     bestScores: {},
     quizXp: 0,
   });
@@ -116,7 +116,7 @@ it.each(['legacy', 'indexeddb'])(
     const store = await ProgressStore.open(factory, storage);
     expect(store).toMatchObject({ reset: true, sessionOnly: false });
     expect(store.profile).toMatchObject({
-      version: 2,
+      version: 3,
       completed: [],
       missionPoints: 0,
     });
@@ -147,9 +147,38 @@ it('keeps playing in session memory when IndexedDB is unavailable or rejects acc
   }
 });
 
+it('preserves M5b progress when adding the album and milestone counters', async () => {
+  const factory = new IDBFactory();
+  const profile = {
+    ...legacy,
+    version: 2,
+    nicknameSeed: 42,
+    missionPoints: 4200,
+    bestScores: { [first.id]: 1200 },
+    quizXp: 30,
+    achievementXp: { old: 20 },
+    licencePassed: false,
+    mastery: {
+      'ZNAK-STOP': { value: 80, goodDay: '2026-11-22', goodToday: 10 },
+    },
+  };
+  await seed(factory, profile);
+  const store = await ProgressStore.open(factory);
+  expect(store.reset).toBe(false);
+  expect(store.profile).toMatchObject({
+    ...profile,
+    version: 3,
+    signPhotos: {},
+    goodHabits: {},
+    cleanMissions: {},
+    stickers: [],
+  });
+  expect((await ProgressStore.open(factory)).profile).toEqual(store.profile);
+});
+
 it('preserves an unsupported future save', async () => {
   const factory = new IDBFactory();
-  const future = { version: 3, data: 'future' };
+  const future = { version: 4, data: 'future' };
   await seed(factory, future);
   const store = await ProgressStore.open(factory);
   expect(store).toMatchObject({ reset: false, sessionOnly: true });

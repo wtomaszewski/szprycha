@@ -17,6 +17,7 @@ export const contentFiles = [
   'pytania.json',
   'balans.yaml',
   'osiagniecia.yaml',
+  'wyzwania.yaml',
 ] as const;
 export async function readMissions(root: string) {
   const directory = resolve(root, 'content/misje');
@@ -103,6 +104,10 @@ export async function readContent(root = process.cwd()) {
       if (key && !textAt(translations, key))
         throw new Error(`Mission ${mission.id}: missing translation ${key}`);
     }
+  }
+  for (const { naklejka } of content.wyzwania.wyzwania) {
+    if (!textAt(translations, `m5c.stickerNames.${naklejka}`))
+      throw new Error(`Missing sticker translation: ${naklejka}`);
   }
   const ruleIds = new Set(content.przepisy.przepisy.map(({ id }) => id));
   for (const id of eventIds) {

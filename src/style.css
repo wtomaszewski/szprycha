@@ -1050,3 +1050,194 @@ button[aria-pressed='true'] {
     grid-template-columns: 1fr;
   }
 }
+
+.menu-progress {
+  position: fixed;
+  top: calc(50% + 140px * var(--menu-zoom, 1));
+  left: 50%;
+  width: min(calc(584px * var(--menu-zoom, 1)), calc(100vw - 12px));
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.menu-progress button {
+  min-width: 0;
+  font-size: clamp(12px, 2.1vw, 15px);
+  padding-inline: 8px;
+}
+
+.progress-panel {
+  box-sizing: border-box;
+  width: min(640px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  padding: 16px 20px;
+}
+
+.progress-panel header {
+  position: sticky;
+  z-index: 1;
+  top: -16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-block: 8px;
+  background: #1a1c2c;
+  border-bottom: 1px solid #566c86;
+}
+
+.progress-panel h2,
+.progress-panel h3 {
+  margin: 0;
+  color: #ffcd75;
+}
+
+.progress-panel p {
+  margin: 4px 0;
+}
+
+.progress-panel header + div {
+  margin-top: 12px;
+}
+
+.album-cards,
+.progress-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.album-cards li,
+.progress-cards li {
+  border: 1px solid #566c86;
+  background: #333c57;
+  padding: 10px;
+}
+
+.album-cards li:not(.album-missing) {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  align-items: center;
+  gap: 4px 12px;
+}
+
+.album-cards img {
+  grid-row: span 2;
+  image-rendering: pixelated;
+}
+
+.album-cards .album-missing {
+  background: none;
+}
+
+.progress-panel summary {
+  cursor: pointer;
+  padding-block: 4px;
+}
+
+.album-missing h3 {
+  color: #c0cbdc;
+}
+
+.progress-cards progress {
+  width: 100%;
+  accent-color: #73eff7;
+}
+
+.sticker-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sticker-list li {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  border: 1px solid #566c86;
+  padding: 5px 8px;
+}
+
+.sticker-icon {
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 3px solid #ffcd75;
+  background: #ef7d57;
+}
+
+.sticker-kolo {
+  border-radius: 50%;
+  background: #257179;
+}
+
+.sticker-szprycha {
+  clip-path: polygon(
+    50% 0,
+    65% 35%,
+    100% 50%,
+    65% 65%,
+    50% 100%,
+    35% 65%,
+    0 50%,
+    35% 35%
+  );
+  background: #73eff7;
+  border: 0;
+}
+
+.ride-camera::before {
+  content: '';
+  width: 19px;
+  height: 14px;
+  box-sizing: border-box;
+  border: 2px solid currentColor;
+  background: radial-gradient(
+    circle at center,
+    currentColor 2px,
+    transparent 3px
+  );
+}
+
+.break-reminder {
+  position: absolute;
+  z-index: 2;
+  top: max(72px, calc(64px + env(safe-area-inset-top)));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(258px, calc(100% - 32px));
+  padding: 8px;
+  color: #f4f4f4;
+  background: #1a1c2c;
+  border: 1px solid #ffcd75;
+  pointer-events: auto;
+}
+
+.break-reminder strong {
+  color: #ffcd75;
+}
+
+.break-reminder p {
+  margin: 4px 0;
+}
+
+@media (max-width: 540px) {
+  .menu-progress {
+    inset: auto 4px max(4px, env(safe-area-inset-bottom));
+    width: auto;
+    transform: none;
+  }
+
+  .progress-cards {
+    grid-template-columns: 1fr;
+  }
+}
