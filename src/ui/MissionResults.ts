@@ -2,6 +2,8 @@ import { missionClock, translate, ui } from '../core/presentation';
 import type { ProgressStore } from '../core/progressStore';
 import type { MissionResult } from '../gameplay/MissionSystem';
 
+import { accessibilityPreferences } from './RidePreferences';
+
 const labels = ui.missionResults;
 type RuleSummary = {
   name: string;
@@ -36,15 +38,13 @@ export class MissionResults {
   private readonly skip = textElement('button', labels.skip);
   private readonly retry = textElement('button', ui.missionUi.retry);
   private readonly map = textElement('button', labels.map);
-  private readonly effects = document.createElement('input');
-  private readonly contrast = document.createElement('input');
-  private readonly size = document.createElement('select');
+  private readonly preferences = document.createElement('details');
   private readonly confetti = document.createElement('div');
 
   constructor(
     parent: HTMLElement,
-    store: ProgressStore,
-    skip: () => void,
+    private readonly store: ProgressStore,
+    private readonly skipAnimation: () => void,
     retry: () => void,
     openPhone: () => void,
     map: () => void,
@@ -52,48 +52,9 @@ export class MissionResults {
     this.dialog.className = 'game-dialog mission-results';
     this.dialog.setAttribute('aria-labelledby', 'mission-result-heading');
     this.region.setAttribute('aria-label', ui.missionUi.result);
+    this.body.className = 'result-body';
     this.heading.id = 'mission-result-heading';
     this.heading.tabIndex = -1;
-
-    const preferences = document.createElement('details');
-    preferences.append(textElement('summary', ui.settings.accessibility));
-    const size = textElement('label', labels.textSize);
-    for (const key of ['medium', 'large', 'largest'] as const)
-      this.size.add(new Option(labels[key], key));
-    size.append(this.size);
-    this.size.value = store.profile.resultsTextSize ?? 'medium';
-    this.dialog.dataset.textSize = this.size.value;
-    this.size.addEventListener('change', () => {
-      const size = this.size.value;
-      if (size !== 'medium' && size !== 'large' && size !== 'largest') return;
-      this.dialog.dataset.textSize = size;
-      store.change((profile) => {
-        profile.resultsTextSize = size;
-      });
-    });
-    const contrast = textElement('label', labels.highContrast);
-    contrast.prepend(this.contrast);
-    this.contrast.type = this.effects.type = 'checkbox';
-    this.contrast.checked = store.profile.resultsHighContrast ?? false;
-    this.dialog.toggleAttribute('data-contrast', this.contrast.checked);
-    this.contrast.addEventListener('change', () => {
-      const checked = this.contrast.checked;
-      this.dialog.toggleAttribute('data-contrast', checked);
-      store.change((profile) => {
-        profile.resultsHighContrast = checked;
-      });
-    });
-    const effects = textElement('label', ui.settings.reducedEffects);
-    effects.prepend(this.effects);
-    this.effects.checked = store.profile.reducedEffects;
-    this.effects.addEventListener('change', () => {
-      const checked = this.effects.checked;
-      store.change((profile) => {
-        profile.reducedEffects = checked;
-      });
-      if (checked) skip();
-    });
-    preferences.append(size, contrast, effects);
 
     const actions = document.createElement('footer');
     const phone = textElement('button', ui.phone.title);
@@ -101,7 +62,7 @@ export class MissionResults {
     phone.setAttribute('aria-haspopup', 'dialog');
     phone.setAttribute('aria-controls', 'mission-phone');
     for (const [button, action] of [
-      [this.skip, skip],
+      [this.skip, skipAnimation],
       [this.retry, retry],
       [phone, openPhone],
       [this.map, map],
@@ -112,7 +73,7 @@ export class MissionResults {
     actions.append(this.retry, phone, this.map);
     this.dialog.addEventListener('cancel', (event) => {
       event.preventDefault();
-      if (!this.skip.hidden) skip();
+      if (!this.skip.hidden) skipAnimation();
     });
 
     this.confetti.className = 'mission-confetti';
@@ -129,7 +90,7 @@ export class MissionResults {
       this.heading,
       this.skip,
       this.body,
-      preferences,
+      this.preferences,
       actions,
     );
     this.dialog.append(this.confetti, this.region);
@@ -150,6 +111,11 @@ export class MissionResults {
     tip: string,
     reduced: boolean,
   ) {
+    this.preferences.open = false;
+    this.preferences.replaceChildren(
+      textElement('summary', ui.settings.accessibility),
+      ...accessibilityPreferences(this.store, this.skipAnimation),
+    );
     const mission = ui.missionUi;
     const completed = result.status === 'completed';
     const hasReplay = Boolean(habit);
@@ -216,13 +182,11 @@ export class MissionResults {
       mastery.append(item);
     }
 
-    this.body.replaceChildren(
-      missionName,
-      highlights,
-      glory,
-      textElement('h3', labels.score),
-      scores,
-    );
+    const overview = document.createElement('section');
+    overview.append(missionName, highlights, glory);
+    const breakdown = document.createElement('section');
+    breakdown.append(textElement('h3', labels.score), scores);
+    this.body.replaceChildren(overview, breakdown);
     const outcomeText =
       result.status === 'failed'
         ? result.reason === 'czas_minal'
@@ -237,15 +201,15 @@ export class MissionResults {
           : !result.timeBonusEligible
             ? mission.noTimeBonus
             : '';
-    if (outcomeText) this.body.append(textElement('p', outcomeText));
+    if (outcomeText) overview.append(textElement('p', outcomeText));
     if (result.illegalShortcut)
-      this.body.append(textElement('p', mission.illegalShortcut));
+      overview.append(textElement('p', mission.illegalShortcut));
     if (tip)
-      this.body.append(
+      overview.append(
         textElement('h3', labels.remember),
         textElement('p', tip),
       );
-    this.body.append(
+    breakdown.append(
       textElement('h3', labels.mastery),
       mastery.childElementCount
         ? mastery

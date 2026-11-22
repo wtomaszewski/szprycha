@@ -3,8 +3,9 @@ import notices from 'virtual:third-party-notices';
 import type { GameContent } from '../content/schemas';
 import { translate, ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
-import { ridePreference } from './RidePreferences';
+import { accessibilityPreferences, ridePreference } from './RidePreferences';
 import { audioSettings } from './AudioControls';
+import { touchLayoutEditor } from './TouchLayout';
 import { signIllustration } from './SignIllustration';
 
 function paragraph(text: string) {
@@ -42,10 +43,12 @@ export function progressPanels(
   const about = document.createElement('button');
   about.type = 'button';
   about.textContent = ui.settings.about;
+  const editor = touchLayoutEditor(progress.store);
   const settings = () => [
-    audioSettings(progress.store),
     heading(ui.settings.accessibility),
-    ridePreference(progress.store, 'reducedEffects'),
+    ...accessibilityPreferences(progress.store),
+    editor.open,
+    audioSettings(progress.store),
     heading(ui.settings.equipment),
     ridePreference(progress.store, 'reflectiveVest'),
     heading(ui.m5c.breakSettings),
@@ -96,6 +99,7 @@ export function progressPanels(
     );
     back.focus();
   });
+  dialog.append(editor.dialog);
   return { dialog, navigation };
 }
 

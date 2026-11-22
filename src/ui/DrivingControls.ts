@@ -2,7 +2,13 @@ import type { DriveInput, Scheme, RiderState } from '../gameplay/bicycle';
 import { ui } from '../core/presentation';
 import { CAMERA_HEIGHT_PX } from '../render/projection';
 import type { ProgressStore } from '../core/progressStore';
-import { ridePreference } from './RidePreferences';
+import { accessibilityPreferences, ridePreference } from './RidePreferences';
+import {
+  positionTouchActions,
+  touchLayoutEditor,
+  touchSymbols,
+} from './TouchLayout';
+import type { TouchAction } from '../core/touchLayout';
 import { audioSettings } from './AudioControls';
 interface OverlayControls {
   keyboard(event: KeyboardEvent): boolean;
@@ -26,14 +32,16 @@ export class DrivingControls {
   };
   previewNight = false;
   onResume?: () => void;
+  private readonly preferences = document.createElement('details');
   private readonly soundOptions = document.createElement('details');
+  private readonly layoutEditor: HTMLDialogElement;
   private readonly pauseMenu = document.createElement('dialog');
   readonly quickActions = document.createElement('div');
   readonly details = document.createElement('div');
   readonly progressDetails = document.createElement('p');
   private x = 0;
   private y = 0;
-  private braking = false;
+  private readonly touchKeys = new Set<string>();
   private padButtons: boolean[] = [];
   private abort = new AbortController();
   readonly speed = document.createElement('output');
@@ -58,7 +66,7 @@ export class DrivingControls {
     const signal = this.abort.signal;
     const pad = navigator.getGamepads?.().find((gamepad) => gamepad?.connected);
     this.padButtons = pad?.buttons.map((button) => button.pressed) ?? [];
-    this.root.className = 'driving-ui';
+    this.root.className = plac ? 'driving-ui driving-plac' : 'driving-ui';
     this.root.setAttribute('aria-label', ui.driving.controls);
     const { quickActions, pauseMenu } = this;
     quickActions.className = 'ride-quick-actions';
@@ -141,103 +149,113 @@ export class DrivingControls {
       this.soundOptions,
       help,
     );
-    if (!plac)
-      options.append(
-        ridePreference(progress, 'reducedEffects'),
-        ridePreference(progress, 'reflectiveVest'),
-      );
+    pauseMenu.insertBefore(this.preferences, this.soundOptions);
     const touch = document.createElement('div');
     touch.className = 'touch-controls';
     const stick = document.createElement('div');
     stick.className = 'joystick';
-    stick.textContent = '✥';
+    const thumb = document.createElement('span');
+    thumb.textContent = '✥';
+    stick.append(thumb);
     stick.setAttribute('aria-label', ui.driving.joystick);
-    let pointer: number | null = null;
+    let pointer: number | undefined;
+    let anchorX = 0;
+    let anchorY = 0;
+    let throwDistance = 0;
     const move = (e: PointerEvent) => {
-      const r = stick.getBoundingClientRect();
-      this.x = Math.max(
-        -1,
-        Math.min(1, (e.clientX - r.left - r.width / 2) / (r.width / 2)),
-      );
-      this.y = Math.max(
-        -1,
-        Math.min(1, (e.clientY - r.top - r.height / 2) / (r.height / 2)),
-      );
+      if (e.pointerId !== pointer) return;
+      this.x = Math.max(-1, Math.min(1, (e.clientX - anchorX) / throwDistance));
+      this.y = Math.max(-1, Math.min(1, (e.clientY - anchorY) / throwDistance));
+      thumb.style.translate = `${this.x * throwDistance}px ${this.y * throwDistance}px`;
     };
     stick.addEventListener(
       'pointerdown',
       (e) => {
+        if (pointer !== undefined || e.button !== 0) return;
         pointer = e.pointerId;
+        anchorX = e.clientX;
+        anchorY = e.clientY;
+        throwDistance = stick.clientWidth / 3;
         stick.setPointerCapture(pointer);
-        move(e);
       },
       { signal },
     );
+    stick.addEventListener('pointermove', move, { signal });
     stick.addEventListener(
-      'pointermove',
+      'lostpointercapture',
       (e) => {
-        if (e.pointerId === pointer) move(e);
+        if (pointer !== e.pointerId) return;
+        pointer = undefined;
+        thumb.style.removeProperty('translate');
+        this.x = 0;
+        this.y = 0;
       },
       { signal },
     );
-    const release = () => {
-      pointer = null;
-      this.x = 0;
-      this.y = 0;
-    };
-    stick.addEventListener('lostpointercapture', release, { signal });
-    stick.addEventListener('pointerup', release, { signal });
-    stick.addEventListener('pointercancel', release, { signal });
-    touch.append(stick);
+
     const actions = document.createElement('div');
     actions.className = 'touch-actions';
+    actions.append(stick);
     touch.append(actions);
-    const hold = (label: string, code: string) => {
-      const b = button(label, () => {}, actions);
+    const buttons = new Map<TouchAction, HTMLButtonElement>();
+    const actionButton = (
+      id: TouchAction,
+      label: string,
+      action: () => void,
+    ) => {
+      const b = button(touchSymbols[id], action, actions);
+      b.setAttribute('aria-label', label);
+      b.title = label;
+      buttons.set(id, b);
+      return b;
+    };
+    const hold = (id: TouchAction, label: string, code: string) => {
+      const b = actionButton(id, label, () => {});
+      let heldBy: number | undefined;
       b.addEventListener(
         'pointerdown',
         (e) => {
+          if (heldBy !== undefined || e.button !== 0) return;
+          heldBy = e.pointerId;
           b.setPointerCapture(e.pointerId);
-          this.keys.add(code);
+          this.touchKeys.add(code);
         },
         { signal },
       );
-      for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'])
-        b.addEventListener(event, () => this.keys.delete(code), { signal });
+      b.addEventListener(
+        'lostpointercapture',
+        (e) => {
+          if (e.pointerId !== heldBy) return;
+          heldBy = undefined;
+          this.touchKeys.delete(code);
+        },
+        { signal },
+      );
+      return b;
     };
-    hold(ui.driving.signalLeft, 'KeyQ');
-    hold(ui.driving.signalRight, 'KeyE');
-    hold(ui.driving.look, 'KeyC');
-    if (!plac) hold(ui.driving.bell, 'KeyF');
-    const lights = (this.lightButton = button(
+    hold('left', ui.driving.signalLeft, 'KeyQ');
+    hold('right', ui.driving.signalRight, 'KeyE');
+    hold('look', ui.driving.look, 'KeyC');
+    if (!plac) hold('bell', ui.driving.bell, 'KeyF');
+    const lights = (this.lightButton = actionButton(
+      'lights',
       ui.driving.lights,
       () => this.setLights(!this.actions.lights),
-      actions,
     ));
     this.setLights(false);
-    this.toggleLabel = button(ui.driving.dismount, () => toggle(), actions);
+    this.toggleLabel = actionButton('dismount', ui.driving.dismount, () =>
+      toggle(),
+    );
     if (plac) {
       lights.hidden = true;
       this.toggleLabel.hidden = true;
     }
-    const brake = button(ui.driving.brake, () => {}, actions);
-    brake.className = 'brake';
-    brake.addEventListener(
-      'pointerdown',
-      (e) => {
-        brake.setPointerCapture(e.pointerId);
-        this.braking = true;
-      },
-      { signal },
-    );
-    for (const event of ['pointerup', 'pointercancel', 'lostpointercapture'])
-      brake.addEventListener(
-        event,
-        () => {
-          this.braking = false;
-        },
-        { signal },
-      );
+    hold('brake', ui.driving.brake, 'Space').classList.add('brake');
+    const applyLayout = () => positionTouchActions(progress, buttons, plac);
+    applyLayout();
+    const editor = touchLayoutEditor(progress, applyLayout);
+    this.layoutEditor = editor.dialog;
+    options.append(editor.open);
     const projection = document.createElement('div');
     projection.className = 'projection-debug';
     projection.hidden = true;
@@ -275,12 +293,13 @@ export class DrivingControls {
       touch,
       projection,
       pauseMenu,
+      editor.dialog,
     );
     document.body.append(this.root);
     window.addEventListener(
       'keydown',
       (e) => {
-        if (e.defaultPrevented) return;
+        if (e.defaultPrevented || this.layoutEditor.open) return;
         if (this.paused) {
           if (e.code === 'Escape' && !e.repeat) {
             e.preventDefault();
@@ -372,6 +391,17 @@ export class DrivingControls {
       this.onResume?.();
       this.pauseButton.focus();
     } else {
+      const preferenceTitle = document.createElement('summary');
+      preferenceTitle.textContent = ui.settings.accessibility;
+      this.preferences.open = false;
+      this.preferences.replaceChildren(
+        preferenceTitle,
+        ...accessibilityPreferences(this.progress),
+      );
+      if (!this.plac)
+        this.preferences.append(
+          ridePreference(this.progress, 'reflectiveVest'),
+        );
       const summary = document.createElement('summary');
       summary.textContent = ui.audio.settings;
       this.soundOptions.open = false;
@@ -390,7 +420,7 @@ export class DrivingControls {
     this.keys.clear();
     this.x = 0;
     this.y = 0;
-    this.braking = false;
+    this.touchKeys.clear();
   }
   read(): DriveInput {
     const pad = navigator.getGamepads?.().find((p) => p?.connected);
@@ -400,19 +430,20 @@ export class DrivingControls {
     const justPressed = (button: number) =>
       pressed(button) && !previous[button];
     if (this.paused) {
-      if (justPressed(9)) this.togglePause();
+      if (!this.layoutEditor.open && justPressed(9)) this.togglePause();
       return { x: 0, y: 0, brake: false, scheme: this.scheme };
     }
     if (this.overlays.gamepad(pressed, justPressed))
       return { x: 0, y: 0, brake: false, scheme: this.scheme };
-    const has = (...codes: string[]) => codes.some((c) => this.keys.has(c));
+    const has = (...codes: string[]) =>
+      codes.some((c) => this.keys.has(c) || this.touchKeys.has(c));
     let x =
       this.x ||
       Number(has('KeyD', 'ArrowRight')) - Number(has('KeyA', 'ArrowLeft'));
     let y =
       this.y ||
       Number(has('KeyS', 'ArrowDown')) - Number(has('KeyW', 'ArrowUp'));
-    let brake = this.braking || has('Space');
+    let brake = has('Space');
     let brakePressure = brake ? 1 : 0;
     this.actions.signal = has('KeyQ') ? 'left' : has('KeyE') ? 'right' : null;
     this.actions.looking = has('KeyC');
@@ -444,9 +475,9 @@ export class DrivingControls {
   }
   setWalking(walking: boolean) {
     this.mode.textContent = walking ? ui.driving.walking : ui.driving.riding;
-    this.toggleLabel.textContent = walking
-      ? ui.driving.mount
-      : ui.driving.dismount;
+    const label = walking ? ui.driving.mount : ui.driving.dismount;
+    this.toggleLabel.title = label;
+    this.toggleLabel.setAttribute('aria-label', label);
   }
   destroy() {
     this.abort.abort();

@@ -62,6 +62,12 @@
     "blue": "Błękitny",
     "pink": "Różowy"
   },
+  "touchLayout": {
+    "title": "Układ sterowania dotykowego",
+    "help": "Przeciągnij przycisk na inny, aby zamienić je miejscami. Możesz też kolejno wybrać oba przyciski.",
+    "reset": "Przywróć domyślny układ",
+    "done": "Gotowe"
+  },
   "driving": {
     "cameraHeight": "Wysokość kamery 2.5D",
     "title": "Miasteczko ruchu",

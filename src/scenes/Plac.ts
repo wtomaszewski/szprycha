@@ -398,9 +398,21 @@ export class Plac extends Scene {
     this.dialog.showModal();
   }
 
+  private readonly portraitTouch = matchMedia(
+    '(pointer: coarse) and (orientation: portrait) and (max-width: 600px)',
+  );
+
   update(_time: number, delta: number) {
     const { run, controls } = this;
-    if (!run || this.dialog.open) return;
+    if (
+      !run ||
+      this.dialog.open ||
+      this.portraitTouch.matches ||
+      document.hidden
+    ) {
+      this.accumulator = 0;
+      return;
+    }
     const input = controls.read();
     if (controls.paused) return;
     this.accumulator += Math.min(delta / 1000, 0.1);

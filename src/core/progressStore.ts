@@ -7,6 +7,7 @@ import { placRecordsSchema } from '../gameplay/plac/placRecords';
 import { leitnerBoxes } from '../gameplay/quiz/leitner';
 import { applyMastery, localDay } from '../progression/mastery';
 import type { Milestones } from '../progression/milestones';
+import { touchLayoutSchema } from './touchLayout';
 import { TICKS_PER_SECOND, type Verdict } from '../rules/types';
 
 export const progressDatabase = 'szprycha';
@@ -131,6 +132,7 @@ const profileSchema = m8aProfileSchema.extend({
     .optional()
     .catch(undefined),
   resultsHighContrast: z.boolean().optional().catch(undefined),
+  touchLayout: touchLayoutSchema,
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;

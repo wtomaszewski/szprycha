@@ -1,7 +1,7 @@
 import { Geom, Scene } from 'phaser';
 import type { MissionCity } from '../content/missions';
 import type { GameContent } from '../content/schemas';
-import { FONT, ui } from '../core/presentation';
+import { ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 
 type Mode = 'campaign' | 'freeRide';
@@ -104,20 +104,17 @@ export class CityPicker extends Scene {
         ).fillRect(x, y, 4, 4);
       }
     }
-    const text = (
-      x: number,
-      y: number,
-      label: string,
-      size: number,
-      color: string,
-    ) =>
-      this.add.text(x, y, label, { fontFamily: FONT, fontSize: size, color });
-    text(24, 12, labels.title, 23, '#f4f4f4');
-    text(462, 15, labels[mode], 17, '#ffcd75');
-
     const controls = document.createElement('section');
     controls.className = 'city-picker';
-    controls.setAttribute('aria-label', labels.title);
+    controls.setAttribute('aria-labelledby', 'city-picker-title');
+    const header = document.createElement('header');
+    const title = document.createElement('h1');
+    title.id = 'city-picker-title';
+    title.textContent = labels.title;
+    const modeLabel = document.createElement('p');
+    modeLabel.textContent = labels[mode];
+    header.append(title, modeLabel);
+    controls.append(header);
     let leaving = false;
     const leave = () => {
       if (leaving) return;
