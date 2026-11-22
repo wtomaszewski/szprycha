@@ -491,7 +491,7 @@ export class City extends Scene {
       plac.addEventListener('click', () =>
         this.scene.start('Plac', { origin: 'City' }),
       );
-      this.controls.quickActions.append(plac);
+      this.controls.root.append(plac);
     }
     const collectibles = tilemap.getObjectLayer('collectibles')?.objects;
     this.gnomes = collectibles?.length

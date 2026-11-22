@@ -1347,6 +1347,14 @@ button[aria-pressed='true'] {
   font-size: calc(16px * var(--menu-zoom, 1));
 }
 
+.ride-plac {
+  position: absolute;
+  top: max(8px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+
 .plac-hud {
   position: absolute;
   top: max(4px, env(safe-area-inset-top));

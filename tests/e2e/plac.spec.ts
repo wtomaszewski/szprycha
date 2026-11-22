@@ -36,17 +36,27 @@ test('opens the yard from the main menu and rides a clean narrow track', async (
   expect(errors).toEqual([]);
 });
 
-test('opens the yard from Miasteczko and returns to the map', async ({
-  page,
-}) => {
-  await page.goto('/');
-  await page.locator('canvas[data-scene="MainMenu"]').press('Enter');
-  const map = page.locator('canvas[data-map="miasteczko"]');
-  await expect(map).toBeVisible();
-  await page.getByRole('button', { name: pl.plac.title }).click();
-  await expect(
-    page.getByRole('heading', { name: pl.plac.title }),
-  ).toBeVisible();
-  await page.getByRole('button', { name: pl.plac.returnToMap }).click();
-  await expect(map).toBeVisible();
+test.describe('touch controls in Miasteczko', () => {
+  test.use({ viewport: { width: 832, height: 390 }, hasTouch: true });
+
+  test('opens the yard from Miasteczko and returns to the map', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await page.locator('canvas[data-scene="MainMenu"]').press('Enter');
+    const map = page.locator('canvas[data-map="miasteczko"]');
+    await expect(map).toBeVisible();
+    await page
+      .getByRole('button', { name: pl.phone.open })
+      .tap({ timeout: 5000 });
+    const phone = page.getByRole('dialog', { name: pl.phone.title });
+    await expect(phone).toBeVisible();
+    await phone.getByRole('button', { name: pl.phone.close }).tap();
+    await page.getByRole('button', { name: pl.plac.title }).tap();
+    await expect(
+      page.getByRole('heading', { name: pl.plac.title }),
+    ).toBeVisible();
+    await page.getByRole('button', { name: pl.plac.returnToMap }).tap();
+    await expect(map).toBeVisible();
+  });
 });
