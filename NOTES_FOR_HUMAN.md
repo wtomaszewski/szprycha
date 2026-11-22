@@ -6,7 +6,8 @@
 - Sprawdzić bramkę na urządzeniach przed zgłoszeniem do Apple Kids Category i Google Play Families. Oświadczenia o prywatności i bezpieczeństwie danych wypełnić zgodnie z działaniem publikowanej wersji i jej hostingu.
 - Wiek dobiera wskazówki z KASK-01 i GDZIE-10 w Mapie Umiejętności. Wariant 16+ pokazuje poradę o dopasowaniu i zapięciu kasku. Scenariusze nadal określają rolę i warunki jazdy bohatera. Brzmienie i zakres GDZIE-10 wymagają potwierdzenia konsultanta.
 - Certyfikat używa nicku z generatora. Pole opcjonalnego imienia z M7c usunięto zgodnie z wymaganiem M10a dotyczącym wolnego tekstu.
-- M10c wymaga ustalenia operatora i regionu hostingu w UE, podstawy przetwarzania, czasu przechowywania danych, treści zgody oraz obsługi usuwania profilu. Przed aktywacją rankingów sprawdzić, jakie dane zapisuje infrastruktura. M10a zapisuje wybór rankingu na urządzeniu, a usuwanie profilu z serwera pozostaje nieaktywne.
+- Przed udostępnieniem rankingów M10c potwierdzić z prawnikiem podstawę przetwarzania, okres przechowywania danych i treść informacji dla rodzica. Operatora, region hostingu i przebieg usuwania z kopii ustalić zgodnie z sekcją M10b.
+- Przed wydaniem rankingów w natywnym APK podjąć decyzję o uprawnieniu `android.permission.INTERNET` i zaktualizować deklaracje sklepowe. Układ M10c sprawdzono w web/PWA na emulowanym telefonie i tablecie.
 
 ## Podsumowanie M8
 

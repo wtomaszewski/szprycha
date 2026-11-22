@@ -1,38 +1,7 @@
+import type { RankingRules } from '../../tools/ranking-rules.ts';
 import type { RankingScore } from '../../src/content/rankings.ts';
-import type { MissionCity } from '../../src/content/missions.ts';
 
-interface Timing {
-  version: string;
-  minTicks: number;
-  maxTicks: number;
-}
-
-export interface RankingRules {
-  missions: Record<
-    string,
-    Timing & {
-      city: MissionCity;
-      smoothBonus: number;
-      parSeconds: number;
-      limitSeconds?: number;
-    }
-  >;
-  plac: Timing;
-  ride: Record<MissionCity, { version: string; maxTicks: number }>;
-  weeklyXp: { version: string };
-  scoring: {
-    ticksPerSecond: number;
-    maxMetersPerTick: number;
-    maxVerdictsPerSecond: number;
-    verdictBurst: number;
-    completion: number;
-    pointsPerGood: number;
-    maxMultiplier: number;
-    minorPenalty: number;
-    timeBonus: number;
-    questionBonus: number;
-  };
-}
+export type { RankingRules } from '../../tools/ranking-rules.ts';
 
 export function validateScore(score: RankingScore, rules: RankingRules) {
   if (score.kind === 'weekly-xp')

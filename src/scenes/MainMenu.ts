@@ -8,6 +8,7 @@ import type { ExamResult } from '../gameplay/exam/exam';
 import { quizPanel } from '../ui/QuizPanel';
 import { progressNotice, skillMapButton } from '../ui/SkillMap';
 import { ui } from '../core/presentation';
+import { rankingsPanel } from '../ui/Rankings';
 import { parentZone } from '../ui/ParentZone';
 import { helmetColors } from '../render/spriteFrames';
 export class MainMenu extends Scene {
@@ -19,7 +20,16 @@ export class MainMenu extends Scene {
     if (data && 'przepisy' in data) this.registry.set('content', data);
     const gameContent = this.registry.get('content') as GameContent;
     const progress = this.registry.get('missionProgress') as MissionProgress;
-    const parents = parentZone(progress, gameContent.balans.zdrowe_granie);
+    const rankings = rankingsPanel(
+      progress.rankings,
+      gameContent.misje,
+      progress.selectedCity,
+    );
+    const parents = parentZone(
+      progress,
+      gameContent.balans.zdrowe_granie,
+      rankings.refresh,
+    );
     const skills = skillMapButton(progress, gameContent);
     const panels = progressPanels(progress, gameContent);
     const quiz = quizPanel(progress, gameContent);
@@ -31,6 +41,7 @@ export class MainMenu extends Scene {
       panels.dialog.open ||
       quiz.dialog.open ||
       exam.dialog.open ||
+      rankings.dialog.open ||
       parents.dialog.open;
     const notice = document.createElement('p');
     notice.className = 'menu-save-notice';
@@ -92,7 +103,7 @@ export class MainMenu extends Scene {
     ride.append(campaign, freeRide, practice);
     const options = document.createElement('div');
     options.className = 'menu-options';
-    options.append(helmetLabel, skills.button, parents.button);
+    options.append(helmetLabel, skills.button, rankings.button, parents.button);
     menu.append(intro, ride, training, panels.navigation, options, notice);
     document.body.append(
       menu,
@@ -100,6 +111,7 @@ export class MainMenu extends Scene {
       exam.dialog,
       skills.dialog,
       panels.dialog,
+      rankings.dialog,
       parents.dialog,
     );
     const startDrive = (event: KeyboardEvent) => {
@@ -118,6 +130,8 @@ export class MainMenu extends Scene {
       exam.dialog.remove();
       skills.dialog.remove();
       panels.dialog.remove();
+      if (rankings.dialog.open) rankings.dialog.close();
+      rankings.dialog.remove();
       parents.dialog.remove();
     });
     const canvas = this.game.canvas;

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { afterEach, beforeAll, expect, it, vi } from 'vitest';
 import { nicknameAt, migrateNickname } from '../../src/content/nicknames.ts';
 import type { RankingScore } from '../../src/content/rankings.ts';
-import { buildRankingRules } from '../src/buildRules.ts';
+import { buildRankingRules } from '../../tools/ranking-rules.ts';
 import { createRankingServer } from '../src/http.ts';
 import type { RankingRules } from '../src/rules.ts';
 import { RankingStore } from '../src/store.ts';

@@ -13,6 +13,8 @@ import { placRecordsSchema } from '../gameplay/plac/placRecords';
 import { leitnerBoxes } from '../gameplay/quiz/leitner';
 import { applyMastery, localDay } from '../progression/mastery';
 import type { Milestones } from '../progression/milestones';
+import { reputationXp } from '../progression/reputation';
+import { addWeeklyXp, rankingState } from '../rankings/state';
 import { touchLayoutSchema } from './touchLayout';
 import { helmetColors, type HelmetColor } from '../render/spriteFrames';
 import { ageBands, TICKS_PER_SECOND, type Verdict } from '../rules/types';
@@ -156,12 +158,31 @@ const profileSchema = m9ProfileSchema.extend({
   ageBand: z.enum(ageBands).optional(),
   breakMinutes: count.positive().nullable().optional(),
   onlineRankings: z.boolean(),
+  rankings: rankingState.optional().catch(undefined),
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
+export type RankingProfile = Pick<
+  ProgressProfile,
+  'profileId' | 'onlineRankings' | 'rankings' | 'nickname' | 'avatarId'
+>;
 export type RideVerdict = Pick<Verdict, 'kind' | 'ruleId'>;
 type LegacyStorage = Pick<Storage, 'getItem' | 'removeItem'>;
 type MasteryBalance = GameContent['balans']['mastery'];
+
+function trackRankingXp<T>(
+  profile: ProgressProfile,
+  version: string | undefined,
+  at: number,
+  edit: () => T,
+) {
+  const state = profile.onlineRankings && profile.rankings;
+  if (!version || !state || state.deleting) return edit();
+  const before = reputationXp(profile);
+  const result = edit();
+  addWeeklyXp(state, version, reputationXp(profile) - before, at);
+  return result;
+}
 
 const rideSaveTicks = 5 * TICKS_PER_SECOND;
 
@@ -172,16 +193,20 @@ class RideBatch {
   readonly balances: MasteryBalance[] = [];
   readonly days: string[] = [];
   readonly cleanSeries: number[] = [];
+  readonly times: number[] = [];
   milestones?: Milestones;
   longest = 0;
   ticks = 0;
 
-  apply(profile: ProgressProfile) {
+  apply(profile: ProgressProfile, weeklyVersion?: string) {
     for (let i = 0; i < this.ruleIds.length; i++) {
       const rule = this.ruleIds[i]!;
       const day = this.days[i]!;
       const series = this.cleanSeries[i]!;
-      if (series >= 0) this.milestones?.good(profile, rule, series, day);
+      if (series >= 0)
+        trackRankingXp(profile, weeklyVersion, this.times[i]!, () =>
+          this.milestones?.good(profile, rule, series, day),
+        );
       applyMastery(
         profile.mastery,
         rule,
@@ -232,7 +257,7 @@ function upgrade(profile: z.infer<typeof m5bProfileSchema>) {
   });
 }
 
-function newProfileId() {
+export function newProfileId() {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
   // WebViews can expose random bytes even when the document is not a secure context.
   const bytes = crypto.getRandomValues(new Uint8Array(16));
@@ -386,6 +411,7 @@ export class ProgressStore {
   private dayKey = NaN;
   reset = false;
   sessionOnly: boolean;
+  rankingXpVersion?: string;
 
   constructor(
     readonly profile = createProfile(),
@@ -517,8 +543,12 @@ export class ProgressStore {
   }
 
   change<T>(edit: (profile: ProgressProfile) => T): T {
-    const result = edit(this.profile);
-    this.save(edit);
+    const version = this.rankingXpVersion;
+    const at = version ? Date.now() : 0;
+    const apply = (profile: ProgressProfile) =>
+      trackRankingXp(profile, version, at, () => edit(profile));
+    const result = apply(this.profile);
+    this.save(apply);
     return result;
   }
 
@@ -543,7 +573,8 @@ export class ProgressStore {
     const batch = this.ride;
     const persistent = !this.sessionOnly;
     if (verdicts.length) {
-      day ??= this.currentDay();
+      const rideDay = day ?? this.currentDay();
+      const at = this.rankingXpVersion ? Date.now() : 0;
       let clean = Boolean(milestones);
       for (let i = 0; clean && i < verdicts.length; i++)
         clean = verdicts[i]!.kind === 'good';
@@ -553,21 +584,28 @@ export class ProgressStore {
         const { kind, ruleId } = verdicts[i]!;
         // A tick with any violation earns no milestone or challenge credit.
         const eligibleSeries = clean ? ++this.cleanStreak : -1;
-        if (clean) milestones!.good(this.profile, ruleId, eligibleSeries, day);
+        if (clean) {
+          if (this.rankingXpVersion)
+            trackRankingXp(this.profile, this.rankingXpVersion, at, () =>
+              milestones!.good(this.profile, ruleId, eligibleSeries, rideDay),
+            );
+          else milestones!.good(this.profile, ruleId, eligibleSeries, rideDay);
+        }
         applyMastery(
           this.profile.mastery,
           ruleId,
           kind,
           balance,
-          day,
+          rideDay,
           this.unusedMastery,
         );
         if (persistent) {
           batch.ruleIds.push(ruleId);
           batch.kinds.push(kind);
           batch.balances.push(balance);
-          batch.days.push(day);
+          batch.days.push(rideDay);
           batch.cleanSeries.push(eligibleSeries);
+          if (this.rankingXpVersion) batch.times.push(at);
         }
       }
       const { progression } = this.profile;
@@ -602,7 +640,7 @@ export class ProgressStore {
       const profile = raw as ProgressProfile | undefined;
       if (this.sessionOnly || profile?.version !== profileVersion)
         throw new Error('Progress record unavailable');
-      batch?.apply(profile);
+      batch?.apply(profile, this.rankingXpVersion);
       edit?.(profile);
       return { ...profile };
     }).catch(() => {
@@ -610,6 +648,26 @@ export class ProgressStore {
       if (this.ride.ruleIds.length) this.ride = new RideBatch();
     });
     this.queue = this.queue.then(() => write);
+  }
+
+  async rankingProfile(): Promise<RankingProfile> {
+    await this.flush();
+    const update = this.updateProgress;
+    if (update && !this.sessionOnly) {
+      let saved: RankingProfile | undefined;
+      try {
+        await update((raw) => {
+          const profile = raw as ProgressProfile | undefined;
+          if (profile?.version === profileVersion) saved = profile;
+          return raw;
+        });
+        if (saved) return saved;
+      } catch {
+        // In session-only mode the in-memory profile is the remaining copy.
+        this.sessionOnly = true;
+      }
+    }
+    return this.profile;
   }
 
   flush() {

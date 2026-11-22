@@ -1,3 +1,6 @@
+import versions from 'virtual:ranking-versions';
+import { RankingClient } from '../rankings/RankingClient';
+import { rankingUrl } from '../platform/parentZoneConfig';
 import { Scene } from 'phaser';
 import { audio } from '../audio/GameAudio';
 import { loadContent } from '../content/load';
@@ -18,6 +21,11 @@ export class Preload extends Scene {
       .setOrigin(0.5);
     void Promise.all([loadContent(), loadMissionProgress()])
       .then(([content, progress]) => {
+        const url = rankingUrl(import.meta.env.VITE_RANKING_URL);
+        if (url && versions) {
+          progress.rankings = new RankingClient(progress.store, url, versions);
+          progress.rankings.start();
+        }
         audio.configure(progress.store.profile.audio);
         applyAccessibility(progress.store.profile);
         this.registry.set('missionProgress', progress);

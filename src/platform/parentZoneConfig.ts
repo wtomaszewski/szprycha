@@ -15,13 +15,15 @@ function httpUrl(value: string | undefined, allowLocalHttp = false) {
   }
 }
 
+export const rankingUrl = (value: string | undefined) => httpUrl(value, true);
+
 export function parentZoneConfig(env: {
   VITE_RANKING_URL?: string;
   VITE_PRIVACY_POLICY_URL?: string;
   VITE_PROJECT_URL?: string;
 }) {
   return {
-    rankingAvailable: Boolean(httpUrl(env.VITE_RANKING_URL, true)),
+    rankingAvailable: Boolean(rankingUrl(env.VITE_RANKING_URL)),
     privacyUrl: httpUrl(env.VITE_PRIVACY_POLICY_URL),
     projectUrl: httpUrl(env.VITE_PROJECT_URL),
   };

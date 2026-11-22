@@ -2374,3 +2374,120 @@ html[data-reduced-effects]
     --tap-size: 56px;
   }
 }
+
+.parent-delete-confirmation {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--ui-accent);
+}
+.parent-delete-confirmation button {
+  margin: 4px;
+}
+
+.rankings {
+  inset: var(--safe-insets);
+  margin: auto;
+  width: 760px;
+  height: fit-content;
+  padding: clamp(10px, 2.6dvh, 22px);
+}
+.rankings > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.rankings h2 {
+  margin: 0;
+  color: var(--ui-accent);
+  font-size: calc(26px * var(--text-scale));
+}
+.rankings-tabs {
+  display: flex;
+  gap: 4px;
+  overflow: auto;
+  padding: 3px;
+}
+.rankings-tabs button {
+  flex: 1 0 auto;
+  min-height: var(--tap-size);
+}
+.rankings-tabs button[aria-selected='true'] {
+  color: var(--ui-bg);
+  background: var(--ui-accent);
+}
+.rankings-filters:not([hidden]) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin-block: 8px;
+}
+.rankings-filters label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+}
+.rankings select {
+  min-height: var(--tap-size);
+  min-width: 0;
+  max-width: 100%;
+  color: inherit;
+  background: var(--ui-panel);
+  border: 1px solid var(--ui-border);
+}
+.rankings p {
+  margin-block: 6px;
+}
+.rankings p:empty,
+.rankings small:empty {
+  display: none;
+}
+.rankings-period {
+  color: var(--ui-muted);
+}
+.rankings-self {
+  width: fit-content;
+  margin-block: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--ui-cyan);
+  color: var(--ui-cyan);
+}
+.rankings table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.rankings :is(th, td) {
+  padding: 5px 8px;
+  text-align: left;
+}
+.rankings :is(th, td):last-child {
+  text-align: right;
+}
+.rankings th {
+  color: var(--ui-accent);
+  border-block-end: 1px solid var(--ui-border);
+}
+.rankings tbody tr:nth-child(odd) {
+  background: var(--ui-panel);
+}
+.rankings tbody tr[data-own] {
+  color: var(--ui-cyan);
+}
+.ranking-avatar {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  background-image: url('../assets/generated/rider.png');
+  image-rendering: pixelated;
+}
+
+@media (any-pointer: coarse) and (min-width: 900px) {
+  .rankings {
+    --tap-size: 56px;
+  }
+}
