@@ -24,11 +24,20 @@ export async function validateMaps(root: string, content: GameContent) {
       throw new Error(`Invalid Tiled map: ${file}`, { cause });
     }
   }
+  const signCodes = new Set(content.znaki.znaki.map(({ kod }) => kod));
   for (const mission of content.misje) {
     const map = mission.mapa ?? mission.miasto;
     const world = worlds.get(map);
     if (!world) throw new Error(`Mission ${mission.id}: unknown map ${map}`);
     new MissionSystem(mission, world, content.balans);
+    for (const goal of mission.cele) {
+      if (goal.typ !== 'sfotografuj') continue;
+      const sign = world.signs.find(({ id }) => id === goal.znak);
+      if (!sign || !signCodes.has(sign.code))
+        throw new Error(
+          `Mission ${mission.id}: photographed sign ${goal.znak} is missing from the catalog`,
+        );
+    }
     for (const { typ, przy, regula } of mission.zdarzenia_wymuszone) {
       const id = typ as TrafficEventId;
       const area =

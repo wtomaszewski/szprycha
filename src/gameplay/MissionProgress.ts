@@ -1,6 +1,8 @@
 import type { DialogueLine, Dialogues } from '../content/dialogues';
 import type { MissionDefinition } from '../content/missions';
 import { moduleId, type GameContent } from '../content/schemas';
+import { BreakReminder } from '../progression/breakReminder';
+import { Milestones } from '../progression/milestones';
 import { ProgressStore, type RideVerdict } from '../core/progressStore';
 import {
   applyMastery,
@@ -22,13 +24,67 @@ import {
 type MissionReward = {
   points: number;
   stars: Stars;
+  clean?: boolean;
   balance: GameContent['balans']['gwiazdki'];
 };
 
 export const canOpenPhone = (speed: number) => speed === 0;
 
 export class MissionProgress {
+  private catalog?: Milestones;
+  private readonly breakReminder = new BreakReminder();
+
   constructor(readonly store = new ProgressStore()) {}
+
+  milestones(content: GameContent) {
+    return (this.catalog ??= new Milestones(content));
+  }
+
+  dailyChallenges(content: GameContent, date = localDay(new Date())) {
+    const milestones = this.milestones(content);
+    const profile = this.store.profile;
+    if (
+      (!profile.daily || profile.daily.date < date) &&
+      milestones.canPlayDaily(profile)
+    )
+      this.store.change((p) => milestones.daily(p, date));
+    return milestones.dailyCards(
+      profile.daily?.date === date ? profile.daily : undefined,
+    );
+  }
+
+  photograph(content: GameContent, code: string, image: string) {
+    const milestones = this.milestones(content);
+    if (
+      !milestones.signs.has(code) ||
+      Object.hasOwn(this.store.profile.signPhotos, code)
+    )
+      return false;
+    return this.store.change((profile) =>
+      milestones.photograph(profile, code, image),
+    );
+  }
+
+  breakMinutes(balance: GameContent['balans']['zdrowe_granie']) {
+    const minutes = this.store.profile.breakMinutes;
+    return minutes !== undefined && balance.opcje_min.includes(minutes)
+      ? minutes
+      : balance.przypomnienie_po_min;
+  }
+
+  setBreakMinutes(
+    minutes: number,
+    balance: GameContent['balans']['zdrowe_granie'],
+  ) {
+    if (balance.opcje_min.includes(minutes))
+      this.store.change((profile) => {
+        profile.breakMinutes = minutes;
+      });
+  }
+
+  playFor(seconds: number, minutes: number) {
+    return this.breakReminder.advance(seconds, minutes);
+  }
 
   get tokens() {
     return this.store.profile.progression.tokens;
@@ -85,6 +141,7 @@ export class MissionProgress {
       if (reward.stars !== 0 && reward.stars > previous)
         progression.bestStars[mission.id] = reward.stars;
       progression.tokens += tokens;
+      if (reward.clean) this.catalog?.completeCleanMission(profile, mission);
       return tokens;
     });
   }
@@ -114,7 +171,7 @@ export class MissionProgress {
     balance: GameContent['balans']['mastery'],
     day?: string,
   ) {
-    this.store.recordRide(verdicts, longest, balance, day);
+    this.store.recordRide(verdicts, longest, balance, day, this.catalog);
   }
 
   recordControlAnswer(

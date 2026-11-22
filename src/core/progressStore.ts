@@ -2,6 +2,7 @@ import { update, type UseStore } from 'idb-keyval';
 import { z } from 'zod';
 import type { GameContent } from '../content/schemas';
 import { applyMastery, localDay } from '../progression/mastery';
+import type { Milestones } from '../progression/milestones';
 import { TICKS_PER_SECOND, type Verdict } from '../rules/types';
 
 export const progressDatabase = 'szprycha';
@@ -30,7 +31,7 @@ const legacySchema = z.strictObject({
   progression: missionProgressFields.progression.partial().optional(),
 });
 
-const profileSchema = z.strictObject({
+const m5bProfileSchema = z.strictObject({
   ...missionProgressFields,
   version: z.literal(2),
   nicknameSeed: count.max(299),
@@ -49,6 +50,33 @@ const profileSchema = z.strictObject({
   ),
 });
 
+const profileSchema = m5bProfileSchema.extend({
+  version: z.literal(3),
+  goodHabits: z.record(id, count),
+  achievementSeries: count,
+  cleanMissions: z.record(id, count),
+  signPhotos: z.record(
+    z.string().regex(/^[A-Z]-[0-9]+[a-z]?(?:\/[A-Z]-[0-9]+[a-z]?)?$/),
+    z
+      .string()
+      .max(64_000)
+      .regex(/^data:image\/png;base64,[A-Za-z0-9+/]+=*$/),
+  ),
+  daily: z
+    .strictObject({
+      date: z.iso.date(),
+      entries: z
+        .array(z.strictObject({ id, count, completed: z.boolean() }))
+        .refine(
+          (entries) =>
+            new Set(entries.map((entry) => entry.id)).size === entries.length,
+        ),
+    })
+    .optional(),
+  stickers: z.array(id),
+  breakMinutes: count.positive().optional(),
+});
+
 export type ProgressProfile = z.infer<typeof profileSchema>;
 export type RideVerdict = Pick<Verdict, 'kind' | 'ruleId'>;
 type LegacyStorage = Pick<Storage, 'getItem' | 'removeItem'>;
@@ -62,18 +90,25 @@ class RideBatch {
   readonly kinds: RideVerdict['kind'][] = [];
   readonly balances: MasteryBalance[] = [];
   readonly days: string[] = [];
+  readonly cleanSeries: number[] = [];
+  milestones?: Milestones;
   longest = 0;
   ticks = 0;
 
   apply(profile: ProgressProfile) {
-    for (let i = 0; i < this.ruleIds.length; i++)
+    for (let i = 0; i < this.ruleIds.length; i++) {
+      const rule = this.ruleIds[i]!;
+      const day = this.days[i]!;
+      const series = this.cleanSeries[i]!;
+      if (series >= 0) this.milestones?.good(profile, rule, series, day);
       applyMastery(
         profile.mastery,
-        this.ruleIds[i]!,
+        rule,
         this.kinds[i]!,
         this.balances[i]!,
-        this.days[i]!,
+        day,
       );
+    }
     profile.progression.longestSeries = Math.max(
       profile.progression.longestSeries,
       this.longest,
@@ -81,8 +116,20 @@ class RideBatch {
   }
 }
 
-function createProfile(legacy?: z.infer<typeof legacySchema>): ProgressProfile {
+function upgrade(profile: z.infer<typeof m5bProfileSchema>): ProgressProfile {
   return {
+    ...profile,
+    version: 3,
+    goodHabits: {},
+    achievementSeries: 0,
+    cleanMissions: {},
+    signPhotos: {},
+    stickers: [],
+  };
+}
+
+function createProfile(legacy?: z.infer<typeof legacySchema>): ProgressProfile {
+  return upgrade({
     version: 2,
     nicknameSeed: Math.floor(Math.random() * 300),
     completed: [...new Set(legacy?.completed)],
@@ -98,12 +145,14 @@ function createProfile(legacy?: z.infer<typeof legacySchema>): ProgressProfile {
     achievementXp: {},
     licencePassed: false,
     mastery: {},
-  };
+  });
 }
 
 function decodeProfile(raw: unknown) {
   const current = profileSchema.safeParse(raw);
   if (current.success) return { profile: current.data, reset: false };
+  const m5b = m5bProfileSchema.safeParse(raw);
+  if (m5b.success) return { profile: upgrade(m5b.data), reset: false };
   const legacy = legacySchema.safeParse(raw);
   return {
     profile: createProfile(legacy.data),
@@ -117,7 +166,7 @@ function hasFutureVersion(raw: unknown) {
     raw !== null &&
     'version' in raw &&
     typeof raw.version === 'number' &&
-    raw.version > 2
+    raw.version > 3
   );
 }
 
@@ -144,6 +193,7 @@ function openDatabase(factory: IDBFactory) {
 export class ProgressStore {
   private queue = Promise.resolve();
   private ride = new RideBatch();
+  private cleanStreak = 0;
   private readonly unusedMastery = new Map<
     string,
     ProgressProfile['mastery'][string]
@@ -243,13 +293,22 @@ export class ProgressStore {
     longest: number,
     balance: MasteryBalance,
     day?: string,
+    milestones?: Milestones,
   ) {
     const batch = this.ride;
     const persistent = !this.sessionOnly;
     if (verdicts.length) {
       day ??= this.currentDay();
+      let clean = Boolean(milestones);
+      for (let i = 0; clean && i < verdicts.length; i++)
+        clean = verdicts[i]!.kind === 'good';
+      batch.milestones = milestones ?? batch.milestones;
+      if (!clean) this.cleanStreak = 0;
       for (let i = 0; i < verdicts.length; i++) {
         const { kind, ruleId } = verdicts[i]!;
+        // A tick with any violation earns no milestone or challenge credit.
+        const eligibleSeries = clean ? ++this.cleanStreak : -1;
+        if (clean) milestones!.good(this.profile, ruleId, eligibleSeries, day);
         applyMastery(
           this.profile.mastery,
           ruleId,
@@ -263,6 +322,7 @@ export class ProgressStore {
           batch.kinds.push(kind);
           batch.balances.push(balance);
           batch.days.push(day);
+          batch.cleanSeries.push(eligibleSeries);
         }
       }
       const { progression } = this.profile;
@@ -296,7 +356,7 @@ export class ProgressStore {
     const write = update<ProgressProfile | undefined>(
       progressRecordKey,
       (profile) => {
-        if (this.sessionOnly || profile?.version !== 2)
+        if (this.sessionOnly || profile?.version !== 3)
           throw new Error('Progress record unavailable');
         batch?.apply(profile);
         edit?.(profile);

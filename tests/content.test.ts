@@ -16,7 +16,7 @@ import { contentSchema } from '../src/content/schemas';
 describe('canonical content', () => {
   it('loads the canonical files and mission data', async () => {
     const content = await readContent();
-    expect(contentFiles).toHaveLength(5);
+    expect(contentFiles).toContain('wyzwania.yaml');
     expect(content.przepisy.przepisy.length).toBeGreaterThan(0);
     expect(content.znaki.znaki.length).toBeGreaterThanOrEqual(40);
     expect(content.pytania.pytania.length).toBeGreaterThanOrEqual(50);
@@ -38,6 +38,15 @@ describe('canonical content', () => {
       expect(() => contentSchema.parse(c)).toThrow('Unknown rule ID');
     },
   );
+  it('requires real practice rules, and unique templates', async () => {
+    const c = await readContent();
+    const first = c.wyzwania.wyzwania[0]!;
+    c.wyzwania.wyzwania.push(first);
+    expect(() => contentSchema.parse(c)).toThrow('Duplicate ID');
+    c.wyzwania.wyzwania.pop();
+    first.good = 'PP-01';
+    expect(() => contentSchema.parse(c)).toThrow('Expected a simulated rule');
+  });
   it('rejects duplicate rules, invalid answer indexes, bad balance and unknown fields', async () => {
     const c = await readContent();
     c.przepisy.przepisy.push(c.przepisy.przepisy[0]!);

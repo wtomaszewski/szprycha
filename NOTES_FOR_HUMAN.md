@@ -176,3 +176,11 @@ Poniżej zestawienie zmian do przejrzenia przez konsultanta merytorycznego (pier
 - **PIER-04** (`weryfikacja: true`) jest regułą ćwiczoną w WAW-A1-04. Zapowiedź Oli dotyczy ustępowania pieszym i rowerzystom przy skręcie, a zdarzenie na zachodnim przyczółku wprowadza pieszego przy zebrze. Do konsultacji pozostaje opis pierwszeństwa oraz dobór sytuacji na przyczółku. To jedyna oflagowana reguła jawnie zadeklarowana do ćwiczenia lub przypisana do wymuszonego zdarzenia w akcie 1.
 - Na fragmencie Warszawy przejazdy referencyjne są krótsze niż 2–5 min z docs/03. W M6 wydłużymy trasy i dostosujemy czasy oraz checkpointy po dołączeniu kolejnych kwartałów.
 - Zdjęcie w WAW-A1-06 jest akcją w obrębie zlecenia. Trwały Album Znaków należy do M5. Wyścig używa deterministycznej trasy Turbo i nalicza mu werdykty tym samym silnikiem zasad co graczowi.
+
+## M5 — decyzje i treści do sprawdzenia
+
+- Album przechowuje po jednym wycinku obrazu gry 64×64 na kod znaku. Karta czyta `dla_dziecka` z `content/znaki.yaml`. Przed publikacją do potwierdzenia pozostają wpisy oznaczone `weryfikacja: true`: C-13/C-16 (GDZIE-11) oraz S-6 i S-7 (SYG-02).
+- Migracja profilu v2→v3 zachowuje rangi, XP, mastery, rekordy i dotychczasowe nagrody. Liczniki osiągnięć startują od zera, ponieważ dotychczasowy profil nie zapisywał historii werdyktów potrzebnej do ich przyznania.
+- Osiągnięcia przyznają XP według mnożnika w `balans.yaml` i żetony z katalogu. Werdykty z ticku zawierającego błąd nie zwiększają nowych liczników nagród. Osiągnięcia za kursy liczą wyłącznie bezbłędne ukończenia. Osiągnięcie za serię pytań Sierżant Oli jest nieaktywne, ponieważ obecne pytania kontrolne pojawiają się po naruszeniu. Osobny quiz pozwoli ćwiczyć bez tego warunku.
+- Wyzwania preferują najsłabszy moduł spośród tych z grywalnymi szablonami. Obecna pula obejmuje M02–M06. Szablony na quiz, pierwszą pomoc i plac można włączyć po udostępnieniu tych aktywności. Naklejki należą do trwałej kolekcji, a te same wzory mogą wracać w kolejnych dniach.
+- Przypomnienie Kazika liczy czas aktywnej sceny jazdy w bieżącej sesji. Ustawienie jest dostępne z menu do czasu udostępnienia Strefy Rodzica. Pauza, ukryta karta i dialogi wstrzymują odliczanie.

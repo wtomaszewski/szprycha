@@ -54,7 +54,7 @@ export const signsSchema = z.strictObject({
           'sygnalizator',
         ]),
         nazwa: text,
-        znaczenie: text,
+        dla_dziecka: text,
         rzadkosc: z.enum(['zwykly', 'rzadki', 'epicki']),
         reguly: z.array(id),
         weryfikacja: z.boolean().optional(),
@@ -126,7 +126,21 @@ export const achievementsSchema = z.strictObject({
         nazwa: text,
         opis: text,
         warunek: conditionSchema,
+        aktywne: z.boolean().default(true),
         zetony: count,
+      }),
+    )
+    .min(1),
+});
+const challengesSchema = z.strictObject({
+  wyzwania: z
+    .array(
+      z.strictObject({
+        id,
+        opis: text,
+        good: id,
+        ile: positive.int(),
+        naklejka: id,
       }),
     )
     .min(1),
@@ -241,7 +255,27 @@ export const balanceSchema = z.strictObject({
     karta_wymagana_do_lat: positive.int(),
     dziecko_jako_pieszy_do_lat: positive.int(),
   }),
-  zdrowe_granie: z.strictObject({ przypomnienie_po_min: positive }),
+  album: z.strictObject({ zasieg_zdjecia_m: positive }),
+  osiagniecia: z.strictObject({ xp_za_zeton: count }),
+  wyzwania_dzienne: z
+    .strictObject({
+      liczba: positive.int(),
+      z_najslabszego_modulu: positive.int(),
+      zetony: count,
+    })
+    .refine(
+      ({ liczba, z_najslabszego_modulu }) => z_najslabszego_modulu <= liczba,
+    ),
+  zdrowe_granie: z
+    .strictObject({
+      przypomnienie_po_min: positive.int(),
+      opcje_min: z.array(positive.int()).min(1),
+    })
+    .refine(
+      ({ przypomnienie_po_min, opcje_min }) =>
+        opcje_min.includes(przypomnienie_po_min) &&
+        new Set(opcje_min).size === opcje_min.length,
+    ),
 });
 export const contentSchema = z
   .strictObject({
@@ -250,6 +284,7 @@ export const contentSchema = z
     pytania: questionsSchema,
     balans: balanceSchema,
     osiagniecia: achievementsSchema,
+    wyzwania: challengesSchema,
     misje: missionsSchema,
     dialogi: dialogueFileSchema,
   })
@@ -328,6 +363,34 @@ export const contentSchema = z
     data.osiagniecia.osiagniecia.forEach((a, i) =>
       condition(a.warunek, ['osiagniecia', 'osiagniecia', i, 'warunek']),
     );
+    const templates = data.wyzwania.wyzwania;
+    unique(
+      templates.map(({ id }) => id),
+      ['wyzwania'],
+    );
+    unique(
+      templates.map(({ good }) => good),
+      ['wyzwania'],
+    );
+    if (templates.length < data.balans.wyzwania_dzienne.liczba)
+      ctx.addIssue({
+        code: 'custom',
+        path: ['wyzwania'],
+        message: 'Too few distinct daily challenge templates',
+      });
+    const simRules = new Set(
+      data.przepisy.przepisy
+        .filter(({ detektor }) => detektor === 'sim')
+        .map(({ id }) => id),
+    );
+    templates.forEach(({ good }, i) => {
+      if (!simRules.has(good))
+        ctx.addIssue({
+          code: 'custom',
+          path: ['wyzwania', 'wyzwania', i, 'good'],
+          message: `Expected a simulated rule: ${good}`,
+        });
+    });
     const { postacie, dialogi, zapowiedzi } = data.dialogi;
     unique(
       postacie.map(({ id }) => id),
