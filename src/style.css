@@ -1211,9 +1211,10 @@ button[aria-pressed='true'] {
 .break-reminder {
   position: absolute;
   z-index: 2;
-  right: max(8px, env(safe-area-inset-right));
-  bottom: max(62px, calc(54px + env(safe-area-inset-bottom)));
-  max-width: min(258px, 42vw);
+  top: max(72px, calc(64px + env(safe-area-inset-top)));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(258px, calc(100% - 32px));
   padding: 8px;
   color: #f4f4f4;
   background: #1a1c2c;

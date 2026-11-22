@@ -4,7 +4,7 @@ wyzwania:
   - { id: zebra, good: GDZIE-06, ile: 3, opis: "Przeprowadź rower przez przejście 3 razy.", naklejka: szprycha }
   - { id: stop, good: ZNAK-STOP, ile: 3, opis: "Zatrzymaj się przy znaku STOP 3 razy.", naklejka: odblask }
   - { id: swiatla, good: SYG-01, ile: 3, opis: "Zastosuj się do świateł 3 razy.", naklejka: kolo }
-  - { id: rondo, good: PIER-08, ile: 3, opis: "Przejedź 3 ronda bez błędu.", naklejka: szprycha }
+  - { id: rondo, good: PIER-08, ile: 3, opis: "Ustąp pierwszeństwa przy wjeździe na rondo 3 razy.", naklejka: szprycha }
   - { id: prawa_reka, good: PIER-01, ile: 3, opis: "Ustąp pierwszeństwa pojazdowi z prawej 3 razy.", naklejka: kolo }
   - { id: sygnal, good: MAN-01, ile: 10, opis: "Zasygnalizuj 10 skrętów.", naklejka: szprycha }
   - { id: ruszanie, good: MAN-07, ile: 3, opis: "Obejrzyj się przed ruszeniem 3 razy.", naklejka: odblask }
