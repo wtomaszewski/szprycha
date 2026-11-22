@@ -57,29 +57,34 @@ test('opens the educational notice and third-party licenses offline from the men
   );
 });
 
-for (const [scenario, review] of [
-  ['pending', null],
-  ['configured', 'Treść została sprawdzona przez konsultanta.'],
-] as const) {
-  test(`shows the ${scenario} review in About`, async ({ page }) => {
-    await page.route('**/data/content.json', async (route) => {
-      const response = await route.fetch();
-      const content = await response.json();
-      content['o-grze'].recenzja_merytoryczna = review;
-      await route.fulfill({ response, json: content });
-    });
-    await page.goto('/');
-    await page.getByRole('button', { name: labels.title, exact: true }).click();
+test.describe('review content', () => {
+  test.use({ serviceWorkers: 'block' });
+  for (const [scenario, review] of [
+    ['pending', null],
+    ['configured', 'Treść została sprawdzona przez konsultanta.'],
+  ] as const) {
+    test(`shows the ${scenario} review in About`, async ({ page }) => {
+      await page.route('**/data/content.json', async (route) => {
+        const response = await route.fetch();
+        const content = await response.json();
+        content['o-grze'].recenzja_merytoryczna = review;
+        await route.fulfill({ response, json: content });
+      });
+      await page.goto('/');
+      await page
+        .getByRole('button', { name: labels.title, exact: true })
+        .click();
 
-    const panel = page.getByRole('dialog', { name: labels.title });
-    const section = panel.locator('section').filter({
-      has: page.getByRole('heading', { name: labels.review, exact: true }),
+      const panel = page.getByRole('dialog', { name: labels.title });
+      const section = panel.locator('section').filter({
+        has: page.getByRole('heading', { name: labels.review, exact: true }),
+      });
+      await expect(section.locator('p')).toHaveText(
+        review ?? labels.reviewPending,
+      );
     });
-    await expect(section.locator('p')).toHaveText(
-      review ?? labels.reviewPending,
-    );
-  });
-}
+  }
+});
 
 test('opens About from the parent zone after the gate and restores focus', async ({
   page,
