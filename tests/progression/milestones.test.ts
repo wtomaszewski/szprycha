@@ -208,16 +208,22 @@ describe('docs/04 §9 — daily challenges', () => {
     const progress = configured();
     expect(progress.dailyChallenges(content, date)).toEqual([]);
     progress.store.profile.missionPoints = kurier.xp! * 2;
+    for (const { id, modul } of content.przepisy.przepisy)
+      if (modul !== 'M03')
+        progress.store.profile.mastery[id] = { value: 100, goodToday: 0 };
     const today = progress.dailyChallenges(content, date);
-    const [first, second] = today;
-    ride(progress, first!.good, first!.ile + 2);
-    expect(progress.dailyChallenges(content, date)[0]).toMatchObject({
-      count: first!.ile,
+    const first = today.find(({ id }) => id === 'stop')!;
+    const second = today.find(({ id }) => id === 'swiatla')!;
+    ride(progress, first.good, first.ile + 2);
+    expect(
+      progress.dailyChallenges(content, date).find(({ id }) => id === first.id),
+    ).toMatchObject({
+      count: first.ile,
       completed: true,
     });
     const tokens = progress.tokens;
     expect(tokens).toBe(balans.wyzwania_dzienne.zetony);
-    expect(progress.store.profile.stickers).toEqual([first!.naklejka]);
+    expect(progress.store.profile.stickers).toEqual([first.naklejka]);
     const later = '2026-12-10';
     expect(progress.dailyChallenges(content, later)).toHaveLength(3);
     expect(
@@ -226,9 +232,9 @@ describe('docs/04 §9 — daily challenges', () => {
         .every(({ count }) => count === 0),
     ).toBe(true);
     expect(progress.dailyChallenges(content, date)).toEqual([]);
-    ride(progress, second!.good, second!.ile);
+    ride(progress, second.good, second.ile);
     expect(progress.tokens).toBe(tokens);
-    expect(progress.store.profile.stickers).toEqual([first!.naklejka]);
+    expect(progress.store.profile.stickers).toEqual([first.naklejka]);
   });
 
   it('batches achievement and daily counters with mastery and merges payouts across tabs', async () => {

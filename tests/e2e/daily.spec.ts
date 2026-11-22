@@ -68,8 +68,7 @@ test('completes a generated daily challenge by turning on lights before a dusk r
   await expect(goal.getByRole('progressbar')).toHaveAttribute('value', '0');
   await panel.getByRole('button', { name: pl.m5c.close }).click();
 
-  await page.mouse.click(5, 5);
-  await page.keyboard.press('Enter');
+  await page.getByRole('button', { name: pl.driving.praga }).click();
   await expect(page.locator('canvas')).toHaveAttribute('data-scene', 'City');
   await page.keyboard.press('KeyM');
   await page
@@ -86,6 +85,7 @@ test('completes a generated daily challenge by turning on lights before a dusk r
     .getByRole('dialog', { name: pl.driving.paused })
     .getByRole('button', { name: pl.driving.menu, exact: true })
     .click();
+  await expect(menu).toBeVisible();
 
   await page.reload();
   await daily.click();
