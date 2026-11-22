@@ -20,9 +20,12 @@ export function applyMastery(
   kind: Verdict['kind'] | 'quiz_ok' | 'quiz_zle',
   balance: Balance,
   day: string,
+  unusedEntries?: Map<string, Mastery[string]>,
 ) {
   const previous = Object.hasOwn(mastery, ruleId) ? mastery[ruleId] : undefined;
-  const entry = previous ?? { value: 0, goodToday: 0 };
+  const entry = previous ??
+    unusedEntries?.get(ruleId) ?? { value: 0, goodToday: 0 };
+  if (!previous) unusedEntries?.delete(ruleId);
   let delta = balance[kind];
   if (kind === 'good') {
     // Do not reopen the daily allowance if the wall clock goes backwards.

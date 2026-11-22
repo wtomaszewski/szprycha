@@ -1,5 +1,8 @@
 import { update, type UseStore } from 'idb-keyval';
 import { z } from 'zod';
+import type { GameContent } from '../content/schemas';
+import { applyMastery, localDay } from '../progression/mastery';
+import { TICKS_PER_SECOND, type Verdict } from '../rules/types';
 
 export const progressDatabase = 'szprycha';
 export const progressStoreName = 'progress';
@@ -47,7 +50,36 @@ const profileSchema = z.strictObject({
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
+export type RideVerdict = Pick<Verdict, 'kind' | 'ruleId'>;
 type LegacyStorage = Pick<Storage, 'getItem' | 'removeItem'>;
+type MasteryBalance = GameContent['balans']['mastery'];
+
+const rideSaveTicks = 5 * TICKS_PER_SECOND;
+
+class RideBatch {
+  // Copy only the replay inputs, without retaining the scene's reusable verdicts.
+  readonly ruleIds: string[] = [];
+  readonly kinds: RideVerdict['kind'][] = [];
+  readonly balances: MasteryBalance[] = [];
+  readonly days: string[] = [];
+  longest = 0;
+  ticks = 0;
+
+  apply(profile: ProgressProfile) {
+    for (let i = 0; i < this.ruleIds.length; i++)
+      applyMastery(
+        profile.mastery,
+        this.ruleIds[i]!,
+        this.kinds[i]!,
+        this.balances[i]!,
+        this.days[i]!,
+      );
+    profile.progression.longestSeries = Math.max(
+      profile.progression.longestSeries,
+      this.longest,
+    );
+  }
+}
 
 function createProfile(legacy?: z.infer<typeof legacySchema>): ProgressProfile {
   return {
@@ -111,6 +143,14 @@ function openDatabase(factory: IDBFactory) {
 
 export class ProgressStore {
   private queue = Promise.resolve();
+  private ride = new RideBatch();
+  private readonly unusedMastery = new Map<
+    string,
+    ProgressProfile['mastery'][string]
+  >();
+  private readonly date = new Date();
+  private day = '';
+  private dayKey = NaN;
   reset = false;
   sessionOnly: boolean;
 
@@ -183,31 +223,95 @@ export class ProgressStore {
 
   change<T>(edit: (profile: ProgressProfile) => T): T {
     const result = edit(this.profile);
-    const { store } = this;
-    if (store && !this.sessionOnly) {
-      this.queue = this.queue
-        .then(async () => {
-          if (this.sessionOnly) return;
-          // Replay the edit against the latest record inside the same transaction.
-          // A second tab can save without replacing progress earned in this tab.
-          await update<unknown>(
-            progressRecordKey,
-            (raw) => {
-              const profile = profileSchema.parse(raw);
-              edit(profile);
-              return profile;
-            },
-            store,
-          );
-        })
-        .catch(() => {
-          this.sessionOnly = true;
-        });
-    }
+    this.save(edit);
     return result;
   }
 
+  prepareRide(rules: readonly { id: string }[]) {
+    for (const { id } of rules) {
+      if (
+        !Object.hasOwn(this.profile.mastery, id) &&
+        !this.unusedMastery.has(id)
+      )
+        this.unusedMastery.set(id, { value: 0, goodToday: 0 });
+    }
+    this.currentDay();
+  }
+
+  recordRide(
+    verdicts: readonly RideVerdict[],
+    longest: number,
+    balance: MasteryBalance,
+    day?: string,
+  ) {
+    const batch = this.ride;
+    const persistent = !this.sessionOnly;
+    if (verdicts.length) {
+      day ??= this.currentDay();
+      for (let i = 0; i < verdicts.length; i++) {
+        const { kind, ruleId } = verdicts[i]!;
+        applyMastery(
+          this.profile.mastery,
+          ruleId,
+          kind,
+          balance,
+          day,
+          this.unusedMastery,
+        );
+        if (persistent) {
+          batch.ruleIds.push(ruleId);
+          batch.kinds.push(kind);
+          batch.balances.push(balance);
+          batch.days.push(day);
+        }
+      }
+      const { progression } = this.profile;
+      progression.longestSeries = Math.max(progression.longestSeries, longest);
+      batch.longest = Math.max(batch.longest, longest);
+    }
+    if (persistent && batch.ruleIds.length && ++batch.ticks >= rideSaveTicks)
+      this.save();
+  }
+
+  private currentDay() {
+    const { date } = this;
+    date.setTime(Date.now());
+    const key =
+      date.getFullYear() * 10_000 + date.getMonth() * 100 + date.getDate();
+    if (key !== this.dayKey) {
+      this.day = localDay(date);
+      this.dayKey = key;
+    }
+    return this.day;
+  }
+
+  private save(edit?: (profile: ProgressProfile) => unknown) {
+    const batch = this.ride.ruleIds.length ? this.ride : undefined;
+    if (batch) this.ride = new RideBatch();
+    const { store } = this;
+    if (!store || this.sessionOnly || (!batch && !edit)) return;
+
+    // IndexedDB orders readwrite transactions on this store across tabs. Start
+    // immediately so pagehide can submit a write within the event handler.
+    const write = update<ProgressProfile | undefined>(
+      progressRecordKey,
+      (profile) => {
+        if (this.sessionOnly || profile?.version !== 2)
+          throw new Error('Progress record unavailable');
+        batch?.apply(profile);
+        edit?.(profile);
+        return profile;
+      },
+      store,
+    ).catch(() => {
+      this.sessionOnly = true;
+      if (this.ride.ruleIds.length) this.ride = new RideBatch();
+    });
+    this.queue = this.queue.then(() => write);
+  }
+
   flush() {
+    this.save();
     return this.queue;
   }
 }

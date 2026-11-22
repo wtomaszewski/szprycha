@@ -43,6 +43,7 @@ export class DrivingControls {
     private toggle: () => void,
     reset: () => void,
     menu: () => void,
+    private readonly onPause: () => void,
     setCameraHeight: (height: number) => void,
     setDebugVisible: (visible: boolean) => void,
     private readonly overlays: OverlayControls,
@@ -336,6 +337,7 @@ export class DrivingControls {
       this.pauseButton.focus();
     } else {
       this.pauseMenu.showModal();
+      this.onPause();
     }
   }
 

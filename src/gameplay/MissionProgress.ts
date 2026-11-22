@@ -1,7 +1,7 @@
 import type { DialogueLine, Dialogues } from '../content/dialogues';
 import type { MissionDefinition } from '../content/missions';
 import { moduleId, type GameContent } from '../content/schemas';
-import { ProgressStore } from '../core/progressStore';
+import { ProgressStore, type RideVerdict } from '../core/progressStore';
 import {
   applyMastery,
   localDay,
@@ -18,9 +18,7 @@ import {
   reputationRank,
   reputationXp,
 } from '../progression/reputation';
-import type { Verdict } from '../rules/types';
 
-type RideVerdict = Pick<Verdict, 'kind' | 'ruleId'>;
 type MissionReward = {
   points: number;
   stars: Stars;
@@ -114,19 +112,9 @@ export class MissionProgress {
     verdicts: readonly RideVerdict[],
     longest: number,
     balance: GameContent['balans']['mastery'],
-    day = localDay(new Date()),
+    day?: string,
   ) {
-    if (!verdicts.length) return;
-    // The scene reuses its tick buffer. Persistence can run after the next tick.
-    const batch = verdicts.slice();
-    this.store.change((profile) => {
-      for (const { kind, ruleId } of batch)
-        applyMastery(profile.mastery, ruleId, kind, balance, day);
-      profile.progression.longestSeries = Math.max(
-        profile.progression.longestSeries,
-        longest,
-      );
-    });
+    this.store.recordRide(verdicts, longest, balance, day);
   }
 
   recordControlAnswer(

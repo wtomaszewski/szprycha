@@ -1,4 +1,4 @@
-import { IDBFactory } from 'fake-indexeddb';
+import { IDBDatabase, IDBFactory, IDBObjectStore } from 'fake-indexeddb';
 import { expect, it, vi } from 'vitest';
 import {
   legacyProgressKey,
@@ -8,6 +8,7 @@ import {
   ProgressStore,
 } from '../../src/core/progressStore';
 import { MissionProgress } from '../../src/gameplay/MissionProgress';
+import { TICKS_PER_SECOND, type Verdict } from '../../src/rules/types';
 import { readContent } from '../../tools/content';
 
 const { balans, misje } = await readContent();
@@ -153,6 +154,48 @@ it('preserves an unsupported future save', async () => {
   const store = await ProgressStore.open(factory);
   expect(store).toMatchObject({ reset: false, sessionOnly: true });
   expect((await ProgressStore.open(factory)).sessionOnly).toBe(true);
+});
+
+it('writes at most once in five seconds of ride ticks and flushes the remaining verdicts', async () => {
+  const factory = new IDBFactory();
+  const store = await ProgressStore.open(factory);
+  const progress = new MissionProgress(store);
+  const write = vi.spyOn(IDBObjectStore.prototype, 'put');
+  const transaction = vi.spyOn(IDBDatabase.prototype, 'transaction');
+  const tickCount = 5 * TICKS_PER_SECOND;
+  const day = '2026-11-22';
+  const verdict = { ruleId: 'ZNAK-STOP', kind: 'good' as Verdict['kind'] };
+  const verdicts = [verdict];
+
+  try {
+    for (let i = 1; i < tickCount; i++)
+      progress.recordRide(verdicts, i, balans.mastery, day);
+    expect(transaction).not.toHaveBeenCalled();
+    expect(write).not.toHaveBeenCalled();
+    expect(progress.ruleMastery('ZNAK-STOP')).toBe(30);
+    expect(progress.longestSeries).toBe(tickCount - 1);
+
+    // A tick without a verdict still advances the game's save window.
+    progress.recordRide([], tickCount - 1, balans.mastery, day);
+    expect(transaction).toHaveBeenCalledTimes(1);
+    await store.flush();
+    expect(write).toHaveBeenCalledTimes(1);
+
+    verdict.kind = 'major';
+    progress.recordRide(verdicts, tickCount, balans.mastery, day);
+    verdict.kind = 'minor';
+    verdicts.length = 0;
+    await store.flush();
+    await store.flush();
+    expect(write).toHaveBeenCalledTimes(2);
+  } finally {
+    transaction.mockRestore();
+    write.mockRestore();
+  }
+
+  const reloaded = new MissionProgress(await ProgressStore.open(factory));
+  expect(reloaded.ruleMastery('ZNAK-STOP')).toBe(10);
+  expect(reloaded.longestSeries).toBe(tickCount);
 });
 
 it('keeps concurrent tab writes and pays each star or achievement only once on disk', async () => {

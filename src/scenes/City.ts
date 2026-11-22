@@ -162,6 +162,9 @@ export class City extends Scene {
   private readonly startForced = (event: ForcedMissionEvent, area: Box) =>
     this.trafficEvents.force(event, area, this.rulesRider);
   private readonly forcedPending = () => this.trafficEvents.hasPendingForced;
+  private readonly flushProgress = () => {
+    void this.progress.store.flush();
+  };
   private readonly tickVerdicts: Verdict[] = [];
   private readonly rulesRider: RiderState = {
     id: 'player',
@@ -210,6 +213,7 @@ export class City extends Scene {
     this.messageUntil = 0;
     this.content = this.registry.get('content') as GameContent;
     this.progress = this.registry.get('missionProgress') as MissionProgress;
+    this.progress.store.prepareRide(this.content.przepisy.przepisy);
     this.series ??= new SafetySeries(
       this.content.balans.combo,
       0,
@@ -433,6 +437,7 @@ export class City extends Scene {
       () => this.toggleMode(),
       () => this.reset(),
       () => this.scene.start('MainMenu'),
+      this.flushProgress,
       (height) => {
         this.blocks.cameraHeight = height;
         this.blocks.update(
@@ -549,7 +554,19 @@ export class City extends Scene {
     this.recordFrame(-FIXED_STEP);
     this.debug = new RuleDebugOverlay(this, this.world, this.controls.root);
     this.controls.setWalking(false);
+    const lifecycle = new AbortController();
+    const { signal } = lifecycle;
+    document.addEventListener(
+      'visibilitychange',
+      () => {
+        if (document.hidden) this.flushProgress();
+      },
+      { signal },
+    );
+    window.addEventListener('pagehide', this.flushProgress, { signal });
     const onShutdown = () => {
+      lifecycle.abort();
+      this.flushProgress();
       this.missionHud?.destroy();
       this.stopListeningForVerdicts?.();
       this.stopListeningForVerdicts = undefined;
@@ -713,6 +730,7 @@ export class City extends Scene {
         () => this.missionHud?.focusResult(),
       );
     } else {
+      this.flushProgress();
       this.updateMissionHud();
       this.missionHud?.focusResult();
     }
@@ -1022,12 +1040,11 @@ export class City extends Scene {
     );
     rider.phoneInHand = false;
     for (const verdict of this.tickVerdicts) this.series.receive(verdict.kind);
-    if (this.tickVerdicts.length)
-      this.progress.recordRide(
-        this.tickVerdicts,
-        this.series.longest,
-        this.content.balans.mastery,
-      );
+    this.progress.recordRide(
+      this.tickVerdicts,
+      this.series.longest,
+      this.content.balans.mastery,
+    );
     this.attention.step(this.tickVerdicts, rider.speed > 0);
     const effects = this.mission?.step(
       rider.pos,
@@ -1069,6 +1086,7 @@ export class City extends Scene {
         verdict === lesson || verdict.kind === 'major',
       );
     if (lesson) {
+      if (this.mission?.result) this.flushProgress();
       if (lesson.kind === 'minor') this.reviewedMinor.add(lesson.ruleId);
       this.review = { verdict: lesson, elapsed: 0, shown: false };
       this.updateProgressionHud();
