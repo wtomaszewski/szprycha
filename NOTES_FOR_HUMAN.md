@@ -170,3 +170,9 @@ Poniżej zestawienie zmian do przejrzenia przez konsultanta merytorycznego (pier
 | MAN-05     | Z prawej możesz, ale ostrożnie — szczególnie obok ciężarówek i autobusów. Martwe pole!                  | Zwolnij, jeśli obok pojazdu jest mało miejsca albo pojazd zaczyna skręcać.                                                                 | Skupia się na zaobserwowanym braku odstępu lub ryzyku skrętu.                           |
 | MAN-08     | Za szybko jak na takie warunki. Zwolnij — wtedy zdążysz zareagować.                                     | Zwolnij, żeby mieć dość miejsca i czasu na zatrzymanie.                                                                                    | Jedno zdanie wiąże prędkość z możliwością zatrzymania.                                  |
 | MAN-12     | Auto stanęło przed pasami — pewnie przepuszcza pieszego. Nigdy go nie omijaj!                           | Nie wyprzedzaj na przejściu, przejeździe, skrzyżowaniu bez świateł ani przed torami i nie omijaj auta, które stoi, by przepuścić pieszych. | Wprost podaje zakaz wyprzedzania w tych miejscach i omijania auta ustępującego pieszym. |
+
+## M4d — akt 1 Warszawy, do konsultacji
+
+- **PIER-04** (`weryfikacja: true`) jest regułą ćwiczoną w WAW-A1-04. Zapowiedź Oli dotyczy ustępowania pieszym i rowerzystom przy skręcie, a zdarzenie na zachodnim przyczółku wprowadza pieszego przy zebrze. Do konsultacji pozostaje opis pierwszeństwa oraz dobór sytuacji na przyczółku. To jedyna oflagowana reguła jawnie zadeklarowana do ćwiczenia lub przypisana do wymuszonego zdarzenia w akcie 1.
+- Na fragmencie Warszawy przejazdy referencyjne są krótsze niż 2–5 min z docs/03. W M6 wydłużymy trasy i dostosujemy czasy oraz checkpointy po dołączeniu kolejnych kwartałów.
+- Zdjęcie w WAW-A1-06 jest akcją w obrębie zlecenia. Trwały Album Znaków należy do M5. Wyścig używa deterministycznej trasy Turbo i nalicza mu werdykty tym samym silnikiem zasad co graczowi.

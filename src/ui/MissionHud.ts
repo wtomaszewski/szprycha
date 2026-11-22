@@ -15,10 +15,20 @@ export class MissionHud {
   private readonly instruction = document.createElement('p');
   private readonly timer = document.createElement('output');
   private readonly navigation = document.createElement('div');
+  private readonly navigationSize = { width: 0, height: 0 };
+  private readonly resize = new ResizeObserver(([entry]) => {
+    if (entry) {
+      const { width, height } = entry.contentRect;
+      Object.assign(this.navigationSize, { width, height });
+    }
+  });
   private readonly arrow = document.createElement('div');
   private readonly bearing = document.createElement('span');
   private readonly distance = document.createElement('span');
   private readonly equip = document.createElement('button');
+  private readonly parcel = document.createElement('label');
+  private readonly shocks = document.createElement('progress');
+  private readonly photo = document.createElement('button');
   private readonly lights = document.createElement('button');
   private readonly resume = document.createElement('button');
   private readonly summary = document.createElement('section');
@@ -32,18 +42,27 @@ export class MissionHud {
     equipHelmet: () => void,
     turnOnLights: () => void,
     resumeFromCheckpoint: () => void,
+    photograph: () => void,
     retry: () => void,
     menu: () => void,
   ) {
     const panel = document.createElement('section');
     panel.className = 'mission-panel';
     this.instruction.setAttribute('role', 'status');
+    this.parcel.className = 'mission-parcel';
+    this.shocks.max = 1;
+    this.parcel.append(ui.missionUi.shocks, this.shocks);
+    this.photo.type = 'button';
+    this.photo.textContent = ui.missionUi.photograph;
+    this.photo.addEventListener('click', photograph);
     panel.append(
       this.title,
       this.instruction,
       this.equip,
       this.lights,
       this.resume,
+      this.parcel,
+      this.photo,
     );
 
     this.timer.className = 'mission-timer';
@@ -57,6 +76,7 @@ export class MissionHud {
     this.distance.className = 'mission-distance';
     this.arrow.append(this.bearing, this.distance);
     this.navigation.append(this.arrow);
+    this.resize.observe(this.navigation);
 
     this.equip.type = this.lights.type = this.resume.type = 'button';
     this.lights.textContent = ui.missionUi.turnOnLights;
@@ -85,6 +105,10 @@ export class MissionHud {
     parent.append(panel, this.timer, this.navigation, this.summary);
   }
 
+  destroy() {
+    this.resize.disconnect();
+  }
+
   focusEquipment() {
     if (!this.equip.hidden) this.equip.focus();
     else if (!this.lights.hidden) this.lights.focus();
@@ -100,7 +124,8 @@ export class MissionHud {
     helmetFastened: boolean,
     lightsOn: boolean,
     interrupted: boolean,
-    checkpointHint?: string,
+    checkpointHint: string | undefined,
+    speed: number,
   ) {
     const { target, result, remainingSeconds, elapsedSeconds } = mission;
     setText(this.title, translate(mission.definition.tytul));
@@ -111,6 +136,12 @@ export class MissionHud {
     this.timer.hidden = !!result;
     this.navigation.hidden = !!result || mission.preparingBike;
     this.summary.hidden = !result;
+    this.parcel.hidden = !!result || mission.shakeLevel === undefined;
+    if (mission.shakeLevel !== undefined)
+      this.shocks.value = mission.shakeLevel;
+    this.photo.hidden = target?.goal.typ !== 'sfotografuj';
+    this.photo.disabled =
+      interrupted || !mission.canPhotograph(position, speed);
 
     if (result && this.displayedResult !== result) {
       const label =
@@ -126,10 +157,25 @@ export class MissionHud {
         details.push(
           result.reason === 'czas_minal'
             ? ui.missionUi.timeExpired
-            : ui.missionUi.threeMajor,
+            : result.reason === 'wynik_wyscigu'
+              ? ui.missionUi.raceScoreRequired
+              : ui.missionUi.threeMajor,
         );
       else if (!result.timeBonusEligible)
         details.push(ui.missionUi.noTimeBonus);
+      if (result.opponentScore !== undefined)
+        details.push(
+          `${ui.missionUi.yourPoints} ${result.points}`,
+          `${ui.missionUi.turboPoints} ${result.opponentScore}`,
+        );
+      if (result.shocks !== undefined)
+        details.push(
+          `${ui.missionUi.shocks} ${Math.round(result.shocks * 100)}%`,
+        );
+      if (result.smoothBonus)
+        details.push(`${ui.missionUi.smoothBonus} +${result.smoothBonus}`);
+      if (result.photos)
+        details.push(`${ui.missionUi.photos} ${result.photos}`);
       if (result.illegalShortcut) details.push(ui.missionUi.illegalShortcut);
       setText(this.resultText, details.join(' · '));
       this.displayedResult = result;
@@ -162,7 +208,7 @@ export class MissionHud {
   }
 
   private drawArrow(dx: number, dy: number) {
-    const { clientWidth: width, clientHeight: height } = this.navigation;
+    const { width, height } = this.navigationSize;
     if (width === 0 || height === 0) return;
     const magnitude = Math.max(Math.abs(dx) / width, Math.abs(dy) / height);
     const x = magnitude === 0 ? 100 : 50 + (50 * dx) / (width * magnitude);

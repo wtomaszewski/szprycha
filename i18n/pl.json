@@ -54,7 +54,7 @@
     "bell": "Dzwonek",
     "lights": "Światła",
     "praga": "Wolna jazda po Pradze",
-    "pragaTitle": "Warszawa · Praga",
+    "pragaTitle": "Warszawa · Praga i Starówka",
     "internalRoadSign": "Droga wewnętrzna"
   },
   "rules": {
@@ -140,7 +140,11 @@
     "declined": "Jedziesz dalej bez pasażera.",
     "kontrola_swiatel": "Próba o zmroku. Sprawdź, czy świecą obie lampy.",
     "pojazd_na_skrzyzowaniu": "Samochód zbliża się do skrzyżowania.",
-    "pieszy_przy_bramie": "Pieszy nadchodzi w stronę bramy."
+    "pieszy_przy_bramie": "Pieszy nadchodzi w stronę bramy.",
+    "rowerzysta_na_moscie": "Przed tobą wolniejszy rowerzysta. Przed wyprzedzaniem obejrzyj się i zostaw odstęp.",
+    "turysci_na_starowce": "Turyści na rynku. Zwolnij i zostaw im miejsce.",
+    "polecenie_oli": "Sierżant Ola: stój przed linią, niezależnie od światła.",
+    "olaRusza": "Sierżant Ola: możesz ruszyć."
   },
   "missionUi": {
     "timer": "Czas misji",
@@ -163,10 +167,18 @@
       "dojedz": "Jedź do zaznaczonego miejsca.",
       "odbierz": "Odbierz przesyłkę w zaznaczonym miejscu.",
       "oddaj": "Oddaj przesyłkę w zaznaczonym miejscu.",
-      "przygotuj_rower": "Załóż kask i włącz światła."
+      "przygotuj_rower": "Załóż kask i włącz światła.",
+      "sfotografuj": "Zrób zdjęcie znaku"
     },
     "turnOnLights": "Włącz przednie i tylne światła",
-    "illegalShortcut": "Jazda rowerem tym skrótem była niezgodna z przepisami."
+    "illegalShortcut": "Jazda rowerem tym skrótem była niezgodna z przepisami.",
+    "shocks": "Wstrząsy",
+    "photograph": "Zrób zdjęcie znaku [P / A]",
+    "raceScoreRequired": "Zdobądź więcej punktów od Turbo, żeby zaliczyć wyścig.",
+    "yourPoints": "Twoje punkty",
+    "turboPoints": "Punkty Turbo",
+    "smoothBonus": "Premia za płynną jazdę",
+    "photos": "Zdjęcia znaków"
   },
   "misje": {
     "WAW-T-01": {
@@ -206,6 +218,29 @@
       "cel4": "Za STOP-em jedź prosto do wjazdu pod blok. Zasygnalizuj skręt w prawo i dowieź pierogi.",
       "stop": "Zatrzymaj się przed linią i przepuść samochód na drodze z pierwszeństwem.",
       "powrot": "Wróć przed linię i zatrzymaj się całkowicie przed znakiem STOP."
+    },
+    "WAW-A1-04": {
+      "tytul": "Turbo rzuca wyzwanie",
+      "opis": "Przepraw się przez Wisłę i zdobądź więcej punktów niż Turbo.",
+      "cel1": "Jedź drogą dla rowerów przez most.",
+      "cel2": "Dojedź do zachodniego przyczółka.",
+      "cel3": "Jedź prosto do zebry przy zamku, przeprowadź rower i kieruj się do Kolumny Zygmunta."
+    },
+    "WAW-A1-05": {
+      "tytul": "Turyści na Starówce",
+      "opis": "Dostarcz kruchą figurkę syrenki do przewodnika.",
+      "cel1": "Odbierz figurkę z lodziarni.",
+      "cel2": "Wjedź powoli na kocie łby.",
+      "cel3": "Jedź płynnie przez rynek i zostaw miejsce pieszym.",
+      "cel4": "Zejdź z roweru i przeprowadź go deptakiem do przewodnika."
+    },
+    "WAW-A1-06": {
+      "tytul": "Błyskawica na znaku",
+      "opis": "Sprawdź, dlaczego znak przy zamku znalazł się w dziwnym miejscu.",
+      "cel1": "Jedź do posterunku Sierżant Oli.",
+      "cel2": "Zatrzymaj się przed linią i rusz dopiero na polecenie Oli.",
+      "cel3": "Przeprowadź rower przez zebrę, zatrzymaj się przy znaku i zrób zdjęcie.",
+      "cel4": "Poszukaj podpisu za zamkiem."
     }
   },
   "phone": {
@@ -258,7 +293,15 @@
       "PIER-06": "Gdy włączasz się do ruchu, ustąp pierwszeństwa wszystkim uczestnikom ruchu.",
       "PIER-02": "Z drogi podporządkowanej ustąp pojazdom na drodze z pierwszeństwem.",
       "MAN-01": "Zamiar skrętu pokaż ręką odpowiednio wcześnie.",
-      "MAN-07": "Przed ruszeniem od krawędzi jezdni obejrzyj się za siebie."
+      "MAN-07": "Przed ruszeniem od krawędzi jezdni obejrzyj się za siebie.",
+      "MAN-04": "Przed ominięciem lub wyprzedzaniem obejrzyj się, pokaż zamiar i zostaw bezpieczny odstęp.",
+      "GDZIE-06": "Na zebrze zejdź z roweru i przeprowadź go pieszo.",
+      "PIER-04": "Przy skręcie przepuść pieszych i rowerzystów jadących prosto przez twój tor jazdy.",
+      "GDZIE-07": "W strefie zamieszkania piesi mają pierwszeństwo, a ty możesz jechać najwyżej 20 km/h.",
+      "GDZIE-05": "Jeśli wyjątkowo wolno ci jechać po chodniku, jedź powoli i ustępuj pieszym.",
+      "MAN-08": "Zwolnij na kocich łbach i tam, gdzie w każdej chwili może pojawić się pieszy.",
+      "SYG-03": "Polecenie osoby kierującej ruchem jest ważniejsze niż światła i znaki.",
+      "ZNAK-A7": "Odwrócony trójkąt oznacza „ustąp pierwszeństwa”."
     },
     "lektor": {
       "ZNAK-STOP": "Przed linią stop zatrzymaj się całkowicie i ustąp pierwszeństwa."
@@ -278,6 +321,20 @@
     "WAW-A1-03": {
       "start_tekst": "Dowieź pierogi, póki są ciepłe. Przy STOP-ie zatrzymaj się, choćby pachniały na całą Pragę.",
       "koniec_tekst": "Jeszcze parują! Dobrze, że przy tym skrzyżowaniu dajesz sobie czas na rozejrzenie."
+    },
+    "WAW-A1-04": {
+      "start_tekst": "Do Kolumny Zygmunta! Za mostem jest uliczka pod prąd. A ty, którą drogę wybierzesz?",
+      "koniec_tekst": "Byłem pierwszy, ale straciłem punkty za jazdę pod prąd i przez zebrę.",
+      "punkty": "Masz więcej punktów niż Turbo. Wygrywasz dzięki bezpiecznej jeździe!"
+    },
+    "WAW-A1-05": {
+      "start_tekst": "Wieziemy kruchą syrenkę. Zwolnij na kocich łbach i pilnuj paska wstrząsów.",
+      "koniec_tekst": "Przewodnik odebrał syrenkę. Widział dziwny znak obok zamku. Sprawdzisz?"
+    },
+    "WAW-A1-06": {
+      "start_tekst": "Kieruję ruchem przy zamku. Zatrzymaj się na mój znak, nawet jeśli światło będzie zielone.",
+      "koniec_tekst": "Błyskawica i podpis „Zakłócacz”! Ktoś celowo przestawia znaki.",
+      "final": "Akt 1 ukończony! Mamy pierwszą wskazówkę i wiemy, gdzie szukać dalej."
     }
   }
 }

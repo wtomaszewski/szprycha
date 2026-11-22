@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { readContent } from '../../tools/content';
+import { MissionRace } from '../../src/gameplay/MissionRace';
 import { MissionSystem } from '../../src/gameplay/MissionSystem';
 import { TrafficEvents } from '../../src/gameplay/TrafficEvents';
 import {
@@ -23,9 +24,9 @@ import {
 } from '../../src/gameplay/trafficObstacles';
 import {
   approachWaypoint,
-  type PragaMissionId,
+  type WarsawMissionId,
   type Waypoint,
-} from './praga-routes';
+} from './warsaw-routes';
 
 export const missionContent = await readContent();
 
@@ -42,7 +43,11 @@ interface TiledMap {
   }[];
 }
 
-export function runPragaRoute(id: PragaMissionId, route: readonly Waypoint[]) {
+export function runWarsawRoute(
+  id: WarsawMissionId,
+  route: readonly Waypoint[],
+  afterViolation?: readonly Waypoint[],
+) {
   const definition = missionContent.misje.find((mission) => mission.id === id)!;
   const map = JSON.parse(
     readFileSync(`maps/${definition.mapa ?? definition.miasto}.tmj`, 'utf8'),
@@ -70,8 +75,16 @@ export function runPragaRoute(id: PragaMissionId, route: readonly Waypoint[]) {
     definition,
     world,
     settings.misja.major_do_porazki,
+    settings,
+    definition.wyscig &&
+      new MissionRace(
+        definition.wyscig.trasa_rywala,
+        definition,
+        world,
+        missionContent,
+      ),
   );
-  const engine = new RuleEngine(world, missionContent, manager);
+  let engine = new RuleEngine(world, missionContent, manager);
   const rider: Rider = {
     x: mission.start.x / scale,
     y: mission.start.y / scale,
@@ -126,13 +139,18 @@ export function runPragaRoute(id: PragaMissionId, route: readonly Waypoint[]) {
   const verdicts: Verdict[] = [];
   const fired: string[] = [];
   const seenAgents = new Set<string>();
-  engine.onVerdict((verdict) => verdicts.push(verdict));
+  const observe = () => engine.onVerdict((verdict) => verdicts.push(verdict));
+  observe();
+  let resumed = false;
   let attempt = 0;
   let waited = 0;
   let collision = false;
   let prepTicks = 0;
   for (let tick = 0; tick < 90 * TICKS_PER_SECOND && !mission.result; tick++) {
     const point = route[attempt];
+    if (point?.walking !== undefined && rider.speed === 0)
+      rider.walking = point.walking;
+    player.mode = rider.walking ? 'walking_bike' : 'riding';
     const preparing = mission.preparingBike;
     const drive =
       point && !preparing
@@ -159,6 +177,7 @@ export function runPragaRoute(id: PragaMissionId, route: readonly Waypoint[]) {
     player.speed = rider.speed * scale;
     player.heading = rider.heading;
     events.step(player);
+    env.officerOrders = events.officerOrders;
     traffic.step(env, player);
     const active = [
       ...traffic.road.agents,
@@ -176,9 +195,30 @@ export function runPragaRoute(id: PragaMissionId, route: readonly Waypoint[]) {
         helmet: player.helmet.fastened,
         lights: player.lights!.front && player.lights!.rear,
       },
+      player.speed,
     );
     fired.push(...(effects?.events?.map(({ typ }) => typ) ?? []));
     if (effects?.respawn) {
+      if (
+        afterViolation &&
+        !resumed &&
+        verdicts.some(({ kind }) => kind === 'major')
+      ) {
+        resumed = true;
+        route = afterViolation;
+        attempt = 0;
+        waited = 0;
+        Object.assign(rider, {
+          x: effects.respawn.x / scale,
+          y: effects.respawn.y / scale,
+          speed: 0,
+          walking: false,
+          heading: effects.respawn.heading,
+        });
+        engine = engine.afterCheckpoint();
+        observe();
+        continue;
+      }
       throw new Error(
         `${id} rewound at ${rider.x.toFixed(0)},${rider.y.toFixed(0)} after ${mission.elapsedSeconds}s: ${JSON.stringify(engine.recent)}`,
       );
@@ -188,8 +228,14 @@ export function runPragaRoute(id: PragaMissionId, route: readonly Waypoint[]) {
       !preparing &&
       drive.brake &&
       rider.speed === 0 &&
+      (point.until !== 'driveway-stop' || engine.drivewayStopReady) &&
+      (point.until !== 'signaled' || engine.signalReady) &&
+      (point.until !== 'officer-go' || events.notice?.officerCleared) &&
+      (point.until !== 'traffic-ended' ||
+        (fired.length > 0 && !events.notice)) &&
       ++waited >= Math.max(1, (point.wait ?? 0) * TICKS_PER_SECOND)
     ) {
+      if (point.photo) mission.photograph(player.pos, player.speed);
       attempt++;
       waited = 0;
     }

@@ -58,10 +58,14 @@
 - **Kolekcja:** 10 Syrenek (ukryte miniatury).
 - **Reguły:** GDZIE-05, GDZIE-06, GDZIE-07, MAN-08, ZNAK-B1, ZNAK-B9.
 
+**Fragment M4d.** Za mostem ulice prowadzą do zastępczej bryły zamku, Kolumny Zygmunta i rynku z kamienicami. Są tu przejście dla pieszych, wlot z sygnalizacją, strefa zamieszkania D-40/D-41, kocie łby i deptak oznaczony B-9. Na rynku pojawiają się turyści. W WAW-A1-05 wolna jazda po nierównościach i spokojne hamowanie pomagają zdobyć premię za płynność. W WAW-A1-06 Ola kieruje ruchem, a zdjęcie przestawionego znaku prowadzi do podpisu Zakłócacza.
+
 ### 3. Powiśle i Bulwary — „Nad Wisłą”
 - **Landmarki:** Centrum Nauki Kopernik (ciemna, kanciasta bryła + kopuła planetarium jako srebrna kula), Most Świętokrzyski (jeden ukośny pylon, liny), bulwary z schodkami do wody, park fontann (nocą kolorowe).
 - **Układ drogowy:** długa DDR i ciąg pieszo-rowerowy (C-16/C-13 — oba warianty: wspólny i z podziałem), most z wydzieloną DDR, zjazd z bulwaru na jezdnię, ławki i spacerowicze, rowerzyści AI do wyprzedzania.
 - **Reguły:** GDZIE-01, GDZIE-02, GDZIE-08, GDZIE-11, MAN-04, MSC-04 (nocne misje).
+
+**Most w M4d.** Pylon i wanty oznaczają przeprawę nad Wisłą. DDR oznaczona C-13 biegnie równolegle do jezdni, a przy zamku znajduje się przejazd dla rowerzystów. W WAW-A1-04 wolniejszy rowerzysta na DDR i pieszy przy zebrze tworzą sytuacje do ćwiczeń. Na przyczółku Turbo jedzie pod B-2 bez wyjątku dla rowerów. Obu zawodników ocenia ta sama punktacja.
 
 ### 4. Praga — „Po drugiej stronie”
 - **Landmarki:** Stadion Narodowy (okrągła misa z fasadą w biało-czerwone pasy „plecione”, maszt pośrodku dachu), praskie kamienice z podwórkami-studniami, neony, bazar z budkami, ceglana fabryka.
@@ -69,7 +73,7 @@
 - **POI:** warsztat Pana Kazika (warszawski), blok Pani Haliny, kiosk z zapiekankami.
 - **Reguły:** PIER-01, PIER-02, PIER-06, MSC-03, ZNAK-STOP, ZNAK-A7, ZNAK-D1, MAN-01, MAN-07.
 
-**Fragment grywalny (M4d, część 1).** `npm run map:generate:warsaw` odtwarza `maps/warszawa.tmj` wspólnym generatorem Tiled dla Warszawy i Miasteczka. Praga jest kolażem w skali 70 × 48 kafli. Do M6 można dołączyć kolejne kwartały przy wlotach granicznych grafu pasów.
+**Fragment grywalny M4d.** `npm run map:generate:warsaw` odtwarza `maps/warszawa.tmj` wspólnym generatorem Tiled dla Warszawy i Miasteczka. Praga, most i Starówka tworzą kolaż w skali 124 × 48 kafli. Do M6 można dołączyć kolejne kwartały przy wlotach granicznych grafu pasów.
 
 | Miejsce | Praktyka |
 | --- | --- |
@@ -79,9 +83,9 @@
 | Małe rondo | Jednokierunkowy pierścień, cztery wloty A-7 + C-12 i wyspa z kolizją. |
 | Osiedle przy szkole | A-17 oraz próg oznaczony A-11a. |
 
-SzprychaApp odblokowuje zadania w kolejności WAW-T-01 → WAW-T-02 → WAW-A1-01 → WAW-A1-02 → WAW-A1-03. Przegląd i próbna jazda odbywają się w Miasteczku. Zlecenia na Pradze używają wymuszonych uczestników ruchu, a wolna jazda uruchamia ruch po całym grafie. W WAW-A1-03 za skrzyżowaniem ze STOP-em jest skrót oznaczony B-1. Jazda rowerem przez pasaż wywołuje werdykt ZNAK-B1.
+SzprychaApp odblokowuje zadania w kolejności WAW-T-01 → WAW-T-02 → WAW-A1-01 → WAW-A1-02 → WAW-A1-03 → WAW-A1-04 → WAW-A1-05 → WAW-A1-06. Przegląd i próbna jazda odbywają się w Miasteczku. Zlecenia na Pradze używają wymuszonych uczestników ruchu, a wolna jazda uruchamia ruch po całym grafie. W WAW-A1-03 za skrzyżowaniem ze STOP-em jest skrót oznaczony B-1. Jazda rowerem przez pasaż wywołuje werdykt ZNAK-B1.
 
-Pomiar fragmentu w Chromium z ograniczeniem CPU 4× można powtórzyć podczas działania Vite poleceniem `BENCH_MAP=warszawa npm run benchmark:driving`. Wynik zapisuje się w `test-results/performance-praga.json`.
+Pomiar fragmentu w Chromium z ograniczeniem CPU 4× można powtórzyć podczas działania Vite poleceniem `BENCH_MAP=warszawa npm run benchmark:driving`. Wynik zapisuje się w `test-results/performance-praga.json`. Ustaw `BENCH_FRAGMENT=most` lub `BENCH_FRAGMENT=starowka` razem z `BENCH_MAP=warszawa`, żeby zmierzyć jazdę w tych częściach mapy. Opcja `BENCH_VIEWPORT=640x360` ustawia natywną rozdzielczość gry. Domyślny viewport to 1280 × 720.
 
 ### 5. Łazienki i Mokotów — „Park i przedmieścia”
 - **Landmarki:** Pałac na Wodzie (biały pałac nad stawem, kolumny), pawie, wiewiórki, pomnik w parku (własny, bez kopiowania pomnika Chopina — „pianista pod wierzbą”, uproszczony), domki jednorodzinne, stacja kolejki podmiejskiej.

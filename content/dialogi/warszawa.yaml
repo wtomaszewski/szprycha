@@ -52,6 +52,42 @@ dialogi:
       - postac: pani_halina
         emocja: happy
         tekst: dialogi.WAW-A1-03.koniec_tekst
+  - id: dialogi.WAW-A1-04.start
+    linie:
+      - postac: turbo
+        emocja: neutral
+        tekst: dialogi.WAW-A1-04.start_tekst
+  - id: dialogi.WAW-A1-04.koniec
+    linie:
+      - postac: turbo
+        emocja: worried
+        tekst: dialogi.WAW-A1-04.koniec_tekst
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.WAW-A1-04.punkty
+  - id: dialogi.WAW-A1-05.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.WAW-A1-05.start_tekst
+  - id: dialogi.WAW-A1-05.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: happy
+        tekst: dialogi.WAW-A1-05.koniec_tekst
+  - id: dialogi.WAW-A1-06.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.WAW-A1-06.start_tekst
+  - id: dialogi.WAW-A1-06.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: surprised
+        tekst: dialogi.WAW-A1-06.koniec_tekst
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.WAW-A1-06.final
 zapowiedzi:
   - regula: KASK-01
     emocja: neutral
@@ -84,3 +120,27 @@ zapowiedzi:
   - regula: MAN-07
     emocja: neutral
     tekst: dialogi.reguly.MAN-07
+  - regula: MAN-04
+    emocja: neutral
+    tekst: dialogi.reguly.MAN-04
+  - regula: GDZIE-06
+    emocja: neutral
+    tekst: dialogi.reguly.GDZIE-06
+  - regula: PIER-04
+    emocja: neutral
+    tekst: dialogi.reguly.PIER-04
+  - regula: GDZIE-07
+    emocja: neutral
+    tekst: dialogi.reguly.GDZIE-07
+  - regula: GDZIE-05
+    emocja: neutral
+    tekst: dialogi.reguly.GDZIE-05
+  - regula: MAN-08
+    emocja: neutral
+    tekst: dialogi.reguly.MAN-08
+  - regula: SYG-03
+    emocja: neutral
+    tekst: dialogi.reguly.SYG-03
+  - regula: ZNAK-A7
+    emocja: neutral
+    tekst: dialogi.reguly.ZNAK-A7

@@ -28,7 +28,12 @@ export async function validateMaps(root: string, content: GameContent) {
     const map = mission.mapa ?? mission.miasto;
     const world = worlds.get(map);
     if (!world) throw new Error(`Mission ${mission.id}: unknown map ${map}`);
-    new MissionSystem(mission, world, content.balans.misja.major_do_porazki);
+    new MissionSystem(
+      mission,
+      world,
+      content.balans.misja.major_do_porazki,
+      content.balans,
+    );
     for (const { typ, przy, regula } of mission.zdarzenia_wymuszone) {
       const id = typ as TrafficEventId;
       const area =

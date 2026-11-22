@@ -107,18 +107,56 @@ export function drawMapGround(
       },
     });
   }
-  return (camera: Cameras.Scene2D.Camera) => {
-    const cx = camera.scrollX + camera.width / 2;
-    const cy = camera.scrollY + camera.height / 2;
-    const hw = camera.width / (2 * camera.zoom) + TILE;
-    const hh = camera.height / (2 * camera.zoom) + TILE;
-    for (const chunk of chunks) {
-      const visible =
-        chunk.x < cx + hw &&
-        chunk.x + chunk.width > cx - hw &&
-        chunk.y < cy + hh &&
-        chunk.y + chunk.height > cy - hh;
-      if (chunk.visible !== visible) chunk.setVisible(visible);
+  return [...chunks, ...water];
+}
+
+/** Keep static vector scenery in camera-culled textures, like the tile layers. */
+export function cacheMapGraphics(
+  scene: Scene,
+  source: GameObjects.Graphics,
+  key: string,
+  width: number,
+  height: number,
+) {
+  const chunkSize = chunkTiles * TILE;
+  const depth = source.depth;
+  const chunks: GameObjects.Image[] = [];
+  source.setScrollFactor(0);
+  for (let y = 0; y < height; y += chunkSize)
+    for (let x = 0; x < width; x += chunkSize) {
+      const name = `${key}-${x}-${y}`;
+      if (!scene.textures.exists(name))
+        source
+          .setPosition(-x, -y)
+          .generateTexture(
+            name,
+            Math.min(chunkSize, width - x),
+            Math.min(chunkSize, height - y),
+          );
+      chunks.push(scene.add.image(x, y, name).setOrigin(0).setDepth(depth));
     }
-  };
+  source.destroy();
+  return chunks;
+}
+
+export function cullMapChunks(
+  chunks: readonly GameObjects.Image[],
+  camera: Cameras.Scene2D.Camera,
+) {
+  const centerX = camera.clampX(camera.scrollX) + camera.width / 2;
+  const centerY = camera.clampY(camera.scrollY) + camera.height / 2;
+  const halfWidth = camera.width / (2 * camera.zoom) + TILE;
+  const halfHeight = camera.height / (2 * camera.zoom) + TILE;
+  const left = centerX - halfWidth;
+  const right = centerX + halfWidth;
+  const top = centerY - halfHeight;
+  const bottom = centerY + halfHeight;
+  for (const chunk of chunks) {
+    const visible =
+      chunk.x + chunk.width >= left &&
+      chunk.x <= right &&
+      chunk.y + chunk.height >= top &&
+      chunk.y <= bottom;
+    if (chunk.visible !== visible) chunk.setVisible(visible);
+  }
 }

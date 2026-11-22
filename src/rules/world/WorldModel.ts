@@ -90,6 +90,7 @@ const laneProperties = z.object({
 const signProperties = z.object({
   code: z.string(),
   exceptBicycles: z.boolean().default(false),
+  displayOnly: z.boolean().optional(),
   affects: z.string(),
   facing: sideSchema,
 });
@@ -246,6 +247,7 @@ export class WorldModel {
   readonly signals: readonly Signal[];
   readonly pedestrianSpawns: readonly PedestrianSpawn[];
   readonly laneGraph: LaneGraph;
+  readonly raceRoutes = new Map<string, { path: RoadPath; speed: number }>();
   readonly trafficRoutes: readonly TrafficRoute[];
   readonly roadwayCyclistLanes: readonly Lane[];
   readonly trafficCarCount: number;
@@ -472,6 +474,7 @@ export class WorldModel {
       ...signalProperties.parse(properties(object)),
     }));
     for (const sign of this.signs) {
+      if (sign.displayOnly) continue;
       const lane = this.lanesById.get(sign.affects);
       if (sign.code === 'B-1' || sign.code === 'B-2' || sign.code === 'B-9') {
         const zone = this.zones.find(({ id }) => id === sign.affects);
@@ -489,6 +492,11 @@ export class WorldModel {
           if (
             (sign.code === 'D-46' || sign.code === 'D-47') &&
             this.driveways.some(({ id }) => sign.affects === id)
+          )
+            continue;
+          if (
+            ['C-13', 'D-40', 'D-41'].includes(sign.code) &&
+            this.zones.some(({ id }) => id === sign.affects)
           )
             continue;
           throw new Error(`Unknown sign lane: ${sign.affects}`);
@@ -531,6 +539,26 @@ export class WorldModel {
       map.width * map.tilewidth * scale,
       map.height * map.tileheight * scale,
     );
+    for (const object of layer('race_routes')) {
+      const id = object.name;
+      const path = polyline(object);
+      if (
+        !id ||
+        this.raceRoutes.has(id) ||
+        path.points.some(
+          ({ x, y }) =>
+            x < 0 ||
+            y < 0 ||
+            x > map.width * map.tilewidth * scale ||
+            y > map.height * map.tileheight * scale,
+        )
+      )
+        throw new Error(`Invalid race route: ${id}`);
+      this.raceRoutes.set(id, {
+        path,
+        speed: z.number().positive().parse(properties(object).speed),
+      });
+    }
     this.trafficRoutes = buildTrafficRoutes(
       [
         ...layer('traffic_routes').map((object) => ({

@@ -107,9 +107,12 @@ export class RuleEngine {
   ) {
     const { balans: settings, przepisy } = content;
     this.settings = settings;
-    const noVehiclesWeight =
-      przepisy.przepisy.find(({ id }) => id === 'ZNAK-B1')?.waga_bledu ?? null;
-    this.road = new RoadVisit(world, settings.silnik, noVehiclesWeight);
+    const weight = (ruleId: string) =>
+      przepisy.przepisy.find(({ id }) => id === ruleId)?.waga_bledu ?? null;
+    this.road = new RoadVisit(world, settings.silnik, {
+      noVehicles: weight('ZNAK-B1'),
+      noEntry: weight('ZNAK-B2T22'),
+    });
     this.passing = new PassingMonitor(world);
     this.railway = new RailwayDetector(world);
     this.zones = new ZoneTracker(world);
@@ -121,6 +124,18 @@ export class RuleEngine {
 
   get at() {
     return Math.max(0, this.tick - 1) / TICKS_PER_SECOND;
+  }
+
+  get drivewayStopReady() {
+    return this.driveway.stopReady;
+  }
+
+  get stopReady() {
+    return this.junction.stopReady;
+  }
+
+  get signalReady() {
+    return this.maneuver.signalingFor(this.tick);
   }
 
   get signal() {

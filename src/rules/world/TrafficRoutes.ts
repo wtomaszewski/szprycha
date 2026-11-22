@@ -82,7 +82,9 @@ export function buildTrafficRoutes(
       throw new Error(`Traffic route outside map: ${id}`);
     const foot = kind === 'pedestrian';
     const bike = kind === 'cyclist';
-    const walkZones = zones.filter(({ kind }) => kind === 'sidewalk');
+    const walkZones = zones.filter(
+      ({ kind }) => kind === 'sidewalk' || kind === 'pedestrian_zone',
+    );
     const bikeZones = zones.filter(
       ({ kind }) => kind === 'bike_lane' || kind === 'bike_path',
     );
@@ -137,7 +139,11 @@ export function buildTrafficRoutes(
       );
     if (kind === 'car' && input.repeat_s)
       throw new Error(`Forced car route cannot repeat: ${id}`);
-    if (bike && (!onBoundary(path.start) || !onBoundary(path.end)))
+    if (
+      bike &&
+      !input.event_only &&
+      (!onBoundary(path.start) || !onBoundary(path.end))
+    )
       throw new Error(`Cycle route needs boundary endpoints: ${id}`);
     byId.set(id, {
       ...input,
