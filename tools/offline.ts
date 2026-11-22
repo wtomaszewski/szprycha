@@ -42,46 +42,52 @@ export function offlineApp(mobile = false, rankingOrigin?: string): Plugin {
     apply: 'build',
     transformIndexHtml: {
       order: 'post',
-      handler: (html) => ({
-        html: html.replace(
-          '<body>',
-          `<body>\n    <img id="pwa-splash" src="./${webSplash}" alt="" />`,
-        ),
-        tags: [
-          ...(mobile
-            ? [
+      handler: (html, ctx) =>
+        ctx.path.endsWith('/nauczyciel.html')
+          ? html
+          : {
+              html: html.replace(
+                '<body>',
+                `<body>\n    <img id="pwa-splash" src="./${webSplash}" alt="" />`,
+              ),
+              tags: [
+                ...(mobile
+                  ? [
+                      {
+                        tag: 'meta',
+                        attrs: {
+                          'http-equiv': 'Content-Security-Policy',
+                          content: mobileContentPolicy(rankingOrigin),
+                        },
+                        injectTo: 'head-prepend' as const,
+                      },
+                    ]
+                  : []),
                 {
-                  tag: 'meta',
-                  attrs: {
-                    'http-equiv': 'Content-Security-Policy',
-                    content: mobileContentPolicy(rankingOrigin),
-                  },
-                  injectTo: 'head-prepend' as const,
+                  tag: 'link',
+                  attrs: { rel: 'manifest', href: `./${manifestFile}` },
                 },
-              ]
-            : []),
-          {
-            tag: 'link',
-            attrs: { rel: 'manifest', href: `./${manifestFile}` },
-          },
-          {
-            tag: 'link',
-            attrs: { rel: 'icon', href: `./${appIcons[0]!.src}` },
-          },
-          {
-            tag: 'link',
-            attrs: { rel: 'apple-touch-icon', href: `./${appleTouchIcon}` },
-          },
-          ...appleSplashes.map(({ src, media }) => ({
-            tag: 'link',
-            attrs: {
-              rel: 'apple-touch-startup-image',
-              href: `./${src}`,
-              media,
+                {
+                  tag: 'link',
+                  attrs: { rel: 'icon', href: `./${appIcons[0]!.src}` },
+                },
+                {
+                  tag: 'link',
+                  attrs: {
+                    rel: 'apple-touch-icon',
+                    href: `./${appleTouchIcon}`,
+                  },
+                },
+                ...appleSplashes.map(({ src, media }) => ({
+                  tag: 'link',
+                  attrs: {
+                    rel: 'apple-touch-startup-image',
+                    href: `./${src}`,
+                    media,
+                  },
+                })),
+              ],
             },
-          })),
-        ],
-      }),
     },
     generateBundle() {
       this.emitFile({
@@ -117,7 +123,13 @@ export function offlineApp(mobile = false, rankingOrigin?: string): Plugin {
             .split(sep)
             .join('/'),
         )
-        .filter((file) => file !== workerFile && file !== '_headers')
+        .filter(
+          (file) =>
+            file !== workerFile &&
+            file !== '_headers' &&
+            file !== 'nauczyciel.html' &&
+            !file.startsWith('assets/nauczyciel-'),
+        )
         .sort();
       const worker = await readFile(
         new URL('./offline-worker.js', import.meta.url),

@@ -2336,12 +2336,30 @@ html[data-reduced-effects]
   display: block;
   color: var(--ui-cyan);
 }
-.parent-zone-setting select {
+.parent-zone-setting select,
+.class-membership-form input {
   min-height: var(--tap-size);
   max-width: 100%;
   color: inherit;
   background: var(--ui-bg);
   border: 2px solid var(--ui-border);
+}
+.parent-zone-preferences[hidden],
+.class-membership-form[hidden] {
+  display: none;
+}
+.parent-zone-preferences h3 {
+  margin: 0;
+}
+.class-membership-form label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.class-membership-form input {
+  width: 13ch;
+  padding-inline: 6px;
 }
 .parent-zone-preferences small {
   color: var(--ui-muted);

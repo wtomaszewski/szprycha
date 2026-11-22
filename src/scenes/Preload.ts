@@ -24,7 +24,7 @@ export class Preload extends Scene {
         const url = rankingUrl(import.meta.env.VITE_RANKING_URL);
         if (url && versions) {
           progress.rankings = new RankingClient(progress.store, url, versions);
-          progress.rankings.start();
+          progress.rankings.start(content.przepisy.przepisy);
         }
         audio.configure(progress.store.profile.audio);
         applyAccessibility(progress.store.profile);

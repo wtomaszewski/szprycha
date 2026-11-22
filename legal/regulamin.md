@@ -19,6 +19,10 @@ Po zainstalowaniu lub zapisaniu gry do użytku offline można grać bez internet
 
 Rodzic może włączyć opcjonalne rankingi w Strefie Rodzica. Gra działa także offline. Ranking korzysta z serwera w UE i otrzymuje UUID, wygenerowany nick, identyfikator awatara i wyniki. Rodzic może wyłączyć rankingi i jednym przyciskiem usunąć profil oraz wyniki z serwera. [Uzupełnij zasady publikowania, liczenia, resetowania i korygowania wyników oraz sposób zgłoszenia błędu rankingu.]
 
+### Klasy
+
+Pełnoletni nauczyciel może założyć konto z własnym adresem e-mail, utworzyć klasę i przekazać kod rodzicom. Rodzic zatwierdza dołączenie kodem w Strefie Rodzica i może później opuścić klasę. Członkowie znajdują się w tabeli według XP i są widoczni pod wygenerowanymi nickami wraz z wynikami opanowania modułów. Nauczyciel ustala moment resetu i może zamknąć kod, wygenerować nowy, usunąć klasę albo konto z klasami. Etykiety przypisane do nicków pozostają w przeglądarce nauczyciela. [Uzupełnij obowiązki szkoły i zasady udostępniania kodów.]
+
 ## Materiał edukacyjny
 
 Gra jest materiałem edukacyjnym pomocniczym. Stan prawny przyjęty w grze: [data]. Licencja Szprychy nie jest kartą rowerową.

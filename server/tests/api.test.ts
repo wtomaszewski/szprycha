@@ -444,3 +444,256 @@ it('enforces exact CORS origins, a body limit and rate limits', async () => {
   expect(throttled.status).toBe(429);
   expect(Number(throttled.headers.get('Retry-After'))).toBeGreaterThan(0);
 });
+
+const password = 'test-classroom-password';
+const mastery = {
+  M01: 20,
+  M02: 30,
+  M03: 0,
+  M04: 0,
+  M05: 0,
+  M06: 0,
+  M07: 0,
+  M08: 0,
+};
+
+function classRequests(
+  request: Awaited<ReturnType<typeof fixture>>['request'],
+) {
+  const call = (method: string, path: string, token?: string, body?: object) =>
+    request(path, {
+      method,
+      headers: {
+        ...(token && { Authorization: 'Bearer ' + token }),
+        ...(body && { 'Content-Type': 'application/json' }),
+      },
+      body: body && JSON.stringify(body),
+    });
+  const register = async (email: string) => {
+    const response = await call('POST', '/teacher/register', undefined, {
+      email,
+      password,
+      adult: true,
+    });
+    expect(response.status).toBe(201);
+    expect(response.headers.get('set-cookie')).toBeNull();
+    const session = (await response.json()) as { token: string };
+    return session.token;
+  };
+  const create = async (token: string, name: string) => {
+    const response = await call('POST', '/teacher/classes', token, { name });
+    expect(response.status).toBe(201);
+    return (await response.json()) as { id: string; code: string };
+  };
+  return { call, register, create };
+}
+
+it('scopes class results to members and the owner and removes roster data on leave or profile deletion', async () => {
+  const { call, register, create } = classRequests((await fixture()).request);
+  const teacher = await register('teacher@example.test');
+  const another = await register('another@example.test');
+  const room = await create(teacher, 'Klasa 4A');
+  const otherRoom = await create(another, 'Klasa 4B');
+  const path = '/teacher/classes/' + room.id;
+  const progress = { nickname: nicknameAt(3), xp: 12.5, mastery };
+  expect(room.code).toMatch(/^[23456789ACDEFHJKMNPQRTVWXY]{10}$/);
+  expect((await call('GET', '/teacher/classes')).status).toBe(401);
+  expect((await call('GET', '/class/board', teacher)).status).toBe(401);
+  expect((await call('GET', path, another)).status).toBe(404);
+  expect((await call('DELETE', path, another)).status).toBe(404);
+  expect((await call('GET', '/class/board', id(3))).status).toBe(404);
+  expect(
+    (
+      await call('POST', '/class/join', id(3), {
+        ...progress,
+        code: room.code,
+        label: 'prawdziwe imię',
+      })
+    ).status,
+  ).toBe(400);
+  expect(
+    (
+      await call('POST', '/class/join', id(3), {
+        ...progress,
+        code: room.code,
+        nickname: 'Dowolny Tekst',
+      })
+    ).status,
+  ).toBe(400);
+  const join = await call('POST', '/class/join', id(3), {
+    ...progress,
+    code: room.code,
+  });
+  expect(join.status).toBe(201);
+  const { memberId } = (await join.json()) as { memberId: string };
+  expect(memberId).not.toBe(id(3));
+  const repeated = await call('POST', '/class/join', id(3), {
+    ...progress,
+    code: room.code,
+  });
+  expect(repeated.status).toBe(200);
+  expect(await repeated.json()).toEqual({ memberId });
+  expect(
+    (
+      await call('POST', '/class/join', id(3), {
+        ...progress,
+        code: otherRoom.code,
+      })
+    ).status,
+  ).toBe(409);
+  expect((await call('GET', '/class/board', id(4))).status).toBe(404);
+  const expected = { ...progress, position: 1 };
+  expect(await (await call('GET', '/class/board', id(3))).json()).toEqual({
+    top: [expected],
+    self: expected,
+  });
+  const teacherResult = await (await call('GET', path, teacher)).json();
+  expect(teacherResult).toMatchObject({ rows: [{ ...expected, memberId }] });
+  expect(JSON.stringify(teacherResult)).not.toContain(id(3));
+  expect(
+    (await call('PUT', '/class/progress', id(4), { ...progress, memberId }))
+      .status,
+  ).toBe(404);
+
+  expect((await call('POST', path + '/reset', another)).status).toBe(404);
+  expect((await call('POST', path + '/reset', teacher)).status).toBe(204);
+  expect(
+    (
+      await call('PUT', '/class/progress', id(3), {
+        ...progress,
+        memberId,
+        xp: 21,
+        mastery: { ...mastery, M01: 34, M02: 25 },
+      })
+    ).status,
+  ).toBe(204);
+  expect(await (await call('GET', '/class/board', id(3))).json()).toMatchObject(
+    {
+      self: { xp: 8.5, mastery: { M01: 14, M02: 0 } },
+    },
+  );
+
+  expect((await call('DELETE', '/class/membership', id(3))).status).toBe(204);
+  expect((await call('GET', '/class/membership', id(3))).status).toBe(204);
+  expect((await call('GET', '/class/board', id(3))).status).toBe(404);
+  const rejoin = await call('POST', '/class/join', id(3), {
+    ...progress,
+    code: room.code,
+  });
+  expect(rejoin.status).toBe(201);
+  expect(await rejoin.json()).not.toEqual({ memberId });
+  expect(await (await call('GET', '/class/board', id(3))).json()).toMatchObject(
+    {
+      self: { xp: 0, mastery: { M01: 0 } },
+    },
+  );
+  expect(
+    (await call('PUT', '/class/progress', id(3), { ...progress, memberId }))
+      .status,
+  ).toBe(404);
+  expect((await call('DELETE', '/profile', id(3))).status).toBe(204);
+  expect((await call('GET', '/class/membership', id(3))).status).toBe(204);
+  expect(await (await call('GET', path, teacher)).json()).toMatchObject({
+    rows: [],
+  });
+});
+
+it('closes and rotates codes while keeping existing members, cascades class and account deletion and expires sessions', async () => {
+  const server = await fixture();
+  const { call, register, create } = classRequests(server.request);
+  const email = 'school@example.test';
+  const teacher = await register(email.toUpperCase());
+  const room = await create(teacher, 'Klasa 5A');
+  const linked = await create(teacher, 'Klasa 5B');
+  const path = '/teacher/classes/' + room.id;
+  const payload = { nickname: nicknameAt(5), xp: 20, mastery, code: room.code };
+  expect((await call('POST', '/class/join', id(5), payload)).status).toBe(201);
+  expect(
+    await (await call('DELETE', path + '/code', teacher)).json(),
+  ).toMatchObject({ code: null });
+  expect((await call('POST', '/class/join', id(6), payload)).status).toBe(404);
+  const opened = (await (
+    await call('POST', path + '/code', teacher)
+  ).json()) as { code: string };
+  const rotated = (await (
+    await call('POST', path + '/code', teacher)
+  ).json()) as { code: string };
+  expect(rotated.code).not.toBe(opened.code);
+  expect(
+    (
+      await call('POST', '/class/join', id(6), {
+        ...payload,
+        code: opened.code,
+      })
+    ).status,
+  ).toBe(404);
+  expect((await call('GET', '/class/board', id(5))).status).toBe(200);
+  expect(
+    (
+      await call('POST', '/class/join', id(6), {
+        ...payload,
+        code: linked.code,
+      })
+    ).status,
+  ).toBe(201);
+  expect((await call('DELETE', path, teacher)).status).toBe(204);
+  expect((await call('GET', '/class/board', id(5))).status).toBe(404);
+  expect((await call('GET', '/class/board', id(6))).status).toBe(200);
+
+  const login = (secret = password) =>
+    call('POST', '/teacher/login', undefined, { email, password: secret });
+  expect((await login('incorrect-password')).status).toBe(401);
+  const { token } = (await (await login()).json()) as { token: string };
+  expect((await call('DELETE', '/teacher/session', token)).status).toBe(204);
+  expect((await call('GET', '/teacher/classes', token)).status).toBe(401);
+  server.setClock('2026-03-29T08:00:00Z');
+  expect((await call('GET', '/teacher/classes', teacher)).status).toBe(401);
+  const active = (await (await login()).json()) as { token: string };
+  const second = (await (await login()).json()) as { token: string };
+  expect((await call('DELETE', '/teacher/account', active.token)).status).toBe(
+    204,
+  );
+  expect((await call('GET', '/teacher/classes', second.token)).status).toBe(
+    401,
+  );
+  expect((await call('GET', '/class/board', id(6))).status).toBe(404);
+  expect(
+    (
+      await call('POST', '/class/join', id(7), {
+        ...payload,
+        code: linked.code,
+      })
+    ).status,
+  ).toBe(404);
+  expect((await login()).status).toBe(401);
+  const recreated = await register(email);
+  expect(
+    await (await call('GET', '/teacher/classes', recreated)).json(),
+  ).toEqual([]);
+});
+
+it('requires adult confirmation and limits attempts to use class codes', async () => {
+  const { call } = classRequests((await fixture()).request);
+  expect(
+    (
+      await call('POST', '/teacher/register', undefined, {
+        email: 'teacher@example.test',
+        password,
+        adult: false,
+      })
+    ).status,
+  ).toBe(400);
+  const payload = {
+    nickname: nicknameAt(6),
+    xp: 0,
+    mastery,
+    code: '23456789AC',
+  };
+  for (let i = 0; i < 60; i++)
+    expect((await call('POST', '/class/join', id(i), payload)).status).toBe(
+      404,
+    );
+  const blocked = await call('POST', '/class/join', id(60), payload);
+  expect(blocked.status).toBe(429);
+  expect(Number(blocked.headers.get('retry-after'))).toBeGreaterThan(0);
+});

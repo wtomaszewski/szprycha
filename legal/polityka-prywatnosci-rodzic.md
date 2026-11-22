@@ -22,6 +22,12 @@ Dane rankingu są przechowywane na serwerze w UE [operator, państwo, podmioty p
 
 Rodzic może wyłączyć ranking w Strefie Rodzica. Przycisk „Usuń profil z serwera” usuwa jednym naciśnięciem profil rankingowy i jego wyniki z usługi. [Uzupełnij zasady usuwania z kopii zapasowych i termin wykonania.] Na urządzeniu gra nadal może zachować lokalne postępy.
 
+### Klasa i konto nauczyciela
+
+Rodzic może zatwierdzić dołączenie do klasy kodem od nauczyciela. Serwer wiąże losowy identyfikator profilu z klasą oraz przechowuje wygenerowany nick, XP i wyniki opanowania modułów. Nick i wyniki klasy są widoczne dla jej członków oraz nauczyciela, który prowadzi klasę. Rodzic może opuścić klasę w Strefie Rodzica. Usunięcie profilu z serwera obejmuje też członkostwo i wyniki klasy. Wyłączenie rankingów wstrzymuje synchronizację. [Uzupełnij zasady udziału w klasie i role administratora oraz szkoły.]
+
+Pełnoletni nauczyciel podaje adres e-mail i hasło. Serwer zapisuje adres, sól i skrót hasła oraz dane potrzebne do obsługi sesji i klas. Nauczyciel może usunąć konto wraz z klasami i ich wynikami. Może też zapisać własne etykiety dla nicków lokalnie w przeglądarce panelu. Etykiety nigdy nie są wysyłane do usługi. [Uzupełnij zasady stosowania etykiet przez szkołę oraz cel, podstawę prawną, retencję konta i zasady usuwania kopii.]
+
 Zakres praw oraz sposób ich realizacji: [uzupełnij dostęp, sprostowanie, usunięcie, ograniczenie, przenoszenie, sprzeciw i wycofanie zgody stosownie do podstawy]. Skargę można złożyć do [właściwy organ nadzorczy].
 
 ## Do publikacji

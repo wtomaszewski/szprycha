@@ -14,7 +14,7 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M7     | Plac, quiz, egzamin                         | Ukończony. Plac (M7a), quiz (M7b) i egzamin z Licencją (M7c).                                |
 | M8     | Audio i szlif                               | Ukończony. M8a (#71), M8b (#72) i M8c (#73) w `main`.                                        |
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
-| M10    | Rankingi online i panel klasy (opcjonalnie) | Nierozpoczęty                                                                                |
+| M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
 ## M9c — aplikacje Android i iOS
 
@@ -257,3 +257,11 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Egzamin w menu łączy 25 pytań z quizu M7b, sześć elementów placu i trasę kontrolną w mieście ukończonej kampanii. W próbie generalnej Sierżant Ola omawia każdy element placu. Trening placu rozwija opanowanie M08.
 - Po zaliczeniu finał odblokowuje rangę Legenda Szprychy i złoty dzwonek. Certyfikat można ponownie otworzyć z menu egzaminu, wydrukować lub zapisać jako PDF przez przeglądarkę. [Certyfikat](docs/screenshots/61-m7c-certyfikat.png)
 - Build wykorzystuje pamięć offline M7b. Po pierwszym pobraniu zasobów test Playwright odcina sieć, przeładowuje stronę i sprawdza teorię, plac, przejazd, przyznanie nagrody, wydruk i ponowne otwarcie certyfikatu. Instalowalna PWA i platformy mobilne pozostają w M9.
+
+## M10 — rankingi online i panel klasy
+
+- M10a dodał Strefę Rodzica z bramką i lokalnym profilem. M10b dodał opcjonalny serwer rankingów, a M10c połączył go z grą, w tym z kolejką wyników offline i usuwaniem profilu.
+- M10d dodaje osobny panel web pod `/nauczyciel.html`. Nauczyciel może utworzyć konto i klasy, zamknąć lub zmienić kod, wyzerować ranking i usunąć klasę albo konto. Etykiety nicków są zapisywane wyłącznie w przeglądarce nauczyciela.
+- Rodzic zatwierdza dołączenie kodem w Strefie Rodzica. Członkowie widzą wygenerowane nicki, XP i opanowanie modułów. Rodzic może opuścić klasę także po wyłączeniu synchronizacji. Gra działa offline, a udział jest domyślnie wyłączony.
+- Po resecie ranking klasy liczy przyrost względem ostatnich zsynchronizowanych wartości. Postęp w grze i rankingi publiczne działają dalej według własnych zasad.
+- Do wydania pozostały decyzje o hostingu, domenach, obsłudze e-maili nauczycieli, deklaracjach sklepowych i publikacji dokumentów prawnych. [Lista dla wydawcy](NOTES_FOR_HUMAN.md#m10d--przed-wydaniem-panelu-nauczyciela-wojtek)

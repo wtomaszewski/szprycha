@@ -34,6 +34,8 @@ Serwer M10b korzysta z istniejących list nicków i identyfikatorów awatarów. 
 
 Ekran rankingów M10c używa klatek rowerzysty z istniejącego generatora i lokalnego fontu. Zrzuty `docs/screenshots/82-*.png` pochodzą z testu Playwright z lokalnym serwerem.
 
+Panel nauczyciela M10d używa systemowego fontu przeglądarki. Zrzuty `docs/screenshots/83-*.png` wygenerował Playwright z lokalnym serwerem i danymi testowymi.
+
 ## Audyt oznaczeń w #63
 
 Przejrzano arkusze PNG i font w `assets/`, procedury rysowania w `src/render/`, generatory i definicje scenerii w `tools/` oraz warstwę tekstową w `content/` i `i18n/`.

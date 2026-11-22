@@ -394,7 +394,9 @@ for (const { name, device, viewport, target } of mobile) {
         .selectOption('silver');
       await expect(dialog.getByText(rankings.promotion)).toBeVisible();
       await dialog.getByRole('tab', { name: rankings.boards.class }).tap();
-      await expect(dialog.getByText(rankings.classSoon)).toBeVisible();
+      await expect(
+        dialog.getByText(pl.classMembership.noMembership),
+      ).toBeVisible();
       await close(page);
       await settings(page);
       await parents.getByRole('button', { name: parent.removeProfile }).click();

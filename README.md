@@ -36,8 +36,10 @@ Stan prawny: 21.11.2026. Zastrzeżenie: Licencja Szprychy w grze to trening — 
 
 Zmienne Vite ustawia się przed budowaniem gry. Pusta wartość ukrywa odpowiedni element.
 
-- `VITE_RANKING_URL` — adres usługi rankingów (HTTPS lub HTTP na localhost do testów). W M10a przełącznik zapisuje wybór lokalnie.
+- `VITE_RANKING_URL` — adres usługi rankingów (HTTPS lub HTTP na localhost do testów). Rodzic włącza rankingi na urządzeniu w Strefie Rodzica.
 - `VITE_PRIVACY_POLICY_URL` — adres opublikowanej polityki prywatności (HTTPS).
 - `VITE_PROJECT_URL` — adres strony projektu (HTTPS).
 
 Szablony do przygotowania wydania są w [legal/](legal/).
+
+Panel web dla nauczyciela jest dostępny pod `/nauczyciel.html` po skonfigurowaniu `VITE_RANKING_URL`. Zobacz [uruchomienie serwera i panelu](docs/BUILD_SERVER.md#panel-nauczyciela-i-klasy).

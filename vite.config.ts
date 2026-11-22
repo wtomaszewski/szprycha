@@ -89,6 +89,12 @@ export default defineConfig(({ mode }) => {
     ],
     build: {
       rolldownOptions: {
+        input: {
+          index: resolve('index.html'),
+          ...(mode === 'mobile'
+            ? {}
+            : { nauczyciel: resolve('nauczyciel.html') }),
+        },
         output: {
           codeSplitting: {
             groups: [{ name: 'phaser', test: /node_modules\/phaser/ }],

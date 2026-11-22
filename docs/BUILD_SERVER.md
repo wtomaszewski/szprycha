@@ -1,4 +1,4 @@
-# Serwer rankingów M10b
+# Serwer rankingów i klas
 
 ## Lokalnie
 
@@ -61,6 +61,16 @@ Formaty żądań są współdzielone z klientem przez `src/content/rankings.ts`.
 
 Rankingi misji, serii i placu resetują widok na początku sezonu. Przejazdy z kolejki trafiają do tygodnia i sezonu według czasu przyjęcia przez serwer. Ponowienie tej samej jazdy z tym samym ziarnem i skrótem jest neutralne także po resecie. Tygodniowe XP i rywalizacja miast resetują się w poniedziałek o północy w `Europe/Warsaw`. Przy pierwszym odczycie ligi lub zapisie po granicy tygodnia serwer awansuje górne 20% aktywnych graczy z każdej ligi (zaokrąglenie w górę). Gracz może awansować o jeden poziom w danym tygodniu. Liga pozostaje między sezonami. Remisy na tablicach rozstrzygane są deterministycznie, a przy XP kolejność jest taka sama jak przy awansie.
 
+## Panel nauczyciela i klasy
+
+Adresem panelu w buildzie web jest `/nauczyciel.html`. Przy wdrożeniu dodaj origin panelu do `RANKING_ORIGINS`. Odwiedź go w przeglądarce po uruchomieniu serwera i klienta z powyższymi ustawieniami. Sesja nauczyciela korzysta z nagłówka Bearer, wygasa po 12 godzinach, a panel przechowuje token w pamięci otwartej strony. Konto zapisuje adres e-mail i solony skrót scrypt. Etykiety nicków są zapisywane w pamięci lokalnej przeglądarki panelu. Konto, utworzone klasy i ich wyniki można usunąć w panelu.
+
+Kod ma 10 znaków z 26-znakowego alfabetu. Losuje go kryptograficzny generator Node.js. Próby użycia kodu mają limit 60 na minutę na adres połączenia. Logowanie i rejestracja mają wspólny odrębny limit 30 na minutę. Kod daje możliwość dołączenia do klasy. Dostęp do rankingu wymaga aktywnego członkostwa albo sesji nauczyciela będącego właścicielem klasy. Zamknięcie albo zmiana kodu zatrzymuje nowe zapisy z poprzednim kodem, a członkowie zachowują dostęp. Jeden profil może należeć do jednej klasy. Klasa ma do 100 członków. Tabela ucznia zawiera 50 najwyższych miejsc i jego pozycję.
+
+Rodzic włącza rankingi i zatwierdza dołączenie w Strefie Rodzica. Gra wysyła tylko wygenerowany nick, łączny XP i opanowanie poszczególnych modułów wraz z identyfikatorem potrzebnym do uwierzytelnienia lub aktualizacji. Wyłączenie rankingów wstrzymuje synchronizację. Opuszczenie klasy usuwa członkostwo i wyniki klasy. Nauczyciel może wyzerować wyniki klasy względem ostatnich zsynchronizowanych wartości. Osoby, które dołączą po resecie, zaczynają od zera w rankingu tej klasy. Rankingi publiczne i lokalny postęp działają niezależnie od tego resetu.
+
+`npm run test:e2e -- tests/e2e/teacher.spec.ts` sprawdza panel i klienta gry z lokalnym API i bazą w pamięci.
+
 ## Kontener i wymagania hostingu w UE
 
 ```sh
@@ -73,6 +83,6 @@ docker run --rm -p 127.0.0.1:8787:8787 \
 
 Kontener działa jako użytkownik `65532:65532`. Przy montowaniu katalogu hosta nadaj temu użytkownikowi prawo zapisu. Host, wolumin i ewentualne kopie danych muszą pozostać w UE. Używaj jednej instancji z lokalnym trwałym woluminem SQLite. Terminu dostępności kopii oraz usunięć z nich trzeba dopilnować przy wyborze hostingu.
 
-Ustaw HTTPS i wyłącz logowanie żądań, nagłówków (w tym `Authorization`) i adresów IP także w proxy, na platformie i w monitoringu. Serwer zapisuje tylko UUID, wygenerowany nick, identyfikator awatara i wyniki wraz z metadanymi tabel oraz skrótami do deduplikacji. Komunikaty diagnostyczne są stałe. Limit żądań używa niejawnego skrótu adresu połączenia w pamięci przez maksymalnie minutę. Za proxy wszystkie jego połączenia dzielą limit, więc skonfiguruj dodatkowy krótkotrwały limit na wejściu, z wyłączonym zapisem IP.
+Ustaw HTTPS i wyłącz logowanie żądań, nagłówków (w tym `Authorization`) i adresów IP także w proxy, na platformie i w monitoringu. W przypadku ucznia serwer zapisuje UUID, wygenerowany nick, identyfikator awatara i wyniki oraz metadane rankingów i członkostwa. Dla nauczycieli zapisuje adres e-mail, sól i skrót hasła oraz skrót tokenu sesji, nazwy i kody klas. Komunikaty diagnostyczne są stałe. Limit żądań używa niejawnego skrótu adresu połączenia w pamięci przez maksymalnie minutę. Za proxy wszystkie jego połączenia dzielą limit, więc skonfiguruj dodatkowy krótkotrwały limit na wejściu, z wyłączonym zapisem IP.
 
 Usługa jest opcjonalna. Gra działa offline i korzysta z rankingów wyłącznie po skonfigurowaniu klienta oraz włączeniu funkcji przez rodzica.

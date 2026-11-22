@@ -162,10 +162,6 @@ const profileSchema = m9ProfileSchema.extend({
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
-export type RankingProfile = Pick<
-  ProgressProfile,
-  'profileId' | 'onlineRankings' | 'rankings' | 'nickname' | 'avatarId'
->;
 export type RideVerdict = Pick<Verdict, 'kind' | 'ruleId'>;
 type LegacyStorage = Pick<Storage, 'getItem' | 'removeItem'>;
 type MasteryBalance = GameContent['balans']['mastery'];
@@ -650,11 +646,11 @@ export class ProgressStore {
     this.queue = this.queue.then(() => write);
   }
 
-  async rankingProfile(): Promise<RankingProfile> {
+  async rankingProfile(): Promise<ProgressProfile> {
     await this.flush();
     const update = this.updateProgress;
     if (update && !this.sessionOnly) {
-      let saved: RankingProfile | undefined;
+      let saved: ProgressProfile | undefined;
       try {
         await update((raw) => {
           const profile = raw as ProgressProfile | undefined;
