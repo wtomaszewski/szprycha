@@ -132,7 +132,8 @@ export class ManeuverDetector {
       this.lane = undefined;
     }
     const lane = this.lane;
-    if (rider.speed > 0 && lane) {
+    // A ring lane can bend between junctions. Its chord must not count as a lane change.
+    if (rider.speed > 0 && lane && lane.priorityClass !== 'roundabout_ring') {
       const current = lateralOffset(lane, rider.pos);
       const displacement = current - this.offset;
       if (Math.abs(current - this.lastOffset) > 0.005) this.stillSince = tick;

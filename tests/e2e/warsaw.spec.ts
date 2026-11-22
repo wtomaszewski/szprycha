@@ -1,4 +1,5 @@
 import { expect as playwrightExpect, test, type Page } from '@playwright/test';
+import { chooseCity } from './city-picker';
 import type { GameContent } from '../../src/content/schemas';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import questions from '../../content/pytania.json' with { type: 'json' };
@@ -384,7 +385,7 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
     .toBe(64);
   await page.screenshot({ path: 'test-results/m5c-album.png' });
   await album.getByRole('button', { name: pl.m5c.close }).click();
-  await page.getByRole('button', { name: pl.driving.praga }).click();
+  await chooseCity(page, 'warszawa');
   await expect(canvas(page)).toHaveAttribute('data-map', 'warszawa');
   await page.keyboard.press('KeyM');
   await expect(order(page, 'WAW-A1-06')).toBeEnabled();

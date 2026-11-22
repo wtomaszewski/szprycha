@@ -219,9 +219,11 @@ export class MissionHud {
         details.push(
           result.reason === 'czas_minal'
             ? ui.missionUi.timeExpired
-            : result.reason === 'wynik_wyscigu'
-              ? ui.missionUi.raceScoreRequired
-              : ui.missionUi.threeMajor,
+            : result.reason === 'dowolny_blad'
+              ? ui.missionUi.failedClean
+              : result.reason === 'wynik_wyscigu'
+                ? ui.missionUi.raceScoreRequired
+                : ui.missionUi.threeMajor,
         );
       else if (!result.timeBonusEligible)
         details.push(

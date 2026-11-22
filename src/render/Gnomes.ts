@@ -64,7 +64,11 @@ function paintGnome(ctx: CanvasRenderingContext2D, variant: number) {
 }
 
 export class Gnomes {
-  private readonly remaining: { id: string; image: GameObjects.Image }[] = [];
+  private readonly remaining: {
+    id: string;
+    questionIndex: number;
+    image: GameObjects.Image;
+  }[] = [];
   private readonly counter = document.createElement('output');
   private total = 0;
 
@@ -79,7 +83,7 @@ export class Gnomes {
     for (const { name, x = 0, y = 0, properties } of objects) {
       const kind = properties?.find((p: { name: string }) => p.name === 'kind');
       if (kind?.value !== 'gnome') continue;
-      this.total++;
+      const questionIndex = this.total++;
       if (found.has(name)) continue;
       const variant = properties?.find(
         (p: { name: string }) => p.name === 'variant',
@@ -88,7 +92,7 @@ export class Gnomes {
         .image(x, y, textureKey, Number(variant?.value ?? 0))
         .setDepth(8)
         .setVisible(false);
-      this.remaining.push({ id: name, image });
+      this.remaining.push({ id: name, questionIndex, image });
     }
     this.counter.title = ui.driving.gnomesHint;
     this.counter.setAttribute('aria-label', ui.driving.gnomes);
@@ -108,20 +112,24 @@ export class Gnomes {
     }
   }
 
-  collect(x: number, y: number) {
-    for (let i = this.remaining.length - 1; i >= 0; i--) {
-      const { id, image } = this.remaining[i]!;
+  nearby(x: number, y: number) {
+    return this.remaining.find(({ image }) => {
       const dx = x - image.x;
       const dy = y - image.y;
-      if (dx * dx + dy * dy > 16 ** 2) continue;
-      image.destroy();
-      this.remaining.splice(i, 1);
-      this.store.change((profile) => {
-        const found = (profile.gnomes ??= []);
-        if (!found.includes(id)) found.push(id);
-      });
-      this.updateCounter();
-    }
+      return dx * dx + dy * dy <= 16 ** 2;
+    });
+  }
+
+  collect(id: string) {
+    const index = this.remaining.findIndex((gnome) => gnome.id === id);
+    if (index < 0) return;
+    const [gnome] = this.remaining.splice(index, 1);
+    gnome!.image.destroy();
+    this.store.change((profile) => {
+      const found = (profile.gnomes ??= []);
+      if (!found.includes(id)) found.push(id);
+    });
+    this.updateCounter();
   }
 
   private updateCounter() {

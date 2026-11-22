@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { chooseCity, cityPin } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import questions from '../../content/pytania.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
@@ -41,10 +42,11 @@ test('starts WAW-T-01 from the menu with a visible goal arrow and timer', async 
   page,
 }) => {
   await page.goto('/');
-  const start = page.getByRole('button', { name: pl.misje['WAW-T-01'].tytul });
+  const start = page.getByRole('button', { name: pl.cityPicker.campaign });
   await expect(start).toBeVisible();
   await page.screenshot({ path: 'test-results/m4a-menu.png' });
   await start.press('Enter');
+  await cityPin(page, 'warszawa').press('Enter');
   await expect(page.locator('canvas')).toHaveAttribute('data-scene', 'City');
   await skipDialogue(page);
   const arrow = page.getByRole('img', {
@@ -68,7 +70,7 @@ test('recovers from a helmet mistake and keeps XP, mastery and mission progress 
 }) => {
   test.setTimeout(45_000);
   await page.goto('/');
-  await page.getByRole('button', { name: pl.misje['WAW-T-01'].tytul }).click();
+  await chooseCity(page, 'warszawa', 'campaign');
   const canvas = page.locator('canvas');
   await expect(canvas).toHaveAttribute('data-scene', 'City');
   await skipDialogue(page);
@@ -191,7 +193,7 @@ test('recovers from a helmet mistake and keeps XP, mastery and mission progress 
   await expect(meter).toHaveJSProperty('value', 15 / moduleRules.length);
   await page.screenshot({ path: 'test-results/m5b-mapa-umiejetnosci.png' });
   await skillMap.getByRole('button', { name: pl.skillMap.close }).click();
-  await page.getByRole('button', { name: pl.driving.praga }).click();
+  await chooseCity(page, 'warszawa');
   await expect(canvas).toHaveAttribute('data-scene', 'City');
   await page.keyboard.press('KeyM');
   await expect(
@@ -207,7 +209,7 @@ test('raises Road Attention for missed STOPs, explains the answer and grants sta
   test.setTimeout(45_000);
   const press = await mockGamepad(page);
   await page.goto('/');
-  await page.getByRole('button', { name: tutorial.tytul }).click();
+  await chooseCity(page, 'warszawa', 'campaign');
   await skipDialogue(page);
   await page.getByRole('button', { name: pl.missionUi.equip }).click();
 
@@ -375,7 +377,11 @@ test('opens SzprychaApp at a stop and plays the opening and closing dialogues', 
   ).toBeVisible();
 
   await page.reload();
-  await page.getByRole('button', { name: tutorial.tytul }).click();
+  await chooseCity(page, 'warszawa');
+  await openPhone.click();
+  await phone
+    .getByRole('button', { name: `${pl.phone.start} · ${tutorial.tytul}` })
+    .click();
   await expect(text).toHaveText(pl.dialogi['WAW-T-01'].powitanie);
 });
 

@@ -1,5 +1,5 @@
 import type { DialogueLine, Dialogues } from '../content/dialogues';
-import type { MissionDefinition } from '../content/missions';
+import type { MissionCity, MissionDefinition } from '../content/missions';
 import { moduleId, type GameContent } from '../content/schemas';
 import { BreakReminder } from '../progression/breakReminder';
 import { Milestones } from '../progression/milestones';
@@ -212,6 +212,27 @@ export class MissionProgress {
     this.store.change((profile) => {
       profile.licencePassed = true;
     });
+  }
+
+  get selectedCity(): MissionCity {
+    return this.store.profile.selectedCity ?? 'warszawa';
+  }
+
+  async selectCity(city: MissionCity) {
+    this.store.change((profile) => {
+      profile.selectedCity = city;
+    });
+    await this.store.flush();
+  }
+
+  nextMission(city: MissionCity, content: GameContent) {
+    return content.misje.find(
+      (mission) =>
+        mission.miasto === city &&
+        !mission.poboczna &&
+        !this.store.profile.completed.includes(mission.id) &&
+        this.isAvailable(mission, content),
+    );
   }
 
   isAvailable(mission: MissionDefinition, content: GameContent) {

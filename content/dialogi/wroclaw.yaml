@@ -1,0 +1,176 @@
+dialogi:
+  - id: dialogi.WRO-T-01.start
+    linie:
+      - { postac: krasnal_dzwoneczek, emocja: neutral, tekst: dialogi.WRO-T-01.start_tekst }
+  - id: dialogi.WRO-T-01.koniec
+    linie:
+      - { postac: krasnal_dzwoneczek, emocja: happy, tekst: dialogi.WRO-T-01.koniec_tekst }
+  - id: dialogi.WRO-T-02.start
+    linie:
+      - { postac: pan_kazik, emocja: neutral, tekst: dialogi.WRO-T-02.start_tekst }
+  - id: dialogi.WRO-T-02.koniec
+    linie:
+      - { postac: pan_kazik, emocja: happy, tekst: dialogi.WRO-T-02.koniec_tekst }
+  - id: dialogi.WRO-A1-01.start
+    linie:
+      - { postac: krasnal_dzwoneczek, emocja: neutral, tekst: dialogi.WRO-A1-01.start_tekst }
+  - id: dialogi.WRO-A1-01.koniec
+    linie:
+      - { postac: krasnal_dzwoneczek, emocja: happy, tekst: dialogi.WRO-A1-01.koniec_tekst }
+  - id: dialogi.WRO-A1-02.start
+    linie:
+      - { postac: lena_mapa, emocja: neutral, tekst: dialogi.WRO-A1-02.start_tekst }
+  - id: dialogi.WRO-A1-02.koniec
+    linie:
+      - { postac: lena_mapa, emocja: happy, tekst: dialogi.WRO-A1-02.koniec_tekst }
+  - id: dialogi.WRO-A1-03.start
+    linie:
+      - { postac: krasnal_dzwoneczek, emocja: neutral, tekst: dialogi.WRO-A1-03.start_tekst }
+  - id: dialogi.WRO-A1-03.koniec
+    linie:
+      - { postac: krasnal_dzwoneczek, emocja: happy, tekst: dialogi.WRO-A1-03.koniec_tekst }
+  - id: dialogi.WRO-A1-04.start
+    linie:
+      - { postac: pan_latarnik, emocja: neutral, tekst: dialogi.WRO-A1-04.start_tekst }
+  - id: dialogi.WRO-A1-04.koniec
+    linie:
+      - { postac: pan_latarnik, emocja: happy, tekst: dialogi.WRO-A1-04.koniec_tekst }
+  - id: dialogi.WRO-A1-05.start
+    linie:
+      - { postac: pan_latarnik, emocja: neutral, tekst: dialogi.WRO-A1-05.start_tekst }
+  - id: dialogi.WRO-A1-05.koniec
+    linie:
+      - { postac: pan_latarnik, emocja: happy, tekst: dialogi.WRO-A1-05.koniec_tekst }
+  - id: dialogi.WRO-A1-06.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WRO-A1-06.start_tekst }
+  - id: dialogi.WRO-A1-06.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WRO-A1-06.koniec_tekst }
+  - id: dialogi.WRO-A2-01.start
+    linie:
+      - { postac: krasnal_dzwoneczek, emocja: neutral, tekst: dialogi.WRO-A2-01.start_tekst }
+  - id: dialogi.WRO-A2-01.koniec
+    linie:
+      - { postac: krasnal_dzwoneczek, emocja: happy, tekst: dialogi.WRO-A2-01.koniec_tekst }
+  - id: dialogi.WRO-A2-02.start
+    linie:
+      - { postac: pani_doktor, emocja: neutral, tekst: dialogi.WRO-A2-02.start_tekst }
+  - id: dialogi.WRO-A2-02.koniec
+    linie:
+      - { postac: pani_doktor, emocja: happy, tekst: dialogi.WRO-A2-02.koniec_tekst }
+  - id: dialogi.WRO-A2-03.start
+    linie:
+      - { postac: lena_mapa, emocja: neutral, tekst: dialogi.WRO-A2-03.start_tekst }
+  - id: dialogi.WRO-A2-03.koniec
+    linie:
+      - { postac: lena_mapa, emocja: happy, tekst: dialogi.WRO-A2-03.koniec_tekst }
+  - id: dialogi.WRO-A2-04.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WRO-A2-04.start_tekst }
+  - id: dialogi.WRO-A2-04.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WRO-A2-04.koniec_tekst }
+  - id: dialogi.WRO-A2-05.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WRO-A2-05.start_tekst }
+  - id: dialogi.WRO-A2-05.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WRO-A2-05.koniec_tekst }
+  - id: dialogi.WRO-A2-06.start
+    linie:
+      - { postac: lena_mapa, emocja: neutral, tekst: dialogi.WRO-A2-06.start_tekst }
+  - id: dialogi.WRO-A2-06.koniec
+    linie:
+      - { postac: lena_mapa, emocja: happy, tekst: dialogi.WRO-A2-06.koniec_tekst }
+  - id: dialogi.WRO-A3-01.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WRO-A3-01.start_tekst }
+  - id: dialogi.WRO-A3-01.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WRO-A3-01.koniec_tekst }
+  - id: dialogi.WRO-A3-02.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WRO-A3-02.start_tekst }
+  - id: dialogi.WRO-A3-02.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WRO-A3-02.koniec_tekst }
+  - id: dialogi.WRO-A3-03.start
+    linie:
+      - { postac: pan_latarnik, emocja: neutral, tekst: dialogi.WRO-A3-03.start_tekst }
+  - id: dialogi.WRO-A3-03.koniec
+    linie:
+      - { postac: pan_latarnik, emocja: happy, tekst: dialogi.WRO-A3-03.koniec_tekst }
+  - id: dialogi.WRO-A3-04.start
+    linie:
+      - { postac: turbo, emocja: neutral, tekst: dialogi.WRO-A3-04.start_tekst }
+  - id: dialogi.WRO-A3-04.koniec
+    linie:
+      - { postac: turbo, emocja: happy, tekst: dialogi.WRO-A3-04.koniec_tekst }
+  - id: dialogi.WRO-A3-05.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WRO-A3-05.start_tekst }
+  - id: dialogi.WRO-A3-05.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WRO-A3-05.koniec_tekst }
+  - id: dialogi.WRO-A3-06.start
+    linie:
+      - { postac: krasnal_dzwoneczek, emocja: neutral, tekst: dialogi.WRO-A3-06.start_tekst }
+  - id: dialogi.WRO-A3-06.koniec
+    linie:
+      - { postac: krasnal_dzwoneczek, emocja: happy, tekst: dialogi.WRO-A3-06.koniec_tekst }
+  - id: dialogi.WRO-B-01.start
+    linie:
+      - { postac: pan_latarnik, emocja: neutral, tekst: dialogi.WRO-B-01.start_tekst }
+  - id: dialogi.WRO-B-01.koniec
+    linie:
+      - { postac: pan_latarnik, emocja: happy, tekst: dialogi.WRO-B-01.koniec_tekst }
+  - id: dialogi.WRO-B-02.start
+    linie:
+      - { postac: lena_mapa, emocja: neutral, tekst: dialogi.WRO-B-02.start_tekst }
+  - id: dialogi.WRO-B-02.koniec
+    linie:
+      - { postac: lena_mapa, emocja: happy, tekst: dialogi.WRO-B-02.koniec_tekst }
+  - id: dialogi.WRO-B-03.start
+    linie:
+      - { postac: lena_mapa, emocja: neutral, tekst: dialogi.WRO-B-03.start_tekst }
+  - id: dialogi.WRO-B-03.koniec
+    linie:
+      - { postac: lena_mapa, emocja: happy, tekst: dialogi.WRO-B-03.koniec_tekst }
+  - id: dialogi.WRO-B-04.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WRO-B-04.start_tekst }
+  - id: dialogi.WRO-B-04.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WRO-B-04.koniec_tekst }
+  - id: dialogi.WRO-B-05.start
+    linie:
+      - { postac: krasnal_dzwoneczek, emocja: neutral, tekst: dialogi.WRO-B-05.start_tekst }
+  - id: dialogi.WRO-B-05.koniec
+    linie:
+      - { postac: krasnal_dzwoneczek, emocja: happy, tekst: dialogi.WRO-B-05.koniec_tekst }
+  - id: dialogi.WRO-B-06.start
+    linie:
+      - { postac: pani_doktor, emocja: neutral, tekst: dialogi.WRO-B-06.start_tekst }
+  - id: dialogi.WRO-B-06.koniec
+    linie:
+      - { postac: pani_doktor, emocja: happy, tekst: dialogi.WRO-B-06.koniec_tekst }
+  - id: dialogi.WRO-B-07.start
+    linie:
+      - { postac: sierzant_ola, emocja: neutral, tekst: dialogi.WRO-B-07.start_tekst }
+  - id: dialogi.WRO-B-07.koniec
+    linie:
+      - { postac: sierzant_ola, emocja: happy, tekst: dialogi.WRO-B-07.koniec_tekst }
+
+zapowiedzi:
+  - { regula: MAN-03, emocja: neutral, tekst: dialogi.wroclaw_zapowiedzi.MAN-03 }
+  - { regula: ZNAK-D1, emocja: neutral, tekst: dialogi.wroclaw_zapowiedzi.ZNAK-D1 }
+  - { regula: PIER-08, emocja: neutral, tekst: dialogi.wroclaw_zapowiedzi.PIER-08 }
+  - { regula: GDZIE-11, emocja: neutral, tekst: dialogi.wroclaw_zapowiedzi.GDZIE-11 }
+  - { regula: PIER-03, emocja: neutral, tekst: dialogi.wroclaw_zapowiedzi.PIER-03 }
+  - { regula: ZNAK-P23, emocja: neutral, tekst: dialogi.wroclaw_zapowiedzi.ZNAK-P23 }
+  - { regula: MAN-05, emocja: neutral, tekst: dialogi.wroclaw_zapowiedzi.MAN-05 }
+  - { regula: GDZIE-03b, emocja: neutral, tekst: dialogi.wroclaw_zapowiedzi.GDZIE-03b }
+  - { regula: ZNAK-B9, emocja: neutral, tekst: dialogi.wroclaw_zapowiedzi.ZNAK-B9 }
+  - { regula: PIER-05, emocja: neutral, tekst: dialogi.wroclaw_zapowiedzi.PIER-05 }
+  - { regula: ZNAK-B2T22, emocja: neutral, tekst: dialogi.wroclaw_zapowiedzi.ZNAK-B2T22 }

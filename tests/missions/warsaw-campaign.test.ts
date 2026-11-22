@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import { campaignRoutes, stadiumShortcut } from './warsaw-campaign-routes';
-import { missionContent, runWarsawRoute } from './run-warsaw-route';
+import { missionContent, runMissionRoute } from './run-mission-route';
 import { analyseMapCoverage } from '../../tools/map-coverage';
 import { readMaps } from '../../tools/maps';
 
@@ -16,7 +16,7 @@ const demonstratedHabits = {
 it.each(Object.entries(campaignRoutes))(
   '%s completes its legal route',
   (id, route) => {
-    const run = runWarsawRoute(id, route);
+    const run = runMissionRoute(id, route);
     expect(
       run.mission.result,
       JSON.stringify({
@@ -105,7 +105,7 @@ const trafficErrors = [
 it.each(trafficErrors)(
   '%s rejects the unsafe route',
   (id, route, ruleId, kind) => {
-    const run = runWarsawRoute(id, route, undefined, true);
+    const run = runMissionRoute(id, route, undefined, true);
     expect(run.mission.result).toBeUndefined();
     expect(run.verdicts).toContainEqual(
       expect.objectContaining({ ruleId, kind }),
@@ -114,7 +114,7 @@ it.each(trafficErrors)(
 );
 
 it('withdraws the smoothness bonus after a rough ride for the Professor', () => {
-  const run = runWarsawRoute(
+  const run = runMissionRoute(
     'WAW-A2-04',
     a['WAW-A2-04'].map((point) => ({ ...point, maxInput: 1 })),
   );
@@ -129,13 +129,13 @@ it('withdraws the smoothness bonus after a rough ride for the Professor', () => 
 
 it('requires equipment before riding at dusk and detects riding without lights', () => {
   const id = 'WAW-A2-05';
-  const blocked = runWarsawRoute(
+  const blocked = runMissionRoute(
     id,
     a[id].map((point) => ({ ...point, lights: false })),
   );
   expect(blocked.mission.preparingBike).toBe(true);
   expect(blocked.mission.result).toBeUndefined();
-  const ride = runWarsawRoute(id, [
+  const ride = runMissionRoute(id, [
     { ...a[id][0]! },
     ...a[id].slice(1).map((point) => ({ ...point, lights: false })),
   ]);
@@ -146,7 +146,7 @@ it('requires equipment before riding at dusk and detects riding without lights',
 
 it('keeps the bridge investigation open if the rider skips the photograph', () => {
   const id = 'WAW-A2-06';
-  const run = runWarsawRoute(
+  const run = runMissionRoute(
     id,
     a[id].map((point) => ({ ...point, photo: false })),
   );
@@ -162,10 +162,10 @@ it.each([
   (id, index, answer, ruleId) => {
     const route = a[id];
     const mistake = [...route.slice(0, index), { ...route[index]!, answer }];
-    const blocked = runWarsawRoute(id, mistake);
+    const blocked = runMissionRoute(id, mistake);
     expect(blocked.mission.pendingChoice?.regula).toBe(ruleId);
     expect(blocked.mission.result).toBeUndefined();
-    const corrected = runWarsawRoute(id, [...mistake, ...route.slice(index)]);
+    const corrected = runMissionRoute(id, [...mistake, ...route.slice(index)]);
     expect(corrected.mission.result?.status).toBe('completed');
     expect(
       corrected.mission.result?.verdicts.filter(
@@ -177,8 +177,8 @@ it.each([
 
 it('makes the illegal stadium shortcut faster, but costs time bonus and the race', () => {
   const id = 'WAW-A3-06';
-  const legal = runWarsawRoute(id, a[id]).mission.result!;
-  const shortcut = runWarsawRoute(id, stadiumShortcut).mission.result!;
+  const legal = runMissionRoute(id, a[id]).mission.result!;
+  const shortcut = runMissionRoute(id, stadiumShortcut).mission.result!;
   expect(shortcut.elapsedSeconds).toBeLessThan(legal.elapsedSeconds);
   expect(shortcut).toMatchObject({
     status: 'failed',
@@ -195,8 +195,8 @@ it('makes the illegal stadium shortcut faster, but costs time bonus and the race
 it('removes the convoy time bonus for riding through the stadium ban', () => {
   const id = 'WAW-A3-05';
   const route = a[id];
-  const legal = runWarsawRoute(id, route).mission.result!;
-  const shortcut = runWarsawRoute(id, [
+  const legal = runMissionRoute(id, route).mission.result!;
+  const shortcut = runMissionRoute(id, [
     ...route.slice(0, -3),
     { x: 1856, y: 2780 },
     { x: 1856, y: 3168 },

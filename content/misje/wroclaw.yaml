@@ -1,0 +1,784 @@
+- id: WRO-T-01
+  miasto: wroclaw
+  akt: 0
+  mapa: miasteczko
+  tytul: misje.WRO-T-01.tytul
+  opis: misje.WRO-T-01.opis
+  zleceniodawca: krasnal_dzwoneczek
+  typ: samouczek
+  start: { poi: tutorial_start, kask_zapiety: false }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: tutorial_jazda, opis: misje.WRO-T-01.cel1 }
+    - { typ: dojedz, poi: tutorial_przed_stop, opis: misje.WRO-T-01.cel2 }
+    - { typ: dojedz, poi: tutorial_meta, opis: misje.WRO-T-01.cel3, wymagany_nawyk: ZNAK-STOP }
+  warunki_porazki: [czas_minal, major_x3]
+  limit_s: 90
+  checkpointy: [tutorial_przed_stop]
+  reguly_cwiczone: [KASK-01, ZNAK-STOP, GDZIE-06]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_stop, przy: tutorial_przed_stop, regula: ZNAK-STOP }
+  par_s: 30
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 0, xp: 50 }
+  dialog_start: dialogi.WRO-T-01.start
+  dialog_koniec: dialogi.WRO-T-01.koniec
+
+- id: WRO-T-02
+  miasto: wroclaw
+  akt: 0
+  mapa: miasteczko
+  tytul: misje.WRO-T-02.tytul
+  opis: misje.WRO-T-02.opis
+  zleceniodawca: pan_kazik
+  typ: przeglad
+  wymagania: { misje_ukonczone: [WRO-T-01] }
+  start: { poi: garaz_start, kask_zapiety: false, zmrok: true }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.WRO-T-02.cel1 }
+    - { typ: dojedz, poi: garaz_objazd, opis: misje.WRO-T-02.cel2 }
+    - { typ: dojedz, poi: garaz_meta, opis: misje.WRO-T-02.cel3 }
+  warunki_porazki: [major_x3]
+  reguly_cwiczone: [KASK-01, WYP-04, WYP-05]
+  zdarzenia_wymuszone:
+    - { typ: kontrola_swiatel, przy: garaz_start, regula: WYP-04 }
+  par_s: 35
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 0, xp: 50 }
+  dialog_start: dialogi.WRO-T-02.start
+  dialog_koniec: dialogi.WRO-T-02.koniec
+
+- id: WRO-A1-01
+  miasto: wroclaw
+  akt: 1
+  tytul: misje.WRO-A1-01.tytul
+  opis: misje.WRO-A1-01.opis
+  zleceniodawca: krasnal_dzwoneczek
+  typ: kolekcja
+  wymagania: { misje_ukonczone: [WRO-T-02] }
+  start: { poi: rynek-start }
+  ruch_ai: false
+  cele:
+    - { typ: zbierz_krasnala, poi: dzwoneczek, opis: misje.WRO-A1-01.cel1 }
+    - { typ: zbierz_krasnala, poi: krasnal-2, opis: misje.WRO-A1-01.cel2 }
+    - { typ: zbierz_krasnala, poi: krasnal-3, opis: misje.WRO-A1-01.cel3 }
+  warunki_porazki: [major_x3]
+  reguly_cwiczone: [GDZIE-05, GDZIE-07, MAN-08]
+  zdarzenia_wymuszone:
+    - { typ: kolega_podwozka, przy: rynek-start, regula: MAN-10 }
+  par_s: 65
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 25, xp: 330 }
+  dialog_start: dialogi.WRO-A1-01.start
+  dialog_koniec: dialogi.WRO-A1-01.koniec
+
+- id: WRO-A1-02
+  miasto: wroclaw
+  akt: 1
+  tytul: misje.WRO-A1-02.tytul
+  opis: misje.WRO-A1-02.opis
+  zleceniodawca: lena_mapa
+  typ: delikatna_przesylka
+  wymagania: { misje_ukonczone: [WRO-A1-01] }
+  start: { poi: kwiaciarnia-solny }
+  ruch_ai: false
+  przesylka: { delikatna: true }
+  cele:
+    - { typ: odbierz, opis: misje.WRO-A1-02.cel1, przedmiot: kwiaty }
+    - { typ: dojedz, poi: rynek-parkowanie, opis: misje.WRO-A1-02.cel2 }
+    - { typ: oddaj, poi: dzwoneczek, opis: misje.WRO-A1-02.cel3, przedmiot: kwiaty }
+  warunki_porazki: [major_x3]
+  checkpointy: [rynek-parkowanie]
+  reguly_cwiczone: [MAN-08, GDZIE-05]
+  zdarzenia_wymuszone:
+    - { typ: turysci_na_starowce, przy: rynek-parkowanie, regula: GDZIE-05 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 25, xp: 330 }
+  dialog_start: dialogi.WRO-A1-02.start
+  dialog_koniec: dialogi.WRO-A1-02.koniec
+
+- id: WRO-A1-03
+  miasto: wroclaw
+  akt: 1
+  tytul: misje.WRO-A1-03.tytul
+  opis: misje.WRO-A1-03.opis
+  zleceniodawca: krasnal_dzwoneczek
+  typ: dostawa_na_czas
+  wymagania: { misje_ukonczone: [WRO-A1-02] }
+  start: { poi: rynek-polnoc }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, opis: misje.WRO-A1-03.cel1, przedmiot: koperta }
+    - { typ: dojedz, poi: zebra-poludnie, opis: misje.WRO-A1-03.cel2 }
+    - { typ: dojedz, poi: zebra-polnoc, opis: misje.WRO-A1-03.cel3, wymagany_nawyk: GDZIE-06 }
+    - { typ: dojedz, poi: most-tumski-poludnie, opis: misje.WRO-A1-03.cel4 }
+    - { typ: dojedz, poi: ostrow-przed, opis: misje.WRO-A1-03.cel5 }
+    - { typ: oddaj, poi: latarnik, opis: misje.WRO-A1-03.cel6, przedmiot: koperta }
+  warunki_porazki: [czas_minal, major_x3]
+  limit_s: 230
+  checkpointy: [zebra-poludnie, most-tumski-poludnie]
+  reguly_cwiczone: [PIER-04, GDZIE-06]
+  zdarzenia_wymuszone:
+    - { typ: pieszy_na_pasach, przy: zebra-poludnie, regula: PIER-04 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 25, xp: 330 }
+  dialog_start: dialogi.WRO-A1-03.start
+  dialog_koniec: dialogi.WRO-A1-03.koniec
+
+- id: WRO-A1-04
+  miasto: wroclaw
+  akt: 1
+  tytul: misje.WRO-A1-04.tytul
+  opis: misje.WRO-A1-04.opis
+  zleceniodawca: pan_latarnik
+  typ: dostawa_na_czas
+  wymagania: { misje_ukonczone: [WRO-A1-03] }
+  start: { poi: ostrow-za }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, opis: misje.WRO-A1-04.cel1, przedmiot: zapalki }
+    - { typ: dojedz, poi: most-tumski-polnoc, opis: misje.WRO-A1-04.cel2 }
+    - { typ: dojedz, poi: ostrow-przed, opis: misje.WRO-A1-04.cel3 }
+    - { typ: oddaj, poi: latarnik, opis: misje.WRO-A1-04.cel4, przedmiot: zapalki }
+  warunki_porazki: [czas_minal, major_x3]
+  limit_s: 190
+  checkpointy: [most-tumski-polnoc]
+  reguly_cwiczone: [PIER-02, MAN-03, GDZIE-07]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_trasy, przy: most-tumski-polnoc, regula: MAN-03 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 25, xp: 330 }
+  dialog_start: dialogi.WRO-A1-04.start
+  dialog_koniec: dialogi.WRO-A1-04.koniec
+
+- id: WRO-A1-05
+  miasto: wroclaw
+  akt: 1
+  tytul: misje.WRO-A1-05.tytul
+  opis: misje.WRO-A1-05.opis
+  zleceniodawca: pan_latarnik
+  typ: nocny
+  wymagania: { misje_ukonczone: [WRO-A1-04] }
+  start: { poi: ostrow-latarnie, zmrok: true }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.WRO-A1-05.cel1 }
+    - { typ: dojedz, poi: most-tumski-srodek, opis: misje.WRO-A1-05.cel2 }
+    - { typ: dojedz, poi: most-tumski-poludnie, opis: misje.WRO-A1-05.cel3 }
+  warunki_porazki: [major_x3]
+  checkpointy: [most-tumski-srodek]
+  reguly_cwiczone: [MSC-04, WYP-04, WYP-05]
+  zdarzenia_wymuszone:
+    - { typ: kontrola_swiatel, przy: ostrow-latarnie, regula: WYP-04 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 25, xp: 330 }
+  dialog_start: dialogi.WRO-A1-05.start
+  dialog_koniec: dialogi.WRO-A1-05.koniec
+
+- id: WRO-A1-06
+  miasto: wroclaw
+  akt: 1
+  tytul: misje.WRO-A1-06.tytul
+  opis: misje.WRO-A1-06.opis
+  zleceniodawca: sierzant_ola
+  typ: detektyw_znakow
+  wymagania: { misje_ukonczone: [WRO-A1-05] }
+  start: { poi: most-tumski-poludnie }
+  ruch_ai: false
+  cele:
+    - { typ: sfotografuj, poi: rynek-foto-d1, opis: misje.WRO-A1-06.cel1, znak: rynek-N-D-1 }
+    - { typ: sfotografuj, poi: rynek-foto-a7, opis: misje.WRO-A1-06.cel2, znak: rynek-E-A-7 }
+    - { typ: dojedz, poi: pod-ratuszem, opis: misje.WRO-A1-06.cel3 }
+  warunki_porazki: [major_x3]
+  checkpointy: [rynek-foto-d1]
+  reguly_cwiczone: [ZNAK-A7, ZNAK-D1]
+  zdarzenia_wymuszone:
+    - { typ: czytaj_oznakowanie, przy: rynek-foto-d1, regula: ZNAK-D1 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 25, xp: 330 }
+  dialog_start: dialogi.WRO-A1-06.start
+  dialog_koniec: dialogi.WRO-A1-06.koniec
+
+- id: WRO-A2-01
+  miasto: wroclaw
+  akt: 2
+  tytul: misje.WRO-A2-01.tytul
+  opis: misje.WRO-A2-01.opis
+  zleceniodawca: krasnal_dzwoneczek
+  typ: dostawa
+  wymagania: { misje_ukonczone: [WRO-A1-06] }
+  start: { poi: hala-rondo-zachod }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, opis: misje.WRO-A2-01.cel1, przedmiot: plan }
+    - { typ: dojedz, poi: hala-rondo-poludnie, opis: misje.WRO-A2-01.cel2 }
+    - { typ: dojedz, poi: hala-rondo-wschod, opis: misje.WRO-A2-01.cel3 }
+    - { typ: dojedz, poi: hala-dojazd, opis: misje.WRO-A2-01.cel4 }
+    - { typ: oddaj, poi: wejscie-hala, opis: misje.WRO-A2-01.cel5, przedmiot: plan }
+  warunki_porazki: [major_x3]
+  checkpointy: [hala-rondo-wschod, hala-dojazd]
+  reguly_cwiczone: [PIER-08, GDZIE-01]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_trasy, przy: hala-rondo-zachod, regula: PIER-08 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 30, xp: 440 }
+  dialog_start: dialogi.WRO-A2-01.start
+  dialog_koniec: dialogi.WRO-A2-01.koniec
+
+- id: WRO-A2-02
+  miasto: wroclaw
+  akt: 2
+  tytul: misje.WRO-A2-02.tytul
+  opis: misje.WRO-A2-02.opis
+  zleceniodawca: pani_doktor
+  typ: delikatna_przesylka
+  wymagania: { misje_ukonczone: [WRO-A2-01] }
+  start: { poi: hala-ddr }
+  ruch_ai: false
+  przesylka: { delikatna: true }
+  cele:
+    - { typ: odbierz, opis: misje.WRO-A2-02.cel1, przedmiot: karma }
+    - { typ: dojedz, poi: hala-lacznik, opis: misje.WRO-A2-02.cel2 }
+    - { typ: dojedz, poi: zoo-ciag, opis: misje.WRO-A2-02.cel3 }
+    - { typ: dojedz, poi: zoo-polowa, opis: misje.WRO-A2-02.cel4 }
+    - { typ: oddaj, poi: afrykarium-wejscie, opis: misje.WRO-A2-02.cel5, przedmiot: karma }
+  warunki_porazki: [major_x3]
+  checkpointy: [zoo-polowa]
+  reguly_cwiczone: [GDZIE-11, GDZIE-08, MAN-08]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_trasy, przy: zoo-ciag, regula: GDZIE-11 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 30, xp: 440 }
+  dialog_start: dialogi.WRO-A2-02.start
+  dialog_koniec: dialogi.WRO-A2-02.koniec
+
+- id: WRO-A2-03
+  miasto: wroclaw
+  akt: 2
+  tytul: misje.WRO-A2-03.tytul
+  opis: misje.WRO-A2-03.opis
+  zleceniodawca: lena_mapa
+  typ: dostawa_na_czas
+  wymagania: { misje_ukonczone: [WRO-A2-02] }
+  start: { poi: sky-ddr }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, opis: misje.WRO-A2-03.cel1, przedmiot: bilet }
+    - { typ: dojedz, poi: dworzec-przejazd-przed, opis: misje.WRO-A2-03.cel2 }
+    - { typ: dojedz, poi: dworzec-przejazd-za, opis: misje.WRO-A2-03.cel3 }
+    - { typ: dojedz, poi: dworzec-przystanek, opis: misje.WRO-A2-03.cel4 }
+    - { typ: oddaj, poi: dworzec-glowny, opis: misje.WRO-A2-03.cel5, przedmiot: bilet }
+  warunki_porazki: [czas_minal, major_x3]
+  limit_s: 240
+  checkpointy: [dworzec-przejazd-przed, dworzec-przejazd-za]
+  reguly_cwiczone: [PIER-09, MSC-02, SYG-01]
+  zdarzenia_wymuszone:
+    - { typ: tramwaj_bez_wysepki, przy: dworzec-przystanek, regula: MSC-02 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 30, xp: 440 }
+  dialog_start: dialogi.WRO-A2-03.start
+  dialog_koniec: dialogi.WRO-A2-03.koniec
+
+- id: WRO-A2-04
+  miasto: wroclaw
+  akt: 2
+  tytul: misje.WRO-A2-04.tytul
+  opis: misje.WRO-A2-04.opis
+  zleceniodawca: sierzant_ola
+  typ: wyzwanie
+  wymagania: { misje_ukonczone: [WRO-A2-03] }
+  start: { poi: sky-aleja-zachod }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: sky-wlot, opis: misje.WRO-A2-04.cel1 }
+    - { typ: dojedz, poi: sky-za, opis: misje.WRO-A2-04.cel2 }
+    - { typ: dojedz, poi: sky-pas-koniec, opis: misje.WRO-A2-04.cel3 }
+  warunki_porazki: [major_x3]
+  checkpointy: [sky-wlot, sky-za]
+  reguly_cwiczone: [MAN-03, GDZIE-02, PIER-03]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_trasy, przy: sky-wlot, regula: MAN-03 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 30, xp: 440 }
+  dialog_start: dialogi.WRO-A2-04.start
+  dialog_koniec: dialogi.WRO-A2-04.koniec
+
+- id: WRO-A2-05
+  miasto: wroclaw
+  akt: 2
+  tytul: misje.WRO-A2-05.tytul
+  opis: misje.WRO-A2-05.opis
+  zleceniodawca: sierzant_ola
+  typ: detektyw_znakow
+  wymagania: { misje_ukonczone: [WRO-A2-04] }
+  start: { poi: dworzec-pas-start }
+  ruch_ai: false
+  cele:
+    - { typ: sfotografuj, poi: sky-p23, opis: misje.WRO-A2-05.cel1, znak: pas-rowerowy-poludnie-P-23 }
+    - { typ: dojedz, poi: sky-pas-koniec, opis: misje.WRO-A2-05.cel2 }
+  warunki_porazki: [major_x3]
+  checkpointy: [sky-p23]
+  reguly_cwiczone: [GDZIE-02, ZNAK-P23]
+  zdarzenia_wymuszone:
+    - { typ: czytaj_oznakowanie, przy: sky-p23, regula: ZNAK-P23 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 30, xp: 440 }
+  dialog_start: dialogi.WRO-A2-05.start
+  dialog_koniec: dialogi.WRO-A2-05.koniec
+
+- id: WRO-A2-06
+  miasto: wroclaw
+  akt: 2
+  tytul: misje.WRO-A2-06.tytul
+  opis: misje.WRO-A2-06.opis
+  zleceniodawca: lena_mapa
+  typ: poscig_pomoc
+  wymagania: { misje_ukonczone: [WRO-A2-05] }
+  start: { poi: sky-aleja-zachod }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: zachod-od-centrum, opis: misje.WRO-A2-06.cel1 }
+    - { typ: dojedz, poi: zachod-luk, opis: misje.WRO-A2-06.cel2 }
+    - { typ: dojedz, poi: zachod-kolej-start, opis: misje.WRO-A2-06.cel3 }
+  warunki_porazki: [major_x3]
+  checkpointy: [zachod-od-centrum]
+  reguly_cwiczone: [MAN-04, MAN-05]
+  zdarzenia_wymuszone:
+    - { typ: start_finalu, przy: zachod-od-centrum, regula: MAN-04 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 30, xp: 440 }
+  dialog_start: dialogi.WRO-A2-06.start
+  dialog_koniec: dialogi.WRO-A2-06.koniec
+
+- id: WRO-A3-01
+  miasto: wroclaw
+  akt: 3
+  tytul: misje.WRO-A3-01.tytul
+  opis: misje.WRO-A3-01.opis
+  zleceniodawca: sierzant_ola
+  typ: dostawa
+  wymagania: { misje_ukonczone: [WRO-A2-06] }
+  start: { poi: zachod-kolej-start }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, opis: misje.WRO-A3-01.cel1, przedmiot: wiadomosc }
+    - { typ: dojedz, poi: zachod-kolej-miedzy, opis: misje.WRO-A3-01.cel2 }
+    - { typ: dojedz, poi: zachod-kolej-meta, opis: misje.WRO-A3-01.cel3 }
+    - { typ: oddaj, poi: zachod-pobocze, opis: misje.WRO-A3-01.cel4, przedmiot: wiadomosc }
+  warunki_porazki: [major_x3]
+  checkpointy: [zachod-kolej-miedzy, zachod-kolej-meta]
+  reguly_cwiczone: [MSC-01, GDZIE-03b]
+  zdarzenia_wymuszone:
+    - { typ: przejazd_kolejowy, przy: zachod-kolej-start, regula: MSC-01 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 550 }
+  dialog_start: dialogi.WRO-A3-01.start
+  dialog_koniec: dialogi.WRO-A3-01.koniec
+
+- id: WRO-A3-02
+  miasto: wroclaw
+  akt: 3
+  tytul: misje.WRO-A3-02.tytul
+  opis: misje.WRO-A3-02.opis
+  zleceniodawca: sierzant_ola
+  typ: wyzwanie
+  wymagania: { misje_ukonczone: [WRO-A3-01] }
+  start: { poi: zachod-tablica }
+  ruch_ai: false
+  cele:
+    - { typ: sfotografuj, poi: zachod-tablica, opis: misje.WRO-A3-02.cel1, znak: zakaz-obwodnica-B-9 }
+    - typ: wybor
+      poi: zachod-tablica
+      opis: misje.WRO-A3-02.cel2
+      regula: GDZIE-09
+      pytanie: misje.WRO-A3-02.cel2_pytanie
+      odpowiedzi: [misje.WRO-A3-02.cel2_odp1, misje.WRO-A3-02.cel2_odp2]
+      poprawna: 0
+      wyjasnienie: misje.WRO-A3-02.cel2_wyjasnienie
+    - { typ: dojedz, poi: zachod-objazd, opis: misje.WRO-A3-02.cel3 }
+  warunki_porazki: [major_x3]
+  reguly_cwiczone: [GDZIE-09, ZNAK-B9]
+  zdarzenia_wymuszone:
+    - { typ: czytaj_oznakowanie, przy: zachod-tablica, regula: ZNAK-B9 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 550 }
+  dialog_start: dialogi.WRO-A3-02.start
+  dialog_koniec: dialogi.WRO-A3-02.koniec
+
+- id: WRO-A3-03
+  miasto: wroclaw
+  akt: 3
+  tytul: misje.WRO-A3-03.tytul
+  opis: misje.WRO-A3-03.opis
+  zleceniodawca: pan_latarnik
+  typ: pogoda
+  wymagania: { misje_ukonczone: [WRO-A3-02] }
+  start: { poi: bulwar-start, ulewa: true }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: bulwar-wschod, opis: misje.WRO-A3-03.cel1 }
+    - { typ: dojedz, poi: bulwar-most, opis: misje.WRO-A3-03.cel2 }
+    - { typ: dojedz, poi: bulwar-dalej, opis: misje.WRO-A3-03.cel3 }
+  warunki_porazki: [major_x3]
+  checkpointy: [bulwar-most]
+  reguly_cwiczone: [GDZIE-04, GDZIE-01]
+  zdarzenia_wymuszone:
+    - { typ: ulewa, przy: bulwar-start, regula: GDZIE-04 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 550 }
+  dialog_start: dialogi.WRO-A3-03.start
+  dialog_koniec: dialogi.WRO-A3-03.koniec
+
+- id: WRO-A3-04
+  miasto: wroclaw
+  akt: 3
+  tytul: misje.WRO-A3-04.tytul
+  opis: misje.WRO-A3-04.opis
+  zleceniodawca: turbo
+  typ: wyscig
+  wymagania: { misje_ukonczone: [WRO-A3-03] }
+  start: { poi: bulwar-start }
+  ruch_ai: false
+  wyscig: { trasa_rywala: turbo-odra }
+  cele:
+    - { typ: dojedz, poi: bulwar-wschod, opis: misje.WRO-A3-04.cel1 }
+    - { typ: dojedz, poi: bulwar-most, opis: misje.WRO-A3-04.cel2 }
+    - { typ: dojedz, poi: bulwar-dalej, opis: misje.WRO-A3-04.cel3 }
+    - { typ: dojedz, poi: bulwar-meta, opis: misje.WRO-A3-04.cel4 }
+  warunki_porazki: [major_x3]
+  checkpointy: [bulwar-most, bulwar-dalej]
+  reguly_cwiczone: [MAN-04, GDZIE-08, PIER-05]
+  zdarzenia_wymuszone:
+    - { typ: rowerzysta_na_moscie, przy: bulwar-dalej, regula: MAN-04 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 550 }
+  dialog_start: dialogi.WRO-A3-04.start
+  dialog_koniec: dialogi.WRO-A3-04.koniec
+
+- id: WRO-A3-05
+  miasto: wroclaw
+  akt: 3
+  tytul: misje.WRO-A3-05.tytul
+  opis: misje.WRO-A3-05.opis
+  zleceniodawca: sierzant_ola
+  typ: pierwsza_pomoc
+  wymagania: { misje_ukonczone: [WRO-A3-04] }
+  start: { poi: bulwar-ciag }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: bulwar-pomoc, opis: misje.WRO-A3-05.cel1 }
+    - typ: wybor
+      poi: bulwar-pomoc
+      opis: misje.WRO-A3-05.cel2
+      regula: PP-01
+      pytanie: misje.WRO-A3-05.cel2_pytanie
+      odpowiedzi: [misje.WRO-A3-05.cel2_odp1, misje.WRO-A3-05.cel2_odp2, misje.WRO-A3-05.cel2_odp3]
+      poprawna: 1
+      wyjasnienie: misje.WRO-A3-05.cel2_wyjasnienie
+    - typ: wybor
+      poi: bulwar-pomoc
+      opis: misje.WRO-A3-05.cel3
+      regula: PP-03
+      pytanie: misje.WRO-A3-05.cel3_pytanie
+      odpowiedzi: [misje.WRO-A3-05.cel3_odp1, misje.WRO-A3-05.cel3_odp2, misje.WRO-A3-05.cel3_odp3]
+      poprawna: 2
+      wyjasnienie: misje.WRO-A3-05.cel3_wyjasnienie
+    - typ: wybor
+      poi: bulwar-pomoc
+      opis: misje.WRO-A3-05.cel4
+      regula: PP-02
+      pytanie: misje.WRO-A3-05.cel4_pytanie
+      odpowiedzi: [misje.WRO-A3-05.cel4_odp1, misje.WRO-A3-05.cel4_odp2, misje.WRO-A3-05.cel4_odp3]
+      poprawna: 0
+      wyjasnienie: misje.WRO-A3-05.cel4_wyjasnienie
+    - typ: wybor
+      poi: bulwar-pomoc
+      opis: misje.WRO-A3-05.cel5
+      regula: PP-04
+      pytanie: misje.WRO-A3-05.cel5_pytanie
+      odpowiedzi: [misje.WRO-A3-05.cel5_odp1, misje.WRO-A3-05.cel5_odp2, misje.WRO-A3-05.cel5_odp3]
+      poprawna: 1
+      wyjasnienie: misje.WRO-A3-05.cel5_wyjasnienie
+  warunki_porazki: [major_x3]
+  checkpointy: [bulwar-pomoc]
+  reguly_cwiczone: [PP-01, PP-02, PP-03]
+  zdarzenia_wymuszone:
+    - { typ: po_zdarzeniu, przy: bulwar-pomoc, regula: PP-01 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 550 }
+  dialog_start: dialogi.WRO-A3-05.start
+  dialog_koniec: dialogi.WRO-A3-05.koniec
+
+- id: WRO-A3-06
+  miasto: wroclaw
+  akt: 3
+  tytul: misje.WRO-A3-06.tytul
+  opis: misje.WRO-A3-06.opis
+  zleceniodawca: krasnal_dzwoneczek
+  typ: konwoj
+  wymagania: { misje_ukonczone: [WRO-A3-05] }
+  start: { poi: bulwar-dalej, awaria_swiatel: true }
+  ruch_ai: false
+  towarzysze: 4
+  cele:
+    - typ: wybor
+      poi: bulwar-dalej
+      opis: misje.WRO-A3-06.cel1
+      regula: MSC-05
+      pytanie: misje.WRO-A3-06.cel1_pytanie
+      odpowiedzi: [misje.WRO-A3-06.cel1_odp1, misje.WRO-A3-06.cel1_odp2, misje.WRO-A3-06.cel1_odp3]
+      poprawna: 0
+      wyjasnienie: misje.WRO-A3-06.cel1_wyjasnienie
+    - { typ: dojedz, poi: bulwar-most, opis: misje.WRO-A3-06.cel2 }
+    - { typ: dojedz, poi: poludnie-ola, opis: misje.WRO-A3-06.cel3 }
+    - { typ: dojedz, poi: poludnie-ola-za, opis: misje.WRO-A3-06.cel3a }
+    - { typ: dojedz, poi: rynek-zachodni, opis: misje.WRO-A3-06.cel4 }
+    - { typ: dojedz, poi: pod-ratuszem, opis: misje.WRO-A3-06.cel5 }
+  warunki_porazki: [major_x3]
+  checkpointy: [bulwar-most, rynek-zachodni]
+  reguly_cwiczone: [MSC-05, SYG-03, GDZIE-01]
+  zdarzenia_wymuszone:
+    - { typ: start_kolumny, przy: bulwar-dalej, regula: MSC-05 }
+    - { typ: polecenie_oli, przy: poludnie-ola, regula: SYG-03 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 35, xp: 550 }
+  dialog_start: dialogi.WRO-A3-06.start
+  dialog_koniec: dialogi.WRO-A3-06.koniec
+
+- id: WRO-B-01
+  miasto: wroclaw
+  akt: 1
+  poboczna: true
+  tytul: misje.WRO-B-01.tytul
+  opis: misje.WRO-B-01.opis
+  zleceniodawca: pan_latarnik
+  typ: nocny
+  wymagania: { misje_ukonczone: [WRO-A1-05] }
+  start: { poi: fontanna-zbiorka, zmrok: true }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.WRO-B-01.cel1 }
+    - { typ: dojedz, poi: wejscie-hala, opis: misje.WRO-B-01.cel2 }
+    - { typ: dojedz, poi: fontanna-meta, opis: misje.WRO-B-01.cel3 }
+  warunki_porazki: [major_x3]
+  reguly_cwiczone: [MSC-04, WYP-04, WYP-05]
+  zdarzenia_wymuszone:
+    - { typ: kontrola_swiatel, przy: fontanna-zbiorka, regula: WYP-04 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 25, xp: 330 }
+  dialog_start: dialogi.WRO-B-01.start
+  dialog_koniec: dialogi.WRO-B-01.koniec
+
+- id: WRO-B-02
+  miasto: wroclaw
+  akt: 1
+  poboczna: true
+  tytul: misje.WRO-B-02.tytul
+  opis: misje.WRO-B-02.opis
+  zleceniodawca: lena_mapa
+  typ: wyzwanie
+  wymagania: { misje_ukonczone: [WRO-A1-06] }
+  start: { poi: most-tumski-poludnie }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: most-tumski-srodek, opis: misje.WRO-B-02.cel1 }
+    - { typ: dojedz, poi: most-tumski-polnoc, opis: misje.WRO-B-02.cel2 }
+    - { typ: dojedz, poi: most-tumski-srodek, opis: misje.WRO-B-02.cel3 }
+    - { typ: dojedz, poi: most-tumski-poludnie, opis: misje.WRO-B-02.cel4 }
+    - { typ: dojedz, poi: most-tumski-polnoc, opis: misje.WRO-B-02.powrot1 }
+    - { typ: dojedz, poi: most-tumski-poludnie, opis: misje.WRO-B-02.powrot2 }
+    - { typ: dojedz, poi: slodowa-poludnie, opis: misje.WRO-B-02.cel5 }
+    - { typ: dojedz, poi: slodowa-polnoc, opis: misje.WRO-B-02.cel6 }
+    - { typ: dojedz, poi: slodowa-poludnie, opis: misje.WRO-B-02.cel7 }
+    - { typ: dojedz, poi: slodowa-polnoc, opis: misje.WRO-B-02.powrot3 }
+    - { typ: dojedz, poi: slodowa-poludnie, opis: misje.WRO-B-02.powrot4 }
+    - { typ: dojedz, poi: hala-most-poludnie, opis: misje.WRO-B-02.cel8 }
+    - { typ: dojedz, poi: hala-most-polnoc, opis: misje.WRO-B-02.cel9 }
+    - { typ: dojedz, poi: hala-most-poludnie, opis: misje.WRO-B-02.cel10 }
+    - { typ: dojedz, poi: zachod-most-poludnie, opis: misje.WRO-B-02.cel11 }
+    - { typ: dojedz, poi: zachod-most-polnoc, opis: misje.WRO-B-02.cel12 }
+    - { typ: dojedz, poi: zachod-most-poludnie, opis: misje.WRO-B-02.cel13 }
+  warunki_porazki: [major_x3]
+  checkpointy: [slodowa-polnoc, hala-most-polnoc, zachod-most-polnoc]
+  reguly_cwiczone: [GDZIE-01, MAN-04]
+  zdarzenia_wymuszone:
+    - { typ: start_finalu, przy: most-tumski-poludnie, regula: GDZIE-01 }
+  par_s: 210
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 25, xp: 330 }
+  dialog_start: dialogi.WRO-B-02.start
+  dialog_koniec: dialogi.WRO-B-02.koniec
+
+- id: WRO-B-03
+  miasto: wroclaw
+  akt: 2
+  poboczna: true
+  tytul: misje.WRO-B-03.tytul
+  opis: misje.WRO-B-03.opis
+  zleceniodawca: lena_mapa
+  typ: dostawa
+  wymagania: { misje_ukonczone: [WRO-A2-03] }
+  start: { poi: dworzec-przejazd-za }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, opis: misje.WRO-B-03.cel1, przedmiot: paczka }
+    - { typ: odbierz, poi: dworzec-przystanek, opis: misje.WRO-B-03.cel2, przedmiot: list }
+    - { typ: oddaj, poi: dworzec-wejscie, opis: misje.WRO-B-03.cel3, przedmiot: paczka }
+    - { typ: oddaj, poi: dworzec-glowny, opis: misje.WRO-B-03.cel4, przedmiot: list }
+  warunki_porazki: [major_x3]
+  checkpointy: [dworzec-przystanek]
+  reguly_cwiczone: [MSC-02, SYG-01]
+  zdarzenia_wymuszone:
+    - { typ: tramwaj_bez_wysepki, przy: dworzec-przystanek, regula: MSC-02 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 30, xp: 440 }
+  dialog_start: dialogi.WRO-B-03.start
+  dialog_koniec: dialogi.WRO-B-03.koniec
+
+- id: WRO-B-04
+  miasto: wroclaw
+  akt: 1
+  poboczna: true
+  tytul: misje.WRO-B-04.tytul
+  opis: misje.WRO-B-04.opis
+  zleceniodawca: sierzant_ola
+  typ: wyzwanie
+  wymagania: { misje_ukonczone: [WRO-A1-03] }
+  start: { poi: nadodrze-start }
+  ruch_ai: false
+  cele:
+    - typ: wybor
+      poi: nadodrze-start
+      opis: misje.WRO-B-04.cel1
+      regula: ZNAK-B2T22
+      pytanie: misje.WRO-B-04.cel1_pytanie
+      odpowiedzi: [misje.WRO-B-04.cel1_odp1, misje.WRO-B-04.cel1_odp2]
+      poprawna: 0
+      wyjasnienie: misje.WRO-B-04.cel1_wyjasnienie
+    - { typ: dojedz, poi: nadodrze-pas, opis: misje.WRO-B-04.cel2 }
+    - { typ: dojedz, poi: nadodrze-meta, opis: misje.WRO-B-04.cel3 }
+  warunki_porazki: [major_x3]
+  reguly_cwiczone: [ZNAK-B2T22, GDZIE-02]
+  zdarzenia_wymuszone:
+    - { typ: czytaj_oznakowanie, przy: nadodrze-start, regula: ZNAK-B2T22 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 25, xp: 330 }
+  dialog_start: dialogi.WRO-B-04.start
+  dialog_koniec: dialogi.WRO-B-04.koniec
+
+- id: WRO-B-05
+  miasto: wroclaw
+  akt: 1
+  poboczna: true
+  tytul: misje.WRO-B-05.tytul
+  opis: misje.WRO-B-05.opis
+  zleceniodawca: krasnal_dzwoneczek
+  typ: dostawa_na_czas
+  wymagania: { misje_ukonczone: [WRO-A1-03] }
+  start: { poi: bulwar-rynek }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, opis: misje.WRO-B-05.cel1, przedmiot: lody }
+    - { typ: dojedz, poi: slodowa-poludnie, opis: misje.WRO-B-05.cel2 }
+    - { typ: dojedz, poi: slodowa-polnoc, opis: misje.WRO-B-05.cel3 }
+    - { typ: oddaj, poi: slodowa-lody, opis: misje.WRO-B-05.cel4, przedmiot: lody }
+  warunki_porazki: [czas_minal, major_x3]
+  limit_s: 150
+  reguly_cwiczone: [GDZIE-11, MAN-08]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_trasy, przy: slodowa-poludnie, regula: GDZIE-11 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 25, xp: 330 }
+  dialog_start: dialogi.WRO-B-05.start
+  dialog_koniec: dialogi.WRO-B-05.koniec
+
+- id: WRO-B-06
+  miasto: wroclaw
+  akt: 2
+  poboczna: true
+  tytul: misje.WRO-B-06.tytul
+  opis: misje.WRO-B-06.opis
+  zleceniodawca: pani_doktor
+  typ: delikatna_przesylka
+  wymagania: { misje_ukonczone: [WRO-A2-02] }
+  start: { poi: zoo-brama }
+  ruch_ai: false
+  przesylka: { delikatna: true }
+  cele:
+    - { typ: odbierz, opis: misje.WRO-B-06.cel1, przedmiot: sadzonki }
+    - { typ: dojedz, poi: japonski-most-poludnie, opis: misje.WRO-B-06.cel2 }
+    - { typ: oddaj, poi: japonski-most-polnoc, opis: misje.WRO-B-06.cel3, przedmiot: sadzonki }
+  warunki_porazki: [major_x3]
+  checkpointy: [japonski-most-poludnie]
+  reguly_cwiczone: [GDZIE-11, GDZIE-08]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_trasy, przy: japonski-most-poludnie, regula: GDZIE-11 }
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 30, xp: 440 }
+  dialog_start: dialogi.WRO-B-06.start
+  dialog_koniec: dialogi.WRO-B-06.koniec
+
+- id: WRO-B-07
+  miasto: wroclaw
+  akt: 2
+  poboczna: true
+  tytul: misje.WRO-B-07.tytul
+  opis: misje.WRO-B-07.opis
+  zleceniodawca: sierzant_ola
+  typ: wyzwanie
+  wymagania: { misje_ukonczone: [WRO-A2-01] }
+  start: { poi: hala-okrag-zachod }
+  ruch_ai: false
+  cele:
+    - { typ: dojedz, poi: hala-okrag-poludnie, opis: misje.WRO-B-07.cel1 }
+    - { typ: dojedz, poi: hala-okrag-wschod, opis: misje.WRO-B-07.cel2 }
+    - { typ: dojedz, poi: hala-okrag-polnoc, opis: misje.WRO-B-07.cel3 }
+    - { typ: dojedz, poi: hala-okrag-zachod, opis: misje.WRO-B-07.cel4 }
+    - { typ: dojedz, poi: hala-okrag-poludnie, opis: misje.WRO-B-07.cel5 }
+    - { typ: dojedz, poi: hala-okrag-wschod, opis: misje.WRO-B-07.cel6 }
+    - { typ: dojedz, poi: hala-okrag-polnoc, opis: misje.WRO-B-07.cel7 }
+    - { typ: dojedz, poi: hala-okrag-zachod, opis: misje.WRO-B-07.cel8 }
+    - { typ: dojedz, poi: hala-okrag-poludnie, opis: misje.WRO-B-07.cel9 }
+    - { typ: dojedz, poi: hala-okrag-wschod, opis: misje.WRO-B-07.cel10 }
+    - { typ: dojedz, poi: hala-okrag-polnoc, opis: misje.WRO-B-07.cel11 }
+    - { typ: dojedz, poi: hala-okrag-zachod, opis: misje.WRO-B-07.cel12 }
+    - { typ: dojedz, poi: hala-okrag-poludnie, opis: misje.WRO-B-07.cel13 }
+    - { typ: dojedz, poi: hala-okrag-wschod, opis: misje.WRO-B-07.cel14 }
+    - { typ: dojedz, poi: hala-okrag-polnoc, opis: misje.WRO-B-07.cel15 }
+    - { typ: dojedz, poi: hala-okrag-zachod, opis: misje.WRO-B-07.cel16 }
+    - { typ: dojedz, poi: hala-okrag-poludnie, opis: misje.WRO-B-07.cel17 }
+    - { typ: dojedz, poi: hala-okrag-wschod, opis: misje.WRO-B-07.cel18 }
+    - { typ: dojedz, poi: hala-okrag-polnoc, opis: misje.WRO-B-07.cel19 }
+    - { typ: dojedz, poi: hala-okrag-zachod, opis: misje.WRO-B-07.cel20 }
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [PIER-08, MAN-01]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_trasy, przy: hala-okrag-zachod, regula: PIER-08 }
+  par_s: 180
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 30, xp: 440 }
+  dialog_start: dialogi.WRO-B-07.start
+  dialog_koniec: dialogi.WRO-B-07.koniec

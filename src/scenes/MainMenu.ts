@@ -3,7 +3,7 @@ import type { GameContent } from '../content/schemas';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 import { progressPanels } from '../ui/ProgressPanels';
 import { progressNotice, skillMapButton } from '../ui/SkillMap';
-import { FONT, translate, ui } from '../core/presentation';
+import { FONT, ui } from '../core/presentation';
 import { readHelmetColor, setHelmetColor } from '../core/helmetColor';
 import { helmetColors } from '../render/spriteFrames';
 export class MainMenu extends Scene {
@@ -21,38 +21,20 @@ export class MainMenu extends Scene {
     notice.className = 'menu-save-notice';
     notice.setAttribute('role', 'status');
     notice.textContent = progressNotice(progress);
-    const tutorial = gameContent.misje.find(
-      (mission) =>
-        mission.id === 'WAW-T-01' && progress.isAvailable(mission, gameContent),
+    const campaign = document.createElement('button');
+    campaign.type = 'button';
+    campaign.className = 'menu-mission';
+    campaign.textContent = ui.cityPicker.campaign;
+    campaign.addEventListener('click', () =>
+      this.scene.start('CityPicker', { mode: 'campaign' }),
     );
-    const missionButton = document.createElement('button');
-    if (tutorial) {
-      missionButton.type = 'button';
-      missionButton.className = 'menu-mission';
-      missionButton.textContent = translate(tutorial.tytul);
-      missionButton.addEventListener('click', () =>
-        this.scene.start('City', { missionId: tutorial.id }),
-      );
-      document.body.append(missionButton);
-    }
-    const pragaButton = document.createElement('button');
-    pragaButton.type = 'button';
-    pragaButton.className = 'menu-mission menu-praga';
-    pragaButton.textContent = ui.driving.praga;
-    pragaButton.addEventListener('click', () =>
-      this.scene.start('City', { map: 'warszawa' }),
+    const freeRide = document.createElement('button');
+    freeRide.type = 'button';
+    freeRide.className = 'menu-mission menu-free-ride';
+    freeRide.textContent = ui.cityPicker.freeRide;
+    freeRide.addEventListener('click', () =>
+      this.scene.start('CityPicker', { mode: 'freeRide' }),
     );
-    const developerMenu = document.createElement('details');
-    developerMenu.className = 'menu-developer';
-    const developerSummary = document.createElement('summary');
-    developerSummary.textContent = ui.driving.developer;
-    const wroclawButton = document.createElement('button');
-    wroclawButton.type = 'button';
-    wroclawButton.textContent = ui.driving.wroclaw;
-    wroclawButton.addEventListener('click', () =>
-      this.scene.start('City', { map: 'wroclaw' }),
-    );
-    developerMenu.append(developerSummary, wroclawButton);
     const helmetLabel = document.createElement('label');
     helmetLabel.className = 'menu-helmet';
     helmetLabel.textContent = ui.helmet.label;
@@ -66,8 +48,8 @@ export class MainMenu extends Scene {
     });
     helmetLabel.append(helmet);
     document.body.append(
-      pragaButton,
-      developerMenu,
+      campaign,
+      freeRide,
       helmetLabel,
       skills.button,
       skills.dialog,
@@ -101,7 +83,7 @@ export class MainMenu extends Scene {
     label(47, 166, ui.tagline, 14, '#c0cbdc');
     g.fillStyle(0x333c57).fillRect(44, 199, 272, 39);
     label(57, 207, ui.driving.startHint, 16);
-    if (tutorial) g.fillStyle(0xffcd75).fillRect(44, 242, 272, 39);
+    g.fillStyle(0xffcd75).fillRect(44, 242, 272, 39);
     g.fillStyle(0xffcd75).fillRect(325, 242, 272, 39);
 
     label(46, 282, ui.pangram, 16);
@@ -125,9 +107,8 @@ export class MainMenu extends Scene {
         -Math.floor((this.scale.height - 360) / 2),
       );
       for (const button of [
-        missionButton,
-        pragaButton,
-        developerMenu,
+        campaign,
+        freeRide,
         helmetLabel,
         skills.button,
         panels.navigation,
@@ -138,16 +119,15 @@ export class MainMenu extends Scene {
     this.scale.on('resize', center);
     const startDrive = (event: KeyboardEvent) => {
       if (
-        event.target !== missionButton &&
-        event.target !== pragaButton &&
+        event.target !== campaign &&
+        event.target !== freeRide &&
         event.target !== helmet &&
         event.target !== skills.button &&
         !skills.dialog.open &&
         !panels.dialog.open &&
         !(
           event.target instanceof Node &&
-          (panels.navigation.contains(event.target) ||
-            developerMenu.contains(event.target))
+          panels.navigation.contains(event.target)
         )
       )
         this.scene.start('City');
@@ -156,9 +136,8 @@ export class MainMenu extends Scene {
     this.events.once('shutdown', () => {
       this.scale.off('resize', center);
       this.input.keyboard?.off('keydown-ENTER', startDrive);
-      missionButton.remove();
-      pragaButton.remove();
-      developerMenu.remove();
+      campaign.remove();
+      freeRide.remove();
       helmetLabel.remove();
       skills.button.remove();
       skills.dialog.remove();

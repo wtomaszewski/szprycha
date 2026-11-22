@@ -184,3 +184,10 @@ Poniżej zestawienie zmian do przejrzenia przez konsultanta merytorycznego (pier
 - Osiągnięcia przyznają XP według mnożnika w `balans.yaml` i żetony z katalogu. Werdykty z ticku zawierającego błąd nie zwiększają nowych liczników nagród. Osiągnięcia za kursy liczą wyłącznie bezbłędne ukończenia. Osiągnięcie za serię pytań Sierżant Oli jest nieaktywne, ponieważ obecne pytania kontrolne pojawiają się po naruszeniu. Osobny quiz pozwoli ćwiczyć bez tego warunku.
 - Wyzwania preferują najsłabszy moduł spośród tych z grywalnymi szablonami. Obecna pula obejmuje M02–M06. Szablony na quiz, pierwszą pomoc i plac można włączyć po udostępnieniu tych aktywności. Naklejki należą do trwałej kolekcji, a te same wzory mogą wracać w kolejnych dniach.
 - Przypomnienie Kazika liczy czas aktywnej sceny jazdy w bieżącej sesji. Ustawienie jest dostępne z menu do czasu udostępnienia Strefy Rodzica. Pauza, ukryta karta i dialogi wstrzymują odliczanie.
+
+## M6d — decyzje i treści do sprawdzenia
+
+- Cykl Wrocławia zaczyna się od dwóch ćwiczeń w Miasteczku i przenosi zlecenia na Rynek po przeglądzie u Kazika. Polecenia SzprychaApp zależą od wybranego miasta. Wyniki, ranga i mastery pozostają wspólne dla całego profilu.
+- Mostowy maraton liczy 12 przepraw przez cztery istniejące mosty i kładki. Krótkie zlecenia miejscowe i scenka pierwszej pomocy mogą trwać poniżej dwóch minut.
+- Scenka pierwszej pomocy korzysta z czterech wyborów w dialogu, tak jak kampania Warszawy. Ratownik lub nauczyciel EDB powinien sprawdzić scenkę, w tym reakcję na osobę nieprzytomną, która oddycha (PP-04).
+- Wrocław używa też reguł oznaczonych do weryfikacji w treści gry. Należy sprawdzić między innymi pierwszeństwo przy skręcie i na przejeździe (PIER-04, PIER-05), przejazd przy niepełnym oznakowaniu (GDZIE-03b) i warunki korzystania z chodnika podczas pogody (GDZIE-04).

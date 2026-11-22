@@ -176,6 +176,22 @@ it('preserves M5b progress when adding the album and milestone counters', async 
   expect((await ProgressStore.open(factory)).profile).toEqual(store.profile);
 });
 
+it('adds the city choice to an existing profile and preserves the rest of the save', async () => {
+  const factory = new IDBFactory();
+  await seed(factory, { version: 1, ...legacy });
+  const store = await ProgressStore.open(factory);
+  const existing = structuredClone(store.profile);
+  const progress = new MissionProgress(await ProgressStore.open(factory));
+  expect(progress.selectedCity).toBe('warszawa');
+  await progress.selectCity('wroclaw');
+  const reloaded = await ProgressStore.open(factory);
+  expect(reloaded.profile).toEqual({ ...existing, selectedCity: 'wroclaw' });
+  await new MissionProgress(reloaded).selectCity('warszawa');
+  expect((await ProgressStore.open(factory)).profile.selectedCity).toBe(
+    'warszawa',
+  );
+});
+
 it('preserves an unsupported future save', async () => {
   const factory = new IDBFactory();
   const future = { version: 4, data: 'future' };

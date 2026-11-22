@@ -1,30 +1,41 @@
 import { expect, test, type Page } from '@playwright/test';
+import questions from '../../content/pytania.json' with { type: 'json' };
+import { chooseCity } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 
 async function openWroclaw(page: Page) {
   await page.goto('/');
-  const menu = page.getByText(pl.driving.developer, { exact: true });
-  await menu.focus();
-  await page.keyboard.press('Enter');
-  await page.getByRole('button', { name: pl.driving.wroclaw }).click();
+  await chooseCity(page, 'wroclaw');
   const canvas = page.locator('canvas[data-map="wroclaw"]');
   await expect(canvas).toHaveAttribute('aria-label', pl.driving.wroclawTitle);
   return canvas;
 }
 
-test('opens Wrocław from the developer menu and saves collected gnomes', async ({
+test('opens Wrocław from the map of Poland and saves collected gnomes', async ({
   page,
 }) => {
   await openWroclaw(page);
   const collection = page.getByRole('status', { name: pl.driving.gnomes });
   await expect(collection).toHaveText('Krasnale 0/100');
   await page.keyboard.press('KeyX');
+  const quiz = page.getByRole('dialog', { name: pl.driving.gnomeQuestion });
   try {
     await page.keyboard.down('ArrowUp');
-    await expect(collection).toHaveText('Krasnale 1/100');
+    await expect(quiz).toBeVisible();
   } finally {
     await page.keyboard.up('ArrowUp');
   }
+  await expect(collection).toHaveText('Krasnale 0/100');
+  const question = questions.pytania[0]!;
+  await expect(quiz).toContainText(question.pytanie);
+  await quiz
+    .getByRole('button', {
+      name: question.odpowiedzi[question.poprawna],
+      exact: true,
+    })
+    .click();
+  await quiz.getByRole('button', { name: pl.progression.continue }).click();
+  await expect(collection).toHaveText('Krasnale 1/100');
   await page.keyboard.press('Escape');
   await page
     .getByRole('button', { name: pl.driving.menu, exact: true })

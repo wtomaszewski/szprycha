@@ -200,6 +200,11 @@ export class MissionSystem {
     return this.forcedWaypoint;
   }
 
+  get gnomeTarget() {
+    const goal = this.goalTarget?.goal;
+    return goal?.typ === 'zbierz_krasnala' ? goal.poi : undefined;
+  }
+
   get preparingBike() {
     return this.goalTarget?.goal.typ === 'przygotuj_rower';
   }
@@ -317,6 +322,7 @@ export class MissionSystem {
     equipment?: Equipment,
     speed = 0,
     questionPending = false,
+    gnomeCollected = false,
   ): TickEffects | undefined {
     const target = this.goalTarget;
     if (!target) return;
@@ -350,6 +356,16 @@ export class MissionSystem {
       major ||= verdict.kind === 'major';
     }
 
+    if (
+      this.failureConditions.has('dowolny_blad') &&
+      verdicts.some(({ kind }) => kind !== 'good')
+    ) {
+      this.finish(
+        { status: 'failed', reason: 'dowolny_blad' },
+        questionPending,
+      );
+      return;
+    }
     if (this.score.tooManyMajor) {
       this.finish({ status: 'failed', reason: 'major_x3' }, questionPending);
       return;
@@ -367,7 +383,8 @@ export class MissionSystem {
         ? this.photos.has(target.goal.znak)
         : target.goal.typ === 'wybor'
           ? Boolean(this.choice?.correct)
-          : reached(target.area, position);
+          : reached(target.area, position) &&
+            (target.goal.typ !== 'zbierz_krasnala' || gnomeCollected);
     if (
       target.goal.typ === 'wybor' &&
       speed === 0 &&

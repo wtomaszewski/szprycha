@@ -3,6 +3,7 @@ import { dialogueId } from './dialogues.ts';
 
 const id = z.string().regex(/^[A-Za-z0-9_-]+$/);
 export const missionCity = z.enum(['warszawa', 'wroclaw']);
+export type MissionCity = z.infer<typeof missionCity>;
 const key = z.string().regex(/^(misje|dialogi)(\.[A-Za-z0-9_-]+)+$/);
 const seconds = z.number().positive();
 const count = z.number().int().nonnegative();
@@ -15,6 +16,7 @@ const goalFields = {
 const missionGoal = z.discriminatedUnion('typ', [
   z.strictObject({ ...goalFields, typ: z.literal('przygotuj_rower') }),
   z.strictObject({ ...goalFields, typ: z.literal('dojedz'), poi: id }),
+  z.strictObject({ ...goalFields, typ: z.literal('zbierz_krasnala'), poi: id }),
   z
     .strictObject({
       ...goalFields,
@@ -53,10 +55,11 @@ const missionGoal = z.discriminatedUnion('typ', [
 
 export const missionSchema = z
   .strictObject({
-    id: z.string().regex(/^(WAW|WRO)-(T|A[1-3])-\d{2}$/),
+    id: z.string().regex(/^(WAW|WRO)-(T|A[1-3]|B)-\d{2}$/),
     miasto: missionCity,
     mapa: id.optional(),
     akt: count.max(3),
+    poboczna: z.literal(true).optional(),
     tytul: key,
     opis: key.optional(),
     zleceniodawca: id,
@@ -78,7 +81,9 @@ export const missionSchema = z
     limit_s: seconds.optional(),
     przesylka: z.strictObject({ delikatna: z.boolean() }).optional(),
     wyscig: z.strictObject({ trasa_rywala: id }).optional(),
-    warunki_porazki: z.array(z.enum(['czas_minal', 'major_x3'])).default([]),
+    warunki_porazki: z
+      .array(z.enum(['czas_minal', 'major_x3', 'dowolny_blad']))
+      .default([]),
     checkpointy: z.array(id).default([]),
     reguly_cwiczone: z.array(id).min(1),
     zdarzenia_wymuszone: z
@@ -98,7 +103,11 @@ export const missionSchema = z
     skrot: z.strictObject({ odcinek: id }).optional(),
   })
   .superRefine((mission, ctx) => {
-    const act = mission.akt === 0 ? 'T' : `A${mission.akt}`;
+    const act = mission.poboczna
+      ? 'B'
+      : mission.akt === 0
+        ? 'T'
+        : `A${mission.akt}`;
     const prefix = mission.miasto === 'warszawa' ? 'WAW' : 'WRO';
     if (!mission.id.startsWith(`${prefix}-${act}-`))
       ctx.addIssue({

@@ -1,11 +1,11 @@
 import { expect, it } from 'vitest';
 import { warsawRoutes, type WarsawMissionId } from './warsaw-routes';
-import { missionContent, runWarsawRoute } from './run-warsaw-route';
+import { missionContent, runMissionRoute } from './run-mission-route';
 
 it.each(Object.keys(warsawRoutes) as WarsawMissionId[])(
   '%s completes the reference route',
   (id) => {
-    const legal = runWarsawRoute(id, warsawRoutes[id].legal);
+    const legal = runMissionRoute(id, warsawRoutes[id].legal);
     expect(
       legal.mission.result,
       JSON.stringify({
@@ -78,7 +78,7 @@ it.each(Object.keys(warsawRoutes) as WarsawMissionId[])(
 
 it('shakes the parcel when riding fast on the cobbles', () => {
   const [market, beforePromenade, ...rest] = warsawRoutes['WAW-A1-05'].legal;
-  const run = runWarsawRoute('WAW-A1-05', [
+  const run = runMissionRoute('WAW-A1-05', [
     { ...market!, maxInput: 1 },
     { ...beforePromenade!, maxInput: 1 },
     ...rest,
@@ -97,7 +97,7 @@ it('shakes the parcel when riding fast on the cobbles', () => {
 
 it('records the instruction from Ola when the rider crosses on green too early', () => {
   const [stop, ...legal] = warsawRoutes['WAW-A1-06'].legal;
-  const run = runWarsawRoute('WAW-A1-06', [legal[0]!], [stop!, ...legal]);
+  const run = runMissionRoute('WAW-A1-06', [legal[0]!], [stop!, ...legal]);
   expect(run.mission.result).toMatchObject({
     status: 'completed',
     photos: 1,
@@ -109,7 +109,7 @@ it('records the instruction from Ola when the rider crosses on green too early',
 });
 
 it('leaves the photo objective open when the rider passes the sign without taking a picture', () => {
-  const run = runWarsawRoute(
+  const run = runMissionRoute(
     'WAW-A1-06',
     warsawRoutes['WAW-A1-06'].legal.map((point) => ({
       ...point,
@@ -126,7 +126,7 @@ it('penalizes an unsignaled exit during the first delivery', () => {
     ...point,
     signal: undefined,
   }));
-  const run = runWarsawRoute(id, route);
+  const run = runMissionRoute(id, route);
   expect(run.mission.result?.verdicts).toContainEqual(
     expect.objectContaining({ ruleId: 'MAN-01', kind: 'minor' }),
   );
@@ -139,7 +139,7 @@ it('records a missed turn signal during the bazaar course', () => {
       ? { ...point, until: undefined, signal: undefined }
       : { ...point, signal: undefined },
   );
-  const run = runWarsawRoute(id, route);
+  const run = runMissionRoute(id, route);
   expect(run.mission.result?.verdicts).toContainEqual(
     expect.objectContaining({ ruleId: 'MAN-01', kind: 'minor' }),
   );

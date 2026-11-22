@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { chooseCity } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import {
   progressDatabase,
@@ -55,7 +56,7 @@ async function saveCompletions(page: Page, completed: string[]) {
 }
 
 async function openPhone(page: Page) {
-  await page.getByRole('button', { name: pl.driving.praga }).click();
+  await chooseCity(page, 'warszawa');
   await expect(canvas(page)).toHaveAttribute('data-map', 'warszawa');
   await page.keyboard.press('KeyM');
   await expect(phone(page)).toBeVisible();
