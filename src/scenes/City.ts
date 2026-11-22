@@ -190,27 +190,13 @@ export class City extends Scene {
   constructor() {
     super('City');
   }
-  private requestedMap: string = defaultMap;
-
-  init({ missionId, map }: { missionId?: string; map?: string } = {}) {
-    const content = this.registry.get('content') as GameContent;
-    const mission =
-      missionId && content.misje.find(({ id }) => id === missionId);
-    this.requestedMap =
-      (mission ? (mission.mapa ?? mission.miasto) : map) ?? defaultMap;
-  }
-
   preload() {
     for (const [id, url] of [
       [defaultMap, trainingUrl],
       ['warszawa', warsawUrl],
       ['wroclaw', wroclawUrl],
     ] as const) {
-      if (
-        (id === defaultMap || id === this.requestedMap) &&
-        !this.cache.tilemap.exists(id)
-      )
-        this.load.tilemapTiledJSON(id, url);
+      if (!this.cache.tilemap.exists(id)) this.load.tilemapTiledJSON(id, url);
     }
     for (const [key, url] of [
       ['training', tilesUrl],
