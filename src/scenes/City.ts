@@ -26,6 +26,7 @@ import { cullMapChunks, drawMapGround } from '../render/MapGround';
 import { DrivingControls } from '../ui/DrivingControls';
 import { showError, translate, ui } from '../core/presentation';
 
+import { nearbyPhotoSubject } from '../gameplay/signPhoto';
 import { MissionRace } from '../gameplay/MissionRace';
 import { MissionSystem, type MissionSpawn } from '../gameplay/MissionSystem';
 import {
@@ -134,6 +135,8 @@ export class City extends Scene {
   private phoneFeedback!: string;
   private missionHud?: MissionHud;
   private missionHudAt = -Infinity;
+  private photoPending = false;
+  private breakMinutes = 0;
   private missionMarker?: GameObjects.Graphics;
   private displayedTarget?: MissionSystem['target'];
   private missionInterrupted = false;
@@ -213,6 +216,11 @@ export class City extends Scene {
     this.messageUntil = 0;
     this.content = this.registry.get('content') as GameContent;
     this.progress = this.registry.get('missionProgress') as MissionProgress;
+    this.progress.milestones(this.content);
+    this.breakMinutes = this.progress.breakMinutes(
+      this.content.balans.zdrowe_granie,
+    );
+    this.photoPending = false;
     this.progress.store.prepareRide(this.content.przepisy.przepisy);
     this.series ??= new SafetySeries(
       this.content.balans.combo,
@@ -464,6 +472,15 @@ export class City extends Scene {
           this.overlayGamepad(pressed, justPressed),
       },
     );
+    if (!this.mission) {
+      const camera = document.createElement('button');
+      camera.type = 'button';
+      camera.className = 'ride-camera';
+      camera.setAttribute('aria-label', ui.m5c.camera);
+      camera.title = ui.m5c.camera;
+      camera.addEventListener('click', () => this.takePhoto(true));
+      this.controls.quickActions.append(camera);
+    }
     this.hud = new DrivingHud(
       this.controls.root,
       this.controls.details,
@@ -693,7 +710,10 @@ export class City extends Scene {
       this.togglePhone();
       return true;
     }
-    if (!this.phone.open) return justPressed(0) && this.takePhoto();
+    if (!this.phone.open)
+      return this.mission
+        ? justPressed(0) && this.takePhoto()
+        : justPressed(15) && this.takePhoto(true);
     if (justPressed(1)) this.phone.close();
     else if (justPressed(0)) this.phone.activate();
     else if (justPressed(12)) this.phone.focusOrder(-1);
@@ -723,6 +743,7 @@ export class City extends Scene {
         points: result.points,
         stars: result.stars,
         balance: this.content.balans.gwiazdki,
+        clean: !result.verdicts.some(({ kind }) => kind !== 'good'),
       });
       this.updateMissionHud();
       this.dialogue.show(
@@ -899,22 +920,102 @@ export class City extends Scene {
     );
   }
 
-  private takePhoto() {
+  private takePhoto(showHint = false) {
     if (
+      this.photoPending ||
       this.dialogue.open ||
       this.review ||
       this.phone.open ||
+      this.questionDialog.open ||
       this.controls.paused ||
-      this.missionInterrupted
+      this.missionInterrupted ||
+      this.mission?.result
     )
       return false;
     const scale = this.world.metersPerPixel;
-    const captured = this.mission?.photograph(
-      { x: this.rider.x * scale, y: this.rider.y * scale },
-      this.rider.speed,
+    const position = { x: this.rider.x * scale, y: this.rider.y * scale };
+    const { speed, walking } = this.rider;
+    const milestones = this.progress.milestones(this.content);
+    const { signPhotos } = this.progress.store.profile;
+    const goal = this.mission?.target?.goal;
+    if (
+      goal?.typ === 'sfotografuj' &&
+      this.mission?.photograph(position, speed)
+    ) {
+      const sign = this.world.signs.find(({ id }) => id === goal.znak);
+      if (
+        sign &&
+        milestones.signs.has(sign.code) &&
+        !Object.hasOwn(signPhotos, sign.code)
+      )
+        this.captureSign(sign);
+      this.updateMissionHud();
+      return true;
+    }
+    if (this.mission) return false;
+
+    const sign = nearbyPhotoSubject(
+      this.world,
+      position,
+      speed,
+      walking,
+      milestones.signs,
+      signPhotos,
+      this.content.balans.album.zasieg_zdjecia_m,
     );
-    if (captured) this.updateMissionHud();
-    return Boolean(captured);
+    if (sign) this.captureSign(sign);
+    else if (showHint || walking) this.message(ui.m5c.noPhoto);
+    return Boolean(sign);
+  }
+
+  private captureSign(sign: Vec2 & { code: string }) {
+    const camera = this.cameras.main;
+    const scale = this.world.metersPerPixel;
+    const centerX =
+      camera.x + (sign.x / scale - camera.worldView.x) * camera.zoomX;
+    const centerY =
+      camera.y + (sign.y / scale - camera.worldView.y) * camera.zoomY;
+    const size = 64;
+    const { width, height } = this.game.canvas;
+    const x = Math.max(
+      0,
+      Math.min(width - size, Math.round(centerX - size / 2)),
+    );
+    const y = Math.max(
+      0,
+      Math.min(height - size, Math.round(centerY - size / 2)),
+    );
+
+    this.photoPending = true;
+    const { progress, content, controls } = this;
+    this.game.renderer.snapshotArea(x, y, size, size, (image) => {
+      if (this.controls === controls) this.photoPending = false;
+      if (image instanceof HTMLImageElement) {
+        if (
+          progress.photograph(content, sign.code, image.src) &&
+          controls.root.isConnected
+        )
+          this.message(ui.m5c.photoSaved);
+      } else if (controls.root.isConnected) {
+        this.message(ui.m5c.photoFailed);
+      }
+    });
+  }
+
+  private showBreakReminder() {
+    const reminder = document.createElement('aside');
+    reminder.className = 'break-reminder';
+    const speaker = document.createElement('strong');
+    speaker.textContent = ui.m5c.kazik;
+    const message = document.createElement('p');
+    message.setAttribute('role', 'status');
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.textContent = ui.m5c.dismiss;
+    close.addEventListener('click', () => reminder.remove());
+    reminder.append(speaker, message, close);
+    this.controls.root.append(reminder);
+    message.textContent = ui.m5c.breakMessage;
   }
 
   private updateRival() {
@@ -1203,13 +1304,17 @@ export class City extends Scene {
       this.questionDialog.open ||
       this.missionInterrupted ||
       this.mission?.result ||
-      this.portraitTouch.matches
+      this.portraitTouch.matches ||
+      document.hidden
     ) {
       this.accumulator = 0;
       this.siren.update(0, this.rules.at);
       return;
     }
-    this.accumulator += Math.min(delta / 1000, 0.1);
+    const seconds = Math.min(delta / 1000, 0.1);
+    if (this.progress.playFor(seconds, this.breakMinutes))
+      this.showBreakReminder();
+    this.accumulator += seconds;
     while (this.accumulator >= FIXED_STEP) {
       if (
         !this.mission?.preparingBike &&

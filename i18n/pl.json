@@ -399,5 +399,37 @@
       "koniec_tekst": "Błyskawica i podpis „Zakłócacz”! Ktoś celowo przestawia znaki.",
       "final": "Akt 1 ukończony! Mamy pierwszą wskazówkę i wiemy, gdzie szukać dalej."
     }
+  },
+  "m5c": {
+    "album": "Album Znaków",
+    "achievements": "Osiągnięcia",
+    "daily": "Wyzwania dzienne",
+    "breakSettings": "Ustawienia przerwy",
+    "close": "Zamknij",
+    "albumProgress": "Zdjęcia w albumie",
+    "albumHint": "Zsiądź z roweru, zatrzymaj się w bezpiecznym miejscu obok znaku i zrób zdjęcie.",
+    "lockedSign": "Do odkrycia",
+    "photoSaved": "Zdjęcie trafiło do Albumu Znaków.",
+    "camera": "Zrób zdjęcie [P / → na padzie]",
+    "noPhoto": "Zsiądź z roweru i zatrzymaj się blisko nowego znaku, poza jezdnią.",
+    "photoFailed": "Spróbuj zrobić zdjęcie jeszcze raz.",
+    "earned": "Zdobyte",
+    "inProgress": "W trakcie",
+    "inactive": "Dostępne w przyszłości",
+    "dailyLocked": "Wyzwania dzienne odblokujesz na randze Kurier.",
+    "dailyRest": "Wyzwania są dobrowolne. Zdobyte naklejki zostają w kolekcji.",
+    "done": "Ukończone",
+    "stickers": "Naklejki",
+    "noStickers": "Tu pojawią się zdobyte naklejki.",
+    "stickerNames": {
+      "odblask": "Odblask",
+      "kolo": "Koło",
+      "szprycha": "Szprycha"
+    },
+    "breakAfter": "Przypomnij o przerwie po",
+    "minutes": "min",
+    "kazik": "Pan Kazik",
+    "breakMessage": "Czas na prawdziwy rower! Kask na głowę!",
+    "dismiss": "Schowaj przypomnienie"
   }
 }

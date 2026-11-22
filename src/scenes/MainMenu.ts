@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 import type { GameContent } from '../content/schemas';
 import type { MissionProgress } from '../gameplay/MissionProgress';
+import { progressPanels } from '../ui/ProgressPanels';
 import { progressNotice, skillMapButton } from '../ui/SkillMap';
 import { FONT, translate, ui } from '../core/presentation';
 import { readHelmetColor, setHelmetColor } from '../core/helmetColor';
@@ -15,6 +16,7 @@ export class MainMenu extends Scene {
     const gameContent = this.registry.get('content') as GameContent;
     const progress = this.registry.get('missionProgress') as MissionProgress;
     const skills = skillMapButton(progress, gameContent);
+    const panels = progressPanels(progress, gameContent);
     const notice = document.createElement('p');
     notice.className = 'menu-save-notice';
     notice.setAttribute('role', 'status');
@@ -57,6 +59,8 @@ export class MainMenu extends Scene {
       helmetLabel,
       skills.button,
       skills.dialog,
+      panels.navigation,
+      panels.dialog,
       notice,
     );
     const g = this.add.graphics();
@@ -113,6 +117,7 @@ export class MainMenu extends Scene {
         pragaButton,
         helmetLabel,
         skills.button,
+        panels.navigation,
       ])
         button.style.setProperty('--menu-zoom', String(this.scale.zoom));
     };
@@ -124,7 +129,12 @@ export class MainMenu extends Scene {
         event.target !== pragaButton &&
         event.target !== helmet &&
         event.target !== skills.button &&
-        !skills.dialog.open
+        !skills.dialog.open &&
+        !panels.dialog.open &&
+        !(
+          event.target instanceof Node &&
+          panels.navigation.contains(event.target)
+        )
       )
         this.scene.start('City');
     };
@@ -137,6 +147,8 @@ export class MainMenu extends Scene {
       helmetLabel.remove();
       skills.button.remove();
       skills.dialog.remove();
+      panels.navigation.remove();
+      panels.dialog.remove();
       notice.remove();
     });
     const canvas = this.game.canvas;

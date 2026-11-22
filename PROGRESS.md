@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan na 22.11.2026. Gałąź `feat/25-m4d-akt1-czesc2`.
+Stan na 22.11.2026. Gałąź `feat/40-m5c-album-osiagniecia`.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -9,7 +9,7 @@ Stan na 22.11.2026. Gałąź `feat/25-m4d-akt1-czesc2`.
 | M2     | Silnik zasad v1                             | Scalony w `main` w PR #13                                                                    |
 | M3     | Ruch drogowy AI i pozostałe detektory       | Scalony w `main`. Ostatni PR to #21.                                                         |
 | M4     | Misje i fabuła                              | Akt 1 Warszawy grywalny od samouczka do finału M4d (#25).                                    |
-| M5     | Punktacja, progresja, zapis                 | Nierozpoczęty                                                                                |
+| M5     | Punktacja, progresja, zapis                 | M5a (#44) i M5b (#46) w `main`. M5c (#40) zamyka etap.                                       |
 | M6     | Mapy Warszawy i Wrocławia                   | Nierozpoczęty                                                                                |
 | M7     | Plac, quiz, egzamin                         | Nierozpoczęty                                                                                |
 | M8     | Audio i szlif                               | Nierozpoczęty                                                                                |
@@ -177,3 +177,11 @@ Na kolejną prośbę użytkownika kamera miasta ma zoom 0,75: widoczny obszar je
 - Warstwa nocna z lampami, reflektorami, oknami i neonami, deszcz z kałużami, dym, gołębie, konfetti i ślad serii. Tryb uproszczony i statyczne warianty dla systemowego ograniczenia ruchu.
 - HUD pokazuje punkty, serię, Uwagę Drogówki, stan wyposażenia, zegar i kierunek celu. Sterowanie i jakość grafiki można zmienić w pauzie. Punkty, seria, rekord i Uwaga Drogówki korzystają z progresji z #38. Rekord można sprawdzić w pauzie.
 - Ustawienia deszczu i podgląd nocy działają w warstwie graficznej. Śnieg i mgła pozostają w zakresie późniejszego szlifu.
+
+## M5 — progresja
+
+- M5a dodał punktację, Serię Bezpieczeństwa, Uwagę Drogówki, gwiazdki i różnicowe nagrody za wynik misji. Testy porównują oznaczone skróty z legalnymi przejazdami.
+- M5b przeniósł postęp z localStorage do IndexedDB i dodał XP, rangi, mastery, Mapę Umiejętności oraz lokalne rekordy. Werdykty są zapisywane partiami co 5 sekund symulacji i przy zdarzeniach cyklu życia.
+- M5c rozszerza ten zapis o Album Znaków, osiągnięcia, trzy wyzwania dzienne od rangi Kurier oraz kolekcję naklejek. Zdjęcie z WAW-A1-06 trafia do Albumu. W wolnej jeździe można fotografować nowe znaki po zatrzymaniu poza jezdnią i zejściu z roweru.
+- Wyzwania utrwalają zestaw na bieżący dzień lokalny. Pominięcie dnia nie wpływa na zdobyte nagrody. Kazik proponuje przerwę po 30 minutach aktywnej gry. Czas można zmienić w menu.
+- Pełny Album wymaga znaków z kolejnych map. Wyzwanie tygodniowe miasta, przyszłe kolekcje oraz plac, quiz i egzamin będą dostępne wraz z odpowiednimi systemami w kolejnych etapach. Rankingi online pozostają w M10.

@@ -4,11 +4,11 @@ import type { ProgressProfile } from '../core/progressStore';
 type Ranks = GameContent['balans']['rangi'];
 
 export function reputationXp(profile: ProgressProfile) {
-  return (
-    profile.missionPoints / 2 +
-    profile.quizXp +
-    Object.values(profile.achievementXp).reduce((sum, xp) => sum + xp, 0)
-  );
+  let xp = profile.missionPoints / 2 + profile.quizXp;
+  for (const id in profile.achievementXp)
+    if (Object.hasOwn(profile.achievementXp, id))
+      xp += profile.achievementXp[id]!;
+  return xp;
 }
 
 export function reputationRank(

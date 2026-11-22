@@ -1,4 +1,5 @@
 import { expect as playwrightExpect, test, type Page } from '@playwright/test';
+import type { GameContent } from '../../src/content/schemas';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import {
   warsawRoutes,
@@ -248,6 +249,7 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
         await expect(photo).toBeEnabled({ timeout: 20_000 });
         await page.screenshot({ path: 'test-results/m4d-znak.png' });
         await photo.click();
+        await expect(page.getByText(pl.m5c.photoSaved)).toBeVisible();
         await expect(
           page.getByText(pl.misje[id].cel4, { exact: true }),
         ).toBeVisible();
@@ -293,6 +295,23 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
       skillMap.getByText(pl.misje[id].tytul, { exact: true }),
     ).toBeVisible();
   await skillMap.getByRole('button', { name: pl.skillMap.close }).click();
+  const content: GameContent = await (
+    await page.request.get('/data/content.json')
+  ).json();
+  const sign = content.znaki.znaki.find(({ kod }) => kod === 'A-7')!;
+  await page.getByRole('button', { name: pl.m5c.album }).click();
+  const album = page.getByRole('dialog', { name: pl.m5c.album });
+  await expect(album).toContainText(
+    `${pl.m5c.albumProgress} 1 / ${content.znaki.znaki.length}`,
+  );
+  await expect(album.getByText(sign.dla_dziecka)).toBeVisible();
+  const image = album.getByRole('img', { name: sign.nazwa });
+  await expect(image).toHaveAttribute('src', /^data:image\/png;base64,/);
+  await expect
+    .poll(() => image.evaluate((img: HTMLImageElement) => img.naturalWidth))
+    .toBe(64);
+  await page.screenshot({ path: 'test-results/m5c-album.png' });
+  await album.getByRole('button', { name: pl.m5c.close }).click();
   await page.getByRole('button', { name: pl.driving.praga }).click();
   await expect(canvas(page)).toHaveAttribute('data-map', 'warszawa');
   await page.keyboard.press('KeyM');

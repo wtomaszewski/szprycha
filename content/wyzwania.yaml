@@ -1,0 +1,12 @@
+# Tylko zdarzenia emitujące good na dostępnych mapach. Moduł pochodzi z przepisy.yaml.
+wyzwania:
+  - { id: droga_rowerowa, good: GDZIE-01, ile: 3, opis: "Wybierz drogę dla rowerów 3 razy.", naklejka: kolo }
+  - { id: zebra, good: GDZIE-06, ile: 3, opis: "Przeprowadź rower przez przejście 3 razy.", naklejka: szprycha }
+  - { id: stop, good: ZNAK-STOP, ile: 3, opis: "Zatrzymaj się przy znaku STOP 3 razy.", naklejka: odblask }
+  - { id: swiatla, good: SYG-01, ile: 3, opis: "Zastosuj się do świateł 3 razy.", naklejka: kolo }
+  - { id: rondo, good: PIER-08, ile: 3, opis: "Ustąp pierwszeństwa przy wjeździe na rondo 3 razy.", naklejka: szprycha }
+  - { id: prawa_reka, good: PIER-01, ile: 3, opis: "Ustąp pierwszeństwa pojazdowi z prawej 3 razy.", naklejka: kolo }
+  - { id: sygnal, good: MAN-01, ile: 10, opis: "Zasygnalizuj 10 skrętów.", naklejka: szprycha }
+  - { id: ruszanie, good: MAN-07, ile: 3, opis: "Obejrzyj się przed ruszeniem 3 razy.", naklejka: odblask }
+  - { id: przystanek, good: MSC-02, ile: 2, opis: "Przepuść pasażerów tramwaju 2 razy.", naklejka: kolo }
+  - { id: widocznosc, good: MSC-04, ile: 1, opis: "Włącz obie lampki przy ograniczonej widoczności.", naklejka: odblask }
