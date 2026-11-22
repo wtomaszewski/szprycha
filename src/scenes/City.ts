@@ -62,7 +62,9 @@ import { Gnomes } from '../render/Gnomes';
 import { drawCyclist, loadTrafficArt, TrafficArt } from '../render/TrafficArt';
 import { RiderArt } from '../render/RiderArt';
 import { readHelmetColor } from '../core/helmetColor';
-import { EmergencySiren } from '../audio/EmergencySiren';
+import { audio } from '../audio/GameAudio';
+import { CitySound } from '../audio/CitySound';
+import { radioControls } from '../ui/AudioControls';
 import { RuleFeedback } from '../ui/RuleFeedback';
 import { DrivingHud } from '../ui/DrivingHud';
 import { ControlQuestionDialog } from '../ui/ControlQuestionDialog';
@@ -116,7 +118,7 @@ export class City extends Scene {
   private stopListeningForVerdicts?: () => void;
   private intersectionManager!: IntersectionManager;
   private traffic!: TrafficParticipants;
-  private siren!: EmergencySiren;
+  private citySound!: CitySound;
   private sirenArt!: GameObjects.Graphics;
   private readonly activeAgents: AgentState[] = [];
   private agents!: readonly (RoadTrafficAgent | RoutedAgent)[];
@@ -311,9 +313,9 @@ export class City extends Scene {
       ambientTraffic,
       this.traffic.road.agents,
     );
-    this.siren = new EmergencySiren();
     const tilemap = this.make.tilemap({ key: mapId });
     const scenery = drawMapDecorations(this, tilemap, mapId);
+    this.citySound = new CitySound(this.world, scenery.peacocks);
     this.worldWidth = tilemap.widthInPixels;
     this.worldHeight = tilemap.heightInPixels;
     this.road = new TrainingRoad(
@@ -396,7 +398,9 @@ export class City extends Scene {
     this.props = new CityProps(this, props);
     this.blocks = new Blocks(this, buildings, mapId);
     this.lighting = new NightLighting(this, this.props, scenery.neons);
-    this.atmosphere = new CityAtmosphere(this, this.blocks, props);
+    this.atmosphere = new CityAtmosphere(this, this.blocks, props, (at) =>
+      this.citySound.pigeon(at),
+    );
     this.agents = [...this.traffic.road.agents, ...this.traffic.routed];
     this.replay = new ReplayBuffer(this.agents.length, propIds.length);
     this.actorObstacles = this.agents.map((agent) =>
@@ -495,7 +499,11 @@ export class City extends Scene {
         gamepad: (pressed, justPressed) =>
           this.overlayGamepad(pressed, justPressed),
       },
+      this.progress.store,
     );
+    const radio = radioControls(this.progress.store);
+    this.controls.quickActions.append(radio.widget);
+    this.controls.onResume = radio.refresh;
     if (mapId === defaultMap && !this.mission) {
       const plac = document.createElement('button');
       plac.type = 'button';
@@ -560,6 +568,7 @@ export class City extends Scene {
     this.dialogue = new DialogueWindow(
       this.controls.root,
       this.content.dialogi,
+      this.progress.store,
     );
     this.feedback = new RuleFeedback(
       this.controls.root,
@@ -602,6 +611,7 @@ export class City extends Scene {
           this.updateMissionHud();
         },
         () => {
+          audio.stopReading('lesson');
           this.missionInterrupted = false;
           this.checkpointHint = undefined;
           this.controls.clear();
@@ -635,12 +645,11 @@ export class City extends Scene {
       this.stopListeningForVerdicts = undefined;
       delete this.game.canvas.dataset.lighting;
       this.renderEnvironment.time = 'day';
-      this.siren.destroy();
+      audio.leave();
       this.debug.destroy();
       this.replayDialog.close();
       this.questionDialog.close();
       this.dialogue.destroy();
-      this.eventNotice.destroy();
       this.phone.close();
       this.controls.destroy();
       this.examRide = undefined;
@@ -813,13 +822,27 @@ export class City extends Scene {
     }
     if (result.status === 'completed') {
       const { definition } = mission;
-      this.missionTokens = this.progress.complete(definition, {
+      const { progress, content } = this;
+      const unlocks = progress.unlocks(content);
+      const nextOrders = content.misje.filter(
+        (order) =>
+          order.miasto === this.campaignCity &&
+          !progress.store.profile.completed.includes(order.id) &&
+          !progress.isAvailable(order, content),
+      );
+      this.missionTokens = progress.complete(definition, {
         points: result.points,
         stars: result.stars,
         balance: this.content.balans.gwiazdki,
         clean: !result.verdicts.some(({ kind }) => kind !== 'good'),
       });
       this.updateMissionHud();
+      if (result.stars > 0) audio.play('stars');
+      if (
+        nextOrders.some((order) => progress.isAvailable(order, content)) ||
+        [...progress.unlocks(content)].some((item) => !unlocks.has(item))
+      )
+        audio.play('unlock', 1, result.stars > 0 ? 0.75 : 0);
       this.dialogue.show(
         missionLines(this.content.dialogi, definition.dialog_koniec),
         () => this.missionHud?.focusResult(),
@@ -927,6 +950,10 @@ export class City extends Scene {
   }
 
   private message(text: string) {
+    if (this.controls.notice.textContent !== text) {
+      if (text === ui.driving.collision) audio.play('oops');
+      audio.read('feedback', text);
+    }
     this.controls.notice.textContent = text;
     this.messageUntil = this.time.now + 2600;
   }
@@ -976,7 +1003,7 @@ export class City extends Scene {
     this.updateRival();
     this.phoneAnsweredSafely = false;
     this.eventNotice.update(undefined, false);
-    this.siren.update(0, 0);
+    this.citySound.reset();
     this.syncActorObstacles();
     this.resetRules();
     this.accumulator = 0;
@@ -1147,8 +1174,10 @@ export class City extends Scene {
         if (
           progress.photograph(content, sign.code, image.src) &&
           controls.root.isConnected
-        )
+        ) {
+          audio.play('unlock');
           this.message(ui.m5c.photoSaved);
+        }
       } else if (controls.root.isConnected) {
         this.message(ui.m5c.photoFailed);
       }
@@ -1348,6 +1377,9 @@ export class City extends Scene {
       if (this.mission?.result) this.flushProgress();
       if (lesson.kind === 'minor') this.reviewedMinor.add(lesson.ruleId);
       this.review = { verdict: lesson, elapsed: 0, shown: false };
+      audio.setActivity(true, true);
+      audio.stopReading('feedback');
+      audio.play('oops');
       this.updateProgressionHud();
       this.controls.clear();
       return;
@@ -1359,6 +1391,7 @@ export class City extends Scene {
         ? translate(hint.hintKey)
         : ui.missionUi.checkpointHint;
       this.missionInterrupted = true;
+      audio.read('lesson', this.checkpointHint);
     }
   }
 
@@ -1391,6 +1424,7 @@ export class City extends Scene {
     const review = this.review;
     if (!review) return;
     this.review = undefined;
+    audio.stopReading('lesson');
     this.replayDialog.close();
     this.highlight.clear();
     this.cameras.main.setZoom(drivingZoom);
@@ -1416,8 +1450,10 @@ export class City extends Scene {
     if (!review.shown && intro >= 1) {
       review.shown = true;
       this.feedback.reset(this.rules.counts);
+      const explanation = this.feedback.explanation(review.verdict);
+      audio.read('lesson', explanation);
       this.replayDialog.show(
-        this.feedback.explanation(review.verdict),
+        explanation,
         review.verdict.kind === 'minor',
         this.replay.size > 1,
         Boolean(this.mission?.result || this.mission?.waitingForQuestion),
@@ -1451,6 +1487,19 @@ export class City extends Scene {
   update(time: number, delta: number) {
     if (!this.controls) return;
     const input = this.controls.read();
+    const quiet =
+      this.controls.paused ||
+      this.phone.open ||
+      this.portraitTouch.matches ||
+      document.hidden;
+    audio.setActivity(
+      !quiet &&
+        (!this.mission?.result || this.dialogue.open || Boolean(this.review)),
+      this.dialogue.open ||
+        this.questionDialog.open ||
+        this.missionInterrupted ||
+        Boolean(this.review),
+    );
     if (this.review) {
       this.updateReview(delta);
       return;
@@ -1466,9 +1515,11 @@ export class City extends Scene {
       document.hidden
     ) {
       this.accumulator = 0;
-      this.siren.update(0, this.rules.at);
+      audio.updateSiren(0);
+      if (this.controls.paused) audio.stopReading('feedback');
       return;
     }
+    this.citySound.input(this.rider, input, this.controls.actions.bell);
     const seconds = Math.min(delta / 1000, 0.1);
     if (this.progress.playFor(seconds, this.breakMinutes))
       this.showBreakReminder();
@@ -1656,6 +1707,7 @@ export class City extends Scene {
     const sirenArt = this.sirenArt.clear();
     let reflected = false;
     let sirenVolume = 0;
+    let tramNearby = false;
     let bearing = 0;
     for (let index = 0; index < this.agents.length; index++) {
       const agent = this.agents[index]!;
@@ -1679,6 +1731,12 @@ export class City extends Scene {
         reflected =
           this.lighting.drawVehicle(x, y, heading, art.nose, r) || reflected;
       }
+      if (
+        visible &&
+        agent.kind === 'tram' &&
+        (x - r.x) ** 2 + (y - r.y) ** 2 < 225 ** 2
+      )
+        tramNearby = true;
       if (pose.active && agent.kind === 'emergency' && pose.signalActive) {
         const volume = Math.max(0, 1 - Math.hypot(x - r.x, y - r.y) / 560);
         if (volume > sirenVolume) {
@@ -1687,7 +1745,21 @@ export class City extends Scene {
         }
       }
     }
-    this.siren.update(reviewing ? 0 : sirenVolume, at);
+    const active =
+      !reviewing &&
+      delta > 0 &&
+      !this.dialogue.open &&
+      !this.questionDialog.open &&
+      !this.mission?.result;
+    audio.updateSiren(active ? sirenVolume : 0);
+    if (active)
+      this.citySound.scan(
+        at,
+        r,
+        this.rulesRider.pos,
+        this.environment,
+        tramNearby,
+      );
     if (sirenVolume > 0) {
       const dx = Math.cos(bearing);
       const dy = Math.sin(bearing);

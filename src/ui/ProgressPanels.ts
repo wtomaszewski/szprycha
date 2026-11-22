@@ -3,6 +3,7 @@ import notices from 'virtual:third-party-notices';
 import type { GameContent } from '../content/schemas';
 import { translate, ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
+import { audioSettings } from './AudioControls';
 import { signIllustration } from './SignIllustration';
 
 function paragraph(text: string) {
@@ -41,6 +42,7 @@ export function progressPanels(
   about.type = 'button';
   about.textContent = ui.settings.about;
   const settings = () => [
+    audioSettings(progress.store),
     heading(ui.m5c.breakSettings),
     breakSettings(progress, content),
     about,

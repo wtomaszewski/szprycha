@@ -1,3 +1,4 @@
+import { audio } from '../audio/GameAudio';
 import portrait from '../../assets/generated/portraits/sierzant_ola.png?url';
 import { moduleId, type GameContent } from '../content/schemas';
 import { illustratedSigns } from '../content/signIllustrations';
@@ -56,6 +57,7 @@ export function quizPanel(progress: MissionProgress, content: GameContent) {
   title.id = 'quiz-title';
   title.textContent = labels.title;
   const close = button(labels.close, () => dialog.close());
+  dialog.addEventListener('close', () => audio.stopReading('lesson'));
   close.autofocus = true;
   header.append(face, title, close);
 
@@ -158,7 +160,10 @@ export function quizPanel(progress: MissionProgress, content: GameContent) {
         );
         if (!correct)
           feedback.append(paragraph(question.odpowiedzi[question.poprawna]!));
-        feedback.append(paragraph(explanation(question)));
+        const detail = explanation(question);
+        feedback.append(paragraph(detail));
+        audio.read('lesson', detail);
+        if (result.achievements.length) audio.play('unlock');
         for (const achievement of result.achievements)
           feedback.append(
             paragraph(`${labels.achievement} · ${achievement.nazwa}`),

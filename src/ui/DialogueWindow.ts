@@ -1,3 +1,6 @@
+import { audio } from '../audio/GameAudio';
+import type { ProgressStore } from '../core/progressStore';
+import { setAudio } from './AudioControls';
 import {
   portraitEmotions,
   type DialogueLine,
@@ -24,7 +27,6 @@ export class DialogueWindow {
   private readonly voiceButton = document.createElement('button');
   private readonly scrollButton = document.createElement('button');
   private readonly names: Map<string, string>;
-  private readonly lifetime = new AbortController();
   private readonly resize = new ResizeObserver(() => this.updateScrollButton());
   private lines: readonly DialogueLine[] = [];
   private index = 0;
@@ -33,9 +35,12 @@ export class DialogueWindow {
   private pointerHeld = false;
   private keyHeld = false;
   private padHeld = false;
-  private speaking = false;
 
-  constructor(parent: HTMLElement, content: Dialogues) {
+  constructor(
+    parent: HTMLElement,
+    content: Dialogues,
+    private readonly progress: ProgressStore,
+  ) {
     this.names = new Map(
       content.postacie.map(({ id, nazwa }) => [id, translate(nazwa)]),
     );
@@ -65,19 +70,6 @@ export class DialogueWindow {
     this.nextButton.title = ui.dialogueUi.controls;
     skip.textContent = ui.dialogueUi.skip;
     this.voiceButton.textContent = ui.dialogueUi.voice;
-    this.voiceButton.setAttribute('aria-pressed', 'false');
-    this.voiceButton.hidden = true;
-    if ('speechSynthesis' in window) {
-      const updateVoiceButton = () => {
-        this.voiceButton.hidden = !this.polishVoice();
-      };
-      window.speechSynthesis.addEventListener(
-        'voiceschanged',
-        updateVoiceButton,
-        { signal: this.lifetime.signal },
-      );
-      updateVoiceButton();
-    }
     this.scrollButton.textContent = ui.dialogueUi.readMore;
     this.scrollButton.addEventListener('click', () => {
       const { scrollTop, scrollHeight, clientHeight } = this.text;
@@ -87,8 +79,11 @@ export class DialogueWindow {
     this.nextButton.addEventListener('click', () => this.advance());
     skip.addEventListener('click', () => this.finish());
     this.voiceButton.addEventListener('click', () => {
-      this.speaking = !this.speaking;
-      this.voiceButton.setAttribute('aria-pressed', String(this.speaking));
+      setAudio(
+        this.progress,
+        'readAloud',
+        !this.progress.profile.audio.readAloud,
+      );
       this.speak();
     });
     actions.append(this.voiceButton, this.scrollButton, skip, this.nextButton);
@@ -154,6 +149,7 @@ export class DialogueWindow {
     this.index = 0;
     this.done = done;
     this.panel.showModal();
+    audio.stopReading('feedback');
     this.nextButton.focus();
     this.render();
   }
@@ -178,10 +174,9 @@ export class DialogueWindow {
   }
 
   destroy() {
-    this.lifetime.abort();
     this.resize.disconnect();
     this.clearHold();
-    if (this.open && this.speaking) window.speechSynthesis?.cancel();
+    audio.stopReading('dialogue');
     this.panel.close();
   }
 
@@ -206,7 +201,7 @@ export class DialogueWindow {
     if (!this.open) return;
     this.clearHold();
     this.pointerHeld = this.keyHeld = this.padHeld = false;
-    if (this.speaking) window.speechSynthesis?.cancel();
+    audio.stopReading('dialogue');
     this.panel.close();
     const done = this.done;
     this.done = undefined;
@@ -230,25 +225,12 @@ export class DialogueWindow {
     this.scrollButton.hidden = this.text.scrollHeight <= this.text.clientHeight;
   }
 
-  private polishVoice() {
-    return window.speechSynthesis
-      .getVoices()
-      .find(
-        ({ localService, lang }) => localService && /^pl(?:-|$)/i.test(lang),
-      );
-  }
-
   private speak() {
-    if (this.voiceButton.hidden) return;
-    const synthesis = window.speechSynthesis;
-    synthesis.cancel();
-    if (!this.speaking) return;
-    const voice = this.polishVoice();
-    if (!voice) return;
+    this.voiceButton.setAttribute(
+      'aria-pressed',
+      String(this.progress.profile.audio.readAloud),
+    );
     const { tekst, lektor } = this.lines[this.index]!;
-    const line = new SpeechSynthesisUtterance(translate(lektor ?? tekst));
-    line.lang = 'pl-PL';
-    line.voice = voice;
-    synthesis.speak(line);
+    audio.read('dialogue', translate(lektor ?? tekst));
   }
 }

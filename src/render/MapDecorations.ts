@@ -8,6 +8,7 @@ export function drawMapDecorations(
   mapId: string,
 ) {
   const neons: Neon[] = [];
+  const peacocks: { x: number; y: number }[] = [];
   const scenery = scene.add.graphics().setDepth(4);
   const centers: { x: number; y: number }[] = [];
   for (const {
@@ -114,6 +115,7 @@ export function drawMapDecorations(
         .fillStyle(0x6ab08a)
         .fillRect(x - 13, y - 7, 4, 14);
     } else if (kind === 'peacock') {
+      peacocks.push({ x, y });
       scenery
         .fillStyle(0x257179)
         .fillTriangle(x - 11, y - 9, x + 11, y - 9, x, y + 8)
@@ -138,6 +140,7 @@ export function drawMapDecorations(
   }
   return {
     neons,
+    peacocks,
     chunks: cacheMapGraphics(
       scene,
       scenery,

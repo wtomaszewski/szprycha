@@ -1,4 +1,46 @@
 {
+  "audio": {
+    "settings": "Dźwięk",
+    "music": "Muzyka",
+    "effects": "Efekty dźwiękowe",
+    "voice": "Głośność lektora",
+    "muted": "Wycisz wszystko",
+    "readAloud": "Czytaj mi",
+    "station": "Stacja radiowa",
+    "bell": "Brzmienie dzwonka",
+    "fm": "FM",
+    "changeStation": "Zmień stację Radia Szprycha FM",
+    "stations": {
+      "hits": "Szprycha Hits",
+      "boulevards": "Nocne Bulwary",
+      "talk": "Dzwonek Talk"
+    },
+    "bells": ["Klasyczny", "Jasny", "Niski"],
+    "tips": [
+      {
+        "rule": "ZNAK-STOP",
+        "text": "audio.tipText.stop"
+      },
+      {
+        "rule": "MSC-01",
+        "text": "audio.tipText.rail"
+      },
+      {
+        "rule": "MAN-08",
+        "text": "audio.tipText.speed"
+      },
+      {
+        "rule": "WYP-02",
+        "text": "audio.tipText.bell"
+      }
+    ],
+    "tipText": {
+      "stop": "Przy znaku STOP zatrzymaj się zawsze, nawet gdy nic nie jedzie, i przepuść pojazdy z pierwszeństwem.",
+      "rail": "Gdy światła na przejeździe migają albo zapory są w ruchu, poczekaj przed torami.",
+      "speed": "Na kocich łbach zwolnij, żeby zdążyć bezpiecznie zahamować.",
+      "bell": "Rower musi mieć dzwonek albo inny sygnał ostrzegawczy o nieprzeraźliwym dźwięku."
+    }
+  },
   "title": "SZPRYCHA",
   "subtitle": "Miejscy Kurierzy",
   "tagline": "Dobra jazda zaczyna się od mądrych decyzji.",

@@ -1,3 +1,4 @@
+import { audio } from '../audio/GameAudio';
 import ola from '../../assets/generated/portraits/sierzant_ola.png?url';
 import kazik from '../../assets/generated/portraits/pan_kazik.png?url';
 import turbo from '../../assets/generated/portraits/turbo.png?url';
@@ -163,7 +164,9 @@ export function examPanel(
 
   function showResult(result: ExamResult) {
     const { practice, passed } = evaluateExam(result, content.balans);
+    const alreadyEarned = progress.store.profile.licencePassed;
     const earned = passed && progress.recordLicence(content, result);
+    if (earned && !alreadyEarned) audio.play('unlock');
     const heading = text(
       'h3',
       earned

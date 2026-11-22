@@ -28,6 +28,7 @@ export class CityAtmosphere {
     scene: Scene,
     private readonly blocks: Blocks,
     props: ReturnType<typeof readProps>,
+    private readonly onPigeon: (at: number) => void,
   ) {
     this.rain = scene.add
       .tileSprite(0, 0, 1, 1, 'city-effects', effectFrame.rain)
@@ -102,7 +103,7 @@ export class CityAtmosphere {
       }
     }
     if (update) {
-      this.drawAmbient(camera, rider, at, staticEffects, lite);
+      this.drawAmbient(camera, rider, at, staticEffects, lite, reviewing);
       this.tick = tick;
       this.staticEffects = staticEffects;
       this.wet = wet;
@@ -136,6 +137,7 @@ export class CityAtmosphere {
     at: number,
     still: boolean,
     lite: boolean,
+    reviewing: boolean,
   ) {
     const art = this.ambient.clear();
     const cx = camera.scrollX + camera.width / 2;
@@ -171,7 +173,10 @@ export class CityAtmosphere {
         continue;
       }
       const nearby = Math.hypot(rider.x - bird.x, rider.y - bird.y) < 67;
-      if (nearby && !bird.nearby) bird.takeoff = at;
+      if (nearby && !bird.nearby) {
+        bird.takeoff = at;
+        if (!reviewing) this.onPigeon(at);
+      }
       bird.nearby = nearby;
       const age = at - bird.takeoff;
       const flying = !still && age >= 0 && age < 1.25;

@@ -5,8 +5,11 @@ import { MainMenu } from './scenes/MainMenu';
 import { CityPicker } from './scenes/CityPicker';
 import { City } from './scenes/City';
 import { Plac } from './scenes/Plac';
+import { audio } from './audio/GameAudio';
 import { ui } from './core/presentation';
 import './style.css';
+
+audio.listen();
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   void navigator.serviceWorker
@@ -64,6 +67,7 @@ function syncViewport() {
     width: baseWidth,
     height: baseHeight,
     backgroundColor: '#1a1c2c',
+    audio: { noAudio: true },
     pixelArt: true,
     roundPixels: true,
     scale: { mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.NO_CENTER },
@@ -73,6 +77,7 @@ function syncViewport() {
         booted = true;
         resizeGame(game);
         game.events.once(Phaser.Core.Events.DESTROY, () => {
+          audio.destroy();
           observer.disconnect();
           window.removeEventListener('resize', syncViewport);
           document.removeEventListener('visibilitychange', syncViewport);

@@ -1,3 +1,4 @@
+import { audio } from '../audio/GameAudio';
 import { Scene } from 'phaser';
 import type { GameContent } from '../content/schemas';
 import type { MissionProgress } from '../gameplay/MissionProgress';
@@ -161,6 +162,7 @@ export class MainMenu extends Scene {
     };
     this.input.keyboard?.on('keydown-ENTER', startDrive);
     this.events.once('shutdown', () => {
+      audio.stopReading('lesson');
       this.scale.off('resize', center);
       this.input.keyboard?.off('keydown-ENTER', startDrive);
       campaign.remove();

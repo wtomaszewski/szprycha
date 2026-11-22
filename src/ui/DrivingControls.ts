@@ -1,6 +1,8 @@
 import type { DriveInput, Scheme, RiderState } from '../gameplay/bicycle';
 import { ui } from '../core/presentation';
 import { CAMERA_HEIGHT_PX } from '../render/projection';
+import type { ProgressStore } from '../core/progressStore';
+import { audioSettings } from './AudioControls';
 interface OverlayControls {
   keyboard(event: KeyboardEvent): boolean;
   gamepad(
@@ -22,6 +24,8 @@ export class DrivingControls {
     lights: false,
   };
   previewNight = false;
+  onResume?: () => void;
+  private readonly soundOptions = document.createElement('details');
   private readonly pauseMenu = document.createElement('dialog');
   readonly quickActions = document.createElement('div');
   readonly details = document.createElement('div');
@@ -47,6 +51,7 @@ export class DrivingControls {
     setCameraHeight: (height: number) => void,
     setDebugVisible: (visible: boolean) => void,
     private readonly overlays: OverlayControls,
+    private readonly progress: ProgressStore,
     private readonly plac = false,
   ) {
     const signal = this.abort.signal;
@@ -127,7 +132,14 @@ export class DrivingControls {
     this.notice.className = 'drive-notice';
     this.notice.setAttribute('role', 'status');
     if (!plac) help.append(' · ', ui.phone.controls);
-    pauseMenu.append(heading, title, this.progressDetails, options, help);
+    pauseMenu.append(
+      heading,
+      title,
+      this.progressDetails,
+      options,
+      this.soundOptions,
+      help,
+    );
     const touch = document.createElement('div');
     touch.className = 'touch-controls';
     const stick = document.createElement('div');
@@ -351,8 +363,13 @@ export class DrivingControls {
     this.clear();
     if (this.paused) {
       this.pauseMenu.close();
+      this.onResume?.();
       this.pauseButton.focus();
     } else {
+      const summary = document.createElement('summary');
+      summary.textContent = ui.audio.settings;
+      this.soundOptions.open = false;
+      this.soundOptions.replaceChildren(summary, audioSettings(this.progress));
       this.pauseMenu.showModal();
       this.onPause();
     }
