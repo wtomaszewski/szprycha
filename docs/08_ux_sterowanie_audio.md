@@ -99,7 +99,7 @@ Tab i Shift+Tab przechodzą między elementami interfejsu. Enter i Spacja urucha
 - Brak migających efektów > 3 Hz (bezpieczeństwo fotosensytywne). Systemowe ograniczenie ruchu zatrzymuje animacje dekoracyjne deszczu, dymu, gołębi, konfetti i śladu. Stan ruchu drogowego oraz informacje w HUD pozostają dostępne.
 
 ## Wydajność i platformy
-Docelowo 60 FPS na: Chromebook szkolny, Android średniej klasy sprzed 3–4 lat, iPad 9. generacji. Ekran w poziomie; na telefonie w pionie komunikat „obróć urządzenie”.
+Docelowo 60 FPS na: Chromebook szkolny, Android średniej klasy sprzed 3–4 lat, iPad 9. generacji. Menu i dialogi działają w obu orientacjach. Podczas jazdy w pionie gra podpowiada obrót urządzenia, pozostawiając sterowanie dostępne.
 
 
 PWA instaluje menu, samouczek i Miasteczko. Mapa Warszawy, Wrocławia lub Krakowa pobiera się przy pierwszym wejściu na daną mapę i jest wtedy zapisywana do gry offline. Jeśli mapa jest niedostępna, gra wraca do menu z komunikatem i można kontynuować w Miasteczku.

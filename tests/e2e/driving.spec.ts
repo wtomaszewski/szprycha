@@ -254,7 +254,7 @@ for (const [width, height] of [
     expect(metrics.rect.y).toBeLessThan(zoom);
   });
 }
-test('phone portrait shows rotation prompt; landscape keeps controls compact', async ({
+test('portrait shows the rotation tip during a ride; landscape keeps controls compact', async ({
   browser,
 }) => {
   const context = await browser.newContext({
@@ -264,16 +264,12 @@ test('phone portrait shows rotation prompt; landscape keeps controls compact', a
   });
   const page = await context.newPage();
   await page.goto('/');
+  await page.getByRole('button', { name: pl.driving.title }).tap();
   await expect(
     page.getByText(pl.driving.rotate, { exact: true }),
   ).toBeVisible();
   await page.setViewportSize({ width: 844, height: 390 });
   await expect(page.getByText(pl.driving.rotate, { exact: true })).toBeHidden();
-  await expect(page.locator('canvas')).toHaveAttribute(
-    'data-scene',
-    'MainMenu',
-  );
-  await page.getByRole('button', { name: pl.driving.title }).tap();
   await expect(page.locator('canvas')).toHaveAttribute('data-scene', 'City');
   const area = await page.evaluate(() => {
     const rects = [

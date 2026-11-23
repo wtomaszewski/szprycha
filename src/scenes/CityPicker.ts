@@ -156,6 +156,9 @@ export class CityPicker extends Scene {
     back.textContent = labels.back;
     back.addEventListener('click', leave);
     controls.append(back);
+    const destinations = document.createElement('div');
+    destinations.className = 'city-picker-destinations';
+    controls.append(destinations);
     let selected = back;
     const selectedCity = freeRide
       ? progress.freeRideCity
@@ -183,7 +186,7 @@ export class CityPicker extends Scene {
         status.textContent = labels.soon;
         pin.append(status);
       }
-      controls.append(pin);
+      destinations.append(pin);
     }
 
     document.body.append(controls);

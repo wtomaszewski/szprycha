@@ -50,7 +50,7 @@ export function parentZone(
       ...settings(progress, balance, rankingChanged),
       aboutButton(),
     );
-    dialog.scrollTop = 0;
+    body.scrollTop = 0;
     title.focus();
   }
 
@@ -58,6 +58,7 @@ export function parentZone(
     title.textContent = labels.gateTitle;
     body.replaceChildren(gate(showSettings));
     dialog.showModal();
+    body.scrollTop = 0;
   });
   dialog.addEventListener('close', () => {
     if (!dialog.open) body.replaceChildren();
@@ -134,7 +135,7 @@ function gate(unlock: () => void) {
   const actions = document.createElement('div');
   actions.className = 'parent-gate-actions';
   actions.append(reset, confirm);
-  form.append(instruction, task, keypad, actions, feedback);
+  form.append(instruction, task, feedback, keypad, actions);
   newQuestion();
   return form;
 }
