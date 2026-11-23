@@ -40,6 +40,8 @@ export class NightLighting {
     this.lamps = props.lamps.map((lamp) => ({
       lamp,
       glow: this.image(effectFrame.lamp),
+      dx: Math.round(Math.cos(lamp.rotation) * 5),
+      dy: Math.round(Math.sin(lamp.rotation) * 5),
     }));
     this.neons = neons.map(({ x, y, color, cycling }) => {
       const glow = this.image(effectFrame.neon).setPosition(x, y);
@@ -135,14 +137,14 @@ export class NightLighting {
         .setPosition(x, y)
         .setDisplaySize(2 * halfWidth + 4, 2 * halfHeight + 4);
 
-    for (const { lamp, glow } of this.lamps) {
+    for (const { lamp, glow, dx, dy } of this.lamps) {
       const visible =
         night &&
         Math.abs(lamp.x - x) < halfWidth + 64 &&
         Math.abs(lamp.y - y) < halfHeight + 64;
       if (glow.visible !== visible) glow.setVisible(visible);
-      if (visible && (glow.x !== lamp.x || glow.y !== lamp.y))
-        glow.setPosition(lamp.x, lamp.y);
+      if (visible && (glow.x !== lamp.x + dx || glow.y !== lamp.y + dy))
+        glow.setPosition(lamp.x + dx, lamp.y + dy);
     }
     for (const [index, { glow, cycling }] of this.neons.entries()) {
       const visible =

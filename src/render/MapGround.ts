@@ -5,7 +5,7 @@ import { paintBlockShadows, sheetImage } from './BlockArt';
 import { paintPropShadows, type readProps } from './CityProps';
 import type { Block } from './projection';
 import { paintRoad, stamp } from './GroundPaint';
-import { TILE, tiles } from './artFrames';
+import { TILE, tiles, winterTile } from './artFrames';
 
 const chunkTiles = 16;
 
@@ -102,6 +102,7 @@ export function drawMapGround(
   world: WorldModel,
   blocks: readonly Block[],
   props: ReturnType<typeof readProps>,
+  snow: boolean,
 ) {
   const layers = ['ground', 'verge', 'curb', 'markings'].map((name) =>
     map.getLayer(name),
@@ -125,7 +126,11 @@ export function drawMapGround(
 
   for (let row = 0; row < map.height; row += chunkTiles)
     for (let col = 0; col < map.width; col += chunkTiles) {
-      const name = `ground-${mapId}-${col}-${row}`;
+      const base = `ground-${mapId}-${col}-${row}`;
+      const name = snow ? base + '-snow' : base;
+      const previous = snow ? base : base + '-snow';
+      // Keep one set of ground textures per map when changing seasons.
+      if (scene.textures.exists(previous)) scene.textures.remove(previous);
       const rows = Math.min(chunkTiles, map.height - row);
       const columns = Math.min(chunkTiles, map.width - col);
       // A two-pixel overlap covers fractional-zoom seams between texture quads.
@@ -147,15 +152,29 @@ export function drawMapGround(
             for (let dx = 0; dx < columns + (padX ? 1 : 0); dx++) {
               const gid = layer.data[row + dy]?.[col + dx]?.index ?? 0;
               if (gid > 0 && (index !== 0 || gid !== tiles.water[0]))
-                stamp(ctx, source, gid, dx * TILE, dy * TILE);
+                stamp(
+                  ctx,
+                  source,
+                  snow && index === 0 ? winterTile(gid) : gid,
+                  dx * TILE,
+                  dy * TILE,
+                );
             }
         }
         ctx.imageSmoothingEnabled = false;
         ctx.save();
         ctx.translate(-col * TILE, -row * TILE);
         paintBlockShadows(ctx, blocks, col * TILE, row * TILE, width, height);
-        paintPropShadows(ctx, props);
-        paintRoad(ctx, source, world, islands, collisions, curbAt ?? undefined);
+        paintPropShadows(ctx, props, col * TILE, row * TILE, width, height);
+        paintRoad(
+          ctx,
+          source,
+          world,
+          islands,
+          collisions,
+          curbAt ?? undefined,
+          snow,
+        );
         ctx.restore();
         chunk?.refresh();
       }

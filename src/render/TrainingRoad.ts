@@ -113,6 +113,7 @@ export class TrainingRoad {
         for (const [radius, color] of [
           [17, 0xf4f4f4],
           [15, 0xe43b44],
+          [12, 0xb13e53],
         ] as const) {
           const points = Array.from({ length: 8 }, (_, i) => {
             const angle = Math.PI / 8 + (i * Math.PI) / 4;

@@ -134,12 +134,22 @@ function drawTerrain(sheet: PNG, seed: number) {
     }
   });
 
-  tiles.asphaltVariants.forEach((gid, variant) => {
+  [...tiles.asphaltVariants, tiles.asphaltDrain].forEach((gid, variant) => {
     const f = tile(gid);
     f.box(0, 0, 32, 32, dark);
     noise(f, gid, ink, 9);
     noise(f, gid + 100, asphalt, 13);
-    if (variant === 1) {
+    if (variant === 4) {
+      f.oval(19, 20, 8, 7, ink);
+      f.oval(18, 19, 7, 6, asphalt);
+      f.oval(19, 20, 6, 5, dark);
+      for (let y = 17; y < 24; y += 2) {
+        f.box(15, y, 8, 1, ink);
+        f.box(16, y + 1, 5, 1, asphalt);
+      }
+      f.dot(14, 16, concrete);
+    } else if (variant === 1) {
+      f.box(11, 12, 12, 7, asphalt, 65);
       f.line(8, 13, 11, 10, asphalt);
       f.line(11, 10, 22, 10, asphalt);
       f.line(22, 10, 25, 14, asphalt);
@@ -160,7 +170,7 @@ function drawTerrain(sheet: PNG, seed: number) {
     }
   });
 
-  tiles.sidewalkVariants.forEach((gid, variant) => {
+  [...tiles.sidewalkVariants, tiles.sidewalkLeaves].forEach((gid, variant) => {
     const f = tile(gid);
     f.box(0, 0, 32, 32, asphalt);
     for (let y = 0; y < 32; y += 16)
@@ -171,6 +181,44 @@ function drawTerrain(sheet: PNG, seed: number) {
         if ((x + y + variant) % 3 === 1) f.box(x + 11, y + 13, 3, 2, asphalt);
       }
     noise(f, gid, steel, 15);
+    if (gid === tiles.sidewalkLeaves)
+      for (let i = 0; i < 7; i++) {
+        const n = artHash(i, gid, seed);
+        const x = 4 + (n % 24);
+        const y = 4 + ((n >>> 8) % 24);
+        f.line(x - 1, y + 1, x + 1, y - 1, wood);
+        f.box(x, y - 1, 2, 2, i % 2 ? gold : '#d98a5a');
+      }
+  });
+
+  // Snow replaces background surfaces only. Road and cycle markings stay intact.
+  tiles.snowGrass.forEach((gid, i) => {
+    const f = tile(gid);
+    f.box(0, 0, TILE, TILE, white);
+    noise(f, gid, steel, 25, 2);
+    noise(f, gid + 100, concrete, 10);
+    if (i === 3) {
+      // A few blades remain exposed away from the edges between tiles.
+      const position = artHash(gid, i, seed);
+      const x = 8 + (position & 15);
+      const y = 8 + ((position >>> 4) & 15);
+      f.box(x, y, 5, 2, steel);
+      f.box(x + 1, y + 1, 3, 1, leaf);
+      f.dot(x + 2, y, grass);
+    }
+  });
+  tiles.snowSidewalk.forEach((gid, i) => {
+    const underlying = tile(tiles.sidewalkVariants[i]!);
+    const f = tile(gid);
+    PNG.bitblt(sheet, sheet, underlying.x, underlying.y, TILE, TILE, f.x, f.y);
+    for (let y = 0; y < TILE; y++) {
+      const edge = artHash(gid, Math.floor(y / 4), seed);
+      const inset = edge % 7;
+      f.box(inset, y, TILE - inset - ((edge >>> 8) & 3), 1, steel);
+      if (y % 16 !== 15)
+        f.box(inset + 1, y, TILE - inset - ((edge >>> 8) & 3) - 4, 1, white);
+    }
+    noise(f, gid, steel, 14, 2);
   });
 
   tiles.bikeVariants.forEach((gid) => {
@@ -182,10 +230,10 @@ function drawTerrain(sheet: PNG, seed: number) {
 
   tiles.cobble.forEach((gid) => {
     const f = tile(gid);
-    f.box(0, 0, 32, 32, '#8b6d5c');
+    f.box(0, 0, 32, 32, asphalt);
     for (let y = 0; y < 32; y += 8)
       for (let x = y % 16 === 0 ? 0 : -4; x < 32; x += 8) {
-        const color = [stone, concrete, stone, sand][
+        const color = [concrete, stone, concrete, steel][
           artHash(x + gid, y, seed) % 4
         ]!;
         f.box(x, y, 7, 7, color);
@@ -452,6 +500,48 @@ export function cityArt(seed: number) {
       f.oval(24, 24, 4, 4, dark);
       f.oval(23, 23, 3, 3, red);
       f.box(22, 22, 3, 1, white);
+    } else if (kind === 'bike-rack') {
+      f.box(6, 13, 36, 2, dark);
+      f.box(6, 13, 2, 23, steel);
+      f.box(40, 13, 2, 23, steel);
+      for (const [x, color] of [
+        [15, sky],
+        [31, red],
+      ] as const) {
+        for (const y of [13, 33]) {
+          f.box(x - 2, y - 4, 4, 8, ink);
+          f.box(x - 1, y - 3, 2, 6, concrete);
+        }
+        f.line(x, 15, x + 3, 26, color, 2);
+        f.line(x + 3, 26, x, 30, color);
+        f.line(x, 16, x, 30, color);
+        f.box(x - 4, 16, 9, 2, dark);
+        f.box(x - 2, 24, 4, 3, ink);
+      }
+    } else if (kind === 'cafe') {
+      for (const [x, y, color] of [
+        [14, 15, teal],
+        [32, 30, red],
+      ] as const) {
+        for (const dx of [-11, 8]) {
+          f.box(x + dx, y - 3, 5, 7, earth);
+          f.box(x + dx, y - 4, 5, 2, sand);
+        }
+        f.oval(x, y + 2, 10, 10, ink);
+        f.oval(x, y, 10, 10, color);
+        f.line(x - 6, y - 6, x + 6, y + 6, cream);
+        f.line(x + 6, y - 6, x - 6, y + 6, cream);
+        f.box(x - 1, y - 1, 3, 3, cream);
+      }
+    } else if (kind === 'kiosk') {
+      f.box(6, 9, 36, 30, ink);
+      f.box(7, 8, 33, 23, teal);
+      f.box(7, 8, 33, 2, copper);
+      f.box(9, 25, 29, 5, dark);
+      f.box(12, 25, 24, 4, cyan);
+      f.box(8, 31, 34, 8, cream);
+      for (let x = 8; x < 42; x += 8) f.box(x, 31, 4, 8, red);
+      f.box(8, 38, 34, 1, earth);
     } else {
       f.box(2, 13, 44, 21, dark);
       f.box(3, 13, 41, 17, concrete);

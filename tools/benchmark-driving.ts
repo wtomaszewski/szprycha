@@ -172,13 +172,20 @@ async function runTrial() {
       await page.keyboard.press('Escape');
     }
     // Stick slightly off-centre for a continuous ride below the random event speed.
-    const stick = await page.getByLabel(pl.driving.joystick).boundingBox();
+    const stick = await page
+      .locator('.touch-controls')
+      .getByLabel(pl.driving.joystick)
+      .boundingBox();
     if (!stick) throw new Error('Missing steering control');
+    await page.mouse.move(
+      stick.x + stick.width / 2,
+      stick.y + stick.height / 2,
+    );
+    await page.mouse.down();
     await page.mouse.move(
       stick.x + stick.width * (horizontal ? 0.5 + direction * 0.065 : 0.5),
       stick.y + stick.height * (horizontal ? 0.5 : 0.5 + direction * 0.065),
     );
-    await page.mouse.down();
     await page.waitForFunction(
       () => Number(document.querySelector('canvas')?.dataset.speed) > 0,
     );

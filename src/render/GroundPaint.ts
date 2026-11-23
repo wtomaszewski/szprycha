@@ -41,6 +41,7 @@ export function paintRoad(
   islands: readonly Types.Tilemaps.TiledObject[],
   curbs: readonly Types.Tilemaps.TiledObject[],
   curbAt: ((x: number, y: number, side: number) => boolean) | undefined,
+  snow: boolean,
 ) {
   const scale = 1 / world.metersPerPixel;
   const texture = (gid: number, x: number, y: number, w: number, h: number) => {
@@ -84,7 +85,13 @@ export function paintRoad(
           }
           ctx.save();
           ctx.clip();
-          texture(tiles.grass, 0, 0, corner, corner);
+          texture(
+            snow ? tiles.snowGrass[0] : tiles.grass,
+            0,
+            0,
+            corner,
+            corner,
+          );
           ctx.restore();
           ctx.fillStyle = '#94b0c2';
           for (let row = 0; row < corner; row++) {
@@ -116,7 +123,7 @@ export function paintRoad(
       ctx.rect(x + 4 + inset, y + row, assetWidth - inset * 2, 1);
     }
     ctx.clip();
-    texture(tiles.grass, x, y, width, height);
+    texture(snow ? tiles.snowGrass[0] : tiles.grass, x, y, width, height);
     ctx.restore();
     if (road > 0) {
       ctx.fillStyle = '#566c86';

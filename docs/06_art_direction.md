@@ -107,7 +107,7 @@ Asfalt (zwykły, łatany, mokry), linie (ciągła, przerywana, P-10 zebra, P-11 
 
 ### Stan oprawy terenu i zabudowy
 
-Miasteczko i Praga korzystają z własnego atlasu terenu. Generator map dobiera
+Miasteczko, Warszawa i Wrocław korzystają z własnego atlasu terenu. Generator map dobiera
 warianty z deterministycznym ziarnem i wylicza warstwy `verge` oraz `curb`
 z sąsiedztwa kafli. Krawężnik zaokrągla narożniki chodników. Dymki, światła
 i uczestnicy ruchu są osobnymi elementami, a statyczne podłoże, oznakowanie
@@ -127,7 +127,12 @@ warianty. Nazwy dachów i ścian oraz indeksy kafli są opisane w
 liczbę klatek do podmiany plików 1:1. Atlasy odtwarza `npm run assets:generate`,
 Miasteczko `npm run map:generate`, a Pragę `npm run map:generate:warsaw`.
 
-Znaki pionowe i portrety korzystają z dotychczasowych placeholderów. Osobne warianty mokrej i zimowej nawierzchni oraz pozostałe landmarki należą do kolejnych etapów. Kałuże i oświetlenie są osobnymi warstwami renderera.
+Studzienki i liście pojawiają się przy sąsiednich typach nawierzchni zgodnie
+z deterministycznym ziarnem mapy. Przy śniegu renderer podmienia trawę i płyty
+chodnika podczas tworzenia tekstury fragmentu. Oznakowanie i czerwone drogi
+rowerowe pozostają czytelne. Kałuże i oświetlenie są osobnymi warstwami.
+Stojaki z rowerami, ogródki i kioski bez marek uzupełniają rekwizyty uliczne.
+[Aktualny audyt oraz ujęcia przed i po](AUDYT_GRAFIKI.md).
 
 Wzory oznakowania pochodzą z [załącznika nr 2 do rozporządzenia o szczegółowych warunkach technicznych dla znaków i sygnałów drogowych](https://eli.gov.pl/eli/DU/2019/2311/ogl).
 
@@ -138,6 +143,8 @@ Sprite'y znaków 16×16 (na mapie) i 64×64 (Album, quiz, stop-klatka). Rysowane
 - Font: pikselowy, licencja OFL, **z pełnym wsparciem polskich znaków** (kandydat: *Pixelify Sans*; zweryfikuj glify ą ę ć ł ń ó ś ź ż Ą Ę Ć Ł Ń Ó Ś Ź Ż; alternatywa: własny bitmap font 8×8/8×12 wygenerowany w `tools/`).
 - W lewym górnym rogu są punkty i mnożnik Serii Bezpieczeństwa, w prawym Uwaga Drogówki (trzy gwizdki i odczyt liczbowy) oraz zegar misji. Strzałka przy krawędzi pokazuje kierunek i odległość do celu. Ikony pauzy i SzprychaApp są przy dolnej krawędzi. Minimapa pozostaje opcjonalna.
 - Kolory UI: granat `#1a1c2c` tło paneli, żółć `#ffcd75` akcent, biel tekst. Kontrast min. 4.5:1.
+- Ikony jazdy korzystają z masek 12×12 generowanych przez `tools/ui-art.ts`.
+  Kolor wskazuje stan wyposażenia, a kształt rozróżnia warunki pogodowe.
 
 ## 10. Efekty
 Deszcz (ukośne piksele, kałuże odbijające światła), śnieg, mgła (gradient widoczności), noc (patrz §3), konfetti przy sukcesie, „UPS!” w komiksowej chmurce przy błędzie, świecący ślad przy combo ×3+, dym z kominów, gołębie podrywające się do lotu.

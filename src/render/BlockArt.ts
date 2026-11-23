@@ -1,6 +1,7 @@
 import type { Scene, Textures } from 'phaser';
 import { artHash, roofDetails, roofKinds, wallKinds } from './artFrames';
 import { FLOOR_PX, type Block } from './projection';
+import { shadowColor, shadowRise } from './shadows';
 
 const isPalaceTower = (b: Block) =>
   b.landmarkId === 'palace-test' || b.landmarkId === 'pkin';
@@ -54,6 +55,8 @@ export function visitRoofDetails(
     b.landmarkId === 'palac-na-wodzie' ||
     b.landmarkId === 'hala-stulecia' ||
     b.landmarkId === 'stadion-wroclaw' ||
+    b.landmarkId === 'stadion-narodowy' ||
+    b.landmarkId === 'zamek-krolewski' ||
     b.landmarkId === 'ratusz-wroclawski' ||
     b.landmarkId?.startsWith('katedra-wieza-')
   )
@@ -151,34 +154,79 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
         ctx.fillRect(64, b.height - 22, b.width - 128, 16);
         return;
       }
-      if (b.landmarkId === 'hala-stulecia') {
-        const radius = b.width / 2;
-        for (let y = 0; y < b.height; y += 2) {
-          const half = Math.floor(
-            Math.sqrt(radius ** 2 - (y + 1 - radius) ** 2),
-          );
-          ctx.clearRect(0, y, radius - half, 2);
-          ctx.clearRect(radius + half, y, radius - half, 2);
+      if (b.landmarkId === 'zamek-krolewski' && b.floors > 4) {
+        const mid = Math.floor(b.width / 2);
+        const middleY = Math.floor(b.height / 2);
+        ctx.fillStyle = '#257179';
+        ctx.fillRect(0, 0, b.width, b.height);
+        for (let inset = 2; inset < Math.min(mid, middleY) - 2; inset += 2) {
+          ctx.fillStyle = inset % 4 === 0 ? '#6ab08a' : '#3e8948';
+          ctx.fillRect(inset, inset, b.width - 2 * inset, b.height - 2 * inset);
         }
-        for (const [inset, color] of [
-          [8, '#566c86'],
-          [14, '#c0cbdc'],
-        ] as const) {
-          ctx.strokeStyle = color;
-          ctx.lineWidth = 4;
-          ctx.beginPath();
-          ctx.arc(radius, radius, radius - inset, 0, Math.PI * 2);
-          ctx.stroke();
+        ctx.fillStyle = '#f0dca8';
+        ctx.fillRect(mid - 1, middleY - 1, 3, 3);
+        return;
+      }
+      if (b.landmarkId === 'stadion-narodowy') {
+        ctx.fillStyle = '#c0cbdc';
+        ctx.fillRect(0, 0, b.width, b.height);
+        const vertical = b.height > b.width;
+        const along = vertical ? b.height : b.width;
+        const across = vertical ? b.width : b.height;
+        for (let i = 0; i < along; i += 5) {
+          ctx.fillStyle = i % 20 < 10 ? '#f4f4f4' : '#e43b44';
+          if (vertical) ctx.fillRect(2, i, across - 4, 5);
+          else ctx.fillRect(i, 2, 5, across - 4);
         }
+        ctx.fillStyle = '#f4f4f4';
+        if (vertical) ctx.fillRect(8, 0, across - 16, along);
+        else ctx.fillRect(0, 8, along, across - 16);
         ctx.fillStyle = '#94b0c2';
-        for (let i = 0; i < 24; i++) {
-          const angle = (i * Math.PI) / 12;
+        if (vertical) ctx.fillRect(14, 0, across - 28, along);
+        else ctx.fillRect(0, 14, along, across - 28);
+      } else if (b.landmarkId === 'hala-stulecia') {
+        const radius = b.width / 2;
+        ctx.clearRect(0, 0, b.width, b.height);
+        // Integer scanlines draw the complete silhouette of each concrete ring.
+        for (let y = 0; y < b.height; y++) {
+          const dy = y + 0.5 - radius;
+          const half = Math.floor(Math.sqrt(radius ** 2 - dy ** 2));
+          ctx.fillStyle = dy < 0 ? '#c0cbdc' : '#94b0c2';
+          ctx.fillRect(radius - half, y, half * 2, 1);
+          for (const [inset, color] of [
+            [5, '#566c86'],
+            [14, '#f4f4f4'],
+            [23, '#566c86'],
+          ] as const) {
+            const ring = radius - inset;
+            if (Math.abs(dy) >= ring) continue;
+            const outer = Math.floor(Math.sqrt(ring ** 2 - dy ** 2));
+            const inner = Math.floor(
+              Math.sqrt(Math.max(0, (ring - 3) ** 2 - dy ** 2)),
+            );
+            ctx.fillStyle = color;
+            ctx.fillRect(radius - outer, y, outer - inner, 1);
+            ctx.fillRect(radius + inner, y, outer - inner, 1);
+          }
+        }
+        for (let i = 0; i < 36; i++) {
+          const angle = (i * Math.PI) / 18;
+          ctx.fillStyle = i % 3 === 0 ? '#73eff7' : '#566c86';
           ctx.fillRect(
-            Math.round(radius + Math.cos(angle) * (radius - 22)),
-            Math.round(radius + Math.sin(angle) * (radius - 22)),
+            Math.round(radius + Math.cos(angle) * (radius - 32)) - 3,
+            Math.round(radius + Math.sin(angle) * (radius - 32)) - 2,
             6,
             4,
           );
+        }
+        if (b.floors === 8) {
+          for (let y = -13; y <= 13; y++) {
+            const span = Math.floor(Math.sqrt(14 ** 2 - y ** 2));
+            ctx.fillStyle = y < 0 ? '#f4f4f4' : '#566c86';
+            ctx.fillRect(radius - span, radius + y, span * 2, 1);
+          }
+          ctx.fillStyle = '#94b0c2';
+          ctx.fillRect(radius - 5, radius - 5, 10, 10);
         }
       } else if (b.landmarkId === 'ratusz-wroclawski' && b.floors === 4) {
         for (let x = 14; x < b.width - 10; x += 32) {
@@ -250,6 +298,7 @@ export function wallEmissionTexture(
     Math.ceil(width),
     floors * FLOOR_PX,
     (ctx) => {
+      if (b.landmarkId === 'stadion-narodowy') return;
       for (let floor = 0; floor < floors; floor++) {
         const row = groundFloor && floor === floors - 1 ? 2 : floor % 2;
         for (let x = 0; x < width; x += 32) {
@@ -314,6 +363,15 @@ export function wallTexture(
           ctx.fillRect(x, y, Math.min(10, width - x), 9);
         }
     }
+    if (b.landmarkId === 'stadion-narodowy') {
+      ctx.fillStyle = '#f4f4f4';
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = '#e43b44';
+      for (let y = 2; y < height - 2; y += 2)
+        for (let x = -height; x < width; x += 16) ctx.fillRect(x + y, y, 8, 2);
+      ctx.fillStyle = '#94b0c2';
+      ctx.fillRect(0, height - 3, width, 3);
+    }
     if (b.landmarkId === 'palac-na-wodzie') {
       ctx.fillStyle = '#c0cbdc';
       ctx.fillRect(0, 0, width, height);
@@ -322,7 +380,11 @@ export function wallTexture(
       ctx.fillRect(0, 0, width, 4);
       ctx.fillRect(0, height - 4, width, 4);
     }
-    if (isPalaceTower(b) && b.floors === 26 && width >= 20) {
+    if (
+      width >= 20 &&
+      ((isPalaceTower(b) && b.floors === 26) ||
+        (b.landmarkId === 'zamek-krolewski' && b.floors > 4))
+    ) {
       const x = Math.floor(width / 2);
       ctx.fillStyle = '#5a3a2e';
       ctx.fillRect(x - 6, 4, 12, 12);
@@ -373,19 +435,23 @@ export function paintBlockShadows(
   width: number,
   height: number,
 ) {
-  for (const b of blocks) {
-    const shift = Math.min(104, 7 + b.floors * 4);
-    const rise = Math.round(shift * 0.73);
-    if (
-      b.x > left + width ||
-      b.y > top + height ||
-      b.x + b.width + shift + 3 < left ||
-      b.y + b.height + rise + 3 < top
-    )
-      continue;
-    for (let band = 2; band >= 0; band--) {
-      ctx.fillStyle =
-        band === 2 ? 'rgba(26, 28, 44, 0.09)' : 'rgba(26, 28, 44, 0.14)';
+  for (const [band, alpha] of [
+    [2, 0.09],
+    [1, 0.12],
+    [0, 0.16],
+  ] as const) {
+    // Fill each band as a union so tiers and adjacent blocks do not stack ink.
+    ctx.beginPath();
+    for (const b of blocks) {
+      const shift = Math.min(104, 7 + b.floors * 4);
+      const rise = shadowRise(shift);
+      if (
+        b.x - band > left + width ||
+        b.y - band > top + height ||
+        b.x + b.width + shift + band < left ||
+        b.y + b.height + rise + band < top
+      )
+        continue;
       const start = Math.max(Math.floor(b.y) - band, top);
       const end = Math.min(
         Math.ceil(b.y + b.height + rise) + band,
@@ -393,11 +459,13 @@ export function paintBlockShadows(
       );
       for (let y = start; y < end; y++) {
         const enter = Math.max(0, (y - b.y - b.height) / rise);
-        const leave = Math.min(1, (y - b.y + 1) / rise);
+        const leave = Math.max(0, Math.min(1, (y - b.y + 1) / rise));
         const from = Math.round(b.x + enter * shift) - band;
         const to = Math.round(b.x + b.width + leave * shift) + band;
-        ctx.fillRect(from, y, to - from, 1);
+        ctx.rect(from, y, to - from, 1);
       }
     }
+    ctx.fillStyle = shadowColor(alpha);
+    ctx.fill();
   }
 }

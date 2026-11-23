@@ -58,13 +58,24 @@
     {
       "id": "props",
       "file": "generated/props.png",
-      "width": 336,
+      "width": 480,
       "height": 48,
       "frameWidth": 48,
       "frameHeight": 48,
-      "frames": 7,
+      "frames": 10,
       "directions": 1,
-      "description": "Przezroczyste sprite’y od lewej: korona drzewa, latarnia, ławka, kosz, słupek, wiata, piłka."
+      "description": "Przezroczyste sprite’y od lewej: korona drzewa, latarnia, ławka, kosz, słupek, wiata, stojak z rowerami, ogródek, kiosk i piłka."
+    },
+    {
+      "id": "ui-icons",
+      "file": "generated/ui-icons.png",
+      "width": 144,
+      "height": 12,
+      "frameWidth": 12,
+      "frameHeight": 12,
+      "frames": 12,
+      "directions": 1,
+      "description": "Maski pikselowe od lewej: kask, lampka, dzień, noc, deszcz, mgła, wiatr, śnieg, lód, gwizdek, pauza i telefon."
     },
     {
       "id": "rider",

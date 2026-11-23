@@ -2,12 +2,6 @@ import { expect, test, type Page } from '@playwright/test';
 import { findDisplayedQuestion } from './question-dialog';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import {
-  progressDatabase,
-  progressRecordKey,
-  progressStoreName,
-  type ProgressProfile,
-} from '../../src/core/progressStore';
-import {
   FIXED_STEP,
   type DriveInput,
   type Rider,
@@ -17,16 +11,12 @@ import { PlacRun, placIds } from '../../src/gameplay/plac/PlacRun';
 import { readContent } from '../../tools/content';
 import { approachWaypoint, warsawRoutes } from '../missions/warsaw-routes';
 import { cleanPlacInput } from '../plac/clean-course';
+import { profile } from './helpers/profile';
 
 test.use({ baseURL: 'http://127.0.0.1:4174', reducedMotion: 'reduce' });
 
 const content = await readContent();
 const { exam, quiz } = pl;
-const storage = {
-  database: progressDatabase,
-  store: progressStoreName,
-  key: progressRecordKey,
-};
 const points = warsawRoutes['WAW-A1-03'].legal.slice(0, 3);
 
 type DriveScene = {
@@ -70,34 +60,6 @@ async function offlineGame(page: Page) {
       };
     });
   });
-}
-
-async function profile(page: Page, updates?: Partial<ProgressProfile>) {
-  return page.evaluate(
-    ({ database, store, key, updates }) =>
-      new Promise<ProgressProfile>((resolve, reject) => {
-        const open = indexedDB.open(database);
-        open.onerror = () => reject(open.error);
-        open.onsuccess = () => {
-          const db = open.result;
-          const tx = db.transaction(store, updates ? 'readwrite' : 'readonly');
-          const records = tx.objectStore(store);
-          const request = records.get(key);
-          request.onsuccess = () => {
-            if (updates) records.put({ ...request.result, ...updates }, key);
-          };
-          tx.oncomplete = () => {
-            db.close();
-            resolve(request.result);
-          };
-          tx.onabort = () => {
-            db.close();
-            reject(tx.error);
-          };
-        };
-      }),
-    { ...storage, updates },
-  );
 }
 
 test('earns, prints and reopens the licence entirely offline', async ({

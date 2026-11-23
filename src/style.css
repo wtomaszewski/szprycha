@@ -204,113 +204,64 @@ button[aria-pressed='true'] {
   align-items: center;
   gap: 5px;
 }
+.ride-whistle,
+.ride-status-icon,
+.ride-pause-icon::before,
+.phone-icon {
+  flex: none;
+  width: var(--icon-size, 24px);
+  height: var(--icon-size, 24px);
+  background: currentColor;
+  image-rendering: pixelated;
+  mask: url('../assets/generated/ui-icons.png') no-repeat;
+  mask-size: calc(12 * var(--icon-size, 24px)) var(--icon-size, 24px);
+  mask-position: calc(-1 * var(--icon-frame, 0) * var(--icon-size, 24px)) 0;
+}
 .ride-whistle {
-  display: block;
-  width: 15px;
-  height: 8px;
-  background: #94b0c2;
-  clip-path: polygon(0 0, 100% 0, 100% 48%, 66% 48%, 60% 100%, 18% 100%, 0 72%);
+  --icon-size: 12px;
+  --icon-frame: 9;
 }
-.ride-whistle.active {
-  background: var(--ui-accent);
-}
+.ride-whistle,
 .ride-status-icon {
-  width: 14px;
-  height: 12px;
-  background: #94b0c2;
-  position: relative;
+  color: var(--ui-muted);
 }
+.ride-whistle.active,
 .ride-status-icon.active {
-  background: var(--ui-accent);
-}
-.ride-status-icon[data-icon='helmet'] {
-  clip-path: polygon(
-    0 42%,
-    22% 10%,
-    72% 10%,
-    100% 42%,
-    100% 83%,
-    52% 83%,
-    52% 60%,
-    22% 60%,
-    22% 83%,
-    0 83%
-  );
+  color: var(--ui-accent);
 }
 .ride-status-icon[data-icon='helmet'].active {
-  background: #a7f070;
+  color: #a7f070;
 }
 .ride-status-icon[data-icon='lights'] {
-  clip-path: polygon(
-    0 20%,
-    25% 8%,
-    48% 8%,
-    48% 92%,
-    25% 92%,
-    0 80%,
-    0 20%,
-    61% 20%,
-    61% 8%,
-    100% 8%,
-    100% 28%,
-    61% 28%,
-    61% 67%,
-    100% 67%,
-    100% 88%,
-    61% 88%,
-    61% 20%
-  );
+  --icon-frame: 1;
 }
 .ride-status-icon[data-icon='day'] {
-  clip-path: polygon(
-    38% 0,
-    62% 0,
-    62% 25%,
-    82% 25%,
-    82% 38%,
-    100% 38%,
-    100% 62%,
-    82% 62%,
-    82% 75%,
-    62% 75%,
-    62% 100%,
-    38% 100%,
-    38% 75%,
-    18% 75%,
-    18% 62%,
-    0 62%,
-    0 38%,
-    18% 38%,
-    18% 25%,
-    38% 25%
-  );
+  --icon-frame: 2;
 }
 .ride-status-icon[data-icon='night'] {
-  background: var(--ui-cyan);
-  clip-path: polygon(
-    42% 0,
-    27% 27%,
-    32% 62%,
-    58% 78%,
-    100% 65%,
-    79% 100%,
-    32% 100%,
-    9% 75%,
-    9% 28%
-  );
+  --icon-frame: 3;
 }
 .ride-status-icon[data-icon='rain'] {
-  background: var(--ui-cyan);
-  clip-path: polygon(
-    44% 0,
-    60% 0,
-    84% 52%,
-    84% 77%,
-    65% 100%,
-    35% 100%,
-    16% 77%,
-    16% 52%
-  );
+  --icon-frame: 4;
+}
+.ride-status-icon.active:is(
+    [data-icon='night'],
+    [data-icon='rain'],
+    [data-icon='ice']
+  ) {
+  color: var(--ui-cyan);
+}
+.ride-status-icon[data-icon='fog'] {
+  --icon-frame: 5;
+}
+.ride-status-icon[data-icon='wind_strong'] {
+  --icon-frame: 6;
+}
+.ride-status-icon[data-icon='snow'] {
+  --icon-frame: 7;
+}
+.ride-status-icon[data-icon='ice'] {
+  --icon-frame: 8;
 }
 .ride-quick-actions {
   position: absolute;
@@ -329,9 +280,7 @@ button[aria-pressed='true'] {
 }
 .ride-pause-icon::before {
   content: '';
-  width: 12px;
-  height: 14px;
-  border-inline: 4px solid currentColor;
+  --icon-frame: 10;
 }
 .ride-pause h2,
 .ride-pause p {
@@ -782,18 +731,7 @@ button[aria-pressed='true'] {
   color: var(--ui-cyan);
 }
 .phone-icon {
-  width: 13px;
-  height: 19px;
-  border: 2px solid currentColor;
-  display: grid;
-  place-items: end center;
-}
-.phone-icon::after {
-  content: '';
-  width: 3px;
-  height: 2px;
-  background: currentColor;
-  margin-bottom: 1px;
+  --icon-frame: 11;
 }
 .drive-notice {
   bottom: 52px;
@@ -1868,30 +1806,6 @@ button[aria-pressed='true'] {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.ride-status-icon[data-icon='fog'],
-.ride-status-icon[data-icon='wind_strong'] {
-  background: repeating-linear-gradient(
-    to bottom,
-    var(--ui-muted) 0 20%,
-    transparent 20% 33%
-  );
-}
-
-.ride-status-icon[data-icon='snow'],
-.ride-status-icon[data-icon='ice'] {
-  background: var(--ui-text);
-  clip-path: polygon(
-    50% 0,
-    65% 35%,
-    100% 50%,
-    65% 65%,
-    50% 100%,
-    35% 65%,
-    0 50%,
-    35% 35%
-  );
 }
 
 /* The menu and HUD use CSS pixels independently of the pixel-art canvas. */
