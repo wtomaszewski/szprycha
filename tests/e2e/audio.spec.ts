@@ -7,7 +7,7 @@ type AudioLog = {
   effects: number;
   notes: number;
   levels: number[];
-  speechCalls: number;
+  recordingDecodes: number;
 };
 
 declare global {
@@ -17,13 +17,17 @@ declare global {
 }
 
 async function observeAudio(page: Page) {
+  // Keep the missing-recording scenarios independent of local voice assets.
+  await page.route(/\/assets\/voice\/pl\/[^/]+\.(ogg|m4a)$/, (route) =>
+    route.fulfill({ status: 404 }),
+  );
   await page.addInitScript(() => {
     const log: AudioLog = {
       contexts: 0,
       effects: 0,
       notes: 0,
       levels: [],
-      speechCalls: 0,
+      recordingDecodes: 0,
     };
     window.audioLog = log;
     window.AudioContext = class extends AudioContext {
@@ -47,12 +51,11 @@ async function observeAudio(page: Page) {
       log.levels.push(value);
       return gainTarget.call(this, value, time, constant);
     };
-    Object.defineProperty(window, 'speechSynthesis', {
-      get() {
-        log.speechCalls++;
-        throw new Error('Game narration accessed Web Speech');
-      },
-    });
+    const decode = AudioContext.prototype.decodeAudioData;
+    AudioContext.prototype.decodeAudioData = function (data, success, error) {
+      log.recordingDecodes++;
+      return decode.call(this, data, success, error);
+    };
   });
 }
 
@@ -101,7 +104,7 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     await expect(result).toContainText(`${pl.progression.tokens} +35`);
     await expect(result).toContainText(`${pl.missionResults.mastery}`);
     await expect(result).toContainText('10% (+10)');
-    expect((await log(page)).speechCalls).toBe(0);
+    expect((await log(page)).recordingDecodes).toBe(0);
     expect((await log(page)).effects).toBeGreaterThan(before.effects);
 
     const skip = result.getByRole('button', { name: pl.missionResults.skip });
@@ -233,7 +236,7 @@ test('unlocks audio with a gesture, saves channel levels and station, and rides 
   expect(await log(page)).toMatchObject({
     notes: mutedAudio.notes,
     effects: mutedAudio.effects,
-    speechCalls: 0,
+    recordingDecodes: 0,
   });
 
   await page.reload();
@@ -256,7 +259,7 @@ test('ducks radio during a dialogue and preserves captions without recordings', 
   const dialogue = page.getByRole('dialog', { name: pl.dialogueUi.title });
   await expect(dialogue).toBeVisible();
   await expect(dialogue.getByText(pl.dialogi.reguly['KASK-01'])).toBeVisible();
-  expect((await log(page)).speechCalls).toBe(0);
+  expect((await log(page)).recordingDecodes).toBe(0);
   await expect.poll(async () => (await log(page)).levels).toContain(0.6 * 0.26);
   await dialogue.getByRole('button', { name: pl.dialogueUi.skip }).click();
   await expect.poll(async () => (await log(page)).levels.at(-1)).toBe(0.6);
@@ -269,5 +272,5 @@ test('ducks radio during a dialogue and preserves captions without recordings', 
   await expect(page.locator('.radio-caption')).toHaveText(
     pl.audio.tipText.stop,
   );
-  expect((await log(page)).speechCalls).toBe(0);
+  expect((await log(page)).recordingDecodes).toBe(0);
 });
