@@ -51,6 +51,7 @@ import { DailyClientSprites } from '../render/DailyClientSprites';
 import { cullMapChunks, drawMapGround } from '../render/MapGround';
 import { DrivingControls } from '../ui/DrivingControls';
 import { showError, translate, ui } from '../core/presentation';
+import { showSignalCountdowns } from '../core/progressStore';
 
 import { nearbyPhotoSubject } from '../gameplay/signPhoto';
 import type { ExamResult, ExamRide } from '../gameplay/exam/exam';
@@ -599,6 +600,7 @@ export class City extends Scene {
           this.overlayGamepad(pressed, justPressed),
       },
       this.progress.store,
+      examRide ? 'exam' : 'ride',
     );
     const radio = radioControls(this.progress.store);
     this.controls.quickActions.append(radio.widget);
@@ -2410,7 +2412,12 @@ export class City extends Scene {
     if (canvas.dataset.weather !== weather) canvas.dataset.weather = weather;
     this.renderEnvironment.time = frame.environment.time;
     this.renderEnvironment.weather = frame.environment.weather;
-    this.road.updateLights(camera, Math.max(0, at), this.renderEnvironment);
+    this.road.updateLights(
+      camera,
+      Math.max(0, at),
+      this.renderEnvironment,
+      showSignalCountdowns(this.progress.store.profile, Boolean(this.examRide)),
+    );
     return sirenVolume;
   }
 }

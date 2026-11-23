@@ -24,6 +24,7 @@ type DriveScene = {
   sys: { sceneUpdate(time: number, delta: number): void };
   controls: { actions: RiderState; read(): DriveInput };
   rider: Rider;
+  road?: { lastCountdowns: boolean };
   review?: unknown;
   resultPresented: boolean;
   tickForTest(time: number, delta: number): void;
@@ -197,6 +198,12 @@ test('earns, prints and reopens the licence entirely offline', async ({
   ).toBeVisible();
   await expect(page.getByText(exam.rideIntro)).toBeVisible();
   await page.getByRole('button', { name: pl.dialogueUi.next }).click();
+  await page.keyboard.press('Escape');
+  await page.getByText(pl.settings.accessibility, { exact: true }).click();
+  await expect(
+    page.getByRole('checkbox', { name: pl.settings.signalCountdowns }),
+  ).not.toBeChecked();
+  await page.getByRole('button', { name: pl.driving.resume }).click();
   const drive = await game.evaluate(
     (game, { points, delta, approach }) => {
       const scene = game.scene.getScene('City');
@@ -231,6 +238,7 @@ test('earns, prints and reopens the licence entirely offline', async ({
           presented: scene.resultPresented,
           review: !!scene.review,
           rider: scene.rider,
+          signalCountdowns: scene.road?.lastCountdowns,
         };
       } finally {
         scene.controls.read = read;
@@ -241,6 +249,7 @@ test('earns, prints and reopens the licence entirely offline', async ({
   expect(drive, JSON.stringify(drive)).toMatchObject({
     presented: true,
     review: false,
+    signalCountdowns: false,
   });
 
   await expect(panel.getByText(exam.reward)).toBeVisible();

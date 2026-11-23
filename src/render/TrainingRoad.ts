@@ -13,6 +13,20 @@ const lightColor: Record<SignalPhase, number> = {
   off: 0x566c86,
 };
 
+// Each number encodes the five rows of a 3×5 pixel digit.
+const digits = [
+  [7, 5, 5, 5, 7],
+  [2, 6, 2, 2, 7],
+  [7, 1, 7, 4, 7],
+  [7, 1, 7, 1, 7],
+  [5, 5, 7, 1, 1],
+  [7, 4, 7, 1, 7],
+  [7, 4, 7, 5, 7],
+  [7, 1, 1, 2, 2],
+  [7, 5, 7, 5, 7],
+  [7, 5, 7, 1, 7],
+];
+
 function bicyclePictogram(
   art: GameObjects.Graphics,
   x: number,
@@ -49,6 +63,7 @@ export class TrainingRoad {
   readonly staticChunks: GameObjects.Image[] = [];
   private readonly lights: GameObjects.Graphics;
   private lastLightFrame = -1;
+  private lastCountdowns = false;
   private lightAt = 0;
   private readonly lightView = {
     left: Infinity,
@@ -361,6 +376,7 @@ export class TrainingRoad {
     camera: Cameras.Scene2D.Camera,
     at: number,
     environment: EnvState,
+    countdowns: boolean,
   ) {
     const cx = camera.clampX(camera.scrollX) + camera.width / 2;
     const cy = camera.clampY(camera.scrollY) + camera.height / 2;
@@ -373,7 +389,13 @@ export class TrainingRoad {
       cy - halfH < view.top ||
       cy + halfH > view.bottom;
     const frame = Math.floor(at * 10);
-    if (!moved && this.lastLightFrame === frame) return;
+    if (
+      !moved &&
+      this.lastLightFrame === frame &&
+      this.lastCountdowns === countdowns
+    )
+      return;
+    this.lastCountdowns = countdowns;
     if (frame !== this.lastLightFrame) {
       this.lastLightFrame = frame;
       this.lightAt = at;
@@ -441,9 +463,17 @@ export class TrainingRoad {
         environment,
       );
       const color = lightColor[open ? 'green' : 'red'];
-      if (firstVisible) this.drawCrossingSignal(x, y, color, pedestrian);
-      if (secondVisible)
+      const seconds = countdowns
+        ? this.world.crossingCountdown(crossing, this.lightAt, environment)
+        : undefined;
+      if (firstVisible) {
+        this.drawCrossingSignal(x, y, color, pedestrian);
+        this.drawCountdown(x, y + 16, seconds);
+      }
+      if (secondVisible) {
         this.drawCrossingSignal(oppositeX, oppositeY, color, pedestrian);
+        this.drawCountdown(oppositeX, oppositeY + 16, seconds);
+      }
     }
     for (const signal of this.world.signals) {
       const x = signal.x * scale;
@@ -466,6 +496,43 @@ export class TrainingRoad {
           .lineBetween(x + 5 * d, y, x, y - 5)
           .lineBetween(x + 5 * d, y, x, y + 5);
       }
+      if (countdowns && lane.type !== 'tram') {
+        const seconds = this.world.signalCountdown(
+          lane,
+          signal.code,
+          this.lightAt,
+          environment,
+        );
+        if (signal.code === 'S-2') this.drawCountdown(x + 18, y, seconds);
+        else if (lane.arrow) this.drawCountdown(x - 18, y, seconds);
+        else this.drawCountdown(x, y - 19, seconds);
+      }
+    }
+  }
+
+  private drawCountdown(x: number, y: number, seconds: number | undefined) {
+    if (seconds === undefined) return;
+    const value = String(seconds);
+    const width = Math.max(18, value.length * 8 + 2);
+    const left = Math.round(x) - width / 2;
+    const top = Math.round(y) - 7;
+    this.lights
+      .fillStyle(0x566c86)
+      .fillRect(left, top, width, 14)
+      .fillStyle(0x1a1c2c)
+      .fillRect(left + 1, top + 1, width - 2, 12)
+      .fillStyle(0xfff1ce);
+    let digitX = Math.round(x) - value.length * 4 + 1;
+    for (const digit of value) {
+      const rows = digits[Number(digit)]!;
+      for (let row = 0; row < rows.length; row++) {
+        const pixels = rows[row]!;
+        for (let col = 0; col < 3; col++) {
+          if (pixels & (4 >> col))
+            this.lights.fillRect(digitX + col * 2, top + 2 + row * 2, 2, 2);
+        }
+      }
+      digitX += 8;
     }
   }
 
