@@ -16,6 +16,11 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Zlecenia proceduralne 1/3 (#102)
+
+- SzprychaApp oferuje deterministyczne Zlecenia dnia dla Warszawy i Wrocławia w Wolnej jeździe oraz po kampanii miasta.
+- Siedem archetypów korzysta ze sprawdzonych przejazdów po mapie, mastery M01–M07 i szablonów i18n. [Opis działania i zrzuty](docs/03_misje.md#zlecenia-dnia)
+
 ## Postacie i portrety (#101)
 
 - Atlas 32×32 przedstawia gracza i rowerzystów AI w sześciu klatkach pedałowania. Gest skrętu i obejrzenie się mają pozy pośrednie.

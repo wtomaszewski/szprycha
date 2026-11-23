@@ -178,6 +178,13 @@ export class MissionProgress {
     });
   }
 
+  completeDailyOrder(points: number) {
+    this.store.change((profile) => {
+      profile.missionPoints += Math.max(0, points);
+    });
+    return 0;
+  }
+
   bestScore(missionId: string) {
     return this.store.profile.bestScores[missionId];
   }

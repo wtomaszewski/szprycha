@@ -1,5 +1,6 @@
 import { missionClock, translate, ui } from '../core/presentation';
 import type { MissionSystem } from '../gameplay/MissionSystem';
+import type { OrderText } from '../gameplay/procedural/orders';
 import type { Vec2 } from '../rules/types';
 
 function setText(element: HTMLElement, text: string) {
@@ -42,6 +43,7 @@ export class MissionHud {
     turnOnLights: () => void,
     resumeFromCheckpoint: () => void,
     photograph: () => void,
+    private readonly orderText?: OrderText,
   ) {
     const panel = document.createElement('section');
     panel.className = 'mission-panel';
@@ -110,7 +112,7 @@ export class MissionHud {
       mission;
     const title = mission.definition.tytul;
     if (this.displayedTitle !== title) {
-      this.title.textContent = translate(title);
+      this.title.textContent = translate(title, this.orderText);
       this.displayedTitle = title;
     }
     const preparing = mission.preparingBike;
@@ -139,7 +141,7 @@ export class MissionHud {
           ? target.eventWaypoint
             ? ui.missionUi.eventWaypoint
             : target.goal.opis
-              ? translate(target.goal.opis)
+              ? translate(target.goal.opis, this.orderText)
               : ui.missionUi.goals[target.goal.typ]
           : ui.missionUi.helmetHint),
     );

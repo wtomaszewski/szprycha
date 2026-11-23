@@ -1,3 +1,12 @@
+import proceduralRoutes from 'virtual:procedural-routes';
+import {
+  DailyOrderGenerator,
+  dailyRivalScoreLimit,
+  orderSeed,
+  type DailyOrder,
+} from '../gameplay/procedural/orders';
+import { localDay } from '../progression/mastery';
+import { campaignCompleted } from '../gameplay/exam/exam';
 import {
   examRideIntro,
   localizedVoiceLine,
@@ -175,6 +184,13 @@ export class City extends Scene {
   private rivalLabel?: GameObjects.Text;
   private companions: GameObjects.Image[] = [];
   private phone!: MissionPhone;
+  private freeRide = false;
+  private dailyOrder?: DailyOrder;
+  private dailyOffers: readonly DailyOrder[] = [];
+  private readonly dailyGenerators = new Map<
+    MissionCity,
+    DailyOrderGenerator
+  >();
   private dialogue!: DialogueWindow;
   private phoneFeedback!: VoiceLine;
   private missionHud?: MissionHud;
@@ -259,12 +275,19 @@ export class City extends Scene {
     map,
     city,
     examRide,
+    freeRide = false,
+    dailyOrder,
   }: {
     missionId?: string;
     map?: string;
     city?: MissionCity;
     examRide?: ExamRide;
+    freeRide?: boolean;
+    dailyOrder?: DailyOrder;
   } = {}) {
+    this.freeRide = freeRide;
+    this.dailyOrder = dailyOrder;
+    this.dailyOffers = [];
     this.examRide = examRide;
     if (examRide) this.sys.settings.data = {};
     this.obstacles = [];
@@ -294,7 +317,8 @@ export class City extends Scene {
     this.results = this.gloryClip = this.resultsElapsed = undefined;
     const definition = examRide
       ? examRoute(examRide.city, this.content.balans.licencja)
-      : this.availableOrders().find(({ id }) => id === missionId);
+      : (dailyOrder?.definition ??
+        this.availableOrders().find(({ id }) => id === missionId));
     const mapId = definition?.mapa ?? definition?.miasto ?? map ?? defaultMap;
     this.rankingCity =
       mapId === 'warszawa' || mapId === 'wroclaw' ? mapId : undefined;
@@ -603,12 +627,24 @@ export class City extends Scene {
       () => this.togglePhone(),
       (id) => {
         if (
-          this.phone.open &&
-          canOpenPhone(this.rider.speed) &&
-          (!this.mission || this.mission.result) &&
-          this.availableOrders().some((order) => order.id === id)
+          !this.phone.open ||
+          !canOpenPhone(this.rider.speed) ||
+          (this.mission && !this.mission.result)
         )
-          this.scene.restart({ missionId: id, city: this.campaignCity });
+          return;
+        const order = this.dailyOffers.find(
+          ({ definition }) => definition.id === id,
+        );
+        if (
+          order ||
+          this.availableOrders().some((mission) => mission.id === id)
+        )
+          this.scene.restart({
+            missionId: id,
+            city: this.campaignCity,
+            freeRide: this.freeRide,
+            dailyOrder: order,
+          });
       },
     );
     this.phone.button.hidden = !!examRide;
@@ -674,6 +710,7 @@ export class City extends Scene {
           this.updateMissionHud();
         },
         () => this.takePhoto(),
+        this.dailyOrder?.text,
       );
       if (!examRide)
         this.results = new MissionResults(
@@ -761,6 +798,26 @@ export class City extends Scene {
     );
   }
 
+  private dailyOrders() {
+    const city = this.campaignCity;
+    const profile = this.progress.store.profile;
+    if (!this.freeRide && !campaignCompleted(city, profile, this.content))
+      return [];
+    let generator = this.dailyGenerators.get(city);
+    if (!generator) {
+      generator = new DailyOrderGenerator(
+        city,
+        proceduralRoutes[city],
+        this.content,
+      );
+      this.dailyGenerators.set(city, generator);
+    }
+    return generator.generate(
+      orderSeed(`${city}/${localDay(new Date())}/${profile.nicknameSeed}`),
+      profile.mastery,
+    );
+  }
+
   private togglePhone() {
     if (this.examRide) return;
     if (this.phone.open) {
@@ -778,9 +835,11 @@ export class City extends Scene {
       this.finishResultsAnimation();
       audio.stopReading('results');
     }
+    this.dailyOffers = this.dailyOrders();
     this.phone.show(
       this.availableOrders(),
       Boolean(this.mission && !this.mission.result),
+      this.dailyOffers,
     );
   }
 
@@ -933,12 +992,14 @@ export class City extends Scene {
           !progress.store.profile.completed.includes(order.id) &&
           !progress.isAvailable(order, content),
       );
-      const tokens = progress.complete(definition, {
-        points: result.points,
-        stars: result.stars,
-        balance: this.content.balans.gwiazdki,
-        clean: !result.verdicts.some(({ kind }) => kind !== 'good'),
-      });
+      const tokens = this.dailyOrder
+        ? progress.completeDailyOrder(result.points)
+        : progress.complete(definition, {
+            points: result.points,
+            stars: result.stars,
+            balance: this.content.balans.gwiazdki,
+            clean: !result.verdicts.some(({ kind }) => kind !== 'good'),
+          });
       this.updateMissionHud();
       const unlocked =
         nextOrders.some((order) => progress.isAvailable(order, content)) ||
@@ -1009,7 +1070,7 @@ export class City extends Scene {
     audio.stopReading('feedback');
     results.show(
       result,
-      definition.tytul,
+      translate(definition.tytul, this.dailyOrder?.text),
       tokens,
       this.progress.tokens,
       rules,
@@ -1095,7 +1156,7 @@ export class City extends Scene {
     this.publishRiderPosition(this.rider);
     this.updateDrivingHud(this.rider, this.controls.actions);
     this.questionDialog.show(
-      {
+      this.dailyOrder?.question ?? {
         pytanie: translate(goal.pytanie),
         odpowiedzi: goal.odpowiedzi.map((key) => translate(key)),
         wyjasnienie: translate(goal.wyjasnienie),
@@ -1205,7 +1266,10 @@ export class City extends Scene {
   private startRankingRide(mission: boolean) {
     const consent = this.progress.rankings?.consent;
     this.rankingRide =
-      consent === undefined || this.examRide || (!mission && !this.rankingCity)
+      consent === undefined ||
+      this.examRide ||
+      this.dailyOrder ||
+      (!mission && !this.rankingCity)
         ? undefined
         : new RideEvidence(rankingSeed(), consent);
   }
@@ -1338,9 +1402,20 @@ export class City extends Scene {
 
   private createMission(definition: MissionDefinition) {
     const balance = this.content.balans;
+    const world = this.dailyOrder
+      ? {
+          ...this.world,
+          pois: new Map([
+            ...this.world.pois,
+            ...this.dailyOrder.route.steps.map(
+              ({ poi }) => [poi.id, poi] as const,
+            ),
+          ]),
+        }
+      : this.world;
     return new MissionSystem(
       definition,
-      this.world,
+      world,
       this.examRide
         ? {
             ...balance,
@@ -1356,8 +1431,10 @@ export class City extends Scene {
           definition,
           this.world,
           this.content,
+          this.dailyOrder && dailyRivalScoreLimit(balance.misja),
         ),
       this.examRide ? 0 : this.series.consecutive,
+      { cleanTimeBonus: Boolean(this.dailyOrder) },
     );
   }
 
