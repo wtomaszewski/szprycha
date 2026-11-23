@@ -1,7 +1,13 @@
 import { expect, test } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { legacyProgressKey } from '../../src/core/progressStore';
-import { chooseCity, cityPin, driveTo, startAt } from './city-picker';
+import {
+  chooseCity,
+  cityPin,
+  driveTo,
+  startAt,
+  stopRider,
+} from './city-picker';
 import { readProfile } from './progress-profile';
 
 test('opens Gdańsk only in free ride and unlocks Ołowianka after training', async ({
@@ -39,15 +45,16 @@ test('opens Gdańsk only in free ride and unlocks Ołowianka after training', as
   } finally {
     await page.keyboard.up('ArrowUp');
   }
-  await page.keyboard.down('Space');
-  await expect(canvas).toHaveAttribute('data-speed', '0');
-  await page.keyboard.up('Space');
+  await stopRider(page);
 
   const option = (id: 'GDA-B-01' | 'GDA-B-02') =>
     page.getByRole('button', {
       name: `${pl.phone.start} · ${pl.misje[id].tytul}`,
     });
   await page.keyboard.press('KeyM');
+  await expect(
+    page.getByRole('dialog', { name: pl.phone.title }),
+  ).toBeVisible();
   await expect(option('GDA-B-02')).toHaveCount(0);
   await option('GDA-B-01').click();
   await expect(canvas).toHaveAttribute('data-mission', 'GDA-B-01');

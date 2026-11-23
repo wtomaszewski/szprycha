@@ -62,9 +62,16 @@ export async function driveTo(
   } finally {
     await page.keyboard.up(key);
   }
+  await stopRider(page);
+}
+
+export async function stopRider(page: Page) {
   await page.keyboard.down('Space');
   try {
-    await expect(page.locator('canvas')).toHaveAttribute('data-speed', '0');
+    await expect(page.locator('canvas[data-scene="City"]')).toHaveAttribute(
+      'data-speed',
+      '0',
+    );
   } finally {
     await page.keyboard.up('Space');
   }

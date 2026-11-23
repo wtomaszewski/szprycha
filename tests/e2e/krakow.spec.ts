@@ -2,7 +2,13 @@ import { expect, test } from '@playwright/test';
 import questions from '../../content/pytania.json' with { type: 'json' };
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { legacyProgressKey } from '../../src/core/progressStore';
-import { chooseCity, cityPin, driveTo, startAt } from './city-picker';
+import {
+  chooseCity,
+  cityPin,
+  driveTo,
+  startAt,
+  stopRider,
+} from './city-picker';
 import { readProfile } from './progress-profile';
 
 test('opens Kraków in free ride and saves district progression', async ({
@@ -33,11 +39,15 @@ test('opens Kraków in free ride and saves district progression', async ({
   } finally {
     await page.keyboard.up('ArrowUp');
   }
+  await stopRider(page);
   const option = (id: 'KRA-B-01' | 'KRA-B-02') =>
     page.getByRole('button', {
       name: `${pl.phone.start} · ${pl.misje[id].tytul}`,
     });
   await page.keyboard.press('KeyM');
+  await expect(
+    page.getByRole('dialog', { name: pl.phone.title }),
+  ).toBeVisible();
   await expect(option('KRA-B-02')).toHaveCount(0);
   await option('KRA-B-01').click();
   await expect(canvas).toHaveAttribute('data-mission', 'KRA-B-01');
