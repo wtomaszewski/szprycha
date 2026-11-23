@@ -34,6 +34,7 @@ export class MissionRace {
     world: WorldModel,
     private readonly content: GameContent,
     private readonly scoreCeiling = Infinity,
+    opponentId = definition.zleceniodawca,
   ) {
     const route = world.raceRoutes.get(routeId);
     if (!route) throw new Error(`Unknown race route: ${routeId}`);
@@ -49,7 +50,7 @@ export class MissionRace {
         )?.id
       : undefined;
     this.rider = {
-      id: definition.zleceniodawca,
+      id: opponentId,
       pos: { ...this.route.path.start },
       heading: 0,
       speed: this.route.speed,

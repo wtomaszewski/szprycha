@@ -9,6 +9,7 @@ import { missionStars, type Stars } from '../progression/missionRewards.ts';
 import type { MissionRace } from './MissionRace.ts';
 import { TICKS_PER_SECOND, type Vec2, type Verdict } from '../rules/types.ts';
 import {
+  boxCenter,
   contains,
   type Box,
   type PointOfInterest,
@@ -57,12 +58,8 @@ interface Checkpoint {
   goalIndex: number;
 }
 
-function center({ x, y, width, height }: Box): Vec2 {
-  return { x: x + width / 2, y: y + height / 2 };
-}
-
 function spawnAt(poi: PointOfInterest): MissionSpawn {
-  return { ...center(poi), heading: poi.heading };
+  return { ...boxCenter(poi), heading: poi.heading };
 }
 
 function reached(area: Box, position: Vec2): boolean {
@@ -138,7 +135,7 @@ export class MissionSystem {
             `Mission ${definition.id}: sign ${goal.znak} is outside its photo POI`,
           );
       }
-      return { goal, area, position: center(area) };
+      return { goal, area, position: boxCenter(area) };
     });
     this.goalTicks = this.goals.map(() => 0);
     this.checkpoints = definition.checkpointy.map(poi);
@@ -151,7 +148,7 @@ export class MissionSystem {
         throw new Error(
           `Mission ${definition.id}: unknown event location ${event.przy}`,
         );
-      return { event, area, fired: false, position: center(area) };
+      return { event, area, fired: false, position: boxCenter(area) };
     });
     this.failureConditions = new Set(definition.warunki_porazki);
     const shortcut = definition.skrot?.odcinek;

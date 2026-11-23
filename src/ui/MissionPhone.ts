@@ -1,5 +1,5 @@
 import type { MissionDefinition } from '../content/missions';
-import type { DailyOrder, OrderText } from '../gameplay/procedural/orders';
+import type { DailyOrder } from '../gameplay/procedural/orders';
 import { translate, ui } from '../core/presentation';
 
 type PhoneMode = 'available' | 'active' | 'tutorial';
@@ -90,7 +90,7 @@ export class MissionPhone {
     this.dailyList.replaceChildren();
     this.dailyHeading.hidden = this.dailyList.hidden = daily.length === 0;
     for (const order of daily)
-      this.addOrder(this.dailyList, order.definition, mode, order.text);
+      this.addOrder(this.dailyList, order.definition, mode, order);
     for (const order of orders) this.addOrder(this.list, order, mode);
     if (orders.length === 0 || mode !== 'available') {
       const message = document.createElement('li');
@@ -111,15 +111,26 @@ export class MissionPhone {
     list: HTMLUListElement,
     order: MissionDefinition,
     mode: PhoneMode,
-    text?: OrderText,
+    daily?: DailyOrder,
   ) {
     const item = document.createElement('li');
     const title = document.createElement('h4');
-    title.textContent = translate(order.tytul, text);
+    title.textContent = translate(order.tytul, daily?.text);
     item.append(title);
+    if (daily) {
+      const { name, age, occupation, trait } = daily.client;
+      const client = document.createElement('p');
+      client.textContent = translate('procedural.clientProfile', {
+        name,
+        age: String(age),
+        occupation,
+        trait,
+      });
+      item.append(client);
+    }
     if (order.opis) {
       const description = document.createElement('p');
-      description.textContent = translate(order.opis, text);
+      description.textContent = translate(order.opis, daily?.text);
       item.append(description);
     }
     list.append(item);

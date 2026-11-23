@@ -4,6 +4,7 @@ import { missionCity } from '../../src/content/missions';
 import { translate } from '../../src/core/presentation';
 import type { ProgressProfile } from '../../src/core/progressStore';
 import { MissionRace } from '../../src/gameplay/MissionRace';
+import { clientPosition } from '../../src/gameplay/procedural/clientPosition';
 import { MissionSystem } from '../../src/gameplay/MissionSystem';
 import {
   DailyOrderGenerator,
@@ -38,6 +39,7 @@ describe.each(missionCity.options)('procedural orders in %s', (city) => {
     const kinds = new Set<string>();
     const modules = new Set<string>();
     const checked = new Set<string>();
+    const clientsByPoi = new Map<string, DailyOrder['client']>();
     const modulesByRule = new Map(
       content.przepisy.przepisy.map(({ id, modul }) => [id, modul]),
     );
@@ -46,7 +48,18 @@ describe.each(missionCity.options)('procedural orders in %s', (city) => {
       expect(orders).toHaveLength(3);
       expect(new Set(orders.map(({ kind }) => kind)).size).toBe(3);
       for (const order of orders) {
-        const { definition, kind, route, text } = order;
+        const { client, definition, kind, route, text } = order;
+        const start = route.steps[0]!.poi;
+        expect(definition.zleceniodawca).toBe(client.id);
+        const previousClient = clientsByPoi.get(start.id);
+        if (previousClient) expect(client).toEqual(previousClient);
+        else {
+          clientsByPoi.set(start.id, client);
+          expect(order.clientPosition).toEqual(clientPosition(world, start));
+        }
+        expect(
+          translate(`procedural.dialogue.start.${kind}`, text),
+        ).not.toMatch(/\{|procedural\./);
         routes.add(route.id);
         kinds.add(kind);
         for (const id of definition.reguly_cwiczone)
@@ -71,10 +84,18 @@ describe.each(missionCity.options)('procedural orders in %s', (city) => {
     }
     expect(kinds).toEqual(new Set(orderKinds));
     expect(routes.size).toBeGreaterThan(30);
+    expect(clientsByPoi.size).toBeGreaterThan(10);
     expect(modules).toEqual(
       new Set(['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07']),
     );
   }, 35_000);
+
+  it('finds a safe client position for every certified start', () => {
+    for (const { steps } of [...catalog.routes, ...catalog.nightRoutes]) {
+      const poi = steps[0]!.poi;
+      expect(catalog.clientPositions[poi.id], poi.id).toBeDefined();
+    }
+  });
 
   it('prioritizes first aid when PP-01 has the weakest rule and module mastery', () => {
     const mastery: ProgressProfile['mastery'] = Object.fromEntries(
@@ -107,6 +128,7 @@ describe.each(missionCity.options)('procedural orders in %s', (city) => {
           world,
           content,
           dailyRivalScoreLimit(content.balans.misja),
+          'turbo',
         );
       const mission = new MissionSystem(
         definition,
@@ -184,7 +206,7 @@ describe.each(missionCity.options)('procedural orders in %s', (city) => {
     const race = catalog.routes.find((route) => route.race)!;
     const order = new DailyOrderGenerator(
       city,
-      { routes: [race], nightRoutes: [] },
+      { ...catalog, routes: [race], nightRoutes: [] },
       content,
     ).generate(0, {})[0]!;
     const { definition, route } = order;
@@ -226,7 +248,7 @@ describe.each(missionCity.options)('procedural orders in %s', (city) => {
     const route = catalog.routes.find(({ race }) => !race)!;
     const [order] = new DailyOrderGenerator(
       city,
-      { routes: [route], nightRoutes: [] },
+      { ...catalog, routes: [route], nightRoutes: [] },
       content,
     ).generate(0, {});
     const start = route.steps[0]!.poi;

@@ -97,6 +97,14 @@ Premię czasową w Zleceniach dnia otrzymuje się za przejazd bez błędów. W w
 
 [SzprychaApp przed zmianą](screenshots/102-szprychaapp-przed.png) · [SzprychaApp ze Zleceniami dnia](screenshots/102-szprychaapp-po.png)
 
+### Fikcyjni zleceniodawcy
+
+Miasto i identyfikator startowego POI wyznaczają tego samego klienta niezależnie od dnia, profilu gracza i rodzaju zlecenia. Gdy punkt wraca w ofercie, wraca także klient. Imię, przydomek, zawód i cecha pochodzą z autorskich list w `content/zleceniodawcy.yaml`. Generator odrzuca wykluczone połączenia po ujednoliceniu wielkości liter, polskich znaków i separatorów. Postacie i ich wiek są fikcyjne.
+
+SzprychaApp pokazuje imię, przydomek, wiek, zawód i cechę klienta. Dialog przed przejazdem i po ukończeniu zlecenia pokazuje jego portret. W Wolnej jeździe klienci czekają w pobliżu punktów startowych aktualnych ofert. Podczas zlecenia przy jego POI stoi wybrana postać. Katalog wyznacza miejsce poza jezdnią, trasami rowerowymi i przejściami. Jeśli punkt wypada na środku mostu, klient może czekać na brzegu.
+
+[SzprychaApp przed i po](screenshots/103-telefon-przed-po.webp) · [NPC przy POI przed i po](screenshots/103-poi-przed-po.webp) · [Dialog ze zleceniodawcą](screenshots/103-dialog.webp)
+
 ---
 
 ## Lista misji MVP — WARSZAWA

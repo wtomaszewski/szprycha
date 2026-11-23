@@ -214,6 +214,10 @@ export const zoneOrder: Record<Zone['kind'], number> = {
   rail: 5,
 };
 
+export function boxCenter({ x, y, width, height }: Box): Vec2 {
+  return { x: x + width / 2, y: y + height / 2 };
+}
+
 export function contains(box: Box, point: Vec2, margin = 0) {
   return (
     point.x >= box.x - margin &&

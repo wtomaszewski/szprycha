@@ -162,3 +162,10 @@ Deszcz (ukośne piksele, kałuże odbijające światła), śnieg, mgła (gradien
 - Podgląd nocy w F3 służy do sprawdzania grafiki. Widoczność, pora symulacji i stan lampek używany przez detektory pochodzą z dotychczasowych danych symulacji.
 
 Praga w dzień, w nocy i podczas deszczu, przed zmianą po lewej i po zmianie po prawej. [Zrzuty porównawcze](graphics-32-before-after.webp)
+
+
+## Portrety zleceniodawców (#103)
+
+Renderer portretów z #101 składa klatkę 64×64 z kształtu twarzy, fryzury, opcjonalnych okularów i nakrycia głowy oraz ubrania. Osobne palety skóry, włosów i ubioru zachowują wielotonowy światłocień. Neutralność, radość, zaskoczenie, zmartwienie i duma zmieniają mimikę. Postać stojąca przy POI ma sprite 24×24 w tych samych kolorach.
+
+Galeria pokazuje 24 postacie z pięcioma wyrazami twarzy w kolejności używanej przez grę. Można ją odtworzyć poleceniem `npx tsx tools/client-gallery.ts`. [Galeria](screenshots/103-galeria.png)

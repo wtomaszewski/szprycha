@@ -1080,23 +1080,31 @@
       "envelope": "kopertę",
       "model": "model z papieru"
     },
-    "senders": {
-      "workshop": "Warsztat",
-      "library": "Biblioteka",
-      "club": "Klub rowerowy"
+    "clientProfile": "{name} · {age} lat · {occupation} · {trait}",
+    "dialogue": {
+      "start": {
+        "delivery": "Mam {item} do dostarczenia przed upływem czasu.",
+        "pickup": "Czy możesz odebrać dla mnie {item}?",
+        "escort": "Poprowadź drugiego rowerzystę do wskazanego celu.",
+        "photo": "Zrób zdjęcie znaku {sign} po zatrzymaniu roweru.",
+        "collect": "Zbierz przedmioty z wyznaczonych punktów.",
+        "race": "Spróbuj wygrać z Turbo, przestrzegając przepisów.",
+        "fragile": "Przewieź {item} tak, żeby przesyłka dotarła bez wstrząsów."
+      },
+      "finish": "Dzięki za pomoc, kurierze!"
     },
     "templates": {
       "delivery": {
-        "title": "Dostawa od: {sender}",
+        "title": "Dostawa na czas",
         "description": "Odbierz {item} i dostarcz przesyłkę na czas. Cel: {place}."
       },
       "pickup": {
         "title": "Odbiór dla kuriera",
-        "description": "Jedź po {item}. Zleca: {sender}. Cel: {place}."
+        "description": "Jedź po {item}. Cel: {place}."
       },
       "escort": {
         "title": "Eskorta rowerowa",
-        "description": "Poprowadź drugiego rowerzystę do celu. Zleca: {sender}. Cel: {place}."
+        "description": "Poprowadź drugiego rowerzystę do celu. Cel: {place}."
       },
       "photo": {
         "title": "Zdjęcie znaku {sign}",
@@ -1104,7 +1112,7 @@
       },
       "collect": {
         "title": "Zbiórka dla kuriera",
-        "description": "Zbierz przedmioty w kolejnych punktach. Zleca: {sender}. Cel: {place}."
+        "description": "Zbierz przedmioty w kolejnych punktach. Cel: {place}."
       },
       "race": {
         "title": "Wyścig punktowy",

@@ -1,0 +1,122 @@
+imiona:
+  - Ada
+  - Agata
+  - Alicja
+  - Aniela
+  - Antonina
+  - Basia
+  - Celina
+  - Danuta
+  - Daria
+  - Dorota
+  - Ewa
+  - Hanna
+  - Iga
+  - Jagoda
+  - Kalina
+  - Klara
+  - Lena
+  - Łucja
+  - Maja
+  - Mira
+  - Nina
+  - Pola
+  - Róża
+  - Zofia
+  - Adam
+  - Aleksy
+  - Antoni
+  - Bartosz
+  - Cezary
+  - Emil
+  - Filip
+  - Gustaw
+  - Henryk
+  - Igor
+  - Jacek
+  - Jan
+  - Jerzy
+  - Julian
+  - Leon
+  - Łukasz
+  - Marek
+  - Michał
+  - Olek
+  - Piotr
+  - Robert
+  - Stefan
+  - Witek
+  - Wojciech
+przydomki:
+  - Agrafka
+  - Aster
+  - Bębenek
+  - Bursztyn
+  - Chaber
+  - Cyrkiel
+  - Czajka
+  - Dalia
+  - Dymek
+  - Fiołek
+  - Flaga
+  - Gałązka
+  - Gwarek
+  - Irys
+  - Iskra
+  - Jarzębina
+  - Jaskółka
+  - Kamyk
+  - Klucz
+  - Kompas
+  - Kreda
+  - Latarenka
+  - Liść
+  - Mak
+  - Migawka
+  - Mięta
+  - Modraszek
+  - Nutka
+  - Obłok
+  - Opal
+  - Pędzel
+  - Piórko
+  - Placek
+  - Promyk
+  - Róża
+  - Struna
+  - Szafran
+  - Tęcza
+  - Wstążka
+  - Wrzos
+  - Zefir
+  - Zięba
+  - Żagiel
+  - Żuraw
+# Całe połączenia, które brzmią jak przezwisko lub powtarzają imię.
+wykluczenia:
+  - Jacek Placek
+  - Róża Róża
+zawody:
+  - Opieka nad księgozbiorem
+  - Naprawa instrumentów
+  - Prowadzenie pracowni ceramiki
+  - Projektowanie ogrodów
+  - Fotografowanie przyrody
+  - Wypiekanie chleba
+  - Renowacja mebli
+  - Serwis rowerowy
+  - Szycie kostiumów
+  - Ilustrowanie książek
+  - Przygotowywanie wystaw
+  - Prowadzenie zajęć muzycznych
+cechy:
+  - cierpliwość
+  - dociekliwość
+  - pogoda ducha
+  - dokładność
+  - spostrzegawczość
+  - wyobraźnia
+  - życzliwość
+  - opanowanie
+  - zaradność
+  - poczucie humoru

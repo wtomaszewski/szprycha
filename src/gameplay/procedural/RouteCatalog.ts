@@ -1,5 +1,7 @@
 import type { MissionCity } from '../../content/missions';
 import type { GameContent } from '../../content/schemas';
+import type { Vec2 } from '../../rules/types';
+import { clientPosition } from './clientPosition.ts';
 import {
   contains,
   type PointOfInterest,
@@ -31,11 +33,13 @@ type Rules = Pick<GameContent, 'balans' | 'przepisy'>;
 export type RouteCatalogData = {
   readonly routes: readonly CertifiedRoute[];
   readonly nightRoutes: readonly CertifiedRoute[];
+  readonly clientPositions: Readonly<Partial<Record<string, Vec2>>>;
 };
 
 export class RouteCatalog implements RouteCatalogData {
   readonly routes: readonly CertifiedRoute[];
   readonly nightRoutes: readonly CertifiedRoute[];
+  readonly clientPositions: Readonly<Partial<Record<string, Vec2>>>;
 
   constructor(city: MissionCity, world: WorldModel, content: Rules) {
     const scale = world.metersPerPixel;
@@ -251,5 +255,11 @@ export class RouteCatalog implements RouteCatalogData {
     for (const chain of junctions) add(chain, { lane: true });
     this.routes = routes;
     this.nightRoutes = nightRoutes;
+    const starts = new Map(
+      routes.map(({ steps }) => [steps[0]!.poi.id, steps[0]!.poi]),
+    );
+    this.clientPositions = Object.fromEntries(
+      Array.from(starts, ([id, poi]) => [id, clientPosition(world, poi)]),
+    );
   }
 }
