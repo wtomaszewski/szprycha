@@ -152,7 +152,7 @@ export function runMissionRoute(
   let collision = false;
   let prepTicks = 0;
   let tramStopped = false;
-  const foundGnomes = new Set<string>();
+  const foundCollectibles = new Set<string>();
   for (let tick = 0; tick < 310 * TICKS_PER_SECOND && !mission.result; tick++) {
     const point = route[attempt];
     if (point?.walking !== undefined && rider.speed === 0)
@@ -208,14 +208,14 @@ export function runMissionRoute(
     for (const { id } of active) seenAgents.add(id);
     verdicts.length = 0;
     engine.step(player, active, env, events.hazards);
-    const gnome = mission.gnomeTarget;
-    if (gnome && rider.walking) {
-      const area = world.pois.get(gnome)!;
+    const collectible = mission.collectibleTarget;
+    if (collectible && rider.walking) {
+      const area = world.collectibles.get(collectible)!;
       if (
         Math.hypot(area.x - player.pos.x, area.y - player.pos.y) <=
         16 * scale
       )
-        foundGnomes.add(gnome);
+        foundCollectibles.add(collectible);
     }
     const effects = mission.step(
       player.pos,
@@ -228,7 +228,7 @@ export function runMissionRoute(
       },
       player.speed,
       false,
-      gnome !== undefined && foundGnomes.has(gnome),
+      collectible !== undefined && foundCollectibles.has(collectible),
     );
     fired.push(...(effects?.events?.map(({ typ }) => typ) ?? []));
     if (effects?.respawn) {
@@ -275,6 +275,9 @@ export function runMissionRoute(
           engine.at,
           env,
         )) &&
+      (!point.mainGreen ||
+        world.phase(world.getLane(point.mainGreen)!, engine.at, env) ===
+          'green') &&
       (!point.railOpen ||
         !world.railState(
           world.crossings.find(({ id }) => id === point.railOpen)!,

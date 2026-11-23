@@ -108,10 +108,14 @@ Wspólny prompt bazowy: *„top-down pixel art building in the style of 1999 GTA
 | **Kopiec** | 8×4 | — | Zielone poziomice zbiegają się ku jasnemu głazowi na szczycie. Piaskowa ścieżka wije się po zboczu. |
 | **Bulwary Wisły** | 40×6 | — | Rytm kamiennych schodów, ławek i latarni. Ceglasta DDR wzdłuż brzegu, jasna nawierzchnia na ciągu wspólnym. |
 
+Rondo Kasztany wyznacza zielona wyspa, a podejścia do przejść serwisowych na Rynku, Kazimierzu i pod Kopcem wyróżnia pas kostki i znak B-1.
+
 Krakowski tramwaj ma srebrne pasy wzdłuż grafitowej bryły, ciemny dach i te same klatki przegubowe co pozostałe warianty. Grafika powstała z generatorów i kształtów w repozytorium, bez logotypów i barw przewoźnika.
 
 **Krasnale:** własne projekty 16×16, ~20 zawodów (rowerzysta, listonosz, kucharz, strażak, malarz…), każdy z jednym atrybutem rozpoznawczym. **Nie kopiujemy** istniejących rzeźb wrocławskich krasnali.
 **Syrenki (Warszawa):** własna figurka-maskotka 16×16 z tarczą i mieczem w formie zabawnej, nie kopia pomnika.
+
+**Obwarzanki (Kraków).** Drewniana pamiątka 16×16 w kształcie plecionego pierścienia. Ciepły bursztynowy kolor, jasne okruszki i ciemny obrys odcinają ją od szarej kostki. Własny sprite w `src/render/CityCollectibles.ts`.
 
 ## 7. Kafelki (tileset minimum)
 Asfalt (zwykły, łatany, mokry), linie (ciągła, przerywana, P-10 zebra, P-11 przejazd rowerowy — czerwony/kratka, P-12, P-13 trójkąty, P-23 symbol roweru, strzałki), chodnik (płyty), kostka, kocie łby, krawężniki (z przejściami obniżonymi), DDR (czerwona nawierzchnia), trawa, żwir, pobocze, tory tramwajowe (w jezdni i na zieleni), tory kolejowe, zapory (animowane), woda (animowana 4 klatki), nabrzeże, schodki, piasek plaży miejskiej, liście jesienią, śnieg (wariant zimowy).

@@ -18,6 +18,150 @@
       "text": "Przy znaku STOP zatrzymaj się zawsze, nawet gdy nic nie jedzie, i przepuść pojazdy z pierwszeństwem.",
       "hash": "cb4289aae6d8d5b91ae07c34f66ca6ebd10be0433c6328f2aa8870f284af067a"
     },
+    "dialogi.KRA-A1-01.koniec": {
+      "text": "Skrót? Przy znaku musiałem zawrócić. Moje zaproszenia nadal stygną w torbie!",
+      "hash": "e7dc8faf2eef98f13cc531bee356de3baaaa51192546b7dfa586e6bdc3bcc254"
+    },
+    "dialogi.KRA-A1-01.start": {
+      "text": "Pierwsza dostawa na festyn. Turbo już liczy, ile sekund oszczędzi w zamkniętym przejściu.",
+      "hash": "72754d877ce1a3d821e0c634a0d0aa370f57928c2626bed6d0478610e46a7033"
+    },
+    "dialogi.KRA-A1-02.koniec": {
+      "text": "Na odwrocie ostatniego ktoś wypalił pikselową błyskawicę. Prześlij Lenie zdjęcie.",
+      "hash": "5ac347d5c47bc2aac7059319ffbcf082f02f89720232f7b2f7dfa0e68796851b"
+    },
+    "dialogi.KRA-A1-02.start": {
+      "text": "Robimy próbę gry terenowej! Każdy obwarzanek z drewna kryje jedną zagadkę. Tylko nie próbuj go gryźć.",
+      "hash": "70aeb2666ab769277590c6acd256ce61bc3a14ba5a1951c3eee1f0407716b8ad"
+    },
+    "dialogi.KRA-A1-03.koniec": {
+      "text": "W latarence była kartka z tą samą błyskawicą i godziną kolejnej próby!",
+      "hash": "0415f8b06681937accdbb3004e4f3b93f8b6f0785eed657c2d24de7bbfa9e5bc"
+    },
+    "dialogi.KRA-A1-03.start": {
+      "text": "Latarenka jest ze szkła. Pod murem jedź płynnie, żeby nie trzęsło paczką.",
+      "hash": "c97a0f5415a131a2f31d97b4a983a5496e93bc09ddec6535b1c9229c7a1dffe5"
+    },
+    "dialogi.KRA-A1-04.koniec": {
+      "text": "Mamy punkt odniesienia. Zdjęcia pokazują, które znaki naprawdę obowiązują przy Rynku.",
+      "hash": "92cebc161e501e6f4ca755218461b7613ee639fe543939449a90b33a01698e5d"
+    },
+    "dialogi.KRA-A1-04.start": {
+      "text": "Zrób zdjęcia oznakowania na postoju. Błyskawica na kartce ktoś może namalować, ale nie jest znakiem drogowym.",
+      "hash": "f5e8020111fd8887ba6340cbe092d847626e821eff7c7dce284efae8d25f5f31"
+    },
+    "dialogi.KRA-A1-05.koniec": {
+      "text": "Kartka prowadzi na Kazimierz. Łącze radiowe z festynem dostało sygnał podpisany błyskawicą.",
+      "hash": "7bf1ebd8fe620abcf6058605579e02bcd48e40e45e13b9867c40a336aada8eed"
+    },
+    "dialogi.KRA-A1-05.start": {
+      "text": "Ola naniosła znaki na mapę. Przenieś kopertę pod Wawel, tam czeka Kazik.",
+      "hash": "f4732be505194eac72860b45a2d87bf7c433d4ce457387899e75812e598163c8"
+    },
+    "dialogi.KRA-A2-01.koniec": {
+      "text": "Na planie zgadza się godzina, ale strzałka z kartki prowadzi w stronę zamkniętego przejścia.",
+      "hash": "0382e4cec50813dd4ca3d56ba08a9ae8d80e888efadf972b61f179e2b7df00d3"
+    },
+    "dialogi.KRA-A2-01.start": {
+      "text": "Potrzebuję planu do porównania z kartką spod Wawelu. Przecinaj aleję według świateł dla rowerów.",
+      "hash": "b66fd1774ff4b4f8f6515099db272a0064d644865e4cc2f5e5a1f7592a5caf0f"
+    },
+    "dialogi.KRA-A2-02.koniec": {
+      "text": "Twoją trasę da się przejechać bez łamania zakazu. Sprawdzimy teraz przystanek o zapisanej godzinie.",
+      "hash": "a43cb9e8fb9b06c839f64c04199eb2aa3ef2adb8f31bdd53a4d0a606db7a3481"
+    },
+    "dialogi.KRA-A2-02.start": {
+      "text": "Posłuchałem strzałki z kartki i znów stanąłem pod zakazem. W notesie mam godzinę dzwonka tramwaju.",
+      "hash": "23f135a816822e0e2b46308bb0142942ddc19f6e53441ba0021091dce21b80bc"
+    },
+    "dialogi.KRA-A2-03.koniec": {
+      "text": "Sygnał odezwał się tuż po dzwonku. Jego ślad prowadzi na bulwary.",
+      "hash": "3e444b23aa1613cd26479e056464227ffbf4eb9db923e84d1bb2e5e83899d9ff"
+    },
+    "dialogi.KRA-A2-03.start": {
+      "text": "Przy przystanku bez wysepki zatrzymaj się, kiedy tramwaj stoi, a pasażerowie przechodzą przez jezdnię.",
+      "hash": "829d679c954de9c9745e399ef85bfc4ca97c40b2530e1e20055bc80c097fb2ab"
+    },
+    "dialogi.KRA-A2-04.koniec": {
+      "text": "Mamy numer urządzenia. Zawiła rozpoznał swój stary nadajnik testowy.",
+      "hash": "3cdca529b1b72915c5560af2cdf2c53c3fde2ba65599f884b29137a1284d1e6e"
+    },
+    "dialogi.KRA-A2-04.start": {
+      "text": "Podłącz odbiornik, zapnij kask i zapal lampki. Na bulwarach będziesz widzieć drogę, a inni zobaczą Ciebie.",
+      "hash": "7a52e007fd3a70e2d35e10b4642b7e15f5cafa734cfc6ae6ec25bf1c6731cacd"
+    },
+    "dialogi.KRA-A2-05.koniec": {
+      "text": "Błyskawica była moim podpisem. Nadajnik nadaje stary scenariusz. Wyłączymy pokaz dopiero na Kopcu.",
+      "hash": "b7b72b3fa4cfcf3d516cfc8f660ad496e2afa5dd2ea4c78fa7f007fd5eeb731c"
+    },
+    "dialogi.KRA-A2-05.start": {
+      "text": "Zawiła chce porównać stare próby z aktualnym oznakowaniem. Zatrzymaj się przed rondem.",
+      "hash": "1224a66e96753a6867a5c671828b2c7b7b1ad2f38196bb5ab9e58c6cc44824f6"
+    },
+    "dialogi.KRA-A3-01.koniec": {
+      "text": "Wyłącznik jest bezpieczny. Radio woła, że Turbo wywrócił się przy bulwarach.",
+      "hash": "a910b620627992edf3d06325bcb6eadf622db0519c728cf0328dad193d3513f3"
+    },
+    "dialogi.KRA-A3-01.start": {
+      "text": "Wyłącznik jest za torami. Podjedź poboczem, a na przejazd wjedź dopiero, gdy można go opuścić.",
+      "hash": "340e2ea59399059dc70ae411dd63d08a6c7edb232638ed681718410df1eada93"
+    },
+    "dialogi.KRA-A3-02.koniec": {
+      "text": "Dzięki, że się zatrzymałeś. Jak odpocznę, pomogę Kazikowi. Na trasę skrótami już się nie pcham.",
+      "hash": "95e1598f0899d338af9b53edbfc304a21d2ea4e23beaa915a88438b57b9bbfea"
+    },
+    "dialogi.KRA-A3-02.start": {
+      "text": "Turbo potrzebuje pomocy. Zatrzymaj się bezpiecznie, ostrzeż innych i wezwij dorosłego.",
+      "hash": "ce154c2370686a2341b5ef25d5650b75d6252368b45406e0febd5e3521344b5e"
+    },
+    "dialogi.KRA-A3-03.koniec": {
+      "text": "Nadajnik ma bezpieczne dojście od alejki. Teraz Kazik odbierze brakujący klucz.",
+      "hash": "894c279ad9e487c172e71014c5b9dc0671a71aea4c989b22f480d7b9a9c1ff34"
+    },
+    "dialogi.KRA-A3-03.start": {
+      "text": "Ktoś zaznaczył wąskie przejście serwisowe. Obejrzyj dozwoloną alejkę przed finałem.",
+      "hash": "778b554fce70d228a013e8b03cf1d73567bdd7f674c529172b367574bd511505"
+    },
+    "dialogi.KRA-A3-04.koniec": {
+      "text": "Wyłącznik i klucz są gotowe. Spotkajmy się na alejce pod Kopcem.",
+      "hash": "836f418f9e2903f4c6b3b38365cf26080541b95329d1f302157ce60bae38a81b"
+    },
+    "dialogi.KRA-A3-04.start": {
+      "text": "Przy STOP-ie zatrzymaj się przed linią nawet wtedy, gdy droga z pierwszeństwem wygląda na pustą.",
+      "hash": "438434eea47941fb0c8f88175cbabe5c16d116228259fcea3e023f6b17d681cb"
+    },
+    "dialogi.KRA-A3-05.koniec": {
+      "text": "Wyłączone! Moja błyskawica od dziś znaczy tylko próbę w miasteczku. DJ-u, możesz zaczynać festyn.",
+      "hash": "ed8249245946303dc69ea1f41559da22440d804783adbd74921a19e6a1c8e958"
+    },
+    "dialogi.KRA-A3-05.start": {
+      "text": "Jedziemy w małej kolumnie. Prowadź ekipę otwartą alejką i sygnalizuj zmianę kierunku.",
+      "hash": "990a4ed30577791f1a7ee70e85f5b49d4ea6c2587e50e69c4b133337d9b869d3"
+    },
+    "dialogi.KRA-B-01.koniec": {
+      "text": "Rynek za Tobą. Lena czeka na Kazimierzu, a od strony Plant jest już otwarte wejście na Wawel.",
+      "hash": "d230de8bda5340256c9c3245b14da6eec0adbe3eebc36255cf9d27b33da23f2a"
+    },
+    "dialogi.KRA-B-01.start": {
+      "text": "Witaj w Krakowie! Przygotuj rower na wieczorny kurs. Jutro przy Sukiennicach pojawi się nasz festyn.",
+      "hash": "7011c8fc8254666defdd9cfe7d2a401adb03f43b3c0acdc8de7cdbba258d6c7d"
+    },
+    "dialogi.KRA-B-02.koniec": {
+      "text": "Dobrze, teraz mamy też bezpieczny dojazd na bulwary.",
+      "hash": "bb2117992c006bb8f7fe7c31392ccb0b005edcfa1ef62d4063dbed9472514037"
+    },
+    "dialogi.KRA-B-02.start": {
+      "text": "Zanim ruszymy po paczki, sprawdź kontrapas i osobne światło dla rowerów przy alei.",
+      "hash": "ddf03c95b4e859bbad40c705dbac5f66c15362a44e86ad49188d5fcd5252fdf5"
+    },
+    "dialogi.KRA-B-03.koniec": {
+      "text": "Tak zaczyna się bezpieczna pomoc. Możesz już zajrzeć na alejkę pod Kopcem.",
+      "hash": "c24fafdf87ac3baddefec3fdddb8fb5551d72695cf0d8ffbd61c4171d881f515"
+    },
+    "dialogi.KRA-B-03.start": {
+      "text": "Na bulwarach spacerują piesi. Zatrzymaj się przy znaczniku i przećwicz, co zrobić, gdy ktoś upadnie.",
+      "hash": "22595f0a6e33ec9d32a2e84357802fc64b1afa604e899aece9a653d64c05ad04"
+    },
     "dialogi.WAW-A1-01.koniec_tekst": {
       "text": "Klucze dotarły. Lena ma dla ciebie kurs na bazar.",
       "hash": "2bdc0fb49bbda8bc9a99fdb3039304eba67d4ba43016525c089074075727a385"
@@ -558,6 +702,10 @@
       "text": "Odwrócony trójkąt oznacza „ustąp pierwszeństwa”.",
       "hash": "47cefa141a7c53b1b42a1df90230e576b74ccbe7a3916fe7bbddc3f9f4076948"
     },
+    "dialogi.reguly.ZNAK-B1": {
+      "text": "Biały znak z czerwoną obwódką zakazuje ruchu także rowerom, chyba że tabliczka wskazuje wyjątek.",
+      "hash": "21eb2361ffbe8c8b53d335620581cdea5bfc9baea4acf0f7e9095e54fd88e5dd"
+    },
     "dialogi.reguly.ZNAK-C13": {
       "text": "Biały rower na niebieskim kole wskazuje drogę dla rowerów.",
       "hash": "35d8396fc73a17cabef12b2c25f3c2ad35f1a2b82aaf497817eb7e3531c52efe"
@@ -646,13 +794,45 @@
       "text": "Zdjęcie trafiło do Albumu Znaków.",
       "hash": "35ebb45b92119c5407f57c31e142e1511b5bdc30c69bb00355d29ba92fd69989"
     },
+    "misje.KRA-A2-05.cel1_pytanie": {
+      "text": "Przed rondem stoi A-7 razem z C-12. Komu ustępujesz przy wjeździe?",
+      "hash": "e080b4560dcb7f191fe1a9808208df821bc30628b8dee05579ad0a386d394879"
+    },
+    "misje.KRA-A2-05.cel1_wyjasnienie": {
+      "text": "Znak A-7 nakazuje ustąpić pojazdom na rondzie.",
+      "hash": "03c27d2a490d95e0f8431b84d15cbcdd84562d7f331652f0d2332c52d992ef86"
+    },
+    "misje.KRA-A3-02.cel1_pytanie": {
+      "text": "Turbo upadł na skraju alejki. Co robisz najpierw?",
+      "hash": "1ff41259f9c9b21f8c4492d3f70e4965a8f74842be34d4315c676c5bcf54600a"
+    },
+    "misje.KRA-A3-02.cel1_wyjasnienie": {
+      "text": "Najpierw zadbaj o swoje bezpieczeństwo i ostrzeż innych.",
+      "hash": "2659e74de19afc666f964b3f633fa26cfa0dd6f3774cca550f6615b67904d235"
+    },
+    "misje.KRA-A3-02.cel2_pytanie": {
+      "text": "Co zrobisz, gdy miejsce jest bezpieczne?",
+      "hash": "f1066f00a85e9e1bcfaca39b3d9b3800a5058f82377ceaa835f4b3565a26cbe4"
+    },
+    "misje.KRA-A3-02.cel2_wyjasnienie": {
+      "text": "Zawołaj dorosłego, sprawdź reakcję i nie przesuwaj poszkodowanego bez potrzeby.",
+      "hash": "a05e9c1aab9ae5457d6d15dc65dac62cc1994d7f39fe9cd8b83947407e4856b6"
+    },
+    "misje.KRA-A3-02.cel3_pytanie": {
+      "text": "Dorosły prosi o wezwanie pomocy. Co mówisz po połączeniu z 112?",
+      "hash": "58566f42bd7b7acc864b743b64af6bdc7ae26797bb506bb3cf37e492cdbd7eac"
+    },
+    "misje.KRA-A3-02.cel3_wyjasnienie": {
+      "text": "Podaj miejsce, zdarzenie i liczbę poszkodowanych. Odpowiadaj na pytania i nie rozłączaj się pierwszy.",
+      "hash": "e022172faf605b09e7483a3239aac2c85fbe8ae90040941c06250db5028c6c8c"
+    },
     "misje.KRA-B-02.pytanie": {
-      "text": "Przed skrzyżowaniem widzisz znak A-7. Komu ustępujesz?",
-      "hash": "f45259a6c4361dd8baec0ace3b2ee41d7e8dcdb90e3be15696d6435295748b31"
+      "text": "Co pozwoliło Ci jechać kontrapasem w przeciwnym kierunku uliczką na Kazimierzu?",
+      "hash": "3875a66034aa13cc8284b671e0c0d7da72409fcdc4b401069b52737ddf1f7627"
     },
     "misje.KRA-B-02.wyjasnienie": {
-      "text": "Znak A-7 oznacza, że musisz ustąpić jadącym drogą z pierwszeństwem.",
-      "hash": "89a311d28650c550f177090cfd304b9236cabe3ea4f9c92d65dbd8ec2a0896b2"
+      "text": "Sprawdź tabliczkę pod B-2. Gdy dopuszcza rowery, na tej ulicy prowadzi Cię oznaczony kontrapas.",
+      "hash": "4f7a069bd0d191185d393f3f13cc1c541f25f9764543f156468e349e9fd830fb"
     },
     "misje.KRA-B-03.pytanie": {
       "text": "Widzisz upadek rowerzysty obok drogi. Co robisz najpierw?",

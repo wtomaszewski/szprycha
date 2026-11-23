@@ -1,72 +1,775 @@
 - id: KRA-B-01
   miasto: krakow
   akt: 0
-  poboczna: true
   tytul: misje.KRA-B-01.tytul
   opis: misje.KRA-B-01.opis
   zleceniodawca: sierzant_ola
   typ: trening
-  start: { poi: krk-rynek-start, kask_zapiety: false, zmrok: true }
+  start:
+    poi: krk-rynek-start
+    kask_zapiety: false
+    zmrok: true
   cele:
-    - { typ: przygotuj_rower, opis: misje.KRA-B-01.start }
-    - { typ: dojedz, poi: krk-sukiennice, opis: misje.KRA-B-01.deptak }
-    - { typ: dojedz, poi: krk-meta-rynek, opis: misje.KRA-B-01.meta }
-  warunki_porazki: [dowolny_blad]
-  reguly_cwiczone: [KASK-01, ZNAK-B9, MAN-08, MSC-04]
+    - typ: przygotuj_rower
+      opis: misje.KRA-B-01.start
+    - typ: dojedz
+      poi: krk-sukiennice
+      opis: misje.KRA-B-01.deptak
+    - typ: dojedz
+      poi: krk-meta-rynek
+      opis: misje.KRA-B-01.meta
+  warunki_porazki:
+    - dowolny_blad
+  reguly_cwiczone:
+    - KASK-01
+    - ZNAK-B9
+    - WYP-04
   par_s: 100
   min_dobre_nawyki: 0
-  nagrody: { zetony: 0, xp: 0 }
-
+  nagrody:
+    zetony: 0
+    xp: 0
+  zdarzenia_wymuszone:
+    - typ: kontrola_swiatel
+      przy: krk-rynek-start
+      regula: WYP-04
+  checkpointy:
+    - krk-sukiennice
+  dialog_start: dialogi.KRA-B-01.start
+  dialog_koniec: dialogi.KRA-B-01.koniec
 - id: KRA-B-02
   miasto: krakow
   akt: 0
-  poboczna: true
   tytul: misje.KRA-B-02.tytul
   opis: misje.KRA-B-02.opis
   zleceniodawca: sierzant_ola
   typ: trening
-  wymagania: { misje_ukonczone: [KRA-B-01] }
-  start: { poi: krk-kazimierz-start }
+  wymagania:
+    misje_ukonczone:
+      - KRA-B-01
+  start:
+    poi: krk-kazimierz-start
   ruch_ai: false
   cele:
-    - { typ: dojedz, poi: krk-kontrapas, opis: misje.KRA-B-02.kontrapas }
+    - typ: dojedz
+      poi: krk-kontrapas
+      opis: misje.KRA-B-02.kontrapas
     - typ: wybor
       poi: krk-przed-przejazdem
       opis: misje.KRA-B-02.postoj
-      regula: PIER-02
+      regula: ZNAK-B2T22
       pytanie: misje.KRA-B-02.pytanie
-      odpowiedzi: [misje.KRA-B-02.odp1, misje.KRA-B-02.odp2]
+      odpowiedzi:
+        - misje.KRA-B-02.odp1
+        - misje.KRA-B-02.odp2
       poprawna: 1
       wyjasnienie: misje.KRA-B-02.wyjasnienie
-    - { typ: dojedz, poi: krk-aleja, opis: misje.KRA-B-02.przejazd }
-  warunki_porazki: [dowolny_blad]
-  reguly_cwiczone: [GDZIE-02, ZNAK-B2T22, SYG-02, PIER-02]
+    - typ: dojedz
+      poi: krk-aleja
+      opis: misje.KRA-B-02.przejazd
+  warunki_porazki:
+    - dowolny_blad
+  reguly_cwiczone:
+    - GDZIE-02
+    - ZNAK-B2T22
+    - SYG-02
   par_s: 110
   min_dobre_nawyki: 0
-  nagrody: { zetony: 0, xp: 0 }
-
+  nagrody:
+    zetony: 0
+    xp: 0
+  zdarzenia_wymuszone:
+    - typ: swiatla_palac
+      przy: krk-przed-przejazdem
+      regula: SYG-02
+  checkpointy:
+    - krk-przed-przejazdem
+  dialog_start: dialogi.KRA-B-02.start
+  dialog_koniec: dialogi.KRA-B-02.koniec
 - id: KRA-B-03
   miasto: krakow
   akt: 0
-  poboczna: true
   tytul: misje.KRA-B-03.tytul
   opis: misje.KRA-B-03.opis
   zleceniodawca: sierzant_ola
   typ: trening
-  wymagania: { misje_ukonczone: [KRA-B-02] }
-  start: { poi: krk-bulwary-start }
+  wymagania:
+    misje_ukonczone:
+      - KRA-B-02
+  start:
+    poi: krk-bulwary-start
   cele:
     - typ: wybor
       poi: krk-pomoc
       opis: misje.KRA-B-03.postoj
       regula: PP-01
       pytanie: misje.KRA-B-03.pytanie
-      odpowiedzi: [misje.KRA-B-03.odp1, misje.KRA-B-03.odp2]
+      odpowiedzi:
+        - misje.KRA-B-03.odp1
+        - misje.KRA-B-03.odp2
       poprawna: 0
       wyjasnienie: misje.KRA-B-03.wyjasnienie
-    - { typ: dojedz, poi: krk-bulwary-meta, opis: misje.KRA-B-03.meta }
-  warunki_porazki: [dowolny_blad]
-  reguly_cwiczone: [GDZIE-11, PP-01]
+    - typ: dojedz
+      poi: krk-bulwary-meta
+      opis: misje.KRA-B-03.meta
+  warunki_porazki:
+    - dowolny_blad
+  reguly_cwiczone:
+    - GDZIE-11
+    - PP-01
   par_s: 85
   min_dobre_nawyki: 0
-  nagrody: { zetony: 0, xp: 0 }
+  nagrody:
+    zetony: 0
+    xp: 0
+  zdarzenia_wymuszone:
+    - typ: po_zdarzeniu
+      przy: krk-pomoc
+      regula: PP-01
+  checkpointy:
+    - krk-pomoc
+  dialog_start: dialogi.KRA-B-03.start
+  dialog_koniec: dialogi.KRA-B-03.koniec
+- id: KRA-A1-01
+  miasto: krakow
+  akt: 1
+  tytul: misje.KRA-A1-01.tytul
+  opis: misje.KRA-A1-01.opis
+  zleceniodawca: lena_mapa
+  typ: dostawa_na_czas
+  wymagania:
+    misje_ukonczone:
+      - KRA-B-03
+  start:
+    poi: krk-targ-zachod
+  ruch_ai: false
+  cele:
+    - typ: odbierz
+      opis: misje.KRA-A1-01.cel1
+      przedmiot: zaproszenia
+    - typ: oddaj
+      poi: krk-targ-wschod
+      opis: misje.KRA-A1-01.cel2
+      przedmiot: zaproszenia
+  limit_s: 160
+  warunki_porazki:
+    - czas_minal
+  reguly_cwiczone:
+    - GDZIE-07
+    - ZNAK-B1
+  zdarzenia_wymuszone:
+    - typ: czytaj_oznakowanie
+      przy: krk-targ-zachod
+      regula: ZNAK-B1
+  skrot:
+    odcinek: krk-skrot-rynek
+  par_s: 100
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 25
+    xp: 330
+  dialog_start: dialogi.KRA-A1-01.start
+  dialog_koniec: dialogi.KRA-A1-01.koniec
+- id: KRA-A1-02
+  miasto: krakow
+  akt: 1
+  tytul: misje.KRA-A1-02.tytul
+  opis: misje.KRA-A1-02.opis
+  zleceniodawca: dj_dzwonek
+  typ: kolekcja
+  wymagania:
+    misje_ukonczone:
+      - KRA-A1-01
+  start:
+    poi: krk-rynek-start
+  ruch_ai: false
+  cele:
+    - typ: zbierz_obwarzanka
+      poi: krk-obwarzanek-sukiennice
+      opis: misje.KRA-A1-02.cel1
+    - typ: zbierz_obwarzanka
+      poi: krk-obwarzanek-mariacki
+      opis: misje.KRA-A1-02.cel2
+    - typ: zbierz_obwarzanka
+      poi: krk-obwarzanek-fontanna
+      opis: misje.KRA-A1-02.cel3
+  warunki_porazki:
+    - dowolny_blad
+  checkpointy:
+    - krk-obwarzanek-mariacki
+  reguly_cwiczone:
+    - ZNAK-B9
+  zdarzenia_wymuszone:
+    - typ: czytaj_oznakowanie
+      przy: krk-rynek-start
+      regula: ZNAK-B9
+  par_s: 110
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 25
+    xp: 330
+  dialog_start: dialogi.KRA-A1-02.start
+  dialog_koniec: dialogi.KRA-A1-02.koniec
+- id: KRA-A1-03
+  miasto: krakow
+  akt: 1
+  tytul: misje.KRA-A1-03.tytul
+  opis: misje.KRA-A1-03.opis
+  zleceniodawca: pan_kazik
+  typ: delikatna_przesylka
+  wymagania:
+    misje_ukonczone:
+      - KRA-A1-02
+  start:
+    poi: krk-wawel-paczka
+  ruch_ai: false
+  cele:
+    - typ: odbierz
+      opis: misje.KRA-A1-03.cel1
+      przedmiot: latarenka
+    - typ: dojedz
+      poi: krk-obwarzanek-smok
+      opis: misje.KRA-A1-03.cel2
+    - typ: oddaj
+      poi: krk-wawel-meta
+      opis: misje.KRA-A1-03.cel3
+      przedmiot: latarenka
+  przesylka:
+    delikatna: true
+  checkpointy:
+    - krk-obwarzanek-smok
+  reguly_cwiczone:
+    - MAN-08
+  zdarzenia_wymuszone:
+    - typ: cwiczenie_trasy
+      przy: krk-wawel-paczka
+      regula: MAN-08
+  par_s: 110
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 25
+    xp: 330
+  dialog_start: dialogi.KRA-A1-03.start
+  dialog_koniec: dialogi.KRA-A1-03.koniec
+- id: KRA-A1-04
+  miasto: krakow
+  akt: 1
+  tytul: misje.KRA-A1-04.tytul
+  opis: misje.KRA-A1-04.opis
+  zleceniodawca: sierzant_ola
+  typ: detektyw_znakow
+  wymagania:
+    misje_ukonczone:
+      - KRA-A1-03
+  start:
+    poi: krk-meta-rynek
+  ruch_ai: false
+  cele:
+    - typ: sfotografuj
+      poi: krk-foto-b9
+      opis: misje.KRA-A1-04.cel1
+      znak: rynek-deptak-B-9-S
+    - typ: sfotografuj
+      poi: krk-foto-d40
+      opis: misje.KRA-A1-04.cel2
+      znak: rynek-dojscie-D-40-S
+  checkpointy:
+    - krk-foto-b9
+  reguly_cwiczone:
+    - ZNAK-B9
+    - GDZIE-07
+  zdarzenia_wymuszone:
+    - typ: czytaj_oznakowanie
+      przy: krk-foto-b9
+      regula: ZNAK-B9
+  par_s: 110
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 25
+    xp: 330
+  dialog_start: dialogi.KRA-A1-04.start
+  dialog_koniec: dialogi.KRA-A1-04.koniec
+- id: KRA-A1-05
+  miasto: krakow
+  akt: 1
+  tytul: misje.KRA-A1-05.tytul
+  opis: misje.KRA-A1-05.opis
+  zleceniodawca: lena_mapa
+  typ: dostawa
+  wymagania:
+    misje_ukonczone:
+      - KRA-A1-04
+  start:
+    poi: krk-meta-rynek
+  ruch_ai: false
+  cele:
+    - typ: odbierz
+      opis: misje.KRA-A1-05.cel1
+      przedmiot: fotografie
+    - typ: dojedz
+      poi: krk-przed-zebra
+      opis: misje.KRA-A1-05.cel2
+    - typ: dojedz
+      poi: krk-za-zebra
+      opis: misje.KRA-A1-05.cel3
+      wymagany_nawyk: GDZIE-06
+    - typ: oddaj
+      poi: krk-wawel-brama
+      opis: misje.KRA-A1-05.cel4
+      przedmiot: fotografie
+  checkpointy:
+    - krk-przed-zebra
+    - krk-za-zebra
+  reguly_cwiczone:
+    - GDZIE-06
+    - MAN-08
+  zdarzenia_wymuszone:
+    - typ: pieszy_na_pasach
+      przy: krk-przed-zebra
+      regula: MAN-08
+  par_s: 110
+  min_dobre_nawyki: 1
+  nagrody:
+    zetony: 25
+    xp: 330
+  dialog_start: dialogi.KRA-A1-05.start
+  dialog_koniec: dialogi.KRA-A1-05.koniec
+- id: KRA-A2-01
+  miasto: krakow
+  akt: 2
+  tytul: misje.KRA-A2-01.tytul
+  opis: misje.KRA-A2-01.opis
+  zleceniodawca: lena_mapa
+  typ: dostawa_na_czas
+  wymagania:
+    misje_ukonczone:
+      - KRA-A1-05
+  start:
+    poi: krk-kazimierz-start
+  ruch_ai: false
+  cele:
+    - typ: odbierz
+      opis: misje.KRA-A2-01.cel1
+      przedmiot: plan
+    - typ: dojedz
+      poi: krk-kontrapas
+      opis: misje.KRA-A2-01.cel2
+    - typ: dojedz
+      poi: krk-przed-przejazdem
+      opis: misje.KRA-A2-01.cel3
+    - typ: oddaj
+      poi: krk-aleja
+      opis: misje.KRA-A2-01.cel4
+      przedmiot: plan
+  limit_s: 160
+  warunki_porazki:
+    - czas_minal
+  checkpointy:
+    - krk-przed-przejazdem
+  reguly_cwiczone:
+    - GDZIE-02
+    - SYG-02
+    - MAN-01
+  zdarzenia_wymuszone:
+    - typ: swiatla_palac
+      przy: krk-przed-przejazdem
+      regula: SYG-02
+  par_s: 100
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 30
+    xp: 440
+  dialog_start: dialogi.KRA-A2-01.start
+  dialog_koniec: dialogi.KRA-A2-01.koniec
+- id: KRA-A2-02
+  miasto: krakow
+  akt: 2
+  tytul: misje.KRA-A2-02.tytul
+  opis: misje.KRA-A2-02.opis
+  zleceniodawca: turbo
+  typ: dostawa_na_czas
+  wymagania:
+    misje_ukonczone:
+      - KRA-A2-01
+  start:
+    poi: krk-kazimierz-boczna
+  ruch_ai: false
+  cele:
+    - typ: odbierz
+      opis: misje.KRA-A2-02.cel1
+      przedmiot: notes
+    - typ: oddaj
+      poi: krk-kazimierz-targ
+      opis: misje.KRA-A2-02.cel2
+      przedmiot: notes
+  limit_s: 160
+  warunki_porazki:
+    - czas_minal
+  reguly_cwiczone:
+    - ZNAK-B1
+    - GDZIE-07
+  zdarzenia_wymuszone:
+    - typ: czytaj_oznakowanie
+      przy: krk-kazimierz-boczna
+      regula: ZNAK-B1
+  skrot:
+    odcinek: krk-skrot-kazimierz
+  par_s: 100
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 30
+    xp: 440
+  dialog_start: dialogi.KRA-A2-02.start
+  dialog_koniec: dialogi.KRA-A2-02.koniec
+- id: KRA-A2-03
+  miasto: krakow
+  akt: 2
+  tytul: misje.KRA-A2-03.tytul
+  opis: misje.KRA-A2-03.opis
+  zleceniodawca: sierzant_ola
+  typ: dostawa
+  wymagania:
+    misje_ukonczone:
+      - KRA-A2-02
+  start:
+    poi: krk-aleja-poludnie
+  ruch_ai: false
+  cele:
+    - typ: odbierz
+      opis: misje.KRA-A2-03.cel1
+      przedmiot: odbiornik
+    - typ: dojedz
+      poi: krk-aleja-przed-s1
+      opis: misje.KRA-A2-03.cel2
+    - typ: dojedz
+      poi: krk-przed-przystankiem
+      opis: misje.KRA-A2-03.cel3
+    - typ: oddaj
+      poi: krk-aleja-polnoc
+      opis: misje.KRA-A2-03.cel4
+      przedmiot: odbiornik
+  checkpointy:
+    - krk-aleja-przed-s1
+  reguly_cwiczone:
+    - SYG-01
+    - MSC-02
+  zdarzenia_wymuszone:
+    - typ: tramwaj_bez_wysepki
+      przy: krk-przed-przystankiem
+      regula: MSC-02
+  par_s: 120
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 30
+    xp: 440
+  dialog_start: dialogi.KRA-A2-03.start
+  dialog_koniec: dialogi.KRA-A2-03.koniec
+- id: KRA-A2-04
+  miasto: krakow
+  akt: 2
+  tytul: misje.KRA-A2-04.tytul
+  opis: misje.KRA-A2-04.opis
+  zleceniodawca: pan_kazik
+  typ: nocny
+  wymagania:
+    misje_ukonczone:
+      - KRA-A2-03
+  start:
+    poi: krk-ddr-start
+    kask_zapiety: false
+    zmrok: true
+  ruch_ai: false
+  cele:
+    - typ: przygotuj_rower
+      opis: misje.KRA-A2-04.cel1
+    - typ: dojedz
+      poi: krk-ddr-latarnia
+      opis: misje.KRA-A2-04.cel2
+    - typ: dojedz
+      poi: krk-ddr-meta
+      opis: misje.KRA-A2-04.cel3
+  checkpointy:
+    - krk-ddr-latarnia
+  reguly_cwiczone:
+    - WYP-04
+    - WYP-05
+    - MSC-04
+  zdarzenia_wymuszone:
+    - typ: kontrola_swiatel
+      przy: krk-ddr-start
+      regula: WYP-04
+  par_s: 110
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 30
+    xp: 440
+  dialog_start: dialogi.KRA-A2-04.start
+  dialog_koniec: dialogi.KRA-A2-04.koniec
+- id: KRA-A2-05
+  miasto: krakow
+  akt: 2
+  tytul: misje.KRA-A2-05.tytul
+  opis: misje.KRA-A2-05.opis
+  zleceniodawca: sierzant_ola
+  typ: detektyw_znakow
+  wymagania:
+    misje_ukonczone:
+      - KRA-A2-04
+  start:
+    poi: krk-rondo-start
+  ruch_ai: false
+  cele:
+    - typ: wybor
+      poi: krk-rondo-postoj
+      opis: misje.KRA-A2-05.cel1
+      pytanie: misje.KRA-A2-05.cel1_pytanie
+      wyjasnienie: misje.KRA-A2-05.cel1_wyjasnienie
+      odpowiedzi:
+        - misje.KRA-A2-05.cel1_odp1
+        - misje.KRA-A2-05.cel1_odp2
+      regula: PIER-08
+      poprawna: 0
+    - typ: sfotografuj
+      poi: krk-rondo-a7
+      opis: misje.KRA-A2-05.cel2
+      znak: rondo-W-W-A-7-W
+  reguly_cwiczone:
+    - PIER-08
+    - ZNAK-A7
+  zdarzenia_wymuszone:
+    - typ: czytaj_oznakowanie
+      przy: krk-rondo-postoj
+      regula: ZNAK-A7
+  par_s: 110
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 30
+    xp: 440
+  dialog_start: dialogi.KRA-A2-05.start
+  dialog_koniec: dialogi.KRA-A2-05.koniec
+- id: KRA-A3-01
+  miasto: krakow
+  akt: 3
+  tytul: misje.KRA-A3-01.tytul
+  opis: misje.KRA-A3-01.opis
+  zleceniodawca: pan_kazik
+  typ: dostawa
+  wymagania:
+    misje_ukonczone:
+      - KRA-A2-05
+  start:
+    poi: krk-kolej-start
+  ruch_ai: false
+  cele:
+    - typ: dojedz
+      poi: krk-kolej-przed
+      opis: misje.KRA-A3-01.cel1
+    - typ: dojedz
+      poi: krk-kolej-za
+      opis: misje.KRA-A3-01.cel2
+    - typ: dojedz
+      poi: krk-kolej-meta
+      opis: misje.KRA-A3-01.cel3
+  checkpointy:
+    - krk-kolej-przed
+    - krk-kolej-za
+  reguly_cwiczone:
+    - GDZIE-03b
+    - MSC-01
+  zdarzenia_wymuszone:
+    - typ: przejazd_kolejowy
+      przy: krk-kolej-przed
+      regula: MSC-01
+  par_s: 110
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 35
+    xp: 550
+  dialog_start: dialogi.KRA-A3-01.start
+  dialog_koniec: dialogi.KRA-A3-01.koniec
+- id: KRA-A3-02
+  miasto: krakow
+  akt: 3
+  tytul: misje.KRA-A3-02.tytul
+  opis: misje.KRA-A3-02.opis
+  zleceniodawca: sierzant_ola
+  typ: pierwsza_pomoc
+  wymagania:
+    misje_ukonczone:
+      - KRA-A3-01
+  start:
+    poi: krk-bulwary-start
+  ruch_ai: false
+  cele:
+    - typ: wybor
+      poi: krk-pomoc
+      opis: misje.KRA-A3-02.cel1
+      pytanie: misje.KRA-A3-02.cel1_pytanie
+      wyjasnienie: misje.KRA-A3-02.cel1_wyjasnienie
+      odpowiedzi:
+        - misje.KRA-A3-02.cel1_odp1
+        - misje.KRA-A3-02.cel1_odp2
+      regula: PP-01
+      poprawna: 0
+    - typ: wybor
+      poi: krk-pomoc
+      opis: misje.KRA-A3-02.cel2
+      pytanie: misje.KRA-A3-02.cel2_pytanie
+      wyjasnienie: misje.KRA-A3-02.cel2_wyjasnienie
+      odpowiedzi:
+        - misje.KRA-A3-02.cel2_odp1
+        - misje.KRA-A3-02.cel2_odp2
+      regula: PP-03
+      poprawna: 1
+    - typ: wybor
+      poi: krk-pomoc
+      opis: misje.KRA-A3-02.cel3
+      pytanie: misje.KRA-A3-02.cel3_pytanie
+      wyjasnienie: misje.KRA-A3-02.cel3_wyjasnienie
+      odpowiedzi:
+        - misje.KRA-A3-02.cel3_odp1
+        - misje.KRA-A3-02.cel3_odp2
+      regula: PP-02
+      poprawna: 0
+    - typ: dojedz
+      poi: krk-bulwary-meta
+      opis: misje.KRA-A3-02.cel4
+  checkpointy:
+    - krk-pomoc
+  reguly_cwiczone:
+    - PP-01
+    - PP-02
+    - PP-03
+  zdarzenia_wymuszone:
+    - typ: po_zdarzeniu
+      przy: krk-pomoc
+      regula: PP-01
+  par_s: 110
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 35
+    xp: 550
+  dialog_start: dialogi.KRA-A3-02.start
+  dialog_koniec: dialogi.KRA-A3-02.koniec
+- id: KRA-A3-03
+  miasto: krakow
+  akt: 3
+  tytul: misje.KRA-A3-03.tytul
+  opis: misje.KRA-A3-03.opis
+  zleceniodawca: lena_mapa
+  typ: dostawa_na_czas
+  wymagania:
+    misje_ukonczone:
+      - KRA-A3-02
+  start:
+    poi: krk-kopiec-start
+  ruch_ai: false
+  cele:
+    - typ: odbierz
+      opis: misje.KRA-A3-03.cel1
+      przedmiot: schemat
+    - typ: oddaj
+      poi: krk-kopiec-meta
+      opis: misje.KRA-A3-03.cel2
+      przedmiot: schemat
+  limit_s: 160
+  warunki_porazki:
+    - czas_minal
+  reguly_cwiczone:
+    - ZNAK-B1
+    - MAN-08
+  zdarzenia_wymuszone:
+    - typ: czytaj_oznakowanie
+      przy: krk-kopiec-start
+      regula: ZNAK-B1
+  skrot:
+    odcinek: krk-skrot-kopiec
+  par_s: 100
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 35
+    xp: 550
+  dialog_start: dialogi.KRA-A3-03.start
+  dialog_koniec: dialogi.KRA-A3-03.koniec
+- id: KRA-A3-04
+  miasto: krakow
+  akt: 3
+  tytul: misje.KRA-A3-04.tytul
+  opis: misje.KRA-A3-04.opis
+  zleceniodawca: sierzant_ola
+  typ: dostawa
+  wymagania:
+    misje_ukonczone:
+      - KRA-A3-03
+  start:
+    poi: krk-stop-start
+  ruch_ai: false
+  cele:
+    - typ: odbierz
+      opis: misje.KRA-A3-04.cel1
+      przedmiot: klucz
+    - typ: dojedz
+      poi: krk-przed-stop
+      opis: misje.KRA-A3-04.cel2
+    - typ: dojedz
+      poi: krk-za-stop
+      opis: misje.KRA-A3-04.cel3
+      wymagany_nawyk: ZNAK-STOP
+  checkpointy:
+    - krk-przed-stop
+  reguly_cwiczone:
+    - ZNAK-STOP
+    - PIER-02
+  zdarzenia_wymuszone:
+    - typ: cwiczenie_stop
+      przy: krk-przed-stop
+      regula: ZNAK-STOP
+  par_s: 110
+  min_dobre_nawyki: 1
+  nagrody:
+    zetony: 35
+    xp: 550
+  dialog_start: dialogi.KRA-A3-04.start
+  dialog_koniec: dialogi.KRA-A3-04.koniec
+- id: KRA-A3-05
+  miasto: krakow
+  akt: 3
+  tytul: misje.KRA-A3-05.tytul
+  opis: misje.KRA-A3-05.opis
+  zleceniodawca: pan_kazik
+  typ: konwoj
+  wymagania:
+    misje_ukonczone:
+      - KRA-A3-04
+  start:
+    poi: krk-kopiec-start
+  ruch_ai: false
+  cele:
+    - typ: odbierz
+      opis: misje.KRA-A3-05.cel1
+      przedmiot: wylacznik
+    - typ: oddaj
+      poi: krk-kopiec-meta
+      opis: misje.KRA-A3-05.cel2
+      przedmiot: wylacznik
+  towarzysze: 3
+  limit_s: 160
+  warunki_porazki:
+    - czas_minal
+  reguly_cwiczone:
+    - MSC-05
+    - ZNAK-B1
+    - MAN-01
+  zdarzenia_wymuszone:
+    - typ: start_kolumny
+      przy: krk-kopiec-start
+      regula: MSC-05
+  skrot:
+    odcinek: krk-skrot-kopiec
+  par_s: 100
+  min_dobre_nawyki: 0
+  nagrody:
+    zetony: 35
+    xp: 550
+  dialog_start: dialogi.KRA-A3-05.start
+  dialog_koniec: dialogi.KRA-A3-05.koniec

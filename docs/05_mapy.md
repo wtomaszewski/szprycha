@@ -167,7 +167,7 @@ Pomiary wykonano w Chromium 156 headless, w rozdzielczości 1280 × 720, z ogran
 
 ## KRAKÓW
 
-Wybierz **Wolna jazda → Kraków** na mapie Polski. Kolaż ma 152 × 112 kafli. Trzy przeprawy łączą brzegi Wisły, a główne połączenia drogowe pozostają dostępne od początku. Generator `npm run map:generate:krakow` odtwarza [krakow.tmj](../maps/krakow.tmj).
+Wybierz **Kampania → Kraków**, aby otrzymać najbliższe nieukończone zlecenie główne. **Wolna jazda → Kraków** zaczyna się przy Rynku. Kolaż ma 152 × 112 kafli. Trzy przeprawy łączą brzegi Wisły, a główne połączenia drogowe pozostają dostępne od początku. Generator `npm run map:generate:krakow` odtwarza [krakow.tmj](../maps/krakow.tmj).
 
 | Dzielnica | Miejsce i praktyka | Dostęp |
 | --- | --- | --- |
@@ -177,22 +177,26 @@ Wybierz **Wolna jazda → Kraków** na mapie Polski. Kolaż ma 152 × 112 kafli.
 | Bulwary Wisły | Czerwona DDR z przejazdami przez drogi przy mostach, oddzielny ciąg wspólny C-13/C-16, schody i ławki. Na ciągu wspólnym piesi mają pierwszeństwo. | Po ćwiczeniu „Kontrapas na Kazimierzu” |
 | Kopiec i park | Zielona sylwetka Kopca z krętą ścieżką i strefą B-9. | Po ćwiczeniu „Pomoc na bulwarach” |
 
-Ćwiczenia uruchamia się na postoju w SzprychaApp. Ukończenie zapisuje się w profilu i otwiera przejścia. Jazda przez Rynek wbrew B-9 przerywa próbę i daje zero punktów. Ćwiczenie z kontrapasem korzysta ze stałych faz S-6 i odbywa się bez ruchu tła. Na bulwarze scenka pierwszej pomocy ćwiczy bezpieczne zatrzymanie i ostrzeżenie innych. Kampania jest opisana w [#106](https://github.com/wtomaszewski/szprycha/issues/106).
+SzprychaApp udostępnia kolejne zlecenia po ukończeniu poprzednich. Szkolenie obejmuje trzy ćwiczenia z mapy #105. Zachowane identyfikatory `KRA-B-01`–`KRA-B-03` pozwalają wczytać wcześniejsze ukończenia i odblokowania dzielnic. Po szkoleniu jest 15 zleceń głównych w trzech aktach. Ukończenie kampanii dodaje Kraków do miast dostępnych w egzaminie po spełnieniu wymagań Licencji Szprychy. [Fabuła](02_fabula.md#kraków--błyskawica-nad-wisłą) · [Lista misji](03_misje.md#kampania--kraków)
+
+Na mapie leży siedem drewnianych obwarzanków. Zsiądź z roweru, podejdź i rozwiąż zagadkę. Zdobycz zapisuje się w profilu. Cztery misje mają oznaczone skróty przez przejścia z B-1 na Rynku, Kazimierzu i pod Kopcem. Jazda skrótem nalicza karę za zakaz i odbiera premię czasową. W pobliżu każdego przejścia można pojechać legalną trasą.
 
 W Wolnej jeździe auta korzystają z połączonego grafu dróg i zatrzymują się przy zielonej fazie dla pieszych i rowerzystów. Piesi chodzą po placach, ciągu wspólnym i przejściu z sygnalizacją. Rowerzysta przejeżdża wzdłuż Wisły. Srebrno-grafitowy tramwaj zatrzymuje się przy przystanku bez wysepki i przepuszcza wysiadającego pasażera. Na zachodzie działają zapory przejazdu kolejowego. Zmrok zapada po 90 sekundach.
 
-`npm run coverage:maps -- --strict` wykrywa 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/krakow.test.ts` sprawdza komplet sytuacji, ćwiczenia i dziesięć minut symulacji dla trzech ziaren. [Raport pokrycia](coverage.md#kraków)
+`npm run coverage:maps -- --strict` wykrywa 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/krakow.test.ts` sprawdza komplet sytuacji, szkolenie i dziesięć minut symulacji dla każdego z trzech ziaren. `npm test -- tests/missions/krakow-campaign.test.ts` sprawdza legalny przejazd przez każdy etap główny, wynik czterech skrótów i trasę egzaminu. [Raport pokrycia](coverage.md#kraków)
 
-Pomiar w Wolnej jeździe wykonano kolejno na tej samej instancji Chromium 156 headless, w WebGL, z pełną grafiką, rozdzielczością 640 × 360 i ograniczeniem CPU 4×. Wyniki z tej instancji służą do porównania map.
+Pomiar po dodaniu kampanii wykonano kolejno na tym samym komputerze w Chromium 156.0.8078.79 headless. Obie próby używały Wolnej jazdy, WebGL, pełnej grafiki, rozdzielczości 640 × 360 i ograniczenia CPU 4×.
 
 | Odcinek | Średnie FPS | p95 klatki |
 | --- | ---: | ---: |
-| Kraków, Rynek | 42,21 | 33,4 ms |
-| Warszawa, Starówka | 43,03 | 33,4 ms |
+| Kraków, Rynek | 58,64 | 16,8 ms |
+| Warszawa, Starówka | 60,00 | 16,7 ms |
 
 Przy uruchomionym Vite użyj `BENCH_VIEWPORT=640x360 BENCH_MAP=krakow npm run benchmark:driving`. Pomiar Warszawy odtwarza `BENCH_VIEWPORT=640x360 BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free npm run benchmark:driving`.
 
-Zrzuty pokazują [wybór miasta](screenshots/105-mapa-polski.webp), [Rynek](screenshots/105-rynek.webp), [Wawel i Smoka](screenshots/105-wawel.webp), [Kazimierz](screenshots/105-kazimierz.webp), [bulwary](screenshots/105-bulwary.webp), [Kopiec](screenshots/105-kopiec.webp) i [tramwaj](screenshots/105-tramwaj.webp).
+Zrzuty kampanii pokazują [wybór Krakowa](screenshots/106-kampania.webp), [obwarzanki przy Sukiennicach](screenshots/106-obwarzanki.webp) i [zagadkę pierwszej znajdźki](screenshots/106-zagadka.webp).
+
+Zrzuty Wolnej jazdy pokazują [wybór miasta](screenshots/105-mapa-polski.webp), [Rynek](screenshots/105-rynek.webp), [Wawel i Smoka](screenshots/105-wawel.webp), [Kazimierz](screenshots/105-kazimierz.webp), [bulwary](screenshots/105-bulwary.webp), [Kopiec](screenshots/105-kopiec.webp) i [tramwaj](screenshots/105-tramwaj.webp).
 
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
 Wzorowane na prawdziwych szkolnych miasteczkach ruchu: małe skrzyżowania każdego typu, mini-rondo, sygnalizacja, przejazd kolejowy z zaporami, znaki z Albumu na tablicach, **plac manewrowy** (ósemka, slalom, tor wąski, pole zatrzymania). Tu: samouczek, plac, quiz w budynku szkoły, egzamin Licencji.

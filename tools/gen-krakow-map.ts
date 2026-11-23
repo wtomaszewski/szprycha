@@ -151,6 +151,9 @@ zone('rynek-dojscie', 1056, 704, 1120, 256, 'living_zone', 'cobble', {
 zone('rynek-polnoc', 1344, 256, 768, 96, 'sidewalk', 'sidewalk');
 zone('rynek-wejscie', 1696, 832, 96, 128, 'sidewalk', 'sidewalk');
 zone('wawel-dziedziniec', 1312, 1312, 864, 416, 'park_path', 'cobble');
+zone('wawel-kostka-pod-murem', 1312, 1632, 864, 96, 'park_path', 'cobble', {
+  surface: 'rough',
+});
 zone('wawel-dojscie', 1664, 1216, 128, 96, 'park_path', 'sidewalk');
 zone('kazimierz-plac', 2720, 1312, 1024, 384, 'living_zone', 'cobble', {
   surface: 'rough',
@@ -183,6 +186,8 @@ zone('ciag-bulwary', 2592, 2208, 1280, 64, 'shared_path', 'sidewalk');
 zone('bulwary-wjazd-w', 2560, 2112, 32, 160, 'shared_path', 'sidewalk');
 zone('bulwary-wjazd-e', 3744, 2112, 128, 96, 'shared_path', 'sidewalk');
 zone('kopiec-alejka', 2624, 2816, 768, 64, 'park_path', 'sidewalk');
+zone('kopiec-alejka-zachod', 2624, 2880, 64, 32, 'park_path', 'sidewalk');
+zone('kopiec-alejka-wschod', 3296, 2880, 96, 32, 'park_path', 'sidewalk');
 zone('kopiec-dojscie', 2816, 2560, 64, 256, 'park_path', 'sidewalk');
 zone('kopiec-zakaz', 3392, 2816, 192, 64, 'no_bikes', 'sidewalk');
 for (const [side, x] of [
@@ -195,6 +200,15 @@ for (const [side, x] of [
 zone('wyjazd-z-podworza', 736, 1088, 96, 192, 'roadway', 'gravel');
 zone('ddr-przejazd-polnoc', 2752, 864, 64, 160, 'bike_path', 'bike');
 zone('ddr-przejazd-poludnie', 2752, 1152, 64, 160, 'bike_path', 'bike');
+
+for (const [id, x, y, w] of [
+  ['krk-skrot-rynek', 1472, 800, 544],
+  ['krk-skrot-kazimierz', 3200, 1504, 384],
+  ['krk-skrot-kopiec', 2688, 2880, 608],
+] as const) {
+  zone(id, x, y, w, 32, 'park_path', 'cobble');
+  sign('B-1', id, 'W', x - 8, y + 28);
+}
 
 sign('B-9', 'rynek-deptak', 'S', 1552, 716);
 sign('B-9', 'kopiec-zakaz', 'W', 3396, 2884);
@@ -504,6 +518,14 @@ const trafficRoutes = [
     { kind: 'cyclist', speed: 3.4 },
   ),
   polyline(
+    'pieszy-targ',
+    [
+      [1432, 1008],
+      [1432, 1168],
+    ],
+    { kind: 'pedestrian', speed: 1.45, event_only: true },
+  ),
+  polyline(
     'pieszy-zebra',
     [
       [2832, 1000],
@@ -600,7 +622,6 @@ objectLayer('driveways', [
 ]);
 objectLayer('spawns', [rect('player', 1440, 768, 0, 0, { heading: 0 })]);
 objectLayer('triggers', []);
-objectLayer('collectibles', []);
 for (const [name, objects] of Object.entries(scenery))
   objectLayer(name, objects);
 await write(

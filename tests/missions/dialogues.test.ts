@@ -41,9 +41,14 @@ describe('dialogue content', () => {
   it('rejects missing dialogue and speaker references, duplicate IDs and introductions for unknown rules', () => {
     const invalid = structuredClone(content);
     invalid.misje[0]!.dialog_koniec = 'dialogi.missing';
-    invalid.dialogi.dialogi[0]!.linie[0]!.postac = 'missing';
-    invalid.dialogi.dialogi.push(invalid.dialogi.dialogi[0]!);
-    invalid.dialogi.zapowiedzi[0]!.regula = 'missing';
+    const opening = invalid.dialogi.dialogi.find(
+      ({ id }) => id === 'dialogi.WAW-T-01.start',
+    )!;
+    opening.linie[0]!.postac = 'missing';
+    invalid.dialogi.dialogi.push(opening);
+    invalid.dialogi.zapowiedzi.find(
+      ({ regula }) => regula === 'KASK-01',
+    )!.regula = 'missing';
     const result = contentSchema.safeParse(invalid);
     expect(result.error?.issues.map(({ message }) => message)).toEqual(
       expect.arrayContaining([

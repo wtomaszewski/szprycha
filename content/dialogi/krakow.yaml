@@ -1,0 +1,184 @@
+dialogi:
+  - id: dialogi.KRA-B-01.start
+    linie:
+      - postac: pan_kazik
+        emocja: happy
+        tekst: dialogi.KRA-B-01.start
+  - id: dialogi.KRA-B-01.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.KRA-B-01.koniec
+  - id: dialogi.KRA-B-02.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.KRA-B-02.start
+  - id: dialogi.KRA-B-02.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: happy
+        tekst: dialogi.KRA-B-02.koniec
+  - id: dialogi.KRA-B-03.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.KRA-B-03.start
+  - id: dialogi.KRA-B-03.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.KRA-B-03.koniec
+  - id: dialogi.KRA-A1-01.start
+    linie:
+      - postac: lena_mapa
+        emocja: happy
+        tekst: dialogi.KRA-A1-01.start
+  - id: dialogi.KRA-A1-01.koniec
+    linie:
+      - postac: turbo
+        emocja: surprised
+        tekst: dialogi.KRA-A1-01.koniec
+  - id: dialogi.KRA-A1-02.start
+    linie:
+      - postac: dj_dzwonek
+        emocja: happy
+        tekst: dialogi.KRA-A1-02.start
+  - id: dialogi.KRA-A1-02.koniec
+    linie:
+      - postac: dj_dzwonek
+        emocja: surprised
+        tekst: dialogi.KRA-A1-02.koniec
+  - id: dialogi.KRA-A1-03.start
+    linie:
+      - postac: pan_kazik
+        emocja: neutral
+        tekst: dialogi.KRA-A1-03.start
+  - id: dialogi.KRA-A1-03.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: surprised
+        tekst: dialogi.KRA-A1-03.koniec
+  - id: dialogi.KRA-A1-04.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.KRA-A1-04.start
+  - id: dialogi.KRA-A1-04.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.KRA-A1-04.koniec
+  - id: dialogi.KRA-A1-05.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.KRA-A1-05.start
+  - id: dialogi.KRA-A1-05.koniec
+    linie:
+      - postac: pan_kazik
+        emocja: worried
+        tekst: dialogi.KRA-A1-05.koniec
+  - id: dialogi.KRA-A2-01.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.KRA-A2-01.start
+  - id: dialogi.KRA-A2-01.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: surprised
+        tekst: dialogi.KRA-A2-01.koniec
+  - id: dialogi.KRA-A2-02.start
+    linie:
+      - postac: turbo
+        emocja: worried
+        tekst: dialogi.KRA-A2-02.start
+  - id: dialogi.KRA-A2-02.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: proud
+        tekst: dialogi.KRA-A2-02.koniec
+  - id: dialogi.KRA-A2-03.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.KRA-A2-03.start
+  - id: dialogi.KRA-A2-03.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: surprised
+        tekst: dialogi.KRA-A2-03.koniec
+  - id: dialogi.KRA-A2-04.start
+    linie:
+      - postac: pan_kazik
+        emocja: neutral
+        tekst: dialogi.KRA-A2-04.start
+  - id: dialogi.KRA-A2-04.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: happy
+        tekst: dialogi.KRA-A2-04.koniec
+  - id: dialogi.KRA-A2-05.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.KRA-A2-05.start
+  - id: dialogi.KRA-A2-05.koniec
+    linie:
+      - postac: inzynier_zawila
+        emocja: worried
+        tekst: dialogi.KRA-A2-05.koniec
+  - id: dialogi.KRA-A3-01.start
+    linie:
+      - postac: pan_kazik
+        emocja: neutral
+        tekst: dialogi.KRA-A3-01.start
+  - id: dialogi.KRA-A3-01.koniec
+    linie:
+      - postac: pan_kazik
+        emocja: proud
+        tekst: dialogi.KRA-A3-01.koniec
+  - id: dialogi.KRA-A3-02.start
+    linie:
+      - postac: sierzant_ola
+        emocja: worried
+        tekst: dialogi.KRA-A3-02.start
+  - id: dialogi.KRA-A3-02.koniec
+    linie:
+      - postac: turbo
+        emocja: neutral
+        tekst: dialogi.KRA-A3-02.koniec
+  - id: dialogi.KRA-A3-03.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.KRA-A3-03.start
+  - id: dialogi.KRA-A3-03.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: proud
+        tekst: dialogi.KRA-A3-03.koniec
+  - id: dialogi.KRA-A3-04.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.KRA-A3-04.start
+  - id: dialogi.KRA-A3-04.koniec
+    linie:
+      - postac: pan_kazik
+        emocja: happy
+        tekst: dialogi.KRA-A3-04.koniec
+  - id: dialogi.KRA-A3-05.start
+    linie:
+      - postac: pan_kazik
+        emocja: neutral
+        tekst: dialogi.KRA-A3-05.start
+  - id: dialogi.KRA-A3-05.koniec
+    linie:
+      - postac: inzynier_zawila
+        emocja: proud
+        tekst: dialogi.KRA-A3-05.koniec
+
+zapowiedzi:
+  - { regula: ZNAK-B1, emocja: neutral, tekst: dialogi.reguly.ZNAK-B1 }

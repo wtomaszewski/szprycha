@@ -38,7 +38,7 @@ export class MainMenu extends Scene {
     const rankings = rankingsPanel(
       progress.rankings,
       gameContent.misje,
-      progress.selectedCity,
+      progress.selectedCity === 'krakow' ? 'warszawa' : progress.selectedCity,
     );
     const parents = parentZone(
       progress,
