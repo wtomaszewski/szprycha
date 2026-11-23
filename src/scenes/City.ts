@@ -28,12 +28,14 @@ import { showBreakReminder } from '../ui/BreakReminder';
 import { verdictHaptics } from '../platform/haptics';
 import { Scene, GameObjects } from 'phaser';
 import { drawMapDecorations } from '../render/MapDecorations';
+import type { TownHallGoats } from '../render/TownHallGoats';
 import { DistrictGates } from '../render/DistrictGates';
 import trainingUrl from '../../maps/miasteczko.tmj?url';
 import warsawUrl from '../../maps/warszawa.tmj?url';
 import wroclawUrl from '../../maps/wroclaw.tmj?url';
 import krakowUrl from '../../maps/krakow.tmj?url';
 import gdanskUrl from '../../maps/gdansk.tmj?url';
+import poznanUrl from '../../maps/poznan.tmj?url';
 import wiesUrl from '../../maps/wies.tmj?url';
 import blockWallsUrl from '../../assets/generated/walls.png?url';
 import blockRoofsUrl from '../../assets/generated/roofs.png?url';
@@ -147,6 +149,7 @@ const mapUrls = {
   wroclaw: wroclawUrl,
   krakow: krakowUrl,
   gdansk: gdanskUrl,
+  poznan: poznanUrl,
   wies: wiesUrl,
 };
 type MapId = keyof typeof mapUrls;
@@ -199,6 +202,7 @@ export class City extends Scene {
   private intersectionManager!: IntersectionManager;
   private traffic!: TrafficParticipants;
   private citySound!: CitySound;
+  private townHallGoats?: TownHallGoats;
   private sirenArt!: GameObjects.Graphics;
   private readonly activeAgents: AgentState[] = [];
   private agents!: readonly (RoadTrafficAgent | RoutedAgent)[];
@@ -451,6 +455,7 @@ export class City extends Scene {
         : (mapId === 'wroclaw' ||
               mapId === 'krakow' ||
               mapId === 'gdansk' ||
+              mapId === 'poznan' ||
               mapId === 'wies') &&
             !definition
           ? 'ambient'
@@ -473,6 +478,8 @@ export class City extends Scene {
     const tilemap = this.make.tilemap({ key: mapId });
     const scenery = drawMapDecorations(this, tilemap, mapId, definition?.id);
     this.citySound = new CitySound(this.world, scenery.peacocks);
+    this.townHallGoats = scenery.townHallGoats;
+    this.townHallGoats?.draw(0, this.reducedEffects);
     this.worldWidth = tilemap.widthInPixels;
     this.worldHeight = tilemap.heightInPixels;
     this.road = new TrainingRoad(
@@ -647,9 +654,11 @@ export class City extends Scene {
             ? ui.driving.krakowTitle
             : mapId === 'gdansk'
               ? ui.driving.gdanskTitle
-              : mapId === 'wies'
-                ? ui.driving.wiesTitle
-                : ui.driving.title;
+              : mapId === 'poznan'
+                ? ui.cityPicker.poznan
+                : mapId === 'wies'
+                  ? ui.driving.wiesTitle
+                  : ui.driving.title;
     this.graphics.lite = this.lowQuality();
     this.controls = new DrivingControls(
       tutorial ? ui.tutorial.title : examRide ? ui.exam.ride : areaTitle,
@@ -863,6 +872,7 @@ export class City extends Scene {
                 this.freeRide &&
                 (this.city === 'krakow' ||
                   this.city === 'gdansk' ||
+                  this.city === 'poznan' ||
                   this.city === 'wies')
                   ? 'freeRide'
                   : 'campaign',
@@ -935,6 +945,7 @@ export class City extends Scene {
       this.stopListeningForVerdicts?.();
       this.stopListeningForVerdicts = undefined;
       delete this.game.canvas.dataset.lighting;
+      delete this.game.canvas.dataset.townHall;
       delete this.game.canvas.dataset.weather;
       this.renderEnvironment.time = 'day';
       audio.leave();
@@ -1327,10 +1338,7 @@ export class City extends Scene {
           kind !== 'good' && !Object.hasOwn(evidence, 'answer'),
       );
       const daily =
-        order &&
-        this.city !== 'krakow' &&
-        this.city !== 'gdansk' &&
-        this.city !== 'wies'
+        order && (this.city === 'warszawa' || this.city === 'wroclaw')
           ? progress.completeDailyOrder(
               this.city,
               result.points,
@@ -2474,6 +2482,11 @@ export class City extends Scene {
     );
     cullMapChunks(this.mapChunks, camera);
     this.collectibles?.update(camera);
+    if (this.townHallGoats) {
+      const phase = this.townHallGoats.draw(at, reduced);
+      if (this.game.canvas.dataset.townHall !== phase)
+        this.game.canvas.dataset.townHall = phase;
+    }
     this.blocks.update(
       camera,
       this.controls.lite,

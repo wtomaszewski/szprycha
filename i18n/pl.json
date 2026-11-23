@@ -620,6 +620,55 @@
       "wyjasnienie": "B-1 zakazuje ruchu także rowerom. Zostań na dozwolonej trasie.",
       "meta": "Wyjedź z gospodarstwa, skręć w prawo w drogę gminną i oddaj mapę przy znaczniku."
     },
+    "POZ-B-01": {
+      "tytul": "Przez Stary Rynek",
+      "opis": "Przygotuj rower i przejedź przez strefę zamieszkania przy Ratuszu.",
+      "start": "Zapnij kask przed ruszeniem.",
+      "zasady": "Zatrzymaj się przy pierwszym znaczniku.",
+      "pytanie": "Kto ma pierwszeństwo w strefie zamieszkania?",
+      "odp1": "Piesi na całej szerokości drogi.",
+      "odp2": "Rowerzysta jadący jej środkiem.",
+      "wyjasnienie": "Ustępuj pieszym na całej szerokości drogi i jedź najwyżej 20 km/h.",
+      "obejscie": "Omiń pasaż ze znakiem zakazu ruchu, jadąc przez plac.",
+      "meta": "Dojedź do kolorowych domków."
+    },
+    "POZ-B-02": {
+      "tytul": "Przed autami",
+      "opis": "Wjedź pasem do śluzy rowerowej i przejedź skrzyżowanie zgodnie ze światłami.",
+      "postoj": "Wjedź do śluzy i zatrzymaj się przed jej przednią linią.",
+      "pytanie": "Stoisz w śluzie, a sygnalizator pokazuje czerwone. Kiedy ruszasz?",
+      "odp1": "Teraz, bo stoję już przed samochodami.",
+      "odp2": "Kiedy sygnał pozwoli mi jechać.",
+      "wyjasnienie": "Poczekaj na zielone, a po wyjeździe ze śluzy zajmij właściwe miejsce na jezdni.",
+      "meta": "Na zielonym przejedź prosto i trzymaj się prawej strony."
+    },
+    "POZ-B-03": {
+      "tytul": "Zebra na wysepkę",
+      "opis": "Zwolnij i ustąp pieszej przechodzącej na peron tramwajowy.",
+      "postoj": "Zatrzymaj się przed zebrą i obserwuj dojście na wysepkę.",
+      "pytanie": "Piesza wchodzi na zebrę, żeby dojść na wysepkę. Co robisz?",
+      "odp1": "Ustępuję jej i czekam, aż przejdzie przez mój pas.",
+      "odp2": "Jadę dalej, bo tramwaj zatrzymuje się przy wysepce.",
+      "wyjasnienie": "Przed zebrą do wysepki zwolnij i ustąp pieszym wchodzącym lub już przechodzącym.",
+      "meta": "Przepuść pieszą przed zebrą i dojedź wzdłuż peronu."
+    },
+    "POZ-B-04": {
+      "tytul": "Przez Wartę o zmroku",
+      "opis": "Włącz światła, dojedź na Ostrów Tumski i poćwicz pierwszą pomoc.",
+      "start": "Włącz obie lampki, zanim ruszysz.",
+      "zakret": "Zatrzymaj się przed skrętem na most.",
+      "pytanie_zakret": "Chcesz skręcić w prawo na most. Kiedy pokazujesz kierunek ręką?",
+      "zakret_odp1": "Z wyprzedzeniem, przed skrętem.",
+      "zakret_odp2": "Dopiero po zakończeniu skrętu.",
+      "zakret_wyjasnienie": "Pokaż kierunek zawczasu, a gdy skończysz sygnalizować, połóż obie dłonie na kierownicy.",
+      "most": "Jedź bulwarem, a potem wjedź na czerwony most.",
+      "pomoc": "Zatrzymaj się po drugiej stronie rzeki.",
+      "pytanie": "Widzisz, że ktoś upadł na drodze. Co sprawdzasz najpierw?",
+      "odp1": "Czy ma przy sobie telefon.",
+      "odp2": "Czy mogę bezpiecznie podejść.",
+      "wyjasnienie": "Najpierw zadbaj o bezpieczeństwo swoje i miejsca zdarzenia.",
+      "meta": "Dojedź do końca wspólnej drogi przy katedrze."
+    },
     "WIE-B-01": {
       "tytul": "Pobocze i bezpieczny odstęp",
       "opis": "Przećwicz jazdę prawym poboczem i zostaw miejsce nadchodzącym pieszym.",
@@ -1706,6 +1755,10 @@
     "readMore": "Przewiń tekst"
   },
   "dialogi": {
+    "poznan_zapowiedzi": {
+      "GDZIE-13": "W śluzie zaczekaj przed autami i rusz dopiero, gdy sygnał na to pozwoli.",
+      "PIER-10": "Przy wysepce obserwuj zebrę i ustąp pieszym, którzy wchodzą na nią lub już po niej idą."
+    },
     "WIE-A1-01": {
       "start": "Przy szkole czekają na nasze szyszki do zajęć. Jedź poboczem, aż zobaczysz bramkę.",
       "koniec": "Dzięki! Lena znalazła na dziedzińcu trzy szyszki z zagadkami."

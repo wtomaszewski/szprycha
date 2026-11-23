@@ -196,17 +196,23 @@ export class TrainingRoad {
           pedestrianPictogram(signs, x, y - 6, 0xf4f4f4);
           bicyclePictogram(signs, x, y + 7, 0xf4f4f4, 0.65);
         }
-      } else if (sign.code === 'D-17' || sign.code === 'D-6a') {
+      } else if (
+        sign.code === 'D-17' ||
+        sign.code === 'D-6a' ||
+        sign.code === 'D-6'
+      ) {
         signs
           .fillStyle(0xf4f4f4)
           .fillRect(x - 14, y - 13, 28, 26)
           .fillStyle(0x3b5dc9)
           .fillRect(x - 12, y - 11, 24, 22);
-        if (sign.code === 'D-6a') {
+        if (sign.code !== 'D-17') {
           signs
             .fillStyle(0xf4f4f4)
             .fillTriangle(x, y - 10, x - 10, y + 9, x + 10, y + 9);
-          bicyclePictogram(signs, x, y + 3, 0x1a1c2c, 0.57);
+          if (sign.code === 'D-6a')
+            bicyclePictogram(signs, x, y + 3, 0x1a1c2c, 0.57);
+          else pedestrianPictogram(signs, x, y + 3, 0x1a1c2c);
         } else {
           signs
             .fillStyle(0xf4f4f4)

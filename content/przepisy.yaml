@@ -212,6 +212,16 @@ przepisy:
     waga_bledu: null
     feedback: "Idź lewą stroną drogi, żeby widzieć nadjeżdżające pojazdy."
 
+  - id: GDZIE-13
+    modul: M02
+    tytul: Śluza dla rowerów
+    dla_dziecka: "W śluzie możesz czekać przed autami. Gdy możesz legalnie ruszyć, opuść śluzę i zajmij właściwe miejsce na jezdni."
+    podstawa: "PoRD art. 2 pkt 5b i art. 33 ust. 1a (Dz.U. 2024 poz. 1251 ze zm.)"
+    weryfikacja: false
+    detektor: quiz-only
+    waga_bledu: minor
+    feedback: "W śluzie czekaj przed linią, a po ruszeniu zajmij właściwe miejsce na jezdni."
+
   # ───────────── M03 — Znaki i sygnały ─────────────
   - id: SYG-03
     modul: M03
@@ -418,6 +428,17 @@ przepisy:
     feedback: "Gdy tory przecinają Twój tor jazdy, zwolnij i obserwuj tramwaj, znaki oraz światła."
 
   # ───────────── M05 — Manewry ─────────────
+  - id: PIER-10
+    modul: M04
+    tytul: Przejście do wysepki tramwajowej
+    dla_dziecka: "Zwolnij przed zebrą i ustąp pieszym, którzy na nią wchodzą lub już po niej idą, także przy wysepce tramwajowej."
+    podstawa: "PoRD art. 13 ust. 7, art. 26 ust. 1 i 6 (Dz.U. 2024 poz. 1251 ze zm.)"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: major
+    dobry_nawyk: "Ustąpienie pieszemu na przejściu prowadzącym na wysepkę"
+    feedback: "Przed zebrą do wysepki zwolnij i przepuść wchodzących oraz przechodzących pieszych."
+
   - id: MAN-01
     modul: M05
     tytul: Sygnalizuj ręką

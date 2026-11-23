@@ -1,0 +1,65 @@
+map: maps/miasteczko.tmj
+scenarios:
+  - name: PIER-10 rowerzysta czeka przed zebrą, aż piesza przejdzie
+    duration: 1.6
+    interpolate: false
+    objects: &platform
+      crossings:
+        - name: zebra-wysepka
+          x: 200
+          y: 300
+          width: 100
+          height: 32
+          properties: { kind: pedestrian, axis: x, tramPlatform: true }
+    player: { x: 250, y: 285, heading: 90, speed: 0 }
+    agents:
+      - {
+          id: piesza,
+          kind: pedestrian,
+          x: 290,
+          y: 315,
+          heading: 180,
+          speed: 1.4,
+          crossingId: zebra-wysepka,
+          leaveAt: 1,
+        }
+    inputs:
+      - { t: 1.1, x: 250, y: 307, speed: 2 }
+      - { t: 1.5, x: 250, y: 330, speed: 2 }
+    expect: { PIER-10: [good] }
+
+  - name: PIER-10 rowerzysta wjeżdża przed pieszą wchodzącą na zebrę
+    objects: *platform
+    player: { x: 250, y: 285, heading: 90, speed: 3 }
+    agents:
+      - {
+          id: piesza,
+          kind: pedestrian,
+          x: 303,
+          y: 315,
+          heading: 180,
+          speed: 1.4,
+          crossingId: zebra-wysepka,
+        }
+    inputs:
+      - { t: 0.4, x: 250, y: 307 }
+      - { t: 0.9, x: 250, y: 330 }
+    expect: { PIER-10: [major] }
+
+  - name: PIER-10 piesza zeszła z toru jazdy roweru albo przejście jest puste
+    objects: *platform
+    player: { x: 250, y: 285, heading: 90, speed: 2 }
+    agents:
+      - {
+          id: piesza,
+          kind: pedestrian,
+          x: 212,
+          y: 316,
+          heading: 180,
+          speed: 1.4,
+          crossingId: zebra-wysepka,
+        }
+    inputs:
+      - { t: 0.4, x: 250, y: 307 }
+      - { t: 0.9, x: 250, y: 330 }
+    expect: { PIER-10: [] }

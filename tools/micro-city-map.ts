@@ -27,6 +27,7 @@ type JunctionNames = {
   westSouth: string;
   centralSouth: string;
   eastSouth: string;
+  westSignalStopOffset?: number;
 };
 
 export function microCityMap(names: JunctionNames) {
@@ -204,6 +205,10 @@ export function microCityMap(names: JunctionNames) {
         width_px: 64,
         speedLimit: j.kind === 'roundabout' ? 18 : 30,
         ...(from && { from }),
+        ...(id === `${names.avenue}-W` &&
+          names.westSignalStopOffset && {
+            stopOffset_px: names.westSignalStopOffset,
+          }),
         ...(id === `${names.westSouth}-S` && { parallelShoulder: 'pobocze-e' }),
       }),
     );

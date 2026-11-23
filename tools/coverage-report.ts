@@ -52,6 +52,7 @@ const mapNames: Readonly<Partial<Record<string, string>>> = {
   krakow: 'Kraków',
   gdansk: 'Gdańsk',
   wies: 'Wieś i las',
+  poznan: 'Poznań',
   miasteczko: 'Miasteczko',
 };
 const hub = 'miasteczko';

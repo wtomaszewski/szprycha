@@ -360,7 +360,7 @@ export class MissionProgress {
     this.store.change((profile) => {
       if (freeRide && city !== 'warszawa' && city !== 'wroclaw')
         profile.freeRideCity = city;
-      else {
+      else if (city !== 'poznan') {
         if (freeRide) delete profile.freeRideCity;
         profile.selectedCity = city;
       }

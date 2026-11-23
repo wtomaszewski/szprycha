@@ -29,6 +29,7 @@ Testy obok scenariuszy sprawdzają tabelę deduplikacji, dane mapy, teksty werdy
 | PIER-07 | Zjazd w prawo, blokowanie z hamowaniem ochronnym, przejazd bez aktywnych sygnałów |
 | PIER-08 | Ustąpienie na wlocie z A-7, wymuszenie, wlot bez A-7 |
 | PIER-09 | Przepuszczenie tramwaju, hamowanie ochronne, czerwone światło tramwaju |
+| PIER-10 | Ustąpienie przed zebrą do wysepki, wjazd przed pieszą, przejazd po zwolnieniu toru jazdy |
 | MAN-03 | Spojrzenie na granicy 3 s, brak spojrzenia z pojazdem w martwym polu i bez niego |
 | MAN-06 | Odstęp powyżej i dokładnie 1 m, postój przed autem |
 | MAN-07 | Spojrzenie przed ruszeniem, martwe pole, krótki postój |

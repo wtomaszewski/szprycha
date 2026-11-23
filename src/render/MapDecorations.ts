@@ -1,6 +1,7 @@
 import type { Scene, Tilemaps } from 'phaser';
 import { cacheMapGraphics } from './MapGround';
 import type { Neon } from './NightLighting';
+import { TownHallGoats } from './TownHallGoats';
 
 export function drawMapDecorations(
   scene: Scene,
@@ -9,6 +10,7 @@ export function drawMapDecorations(
   missionId?: string,
 ) {
   const neons: Neon[] = [];
+  let townHallGoats: TownHallGoats | undefined;
   const peacocks: { x: number; y: number }[] = [];
   const scenery = scene.add.graphics().setDepth(4);
   const centers: { x: number; y: number }[] = [];
@@ -26,6 +28,10 @@ export function drawMapDecorations(
       (p: { name: string }) => p.name === 'color',
     )?.value;
     const color = typeof tint === 'number' ? tint : undefined;
+    if (kind === 'poznan-koziolki') {
+      townHallGoats = new TownHallGoats(scene, x, y);
+      continue;
+    }
     if (kind === 'neon') {
       const cycling = properties?.some(
         (p: { name: string; value: unknown }) =>
@@ -195,6 +201,18 @@ export function drawMapDecorations(
           .lineStyle(2, 0x487b62)
           .lineBetween(x + 8, y + 7, x + 12, y - 25)
           .lineBetween(x + 8, y - 23, x + 15, y - 23);
+    } else if (kind === 'poznan-peron') {
+      scenery
+        .fillStyle(0x333c57)
+        .fillRect(x, y, width, height)
+        .fillStyle(0xc0cbdc)
+        .fillRect(x + 2, y, width - 4, height - 2)
+        .fillStyle(0xf0dca8)
+        .fillRect(x + 3, y, 2, height);
+      for (let dy = 8; dy < height; dy += 16) {
+        scenery.fillStyle(0x94b0c2).fillRect(x + 7, y + dy, width - 10, 1);
+        centers.push({ x, y: y + dy });
+      }
     } else if (kind === 'tram-platform') {
       scenery
         .fillStyle(0x333c57)
@@ -316,6 +334,7 @@ export function drawMapDecorations(
   return {
     neons,
     peacocks,
+    townHallGoats,
     chunks: cacheMapGraphics(
       scene,
       scenery,

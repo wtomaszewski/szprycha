@@ -21,6 +21,7 @@ import { TramStopDetector } from './detectors/MSC-02';
 import { DrivewayDetector } from './detectors/MSC-03';
 import { VisibilityDetector } from './detectors/MSC-04';
 import { TurningCrossingDetector } from './detectors/PIER-04';
+import { PlatformCrossingDetector } from './detectors/PIER-10';
 import { BikeCrossingDetector } from './detectors/PIER-05';
 import { EmergencyYieldDetector } from './detectors/PIER-07';
 import { IntersectionManager } from './priority/IntersectionManager';
@@ -37,7 +38,7 @@ import {
   type RiderState,
   type Verdict,
 } from './types';
-import { sideVector, type WorldModel } from './world/WorldModel';
+import { sideVector, type Crossing, type WorldModel } from './world/WorldModel';
 import { ZoneTracker } from './world/ZoneTracker';
 
 const EXIT_TICKS = 0.25 * TICKS_PER_SECOND;
@@ -58,6 +59,8 @@ export class RuleEngine {
   private readonly phone = new PhoneDetector();
   private readonly railway: RailwayDetector;
   private readonly tramStop = new TramStopDetector();
+  private readonly platformCrossing = new PlatformCrossingDetector();
+  private readonly platformCrossings: Crossing[];
   private readonly driveway = new DrivewayDetector();
   private praisedVest = false;
   private readonly visibility = new VisibilityDetector();
@@ -117,6 +120,9 @@ export class RuleEngine {
     });
     this.passing = new PassingMonitor(world);
     this.railway = new RailwayDetector(world);
+    this.platformCrossings = world.crossings.filter(
+      ({ tramPlatform }) => tramPlatform,
+    );
     this.zones = new ZoneTracker(world);
     this.junction = new IntersectionVisit(world, settings.silnik, manager);
     this.maneuver = new ManeuverDetector(
@@ -304,6 +310,15 @@ export class RuleEngine {
     this.emit(this.emergency.evaluate(rider, agents, at));
     this.emit(this.railway.evaluate(rider, agents, at, env));
     this.emit(this.tramStop.evaluate(rider, agents, at, tramStops));
+    if (this.platformCrossings.length)
+      this.emit(
+        this.platformCrossing.evaluate(
+          rider,
+          agents,
+          at,
+          this.platformCrossings,
+        ),
+      );
     this.emit(
       this.parked.evaluate(
         rider,

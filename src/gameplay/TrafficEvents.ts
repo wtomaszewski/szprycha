@@ -55,7 +55,7 @@ export const eventRules = {
   rowerzysta_na_moscie: ['MAN-04'],
   polecenie_oli: ['SYG-03'],
   pojazd_uprzywilejowany: ['PIER-07'],
-  pieszy_na_pasach: ['PIER-04', 'MAN-08'],
+  pieszy_na_pasach: ['PIER-04', 'PIER-10', 'MAN-08'],
   pilka_na_jezdni: ['MAN-08'],
   drzwi_auta: ['MAN-06'],
   tramwaj_bez_wysepki: ['MSC-02'],

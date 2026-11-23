@@ -23,7 +23,8 @@ if (
   requestedMap !== 'wroclaw' &&
   requestedMap !== 'krakow' &&
   requestedMap !== 'gdansk' &&
-  requestedMap !== 'wies'
+  requestedMap !== 'wies' &&
+  requestedMap !== 'poznan'
 )
   throw new Error(`Unknown benchmark map: ${requestedMap}`);
 const map = requestedMap;
@@ -74,16 +75,22 @@ const ruralSpawns: typeof warsawSpawns = {
   gminna: { x: 1208, y: 866, heading: -Math.PI / 2 },
   pole: { x: 3879, y: 512, heading: -Math.PI / 2 },
 };
+const poznanSpawns: typeof warsawSpawns = {
+  rynek: { x: 1380, y: 862, heading: 0 },
+  bulwar: { x: 1280, y: 1610, heading: 0 },
+};
 const freeSpawns =
-  map === 'wies'
-    ? ruralSpawns
-    : map === 'gdansk'
-      ? gdanskSpawns
-      : map === 'krakow'
-        ? krakowSpawns
-        : wroclaw
-          ? wroclawSpawns
-          : warsawSpawns;
+  map === 'poznan'
+    ? poznanSpawns
+    : map === 'wies'
+      ? ruralSpawns
+      : map === 'gdansk'
+        ? gdanskSpawns
+        : map === 'krakow'
+          ? krakowSpawns
+          : wroclaw
+            ? wroclawSpawns
+            : warsawSpawns;
 if (
   (map === 'miasteczko' && process.env.BENCH_FRAGMENT && !signals) ||
   (map !== 'miasteczko' &&

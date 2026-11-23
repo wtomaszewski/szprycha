@@ -16,6 +16,11 @@ Stan na 23.11.2026.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Poznań 1/2 — mapa (#137)
+
+- W Wolnej jeździe można wybrać Poznań ze Starym Rynkiem, południowym pokazem koziołków, Ostrowem Tumskim, bulwarem i dawnym browarem.
+- SzprychaApp udostępnia cztery ćwiczenia `POZ-B-01`–`POZ-B-04`. Raport ścisły obejmuje 13/13 sytuacji i wszystkie moduły M01–M07. [Mapa, pomiary i zrzuty](docs/05_mapy.md#poznań)
+
 ## Wieś i las 2/2 — kampania (#128)
 
 - „Mapa bez skrótów” zachowuje cztery szkolenia i dodaje sześć misji w trzech aktach, cztery znajdźki z zagadkami i wiejski przejazd kontrolny.

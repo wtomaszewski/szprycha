@@ -134,6 +134,16 @@ Tramwaje Krakowa i Gdańska mają srebrne pasy wzdłuż grafitowej bryły, ciemn
 - **Szyszki**. Autorski sprite 16 × 16 ma zwężony czubek, brązowy obrys i jasne łuski ułożone na przemian. Powstaje w `src/render/CityCollectibles.ts`.
 - **Scenka przy polu**. Rower leży przy skraju drogi gruntowej, a obok siedzi rowerzysta w niebieskim kasku. Generator mapy przypisuje scenkę do misji `WIE-A3-01`.
 
+### Poznań
+
+| Landmark | Sylwetka i paleta |
+| --- | --- |
+| Ratusz i koziołki | Jasna, trójkondygnacyjna optycznie fasada z ciemnymi arkadami, piętrząca się wieża z miedzianym hełmem, mały zegar i para jasnych koziołków na balkonie. Symetryczne pikselowe sylwetki trzykrotnie zbliżają głowy w południe czasu gry. |
+| Domki budnicze | Wąskie podcienia pod szeregami spadzistych dachów, na przemian złocista, różowa, miętowa i niebieska elewacja. |
+| Ostrów Tumski | Katedralna ceglana nawa z dwiema wieżami, miedziane dachy wież i czerwony most kratownicowy nad Wartą. |
+| Dawny browar | Warzelnia, niższy magazyn i wysoki, wąski komin z ciemnoczerwonej cegły. Ściany bez napisów, reklam i oznaczeń handlowych. |
+| Bulwar Warty | Jasne nabrzeże ze schodkami, ławkami, drzewami i odcinkiem czerwonej drogi dla rowerów na przeciwległym brzegu. |
+
 ## 7. Kafelki (tileset minimum)
 Asfalt (zwykły, łatany, mokry), linie (ciągła, przerywana, P-10 zebra, P-11 przejazd rowerowy — czerwony/kratka, P-12, P-13 trójkąty, P-23 symbol roweru, strzałki), chodnik (płyty), kostka, kocie łby, krawężniki (z przejściami obniżonymi), DDR (czerwona nawierzchnia), trawa, żwir, pobocze, tory tramwajowe (w jezdni i na zieleni), tory kolejowe, zapory (animowane), woda (animowana 4 klatki), nabrzeże, schodki, piasek plaży miejskiej, liście jesienią, śnieg (wariant zimowy).
 

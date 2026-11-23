@@ -734,6 +734,14 @@
       "text": "Przed linią stop zatrzymaj się całkowicie i ustąp pierwszeństwa.",
       "hash": "54047d2f5a5067a18ca4dc92009b476bc5f95aec2f73e60ee2859b036f57e75a"
     },
+    "dialogi.poznan_zapowiedzi.GDZIE-13": {
+      "text": "W śluzie zaczekaj przed autami i rusz dopiero, gdy sygnał na to pozwoli.",
+      "hash": "bb2bb1edcba9f0213bbe9152b9be8a007749903e335f038b2740cc254dad8987"
+    },
+    "dialogi.poznan_zapowiedzi.PIER-10": {
+      "text": "Przy wysepce obserwuj zebrę i ustąp pieszym, którzy wchodzą na nią lub już po niej idą.",
+      "hash": "93f022d30c1067b141b5661d211ceafffe461144057002608e18174020ce9eca"
+    },
     "dialogi.reguly.GDZIE-01": {
       "text": "Jeśli droga dla rowerów biegnie w Twoim kierunku, korzystaj z niej.",
       "hash": "b0246f7a75407b695cb4325d406d3ed2d3888aba9d76fe73a2169106e7400d8d"
@@ -1085,6 +1093,46 @@
     "misje.KRA-B-03.wyjasnienie": {
       "text": "Zadbaj o swoje bezpieczeństwo i ostrzeż innych, zanim podejdziesz z pomocą.",
       "hash": "b17c076808d9856694f47faca564a40dd0adeee353b3b5d11f9f1c75ec27a6f5"
+    },
+    "misje.POZ-B-01.pytanie": {
+      "text": "Kto ma pierwszeństwo w strefie zamieszkania?",
+      "hash": "3e3079fb23ba502da16ccfb4eec317e9fa0fec129d4c92d39f6aadd73ef467b9"
+    },
+    "misje.POZ-B-01.wyjasnienie": {
+      "text": "Ustępuj pieszym na całej szerokości drogi i jedź najwyżej 20 km/h.",
+      "hash": "31c8bd30a30a352a3d10c17b1a9cdf70b4863c30cd0661b8097b8177fbe50f62"
+    },
+    "misje.POZ-B-02.pytanie": {
+      "text": "Stoisz w śluzie, a sygnalizator pokazuje czerwone. Kiedy ruszasz?",
+      "hash": "ef07238bb434b8db45fc1922d624dc55b45404e9c7c0bce0c692c68f24338f2f"
+    },
+    "misje.POZ-B-02.wyjasnienie": {
+      "text": "Poczekaj na zielone, a po wyjeździe ze śluzy zajmij właściwe miejsce na jezdni.",
+      "hash": "9b494b4ebcbcba30685a2b2fc82bcebedcba52e95beae0b0536653b1177fd37f"
+    },
+    "misje.POZ-B-03.pytanie": {
+      "text": "Piesza wchodzi na zebrę, żeby dojść na wysepkę. Co robisz?",
+      "hash": "9631ef8a3859f30fbc9ac44469da31d084d65e5089d04db6afb0e2561fc801f0"
+    },
+    "misje.POZ-B-03.wyjasnienie": {
+      "text": "Przed zebrą do wysepki zwolnij i ustąp pieszym wchodzącym lub już przechodzącym.",
+      "hash": "5367457bbd72535704184c50961db2cb7b4205915f01f3309df6c7c4bbc525fa"
+    },
+    "misje.POZ-B-04.pytanie": {
+      "text": "Widzisz, że ktoś upadł na drodze. Co sprawdzasz najpierw?",
+      "hash": "55fcef898cf93e5a36d364ab951259c9985d1a7e4a306cd5f2863e15e47234eb"
+    },
+    "misje.POZ-B-04.pytanie_zakret": {
+      "text": "Chcesz skręcić w prawo na most. Kiedy pokazujesz kierunek ręką?",
+      "hash": "8fbac94230872f11a435eb38e42dd190abf22ee305a6a0a9176d0b4e06739804"
+    },
+    "misje.POZ-B-04.wyjasnienie": {
+      "text": "Najpierw zadbaj o bezpieczeństwo swoje i miejsca zdarzenia.",
+      "hash": "23c28e9dfaf276e199916408f8d5249422e73f2cdd7424b31b8553595708aa78"
+    },
+    "misje.POZ-B-04.zakret_wyjasnienie": {
+      "text": "Pokaż kierunek zawczasu, a gdy skończysz sygnalizować, połóż obie dłonie na kierownicy.",
+      "hash": "bdd408e12adfca591d2d447d5a3c575d5ea2fd0742d79c84506f50d55eb46e94"
     },
     "misje.WAW-A1-03.powrot": {
       "text": "Wróć przed linię i zatrzymaj się całkowicie przed znakiem STOP.",
@@ -1466,6 +1514,14 @@
       "text": "Bez chodnika lub drogi dla pieszych idź lewym poboczem, a gdy nie da się nim iść, lewą krawędzią jezdni i ustępuj pojazdom.",
       "hash": "44d6e7fabe2a51c1d640735570d1a482ab73e98b4bb34a827a158d4c795d8e77"
     },
+    "przepisy.GDZIE-13.feedback": {
+      "text": "W śluzie czekaj przed linią, a po ruszeniu zajmij właściwe miejsce na jezdni.",
+      "hash": "808b426ff8ac35a244b4b6c079c3c3ed0cde024942125ebc85003c3e9066db90"
+    },
+    "przepisy.GDZIE-13.quiz": {
+      "text": "W śluzie możesz czekać przed autami.",
+      "hash": "d6459d415146167b797e5370c276c072580b955129ffbf5c6b08ad0951cfe64e"
+    },
     "przepisy.KASK-01.feedback": {
       "text": "Zapnij pasek kasku, zanim ruszysz rowerem.",
       "hash": "a8a3dae5c5306707c2b253ed27b270d7930ca9296f455018fc14288ea076a735"
@@ -1689,6 +1745,14 @@
     "przepisy.PIER-09.quiz": {
       "text": "Na skrzyżowaniu równorzędnym tramwaj ma pierwszeństwo przed innymi pojazdami, także przed rowerem.",
       "hash": "9a8acc6fbc95ce1f9c73096a25110a99ffbff1a0e6d92440779419dafd87a090"
+    },
+    "przepisy.PIER-10.feedback": {
+      "text": "Przed zebrą do wysepki zwolnij i przepuść wchodzących oraz przechodzących pieszych.",
+      "hash": "164bf194f3c79aaf1d7a0de9975db52542256e6860e2709e700bdd1862ed1017"
+    },
+    "przepisy.PIER-10.quiz": {
+      "text": "Zwolnij przed zebrą i ustąp pieszym, którzy na nią wchodzą lub już po niej idą, także przy wysepce tramwajowej.",
+      "hash": "ee5251d617ae7f3d34fda19cf832ea16632619c2bf1b5adf2da8b450747bbe00"
     },
     "przepisy.PLAC-01.feedback": {
       "text": "Patrz tam, gdzie chcesz jechać, nie na pachołek — rower pojedzie za wzrokiem.",
@@ -2401,6 +2465,22 @@
     "pytania.Q065.wyjasnienie": {
       "text": "Idąc poboczem, używaj odblasku widocznego dla nadjeżdżających kierowców.",
       "hash": "0c1f9682d5f126c7839991efcc4c90bec29715bdb131724b6ebeac79c12e1033"
+    },
+    "pytania.Q066.pytanie": {
+      "text": "Co robisz po ruszeniu ze śluzy rowerowej na zielonym?",
+      "hash": "220abff84bb79a5d53aae83c28ac17bd56a14bb0e0520b3c7d674ed65fb8d63d"
+    },
+    "pytania.Q066.wyjasnienie": {
+      "text": "Opuść śluzę i zajmij miejsce odpowiednie do kierunku jazdy.",
+      "hash": "115590d9c621c6be4edf108a1d0fccc918cdb03135802f1ce4f229058a19fb03"
+    },
+    "pytania.Q067.pytanie": {
+      "text": "Pasażer wchodzi na zebrę do wysepki tramwajowej. Jak zachowasz się na rowerze?",
+      "hash": "9f358e9b5a42a1ce109ddac8d5a249573d39a3a633b7e0b6a71b3d2c3b9ceaed"
+    },
+    "pytania.Q067.wyjasnienie": {
+      "text": "Ustąp pieszemu wchodzącemu na przejście i pieszemu, który już po nim idzie.",
+      "hash": "99b70ea836a007ed232e340ce354e61511ddb55b1f6085ae76bf0b2466baa8a1"
     }
   },
   "recorded": {}
