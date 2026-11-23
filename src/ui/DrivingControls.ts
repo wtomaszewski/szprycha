@@ -1,6 +1,6 @@
 import type { DriveInput, Scheme, RiderState } from '../gameplay/bicycle';
 import { ui } from '../core/presentation';
-import { CAMERA_HEIGHT_PX } from '../render/projection';
+import { CAMERA_HEIGHT_PX, MIN_CAMERA_HEIGHT_PX } from '../render/projection';
 import { graphicsQualities, type ProgressStore } from '../core/progressStore';
 import {
   accessibilityPreferences,
@@ -302,7 +302,7 @@ export class DrivingControls {
     cameraHeight.id = 'drive-camera-height';
     cameraLabel.htmlFor = cameraHeight.id;
     cameraHeight.type = 'range';
-    cameraHeight.min = '400';
+    cameraHeight.min = String(MIN_CAMERA_HEIGHT_PX);
     cameraHeight.max = '2400';
     cameraHeight.step = '10';
     cameraHeight.value = String(CAMERA_HEIGHT_PX);

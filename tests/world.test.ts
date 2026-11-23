@@ -4,7 +4,9 @@ import { TILE_COUNT } from '../src/render/artFrames';
 import { pixelScroll } from '../src/render/pixelCamera';
 import {
   MAX_FACTOR,
+  MIN_CAMERA_HEIGHT_PX,
   blockOpacity,
+  blockRoadBounds,
   projectionFactor,
   roofOffset,
 } from '../src/render/projection';
@@ -62,6 +64,38 @@ it('fades a projected building gradually when it hides a nearby road', () => {
   expect(blockOpacity(112, 160, silhouette, [road])).toBeCloseTo(0.28);
   expect(blockOpacity(112, 160, silhouette, [road])).toBeLessThan(approach);
   expect(blockOpacity(48, 64, silhouette, [])).toBeCloseTo(0.28);
+  for (let y = 129; y <= 300; y++) {
+    const step = ((1 - blockOpacity(112, y, silhouette, [road])) / 0.72) * 16;
+    expect(step).toBeCloseTo(Math.round(step), 10);
+  }
+});
+
+it('bounds road candidates for both tiers at the projection extremes', () => {
+  const block = { x: 320, y: 264, width: 24, height: 24, floors: 32 };
+  const support = { x: 280, y: 224, width: 64, height: 64, floors: 12 };
+  const bounds = blockRoadBounds(block, support, 800, 600);
+  for (const [cx, cy] of [
+    [0, 0],
+    [800, 600],
+  ] as const) {
+    for (const lite of [true, false]) {
+      for (const tier of [block, support]) {
+        const { x, y } = roofOffset(
+          tier,
+          cx,
+          cy,
+          lite,
+          MIN_CAMERA_HEIGHT_PX,
+          undefined,
+          0.75,
+        );
+        expect(block.x + x).toBeGreaterThan(bounds.left);
+        expect(block.x + block.width + x).toBeLessThan(bounds.right);
+        expect(block.y + y).toBeGreaterThan(bounds.top);
+        expect(block.y + block.height + y).toBeLessThan(bounds.bottom);
+      }
+    }
+  }
 });
 
 it('training Tiled map has complete tile layers, spawn and collision objects', () => {

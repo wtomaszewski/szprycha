@@ -100,7 +100,7 @@ Tab i Shift+Tab przechodzą między elementami interfejsu. Enter i Spacja urucha
 
 ## Wydajność i platformy
 Docelowo 60 FPS na: Chromebook szkolny, Android średniej klasy sprzed 3–4 lat, iPad 9. generacji. Menu i dialogi działają w obu orientacjach. Podczas jazdy w pionie gra podpowiada obrót urządzenia, pozostawiając sterowanie dostępne.
-
+Przy 740×390 px i DPR 1 canvas 640×360 px zostawia czarne pasy po bokach, aby zachować całkowitą skalę pixel-artu.
 
 PWA instaluje menu, samouczek i Miasteczko. Mapa Warszawy, Wrocławia lub Krakowa pobiera się przy pierwszym wejściu na daną mapę i jest wtedy zapisywana do gry offline. Jeśli mapa jest niedostępna, gra wraca do menu z komunikatem i można kontynuować w Miasteczku.
 

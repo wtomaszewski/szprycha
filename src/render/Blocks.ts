@@ -17,6 +17,7 @@ import type { WorldModel } from '../rules/world/WorldModel';
 import {
   CAMERA_HEIGHT_PX,
   blockOpacity,
+  blockRoadBounds,
   roofOffset,
   supportingTier,
   type Block,
@@ -144,6 +145,8 @@ export class Blocks {
   cameraHeight = CAMERA_HEIGHT_PX;
   private readonly items;
   private readonly roads;
+  private readonly mapWidth;
+  private readonly mapHeight;
   private readonly silhouette = { left: 0, right: 0, top: 0, bottom: 0 };
   readonly chimneys: { roof: GameObjects.Image; x: number; y: number }[] = [];
   private night = false;
@@ -165,6 +168,8 @@ export class Blocks {
         right: (x + width) * scale,
         bottom: (y + height) * scale,
       }));
+    this.mapWidth = world.width * scale;
+    this.mapHeight = world.height * scale;
     const landmarkTiers = new Map<string, Block[]>();
     this.items = [...blocks]
       .sort((a, b) => a.floors - b.floors)
@@ -176,6 +181,19 @@ export class Blocks {
           tiers.push(block);
           landmarkTiers.set(block.landmarkId, tiers);
         }
+        const bounds = blockRoadBounds(
+          block,
+          support,
+          this.mapWidth,
+          this.mapHeight,
+        );
+        const nearbyRoads = this.roads.filter(
+          (road) =>
+            road.left < bounds.right &&
+            road.right > bounds.left &&
+            road.top < bounds.bottom &&
+            road.bottom > bounds.top,
+        );
         let id = 0;
         for (const ch of block.id ?? String(i))
           id = Math.imul(id, 31) + ch.charCodeAt(0);
@@ -200,6 +218,7 @@ export class Blocks {
         });
         return {
           block,
+          nearbyRoads,
           support,
           horizontal: new Wall(
             scene,
@@ -244,6 +263,9 @@ export class Blocks {
     const zoom = camera.zoom;
     const cx = camera.scrollX + camera.width / 2;
     const cy = camera.scrollY + camera.height / 2;
+    // An oversized viewport can put the camera center beyond the map.
+    const withinMap =
+      cx >= 0 && cx <= this.mapWidth && cy >= 0 && cy <= this.mapHeight;
     const halfWidth = camera.width / (2 * camera.zoom);
     const halfHeight = camera.height / (2 * camera.zoom);
     const viewX = camera.clampX(camera.scrollX) + camera.width / 2;
@@ -309,7 +331,12 @@ export class Blocks {
       silhouette.right = x + b.width - Math.min(0, dx);
       silhouette.top = y - Math.max(0, dy);
       silhouette.bottom = y + b.height - Math.min(0, dy);
-      const alpha = blockOpacity(playerX, playerY, silhouette, this.roads);
+      const alpha = blockOpacity(
+        playerX,
+        playerY,
+        silhouette,
+        withinMap ? item.nearbyRoads : this.roads,
+      );
       if (item.alpha !== alpha) {
         item.alpha = alpha;
         roof.setAlpha(alpha);
