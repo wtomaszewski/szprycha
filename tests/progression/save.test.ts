@@ -517,13 +517,14 @@ it('preserves Kraków training and city selection when upgrading a v10 profile',
   });
 });
 
-it('migrates v11 Gdańsk free ride and saves campaign selection and amber independently', async () => {
+it('preserves v11 graphics and free-ride progress while adding Gdańsk campaign selection and amber', async () => {
   const factory = new IDBFactory();
   const previous = {
     ...new ProgressStore().profile,
     version: 11,
     selectedCity: 'krakow',
     freeRideCity: 'gdansk',
+    graphicsQuality: 'lite',
     completed: ['GDA-B-01', 'GDA-B-04'],
     obwarzanki: ['krk-obwarzanek-sukiennice'],
   };

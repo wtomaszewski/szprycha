@@ -21,6 +21,12 @@ Stan na 23.11.2026.
 - „Trzy błyski nad Motławą” obejmuje cztery zachowane szkolenia i dziewięć misji głównych. Profil w wersji 12 zapisuje wybór Gdańska w kampanii i sześć autorskich bursztynów z zagadkami. Migracja zachowuje dotychczasowe postępy.
 - Główne misje ćwiczą wszystkie moduły M01–M07, a CI sprawdza raport strict dla 13 sytuacji na mapie. Testy sprawdzają legalne trasy, przejazd egzaminacyjny i wynik trzech niedozwolonych skrótów. [Kampania, weryfikacja i zrzuty](docs/05_mapy.md#gdańsk)
 
+## Wydanie 2/2 — audyt wydajności (#123)
+
+- PWA mieści się w budżecie 8 MB. Warszawa, Wrocław, Kraków, Gdańsk, playlisty i nagrania lektora pobierają się przy użyciu i zostają w lokalnym cache. Miasteczko działa po pierwszej instalacji.
+- Rozdzielono kod menu i jazdy, ograniczono pracę przy generowaniu podłoża i zwalniane są tekstury poprzedniego miasta. Na słabszym urządzeniu dotykowym działa automatyczny profil niski z ręcznym wyborem w pauzie.
+- CI sprawdza rozmiar i czasy startu w Chromium. [Pomiary, budżety i odłożone pozycje](docs/AUDYT_WYDAJNOSCI.md)
+
 ## Gdańsk 1/2 — mapa (#125)
 
 - W Wolnej jeździe można wybrać Gdańsk i przejechać kolaż obejmujący Długi Targ, Żuraw, stocznię, kładki i plażę. Cztery ćwiczenia `GDA-B-*` prowadzą przez kolejne odblokowania.

@@ -1,4 +1,5 @@
 import { radioCatalog, radioPath, type Station } from './radio/catalog';
+import { cacheAfterInstall } from '../platform/pwa';
 import { createRadioMix } from './radio/mix';
 
 type Broadcast = {
@@ -13,6 +14,7 @@ export class Radio {
   private readonly mix;
   private readonly nextTrack = new Map<Station, number>();
   private broadcast?: Broadcast;
+  private readonly warmed = new Set<Station>();
 
   constructor(
     private readonly context: AudioContext,
@@ -78,6 +80,15 @@ export class Radio {
       }
 
       failures = 0;
+      if (navigator.onLine && !this.warmed.has(station)) {
+        this.warmed.add(station);
+        // Let the ident and first track finish downloading before warming the playlist.
+        cacheAfterInstall(
+          (['jingle', ...seeds] as const).map((seed) =>
+            radioPath(station, seed),
+          ),
+        );
+      }
       // Defer the next decode so tuning starts with only the ident and current track.
       let preload: Promise<AudioBuffer | undefined> | undefined;
       broadcast.preload = window.setTimeout(

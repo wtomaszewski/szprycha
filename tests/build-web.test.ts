@@ -1,4 +1,5 @@
 import { execFile } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -11,9 +12,11 @@ async function checkPrecache(dist: string) {
   const worker = await readFile(join(dist, 'quiz-worker.js'), 'utf8');
   const header = /^const manifest = (.+);/m.exec(worker);
   expect(header).not.toBeNull();
-  const precache: { files: string[]; version: string } = JSON.parse(
-    header![1]!,
-  );
+  const precache: {
+    files: string[];
+    lazy: Record<string, string>;
+    version: string;
+  } = JSON.parse(header![1]!);
   const files = await readdir(dist, { recursive: true, withFileTypes: true });
   const published = files
     .filter((file) => file.isFile())
@@ -32,17 +35,39 @@ async function checkPrecache(dist: string) {
       expect.stringMatching(/^assets\/nauczyciel-.*\.css$/),
     ]),
   );
-  expect(precache.files).toEqual(
+  const lazy = Object.keys(precache.lazy);
+  expect([...precache.files, ...lazy].sort()).toEqual(
     published.filter((file) => !teacherFiles.includes(file)),
+  );
+  expect(precache.files).toEqual(
+    expect.arrayContaining([
+      expect.stringMatching(/^assets\/miasteczko-.*\.tmj$/),
+    ]),
+  );
+  expect(lazy).toEqual(
+    expect.arrayContaining(
+      ['warszawa', 'wroclaw', 'krakow', 'gdansk'].map((city) =>
+        expect.stringMatching(new RegExp(`^assets/${city}-.*\\.tmj$`)),
+      ),
+    ),
+  );
+  expect(lazy.filter((file) => /\.(ogg|m4a)$/.test(file))).toEqual(
+    published.filter((file) => /\.(ogg|m4a)$/.test(file)),
   );
   const broadcasts = stations.flatMap((station) =>
     (['jingle', ...radioCatalog[station].seeds] as const).map((seed) =>
       radioPath(station, seed),
     ),
   );
-  expect(
-    precache.files.filter((file) => file.startsWith('assets/radio/')),
-  ).toEqual(broadcasts.sort());
+  expect(lazy.filter((file) => file.startsWith('assets/radio/'))).toEqual(
+    broadcasts.sort(),
+  );
+  for (const file of lazy) {
+    const digest = createHash('sha256')
+      .update(await readFile(join(dist, file)))
+      .digest('hex');
+    expect(precache.lazy[file]).toBe(digest.slice(0, 16));
+  }
   const teacherHtml = await readFile(join(dist, 'nauczyciel.html'), 'utf8');
   expect(teacherHtml).not.toContain('app.webmanifest');
   expect(teacherHtml).not.toContain('pwa-splash');

@@ -1,5 +1,5 @@
 import type { Types } from 'phaser';
-import type { WorldModel } from '../rules/world/WorldModel';
+import type { Box, WorldModel } from '../rules/world/WorldModel';
 import { artHash, TILE, TILE_COLUMNS, tiles } from './artFrames';
 
 const quarterTurn = Math.PI / 2;
@@ -42,8 +42,14 @@ export function paintRoad(
   curbs: readonly Types.Tilemaps.TiledObject[],
   curbAt: ((x: number, y: number, side: number) => boolean) | undefined,
   snow: boolean,
+  chunk: Pick<Box, 'x' | 'y' | 'width' | 'height'>,
 ) {
   const scale = 1 / world.metersPerPixel;
+  const overlaps = (x: number, y: number, w: number, h: number, padding = 0) =>
+    x - padding < chunk.x + chunk.width &&
+    x + w + padding > chunk.x &&
+    y - padding < chunk.y + chunk.height &&
+    y + h + padding > chunk.y;
   const texture = (gid: number, x: number, y: number, w: number, h: number) => {
     ctx.save();
     ctx.beginPath();
@@ -70,6 +76,12 @@ export function paintRoad(
     );
     const cx = x + width / 2;
     const cy = y + height / 2;
+    const radius = Math.max(road + corner + 3, 36);
+    if (
+      !overlaps(x, y, width, height) &&
+      !(road > 0 && overlaps(cx - radius, cy - radius, 2 * radius, 2 * radius))
+    )
+      continue;
     if (road > 0 && corner > 0) {
       for (const dx of [-1, 1])
         for (const dy of [-1, 1]) {
@@ -136,6 +148,7 @@ export function paintRoad(
     ctx.fillStyle = '#c0cbdc';
     for (const { x = 0, y = 0, width = 0, height = 0, properties } of curbs)
       if (
+        overlaps(x, y, width, height) &&
         !properties?.some(
           ({ name, value }: { name: string; value: unknown }) =>
             name === 'kind' && value === 'wall',
@@ -149,6 +162,7 @@ export function paintRoad(
     const y = Math.round(zone.y * scale);
     const w = Math.round(zone.width * scale);
     const h = Math.round(zone.height * scale);
+    if (!overlaps(x, y, w, h, TILE)) continue;
     texture(tiles.bike, x, y, w, h);
     const vertical = h > w;
     const length = vertical ? h : w;
@@ -201,6 +215,16 @@ export function paintRoad(
       const y = Math.round(start.y * scale);
       const dx = Math.round(end.x * scale) - x;
       const dy = Math.round(end.y * scale) - y;
+      if (
+        !overlaps(
+          x + Math.min(dx, 0),
+          y + Math.min(dy, 0),
+          Math.abs(dx),
+          Math.abs(dy),
+          TILE,
+        )
+      )
+        continue;
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(Math.atan2(dy, dx));
@@ -208,14 +232,13 @@ export function paintRoad(
       ctx.restore();
     }
   }
-  for (const drive of world.driveways)
-    texture(
-      tiles.asphalt,
-      Math.round(drive.x * scale),
-      Math.round(drive.y * scale),
-      Math.round(drive.width * scale),
-      Math.round(drive.height * scale),
-    );
+  for (const drive of world.driveways) {
+    const x = Math.round(drive.x * scale);
+    const y = Math.round(drive.y * scale);
+    const w = Math.round(drive.width * scale);
+    const h = Math.round(drive.height * scale);
+    if (overlaps(x, y, w, h)) texture(tiles.asphalt, x, y, w, h);
+  }
 
   const crossings = [...world.crossings].sort(
     (a, b) => Number(a.kind === 'pedestrian') - Number(b.kind === 'pedestrian'),
@@ -225,6 +248,7 @@ export function paintRoad(
     const y = Math.round(crossing.y * scale);
     const width = Math.round(crossing.width * scale);
     const height = Math.round(crossing.height * scale);
+    if (!overlaps(x, y, width, height, TILE)) continue;
     if (crossing.kind === 'rail') {
       texture(tiles.asphalt, x, y, width, height);
       texture(tiles.rails, x, y + Math.floor((height - TILE) / 2), width, TILE);
@@ -275,11 +299,11 @@ export function paintRoad(
   }
 
   for (const lane of world.lanes) {
-    const angle = Math.atan2(lane.forward.y, lane.forward.x) + quarterTurn;
     const x = Math.round(lane.end.x * scale);
     const y = Math.round(lane.end.y * scale);
     const halfWidth = Math.floor(Math.min(45, (lane.width * scale) / 2 - 3));
-    if (halfWidth < 1) continue;
+    if (halfWidth < 1 || !overlaps(x, y, 0, 0, 72)) continue;
+    const angle = Math.atan2(lane.forward.y, lane.forward.x) + quarterTurn;
     if (lane.stopSign || lane.mainSignal) {
       ctx.save();
       ctx.translate(x, y);

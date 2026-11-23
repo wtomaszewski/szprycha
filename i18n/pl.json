@@ -208,8 +208,10 @@
     "pause": "Pauza [Esc]",
     "paused": "Pauza",
     "resume": "Wznów [Esc]",
-    "full": "Grafika: pełna",
-    "lite": "Grafika: uproszczona",
+    "quality": "Jakość grafiki",
+    "auto": "Automatyczna",
+    "full": "Pełna",
+    "lite": "Niska",
     "rain": "Deszcz",
     "previewNight": "Podgląd nocy (grafika)",
     "reset": "Wróć na start [R]",
@@ -490,6 +492,7 @@
     "noShortcutBonus": "Przejazd przez oznaczony nielegalny skrót wyklucza premię za czas."
   },
   "cityPicker": {
+    "mapUnavailable": "Nie udało się pobrać mapy. Połącz się z internetem i wybierz miasto ponownie.",
     "title": "Wybierz miasto",
     "map": "Mapa Polski",
     "campaign": "Kampania",

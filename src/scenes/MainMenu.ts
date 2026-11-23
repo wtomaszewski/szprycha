@@ -1,3 +1,4 @@
+import { startScene } from './startScene';
 import { isTutorialStep } from '../gameplay/Tutorial';
 import { tutorialHelp } from '../ui/TutorialPanel';
 import { audio } from '../audio/GameAudio';
@@ -26,7 +27,9 @@ export class MainMenu extends Scene {
   constructor() {
     super('MainMenu');
   }
-  create(data?: GameContent | { examResult?: ExamResult }) {
+  create(
+    data?: GameContent | { examResult?: ExamResult; mapUnavailable?: string },
+  ) {
     // Data has passed the same schema at build time and at the loading boundary.
     if (data && 'przepisy' in data) this.registry.set('content', data);
     const gameContent = this.registry.get('content') as GameContent;
@@ -35,12 +38,12 @@ export class MainMenu extends Scene {
     const tutorial = progress.store.profile.tutorial;
     const help = tutorialHelp(
       isTutorialStep(tutorial),
-      () => this.scene.start('City', { tutorial }),
+      () => startScene(this, 'City', { tutorial }),
       () => {
         progress.store.change((profile) => {
           profile.tutorial = 'move';
         });
-        this.scene.start('City', { tutorial: 'move' });
+        startScene(this, 'City', { tutorial: 'move' });
       },
     );
     const rankings = rankingsPanel(
@@ -58,7 +61,7 @@ export class MainMenu extends Scene {
     const panels = progressPanels(progress, gameContent, about.trigger());
     const quiz = quizPanel(progress, gameContent);
     const exam = examPanel(progress, gameContent, (attempt) =>
-      this.scene.start('Plac', { attempt, rehearsal: !attempt }),
+      startScene(this, 'Plac', { attempt, rehearsal: !attempt }),
     );
     const menuDialogOpen = () =>
       skills.dialog.open ||
@@ -72,25 +75,29 @@ export class MainMenu extends Scene {
     const notice = document.createElement('p');
     notice.className = 'menu-save-notice';
     notice.setAttribute('role', 'status');
-    notice.textContent = progressNotice(progress);
+    notice.textContent =
+      data && 'mapUnavailable' in data
+        ? ui.cityPicker.mapUnavailable
+        : progressNotice(progress);
+    if (data && 'mapUnavailable' in data) this.sys.settings.data = {};
     const campaign = document.createElement('button');
     campaign.type = 'button';
     campaign.className = 'menu-mission';
     campaign.textContent = ui.cityPicker.campaign;
     campaign.addEventListener('click', () =>
-      this.scene.start('CityPicker', { mode: 'campaign' }),
+      startScene(this, 'CityPicker', { mode: 'campaign' }),
     );
     const freeRide = document.createElement('button');
     freeRide.type = 'button';
     freeRide.className = 'menu-mission';
     freeRide.textContent = ui.cityPicker.freeRide;
     freeRide.addEventListener('click', () =>
-      this.scene.start('CityPicker', { mode: 'freeRide' }),
+      startScene(this, 'CityPicker', { mode: 'freeRide' }),
     );
     const plac = document.createElement('button');
     plac.type = 'button';
     plac.textContent = ui.plac.title;
-    plac.addEventListener('click', () => this.scene.start('Plac', {}));
+    plac.addEventListener('click', () => startScene(this, 'Plac', {}));
     const training = document.createElement('div');
     training.className = 'menu-training';
     training.append(plac, quiz.button, exam.button);
@@ -126,7 +133,7 @@ export class MainMenu extends Scene {
     const practice = document.createElement('button');
     practice.type = 'button';
     practice.textContent = ui.driving.title;
-    practice.addEventListener('click', () => this.scene.start('City'));
+    practice.addEventListener('click', () => startScene(this, 'City'));
     ride.append(campaign, freeRide, practice);
     const options = document.createElement('div');
     options.className = 'menu-options';
@@ -160,7 +167,7 @@ export class MainMenu extends Scene {
           event.target.closest('button, select, input, summary, a[href]')
         )
       )
-        this.scene.start('City');
+        startScene(this, 'City');
     };
     this.input.keyboard?.on('keydown-ENTER', startDrive);
     this.events.once('shutdown', () => {

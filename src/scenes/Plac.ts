@@ -1,3 +1,4 @@
+import { startScene } from './startScene';
 import { localizedVoiceLine } from '../audio/voiceLines';
 import { inputHash, rankingSeed, RideEvidence } from '../rankings/evidence';
 import { showBreakReminder } from '../ui/BreakReminder';
@@ -393,7 +394,7 @@ export class Plac extends Scene {
       actions.append(
         score.passed
           ? this.button(ui.exam.startRide, () =>
-              this.scene.start('City', { examRide: result }),
+              startScene(this, 'City', { examRide: result }),
             )
           : this.button(ui.exam.showResult, () =>
               this.scene.start('MainMenu', { examResult: result }),

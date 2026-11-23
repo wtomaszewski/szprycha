@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { findDisplayedQuestion } from './question-dialog';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import {
@@ -12,6 +12,8 @@ import { readContent } from '../../tools/content';
 import { approachWaypoint, warsawRoutes } from '../missions/warsaw-routes';
 import { cleanPlacInput } from '../plac/clean-course';
 import { profile } from './helpers/profile';
+import { fixedSceneTicks } from './helpers/fixed-scene-ticks';
+import { chooseCity } from './city-picker';
 
 test.use({ baseURL: 'http://127.0.0.1:4174', reducedMotion: 'reduce' });
 
@@ -20,8 +22,10 @@ const { exam, quiz } = pl;
 const points = warsawRoutes['WAW-A1-03'].legal.slice(0, 3);
 
 type DriveScene = {
-  events: { once(name: 'create', listener: () => void): void };
-  sys: { sceneUpdate(time: number, delta: number): void };
+  sys: {
+    settings: { key: string };
+    sceneUpdate(time: number, delta: number): void;
+  };
   controls: { actions: RiderState; read(): DriveInput };
   rider: Rider;
   road?: { lastCountdowns: boolean };
@@ -29,40 +33,6 @@ type DriveScene = {
   resultPresented: boolean;
   tickForTest(time: number, delta: number): void;
 };
-type Game = { scene: { getScene(name: string): DriveScene } };
-type SceneManager = { game: Game; update(time: number, delta: number): void };
-
-async function offlineGame(page: Page) {
-  // Use the Phaser module already loaded by production to run deterministic
-  // fixed ticks. Scene transitions, physics, judging and persistence are real.
-  return page.evaluateHandle(async () => {
-    const link = document.querySelector<HTMLLinkElement>(
-      'link[href*="/phaser-"]',
-    )!;
-    const module: Record<
-      string,
-      () => { Scenes: { SceneManager: { prototype: SceneManager } } }
-    > = await import(link.href);
-    const phaser = Object.values(module)[0]!();
-    const prototype = phaser.Scenes.SceneManager.prototype;
-    const original = prototype.update;
-    return await new Promise<Game>((resolve) => {
-      prototype.update = function (time, delta) {
-        prototype.update = original;
-        for (const name of ['Plac', 'City']) {
-          const scene = this.game.scene.getScene(name);
-          scene.events.once('create', () => {
-            scene.tickForTest = scene.sys.sceneUpdate.bind(scene);
-            scene.sys.sceneUpdate = () => {};
-          });
-        }
-        original.call(this, time, delta);
-        resolve(this.game);
-      };
-    });
-  });
-}
-
 test('earns, prints and reopens the licence entirely offline', async ({
   page,
   context,
@@ -76,6 +46,13 @@ test('earns, prints and reopens the licence entirely offline', async ({
   await expect(
     panel.getByRole('button', { name: exam.startTheory }),
   ).toBeDisabled();
+  await panel.getByRole('button', { name: quiz.close, exact: true }).click();
+  await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
+  await chooseCity(page, 'warszawa');
+  await page.keyboard.press('Escape');
+  await page
+    .getByRole('button', { name: pl.driving.menu, exact: true })
+    .click();
 
   const saved = await profile(page, {
     nickname: 'Szybki Jeż 1',
@@ -101,10 +78,9 @@ test('earns, prints and reopens the licence entirely offline', async ({
   });
   expect(saved.licencePassed).toBe(false);
 
-  await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
   await context.setOffline(true);
   await page.reload();
-  const game = await offlineGame(page);
+  const game = await fixedSceneTicks<DriveScene>(page, ['Plac', 'City']);
   const before = await profile(page);
   await open.click();
   await panel.getByRole('button', { name: exam.startTheory }).click();
