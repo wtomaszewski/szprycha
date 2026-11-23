@@ -20,7 +20,7 @@
       "frameHeight": 32,
       "frames": 96,
       "directions": 1,
-      "description": "Kafle 32×32. Nawierzchnie, warianty i maski krawężników, cztery klatki wody oraz przezroczyste oznakowanie. Identyfikatory GID określa src/render/artFrames.ts."
+      "description": "Kafle 32×32. Nawierzchnie (w tym trzy warianty piasku plażowego), maski krawężników, cztery klatki wody oraz przezroczyste oznakowanie. Identyfikatory GID określa src/render/artFrames.ts."
     },
     {
       "id": "block-walls",
@@ -163,7 +163,7 @@
       "frameHeight": 80,
       "frames": 6,
       "directions": 1,
-      "description": "Rzędy: Warszawa czerwono-żółta, Wrocław niebiesko-kremowy, Kraków grafitowo-srebrny. Kolumny: przód i tył, przegub przy stykających się krawędziach. Kierunek źródłowy: północ."
+      "description": "Rzędy: Warszawa czerwono-żółta, Wrocław niebiesko-kremowy, Kraków i Gdańsk grafitowo-srebrne. Kolumny: przód i tył, przegub przy stykających się krawędziach. Kierunek źródłowy: północ."
     },
     {
       "id": "portrait-gracz",

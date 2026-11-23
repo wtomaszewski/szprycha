@@ -21,7 +21,7 @@ function loadOnDemand(file: string) {
   return (
     file.startsWith('assets/radio/') ||
     /^assets\/[^/]+\.(ogg|m4a)$/.test(file) ||
-    /^assets\/(warszawa|wroclaw|krakow)-[^/]+\.tmj$/.test(file)
+    /^assets\/(warszawa|wroclaw|krakow|gdansk)-[^/]+\.tmj$/.test(file)
   );
 }
 

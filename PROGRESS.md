@@ -22,6 +22,11 @@ Stan na 23.11.2026.
 - Rozdzielono kod menu i jazdy, ograniczono pracę przy generowaniu podłoża i zwalniane są tekstury poprzedniego miasta. Na słabszym urządzeniu dotykowym działa automatyczny profil niski z ręcznym wyborem w pauzie.
 - CI sprawdza rozmiar i czasy startu w Chromium. [Pomiary, budżety i odłożone pozycje](docs/AUDYT_WYDAJNOSCI.md)
 
+## Gdańsk 1/2 — mapa (#125)
+
+- W Wolnej jeździe można wybrać Gdańsk i przejechać kolaż obejmujący Długi Targ, Żuraw, stocznię, kładki i plażę. Cztery ćwiczenia `GDA-B-*` prowadzą przez kolejne odblokowania.
+- Raport strict wykazuje 13/13 sytuacji i 7/7 modułów M01–M07. Testy obejmują dziesięć minut ruchu AI dla trzech ziaren oraz zapis odblokowań po przeładowaniu gry. Kampania stanowi część 2/2. [Mapa, weryfikacja i zrzuty](docs/05_mapy.md#gdańsk)
+
 ## Wydanie 2/2 — audyt dostępności (#122)
 
 - Audyt ekranów DOM w Playwright i axe sprawdza nazwy, role, kontrast i fokus. Klawiatura i pad obsługują menu i dialogi, HUD ogłasza istotne zmiany, a tekst dialogów skaluje się do 200%.

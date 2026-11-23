@@ -198,25 +198,56 @@ Zrzuty kampanii pokazują [wybór Krakowa](screenshots/106-kampania.webp), [obwa
 
 Zrzuty Wolnej jazdy pokazują [wybór miasta](screenshots/105-mapa-polski.webp), [Rynek](screenshots/105-rynek.webp), [Wawel i Smoka](screenshots/105-wawel.webp), [Kazimierz](screenshots/105-kazimierz.webp), [bulwary](screenshots/105-bulwary.webp), [Kopiec](screenshots/105-kopiec.webp) i [tramwaj](screenshots/105-tramwaj.webp).
 
+## GDAŃSK
+
+**Wolna jazda → Gdańsk** zaczyna się przy Długim Targu. Kolaż w skali mikro ma 152 × 112 kafli. Przez Motławę prowadzą przeprawy drogowe i dwie kładki. Generator `npm run map:generate:gdansk` odtwarza [gdansk.tmj](../maps/gdansk.tmj).
+
+| Dzielnica | Miejsce i praktyka | Dostęp |
+| --- | --- | --- |
+| Długi Targ | Kostka, szereg kamienic, autorska fontanna, dojście przez strefę zamieszkania. | Od startu |
+| Żuraw | Ceglane wieże obejmują ciemną drewnianą bryłę wysuniętą ku Motławie. Znak B-9 przy drewnianej kładce zabrania jazdy. Rower można przeprowadzić. | Od startu |
+| Ołowianka | Spichlerz za kładką, czerwona DDR z przejazdami, dalej skrzyżowanie równorzędne i tory towarowe. | Po `GDA-B-01` |
+| Promenada w Brzeźnie | Wspólny ciąg C-13/C-16, na którym piesi mają pierwszeństwo. Wydmy oddzielają go od zapiaszczonej drogi dojazdowej. | Po `GDA-B-01` |
+| Plaża | Pas piasku i pianka przy brzegu zatoki. Od północy dochodzi droga, na której trzeba dostosować prędkość do zapiaszczenia. | Po `GDA-B-03` |
+| Stocznia | Hale, kratownicowe dźwigi, kontrapas z wyjątkiem pod B-2 i stalowa kładka ze wspólną drogą. | Po `GDA-B-04` |
+
+Ćwiczenia uruchamia się w SzprychaApp. W `GDA-B-01` gracz zapina kask, włącza lampki i prowadzi rower przez kładkę. `GDA-B-02` sprawdza zachowanie wobec pieszych i bezpieczną reakcję na upadek. W `GDA-B-03` silny wiatr nawiewa piasek na drogę. Reguła MAN-08 ocenia prędkość na podstawie drogi zatrzymania, a wjazd w skrót z B-1 kończy próbę bez premii czasowej. `GDA-B-04` obejmuje przejazd zgodnie z S-6 i sprawdzenie, czy jest wolny.
+
+Auta korzystają z połączonego grafu dróg. Rowerzysta jedzie wzdłuż Motławy, a piesi chodzą po nabrzeżu, Długim Targu i promenadzie. Srebrno-grafitowy tramwaj obsługuje przystanek bez wysepki. W Wolnej jeździe zmrok zapada po 90 sekundach.
+
+`npm run coverage:maps -- --strict` wykrywa 13/13 sytuacji oraz 7/7 modułów M01–M07. `npm test -- tests/sim/gdansk.test.ts` sprawdza cztery szkolenia, naruszenia i dziesięć minut symulacji ruchu dla każdego z trzech ziaren. [Raport pokrycia](coverage.md#gdańsk)
+
+Pomiar na tym samym komputerze w Chromium 156.0.8078.79 headless używał Wolnej jazdy, WebGL, pełnej grafiki, rozdzielczości 640 × 360 i ograniczenia CPU 4×. Dla Długiego Targu i Starówki podano mediany dwóch prób, a dla plaży wynik jednej próby.
+
+| Odcinek | Średnie FPS | p95 klatki |
+| --- | ---: | ---: |
+| Gdańsk, Długi Targ | 59,78 | 16,75 ms |
+| Gdańsk, plaża | 60,00 | 16,70 ms |
+| Warszawa, Starówka | 59,87 | 16,75 ms |
+
+Przy uruchomionym Vite pomiar odtwarza `BENCH_VIEWPORT=640x360 BENCH_MAP=gdansk BENCH_RUNS=2 npm run benchmark:driving`. Dla plaży ustaw `BENCH_FRAGMENT=plaza` i `BENCH_RUNS=1`. Warszawę odtwarza `BENCH_VIEWPORT=640x360 BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free BENCH_RUNS=2 npm run benchmark:driving`.
+
+Zrzuty pokazują [wybór miasta](screenshots/125-mapa-polski.webp), [Długi Targ](screenshots/125-dlugi-targ.webp), [Żuraw](screenshots/125-zuraw.webp), [kładkę](screenshots/125-kladka.webp), [stocznię](screenshots/125-stocznia.webp), [promenadę](screenshots/125-promenada.webp), [plażę](screenshots/125-plaza.webp) i [tramwaj](screenshots/125-tramwaj.webp).
+
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
 Wzorowane na prawdziwych szkolnych miasteczkach ruchu: małe skrzyżowania każdego typu, mini-rondo, sygnalizacja, przejazd kolejowy z zaporami, znaki z Albumu na tablicach, **plac manewrowy** (ósemka, slalom, tor wąski, pole zatrzymania). Tu: samouczek, plac, quiz w budynku szkoły, egzamin Licencji.
 
 ## Tabela pokrycia (każde miasto musi mieć ✓ w każdym wierszu)
-| Sytuacja | Warszawa | Wrocław | Kraków |
-|---|---|---|---|
-| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody |
-| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu |
-| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa |
-| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku |
-| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa |
-| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz |
-| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary |
-| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz |
-| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu |
-| Przejazd kolejowy | Mokotów | Zachód | Dębniki |
-| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec |
-| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz |
-| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary |
+| Sytuacja | Warszawa | Wrocław | Kraków | Gdańsk |
+|---|---|---|---| --- |
+| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody | Ołowianka i Brzeźno |
+| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu | Skrzyżowanie przy Długim Targu |
+| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa |
+| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku | Rondo przy stoczni |
+| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz | DDR nad Motławą, kontrapas w stoczni i promenada |
+| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary | Aleja i przeprawy przez Motławę |
+| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz | Dojście do Długiego Targu |
+| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu | Wyjazd z placu magazynowego |
+| Przejazd kolejowy | Mokotów | Zachód | Dębniki | Tory towarowe na południowym zachodzie |
+| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec | Pobocze przy torach i kładka przy Żurawiu |
+| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz | Stocznia |
+| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary | Kładka przy Żurawiu |
 
 ## Kolejne mapy (po MVP, kolejność wg popularności)
-Gdańsk (Żuraw, Długi Targ, stocznia, plaża) · Poznań (Ratusz z koziołkami, Stary Browar) · Łódź (Piotrkowska, Manufaktura) · **Wieś i las** (droga gminna, PKS, przejazd niestrzeżony, pole, las, ciągnik — szczególnie ważne dla dzieci spoza dużych miast) · Zakopane (Krupówki, Giewont w tle).
+Poznań (Ratusz z koziołkami, Stary Browar) · Łódź (Piotrkowska, Manufaktura) · **Wieś i las** (droga gminna, PKS, przejazd niestrzeżony, pole, las, ciągnik — szczególnie ważne dla dzieci spoza dużych miast) · Zakopane (Krupówki, Giewont w tle).

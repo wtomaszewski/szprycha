@@ -1,5 +1,5 @@
 import type {
-  PlayableCity,
+  CampaignCity,
   MissionDefinition,
 } from '../../content/missions.ts';
 import type { GameContent } from '../../content/schemas.ts';
@@ -7,7 +7,7 @@ import type { GameContent } from '../../content/schemas.ts';
 type ExamBalance = GameContent['balans']['licencja'];
 
 export function examRoute(
-  city: PlayableCity,
+  city: CampaignCity,
   balance: ExamBalance,
 ): MissionDefinition {
   const { start, punkty } = balance.przejazdy[city];

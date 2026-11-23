@@ -1,0 +1,41 @@
+dialogi:
+  - id: dialogi.GDA-B-01.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.GDA-B-01.start
+  - id: dialogi.GDA-B-01.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.GDA-B-01.koniec
+  - id: dialogi.GDA-B-02.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.GDA-B-02.start
+  - id: dialogi.GDA-B-02.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.GDA-B-02.koniec
+  - id: dialogi.GDA-B-03.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.GDA-B-03.start
+  - id: dialogi.GDA-B-03.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.GDA-B-03.koniec
+  - id: dialogi.GDA-B-04.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.GDA-B-04.start
+  - id: dialogi.GDA-B-04.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.GDA-B-04.koniec

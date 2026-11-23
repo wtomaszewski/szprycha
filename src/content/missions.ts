@@ -4,7 +4,9 @@ import { dialogueId } from './dialogues.ts';
 const id = z.string().regex(/^[A-Za-z0-9_-]+$/);
 export const missionCity = z.enum(['warszawa', 'wroclaw']);
 export type MissionCity = z.infer<typeof missionCity>;
-export const playableCity = z.enum([...missionCity.options, 'krakow']);
+export const campaignCity = z.enum([...missionCity.options, 'krakow']);
+export type CampaignCity = z.infer<typeof campaignCity>;
+export const playableCity = z.enum([...campaignCity.options, 'gdansk']);
 export type PlayableCity = z.infer<typeof playableCity>;
 const key = z.string().regex(/^(misje|dialogi)(\.[A-Za-z0-9_-]+)+$/);
 const seconds = z.number().positive();
@@ -62,7 +64,7 @@ const missionGoal = z.discriminatedUnion('typ', [
 
 export const missionSchema = z
   .strictObject({
-    id: z.string().regex(/^(WAW|WRO|KRA)-(T|A[1-3]|B)-\d{2}$/),
+    id: z.string().regex(/^(WAW|WRO|KRA|GDA)-(T|A[1-3]|B)-\d{2}$/),
     miasto: playableCity,
     mapa: id.optional(),
     akt: count.max(3),
@@ -127,9 +129,18 @@ export const missionSchema = z
       : mission.akt === 0
         ? 'T'
         : `A${mission.akt}`;
-    const prefix = { warszawa: 'WAW', wroclaw: 'WRO', krakow: 'KRA' }[
-      mission.miasto
-    ];
+    const prefix = {
+      warszawa: 'WAW',
+      wroclaw: 'WRO',
+      krakow: 'KRA',
+      gdansk: 'GDA',
+    }[mission.miasto];
+    if (mission.miasto === 'gdansk' && (mission.akt !== 0 || act !== 'B'))
+      ctx.addIssue({
+        code: 'custom',
+        path: ['akt'],
+        message: 'Gdańsk currently supports free-ride exercises only',
+      });
     // Kraków's original free-ride exercises retain their saved IDs.
     const legacyKrakowTraining =
       mission.miasto === 'krakow' &&

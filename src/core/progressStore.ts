@@ -8,7 +8,7 @@ import {
   maxNicknameLength,
   migrateNickname,
 } from '../content/nicknames';
-import { missionCity, playableCity } from '../content/missions';
+import { campaignCity, missionCity } from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { placRecordsSchema } from '../gameplay/plac/placRecords';
 import { storyTemplates } from '../gameplay/procedural/storyTemplates';
@@ -189,7 +189,8 @@ export const graphicsQualities = ['auto', 'full', 'lite'] as const;
 const profileVersion = 11;
 const profileSchema = storyProfileSchema.extend({
   version: z.literal(profileVersion),
-  selectedCity: playableCity.optional(),
+  selectedCity: campaignCity.optional(),
+  freeRideCity: z.enum(['krakow', 'gdansk']).optional(),
   obwarzanki: z.array(id).optional(),
   graphicsQuality: z.enum(graphicsQualities).optional().catch(undefined),
 });
