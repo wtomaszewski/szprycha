@@ -111,10 +111,9 @@ describe('docs/04 §2 — mission score', () => {
     },
   );
 
-  it('reaches the failure threshold only on the third major', () => {
+  it('reaches the campaign failure threshold on the first major', () => {
     const score = new MissionScore(balans);
-    for (const kind of ['major', 'good', 'minor', 'major'] as const)
-      score.receive(kind);
+    for (const kind of ['good', 'minor'] as const) score.receive(kind);
     expect(score.tooManyMajor).toBe(false);
     score.receive('major');
     expect(score.tooManyMajor).toBe(true);

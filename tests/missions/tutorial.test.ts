@@ -139,19 +139,24 @@ it('completes WAW-T-01 headlessly using only scripted player input', async () =>
   expect(events).toEqual(['cwiczenie_stop']);
 });
 
-it('records KASK-01, restarts at the checkpoint and denies the time bonus', async () => {
+it('ends the attempt on KASK-01 and rewards a new safe attempt', async () => {
   const { mission, respawns } = await runTutorial([
     { ticks: 1, y: -1, helmet: false },
     ...route,
   ]);
-  expect(respawns).toEqual([mission.start]);
+  expect(respawns).toEqual([]);
   expect(mission.result).toMatchObject({
-    status: 'completed',
+    status: 'failed',
+    reason: 'major',
+    points: 0,
     timeBonusEligible: false,
-    verdicts: [
-      expect.objectContaining({ ruleId: 'KASK-01', kind: 'major' }),
-      expect.objectContaining({ ruleId: 'ZNAK-STOP', kind: 'good' }),
-    ],
+    verdicts: [expect.objectContaining({ ruleId: 'KASK-01', kind: 'major' })],
+  });
+  const retry = await runTutorial(route);
+  expect(retry.mission.result).toMatchObject({
+    status: 'completed',
+    timeBonusEligible: true,
+    verdicts: [expect.objectContaining({ ruleId: 'ZNAK-STOP', kind: 'good' })],
   });
 });
 

@@ -34,6 +34,14 @@ Boot → wybór profilu (do 4 profili lokalnych, avatar + nick z generatora) →
 **Ekran wyników misji:** gwiazdki (animacja), punkty z rozbiciem (dobre nawyki, błędy, czas), 1 przepis „do zapamiętania”, przycisk „Jeszcze raz po 3 gwiazdki”.
 **Strefa dla rodzica** (zablokowana prostym zadaniem matematycznym): postęp mastery w modułach, przepisy sprawiające trudność, limit czasu gry, włączanie rankingów online, eksport certyfikatu.
 
+### Nieudana próba misji (#97)
+
+Poważny błąd, koniec czasu, nadmierne wstrząsy przesyłki, przegrany wyścig lub błędna odpowiedź przy pełnej Uwadze Drogówki zatrzymują próbę. Pieczątce „OBLAŁEŚ!” towarzyszy krótki dżingiel syntezatora regulowany głośnością efektów. Na stop-klatce Sierżant Ola pokazuje przyczynę i podpowiada, co zrobić w następnej próbie. Przyciski pozwalają zacząć misję od początku lub wrócić do menu.
+
+Opcja „Łagodniejszy napis po nieudanej próbie” w Strefie Rodzica zmienia pieczątkę na „Spróbuj jeszcze raz”. Przy systemowym lub włączonym w grze ograniczeniu efektów pieczątka jest statyczna.
+
+[Stop-klatka przed zmianą](screenshots/97-przed.png) · [Ekran porażki](screenshots/97-po.png) · [Wariant łagodniejszy](screenshots/97-lagodny.png)
+
 ### Pierwsza jazda z Sierżant Olą (#96)
 
 Nowy profil zaczyna w Miasteczku Ruchu. Samouczek zapisuje bieżący krok lokalnie i wznawia go po ponownym uruchomieniu. Gracz może użyć przycisku „Pomiń samouczek” lub otworzyć w menu głównym „Pomoc”, aby wznowić albo zacząć od początku. Wcześniej utworzone profile otwierają od razu menu.

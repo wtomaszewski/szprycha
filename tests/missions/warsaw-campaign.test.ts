@@ -106,20 +106,29 @@ it.each(trafficErrors)(
   '%s rejects the unsafe route',
   (id, route, ruleId, kind) => {
     const run = runMissionRoute(id, route, undefined, true);
-    expect(run.mission.result).toBeUndefined();
+    if (kind === 'major') {
+      expect(run.mission.result).toMatchObject({
+        status: 'failed',
+        reason: 'major',
+        points: 0,
+        verdict: { ruleId, kind },
+      });
+    } else expect(run.mission.result).toBeUndefined();
     expect(run.verdicts).toContainEqual(
       expect.objectContaining({ ruleId, kind }),
     );
   },
 );
 
-it('withdraws the smoothness bonus after a rough ride for the Professor', () => {
+it('ends a delivery that shakes the Professor’s parcel too much', () => {
   const run = runMissionRoute(
     'WAW-A2-04',
     a['WAW-A2-04'].map((point) => ({ ...point, maxInput: 1 })),
   );
   expect(run.mission.result).toMatchObject({
-    status: 'completed',
+    status: 'failed',
+    reason: 'wstrzasy_paczki',
+    points: 0,
     smoothBonus: 0,
   });
   expect(run.mission.result?.verdicts).toContainEqual(

@@ -48,7 +48,7 @@ it.each(shortcuts)(
       illegalShortcut: false,
     });
     expect(shortcutResult).toMatchObject({
-      status: 'completed',
+      status: rule.waga_bledu === 'major' ? 'failed' : 'completed',
       illegalShortcut: true,
       timeBonusEligible: false,
       verdicts: expect.arrayContaining([

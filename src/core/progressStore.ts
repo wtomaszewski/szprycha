@@ -158,6 +158,7 @@ const profileSchema = m9ProfileSchema.extend({
   avatarId: z.enum(helmetColors),
   ageBand: z.enum(ageBands).optional(),
   breakMinutes: count.positive().nullable().optional(),
+  gentleFailure: z.boolean().optional().catch(undefined),
   onlineRankings: z.boolean(),
   rankings: rankingState.optional().catch(undefined),
   tutorial: z.enum(tutorialStates).optional().catch(undefined),

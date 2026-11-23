@@ -19,7 +19,7 @@
       wymagany_nawyk: ZNAK-STOP
       wskazowka_powrotu: misje.WAW-T-01.powrot_stop
   limit_s: 90
-  warunki_porazki: [ czas_minal, major_x3 ]
+  warunki_porazki: [ czas_minal ]
   checkpointy: [ tutorial_przed_stop ]
   reguly_cwiczone: [ KASK-01, ZNAK-STOP ]
   zdarzenia_wymuszone:
@@ -75,7 +75,6 @@
     - { typ: dojedz, poi: praga_osiedle_powrot, opis: misje.WAW-A1-01.objazd7 }
     - { typ: dojedz, poi: praga_warsztat_powrot, opis: misje.WAW-A1-01.objazd8 }
   checkpointy: [prawa_reka, praga_petla_zachod, praga_osiedle_powrot]
-  warunki_porazki: [major_x3]
   reguly_cwiczone: [PIER-01, MSC-03]
   zdarzenia_wymuszone:
     - { typ: pojazd_na_skrzyzowaniu, przy: prawa_reka, regula: PIER-01 }
@@ -108,7 +107,6 @@
     - { typ: dojedz, poi: praga_osiedle_powrot, opis: misje.WAW-A1-02.objazd7 }
     - { typ: dojedz, poi: odbiorca_bazar, opis: misje.WAW-A1-02.objazd8 }
   checkpointy: [cp_bramy, praga_petla_zachod, praga_osiedle_powrot]
-  warunki_porazki: [major_x3]
   reguly_cwiczone: [PIER-06, MAN-01, MAN-07]
   zdarzenia_wymuszone:
     - { typ: pieszy_przy_bramie, przy: przed_brama, regula: PIER-06 }
@@ -142,7 +140,7 @@
     - { typ: dojedz, poi: praga_osiedle_powrot, opis: misje.WAW-A1-03.objazd7 }
     - { typ: dojedz, poi: praga_warsztat_powrot, opis: misje.WAW-A1-03.objazd8 }
   limit_s: 250
-  warunki_porazki: [czas_minal, major_x3]
+  warunki_porazki: [czas_minal]
   checkpointy: [cp_bazar, podejscie_do_stop, praga_petla_zachod, praga_osiedle_powrot]
   reguly_cwiczone: [PIER-01, PIER-02, MAN-01]
   zdarzenia_wymuszone:
@@ -176,7 +174,7 @@
     - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A1-04.objazd7 }
     - { typ: dojedz, poi: kolumna, opis: misje.WAW-A1-04.cel3 }
   limit_s: 250
-  warunki_porazki: [czas_minal, major_x3]
+  warunki_porazki: [czas_minal]
   checkpointy: [most_ddr, przyczolek_mostu, bulwar_srodek, bulwary_noca]
   reguly_cwiczone: [MAN-04, GDZIE-06, PIER-04]
   zdarzenia_wymuszone:
@@ -214,7 +212,6 @@
     - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A1-05.objazd7 }
     - { typ: dojedz, poi: przewodnik, opis: misje.WAW-A1-05.objazd8 }
   przesylka: { delikatna: true }
-  warunki_porazki: [major_x3]
   checkpointy: [kamienny_rynek, przed_deptakiem, bulwar_srodek, bulwary_noca]
   reguly_cwiczone: [GDZIE-07, GDZIE-05, MAN-08]
   zdarzenia_wymuszone:
@@ -248,7 +245,6 @@
     - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A1-06.objazd6 }
     - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A1-06.objazd7 }
     - { typ: dojedz, poi: podpis_zakloczacza, opis: misje.WAW-A1-06.objazd8 }
-  warunki_porazki: [major_x3]
   checkpointy: [posterunek_oli, za_skrzyzowaniem, bulwar_srodek, bulwary_noca]
   reguly_cwiczone: [SYG-03, ZNAK-A7]
   zdarzenia_wymuszone:
@@ -285,7 +281,7 @@
     - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-01.objazd6 }
     - { typ: dojedz, poi: palac_ddr_wjazd, opis: misje.WAW-A2-01.objazd7 }
   limit_s: 280
-  warunki_porazki: [czas_minal, major_x3]
+  warunki_porazki: [czas_minal]
   checkpointy: [palac_ddr_przed, starowka_lacznik, bulwar_poludnie]
   reguly_cwiczone: [SYG-01, SYG-02, PIER-09]
   zdarzenia_wymuszone:
@@ -317,7 +313,6 @@
     - { typ: dojedz, poi: bulwar_noc_start, opis: misje.WAW-A2-02.objazd5 }
     - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-02.objazd6 }
     - { typ: dojedz, poi: palac_ddr_wjazd, opis: misje.WAW-A2-02.objazd7 }
-  warunki_porazki: [major_x3]
   checkpointy: [palac_strzalka_przed, bulwar_srodek, bulwar_poludnie]
   reguly_cwiczone: [ZNAK-S2, PIER-04]
   zdarzenia_wymuszone:
@@ -350,7 +345,6 @@
     - { typ: dojedz, poi: bulwar_noc_start, opis: misje.WAW-A2-03.objazd5 }
     - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-03.objazd6 }
     - { typ: dojedz, poi: palac_ddr_wjazd, opis: misje.WAW-A2-03.objazd7 }
-  warunki_porazki: [major_x3]
   checkpointy: [palac_tram_przed, starowka_lacznik, bulwar_poludnie]
   reguly_cwiczone: [MSC-02, PIER-09]
   zdarzenia_wymuszone:
@@ -379,7 +373,6 @@
     - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-04.objazd1 }
     - { typ: dojedz, poi: starowka_lacznik, opis: misje.WAW-A2-04.objazd2 }
     - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A2-04.objazd3 }
-  warunki_porazki: [major_x3]
   checkpointy: [bulwar_srodek, bulwar_poludnie, bulwary_noca]
   reguly_cwiczone: [GDZIE-01, GDZIE-08, MAN-04]
   zdarzenia_wymuszone:
@@ -412,7 +405,6 @@
     - { typ: dojedz, poi: bulwar_noc_start, opis: misje.WAW-A2-05.objazd5 }
     - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-05.objazd6 }
     - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A2-05.objazd7 }
-  warunki_porazki: [major_x3]
   checkpointy: [bulwar_srodek, starowka_lacznik, bulwar_poludnie]
   reguly_cwiczone: [KASK-01, WYP-04, WYP-05]
   zdarzenia_wymuszone:
@@ -444,7 +436,6 @@
     - { typ: dojedz, poi: bulwar_noc_start, opis: misje.WAW-A2-06.objazd5 }
     - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A2-06.objazd6 }
     - { typ: dojedz, poi: bulwar_polnoc, opis: misje.WAW-A2-06.objazd7 }
-  warunki_porazki: [major_x3]
   checkpointy: [most_detektyw_foto, bulwar_srodek, bulwar_poludnie]
   reguly_cwiczone: [GDZIE-01, GDZIE-02, ZNAK-C13]
   zdarzenia_wymuszone:
@@ -479,7 +470,6 @@
     - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A3-01.bulwarNawrot }
     - { typ: dojedz, poi: park_powrot, opis: misje.WAW-A3-01.objazd6 }
     - { typ: dojedz, poi: lazienki_pawilon, opis: misje.WAW-A3-01.objazd7 }
-  warunki_porazki: [major_x3]
   checkpointy: [fontanny_poludnie, lazienki_frank_start, bulwar_srodek]
   reguly_cwiczone: [GDZIE-04, GDZIE-05, GDZIE-09]
   zdarzenia_wymuszone:
@@ -524,7 +514,6 @@
     - { typ: dojedz, poi: bulwary_noca, opis: misje.WAW-A3-02.bulwarNawrot }
     - { typ: dojedz, poi: park_powrot, opis: misje.WAW-A3-02.objazd6 }
     - { typ: dojedz, poi: lazienki_pawilon, opis: misje.WAW-A3-02.objazd7 }
-  warunki_porazki: [major_x3]
   checkpointy: [lazienki_aleja, lazienki_frank_start, bulwar_srodek]
   reguly_cwiczone: [GDZIE-10, GDZIE-08, MAN-01]
   zdarzenia_wymuszone:
@@ -555,7 +544,6 @@
     - { typ: dojedz, poi: kolej_poludnie_przed, opis: misje.WAW-A3-03.objazd3 }
     - { typ: dojedz, poi: kolej_poludnie_za, opis: misje.WAW-A3-03.objazd4 }
     - { typ: dojedz, poi: mokotow_stacja_przed, opis: misje.WAW-A3-03.objazd5 }
-  warunki_porazki: [major_x3]
   checkpointy: [mokotow_kolej_przed, mokotow_stacja_przed, kolej_poludnie_przed]
   reguly_cwiczone: [MSC-01, MAN-04]
   zdarzenia_wymuszone:
@@ -622,7 +610,6 @@
         - misje.WAW-A3-04.cel5Odp3
       poprawna: 1
       wyjasnienie: misje.WAW-A3-04.cel5Feedback
-  warunki_porazki: [major_x3]
   checkpointy: [palac_pomoc_miejsce]
   reguly_cwiczone: [PP-01, PP-02, PP-03]
   zdarzenia_wymuszone:
@@ -665,7 +652,6 @@
     - { typ: dojedz, poi: most_detektyw_srodek, opis: misje.WAW-A3-05.cel8 }
     - { typ: dojedz, poi: stadion_start, opis: misje.WAW-A3-05.stadionPrzed }
     - { typ: oddaj, poi: stadion_meta, opis: misje.WAW-A3-05.cel9, przedmiot: klucz }
-  warunki_porazki: [major_x3]
   checkpointy: [fontanny_poludnie, palac_ola_przed, bulwar_polnoc]
   reguly_cwiczone: [MSC-05, SYG-03, PIER-07]
   zdarzenia_wymuszone:
@@ -701,7 +687,7 @@
     - { typ: dojedz, poi: stadion_start, opis: misje.WAW-A3-06.cel2 }
     - { typ: dojedz, poi: stadion_meta, opis: misje.WAW-A3-06.cel3 }
   limit_s: 250
-  warunki_porazki: [czas_minal, major_x3]
+  warunki_porazki: [czas_minal]
   checkpointy: [stadion_trening_brama, stadion_start, stadion_nawrot]
   reguly_cwiczone: [GDZIE-01, MAN-04, PIER-01]
   zdarzenia_wymuszone:

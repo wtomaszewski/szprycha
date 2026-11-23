@@ -2,6 +2,7 @@ import { readContent } from '../../tools/content';
 import { describe, expect, it } from 'vitest';
 import { missionSchema } from '../../src/content/missions';
 import { MissionSystem } from '../../src/gameplay/MissionSystem';
+import { RoadAttention } from '../../src/progression/RoadAttention';
 import type { Verdict } from '../../src/rules/types';
 import type {
   Box,
@@ -9,7 +10,7 @@ import type {
   Zone,
 } from '../../src/rules/world/WorldModel';
 
-const { balans } = await readContent();
+const { balans, pytania } = await readContent();
 
 const start = { id: 'start', x: 1, y: 1, width: 0, height: 0, heading: 0 };
 const pickup = { ...start, id: 'pickup', x: 8 };
@@ -46,7 +47,6 @@ const definition = missionSchema.parse({
     { typ: 'oddaj', poi: 'destination', przedmiot: 'paczka' },
   ],
   checkpointy: ['check'],
-  warunki_porazki: ['major_x3'],
   reguly_cwiczone: ['ZNAK-STOP'],
   par_s: 25,
   min_dobre_nawyki: 1,
@@ -61,7 +61,12 @@ const good: Verdict = {
   evidence: {},
   feedbackKey: 'przepisy.ZNAK-STOP.feedback',
 };
-const major: Verdict = { ...good, kind: 'major', ruleId: 'SYG-01' };
+const major: Verdict = {
+  ...good,
+  kind: 'major',
+  ruleId: 'SYG-01',
+  feedbackKey: 'przepisy.SYG-01.feedback',
+};
 
 function driveToCheckpoint(mission: MissionSystem) {
   mission.step(pickup, []);
@@ -136,20 +141,89 @@ describe('MissionSystem', () => {
     },
   );
 
-  it('fails at the third major verdict, even at the goal', () => {
+  it('ends the attempt on the first major, even at the goal and with a control question pending', () => {
     const mission = new MissionSystem(definition, world, balans);
     driveToCheckpoint(mission);
-    for (let i = 0; i < 2; i++) {
-      expect(mission.step(destination, [major])?.respawn).toBeDefined();
-      expect(mission.result).toBeUndefined();
-    }
-    expect(mission.step(destination, [major])).toBeUndefined();
+    mission.step(checkpoint, [good]);
+    mission.answerQuestion(balans.uwaga_drogowki.bonus_madra_glowa);
+    expect(
+      mission.step(
+        destination,
+        [major],
+        undefined,
+        undefined,
+        undefined,
+        1,
+        true,
+      ),
+    ).toBeUndefined();
     expect(mission.result).toMatchObject({
       status: 'failed',
-      reason: 'major_x3',
-      verdicts: [major, major, major],
+      reason: 'major',
+      verdict: major,
+      verdicts: [good, major],
+      points: 0,
+      habitPoints: 0,
+      questionPoints: 0,
+      stars: 0,
       timeBonusEligible: false,
     });
+    expect(mission.waitingForQuestion).toBe(false);
+    mission.step(destination, [good]);
+    expect(mission.result?.verdicts).toEqual([good, major]);
+  });
+
+  it('fails a fragile delivery at the configured shock threshold', () => {
+    const mission = new MissionSystem(
+      { ...definition, przesylka: { delikatna: true } },
+      { ...world, zones: [{ ...zone, surface: 'rough' }] },
+      balans,
+    );
+    driveToCheckpoint(mission);
+    for (let tick = 0; tick < 120 && !mission.result; tick++)
+      mission.step(checkpoint, [], undefined, undefined, undefined, 8);
+    expect(mission.result).toMatchObject({
+      status: 'failed',
+      reason: 'wstrzasy_paczki',
+      shocks: balans.misja.prog_wstrzasow_porazka,
+      points: 0,
+    });
+  });
+
+  it('fails at full Road Attention when the finishing question is answered incorrectly', () => {
+    const mission = new MissionSystem(definition, world, balans);
+    const attention = new RoadAttention(balans.uwaga_drogowki, pytania.pytania);
+    const minor = { ...good, kind: 'minor' } as const;
+    mission.step(start, [good]);
+    driveToCheckpoint(mission);
+    for (let i = 0; i < balans.uwaga_drogowki.max; i++) {
+      attention.step([minor], true);
+      const position = attention.pending ? destination : checkpoint;
+      mission.step(
+        position,
+        [minor],
+        undefined,
+        undefined,
+        undefined,
+        1,
+        Boolean(attention.pending),
+      );
+    }
+    expect(attention.level).toBe(balans.uwaga_drogowki.max);
+    expect(mission.waitingForQuestion).toBe(true);
+    const wrongIndex =
+      (attention.pending!.poprawna + 1) % attention.pending!.odpowiedzi.length;
+    const answer = attention.answer(wrongIndex)!;
+    expect(answer.correct).toBe(false);
+    mission.failControlQuestion(answer.ruleId);
+    expect(mission.result).toMatchObject({
+      status: 'failed',
+      reason: 'uwaga_drogowki',
+      verdict: minor,
+      points: 0,
+      stars: 0,
+    });
+    expect(mission.waitingForQuestion).toBe(false);
   });
 
   it('counts a control answer before producing the result of the finishing tick', () => {
@@ -184,26 +258,31 @@ describe('MissionSystem', () => {
     expect(mission.result?.points).toBe(1450);
   });
 
-  it('rewinds goal progress, preserving the clock, stage budget and verdicts', () => {
+  it('rewinds a missing required habit, preserving the clock, stage budget and verdicts', () => {
     const mission = new MissionSystem(
       {
         ...definition,
-        warunki_porazki: ['czas_minal', 'major_x3'],
+        warunki_porazki: ['czas_minal'],
         limit_s: 60,
         cele: [
           ...definition.cele.slice(0, 3),
           { typ: 'dojedz', poi: 'destination', limit_s: 1 },
-          { typ: 'oddaj', przedmiot: 'paczka', poi: 'destination' },
+          {
+            typ: 'oddaj',
+            przedmiot: 'paczka',
+            poi: 'destination',
+            wymagany_nawyk: good.ruleId,
+          },
         ],
       },
       world,
       balans,
     );
-    expect(mission.step(start, [major])?.respawn).toEqual(mission.start);
+    mission.step(start, []);
     driveToCheckpoint(mission);
     mission.step(destination, [good]);
     expect(mission.target?.goal.typ).toBe('oddaj');
-    expect(mission.step(destination, [major])?.respawn).toEqual({
+    expect(mission.step(destination, [])?.respawn).toEqual({
       x: checkpoint.x,
       y: checkpoint.y,
       heading: checkpoint.heading,
@@ -212,13 +291,13 @@ describe('MissionSystem', () => {
     expect(mission.remainingSeconds).toBeCloseTo(59 / 60);
     expect(mission.elapsedSeconds).toBe(6 / 60);
     mission.step(destination, []);
-    mission.step(destination, []);
+    mission.step(destination, [good]);
     expect(mission.result).toMatchObject({
       status: 'completed',
       elapsedSeconds: 8 / 60,
-      goodHabits: 1,
-      verdicts: [major, good, major],
-      timeBonusEligible: false,
+      goodHabits: 2,
+      verdicts: [good, good],
+      timeBonusEligible: true,
     });
   });
 
@@ -226,7 +305,7 @@ describe('MissionSystem', () => {
     const mission = new MissionSystem(definition, world, balans);
     mission.step(checkpoint, []);
     driveToCheckpoint(mission);
-    mission.step(destination, [major]);
+    mission.rewindCheckpoint();
     expect(mission.target?.goal.typ).toBe('oddaj');
   });
 
@@ -242,7 +321,7 @@ describe('MissionSystem', () => {
       balans,
     );
     expect(mission.step(checkpoint, [])?.events).toEqual(events.slice(0, 2));
-    expect(mission.step(checkpoint, [major])?.respawn).toBeDefined();
+    mission.rewindCheckpoint();
     expect(mission.step(checkpoint, [])).toBeUndefined();
     expect(mission.step(destination, [])?.events).toEqual(events.slice(2));
     expect(mission.step(destination, [])).toBeUndefined();
@@ -252,7 +331,7 @@ describe('MissionSystem', () => {
     function run() {
       const mission = new MissionSystem(definition, world, balans);
       const effects = [
-        mission.step(start, [major]),
+        mission.step(start, []),
         mission.step(pickup, []),
         mission.step(pickup, []),
         mission.step(checkpoint, []),

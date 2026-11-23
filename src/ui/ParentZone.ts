@@ -197,9 +197,22 @@ function settings(
   breakLabel.className = 'parent-zone-setting';
   breakLabel.append(labels.breakReminder, breakTime);
 
+  const gentle = document.createElement('input');
+  gentle.type = 'checkbox';
+  gentle.checked = store.profile.gentleFailure === true;
+  gentle.addEventListener('change', () => {
+    const checked = gentle.checked;
+    store.change((profile) => {
+      profile.gentleFailure = checked;
+    });
+  });
+  const gentleLabel = document.createElement('label');
+  gentleLabel.className = 'parent-zone-toggle';
+  gentleLabel.append(gentle, labels.gentleFailure);
+
   const preferences = document.createElement('div');
   preferences.className = 'parent-zone-preferences';
-  preferences.append(ageLabel, ageHelp, breakLabel);
+  preferences.append(ageLabel, ageHelp, breakLabel, gentleLabel);
   const parts: HTMLElement[] = [identity, preferences];
 
   const client = progress.rankings;

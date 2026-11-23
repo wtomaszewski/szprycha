@@ -93,6 +93,7 @@ import { ControlQuestionDialog } from '../ui/ControlQuestionDialog';
 import { RoadAttention } from '../progression/RoadAttention';
 import { SafetySeries } from '../progression/SafetySeries';
 import { MissionHud } from '../ui/MissionHud';
+import { MissionFailureDialog } from '../ui/MissionFailureDialog';
 import { MissionResults } from '../ui/MissionResults';
 import { MissionPhone } from '../ui/MissionPhone';
 import { DialogueWindow } from '../ui/DialogueWindow';
@@ -170,6 +171,8 @@ export class City extends Scene {
   private rankingCity?: MissionCity;
   private resultPresented = false;
   private results?: MissionResults;
+  private failureDialog?: MissionFailureDialog;
+  private readonly missionVerdictBatches: Verdict[][] = [];
   private glory?: GloryReplay;
   private gloryClip?: GloryClip;
   private resultsElapsed?: number;
@@ -288,20 +291,27 @@ export class City extends Scene {
     this.askedGnome = undefined;
     if (!tutorial)
       this.progress.store.prepareRide(this.content.przepisy.przepisy);
-    this.series ??= new SafetySeries(
-      this.content.balans.combo,
-      0,
-      this.progress.longestSeries,
-    );
-    this.attention ??= new RoadAttention(
-      this.content.balans.uwaga_drogowki,
-      this.content.pytania.pytania,
-    );
-    this.resultPresented = false;
-    this.results = this.gloryClip = this.resultsElapsed = undefined;
     const definition = examRide
       ? examRoute(examRide.city, this.content.balans.licencja)
       : this.availableOrders().find(({ id }) => id === missionId);
+    if (!this.series || (!examRide && (definition || this.mission))) {
+      this.series = new SafetySeries(
+        this.content.balans.combo,
+        0,
+        this.progress.longestSeries,
+      );
+      this.attention = new RoadAttention(
+        this.content.balans.uwaga_drogowki,
+        this.content.pytania.pytania,
+      );
+      this.reviewedMinor.clear();
+    }
+    this.resultPresented = false;
+    this.failureDialog =
+      this.results =
+      this.gloryClip =
+      this.resultsElapsed =
+        undefined;
     const mapId = definition?.mapa ?? definition?.miasto ?? map ?? defaultMap;
     this.rankingCity =
       mapId === 'warszawa' || mapId === 'wroclaw' ? mapId : undefined;
@@ -650,8 +660,14 @@ export class City extends Scene {
           answer.correct,
           this.content.balans.mastery,
         );
-        if (this.mission) this.mission.answerQuestion(answer.points);
-        else this.freeRidePoints += answer.points;
+        if (!this.mission) this.freeRidePoints += answer.points;
+        else if (answer.correct) this.mission.answerQuestion(answer.points);
+        else {
+          this.mission.failControlQuestion(answer.ruleId);
+          this.questionDialog.close();
+          this.presentMissionResult();
+          return;
+        }
         this.updateProgressionHud();
         return answer;
       },
@@ -694,7 +710,12 @@ export class City extends Scene {
         },
         () => this.takePhoto(),
       );
-      if (!examRide)
+      if (!examRide) {
+        this.failureDialog = new MissionFailureDialog(
+          this.controls.root,
+          () => this.reset(),
+          () => this.scene.start('MainMenu'),
+        );
         this.results = new MissionResults(
           this.controls.root,
           this.progress.store,
@@ -703,6 +724,7 @@ export class City extends Scene {
           () => this.togglePhone(),
           () => this.scene.start('CityPicker', { mode: 'campaign' }),
         );
+      }
       this.updateMissionHud();
     }
     this.resetRules();
@@ -744,6 +766,9 @@ export class City extends Scene {
     window.addEventListener('pagehide', this.flushProgress, { signal });
     const onShutdown = () => {
       this.finishFreeRide();
+      this.recordMissionVerdicts(
+        this.mission?.result?.status !== 'failed' && !this.attention.pending,
+      );
       lifecycle.abort();
       this.scale.off('resize', refreshGlory);
       this.flushProgress();
@@ -752,6 +777,7 @@ export class City extends Scene {
       this.tutorial = undefined;
       this.tutorialMarker = undefined;
       this.results?.close();
+      this.failureDialog?.close();
       this.stopListeningForVerdicts?.();
       this.stopListeningForVerdicts = undefined;
       delete this.game.canvas.dataset.lighting;
@@ -819,7 +845,13 @@ export class City extends Scene {
       this.tutorial.advance();
       return;
     }
-    if (this.dialogue.open || this.review || this.questionDialog.open) return;
+    if (
+      this.dialogue.open ||
+      this.review ||
+      this.questionDialog.open ||
+      this.failureDialog?.open
+    )
+      return;
     if (!canOpenPhone(this.rider.speed)) {
       this.message(this.phoneFeedback);
       return;
@@ -842,6 +874,7 @@ export class City extends Scene {
       this.dialogue.open ||
       this.review ||
       this.questionDialog.open ||
+      this.failureDialog?.open ||
       (this.results?.open && event.code !== 'KeyM')
     )
       return true;
@@ -881,6 +914,10 @@ export class City extends Scene {
     pressed: (button: number) => boolean,
     justPressed: (button: number) => boolean,
   ) {
+    if (this.failureDialog?.open) {
+      this.failureDialog.gamepad(justPressed);
+      return true;
+    }
     if (this.review) {
       if (this.review.shown) this.replayDialog.gamepad(justPressed);
       return true;
@@ -948,6 +985,50 @@ export class City extends Scene {
     this.dialogue.show(lines, () => this.missionHud?.focusEquipment());
   }
 
+  private recordMissionVerdicts(creditGoodVerdicts: boolean) {
+    const longest = creditGoodVerdicts
+      ? this.series.longest
+      : this.progress.longestSeries;
+    for (const batch of this.missionVerdictBatches) {
+      const verdicts = creditGoodVerdicts
+        ? batch
+        : batch.filter(({ kind }) => kind !== 'good');
+      this.progress.recordRide(verdicts, longest, this.content.balans.mastery);
+    }
+    this.missionVerdictBatches.length = 0;
+  }
+
+  private showMissionFailure(
+    result: Extract<MissionResult, { status: 'failed' }>,
+  ) {
+    const { reason, verdict } = result;
+    const reduced = Boolean(this.reducedEffects);
+    const frame = this.replay.frame(this.replay.size - 1)!;
+    const focus = verdict ? this.highlight.focus(verdict) : frame.rider;
+    this.cameras.main.setZoom(drivingZoom * (verdict && !reduced ? 1.25 : 1));
+    this.cameras.main.centerOn(focus.x, focus.y);
+    this.renderFrame(frame, 0, true);
+    if (verdict) this.highlight.draw(verdict, frame, 0, true);
+    this.feedback.reset(this.rules.counts);
+    this.publishRiderPosition(this.rider);
+    this.updateDrivingHud(this.rider, this.controls.actions);
+    this.updateProgressionHud();
+    this.updateMissionHud();
+    audio.setActivity(false);
+    audio.updateSiren(0);
+    audio.play('missionFailed');
+    const tip =
+      (verdict && this.feedback.explanation(verdict)) ||
+      localizedVoiceLine(`missionFailure.tips.${reason}`);
+    this.failureDialog?.show(
+      ui.missionFailure.reasons[reason],
+      tip.text,
+      this.progress.store.profile.gentleFailure === true,
+      reduced,
+    );
+    audio.read('lesson', tip);
+  }
+
   private presentMissionResult() {
     const mission = this.mission;
     const result = mission?.result;
@@ -966,7 +1047,11 @@ export class City extends Scene {
       this.scene.start('MainMenu', { examResult });
       return;
     }
-    if (result.status === 'completed') {
+    this.recordMissionVerdicts(result.status === 'completed');
+    if (result.status === 'failed') {
+      this.flushProgress();
+      this.showMissionFailure(result);
+    } else {
       const { definition } = mission;
       const ride = this.rankingRide;
       if (ride?.valid) {
@@ -1012,10 +1097,6 @@ export class City extends Scene {
         missionLines(this.content.dialogi, definition.dialog_koniec),
         () => this.showResults(result, definition, tokens, unlocked),
       );
-    } else {
-      this.flushProgress();
-      this.updateMissionHud();
-      this.showResults(result, mission.definition, 0, false);
     }
   }
 
@@ -1027,7 +1108,7 @@ export class City extends Scene {
   }
 
   private showResults(
-    result: MissionResult,
+    result: Extract<MissionResult, { status: 'completed' }>,
     definition: MissionDefinition,
     tokens: number,
     unlocked: boolean,
@@ -1054,8 +1135,7 @@ export class City extends Scene {
           ]
         : [];
     });
-    this.gloryClip =
-      result.status === 'completed' ? this.glory?.finish() : undefined;
+    this.gloryClip = this.glory?.finish();
     const verdict = this.gloryClip?.verdict;
     const habit =
       verdict &&
@@ -1086,18 +1166,9 @@ export class City extends Scene {
     if (unlocked) audio.play('unlock', 1, result.stars > 0 ? 0.75 : 0);
     audio.read(
       'results',
-      localizedVoiceLine(
-        resultVoiceIds[
-          result.status === 'completed'
-            ? habit
-              ? 'glory'
-              : 'completed'
-            : 'failed'
-        ],
-      ),
+      localizedVoiceLine(resultVoiceIds[habit ? 'glory' : 'completed']),
     );
-    this.resultsElapsed =
-      result.status === 'completed' && !this.reducedEffects ? 0 : undefined;
+    this.resultsElapsed = this.reducedEffects ? undefined : 0;
     this.drawGlory(this.resultsElapsed);
   }
 
@@ -1222,7 +1293,7 @@ export class City extends Scene {
   }
 
   private showControlQuestion() {
-    if (this.examRide) return false;
+    if (this.examRide || this.mission?.result) return false;
     const question = this.attention.pending;
     if (!question) return false;
     this.rider.speed = 0;
@@ -1294,33 +1365,19 @@ export class City extends Scene {
   }
 
   private reset() {
+    if (this.mission) {
+      this.scene.restart({
+        missionId: this.mission.definition.id,
+        city: this.campaignCity,
+      });
+      return;
+    }
     this.finishFreeRide();
-    this.startRankingRide(Boolean(this.mission));
+    this.startRankingRide(false);
     Object.assign(this.rider, this.spawn, {
       speed: 0,
       walking: false,
     });
-    if (this.mission) {
-      this.results?.close();
-      audio.stopReading('results');
-      this.resultsElapsed = this.gloryClip = undefined;
-      this.glory?.reset();
-      this.rememberMastery();
-      this.highlight.clear();
-      this.cameras.main.setZoom(drivingZoom);
-      this.rivalSprite?.setVisible(true);
-      this.rivalLabel?.setVisible(true);
-      this.mission = this.createMission(this.mission.definition);
-      this.resultPresented = false;
-      this.updateProgressionHud();
-      this.missionInterrupted = false;
-      this.checkpointHint = undefined;
-      this.controls.notice.textContent = '';
-      this.rulesRider.helmet.fastened =
-        this.mission.definition.start.kask_zapiety ?? true;
-      this.placeRider(this.mission.start);
-      this.updateMissionHud();
-    }
     this.traffic.reset(this.rankingRide?.seed);
     this.trafficEvents.reset(this.rankingRide?.seed);
     this.environment.officerOrders = undefined;
@@ -1664,11 +1721,16 @@ export class City extends Scene {
     if (!this.examRide) {
       for (const verdict of this.tickVerdicts)
         this.series.receive(verdict.kind);
-      this.progress.recordRide(
-        this.tickVerdicts,
-        this.series.longest,
-        this.content.balans.mastery,
-      );
+      if (this.mission) {
+        if (this.tickVerdicts.length)
+          this.missionVerdictBatches.push(this.tickVerdicts.slice());
+      } else {
+        this.progress.recordRide(
+          this.tickVerdicts,
+          this.series.longest,
+          this.content.balans.mastery,
+        );
+      }
       this.attention.step(this.tickVerdicts, rider.speed > 0);
     }
     const gnome = this.mission?.gnomeTarget;
@@ -1741,7 +1803,8 @@ export class City extends Scene {
         this.rules.counts,
         verdict === lesson || verdict.kind === 'major',
       );
-    if (lesson) {
+    const failed = this.mission?.result?.status === 'failed' && !this.examRide;
+    if (lesson && !failed) {
       if (this.mission?.result) this.flushProgress();
       if (lesson.kind === 'minor') this.reviewedMinor.add(lesson.ruleId);
       this.review = { verdict: lesson, elapsed: 0, shown: false };
@@ -1963,7 +2026,7 @@ export class City extends Scene {
       this.updateReview(delta);
       return;
     }
-    if (this.results?.open) return;
+    if (this.results?.open || this.failureDialog?.open) return;
     const sirenVolume = this.renderFrame(
       this.replay.frame(this.replay.size - 1)!,
       delta,

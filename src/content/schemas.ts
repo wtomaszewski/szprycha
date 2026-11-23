@@ -167,6 +167,7 @@ export const balanceSchema = z.strictObject({
     bonus_czasu_max: count,
     bonus_plynnosci: count,
     prog_wstrzasow_plynnosc: ratio,
+    prog_wstrzasow_porazka: positive.max(1),
     kara_minor: count,
     kara_major: count,
     major_do_porazki: positive.int(),
