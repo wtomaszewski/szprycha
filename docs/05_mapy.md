@@ -5,7 +5,7 @@
 - **Skala:** kafel 32×32 px ≈ 1,5 m. Jezdnia 2 pasy = 4–5 kafli, chodnik 2 kafle, DDR 1–2 kafle. Landmarki są **przeskalowane w dół** (PKiN ~10×10 kafli podstawy, nie 100×100) — skala symboliczna, jak w makiecie.
 - **Rozmiar mapy miasta:** ok. 200×150 kafli (6400×4800 px), jedna mapa Tiled na miasto, podział na dzielnice warstwą obiektów `districts`. Dzielnice odblokowywane fabularnie (zablokowane = szlaban/„roboty drogowe” z humorem).
 - **Każde miasto musi zawierać komplet sytuacji drogowych** potrzebnych do modułów M01–M07 (tabela pokrycia na końcu). Raport `tools/coverage-report.ts` sprawdza to automatycznie z warstw obiektów.
-- **Wybór mapy:** scena `CityPicker` — pixel-artowa mapa Polski z pinezkami. Warszawa i Wrocław są dostępne od startu w Kampanii i Wolnej jeździe. Kraków jest dostępny w Wolnej jeździe.
+- **Wybór mapy:** scena `CityPicker` — pixel-artowa mapa Polski z pinezkami. Warszawa, Wrocław, Kraków i Gdańsk są dostępne od startu w Kampanii i Wolnej jeździe.
 
 ## Warstwy Tiled (wymagane, nazwy dokładnie takie)
 | Warstwa | Typ | Zawartość |
@@ -200,7 +200,7 @@ Zrzuty Wolnej jazdy pokazują [wybór miasta](screenshots/105-mapa-polski.webp),
 
 ## GDAŃSK
 
-**Wolna jazda → Gdańsk** zaczyna się przy Długim Targu. Kolaż w skali mikro ma 152 × 112 kafli. Przez Motławę prowadzą przeprawy drogowe i dwie kładki. Generator `npm run map:generate:gdansk` odtwarza [gdansk.tmj](../maps/gdansk.tmj).
+**Kampania → Gdańsk** otwiera najbliższe nieukończone zlecenie. **Wolna jazda → Gdańsk** zaczyna się przy Długim Targu. Kolaż w skali mikro ma 152 × 112 kafli. Przez Motławę prowadzą przeprawy drogowe i dwie kładki. Generator `npm run map:generate:gdansk` odtwarza [gdansk.tmj](../maps/gdansk.tmj).
 
 | Dzielnica | Miejsce i praktyka | Dostęp |
 | --- | --- | --- |
@@ -215,19 +215,23 @@ Zrzuty Wolnej jazdy pokazują [wybór miasta](screenshots/105-mapa-polski.webp),
 
 Auta korzystają z połączonego grafu dróg. Rowerzysta jedzie wzdłuż Motławy, a piesi chodzą po nabrzeżu, Długim Targu i promenadzie. Srebrno-grafitowy tramwaj obsługuje przystanek bez wysepki. W Wolnej jeździe zmrok zapada po 90 sekundach.
 
-`npm run coverage:maps -- --strict` wykrywa 13/13 sytuacji oraz 7/7 modułów M01–M07. `npm test -- tests/sim/gdansk.test.ts` sprawdza cztery szkolenia, naruszenia i dziesięć minut symulacji ruchu dla każdego z trzech ziaren. [Raport pokrycia](coverage.md#gdańsk)
+Kampania zachowuje identyfikatory szkoleń `GDA-B-01`–`GDA-B-04` i dotychczasowe odblokowania. Po szkoleniu SzprychaApp udostępnia dziewięć misji w trzech aktach. Spośród sześciu gdańskich bursztynów trzy prowadzą trop przez Długi Targ. Pozostałe można zebrać w Wolnej jeździe przy Żurawiu, na promenadzie i w stoczni. Po ukończeniu kampanii można wybrać Gdańsk na przejazd kontrolny po spełnieniu wymagań Licencji Szprychy. [Fabuła](02_fabula.md#gdańsk--trzy-błyski-nad-motławą) · [Lista misji](03_misje.md#kampania--gdańsk)
 
-Pomiar na tym samym komputerze w Chromium 156.0.8078.79 headless używał Wolnej jazdy, WebGL, pełnej grafiki, rozdzielczości 640 × 360 i ograniczenia CPU 4×. Dla Długiego Targu i Starówki podano mediany dwóch prób, a dla plaży wynik jednej próby.
+`npm run coverage:maps -- --strict` sprawdza w CI 13/13 sytuacji oraz 7/7 modułów M01–M07. `npm test -- tests/sim/gdansk.test.ts tests/missions/gdansk-campaign.test.ts` sprawdza dziesięć minut ruchu dla każdego z trzech ziaren, szkolenia, przejazdy w kampanii i egzaminie oraz punktację trzech nielegalnych skrótów. [Raport pokrycia](coverage.md#gdańsk)
+
+Pomiar kampanii #126 na tym samym komputerze w Chromium 156.0.8078.79 headless używał Wolnej jazdy, WebGL, pełnej grafiki, rozdzielczości 640 × 360 i ograniczenia CPU 4×. Dla Długiego Targu i Starówki podano mediany dwóch prób, a dla plaży wynik jednej próby.
 
 | Odcinek | Średnie FPS | p95 klatki |
 | --- | ---: | ---: |
 | Gdańsk, Długi Targ | 59,78 | 16,75 ms |
-| Gdańsk, plaża | 60,00 | 16,70 ms |
-| Warszawa, Starówka | 59,87 | 16,75 ms |
+| Gdańsk, plaża | 59,91 | 16,80 ms |
+| Warszawa, Starówka | 59,73 | 16,75 ms |
 
 Przy uruchomionym Vite pomiar odtwarza `BENCH_VIEWPORT=640x360 BENCH_MAP=gdansk BENCH_RUNS=2 npm run benchmark:driving`. Dla plaży ustaw `BENCH_FRAGMENT=plaza` i `BENCH_RUNS=1`. Warszawę odtwarza `BENCH_VIEWPORT=640x360 BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free BENCH_RUNS=2 npm run benchmark:driving`.
 
 Zrzuty pokazują [wybór miasta](screenshots/125-mapa-polski.webp), [Długi Targ](screenshots/125-dlugi-targ.webp), [Żuraw](screenshots/125-zuraw.webp), [kładkę](screenshots/125-kladka.webp), [stocznię](screenshots/125-stocznia.webp), [promenadę](screenshots/125-promenada.webp), [plażę](screenshots/125-plaza.webp) i [tramwaj](screenshots/125-tramwaj.webp).
+
+Zrzuty kampanii pokazują [wybór Gdańska](screenshots/126-kampania.webp), [bursztyn na Długim Targu](screenshots/126-bursztyny.webp) i [pierwszą zagadkę](screenshots/126-zagadka.webp).
 
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
 Wzorowane na prawdziwych szkolnych miasteczkach ruchu: małe skrzyżowania każdego typu, mini-rondo, sygnalizacja, przejazd kolejowy z zaporami, znaki z Albumu na tablicach, **plac manewrowy** (ósemka, slalom, tor wąski, pole zatrzymania). Tu: samouczek, plac, quiz w budynku szkoły, egzamin Licencji.

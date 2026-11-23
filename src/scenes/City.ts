@@ -702,7 +702,7 @@ export class City extends Scene {
           this.world,
           this.progress.store,
           this.controls.details,
-          mapId === 'krakow' ? 'obwarzanek' : 'gnome',
+          this.world.collectibles.values().next().value!.kind,
         )
       : undefined;
     if (!this.mission && !tutorial) {

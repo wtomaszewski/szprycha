@@ -24,6 +24,14 @@ const collections = {
     variants: 1,
     paint: paintObwarzanek,
   },
+  bursztyn: {
+    field: 'bursztyny',
+    label: ui.driving.bursztyny,
+    hint: ui.driving.bursztynyHint,
+    question: ui.driving.bursztynQuestion,
+    variants: 1,
+    paint: paintBursztyn,
+  },
 } as const;
 type CollectionKind = keyof typeof collections;
 
@@ -108,9 +116,42 @@ function paintObwarzanek(ctx: CanvasRenderingContext2D) {
     o: '#ef9c53',
     h: '#ffe19a',
   } as const;
+  paintPixels(ctx, rows, colors);
+}
+
+function paintBursztyn(ctx: CanvasRenderingContext2D) {
+  paintPixels(
+    ctx,
+    [
+      '................',
+      '.......####.....',
+      '.....##ohho#....',
+      '....#ohhhooo#...',
+      '...#ohhooooaa#..',
+      '..#ohhhoooaaa#..',
+      '.#ohoooohhaaaa#.',
+      '.#ooooohhoaaaa#.',
+      '.#oooooaaoaaaa#.',
+      '..#oaaoaaoaab#..',
+      '..#oaoaaababb#..',
+      '...#aaaababbb#..',
+      '....#bbabbbb#...',
+      '.....#######....',
+      '................',
+      '................',
+    ],
+    { '#': '#4b2737', h: '#ffe1a1', o: '#ffad4f', a: '#d77730', b: '#a94a32' },
+  );
+}
+
+function paintPixels(
+  ctx: CanvasRenderingContext2D,
+  rows: readonly string[],
+  colors: Readonly<Record<string, string>>,
+) {
   rows.forEach((row, y) => {
     [...row].forEach((pixel, x) => {
-      const color = colors[pixel as keyof typeof colors];
+      const color = colors[pixel];
       if (!color) return;
       ctx.fillStyle = color;
       ctx.fillRect(x, y, 1, 1);
@@ -158,7 +199,7 @@ export class CityCollectibles {
       this.remaining.push({
         id: item.id,
         questionIndex,
-        question: item.kind === 'obwarzanek' ? item.question : undefined,
+        question: item.kind === 'gnome' ? undefined : item.question,
         image,
       });
     });

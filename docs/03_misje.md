@@ -71,7 +71,7 @@ Losowanie używa ziarna i stałego kroku symulacji. Rozpatruje tylko zdarzenia p
 ### Uruchamianie misji
 
 - `mapa` wskazuje plik Tiled bez rozszerzenia (domyślnie wartość z `miasto`). Samouczki używają `akt: 0`. `start.kask_zapiety` określa stan kasku przed ruszeniem, a `ruch_ai: false` pozwala przećwiczyć manewr bez ruchu AI.
-- Cele są wykonywane kolejno, po osiągnięciu obszaru POI. `zbierz_obwarzanka` wymaga dojścia z rowerem do oznaczonej znajdźki i odpowiedzi na pytanie przypisane w warstwie `collectibles`. Zdobycz z profilu liczy się przy ponownym przejeździe. `odbierz` i `oddaj` bez własnego `poi` korzystają z ostatniego wskazanego POI. `wymagany_nawyk` wymaga werdyktu `good` dla wskazanej reguły w trakcie danego celu.
+- Cele są wykonywane kolejno, po osiągnięciu obszaru POI. `zbierz_obwarzanka` i `zbierz_bursztyn` wymagają dojścia z rowerem do oznaczonej znajdźki i odpowiedzi na pytanie przypisane w warstwie `collectibles`. Zdobycz z profilu liczy się przy ponownym przejeździe. `odbierz` i `oddaj` bez własnego `poi` korzystają z ostatniego wskazanego POI. `wymagany_nawyk` wymaga werdyktu `good` dla wskazanej reguły w trakcie danego celu.
 - `przygotuj_rower` może być pierwszym celem misji. Do jego ukończenia trzeba zapiąć kask i włączyć obie lampy. `start.zmrok: true` ustawia warunki ćwiczenia.
 - `skrot.odcinek` wskazuje strefę Tiled objętą znakiem B-1 lub B-2 bez wyjątku dla rowerów. Za jazdę rowerem przez tę strefę silnik wystawia zwykły werdykt zgodnie z wagą reguły. Podsumowanie misji informuje o nielegalnym przejeździe i odjęciu premii za czas. Prowadzenie roweru pozostaje dozwolone.
 - `wyscig.trasa_rywala` wskazuje polilinię Tiled w warstwie `race_routes`. Wynik rywala uwzględnia werdykty z jego przejazdu. Do zaliczenia wyścigu trzeba zdobyć od niego więcej punktów.
@@ -179,6 +179,15 @@ Finał przyznaje 8–12 żetonów i naklejkę do kolekcji, raz na wątek w każd
 | Akt 1 | `KRA-A1-01` Zaproszenia pod Plantami · `KRA-A1-02` Obwarzanki z zagadką · `KRA-A1-03` Latarenka dla Smoka · `KRA-A1-04` Zdjęcia dla Oli · `KRA-A1-05` Koperta przez zebrę | Strefa zamieszkania, objazd B-1, zagadki, ostrożna jazda po kostce, zdjęcia znaków na postoju oraz prowadzenie roweru przez zebrę |
 | Akt 2 | `KRA-A2-01` Plan Kazimierza · `KRA-A2-02` Boczne przejście · `KRA-A2-03` Dzwonek bez wysepki · `KRA-A2-04` Sygnał nad Wisłą · `KRA-A2-05` Znak przed rondem | Kontrapas, sygnalizacja, wysiadający pasażerowie, lampki po zmroku i pierwszeństwo na rondzie z A-7 |
 | Akt 3 | `KRA-A3-01` Część zza torów · `KRA-A3-02` Pomoc dla Turbo · `KRA-A3-03` Objazd pod Kopcem · `KRA-A3-04` Klucz za STOP-em · `KRA-A3-05` Festyn bez zakłóceń | Pobocze i zapory, pierwsze kroki pomocy i symulacja rozmowy z 112, pełne zatrzymanie na STOP-ie, objazd B-1 i jazda w kolumnie |
+
+## Kampania — GDAŃSK
+
+| Etap | Misje | Ćwiczenia |
+|---|---|---|
+| Szkolenie | `GDA-B-01` Kładka przy Żurawiu · `GDA-B-02` Promenada w Brzeźnie · `GDA-B-03` Wiatr i piasek · `GDA-B-04` Zielone w stronę stoczni | Kask, światła, prowadzenie roweru przy B-9, pierwszeństwo pieszych na ciągu wspólnym, bezpieczeństwo po upadku, prędkość na piasku oraz S-6 |
+| Akt 1 | `GDA-A1-01` Latarenki na Długi Targ · `GDA-A1-02` Bursztynowa układanka · `GDA-A1-03` Trzy błyski Żurawia | Delikatna dostawa po kostce i objazd B-1, trzy zagadki drogowe i prowadzenie roweru na kładce po zmroku |
+| Akt 2 | `GDA-A2-01` Zapis sygnału · `GDA-A2-02` Przystanek nad Motławą · `GDA-A2-03` Wtyk zza torów | Sprawdzenie, czy przejazd rowerowy jest wolny, ustąpienie wysiadającym na przystanku bez wysepki, jazda poboczem i oczekiwanie na otwarcie zapór |
+| Akt 3 | `GDA-A3-01` Obudowa na wietrze · `GDA-A3-02` Pomoc dla Turbo · `GDA-A3-03` Światło nad stocznią | Prędkość i objazd na zapiaszczonej drodze, bezpieczna reakcja po upadku i rozmowa z 112, przejazd kolumny otwartą alejką |
 
 ## Wspólne — Miasteczko Ruchu Drogowego
 - **Plac manewrowy:** PLAC-01 ósemka, PLAC-02 slalom, PLAC-03 wąski tor, PLAC-04 zatrzymanie w polu, PLAC-05 ruszanie i sygnalizacja, PLAC-06 jazda z jedną ręką (sygnalizowanie skrętu). Każdy element: brąz/srebro/złoto czasowe, ale tylko przejazd bez dotknięcia linii/pachołka i bez podparcia nogą się liczy.

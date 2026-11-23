@@ -48,7 +48,7 @@ export async function validateMaps(root: string, content: GameContent) {
   const questionIds = new Set(content.pytania.pytania.map(({ id }) => id));
   for (const [map, world] of worlds)
     for (const item of world.collectibles.values())
-      if (item.kind === 'obwarzanek' && !questionIds.has(item.question))
+      if (item.kind !== 'gnome' && !questionIds.has(item.question))
         throw new Error(
           `Map ${map}: unknown question ${item.question} for ${item.id}`,
         );
@@ -62,15 +62,16 @@ export async function validateMaps(root: string, content: GameContent) {
     if (!world) throw new Error(`Mission ${mission.id}: unknown map ${map}`);
     new MissionSystem(mission, world, content.balans);
     for (const goal of mission.cele) {
-      if (goal.typ === 'zbierz_obwarzanka') {
+      if (goal.typ === 'zbierz_obwarzanka' || goal.typ === 'zbierz_bursztyn') {
+        const kind = goal.typ === 'zbierz_bursztyn' ? 'bursztyn' : 'obwarzanek';
         const item = world.collectibles.get(goal.poi);
         const poi = world.pois.get(goal.poi)!;
         if (
-          item?.kind !== 'obwarzanek' ||
+          item?.kind !== kind ||
           Math.hypot(item.x - poi.x, item.y - poi.y) > 1.5
         )
           throw new Error(
-            `Mission ${mission.id}: missing obwarzanek at ${goal.poi}`,
+            `Mission ${mission.id}: missing ${kind} at ${goal.poi}`,
           );
       }
       if (goal.typ !== 'sfotografuj') continue;

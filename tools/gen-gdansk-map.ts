@@ -64,12 +64,14 @@ drawRoads();
 
 zone('dlugi-targ', 1248, 384, 928, 384, 'pedestrian_zone', 'cobble');
 zone('targ-dojscie', 1248, 768, 928, 192, 'living_zone', 'cobble');
+zone('skrot-przez-targ', 1664, 800, 64, 128, 'living_zone', 'cobble');
 zone('zuraw-nabrzeze', 1248, 1408, 992, 384, 'pedestrian_zone', 'sidewalk');
 zone('zuraw-dojscie', 1632, 1216, 160, 192, 'sidewalk', 'sidewalk');
 zone('olowianka-brzeg', 1344, 2112, 896, 256, 'sidewalk', 'cobble');
 zone('olowianka-dojscie', 1664, 2368, 96, 64, 'sidewalk', 'sidewalk');
 zone('kladka-zuraw', 1664, 1792, 96, 320, 'no_bikes', 'sidewalk');
 zone('stocznia-nabrzeze', 2656, 1280, 1088, 448, 'living_zone', 'cobble');
+zone('skrot-miedzy-halami', 3456, 1504, 64, 128, 'living_zone', 'cobble');
 zone('stocznia-wjazd', 3136, 1216, 128, 416, 'roadway', 'asphalt', {
   direction: 'S',
 });
@@ -126,10 +128,14 @@ zone('wyjazd-magazyn', 736, 1088, 96, 192, 'roadway', 'gravel');
 
 sign('D-40', 'targ-dojscie', 'S', 1688, 954);
 sign('D-41', 'targ-dojscie', 'N', 1796, 951);
+sign('B-1', 'skrot-przez-targ', 'E', 1664, 894);
+sign('B-1', 'skrot-przez-targ', 'W', 1728, 837, { displayOnly: true });
 sign('B-9', 'kladka-zuraw', 'N', 1658, 1792);
 sign('B-9', 'kladka-zuraw', 'S', 1768, 2112, { displayOnly: true });
 sign('B-2', 'stocznia-wjazd', 'S', 3274, 1628, { exceptBicycles: true });
 sign('P-23', 'stocznia-kontrapas', 'S', 3250, 1574);
+sign('B-1', 'skrot-miedzy-halami', 'E', 3456, 1597);
+sign('B-1', 'skrot-miedzy-halami', 'W', 3520, 1539, { displayOnly: true });
 sign('C-13', 'aleja-ddr-poludnie', 'S', 2744, 1262);
 sign('C-13', 'aleja-ddr-polnoc', 'N', 2826, 742);
 sign('C-13/C-16', 'promenada', 'W', 2738, 2909);

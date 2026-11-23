@@ -58,6 +58,9 @@ licencja:
     krakow:
       start: krk-kazimierz-start
       punkty: [krk-kontrapas, krk-przed-przejazdem, krk-aleja]
+    gdansk:
+      start: gda-przejazd-start
+      punkty: [gda-przejazd-postoj, gda-przejazd-meta]
 silnik:
   ttc_minor_s: 2.0
   ttc_major_s: 1.0

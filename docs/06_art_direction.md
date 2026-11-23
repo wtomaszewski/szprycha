@@ -121,6 +121,8 @@ Tramwaje Krakowa i Gdańska mają srebrne pasy wzdłuż grafitowej bryły, ciemn
 
 **Obwarzanki (Kraków).** Drewniana pamiątka 16×16 w kształcie plecionego pierścienia. Ciepły bursztynowy kolor, jasne okruszki i ciemny obrys odcinają ją od szarej kostki. Własny sprite w `src/render/CityCollectibles.ts`.
 
+**Bursztyny (Gdańsk).** Pikselowa bryłka 16×16 ma nieregularny obrys, miodowo-pomarańczowe ścianki i jasny refleks. Ciemny kontur odcina ją od kostki Długiego Targu i jasnej nawierzchni nad wodą. Sprite powstaje w `src/render/CityCollectibles.ts`.
+
 ## 7. Kafelki (tileset minimum)
 Asfalt (zwykły, łatany, mokry), linie (ciągła, przerywana, P-10 zebra, P-11 przejazd rowerowy — czerwony/kratka, P-12, P-13 trójkąty, P-23 symbol roweru, strzałki), chodnik (płyty), kostka, kocie łby, krawężniki (z przejściami obniżonymi), DDR (czerwona nawierzchnia), trawa, żwir, pobocze, tory tramwajowe (w jezdni i na zieleni), tory kolejowe, zapory (animowane), woda (animowana 4 klatki), nabrzeże, schodki, piasek plaży miejskiej, liście jesienią, śnieg (wariant zimowy).
 
