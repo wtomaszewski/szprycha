@@ -194,7 +194,7 @@ export function krakowScenery({
   const props = [
     prop('przystanek-wiata', 'shelter', 2598, 790, 1),
     prop('rynek-kwiaty', 'kiosk', 1352, 630),
-    prop('wawel-stojak', 'bike-rack', 1784, 1574),
+    prop('wawel-stojak', 'bike-rack', 1784, 1630),
     prop('kazimierz-targ-budka', 'kiosk', 3392, 1512),
     prop('kazimierz-targ-kawiarnia', 'cafe', 3552, 1550),
     prop('kopiec-tablica', 'kiosk', 2840, 2770),
@@ -249,12 +249,14 @@ export function krakowScenery({
     rect('krk-pomoc', 2908, 2220, 48, 42),
     rect('krk-bulwary-meta', 3220, 2216, 48, 48),
   ];
+  const retainingWall = [1374, 1566, 552, 38] as const;
   const collisions = [
+    rect('wawel-mur-oporowy', ...retainingWall, { kind: 'wall' }),
     rect('smok-cokol', 1598, 1618, 62, 32, { kind: 'wall' }),
     rect('kopiec-zbocze', 3088, 2760, 252, 58, { kind: 'wall' }),
   ];
   const map_decorations = [
-    decor('wawel-mur-oporowy', 1374, 1566, 552, 38),
+    decor('wawel-mur-oporowy', ...retainingWall),
     decor('smok-wawelski', 1628, 1633),
     decor('kopiec', 3216, 2790),
     decor('fountain', 2126, 628),

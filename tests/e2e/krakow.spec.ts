@@ -134,14 +134,14 @@ test('opens Kraków only in free ride and saves district progression', async ({
 
 const views = [
   ['rynek', 1710, 614],
-  ['wawel', 1640, 1580],
+  ['wawel', 1708, 1636, -Math.PI / 2],
   ['kazimierz', 3280, 1472],
   ['bulwary', 2950, 2176],
   ['kopiec', 3216, 2862],
   ['tramwaj', 2520, 720],
 ] as const;
 
-for (const [name, x, y] of views)
+for (const [name, x, y, heading = 0] of views)
   test(`renders Kraków — ${name}`, async ({ page }, info) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
@@ -154,7 +154,7 @@ for (const [name, x, y] of views)
       { key: legacyProgressKey },
     );
     if (name === 'tramwaj') await page.clock.install();
-    await startAt(page, x, y, 0);
+    await startAt(page, x, y, heading);
     await page.goto('/');
     await chooseCity(page, 'krakow');
     const canvas = page.locator('canvas[data-map="krakow"]');
@@ -165,5 +165,19 @@ for (const [name, x, y] of views)
     const path = info.outputPath(`105-${name}.png`);
     await page.screenshot({ path });
     await info.attach(name, { path, contentType: 'image/png' });
+    if (name === 'wawel') {
+      await page.keyboard.down('ArrowUp');
+      try {
+        await expect(
+          page.getByText(pl.driving.collision, { exact: true }),
+        ).toBeVisible();
+        await expect(canvas).toHaveAttribute('data-speed', '0');
+      } finally {
+        await page.keyboard.up('ArrowUp');
+      }
+      const stoppedAt = Number(await canvas.getAttribute('data-y'));
+      expect(stoppedAt).toBeGreaterThan(1604);
+      expect(stoppedAt).toBeLessThan(y);
+    }
     expect(errors).toEqual([]);
   });
