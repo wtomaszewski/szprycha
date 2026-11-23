@@ -12,7 +12,10 @@ test('reports a damaged legacy save and starts a fresh profile', async ({
   );
   await page.goto('/');
   await page.getByRole('button', { name: pl.tutorial.skip }).click();
-  await expect(page.getByRole('status')).toContainText(pl.skillMap.reset);
+  // The driving HUD may still be mounted for a frame after skipping the tutorial.
+  await expect(
+    page.getByRole('status').filter({ hasText: pl.skillMap.reset }),
+  ).toBeVisible();
   await page.getByRole('button', { name: pl.skillMap.title }).click();
   await expect(page.getByRole('dialog')).toContainText(`${pl.skillMap.xp} 0`);
   expect(
