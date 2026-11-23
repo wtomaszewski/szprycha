@@ -114,7 +114,7 @@ Mapa [warszawa.tmj](../maps/warszawa.tmj)
 
 Mapa [wies.tmj](../maps/wies.tmj)
 
-**Misje na mapie** `WIE-B-01`, `WIE-B-02`, `WIE-B-03`, `WIE-B-04`
+**Misje na mapie** `WIE-A1-01`, `WIE-A1-02`, `WIE-A2-01`, `WIE-A2-02`, `WIE-A3-01`, `WIE-A3-02`, `WIE-B-01`, `WIE-B-02`, `WIE-B-03`, `WIE-B-04`
 
 | Sytuacja drogowa | Pokrycie | Wykryte obiekty lub misje | Brakujące elementy |
 | --- | :---: | --- | --- |
@@ -130,7 +130,7 @@ Mapa [wies.tmj](../maps/wies.tmj)
 | Przejazd kolejowy | ✓ | `przejazd-gminny` | — |
 | Pobocze, zakaz wjazdu rowerów | ✓ | `piaszczysty-skraj`, `pobocze-wschod`, `pobocze-zachod`, `sciezka-rezerwatu`, `sciezka-rezerwatu-B-9-W` | — |
 | Kontraruch | ✓ | `uliczka-osady-B-2-S` | — |
-| Nocna jazda | ✓ | `WIE-B-03`, `dusk_at_s` | — |
+| Nocna jazda | ✓ | `WIE-A2-02`, `WIE-B-03`, `dusk_at_s` | — |
 
 | Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
 | --- | :---: | --- | --- |
@@ -138,9 +138,9 @@ Mapa [wies.tmj](../maps/wies.tmj)
 | M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-03`, `GDZIE-03b`, `GDZIE-12` |
 | M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `ZNAK-B1` |
 | M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | `PIER-06` |
-| M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-08` | `MAN-13` |
+| M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-08` | `MAN-08`, `MAN-13` |
 | M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | `MSC-01`, `MSC-03`, `MSC-04` |
-| M07 | ✓ | — | `PP-01` |
+| M07 | ✓ | — | `PP-01`, `PP-03` |
 
 **Pokrycie** 13/13 sytuacji, 7/7 modułów.
 

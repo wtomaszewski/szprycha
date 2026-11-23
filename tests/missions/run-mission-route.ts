@@ -176,6 +176,8 @@ export function runMissionRoute(
     if (preparing) {
       if (++prepTicks === 10) player.helmet.fastened = true;
       if (prepTicks === 30) player.lights!.front = player.lights!.rear = true;
+      if (prepTicks === 40 && mission.preparingVest)
+        player.reflectiveVest = true;
     }
     if (point?.helmet !== undefined) player.helmet.fastened = point.helmet;
     if (point?.lights !== undefined)
@@ -225,6 +227,7 @@ export function runMissionRoute(
       {
         helmet: player.helmet.fastened,
         lights: player.lights!.front && player.lights!.rear,
+        vest: player.reflectiveVest,
       },
       player.speed,
       false,

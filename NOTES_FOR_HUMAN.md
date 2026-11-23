@@ -1,5 +1,9 @@
 # Notatki dla człowieka
 
+## Wieś i las 2/2 — kampania (#128)
+
+- Przed wydaniem konsultant sprawdza zakres korzystania z przejezdnego pobocza (`GDZIE-03b`) i sformułowanie zalecenia o dodatkowych odblaskach (`WYP-06`). W misji o zmroku kamizelka jest częścią ćwiczenia poprawiającego widoczność.
+
 ## Gdańsk 2/2 — kampania (#126)
 
 - Przed wydaniem konsultant sprawdza reguły z flagą `weryfikacja: true` użyte w Gdańsku: `GDZIE-03b`, `GDZIE-11`, `PIER-05`, `SYG-02` i `MSC-05`. Użyte brzmienie i warunki pochodzą z `content/przepisy.yaml`.

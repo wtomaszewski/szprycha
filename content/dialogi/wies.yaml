@@ -3,3 +3,64 @@ zapowiedzi:
   - { regula: MAN-13, emocja: neutral, tekst: dialogi.wies_zapowiedzi.MAN-13 }
   - { regula: GDZIE-03, emocja: neutral, tekst: dialogi.wies_zapowiedzi.GDZIE-03 }
   - { regula: WYP-06, emocja: neutral, tekst: dialogi.wies_zapowiedzi.WYP-06 }
+dialogi:
+  - id: dialogi.WIE-A1-01.start
+    linie:
+      - postac: pan_kazik
+        emocja: neutral
+        tekst: dialogi.WIE-A1-01.start
+  - id: dialogi.WIE-A1-01.koniec
+    linie:
+      - postac: pan_kazik
+        emocja: proud
+        tekst: dialogi.WIE-A1-01.koniec
+  - id: dialogi.WIE-A1-02.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.WIE-A1-02.start
+  - id: dialogi.WIE-A1-02.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: proud
+        tekst: dialogi.WIE-A1-02.koniec
+  - id: dialogi.WIE-A2-01.start
+    linie:
+      - postac: inzynier_zawila
+        emocja: neutral
+        tekst: dialogi.WIE-A2-01.start
+  - id: dialogi.WIE-A2-01.koniec
+    linie:
+      - postac: inzynier_zawila
+        emocja: proud
+        tekst: dialogi.WIE-A2-01.koniec
+  - id: dialogi.WIE-A2-02.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.WIE-A2-02.start
+  - id: dialogi.WIE-A2-02.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.WIE-A2-02.koniec
+  - id: dialogi.WIE-A3-01.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.WIE-A3-01.start
+  - id: dialogi.WIE-A3-01.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.WIE-A3-01.koniec
+  - id: dialogi.WIE-A3-02.start
+    linie:
+      - postac: pan_kazik
+        emocja: neutral
+        tekst: dialogi.WIE-A3-02.start
+  - id: dialogi.WIE-A3-02.koniec
+    linie:
+      - postac: pan_kazik
+        emocja: proud
+        tekst: dialogi.WIE-A3-02.koniec

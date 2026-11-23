@@ -56,14 +56,23 @@ export async function validateMaps(root: string, content: GameContent) {
   const examRoutes = campaignCity.options.map((city) =>
     examRoute(city, content.balans.licencja),
   );
+  const collectibleKinds = {
+    zbierz_obwarzanka: 'obwarzanek',
+    zbierz_bursztyn: 'bursztyn',
+    zbierz_szyszke: 'szyszka',
+  } as const;
   for (const mission of [...content.misje, ...examRoutes]) {
     const map = mission.mapa ?? mission.miasto;
     const world = worlds.get(map);
     if (!world) throw new Error(`Mission ${mission.id}: unknown map ${map}`);
     new MissionSystem(mission, world, content.balans);
     for (const goal of mission.cele) {
-      if (goal.typ === 'zbierz_obwarzanka' || goal.typ === 'zbierz_bursztyn') {
-        const kind = goal.typ === 'zbierz_bursztyn' ? 'bursztyn' : 'obwarzanek';
+      if (
+        goal.typ === 'zbierz_obwarzanka' ||
+        goal.typ === 'zbierz_bursztyn' ||
+        goal.typ === 'zbierz_szyszke'
+      ) {
+        const kind = collectibleKinds[goal.typ];
         const item = world.collectibles.get(goal.poi);
         const poi = world.pois.get(goal.poi)!;
         if (

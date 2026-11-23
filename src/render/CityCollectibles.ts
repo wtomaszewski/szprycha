@@ -32,6 +32,14 @@ const collections = {
     variants: 1,
     paint: paintBursztyn,
   },
+  szyszka: {
+    field: 'szyszki',
+    label: ui.driving.szyszki,
+    hint: ui.driving.szyszkiHint,
+    question: ui.driving.szyszkaQuestion,
+    variants: 1,
+    paint: paintSzyszka,
+  },
 } as const;
 type CollectionKind = keyof typeof collections;
 
@@ -141,6 +149,31 @@ function paintBursztyn(ctx: CanvasRenderingContext2D) {
       '................',
     ],
     { '#': '#4b2737', h: '#ffe1a1', o: '#ffad4f', a: '#d77730', b: '#a94a32' },
+  );
+}
+
+function paintSzyszka(ctx: CanvasRenderingContext2D) {
+  paintPixels(
+    ctx,
+    [
+      '................',
+      '........##......',
+      '.......#h#......',
+      '......#aa#......',
+      '.....#hhba#.....',
+      '....#hbbha#.....',
+      '....#abhab#.....',
+      '...#hhbbbab#....',
+      '...#abbhhba#....',
+      '...#hhbaaab#....',
+      '...#abbbhbb#....',
+      '....#bhaab#.....',
+      '....#abbab#.....',
+      '.....#####......',
+      '................',
+      '................',
+    ],
+    { '#': '#472c30', h: '#ffcd75', a: '#bb7848', b: '#7b472e' },
   );
 }
 

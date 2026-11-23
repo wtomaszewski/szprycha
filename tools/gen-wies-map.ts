@@ -77,6 +77,7 @@ zone('pobocze-wschod', road + 96, 0, 32, 960, 'shoulder', 'gravel', {
   direction: 'N',
   shoulderUsable: true,
 });
+zone('dziedziniec-szkoly', 1216, 256, 192, 192, 'park_path', 'sidewalk');
 zone('piaszczysty-skraj', road + 96, 960, 32, 160, 'shoulder', 'gravel', {
   direction: 'N',
   shoulderUsable: false,
@@ -541,7 +542,23 @@ const poi = (id: string, x: number, y: number, heading: number, size = 36) =>
   rect(id, x - size / 2, y - size / 2, size, size, {
     heading: (heading * Math.PI) / 180,
   });
+const finds = [
+  ['wie-szyszka-bramka', 1272, 340, 'Q063'],
+  ['wie-szyszka-lawka', 1328, 340, 'Q065'],
+  ['wie-szyszka-ganek', 1384, 340, 'Q064'],
+  ['wie-szyszka-skansen', 2470, 1350, 'Q003'],
+] as const;
+objectLayer(
+  'collectibles',
+  finds.map(([id, x, y, question]) =>
+    rect(id, x, y, 0, 0, { kind: 'szyszka', question }),
+  ),
+);
 objectLayer('pois', [
+  ...finds.map(([id, x, y]) => poi(id, x, y, 0)),
+  poi('wie-szkola-dziedziniec', 1224, 340, 0, 16),
+  poi('wie-pole-start', 3798, 444, 90, 16),
+  poi('wie-pole-pomoc', 3798, 662, 90, 24),
   poi('wie-pobocze-start', 1208, 868, -90, 16),
   poi('wie-widocznosc-kierowcy', 1208, 552, -90, 28),
   poi('wie-pobocze-meta', 1208, 288, -90, 28),
@@ -556,6 +573,8 @@ objectLayer('pois', [
 ]);
 
 const props = [
+  rect('lawka-szkolna', 1328, 310, 0, 0, { kind: 'bench' }),
+  rect('latarnia-szkola', 1244, 290, 0, 0, { kind: 'lamp' }),
   rect('wiata', 552, 479, 0, 0, { kind: 'shelter', turn: 1 }),
   rect('lawka', 546, 504, 0, 0, { kind: 'bench', turn: 1 }),
   rect('latarnia-przystanek', 566, 422, 0, 0, { kind: 'lamp' }),
@@ -563,6 +582,16 @@ const props = [
   rect('latarnia-zagroda', 820, 2154, 0, 0, { kind: 'lamp' }),
 ];
 const blocks = [
+  rect('szkola-wiejska', 1304, 214, 124, 70, {
+    height: 3,
+    roof: 'tile',
+    wall: 'sand',
+  }),
+  rect('ganek-szkoly', 1352, 284, 30, 14, {
+    height: 2,
+    roof: 'tile',
+    wall: 'brick',
+  }),
   rect('dom-gospodarza', 350, 2112, 108, 72, {
     height: 3,
     roof: 'tile',
@@ -624,7 +653,8 @@ for (const [startX, startY, endX, endY] of [
       if (
         n % 5 === 0 ||
         (y > 2640 && x > 1616 && x < 1950) ||
-        (x > 1430 && x < 1600 && y > 630 && y < 775)
+        (x > 1430 && x < 1600 && y > 630 && y < 775) ||
+        (x < 1450 && y > 170 && y < 450)
       )
         continue;
       const px = x + (n % 38);
@@ -642,6 +672,11 @@ objectLayer('blocks', blocks);
 objectLayer('props', props);
 objectLayer('collisions', collisions);
 objectLayer('map_decorations', [
+  rect('bramka-szkolna', 1245, 340, 0, 0, { kind: 'school-gate' }),
+  rect('rower-na-drodze-gruntowej', 3774, 644, 0, 0, {
+    kind: 'fallen-bike',
+    mission: 'WIE-A3-01',
+  }),
   rect('pole-zachod', 728, 160, 216, 400, { kind: 'field-rows' }),
   rect('pole-za-stodola', 112, 2032, 208, 320, { kind: 'field-rows' }),
   rect('pole-ciagnika', 3440, 352, 240, 256, { kind: 'field-rows' }),

@@ -1,7 +1,6 @@
 - id: WIE-B-01
   miasto: wies
   akt: 0
-  poboczna: true
   tytul: misje.WIE-B-01.tytul
   opis: misje.WIE-B-01.opis
   zleceniodawca: sierzant_ola
@@ -30,7 +29,6 @@
 - id: WIE-B-02
   miasto: wies
   akt: 0
-  poboczna: true
   tytul: misje.WIE-B-02.tytul
   opis: misje.WIE-B-02.opis
   zleceniodawca: sierzant_ola
@@ -63,7 +61,6 @@
 - id: WIE-B-03
   miasto: wies
   akt: 0
-  poboczna: true
   tytul: misje.WIE-B-03.tytul
   opis: misje.WIE-B-03.opis
   zleceniodawca: sierzant_ola
@@ -93,7 +90,6 @@
 - id: WIE-B-04
   miasto: wies
   akt: 0
-  poboczna: true
   tytul: misje.WIE-B-04.tytul
   opis: misje.WIE-B-04.opis
   zleceniodawca: sierzant_ola
@@ -127,3 +123,179 @@
   par_s: 90
   min_dobre_nawyki: 0
   nagrody: { zetony: 0, xp: 0 }
+
+- id: WIE-A1-01
+  miasto: wies
+  akt: 1
+  tytul: misje.WIE-A1-01.tytul
+  opis: misje.WIE-A1-01.opis
+  zleceniodawca: pan_kazik
+  typ: dostawa
+  wymagania: { misje_ukonczone: [WIE-B-01, WIE-B-02, WIE-B-03, WIE-B-04] }
+  start: { poi: wie-pobocze-start }
+  cele:
+    - { typ: odbierz, poi: wie-pobocze-start, przedmiot: pudelko_szyszek, opis: misje.WIE-A1-01.odbior }
+    - typ: wybor
+      poi: wie-widocznosc-kierowcy
+      opis: misje.WIE-B-01.pobocze
+      regula: MAN-13
+      pytanie: misje.WIE-B-01.pytanie
+      odpowiedzi: [misje.WIE-B-01.odp1, misje.WIE-B-01.odp2]
+      poprawna: 0
+      wyjasnienie: misje.WIE-B-01.wyjasnienie
+    - { typ: oddaj, poi: wie-pobocze-meta, przedmiot: pudelko_szyszek, opis: misje.WIE-A1-01.meta }
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [GDZIE-03b, MAN-13]
+  par_s: 90
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 12, xp: 100 }
+  dialog_start: dialogi.WIE-A1-01.start
+  dialog_koniec: dialogi.WIE-A1-01.koniec
+
+- id: WIE-A1-02
+  miasto: wies
+  akt: 1
+  tytul: misje.WIE-A1-02.tytul
+  opis: misje.WIE-A1-02.opis
+  zleceniodawca: lena_mapa
+  typ: detektyw
+  wymagania: { misje_ukonczone: [WIE-A1-01] }
+  start: { poi: wie-szkola-dziedziniec }
+  ruch_ai: false
+  cele:
+    - { typ: zbierz_szyszke, poi: wie-szyszka-bramka, opis: misje.WIE-A1-02.bramka }
+    - { typ: zbierz_szyszke, poi: wie-szyszka-lawka, opis: misje.WIE-A1-02.lawka }
+    - { typ: zbierz_szyszke, poi: wie-szyszka-ganek, opis: misje.WIE-A1-02.ganek }
+  reguly_cwiczone: [GDZIE-12, MAN-13]
+  par_s: 90
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 14, xp: 120 }
+  dialog_start: dialogi.WIE-A1-02.start
+  dialog_koniec: dialogi.WIE-A1-02.koniec
+
+- id: WIE-A2-01
+  miasto: wies
+  akt: 2
+  tytul: misje.WIE-A2-01.tytul
+  opis: misje.WIE-A2-01.opis
+  zleceniodawca: inzynier_zawila
+  typ: dostawa
+  wymagania: { misje_ukonczone: [WIE-A1-02] }
+  start: { poi: wie-tory-start }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: wie-tory-start, przedmiot: szkic, opis: misje.WIE-A2-01.odbior }
+    - typ: wybor
+      poi: wie-stop-przed-torami
+      opis: misje.WIE-B-02.postoj
+      regula: MSC-01
+      pytanie: misje.WIE-B-02.pytanie
+      odpowiedzi: [misje.WIE-B-02.odp1, misje.WIE-B-02.odp2]
+      poprawna: 1
+      wyjasnienie: misje.WIE-B-02.wyjasnienie
+    - typ: oddaj
+      poi: wie-za-torami
+      przedmiot: szkic
+      opis: misje.WIE-A2-01.meta
+      wymagany_nawyk: MSC-01
+      wskazowka_powrotu: misje.WIE-B-02.powrot
+  checkpointy: [wie-stop-przed-torami]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [MSC-01, GDZIE-03]
+  par_s: 95
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 16, xp: 140 }
+  dialog_start: dialogi.WIE-A2-01.start
+  dialog_koniec: dialogi.WIE-A2-01.koniec
+
+- id: WIE-A2-02
+  miasto: wies
+  akt: 2
+  tytul: misje.WIE-A2-02.tytul
+  opis: misje.WIE-A2-02.opis
+  zleceniodawca: sierzant_ola
+  typ: nocny
+  wymagania: { misje_ukonczone: [WIE-A2-01] }
+  start: { poi: wie-noc-start, kask_zapiety: false, zmrok: true }
+  cele:
+    - { typ: przygotuj_rower, wymagana_kamizelka: true, opis: misje.WIE-A2-02.start }
+    - { typ: dojedz, poi: wie-noc-meta, opis: misje.WIE-A2-02.meta }
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [KASK-01, MSC-04, WYP-06]
+  par_s: 90
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 18, xp: 160 }
+  dialog_start: dialogi.WIE-A2-02.start
+  dialog_koniec: dialogi.WIE-A2-02.koniec
+
+- id: WIE-A3-01
+  miasto: wies
+  akt: 3
+  tytul: misje.WIE-A3-01.tytul
+  opis: misje.WIE-A3-01.opis
+  zleceniodawca: sierzant_ola
+  typ: pierwsza_pomoc
+  wymagania: { misje_ukonczone: [WIE-A2-02] }
+  start: { poi: wie-pole-start }
+  ruch_ai: false
+  cele:
+    - typ: wybor
+      poi: wie-pole-pomoc
+      opis: misje.WIE-A3-01.postoj
+      regula: PP-01
+      pytanie: misje.WIE-A3-01.pytanie
+      odpowiedzi: [misje.WIE-A3-01.odp1, misje.WIE-A3-01.odp2]
+      poprawna: 1
+      wyjasnienie: misje.WIE-A3-01.wyjasnienie
+    - typ: wybor
+      poi: wie-pole-pomoc
+      opis: misje.WIE-A3-01.dorosly
+      regula: PP-03
+      pytanie: misje.WIE-A3-01.dalej
+      odpowiedzi: [misje.WIE-A3-01.dalej1, misje.WIE-A3-01.dalej2]
+      poprawna: 0
+      wyjasnienie: misje.WIE-A3-01.dalejWyjasnienie
+  reguly_cwiczone: [PP-01, PP-03, MAN-08]
+  par_s: 90
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 20, xp: 180 }
+  dialog_start: dialogi.WIE-A3-01.start
+  dialog_koniec: dialogi.WIE-A3-01.koniec
+
+- id: WIE-A3-02
+  miasto: wies
+  akt: 3
+  tytul: misje.WIE-A3-02.tytul
+  opis: misje.WIE-A3-02.opis
+  zleceniodawca: pan_kazik
+  typ: dostawa
+  wymagania: { misje_ukonczone: [WIE-A3-01] }
+  start: { poi: wie-podworze-start }
+  cele:
+    - { typ: odbierz, poi: wie-podworze-start, przedmiot: mapa, opis: misje.WIE-A3-02.odbior }
+    - typ: wybor
+      poi: wie-brama
+      opis: misje.WIE-B-04.brama
+      regula: PIER-06
+      pytanie: misje.WIE-B-04.pytanieBrama
+      odpowiedzi: [misje.WIE-B-04.odpBrama1, misje.WIE-B-04.odpBrama2]
+      poprawna: 1
+      wyjasnienie: misje.WIE-B-04.wyjasnienieBrama
+    - typ: wybor
+      poi: wie-brama
+      opis: misje.WIE-A3-02.sprzecznosc
+      regula: ZNAK-B1
+      pytanie: misje.WIE-A3-02.pytanie
+      odpowiedzi: [misje.WIE-A3-02.odp1, misje.WIE-A3-02.odp2]
+      poprawna: 0
+      wyjasnienie: misje.WIE-A3-02.wyjasnienie
+    - { typ: oddaj, poi: wie-pomoc, przedmiot: mapa, opis: misje.WIE-A3-02.meta }
+  checkpointy: [wie-brama]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [PIER-06, MSC-03, ZNAK-B1]
+  skrot: { odcinek: skrot-gospodarczy }
+  par_s: 100
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 26, xp: 240 }
+  dialog_start: dialogi.WIE-A3-02.start
+  dialog_koniec: dialogi.WIE-A3-02.koniec

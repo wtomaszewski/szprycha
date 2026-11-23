@@ -247,18 +247,22 @@ Wybierz **Wolna jazda → Wieś i las**, aby zacząć na poboczu drogi gminnej. 
 
 **Ćwiczenia.** WIE-B-01 obejmuje pobocze i odstęp przy wyprzedzaniu. WIE-B-02 zalicza przejazd po zatrzymaniu się przed torami i sprawdzeniu, czy są wolne. W tym ćwiczeniu na drodze wyłączono pozostały ruch, a pociąg kursuje według rozkładu mapy. WIE-B-03 wymaga kasku i świateł po zmroku. Kamizelka jest zalecana podczas jazdy, a pieszy na poboczu poza obszarem zabudowanym po zmroku używa widocznego odblasku. WIE-B-04 ćwiczy wyjazd z gospodarstwa i wybór bezpiecznego miejsca do udzielenia pomocy. Wjazd w skrót z B-1 kończy próbę bez premii czasowej.
 
-`npm run coverage:maps -- --strict` sprawdza 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/wies.test.ts` obejmuje przejście wszystkich ćwiczeń, odstęp przy wyprzedzaniu i trzy próby po dziesięć minut ruchu. `npm run test:e2e -- tests/e2e/wies.spec.ts` sprawdza wybór mapy i ćwiczeń oraz tworzy zrzuty. [Raport pokrycia](coverage.md#wieś-i-las)
+**Kampania → Wieś i las** otwiera najbliższe nieukończone zlecenie. Ukończenia szkoleń z Wolnej jazdy liczą się w kampanii. Trzy szyszki z zagadkami leżą na dziedzińcu szkoły, a czwarta przy skansenie. Podejdź do nich, prowadząc rower. Po finale można wybrać wieś na przejazd kontrolny po spełnieniu wymagań Licencji Szprychy. [Fabuła](02_fabula.md#wieś-i-las--mapa-bez-skrótów) · [Lista misji](03_misje.md#kampania--wieś-i-las)
 
-Pomiar wykonano kolejno na tej samej maszynie w Chromium 156.0.8078.79 headless, w Wolnej jeździe, z WebGL, pełną grafiką, rozdzielczością 640 × 360 i ograniczeniem CPU 4×.
+`npm run coverage:maps -- --strict` sprawdza w CI 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/wies.test.ts tests/missions/wies-campaign.test.ts` obejmuje przejście ćwiczeń, kampanii i przejazdu kontrolnego, zakazany skrót, odstęp przy wyprzedzaniu i trzy próby po dziesięć minut ruchu. `npm run test:e2e -- tests/e2e/wies.spec.ts` sprawdza także wybór kampanii, zapis znajdźki, wyposażenie po zmroku i scenkę pierwszej pomocy. [Raport pokrycia](coverage.md#wieś-i-las)
+
+Pomiar po dodaniu kampanii (#128) wykonano kolejno na tej samej maszynie w Chromium 156.0.8078.79 headless, w Wolnej jeździe, z WebGL, pełną grafiką, rozdzielczością 640 × 360 i ograniczeniem CPU 4×.
 
 | Odcinek | Średnie FPS | p95 klatki |
 | --- | ---: | ---: |
-| Wieś i las, droga gminna | 56,38 | 16,8 ms |
-| Warszawa, Starówka | 54,65 | 33,2 ms |
+| Wieś i las, droga gminna | 58,73 | 16,8 ms |
+| Warszawa, Starówka | 57,37 | 16,8 ms |
 
 Przy uruchomionym Vite pomiar odtwarza `BENCH_VIEWPORT=640x360 BENCH_MAP=wies npm run benchmark:driving`. Dla Warszawy ustaw `BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free`.
 
 Zrzuty pokazują [wybór mapy](screenshots/127-mapa-polski.webp), [drogę gminną](screenshots/127-gminna.webp), [przystanek](screenshots/127-przystanek.webp), [przejazd kolejowy](screenshots/127-kolej.webp), [mostek](screenshots/127-mostek.webp), [ciągnik przy polu](screenshots/127-ciagnik.webp), [gospodarstwo](screenshots/127-gospodarstwo.webp) i [jazdę po zmroku](screenshots/127-noc.webp).
+
+Zrzuty kampanii pokazują [wybór kampanii](screenshots/128-kampania.webp), [szyszki przy szkole](screenshots/128-szyszki.webp), [przygotowanie do jazdy o zmroku](screenshots/128-kamizelka.webp) i [pierwszą pomoc przy polu](screenshots/128-pierwsza-pomoc.webp).
 
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
 Wzorowane na prawdziwych szkolnych miasteczkach ruchu: małe skrzyżowania każdego typu, mini-rondo, sygnalizacja, przejazd kolejowy z zaporami, znaki z Albumu na tablicach, **plac manewrowy** (ósemka, slalom, tor wąski, pole zatrzymania). Tu: samouczek, plac, quiz w budynku szkoły, egzamin Licencji.

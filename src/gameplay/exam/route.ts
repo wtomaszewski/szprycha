@@ -17,6 +17,7 @@ export function examRoute(
       wroclaw: 'WRO-EGZAMIN',
       krakow: 'KRA-EGZAMIN',
       gdansk: 'GDA-EGZAMIN',
+      wies: 'WIE-EGZAMIN',
     }[city],
     miasto: city,
     akt: 0,

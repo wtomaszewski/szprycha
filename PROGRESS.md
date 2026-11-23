@@ -16,11 +16,15 @@ Stan na 23.11.2026.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Wieś i las 2/2 — kampania (#128)
+
+- „Mapa bez skrótów” zachowuje cztery szkolenia i dodaje sześć misji w trzech aktach, cztery znajdźki z zagadkami i wiejski przejazd kontrolny.
+- Misje główne ćwiczą M01–M07. Testy obejmują bezpieczny przejazd przez tory, wyposażenie na zmrok, pierwszą pomoc, zakazany skrót i zapis szyszek. [Mapa, pomiary i zrzuty](docs/05_mapy.md#wieś-i-las)
+
 ## Wieś i las 1/2 — mapa (#127)
 
 - Kolaż wsi jest dostępny w Wolnej jeździe. Obejmuje drogę gminną, odkryty przejazd kolejowy, przystanek regionalny, pole, las, gospodarstwo i mostek.
 - SzprychaApp udostępnia cztery ćwiczenia `WIE-B-01`–`WIE-B-04`. Raport ścisły obejmuje 13/13 sytuacji i wszystkie moduły M01–M07, a testy sprawdzają cztery trasy oraz po dziesięć minut ruchu dla trzech ziaren. [Mapa, pomiary i zrzuty](docs/05_mapy.md#wieś-i-las)
-- Kampania i wiejskie znajdźki są zakresem [#128](https://github.com/wtomaszewski/szprycha/issues/128).
 
 ## Gdańsk 2/2 — kampania (#126)
 

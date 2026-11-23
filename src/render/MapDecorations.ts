@@ -6,6 +6,7 @@ export function drawMapDecorations(
   scene: Scene,
   map: Tilemaps.Tilemap,
   mapId: string,
+  missionId?: string,
 ) {
   const neons: Neon[] = [];
   const peacocks: { x: number; y: number }[] = [];
@@ -44,6 +45,32 @@ export function drawMapDecorations(
       bridge.lineStyle(4, 0xc0cbdc).lineBetween(x - 296, y, x + 278, y);
       continue;
     }
+    if (kind === 'fallen-bike') {
+      const mission = properties?.find(
+        (p: { name: string; value: unknown }) => p.name === 'mission',
+      )?.value;
+      if (mission !== missionId) continue;
+      // Mission scenery lives on the scene so the shared map cache cannot reuse it.
+      scene.add
+        .graphics()
+        .setDepth(4)
+        .lineStyle(2, 0x1a1c2c)
+        .strokeCircle(x - 16, y, 5)
+        .strokeCircle(x + 2, y + 5, 5)
+        .lineStyle(2, 0xb13e53)
+        .lineBetween(x - 16, y, x - 6, y + 5)
+        .lineBetween(x - 6, y + 5, x - 8, y - 4)
+        .lineBetween(x - 8, y - 4, x + 2, y + 5)
+        .fillStyle(0x1a1c2c)
+        .fillRect(x + 10, y + 1, 10, 8)
+        .fillStyle(0x3b5dc9)
+        .fillRect(x + 11, y - 4, 9, 9)
+        .fillStyle(0xe8c39e)
+        .fillCircle(x + 16, y - 6, 4)
+        .fillStyle(0x41a6f6)
+        .fillRect(x + 12, y - 10, 8, 3);
+      continue;
+    }
     centers.push({ x, y });
     if (kind === 'field-rows') {
       scenery.fillStyle(0x76513b).fillRect(x, y, width, height);
@@ -57,6 +84,17 @@ export function drawMapDecorations(
         for (let dy = 0; dy <= height; dy += 32)
           centers.push({ x: x + dx, y: y + dy });
       }
+    } else if (kind === 'school-gate') {
+      scenery
+        .lineStyle(4, 0x805b43)
+        .lineBetween(x, y - 44, x, y - 18)
+        .lineBetween(x, y + 18, x, y + 44);
+      for (const offset of [-44, -18, 18, 44])
+        scenery
+          .fillStyle(0x4d3c37)
+          .fillRect(x - 3, y + offset - 3, 7, 7)
+          .fillStyle(0xc69063)
+          .fillRect(x - 2, y + offset - 2, 5, 4);
     } else if (kind === 'kladka-drewniana') {
       scenery.fillStyle(0x9b7352).fillRect(x, y, width, height);
       for (let dy = 2; dy < height - 2; dy += 8) {
