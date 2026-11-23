@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { PNG } from 'pngjs';
 import pl from '../../i18n/pl.json' with { type: 'json' };
+import { readProfile } from './progress-profile';
 
 test('captures the sign from a stop off the roadway in free ride', async ({
   page,
@@ -31,6 +32,9 @@ test('captures the sign from a stop off the roadway in free ride', async ({
   await expect(canvas).toHaveAttribute('data-walking', 'true');
   await camera.click();
   await expect(page.getByText(pl.m5c.photoSaved)).toBeVisible();
+  await expect
+    .poll(async () => (await readProfile(page)).signPhotos['B-20'])
+    .toMatch(/^data:image\/png;base64,/);
 
   await page.reload();
   await page.getByRole('button', { name: pl.m5c.album, exact: true }).click();

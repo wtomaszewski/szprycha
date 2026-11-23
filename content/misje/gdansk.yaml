@@ -1,0 +1,138 @@
+- id: GDA-B-01
+  miasto: gdansk
+  akt: 0
+  poboczna: true
+  tytul: misje.GDA-B-01.tytul
+  opis: misje.GDA-B-01.opis
+  zleceniodawca: sierzant_ola
+  typ: trening
+  start:
+    poi: gda-zuraw-start
+    kask_zapiety: false
+    zmrok: true
+  ruch_ai: false
+  cele:
+    - typ: przygotuj_rower
+      opis: misje.GDA-B-01.start
+    - typ: dojedz
+      poi: gda-kladka
+      opis: misje.GDA-B-01.kladka
+    - typ: dojedz
+      poi: gda-kladka-meta
+      opis: misje.GDA-B-01.meta
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [KASK-01, WYP-04, ZNAK-B9]
+  par_s: 75
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 0, xp: 0 }
+  dialog_start: dialogi.GDA-B-01.start
+  dialog_koniec: dialogi.GDA-B-01.koniec
+
+- id: GDA-B-02
+  miasto: gdansk
+  akt: 0
+  poboczna: true
+  tytul: misje.GDA-B-02.tytul
+  opis: misje.GDA-B-02.opis
+  zleceniodawca: sierzant_ola
+  typ: trening
+  wymagania:
+    misje_ukonczone: [GDA-B-01]
+  start:
+    poi: gda-promenada-start
+  cele:
+    - typ: wybor
+      poi: gda-promenada-piesi
+      opis: misje.GDA-B-02.postoj
+      regula: GDZIE-11
+      pytanie: misje.GDA-B-02.pytanie
+      odpowiedzi: [misje.GDA-B-02.odp1, misje.GDA-B-02.odp2]
+      poprawna: 1
+      wyjasnienie: misje.GDA-B-02.wyjasnienie
+    - typ: wybor
+      poi: gda-promenada-pomoc
+      opis: misje.GDA-B-02.pomoc
+      regula: PP-01
+      pytanie: misje.GDA-B-02.pytanie_pomoc
+      odpowiedzi: [misje.GDA-B-02.pomoc_odp1, misje.GDA-B-02.pomoc_odp2]
+      poprawna: 0
+      wyjasnienie: misje.GDA-B-02.pomoc_wyjasnienie
+    - typ: dojedz
+      poi: gda-promenada-meta
+      opis: misje.GDA-B-02.meta
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [GDZIE-11, PP-01]
+  checkpointy: [gda-promenada-piesi]
+  par_s: 110
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 0, xp: 0 }
+  dialog_start: dialogi.GDA-B-02.start
+  dialog_koniec: dialogi.GDA-B-02.koniec
+
+- id: GDA-B-03
+  miasto: gdansk
+  akt: 0
+  poboczna: true
+  tytul: misje.GDA-B-03.tytul
+  opis: misje.GDA-B-03.opis
+  zleceniodawca: sierzant_ola
+  typ: trening
+  wymagania:
+    misje_ukonczone: [GDA-B-02]
+  start:
+    poi: gda-wiatr-start
+    pogoda: silny_wiatr
+  ruch_ai: false
+  cele:
+    - typ: dojedz
+      poi: gda-wiatr-zjazd
+      opis: misje.GDA-B-03.objazd
+    - typ: dojedz
+      poi: gda-wiatr-piasek
+      opis: misje.GDA-B-03.piasek
+    - typ: dojedz
+      poi: gda-wiatr-meta
+      opis: misje.GDA-B-03.meta
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [MAN-08, ZNAK-B1]
+  skrot: { odcinek: skrot-przez-wydmy }
+  checkpointy: [gda-wiatr-zjazd, gda-wiatr-piasek]
+  par_s: 110
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 0, xp: 0 }
+  dialog_start: dialogi.GDA-B-03.start
+  dialog_koniec: dialogi.GDA-B-03.koniec
+
+- id: GDA-B-04
+  miasto: gdansk
+  akt: 0
+  poboczna: true
+  tytul: misje.GDA-B-04.tytul
+  opis: misje.GDA-B-04.opis
+  zleceniodawca: sierzant_ola
+  typ: trening
+  wymagania:
+    misje_ukonczone: [GDA-B-01]
+  start:
+    poi: gda-przejazd-start
+  ruch_ai: false
+  cele:
+    - typ: wybor
+      poi: gda-przejazd-postoj
+      opis: misje.GDA-B-04.postoj
+      regula: PIER-05
+      pytanie: misje.GDA-B-04.pytanie
+      odpowiedzi: [misje.GDA-B-04.odp1, misje.GDA-B-04.odp2]
+      poprawna: 0
+      wyjasnienie: misje.GDA-B-04.wyjasnienie
+    - typ: dojedz
+      poi: gda-przejazd-meta
+      opis: misje.GDA-B-04.meta
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [PIER-05, SYG-02]
+  checkpointy: [gda-przejazd-postoj]
+  par_s: 100
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 0, xp: 0 }
+  dialog_start: dialogi.GDA-B-04.start
+  dialog_koniec: dialogi.GDA-B-04.koniec

@@ -107,10 +107,14 @@ Wspólny prompt bazowy: *„top-down pixel art building in the style of 1999 GTA
 | **Kazimierz** | 5×3 (dom modlitwy) | 2–5 | Piaskowa bryła z wyniesionym szczytem, pobliskie ceglane i tynkowane kamienice oraz parterowy targ. |
 | **Kopiec** | 8×4 | — | Zielone poziomice zbiegają się ku jasnemu głazowi na szczycie. Piaskowa ścieżka wije się po zboczu. |
 | **Bulwary Wisły** | 40×6 | — | Rytm kamiennych schodów, ławek i latarni. Ceglasta DDR wzdłuż brzegu, jasna nawierzchnia na ciągu wspólnym. |
+| **Żuraw nad Motławą** | 9×5 | 6–7 | Dwie ceglane wieże pod dwuspadowymi dachami obejmują ciemną drewnianą bramę. Węższy wysięgnik z pionowymi deskami wskazuje brzeg. |
+| **Długi Targ** | 27×8 (pierzeja i plac) | 3–6 | Wąskie kamienice o schodkowym rytmie wysokości, środkowych kalenicach i dachach z czerwonej dachówki lub patynowanej miedzi. Autorska fontanna z zieloną figurą i kamienną misą. |
+| **Stocznia** | 34×14 (hale i nabrzeże) | 3–4, dźwigi 137–170 px | Niskie hale w cegle i betonie. Zielonoszare sylwetki kratownicowych dźwigów, przeciwwaga, wysięgnik i hak. |
+| **Brzeźno i kładki** | 41×16 (brzeg zatoki) | — | Jasny pas plaży i stopniowana linia piany, piaszczyste smugi na asfalcie. Drewniana kładka przy Żurawiu, stalowe kratownice przy stoczni. |
 
 Rondo Kasztany wyznacza zielona wyspa, a podejścia do przejść serwisowych na Rynku, Kazimierzu i pod Kopcem wyróżnia pas kostki i znak B-1.
 
-Krakowski tramwaj ma srebrne pasy wzdłuż grafitowej bryły, ciemny dach i te same klatki przegubowe co pozostałe warianty. Grafika powstała z generatorów i kształtów w repozytorium, bez logotypów i barw przewoźnika.
+Tramwaje Krakowa i Gdańska mają srebrne pasy wzdłuż grafitowej bryły, ciemny dach i te same klatki przegubowe co pozostałe warianty. Grafika powstała z generatorów i kształtów w repozytorium, bez logotypów i barw przewoźnika.
 
 **Krasnale:** własne projekty 16×16, ~20 zawodów (rowerzysta, listonosz, kucharz, strażak, malarz…), każdy z jednym atrybutem rozpoznawczym. **Nie kopiujemy** istniejących rzeźb wrocławskich krasnali.
 **Syrenki (Warszawa):** własna figurka-maskotka 16×16 z tarczą i mieczem w formie zabawnej, nie kopia pomnika.

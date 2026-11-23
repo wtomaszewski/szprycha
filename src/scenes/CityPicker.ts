@@ -1,5 +1,9 @@
 import { Geom, Scene } from 'phaser';
-import { playableCity, type PlayableCity } from '../content/missions';
+import {
+  campaignCity,
+  playableCity,
+  type PlayableCity,
+} from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
@@ -164,7 +168,7 @@ export class CityPicker extends Scene {
       const caption = document.createElement('span');
       caption.textContent = labels[id];
       pin.append(caption);
-      const city = playableCity.safeParse(id);
+      const city = (freeRide ? playableCity : campaignCity).safeParse(id);
       if (city.success) {
         pin.addEventListener('click', () => void enter(city.data));
         if (id === selectedCity) {

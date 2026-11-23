@@ -97,7 +97,9 @@ export async function buildRankingRules(root: string): Promise<RankingRules> {
     content('osiagniecia.yaml').then((file) => parse(file) as unknown),
   ]);
   const rankedMissions = missions.flatMap((mission) =>
-    mission.miasto === 'krakow' ? [] : [{ ...mission, miasto: mission.miasto }],
+    mission.miasto === 'krakow' || mission.miasto === 'gdansk'
+      ? []
+      : [{ ...mission, miasto: mission.miasto }],
   );
   const mapIds = [
     ...new Set([

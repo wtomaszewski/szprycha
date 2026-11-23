@@ -31,6 +31,7 @@ import trainingUrl from '../../maps/miasteczko.tmj?url';
 import warsawUrl from '../../maps/warszawa.tmj?url';
 import wroclawUrl from '../../maps/wroclaw.tmj?url';
 import krakowUrl from '../../maps/krakow.tmj?url';
+import gdanskUrl from '../../maps/gdansk.tmj?url';
 import blockWallsUrl from '../../assets/generated/walls.png?url';
 import blockRoofsUrl from '../../assets/generated/roofs.png?url';
 import roofDetailsUrl from '../../assets/generated/roof-details.png?url';
@@ -269,6 +270,7 @@ export class City extends Scene {
       ['warszawa', warsawUrl],
       ['wroclaw', wroclawUrl],
       ['krakow', krakowUrl],
+      ['gdansk', gdanskUrl],
     ] as const) {
       if (!this.cache.tilemap.exists(id)) this.load.tilemapTiledJSON(id, url);
     }
@@ -354,7 +356,9 @@ export class City extends Scene {
       definition?.mapa ??
       definition?.miasto ??
       map ??
-      (this.city === 'krakow' ? this.city : defaultMap);
+      (this.city === 'krakow' || this.city === 'gdansk'
+        ? this.city
+        : defaultMap);
     this.rankingCity =
       mapId === 'warszawa' || mapId === 'wroclaw' ? mapId : undefined;
     this.startRankingRide(Boolean(definition));
@@ -397,7 +401,8 @@ export class City extends Scene {
       rankingSeed,
       !ambientTraffic
         ? 'mission-only'
-        : (mapId === 'wroclaw' || mapId === 'krakow') && !definition
+        : (mapId === 'wroclaw' || mapId === 'krakow' || mapId === 'gdansk') &&
+            !definition
           ? 'ambient'
           : 'scheduled',
     );
@@ -587,7 +592,9 @@ export class City extends Scene {
           ? ui.driving.wroclawTitle
           : mapId === 'krakow'
             ? ui.driving.krakowTitle
-            : ui.driving.title;
+            : mapId === 'gdansk'
+              ? ui.driving.gdanskTitle
+              : ui.driving.title;
     this.controls = new DrivingControls(
       tutorial ? ui.tutorial.title : examRide ? ui.exam.ride : areaTitle,
       this.graphics,
@@ -789,7 +796,8 @@ export class City extends Scene {
           () =>
             this.scene.start('CityPicker', {
               mode:
-                this.city === 'krakow' && this.freeRide
+                this.freeRide &&
+                (this.city === 'krakow' || this.city === 'gdansk')
                   ? 'freeRide'
                   : 'campaign',
             }),
@@ -798,7 +806,7 @@ export class City extends Scene {
       this.updateMissionHud();
     }
     this.resetRules();
-    if (mapId === this.city && mapId !== 'krakow' && !tutorial && !examRide) {
+    if (mapId === this.city && this.rankingCity && !tutorial && !examRide) {
       this.dailyClientSprites = new DailyClientSprites(
         this,
         this.world.metersPerPixel,
@@ -911,7 +919,7 @@ export class City extends Scene {
 
   private refreshDailyOffers() {
     const city = this.city;
-    if (city === 'krakow') return;
+    if (city === 'krakow' || city === 'gdansk') return;
     const profile = this.progress.store.profile;
     if (!this.freeRide && !campaignCompleted(city, profile, this.content))
       return;
@@ -1191,7 +1199,11 @@ export class City extends Scene {
     } else {
       const { definition } = mission;
       const ride = this.rankingRide;
-      if (ride?.valid && definition.miasto !== 'krakow') {
+      if (
+        ride?.valid &&
+        definition.miasto !== 'krakow' &&
+        definition.miasto !== 'gdansk'
+      ) {
         const stats = RideEvidence.verdictStats(result.verdicts);
         void this.progress.rankings?.record(
           {
@@ -1228,7 +1240,7 @@ export class City extends Scene {
           kind !== 'good' && !Object.hasOwn(evidence, 'answer'),
       );
       const daily =
-        order && this.city !== 'krakow'
+        order && this.city !== 'krakow' && this.city !== 'gdansk'
           ? progress.completeDailyOrder(
               this.city,
               result.points,

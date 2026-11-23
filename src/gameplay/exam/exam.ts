@@ -1,4 +1,4 @@
-import { playableCity, type PlayableCity } from '../../content/missions';
+import { campaignCity, type CampaignCity } from '../../content/missions';
 import { moduleId, type GameContent } from '../../content/schemas';
 import type { ProgressProfile } from '../../core/progressStore';
 import { moduleMastery } from '../../progression/mastery';
@@ -7,14 +7,14 @@ import { placIds, scorePlac, type PlacResult } from '../plac/PlacRun';
 import { drawQuestions } from '../quiz/leitner';
 
 export type TheoryResult = { correct: number; total: number };
-export type ExamAttempt = { city: PlayableCity; theory: TheoryResult };
+export type ExamAttempt = { city: CampaignCity; theory: TheoryResult };
 export type ExamRide = ExamAttempt & { plac: readonly PlacResult[] };
 export type RideResult = { completed: boolean; minor: number; major: number };
 export type ExamResult = ExamRide & { ride?: RideResult };
 type ExamBalance = GameContent['balans']['licencja'];
 
 export function campaignCompleted(
-  city: PlayableCity,
+  city: CampaignCity,
   profile: Pick<ProgressProfile, 'completed'>,
   content: Pick<GameContent, 'misje'>,
 ) {
@@ -31,7 +31,7 @@ export function licenceRequirements(
   profile: ProgressProfile,
   content: GameContent,
 ) {
-  const cities = playableCity.options.filter((city) =>
+  const cities = campaignCity.options.filter((city) =>
     campaignCompleted(city, profile, content),
   );
   const rank = content.balans.rangi.find(({ id }) => id === 'mistrz_szlaku');

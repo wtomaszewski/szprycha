@@ -39,6 +39,7 @@ export const tiles = {
   sidewalkLeaves: 80,
   snowGrass: [81, 82, 83, 84],
   snowSidewalk: [85, 86, 87, 88],
+  sand: [89, 90, 91],
 } as const;
 
 // clockwise from north; corners start at north-west

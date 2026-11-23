@@ -1,7 +1,14 @@
 import { artHash, neighbours, tiles } from '../src/render/artFrames.ts';
 
 export type Surface =
-  'grass' | 'asphalt' | 'sidewalk' | 'bike' | 'cobble' | 'gravel' | 'water';
+  | 'grass'
+  | 'asphalt'
+  | 'sidewalk'
+  | 'bike'
+  | 'cobble'
+  | 'gravel'
+  | 'sand'
+  | 'water';
 
 const variants = {
   grass: tiles.grassVariants,
@@ -10,6 +17,7 @@ const variants = {
   bike: tiles.bikeVariants,
   cobble: tiles.cobble,
   gravel: tiles.gravel,
+  sand: tiles.sand,
   water: [tiles.water[0]],
 };
 
