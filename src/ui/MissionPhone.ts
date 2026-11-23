@@ -2,6 +2,8 @@ import type { MissionDefinition } from '../content/missions';
 import type { DailyOrder, OrderText } from '../gameplay/procedural/orders';
 import { translate, ui } from '../core/presentation';
 
+type PhoneMode = 'available' | 'active' | 'tutorial';
+
 export class MissionPhone {
   readonly button = document.createElement('button');
   private readonly panel = document.createElement('dialog');
@@ -80,20 +82,24 @@ export class MissionPhone {
 
   show(
     orders: readonly MissionDefinition[],
-    active: boolean,
-    daily?: readonly DailyOrder[],
+    mode: PhoneMode,
+    daily: readonly DailyOrder[] = [],
   ) {
     this.starts = [];
     this.list.replaceChildren();
     this.dailyList.replaceChildren();
-    this.dailyHeading.hidden = this.dailyList.hidden = !daily?.length;
-    for (const order of daily ?? [])
-      this.addOrder(this.dailyList, order.definition, active, order.text);
-    for (const order of orders) this.addOrder(this.list, order, active);
-    if (orders.length === 0 || active) {
+    this.dailyHeading.hidden = this.dailyList.hidden = daily.length === 0;
+    for (const order of daily)
+      this.addOrder(this.dailyList, order.definition, mode, order.text);
+    for (const order of orders) this.addOrder(this.list, order, mode);
+    if (orders.length === 0 || mode !== 'available') {
       const message = document.createElement('li');
       message.textContent =
-        orders.length === 0 ? ui.phone.empty : ui.phone.active;
+        mode === 'tutorial'
+          ? ui.tutorial.phonePreview
+          : orders.length === 0
+            ? ui.phone.empty
+            : ui.phone.active;
       this.list.prepend(message);
     }
     this.panel.showModal();
@@ -104,7 +110,7 @@ export class MissionPhone {
   private addOrder(
     list: HTMLUListElement,
     order: MissionDefinition,
-    active: boolean,
+    mode: PhoneMode,
     text?: OrderText,
   ) {
     const item = document.createElement('li');
@@ -116,6 +122,9 @@ export class MissionPhone {
       description.textContent = translate(order.opis, text);
       item.append(description);
     }
+    list.append(item);
+    if (mode === 'tutorial') return;
+
     const button = document.createElement('button');
     button.type = 'button';
     button.textContent = ui.phone.start;
@@ -123,11 +132,10 @@ export class MissionPhone {
       'aria-label',
       `${ui.phone.start} · ${title.textContent}`,
     );
-    button.disabled = active;
+    button.disabled = mode === 'active';
     button.addEventListener('click', () => this.start(order.id));
     item.append(button);
-    list.append(item);
-    if (!active) this.starts.push(button);
+    if (mode === 'available') this.starts.push(button);
   }
 
   focusOrder(direction: number) {

@@ -1,3 +1,4 @@
+import { tutorialStates } from '../gameplay/Tutorial';
 import { get, update, type UseStore } from 'idb-keyval';
 import { z } from 'zod';
 import { audioSettingsSchema, defaultAudio } from '../audio/settings';
@@ -159,6 +160,7 @@ const profileSchema = m9ProfileSchema.extend({
   breakMinutes: count.positive().nullable().optional(),
   onlineRankings: z.boolean(),
   rankings: rankingState.optional().catch(undefined),
+  tutorial: z.enum(tutorialStates).optional().catch(undefined),
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
@@ -307,11 +309,13 @@ function createProfile(
     licencePassed: false,
     mastery: {},
   });
-  return addLocalIdentity(
+  const identified = addLocalIdentity(
     profile,
     avatarId,
     legacy === undefined ? generateNickname() : undefined,
   );
+  if (legacy === undefined) identified.tutorial = 'move';
+  return identified;
 }
 
 function decodeProfile(

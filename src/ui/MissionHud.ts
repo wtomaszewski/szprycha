@@ -1,3 +1,4 @@
+import { GoalArrow } from './GoalArrow';
 import { missionClock, translate, ui } from '../core/presentation';
 import type { MissionSystem } from '../gameplay/MissionSystem';
 import type { OrderText } from '../gameplay/procedural/orders';
@@ -15,17 +16,7 @@ export class MissionHud {
   private readonly title = document.createElement('strong');
   private readonly instruction = document.createElement('p');
   private readonly timer = document.createElement('output');
-  private readonly navigation = document.createElement('div');
-  private readonly navigationSize = { width: 0, height: 0 };
-  private readonly resize = new ResizeObserver(([entry]) => {
-    if (entry) {
-      const { width, height } = entry.contentRect;
-      Object.assign(this.navigationSize, { width, height });
-    }
-  });
-  private readonly arrow = document.createElement('div');
-  private readonly bearing = document.createElement('span');
-  private readonly distance = document.createElement('span');
+  private readonly arrow: GoalArrow;
   private readonly equip = document.createElement('button');
   private readonly parcel = document.createElement('label');
   private readonly shocks = document.createElement('progress');
@@ -34,7 +25,6 @@ export class MissionHud {
   private readonly resume = document.createElement('button');
   private displayedTitle?: string;
   private displayedSeconds?: number;
-  private displayedDistance?: number;
 
   constructor(
     parent: HTMLElement,
@@ -69,15 +59,6 @@ export class MissionHud {
     this.timer.setAttribute('aria-label', ui.missionUi.timer);
     this.timer.setAttribute('aria-live', 'off');
 
-    this.navigation.className = 'mission-navigation';
-    this.arrow.className = 'mission-arrow';
-    this.arrow.setAttribute('role', 'img');
-    this.bearing.className = 'mission-bearing';
-    this.distance.className = 'mission-distance';
-    this.arrow.append(this.bearing, this.distance);
-    this.navigation.append(this.arrow);
-    this.resize.observe(this.navigation);
-
     this.equip.type = this.lights.type = this.resume.type = 'button';
     this.lights.textContent = ui.missionUi.turnOnLights;
     this.lights.addEventListener('click', turnOnLights);
@@ -87,11 +68,12 @@ export class MissionHud {
     this.resume.addEventListener('click', resumeFromCheckpoint);
 
     timerSlot.append(this.timer);
-    parent.append(panel, this.navigation);
+    parent.append(panel);
+    this.arrow = new GoalArrow(parent);
   }
 
   destroy() {
-    this.resize.disconnect();
+    this.arrow.destroy();
   }
 
   focusEquipment() {
@@ -121,7 +103,7 @@ export class MissionHud {
     setHidden(this.lights, !preparing || lightsOn);
     setHidden(this.resume, !!result || !interrupted);
     setHidden(this.timer, !!result);
-    setHidden(this.navigation, !!result || preparing);
+    setHidden(this.arrow.root, !!result || preparing);
     setHidden(this.parcel, !!result || shakeLevel === undefined);
     if (shakeLevel !== undefined && this.shocks.value !== shakeLevel)
       this.shocks.value = shakeLevel;
@@ -153,29 +135,9 @@ export class MissionHud {
       this.timer.textContent = missionClock(seconds);
       this.displayedSeconds = seconds;
     }
-    this.drawArrow(
+    this.arrow.draw(
       target.position.x - position.x,
       target.position.y - position.y,
     );
-  }
-
-  private drawArrow(dx: number, dy: number) {
-    const { width, height } = this.navigationSize;
-    if (width === 0 || height === 0) return;
-    const magnitude = Math.max(Math.abs(dx) / width, Math.abs(dy) / height);
-    const x = magnitude === 0 ? width : (width + dx / magnitude) / 2;
-    const y = magnitude === 0 ? height / 2 : (height + dy / magnitude) / 2;
-    this.arrow.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-    this.bearing.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
-    const pixels = Math.round(Math.hypot(dx, dy));
-    if (this.displayedDistance !== pixels) {
-      this.displayedDistance = pixels;
-      const distance = `${pixels} ${ui.missionUi.distanceUnit}`;
-      this.distance.textContent = distance;
-      this.arrow.setAttribute(
-        'aria-label',
-        `${ui.missionUi.direction} · ${distance}`,
-      );
-    }
   }
 }

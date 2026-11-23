@@ -239,9 +239,9 @@ for (const { profile, device, viewport, target, logicalHeight } of [
 
       await page.getByRole('button', { name: pl.missionUi.equip }).tap();
       await page.keyboard.down('ArrowDown');
-      await expect
-        .poll(async () => Number(await canvas.getAttribute('data-y')))
-        .toBeGreaterThanOrEqual(1184);
+      await page.waitForFunction(
+        () => Number(document.querySelector('canvas')?.dataset.y) >= 1184,
+      );
       await page.keyboard.up('ArrowDown');
       await page.keyboard.down('Space');
       await expect(canvas).toHaveAttribute('data-speed', '0');

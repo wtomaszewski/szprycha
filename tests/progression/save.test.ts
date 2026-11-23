@@ -34,7 +34,13 @@ const migratedIdentity = {
 
 function previousProfile() {
   const profile = new ProgressStore().profile;
-  for (const field of ['profileId', 'nickname', 'avatarId', 'onlineRankings'])
+  for (const field of [
+    'profileId',
+    'nickname',
+    'avatarId',
+    'onlineRankings',
+    'tutorial',
+  ])
     Reflect.deleteProperty(profile, field);
   return profile;
 }
@@ -70,6 +76,23 @@ async function seed(factory: IDBFactory, value: unknown) {
     };
   });
 }
+
+it('only starts the tutorial automatically for a new local profile', async () => {
+  const factory = new IDBFactory();
+  const fresh = await ProgressStore.open(factory);
+  expect(fresh.profile.tutorial).toBe('move');
+  fresh.change((profile) => {
+    profile.tutorial = 'left';
+  });
+  await fresh.flush();
+  expect((await ProgressStore.open(factory)).profile.tutorial).toBe('left');
+
+  const { tutorial, ...existing } = fresh.profile;
+  expect(tutorial).toBe('left');
+  const imported = new IDBFactory();
+  await seed(imported, existing);
+  expect((await ProgressStore.open(imported)).profile.tutorial).toBeUndefined();
+});
 
 it('migrates the M5a localStorage profile and retires it after the commit', async () => {
   const factory = new IDBFactory();

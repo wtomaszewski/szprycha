@@ -1,4 +1,5 @@
 import { defineConfig } from '@playwright/test';
+import { legacyProgressKey } from './src/core/progressStore';
 const offlineConfig = {
   VITE_RANKING_URL: '',
   VITE_PRIVACY_POLICY_URL: '',
@@ -11,6 +12,14 @@ export default defineConfig({
   use: {
     baseURL: 'http://127.0.0.1:4173',
     viewport: { width: 1280, height: 720 },
+    // Existing feature tests begin with a returning rider. The onboarding tests use empty storage.
+    storageState: {
+      cookies: [],
+      origins: [4173, 4174, 4175].map((port) => ({
+        origin: `http://127.0.0.1:${port}`,
+        localStorage: [{ name: legacyProgressKey, value: '{"completed":[]}' }],
+      })),
+    },
     launchOptions: {
       executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
     },

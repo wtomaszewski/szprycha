@@ -1,4 +1,129 @@
 {
+  "tutorial": {
+    "title": "Samouczek w Miasteczku Ruchu",
+    "help": "Pomoc",
+    "replay": "Powtórz samouczek",
+    "resume": "Wznów samouczek",
+    "skip": "Pomiń samouczek",
+    "next": "Dalej",
+    "campaign": "Wybierz miasto",
+    "progress": "Postęp samouczka",
+    "phonePreview": "Te misje szkoleniowe znajdziesz po wybraniu miasta w kampanii.",
+    "feedback": {
+      "signalFirst": "Najpierw przytrzymaj właściwy sygnał ręką i poczekaj na podpowiedź Oli.",
+      "turnNow": "Teraz skręć łagodnie w pokazanym kierunku.",
+      "missedLine": "Zacznij hamować wcześniej i zatrzymaj się po swojej stronie przed linią.",
+      "retry": "Spróbuj jeszcze raz i trzymaj się wyznaczonego miejsca ćwiczeń.",
+      "resumeBrake": "Rusz kawałek, a potem użyj hamulca i zatrzymaj rower."
+    },
+    "stopControls": {
+      "classic": {
+        "keyboard": "W / ↑, potem Spacja",
+        "touch": "Joystick w górę, potem hamulec",
+        "gamepad": "Lewa gałka w górę, potem B lub RT"
+      },
+      "simple": {
+        "keyboard": "S / ↓, potem Spacja",
+        "touch": "Joystick w dół, potem hamulec",
+        "gamepad": "Lewa gałka w dół, potem B lub RT"
+      }
+    },
+    "steps": {
+      "move": {
+        "text": "Witaj w Miasteczku Ruchu! Rozejrzyj się i rusz ostrożnie.",
+        "keyboard": "W lub strzałka w górę",
+        "touch": "Popchnij joystick w górę",
+        "gamepad": "Popchnij lewą gałkę w górę"
+      },
+      "brake": {
+        "text": "Zahamuj i poczekaj, aż rower się zatrzyma.",
+        "keyboard": "Spacja",
+        "touch": "Przytrzymaj hamulec",
+        "gamepad": "Przytrzymaj B lub RT"
+      },
+      "look": {
+        "text": "Spójrz przez lewe ramię, żeby sprawdzić, co dzieje się za Tobą.",
+        "keyboard": "C",
+        "touch": "Przycisk z okiem",
+        "gamepad": "Y"
+      },
+      "left": {
+        "text": "Spójrz przez lewe ramię i zasygnalizuj lewą ręką, zanim skręcisz.",
+        "keyboard": "Przytrzymaj Q, potem skręć w lewo (A / ←; w trybie klasycznym trzymaj też W / ↑)",
+        "touch": "Przytrzymaj lewą dłoń, potem skręć joystickiem (w trybie klasycznym wychyl go też do przodu)",
+        "gamepad": "Przytrzymaj LB, potem skręć lewą gałką (w trybie klasycznym wychyl ją też do przodu)"
+      },
+      "right": {
+        "text": "Zasygnalizuj prawą ręką i skręć łagodnym łukiem w prawo.",
+        "keyboard": "Przytrzymaj E, potem skręć w prawo (D / →; w trybie klasycznym trzymaj też W / ↑)",
+        "touch": "Przytrzymaj prawą dłoń, potem skręć joystickiem (w trybie klasycznym wychyl go też do przodu)",
+        "gamepad": "Przytrzymaj RB, potem skręć lewą gałką (w trybie klasycznym wychyl ją też do przodu)"
+      },
+      "bell": {
+        "text": "Wypróbuj dzwonek, który pomaga ostrzec innych, gdy jest to potrzebne.",
+        "keyboard": "F",
+        "touch": "Przycisk z dzwonkiem",
+        "gamepad": "X"
+      },
+      "lights": {
+        "text": "Włącz lampki i zobacz ich wskaźnik na pasku u góry.",
+        "keyboard": "L",
+        "touch": "Przycisk świateł",
+        "gamepad": "D-pad ↑"
+      },
+      "walk": {
+        "text": "Zsiądź i poprowadź rower, tak jak przed zwykłym przejściem dla pieszych.",
+        "keyboard": "X, potem W lub ↑",
+        "touch": "Przycisk zsiadania, potem joystick w górę",
+        "gamepad": "A, potem popchnij lewą gałkę w górę"
+      },
+      "stop": {
+        "text": "Jedź w stronę strzałki i zatrzymaj się całkowicie przed linią STOP."
+      },
+      "points": {
+        "text": "Punkty na górze pokazują Twój wynik za jazdę.",
+        "keyboard": "Enter",
+        "touch": "Dotknij Dalej",
+        "gamepad": "A"
+      },
+      "series": {
+        "text": "Seria zwiększa mnożnik punktów za kolejne dobre nawyki.",
+        "keyboard": "Enter",
+        "touch": "Dotknij Dalej",
+        "gamepad": "A"
+      },
+      "attention": {
+        "text": "Uwaga Drogówki pokazuje, kiedy po błędach Ola zada pytanie kontrolne.",
+        "keyboard": "Enter",
+        "touch": "Dotknij Dalej",
+        "gamepad": "A"
+      },
+      "arrow": {
+        "text": "Strzałka pokazuje kierunek i odległość do celu.",
+        "keyboard": "Enter",
+        "touch": "Dotknij Dalej",
+        "gamepad": "A"
+      },
+      "phone": {
+        "text": "Na postoju otwórz SzprychaApp i zajrzyj do listy zleceń.",
+        "keyboard": "M, ponownie M, żeby zamknąć",
+        "touch": "Dotknij ikony telefonu, potem Zamknij",
+        "gamepad": "Select otwiera i zamyka aplikację"
+      },
+      "pause": {
+        "text": "Otwórz pauzę, żeby zrobić przerwę lub zmienić ustawienia.",
+        "keyboard": "Esc, ponownie Esc, żeby wrócić",
+        "touch": "Ikona pauzy, potem Wznów",
+        "gamepad": "Start otwiera i zamyka pauzę"
+      },
+      "finish": {
+        "text": "Świetnie! Wybierz miasto i rusz na misję szkoleniową.",
+        "keyboard": "Enter",
+        "touch": "Dotknij Wybierz miasto",
+        "gamepad": "A"
+      }
+    }
+  },
   "audio": {
     "settings": "Dźwięk",
     "music": "Muzyka",
