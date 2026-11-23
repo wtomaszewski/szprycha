@@ -186,13 +186,19 @@ const storyProfileSchema = identityProfileSchema.extend({
 
 export const graphicsQualities = ['auto', 'full', 'lite'] as const;
 
-const profileVersion = 11;
-const profileSchema = storyProfileSchema.extend({
-  version: z.literal(profileVersion),
-  selectedCity: campaignCity.optional(),
+const krakowProfileSchema = storyProfileSchema.extend({
+  version: z.literal(11),
+  selectedCity: campaignCity.exclude(['gdansk']).optional(),
   freeRideCity: z.enum(['krakow', 'gdansk', 'wies']).optional(),
   obwarzanki: z.array(id).optional(),
   graphicsQuality: z.enum(graphicsQualities).optional().catch(undefined),
+});
+
+const profileVersion = 12;
+const profileSchema = krakowProfileSchema.extend({
+  version: z.literal(profileVersion),
+  selectedCity: campaignCity.optional(),
+  bursztyny: z.array(id).optional(),
 });
 
 function addStories(
@@ -372,6 +378,12 @@ function decodeProfile(
 } {
   const current = profileSchema.safeParse(raw);
   if (current.success) return { profile: current.data, reset: false };
+  const krakow = krakowProfileSchema.safeParse(raw);
+  if (krakow.success)
+    return {
+      profile: { ...krakow.data, version: profileVersion },
+      reset: false,
+    };
   const stories = storyProfileSchema.safeParse(raw);
   if (stories.success)
     return {

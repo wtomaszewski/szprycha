@@ -18,6 +18,98 @@
       "text": "Przy znaku STOP zatrzymaj się zawsze, nawet gdy nic nie jedzie, i przepuść pojazdy z pierwszeństwem.",
       "hash": "cb4289aae6d8d5b91ae07c34f66ca6ebd10be0433c6328f2aa8870f284af067a"
     },
+    "dialogi.GDA-A1-01.koniec": {
+      "text": "Wszystkie całe! W jednej coś grzechocze.",
+      "hash": "b2f21b61376d97a7d2fa3b4a04a8b228233acdef8b6df5d29f8a2330ac6b87b4"
+    },
+    "dialogi.GDA-A1-01.koniec2": {
+      "text": "Bursztyn z pikselową błyskawicą. Na odwrocie jest plan Targu!",
+      "hash": "71f236313e16d7712fd4630005845e03e45a2ae1ecd4a20da95aa2e2bdc5792e"
+    },
+    "dialogi.GDA-A1-01.start": {
+      "text": "Pokaz nad Motławą potrzebuje latarenek. Zawieź je na drugi koniec Targu.",
+      "hash": "f5003dd0034c58a855ae17b2f083a573d1a09911e3ee1adad3b85fa285dd33c9"
+    },
+    "dialogi.GDA-A1-02.koniec": {
+      "text": "Bursztyny układają się w obraz Żurawia. Trzy kreski pod nim wyglądają jak sygnał.",
+      "hash": "bdd0aebb3c35bff1205d39fbdc862a42c311192dbdb103f4856b65f62831073c"
+    },
+    "dialogi.GDA-A1-02.start": {
+      "text": "Na planie są trzy kropki. Poprowadź rower po Targu i sprawdź zagadki.",
+      "hash": "d919d0fefecfb0b6f3319620ad84df36e4f9d54cf55709c079c180758957f2ca"
+    },
+    "dialogi.GDA-A1-03.koniec": {
+      "text": "Trzy błyski z Ołowianki, jak na bursztynach. Zapiszemy rytm dla Zawiły.",
+      "hash": "ab760de7b7f7d81c97bdd3abaa60fa96746685fcc732bfe3bf6979dbc217ff04"
+    },
+    "dialogi.GDA-A1-03.start": {
+      "text": "Włącz obie lampki i zapnij kask. Na kładkę wejdź pieszo z rowerem.",
+      "hash": "fc71701f3c32fb724118869240b6cfd38579cb2a31bc1cad01bff22e86da7ab1"
+    },
+    "dialogi.GDA-A2-01.koniec": {
+      "text": "Trzy krótkie błyski. Tak oznaczałem próbę nadajnika, kiedy podpisywałem się jako Zakłócacz.",
+      "hash": "f82dfcef53f7872a83b460022d11925ced15399587a4b48ff521a1018af48918"
+    },
+    "dialogi.GDA-A2-01.start": {
+      "text": "Przywieź zapis rytmu. Przed wjazdem sprawdź światło dla rowerów i czy droga jest wolna.",
+      "hash": "9c30222b826aa996b89aafbd66ef5c09c18e0a6f1e552d42c67beba253cc9ae8"
+    },
+    "dialogi.GDA-A2-02.koniec": {
+      "text": "Trzaski są na kanale pokazu. Sygnał wychodzi ze stoczni, spod dźwigów!",
+      "hash": "d6ebf182f8ad7eec468b5d319a89ec2f1e1ced296e2084cc4a9bcb5ec7e98a74"
+    },
+    "dialogi.GDA-A2-02.start": {
+      "text": "Radio też złapało trzy trzaski. Przywieź notatki z rejestratora.",
+      "hash": "787d8873b0d13f6d522ec02701b765dca43854a6e4a8d6f1c131dda631263aab"
+    },
+    "dialogi.GDA-A2-02.start2": {
+      "text": "Przy przystanku bez wysepki zatrzymaj się i przepuść wysiadających.",
+      "hash": "b1ebbc3cab1e9ec46f6147e4b1ff18d404ffdb36ba8f4e599b5e6aec6eb14c5f"
+    },
+    "dialogi.GDA-A2-03.koniec": {
+      "text": "Wtyk pasuje. Zawiła czeka na obudowę, żeby wyłączyć antenę przed pokazem.",
+      "hash": "05628f96ff001dc50fc47ffcffb530ae0605fe4181491375ef9c3af28b52e1d3"
+    },
+    "dialogi.GDA-A2-03.start": {
+      "text": "Zawiła składa wyłącznik. Brakuje wtyku ze schowka przy torach.",
+      "hash": "33015218c37f91d192ba9f268059cce09b64b790dcec57684ee855ba379e153f"
+    },
+    "dialogi.GDA-A2-03.start2": {
+      "text": "Przez tory jedź, gdy sygnały zgasną, zapory się podniosą i przejazd będzie wolny.",
+      "hash": "e65efd00d219354dbefb6fea1920ea2426891e959c9c4b568d18925371458265"
+    },
+    "dialogi.GDA-A3-01.koniec": {
+      "text": "Wyłącznik gotowy. Przy dźwigach czeka ekipa, ale nie widzę Turbo.",
+      "hash": "3f903033c50f87a6d8a8ef443b161c2a60e01798f35f201207623ef802943d4f"
+    },
+    "dialogi.GDA-A3-01.start": {
+      "text": "Zabierz obudowę na plażę. Wiatr nawiał piasek, więc zostaw sobie miejsce na hamowanie.",
+      "hash": "df9c82d71b99e3601e9248a362397b56a475a55f6ef6e40c1e82f0ffdd0ebe1b"
+    },
+    "dialogi.GDA-A3-02.koniec": {
+      "text": "Dobrze, wiesz, jak opisać miejsce dyspozytorowi. Teraz zostanę z Turbo.",
+      "hash": "32ffb187673a54616420e7785110aae6e5ba916f6d73823529fb199955abf7d8"
+    },
+    "dialogi.GDA-A3-02.koniec2": {
+      "text": "Ola już się mną zajęła. Będę wam kibicował z ławki!",
+      "hash": "30d67e391871caa5f1725ad381e66f7d82040c6aa1b050e32a0645c41761c81c"
+    },
+    "dialogi.GDA-A3-02.start": {
+      "text": "Turbo się przewrócił. Zatrzymaj się z boku i przećwicz ze mną, jak wezwać pomoc.",
+      "hash": "e80a2fe5c245853259d135bf47c6444613d1d70fbb72bf83829044eb55814581"
+    },
+    "dialogi.GDA-A3-03.koniec": {
+      "text": "Próba Zakłócacza wyłączona. Dzięki, że przywieźliście klucz bez ryzyka.",
+      "hash": "e4e3cb0c3d6b5532ae170b4078ade6a78605e543dbd8a8312959508a3c5517fb"
+    },
+    "dialogi.GDA-A3-03.koniec2": {
+      "text": "Kanał czysty! Raz, dwa, trzy… zapalamy latarenki nad Motławą!",
+      "hash": "82049c5079a83ab551042898a77488df97fa804a3e2b9e5ceff08c06e4c18a35"
+    },
+    "dialogi.GDA-A3-03.start": {
+      "text": "Ekipa gotowa. Weź wyłącznik i poprowadź wszystkich otwartą alejką obok hal.",
+      "hash": "c927ef4983e6dc868222154185c6169365a0a28c79a3bfeaa4ed1bc468821471"
+    },
     "dialogi.GDA-B-01.koniec": {
       "text": "Rower przeprowadzony! Otwieramy Ołowiankę i promenadę w Brzeźnie.",
       "hash": "1bc7b36d0a991624b469ba2a781464a8bccb6d526aa833b801bf0695f3b2c01c"
@@ -841,6 +933,38 @@
     "m5c.photoSaved": {
       "text": "Zdjęcie trafiło do Albumu Znaków.",
       "hash": "35ebb45b92119c5407f57c31e142e1511b5bdc30c69bb00355d29ba92fd69989"
+    },
+    "misje.GDA-A3-02.alarm_pytanie": {
+      "text": "W ćwiczeniu Turbo potrzebuje pilnej pomocy. Co powiesz, dzwoniąc na 112?",
+      "hash": "d331096dad3fd249f67df4a0aadb45118e512b191a08cc4129aea79e907e8a2b"
+    },
+    "misje.GDA-A3-02.alarm_wyjasnienie": {
+      "text": "Podaj miejsce, opisz zdarzenie i liczbę poszkodowanych. Czekaj na polecenia dyspozytora.",
+      "hash": "d5cf6f4d575b5c5aff01b31fb61b9e8a4c4d92059d733387e234c3fbfdfa9ed2"
+    },
+    "misje.GDA-A3-02.dorosly_pytanie": {
+      "text": "Jesteś już w bezpiecznym miejscu. Jak sprawdzisz, czy Turbo reaguje?",
+      "hash": "e414bc263de488c6a34d05a879505695597591d712e6696c11d2da6d6f930291"
+    },
+    "misje.GDA-A3-02.dorosly_wyjasnienie": {
+      "text": "Zawołaj dorosłego i sprawdź głosem, czy Turbo reaguje.",
+      "hash": "6f5c64a9e61ae2ea770276bedc7ebb82d30932f544f73700247a53096b3d45fa"
+    },
+    "misje.GDA-A3-02.pytanie": {
+      "text": "Turbo się przewrócił, a drogą wciąż jadą rowery. Co robisz najpierw?",
+      "hash": "55dd35e8e90e66bea538df2abf604a6b359755053212f88aae53df64e79b2b4e"
+    },
+    "misje.GDA-A3-02.wyjasnienie": {
+      "text": "Zanim podejdziesz, zatrzymaj się bezpiecznie i ostrzeż innych.",
+      "hash": "22bf71981e74b8aa26020b53d9dcc89f060ee1b042a679bc6f6688f3b9f2dfb5"
+    },
+    "misje.GDA-A3-03.pytanie": {
+      "text": "Ile rowerów może jechać w jednej kolumnie?",
+      "hash": "cc8b8f85e684b8c095a6c29e5c85f07d1363d1223aa34a9d73e45dc8cbf888cd"
+    },
+    "misje.GDA-A3-03.wyjasnienie": {
+      "text": "W kolumnie może jechać najwyżej 15 rowerów, a między kolumnami trzeba zostawić co najmniej 200 m.",
+      "hash": "441896f4a6899ef45f25d5dc5586f0f27c0e8a0973a09df0e841f2a3b9722023"
     },
     "misje.GDA-B-02.pomoc_wyjasnienie": {
       "text": "Zadbaj o bezpieczeństwo swoje i innych, zanim podejdziesz do osoby, która upadła.",

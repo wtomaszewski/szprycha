@@ -16,6 +16,7 @@ import { parentZone } from '../ui/ParentZone';
 import { aboutGame } from '../ui/AboutGame';
 import { menuGamepad } from '../ui/KeyboardGamepad';
 import { helmetColors } from '../render/spriteFrames';
+import { missionCity } from '../content/missions';
 export class MainMenu extends Scene {
   private readGamepad?: () => void;
 
@@ -48,7 +49,7 @@ export class MainMenu extends Scene {
     const rankings = rankingsPanel(
       progress.rankings,
       gameContent.misje,
-      progress.selectedCity === 'krakow' ? 'warszawa' : progress.selectedCity,
+      missionCity.safeParse(progress.selectedCity).data ?? 'warszawa',
     );
     const parents = parentZone(
       progress,

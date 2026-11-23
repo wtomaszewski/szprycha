@@ -108,7 +108,7 @@ it('migrates the M5a localStorage profile and retires it after the commit', asyn
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 11,
+    version: 12,
     stories: {},
     missionPoints: 0,
     mastery: {},
@@ -141,7 +141,7 @@ it('upgrades an IndexedDB v1 record and prefers it over remaining localStorage',
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 11,
+    version: 12,
     stories: {},
     bestScores: {},
     quizXp: 0,
@@ -165,7 +165,7 @@ it.each(['legacy', 'indexeddb'])(
     const store = await ProgressStore.open(factory, storage);
     expect(store).toMatchObject({ reset: true, sessionOnly: false });
     expect(store.profile).toMatchObject({
-      version: 11,
+      version: 12,
       stories: {},
       completed: [],
       missionPoints: 0,
@@ -217,7 +217,7 @@ it('preserves M5b progress when adding the album and milestone counters', async 
   expect(store.reset).toBe(false);
   expect(store.profile).toMatchObject({
     ...profile,
-    version: 11,
+    version: 12,
     stories: {},
     signPhotos: {},
     goodHabits: {},
@@ -261,7 +261,7 @@ it('adds empty quiz progress to a v3 profile without changing its existing field
   expect(store.profile).toEqual({
     ...v3,
     ...migratedIdentity,
-    version: 11,
+    version: 12,
     stories: {},
     audio,
     reducedEffects,
@@ -306,7 +306,7 @@ it('migrates a v5 licence profile and saves audio changes alongside existing pro
   expect(first.profile).toEqual({
     ...previous,
     ...migratedIdentity,
-    version: 11,
+    version: 12,
     stories: {},
     audio: defaultAudio,
     reducedEffects,
@@ -326,7 +326,7 @@ it('migrates a v5 licence profile and saves audio changes alongside existing pro
   expect((await ProgressStore.open(factory)).profile).toEqual({
     ...previous,
     ...migratedIdentity,
-    version: 11,
+    version: 12,
     stories: {},
     audio: { ...audio, music: 0.34, station: 'talk', muted: true },
     reducedEffects,
@@ -362,7 +362,7 @@ it('migrates audio settings from v6 and persists the ride preferences', async ()
   const store = await ProgressStore.open(factory);
   expect(store.reset).toBe(false);
   expect(store.profile).toMatchObject({
-    version: 11,
+    version: 12,
     stories: {},
     reducedEffects,
     reflectiveVest,
@@ -396,7 +396,7 @@ it('upgrades the existing accessibility preferences and saves a touch layout alo
   expect(store.profile).toEqual({
     ...previous,
     ...migratedIdentity,
-    version: 11,
+    version: 12,
     stories: {},
   });
   const touchLayout = [
@@ -415,7 +415,7 @@ it('upgrades the existing accessibility preferences and saves a touch layout alo
   expect((await ProgressStore.open(factory)).profile).toEqual({
     ...previous,
     ...migratedIdentity,
-    version: 11,
+    version: 12,
     stories: {},
     touchLayout,
   });
@@ -452,7 +452,7 @@ it.each(['IndexedDB', 'Preferences'])(
     expect(first.reset).toBe(false);
     expect(first.profile).toEqual({
       ...previous,
-      version: 11,
+      version: 12,
       stories: {},
       profileId: expect.stringMatching(uuidV4),
       nickname: 'Dzielna Szprycha 42',
@@ -490,7 +490,7 @@ it('migrates the version 9 profile to story progress without changing identity o
   await seed(factory, previous);
   const store = await ProgressStore.open(factory);
   expect(store.reset).toBe(false);
-  expect(store.profile).toEqual({ ...previous, version: 11, stories: {} });
+  expect(store.profile).toEqual({ ...previous, version: 12, stories: {} });
   expect((await ProgressStore.open(factory)).profile).toEqual(store.profile);
 });
 
@@ -507,15 +507,50 @@ it('preserves Kraków training and city selection when upgrading a v10 profile',
   await seed(factory, previous);
   const store = await ProgressStore.open(factory);
   const progress = new MissionProgress(store);
-  expect(store.profile).toEqual({ ...previous, version: 11 });
+  expect(store.profile).toEqual({ ...previous, version: 12 });
   expect(progress.freeRideCity).toBe('krakow');
   await progress.selectCity('krakow');
   expect((await ProgressStore.open(factory)).profile).toEqual({
     ...previous,
-    version: 11,
+    version: 12,
     selectedCity: 'krakow',
   });
 });
+
+it.each(['gdansk', 'wies'] as const)(
+  'preserves v11 graphics and free-ride progress for %s while adding Gdańsk campaign selection and amber',
+  async (freeRideCity) => {
+    const factory = new IDBFactory();
+    const previous = {
+      ...new ProgressStore().profile,
+      version: 11,
+      selectedCity: 'krakow',
+      freeRideCity,
+      graphicsQuality: 'lite',
+      completed: ['GDA-B-01', 'GDA-B-04'],
+      obwarzanki: ['krk-obwarzanek-sukiennice'],
+    };
+    await seed(factory, previous);
+    const store = await ProgressStore.open(factory);
+    const progress = new MissionProgress(store);
+    expect(store.reset).toBe(false);
+    expect(store.profile).toEqual({ ...previous, version: 12 });
+
+    await progress.selectCity('gdansk');
+    await progress.selectCity('krakow', true);
+    store.change((profile) => {
+      profile.bursztyny = ['gda-bursztyn-targ'];
+    });
+    await store.flush();
+    expect((await ProgressStore.open(factory)).profile).toEqual({
+      ...previous,
+      version: 12,
+      selectedCity: 'gdansk',
+      freeRideCity: 'krakow',
+      bursztyny: ['gda-bursztyn-targ'],
+    });
+  },
+);
 
 it('persists story steps and grants a finale reward only once across open profiles', async () => {
   const city = 'warszawa';
@@ -579,7 +614,7 @@ it('creates a v4 UUID when a WebView only exposes random bytes', () => {
 
 it('preserves an unsupported future save', async () => {
   const factory = new IDBFactory();
-  const future = { version: 12, data: 'future' };
+  const future = { version: 13, data: 'future' };
   await seed(factory, future);
   const store = await ProgressStore.open(factory);
   expect(store).toMatchObject({ reset: false, sessionOnly: true });

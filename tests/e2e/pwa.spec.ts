@@ -96,8 +96,8 @@ test('Chromium can install the build and play offline after the first visit', as
     .click();
 
   await context.setOffline(false);
-  await chooseCity(page, 'warszawa');
-  await expect(canvas).toHaveAttribute('data-map', 'warszawa');
+  await chooseCity(page, 'gdansk');
+  await expect(canvas).toHaveAttribute('data-map', 'gdansk');
   await ride(page);
   const playlist = (['jingle', ...radioCatalog.hits.seeds] as const).map(
     (seed) => '/' + radioPath('hits', seed),
@@ -106,9 +106,9 @@ test('Chromium can install the build and play offline after the first visit', as
     .poll(cachedPaths, { timeout: 15_000 })
     .toEqual(expect.arrayContaining(playlist));
   const paths = await cachedPaths();
-  expect(paths.some((path) => /\/warszawa-[^/]+\.tmj$/.test(path))).toBe(true);
+  expect(paths.some((path) => /\/gdansk-[^/]+\.tmj$/.test(path))).toBe(true);
   expect(
-    paths.some((path) => /\/(wroclaw|krakow)-[^/]+\.tmj$/.test(path)),
+    paths.some((path) => /\/(warszawa|wroclaw|krakow)-[^/]+\.tmj$/.test(path)),
   ).toBe(false);
   expect(paths.filter((path) => path.includes('/radio/')).sort()).toEqual(
     playlist.sort(),
@@ -123,9 +123,9 @@ test('Chromium can install the build and play offline after the first visit', as
   await context.setOffline(true);
   await page.reload();
   await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
-  await chooseCity(page, 'warszawa');
+  await chooseCity(page, 'gdansk');
   await offlineRadio;
-  await expect(canvas).toHaveAttribute('data-map', 'warszawa');
+  await expect(canvas).toHaveAttribute('data-map', 'gdansk');
   await ride(page);
   expect(requests.length).toBeGreaterThan(0);
   expect(

@@ -4,9 +4,13 @@ import { dialogueId } from './dialogues.ts';
 const id = z.string().regex(/^[A-Za-z0-9_-]+$/);
 export const missionCity = z.enum(['warszawa', 'wroclaw']);
 export type MissionCity = z.infer<typeof missionCity>;
-export const campaignCity = z.enum([...missionCity.options, 'krakow']);
+export const campaignCity = z.enum([
+  ...missionCity.options,
+  'krakow',
+  'gdansk',
+]);
 export type CampaignCity = z.infer<typeof campaignCity>;
-export const playableCity = z.enum([...campaignCity.options, 'gdansk', 'wies']);
+export const playableCity = z.enum([...campaignCity.options, 'wies']);
 export type PlayableCity = z.infer<typeof playableCity>;
 const key = z.string().regex(/^(misje|dialogi)(\.[A-Za-z0-9_-]+)+$/);
 const seconds = z.number().positive();
@@ -26,6 +30,7 @@ const missionGoal = z.discriminatedUnion('typ', [
     typ: z.literal('zbierz_obwarzanka'),
     poi: id,
   }),
+  z.strictObject({ ...goalFields, typ: z.literal('zbierz_bursztyn'), poi: id }),
   z
     .strictObject({
       ...goalFields,
@@ -145,12 +150,12 @@ export const missionSchema = z
         path: ['akt'],
         message: 'This city currently supports free-ride exercises only',
       });
-    // Kraków's original free-ride exercises retain their saved IDs.
-    const legacyKrakowTraining =
-      mission.miasto === 'krakow' &&
+    // Original free-ride exercises retain their saved IDs in the campaigns.
+    const legacyCityTraining =
       act === 'T' &&
-      /^KRA-B-0[1-3]$/.test(mission.id);
-    if (!legacyKrakowTraining && !mission.id.startsWith(`${prefix}-${act}-`))
+      ((mission.miasto === 'krakow' && /^KRA-B-0[1-3]$/.test(mission.id)) ||
+        (mission.miasto === 'gdansk' && /^GDA-B-0[1-4]$/.test(mission.id)));
+    if (!legacyCityTraining && !mission.id.startsWith(`${prefix}-${act}-`))
       ctx.addIssue({
         code: 'custom',
         path: ['id'],

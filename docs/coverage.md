@@ -12,7 +12,7 @@ Aby odtworzyć raport, uruchom `npm run coverage:maps`. Opcja `--strict` (po sep
 
 Mapa [gdansk.tmj](../maps/gdansk.tmj)
 
-**Misje na mapie** `GDA-B-01`, `GDA-B-02`, `GDA-B-03`, `GDA-B-04`
+**Misje na mapie** `GDA-A1-01`, `GDA-A1-02`, `GDA-A1-03`, `GDA-A2-01`, `GDA-A2-02`, `GDA-A2-03`, `GDA-A3-01`, `GDA-A3-02`, `GDA-A3-03`, `GDA-B-01`, `GDA-B-02`, `GDA-B-03`, `GDA-B-04`
 
 | Sytuacja drogowa | Pokrycie | Wykryte obiekty lub misje | Brakujące elementy |
 | --- | :---: | --- | --- |
@@ -23,22 +23,22 @@ Mapa [gdansk.tmj](../maps/gdansk.tmj)
 | Tramwaj + przystanek bez wysepki | ✓ | `aleja-przystanek`, `tramwaj-nabrzeze` | — |
 | DDR, pas rowerowy, ciąg pieszo-rowerowy | ✓ | `aleja-ddr-polnoc`, `aleja-ddr-poludnie`, `ddr-motlawa-0`, `ddr-motlawa-1088`, `ddr-motlawa-2560`, `ddr-motlawa-4064`, `kladka-stocznia`, `promenada`, `promenada-wschod`, `promenada-zachod`, `stocznia-dojscie`, `stocznia-drugi-brzeg`, `stocznia-kontrapas` | — |
 | Przejazd dla rowerzystów | ✓ | `aleja-przejazd`, `motlawa-przejazd-1024`, `motlawa-przejazd-2432`, `motlawa-przejazd-4000` | — |
-| Strefa zamieszkania / pieszych | ✓ | `dlugi-targ`, `stocznia-nabrzeze`, `targ-dojscie`, `zuraw-nabrzeze` | — |
+| Strefa zamieszkania / pieszych | ✓ | `dlugi-targ`, `skrot-miedzy-halami`, `skrot-przez-targ`, `stocznia-nabrzeze`, `targ-dojscie`, `zuraw-nabrzeze` | — |
 | Wyjazd z drogi wewnętrznej | ✓ | `wyjazd-magazyn` | — |
 | Przejazd kolejowy | ✓ | `olowianka-kolej` | — |
 | Pobocze, zakaz wjazdu rowerów | ✓ | `kladka-zuraw`, `kladka-zuraw-B-9-N`, `pobocze-e`, `pobocze-w` | — |
 | Kontraruch | ✓ | `stocznia-wjazd-B-2-S` | — |
-| Nocna jazda | ✓ | `GDA-B-01`, `dusk_at_s` | — |
+| Nocna jazda | ✓ | `GDA-A1-03`, `GDA-B-01`, `dusk_at_s` | — |
 
 | Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
 | --- | :---: | --- | --- |
 | M01 | ✓ | `WYP-04`, `WYP-05`, `WYP-06` | `KASK-01`, `WYP-04`, `WYP-05`, `WYP-06` |
-| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-01`, `GDZIE-09`, `GDZIE-11` |
-| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `SYG-02`, `ZNAK-B1`, `ZNAK-B9` |
+| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-01`, `GDZIE-03b`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` |
+| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `SYG-01`, `SYG-02`, `ZNAK-B1`, `ZNAK-B9` |
 | M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | `PIER-05` |
 | M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-08` | `MAN-08` |
-| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | `MSC-04` |
-| M07 | ✓ | — | `PP-01` |
+| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | `MSC-01`, `MSC-02`, `MSC-04`, `MSC-05` |
+| M07 | ✓ | — | `PP-01`, `PP-02`, `PP-03` |
 
 **Pokrycie** 13/13 sytuacji, 7/7 modułów.
 

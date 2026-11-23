@@ -17,16 +17,13 @@ const world = new WorldModel(
 const day: EnvState = { time: 'day', weather: 'clear', visibilityLow: false };
 const dusk: EnvState = { ...day, time: 'dusk' };
 
-it('covers all traffic situations and M01–M07 through free-ride exercises', () => {
-  const exercises = missionContent.misje.filter(
-    ({ miasto }) => miasto === 'gdansk',
-  );
-  expect(exercises.every(({ akt, poboczna }) => akt === 0 && poboczna)).toBe(
-    true,
+it('covers all traffic situations and M01–M07 on the Gdańsk map', () => {
+  const campaign = missionContent.misje.filter(
+    ({ miasto, akt }) => miasto === 'gdansk' && akt > 0,
   );
   const { situations, modules } = analyseMapCoverage(
     world,
-    exercises,
+    campaign,
     missionContent.przepisy.przepisy,
   );
   expect(Object.keys(situations)).toHaveLength(13);

@@ -121,6 +121,8 @@ Tramwaje Krakowa i Gdańska mają srebrne pasy wzdłuż grafitowej bryły, ciemn
 
 **Obwarzanki (Kraków).** Drewniana pamiątka 16×16 w kształcie plecionego pierścienia. Ciepły bursztynowy kolor, jasne okruszki i ciemny obrys odcinają ją od szarej kostki. Własny sprite w `src/render/CityCollectibles.ts`.
 
+**Bursztyny (Gdańsk).** Pikselowa bryłka 16×16 ma nieregularny obrys, miodowo-pomarańczowe ścianki i jasny refleks. Ciemny kontur odcina ją od kostki Długiego Targu i jasnej nawierzchni nad wodą. Sprite powstaje w `src/render/CityCollectibles.ts`.
+
 ### Wieś i las
 
 - **Gospodarstwo**: długa ceglana stodoła z wysokim, dwuspadowym dachem, niższy jasny dom i mały kamienny spichlerz.

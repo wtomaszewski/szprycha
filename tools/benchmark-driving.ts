@@ -67,7 +67,7 @@ const krakowSpawns: typeof warsawSpawns = {
   bulwary: { x: 2674, y: 2144, heading: 0 },
 };
 const gdanskSpawns: typeof warsawSpawns = {
-  targ: { x: 1390, y: 836, heading: 0 },
+  targ: { x: 1390, y: 783, heading: 0 },
   plaza: { x: 2940, y: 3190, heading: 0 },
 };
 const ruralSpawns: typeof warsawSpawns = {
