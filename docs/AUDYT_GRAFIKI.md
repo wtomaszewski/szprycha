@@ -1,6 +1,6 @@
 # Audyt grafiki — #100
 
-Punktem odniesienia jest `main` z commita `4b97f27`. Zrzuty wykonano w Chromium przy 1280×720 oraz na emulowanym telefonie dotykowym 740×390. Dla każdej z trzech map użyto tego samego punktu kamery w dzień, w nocy, w ulewie i w śniegu. Playwright podaje grze współrzędne startu i pogodę przez odpowiedzi HTTP z danymi testowymi. Ekrany quizu, egzaminu i certyfikatu korzystają z przygotowanego lokalnego profilu. Album otwiera się po sfotografowaniu znaku podczas jazdy. Wyniki misji i placu powstają po przejściu przez mechanizmy gry.
+Audyt zawiera 43 pary zrzutów. Punktem odniesienia dla scen jazdy i benchmarku jest `main` z commita `4b97f27`. Ujęcia menu, quizu, egzaminu, licencji, albumu i Strefy Rodzica odtworzono po uwzględnieniu aktualizacji znaków w `944c070`. Zrzuty wykonano w Chromium przy 1280×720 oraz na emulowanym telefonie dotykowym 740×390. Dla każdej z trzech map użyto tego samego punktu kamery w dzień, w nocy, w ulewie i w śniegu. Playwright podaje grze współrzędne startu i pogodę przez odpowiedzi HTTP z danymi testowymi. Ekrany quizu, egzaminu i certyfikatu korzystają z przygotowanego lokalnego profilu. Album otwiera się po sfotografowaniu znaku podczas jazdy. Wyniki misji i placu powstają po przejściu przez mechanizmy gry.
 
 ## Ujęcia przed i po
 
