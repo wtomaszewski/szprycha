@@ -117,6 +117,7 @@ export class MissionSystem {
     >,
     readonly race?: MissionRace,
     initialStreak = 0,
+    private readonly options: { cleanTimeBonus?: boolean } = {},
   ) {
     this.score = new MissionScore(balance, initialStreak);
     const poi = (id: string) => {
@@ -467,12 +468,15 @@ export class MissionSystem {
         ruleId === this.shortcutSign?.ruleId &&
         highlight?.signId === this.shortcutSign?.id,
     );
+    const allowsTimeBonus =
+      !illegalShortcut &&
+      (!this.options.cleanTimeBonus || this.score.minor === 0);
     const { smoothBonus, ...score } = this.score.result(
       this.definition,
       this.elapsedSeconds,
       outcome.status === 'completed',
       this.shakeLevel,
-      !illegalShortcut,
+      allowsTimeBonus,
     );
     const opponent = this.race?.opponentScore;
     if (
@@ -507,7 +511,7 @@ export class MissionSystem {
       timeBonusEligible:
         outcome.status === 'completed' &&
         this.score.major === 0 &&
-        !illegalShortcut,
+        allowsTimeBonus,
     };
   }
 }

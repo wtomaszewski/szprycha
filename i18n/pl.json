@@ -1054,6 +1054,78 @@
       "trening4": "Wjedź na drugie okrążenie."
     }
   },
+  "procedural": {
+    "heading": "Zlecenia dnia",
+    "places": {
+      "warszawa": {
+        "praga": "Praga",
+        "wisla": "Nad Wisłą",
+        "stare-miasto": "Stare Miasto",
+        "srodmiescie": "Śródmieście",
+        "powisle": "Powiśle",
+        "lazienki-mokotow": "Łazienki i Mokotów"
+      },
+      "wroclaw": {
+        "rynek-stare-miasto": "Rynek i Stare Miasto",
+        "ostrow-tumski-wyspy": "Ostrów Tumski i wyspy",
+        "hala-stulecia-zoo": "Hala Stulecia i okolice zoo",
+        "poludnie": "Południe Wrocławia",
+        "zachod": "Zachód Wrocławia",
+        "bulwary-odry": "Bulwary Odry"
+      }
+    },
+    "items": {
+      "map": "mapę",
+      "notebook": "notes",
+      "envelope": "kopertę",
+      "model": "model z papieru"
+    },
+    "senders": {
+      "workshop": "Warsztat",
+      "library": "Biblioteka",
+      "club": "Klub rowerowy"
+    },
+    "templates": {
+      "delivery": {
+        "title": "Dostawa od: {sender}",
+        "description": "Odbierz {item} i dostarcz przesyłkę na czas. Cel: {place}."
+      },
+      "pickup": {
+        "title": "Odbiór dla kuriera",
+        "description": "Jedź po {item}. Zleca: {sender}. Cel: {place}."
+      },
+      "escort": {
+        "title": "Eskorta rowerowa",
+        "description": "Poprowadź drugiego rowerzystę do celu. Zleca: {sender}. Cel: {place}."
+      },
+      "photo": {
+        "title": "Zdjęcie znaku {sign}",
+        "description": "Zatrzymaj się przy znaku {sign} i zrób zdjęcie. Cel: {place}."
+      },
+      "collect": {
+        "title": "Zbiórka dla kuriera",
+        "description": "Zbierz przedmioty w kolejnych punktach. Zleca: {sender}. Cel: {place}."
+      },
+      "race": {
+        "title": "Wyścig punktowy",
+        "description": "Zdobądź więcej punktów niż Turbo. Za naruszenie przepisów tracisz szansę na wygraną. Cel: {place}."
+      },
+      "fragile": {
+        "title": "Delikatna przesyłka",
+        "description": "Odbierz {item} i zawieź go bez wstrząsów. Cel: {place}."
+      }
+    },
+    "goals": {
+      "ride": "Jedź do wskazanego punktu.",
+      "walk": "Zsiądź i przeprowadź rower do wskazanego punktu.",
+      "pickup": "Odbierz {item}.",
+      "collect": "Zbierz przedmiot w następnym punkcie.",
+      "collectWalk": "Zsiądź i przeprowadź rower po przedmiot.",
+      "deliver": "Oddaj przesyłkę.",
+      "photo": "Zatrzymaj się i sfotografuj znak {sign}.",
+      "question": "Zatrzymaj się i odpowiedz na pytanie."
+    }
+  },
   "phone": {
     "title": "SzprychaApp",
     "orders": "Dostępne zlecenia",

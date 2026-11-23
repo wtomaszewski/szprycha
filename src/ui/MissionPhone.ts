@@ -1,10 +1,15 @@
 import type { MissionDefinition } from '../content/missions';
+import type { DailyOrder, OrderText } from '../gameplay/procedural/orders';
 import { translate, ui } from '../core/presentation';
+
+type PhoneMode = 'available' | 'active' | 'tutorial';
 
 export class MissionPhone {
   readonly button = document.createElement('button');
   private readonly panel = document.createElement('dialog');
   private readonly closeButton = document.createElement('button');
+  private readonly dailyHeading = document.createElement('h3');
+  private readonly dailyList = document.createElement('ul');
   private readonly list = document.createElement('ul');
   private starts: HTMLButtonElement[] = [];
 
@@ -41,7 +46,16 @@ export class MissionPhone {
     this.panel.id = 'mission-phone';
     this.panel.className = 'game-dialog mission-phone';
     this.panel.setAttribute('aria-labelledby', title.id);
-    this.panel.append(header, heading, this.list);
+    this.dailyHeading.textContent = ui.procedural.heading;
+    this.dailyHeading.id = 'daily-orders-title';
+    this.dailyList.setAttribute('aria-labelledby', this.dailyHeading.id);
+    this.panel.append(
+      header,
+      this.dailyHeading,
+      this.dailyList,
+      heading,
+      this.list,
+    );
     this.panel.addEventListener('keydown', (event) => {
       if (event.code === 'KeyM') {
         event.preventDefault();
@@ -68,35 +82,16 @@ export class MissionPhone {
 
   show(
     orders: readonly MissionDefinition[],
-    mode: 'available' | 'active' | 'tutorial',
+    mode: PhoneMode,
+    daily: readonly DailyOrder[] = [],
   ) {
     this.starts = [];
     this.list.replaceChildren();
-    for (const order of orders) {
-      const item = document.createElement('li');
-      const title = document.createElement('h4');
-      title.textContent = translate(order.tytul);
-      item.append(title);
-      if (order.opis) {
-        const description = document.createElement('p');
-        description.textContent = translate(order.opis);
-        item.append(description);
-      }
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.textContent = ui.phone.start;
-      button.setAttribute(
-        'aria-label',
-        `${ui.phone.start} · ${title.textContent}`,
-      );
-      if (mode !== 'tutorial') {
-        button.disabled = mode === 'active';
-        button.addEventListener('click', () => this.start(order.id));
-        item.append(button);
-      }
-      this.list.append(item);
-      if (mode === 'available') this.starts.push(button);
-    }
+    this.dailyList.replaceChildren();
+    this.dailyHeading.hidden = this.dailyList.hidden = daily.length === 0;
+    for (const order of daily)
+      this.addOrder(this.dailyList, order.definition, mode, order.text);
+    for (const order of orders) this.addOrder(this.list, order, mode);
     if (orders.length === 0 || mode !== 'available') {
       const message = document.createElement('li');
       message.textContent =
@@ -110,6 +105,37 @@ export class MissionPhone {
     this.panel.showModal();
     this.button.setAttribute('aria-expanded', 'true');
     (this.starts[0] ?? this.closeButton).focus();
+  }
+
+  private addOrder(
+    list: HTMLUListElement,
+    order: MissionDefinition,
+    mode: PhoneMode,
+    text?: OrderText,
+  ) {
+    const item = document.createElement('li');
+    const title = document.createElement('h4');
+    title.textContent = translate(order.tytul, text);
+    item.append(title);
+    if (order.opis) {
+      const description = document.createElement('p');
+      description.textContent = translate(order.opis, text);
+      item.append(description);
+    }
+    list.append(item);
+    if (mode === 'tutorial') return;
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = ui.phone.start;
+    button.setAttribute(
+      'aria-label',
+      `${ui.phone.start} · ${title.textContent}`,
+    );
+    button.disabled = mode === 'active';
+    button.addEventListener('click', () => this.start(order.id));
+    item.append(button);
+    if (mode === 'available') this.starts.push(button);
   }
 
   focusOrder(direction: number) {

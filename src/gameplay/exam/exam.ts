@@ -13,19 +13,27 @@ export type RideResult = { completed: boolean; minor: number; major: number };
 export type ExamResult = ExamRide & { ride?: RideResult };
 type ExamBalance = GameContent['balans']['licencja'];
 
+export function campaignCompleted(
+  city: MissionCity,
+  profile: Pick<ProgressProfile, 'completed'>,
+  content: Pick<GameContent, 'misje'>,
+) {
+  const missions = content.misje.filter(
+    ({ miasto, poboczna }) => miasto === city && !poboczna,
+  );
+  return (
+    missions.length > 0 &&
+    missions.every(({ id }) => profile.completed.includes(id))
+  );
+}
+
 export function licenceRequirements(
   profile: ProgressProfile,
   content: GameContent,
 ) {
-  const cities = missionCity.options.filter((city) => {
-    const missions = content.misje.filter(
-      ({ miasto, poboczna }) => miasto === city && !poboczna,
-    );
-    return (
-      missions.length > 0 &&
-      missions.every(({ id }) => profile.completed.includes(id))
-    );
-  });
+  const cities = missionCity.options.filter((city) =>
+    campaignCompleted(city, profile, content),
+  );
   const rank = content.balans.rangi.find(({ id }) => id === 'mistrz_szlaku');
   const rankMet = rank?.xp != null && reputationXp(profile) >= rank.xp;
   const missingModules = moduleId.options.filter((module) => {
