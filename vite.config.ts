@@ -6,6 +6,7 @@ import { rankingUrl } from './src/platform/parentZoneConfig.ts';
 import { rankingVersions } from './src/rankings/versions.ts';
 import { buildThirdPartyNotices } from './tools/check-licenses.ts';
 import { buildOrderRoutes } from './tools/procedural-orders.ts';
+import { checkFontCoverage } from './tools/font-coverage.ts';
 import { buildContent } from './tools/content.ts';
 import { offlineApp } from './tools/offline.ts';
 import { radioAssets } from './tools/radio/assets.ts';
@@ -71,6 +72,7 @@ export default defineConfig(({ mode }) => {
       {
         name: 'validated-game-content',
         async buildStart() {
+          checkFontCoverage(process.cwd());
           gameContent = await buildContent();
         },
         resolveId(id) {

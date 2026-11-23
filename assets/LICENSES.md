@@ -2,11 +2,14 @@
 
 ## Zasoby zewnętrzne
 
-| Plik                     | Źródło                              | Autor                             | Licencja                                                 | Data pozyskania | URL                                                          |
-| ------------------------ | ----------------------------------- | --------------------------------- | -------------------------------------------------------- | --------------- | ------------------------------------------------------------ |
-| `fonts/PixelifySans.ttf` | Google Fonts, katalog Pixelify Sans | The Pixelify Sans Project Authors | SIL Open Font License 1.1, pełny tekst w `fonts/OFL.txt` | 2026-11-21      | <https://github.com/google/fonts/tree/main/ofl/pixelifysans> |
+| Plik                                            | Źródło                                                | Autor                                                | Licencja                                                  | Data pozyskania | URL                                                                |
+| ----------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------- | --------------- | ------------------------------------------------------------------ |
+| `fonts/press-start-2p/PressStart2P-Regular.ttf` | Google Fonts                                          | The Press Start 2P Project Authors (cody@zone38.net) | SIL Open Font License 1.1, `fonts/press-start-2p/OFL.txt` | 2026-11-23      | <https://github.com/google/fonts/tree/main/ofl/pressstart2p>       |
+| `fonts/press-start-2p/*.woff2`                  | `@fontsource/press-start-2p@5.2.7`, latin i latin-ext | The Press Start 2P Project Authors                   | SIL Open Font License 1.1, `fonts/press-start-2p/OFL.txt` | 2026-11-23      | <https://www.npmjs.com/package/@fontsource/press-start-2p/v/5.2.7> |
+| `fonts/vt323/VT323-Regular.ttf`                 | Google Fonts                                          | The VT323 Project Authors (peter.hull@oikoi.com)     | SIL Open Font License 1.1, `fonts/vt323/OFL.txt`          | 2026-11-23      | <https://github.com/google/fonts/tree/main/ofl/vt323>              |
+| `fonts/vt323/*.woff2`                           | `@fontsource/vt323@5.2.7`, latin i latin-ext          | The VT323 Project Authors                            | SIL Open Font License 1.1, `fonts/vt323/OFL.txt`          | 2026-11-23      | <https://www.npmjs.com/package/@fontsource/vt323/v/5.2.7>          |
 
-Gra używa lokalnej kopii fontu. W `licenses/` są teksty dołączane do not o kodzie zewnętrznym. Plik `Apache-2.0.txt` pochodzi z Apache Software Foundation, a `phaser-3.90.0.txt` zawiera noty komponentów osadzonych w Phaserze i odnośniki do pochodzenia wymagającego weryfikacji. [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+Gra używa lokalnych kopii fontów WOFF2, dołączonych do pamięci podręcznej PWA. Pliki TTF służą do walidacji glifów oraz generowania grafiki sklepowej. W `licenses/` są teksty dołączane do not o kodzie zewnętrznym. Plik `Apache-2.0.txt` pochodzi z Apache Software Foundation, a `phaser-3.90.0.txt` zawiera noty komponentów osadzonych w Phaserze i odnośniki do pochodzenia wymagającego weryfikacji. [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
 ### Nagrania lektora (`voice/pl/`)
 
@@ -45,7 +48,7 @@ Ekran rankingów M10c używa klatek rowerzysty z istniejącego generatora i loka
 
 Panel nauczyciela M10d używa systemowego fontu przeglądarki. Zrzuty `docs/screenshots/83-*.png` wygenerował Playwright z lokalnym serwerem i danymi testowymi.
 
-Zrzuty sklepowe w `store/` i podglądy `docs/screenshots/90-*` pochodzą z lokalnego buildu gry w Playwright. Grafika promocyjna korzysta ze zrzutu gry, ikony z `tools/app-icons.ts` i lokalnego fontu Pixelify Sans (OFL 1.1). Ikona sklepowa powstaje z tego samego generatora M9.
+Zrzuty sklepowe w `store/` i podglądy `docs/screenshots/90-*` pochodzą z lokalnego buildu gry w Playwright. Grafika promocyjna korzysta ze zrzutu gry, ikony z `tools/app-icons.ts` oraz lokalnych fontów OFL 1.1. Istniejące grafiki sprzed #133 zachowują wygląd Pixelify Sans, a generator używa lokalnych Press Start 2P i VT323. Ikona sklepowa powstaje z tego samego generatora M9.
 
 ## Audyt oznaczeń w #63
 

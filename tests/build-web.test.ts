@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { promisify } from 'node:util';
 import { PNG } from 'pngjs';
 import { expect, it } from 'vitest';
+import { localFonts } from '../tools/font-coverage';
 import { radioCatalog, radioPath, stations } from '../src/audio/radio/catalog';
 
 async function checkPrecache(dist: string) {
@@ -44,6 +45,18 @@ async function checkPrecache(dist: string) {
       expect.stringMatching(/^assets\/miasteczko-.*\.tmj$/),
     ]),
   );
+  for (const { directory } of localFonts) {
+    for (const subset of ['latin', 'latin-ext']) {
+      expect(precache.files).toEqual(
+        expect.arrayContaining([
+          expect.stringMatching(
+            new RegExp(`^assets/${directory}-${subset}-400-normal-.*\\.woff2$`),
+          ),
+        ]),
+      );
+    }
+  }
+  expect(published.filter((file) => file.endsWith('.ttf'))).toEqual([]);
   expect(lazy).toEqual(
     expect.arrayContaining(
       ['warszawa', 'wroclaw', 'krakow', 'gdansk'].map((city) =>
@@ -79,7 +92,6 @@ async function checkPrecache(dist: string) {
       expect.stringMatching(/^assets\/index-.*\.js$/),
       expect.stringMatching(/^assets\/index-.*\.css$/),
       expect.stringMatching(/^assets\/rider-.*\.png$/),
-      expect.stringMatching(/^assets\/PixelifySans-.*\.ttf$/),
       ...['miasteczko', 'warszawa', 'wroclaw', 'krakow', 'gdansk'].map((city) =>
         expect.stringMatching(new RegExp(`^assets/${city}-.*\\.tmj$`)),
       ),
@@ -157,8 +169,15 @@ it('writes the noindex header, third-party notices and complete PWA cache to the
     );
     expect(notices).toMatch(/eventemitter3@[^ ]+ \(MIT\)/);
     expect(notices).toContain('Copyright (c) 2016, Mapbox');
-    const fontLicense = await readFile('assets/fonts/OFL.txt', 'utf8');
-    expect(notices).toContain(fontLicense.replace(/\r\n/g, '\n').trimEnd());
+    for (const { family, directory } of localFonts) {
+      const fontLicense = await readFile(
+        join('assets/fonts', directory, 'OFL.txt'),
+        'utf8',
+      );
+      expect(notices).toContain(
+        `${family} (OFL-1.1)\n\n${fontLicense.replace(/\r\n/g, '\n').trimEnd()}`,
+      );
+    }
     expect(notices).not.toContain('lightningcss');
 
     const assets = join(dist, 'assets');

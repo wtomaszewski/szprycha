@@ -139,7 +139,7 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
         .getByLabel(pl.missionResults.textSize)
         .selectOption('largest');
       const modal = page.getByRole('dialog', { name: pl.missionUi.completed });
-      await expect(modal).toHaveCSS('font-size', '24px');
+      await expect(modal).toHaveCSS('font-size', '32px');
       await expect(modal).toHaveCSS('background-color', 'rgb(0, 0, 0)');
     } else {
       await expect(skip).toBeVisible();

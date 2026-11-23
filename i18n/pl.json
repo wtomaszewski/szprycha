@@ -18,12 +18,12 @@
     },
     "stopControls": {
       "classic": {
-        "keyboard": "W / ↑, potem Spacja",
+        "keyboard": "W / strzałka w górę, potem Spacja",
         "touch": "Joystick w górę, potem hamulec",
         "gamepad": "Lewa gałka w górę, potem B lub RT"
       },
       "simple": {
-        "keyboard": "S / ↓, potem Spacja",
+        "keyboard": "S / strzałka w dół, potem Spacja",
         "touch": "Joystick w dół, potem hamulec",
         "gamepad": "Lewa gałka w dół, potem B lub RT"
       }
@@ -49,13 +49,13 @@
       },
       "left": {
         "text": "Spójrz przez lewe ramię i zasygnalizuj lewą ręką, zanim skręcisz.",
-        "keyboard": "Przytrzymaj Q, potem skręć w lewo (A / ←; w trybie klasycznym trzymaj też W / ↑)",
+        "keyboard": "Przytrzymaj Q, potem skręć w lewo (A / strzałka w lewo; w trybie klasycznym trzymaj też W / strzałka w górę)",
         "touch": "Przytrzymaj lewą dłoń, potem skręć joystickiem (w trybie klasycznym wychyl go też do przodu)",
         "gamepad": "Przytrzymaj LB, potem skręć lewą gałką (w trybie klasycznym wychyl ją też do przodu)"
       },
       "right": {
         "text": "Zasygnalizuj prawą ręką i skręć łagodnym łukiem w prawo.",
-        "keyboard": "Przytrzymaj E, potem skręć w prawo (D / →; w trybie klasycznym trzymaj też W / ↑)",
+        "keyboard": "Przytrzymaj E, potem skręć w prawo (D / strzałka w prawo; w trybie klasycznym trzymaj też W / strzałka w górę)",
         "touch": "Przytrzymaj prawą dłoń, potem skręć joystickiem (w trybie klasycznym wychyl go też do przodu)",
         "gamepad": "Przytrzymaj RB, potem skręć lewą gałką (w trybie klasycznym wychyl ją też do przodu)"
       },
@@ -69,11 +69,11 @@
         "text": "Włącz lampki i zobacz ich wskaźnik na pasku u góry.",
         "keyboard": "L",
         "touch": "Przycisk świateł",
-        "gamepad": "D-pad ↑"
+        "gamepad": "D-pad w górę"
       },
       "walk": {
         "text": "Zsiądź i poprowadź rower, tak jak przed zwykłym przejściem dla pieszych.",
-        "keyboard": "X, potem W lub ↑",
+        "keyboard": "X, potem W lub strzałka w górę",
         "touch": "Przycisk zsiadania, potem joystick w górę",
         "gamepad": "A, potem popchnij lewą gałkę w górę"
       },
@@ -230,8 +230,8 @@
     "walkingHint": "Prowadzisz rower.",
     "startHint": "Jazda próbna · Enter",
     "rotate": "Obróć urządzenie",
-    "signalLeft": "← Ręka",
-    "signalRight": "Ręka →",
+    "signalLeft": "Lewa ręka",
+    "signalRight": "Prawa ręka",
     "look": "Obejrzyj się",
     "bell": "Dzwonek",
     "lights": "Światła",
@@ -1904,7 +1904,7 @@
     "signalCountdownHint": "Liczniki są tylko na niektórych skrzyżowaniach. Zawsze kieruj się kolorem światła.",
     "lockedSign": "Do odkrycia",
     "photoSaved": "Zdjęcie trafiło do Albumu Znaków.",
-    "camera": "Zrób zdjęcie [P / → na padzie]",
+    "camera": "Zdjęcie [P / D-pad w prawo]",
     "noPhoto": "Zsiądź z roweru i zatrzymaj się blisko nowego znaku, poza jezdnią.",
     "photoFailed": "Spróbuj zrobić zdjęcie jeszcze raz.",
     "earned": "Zdobyte",
@@ -2075,7 +2075,7 @@
     "intro": "Rozwiąż test, przejedź sześć elementów placu i ukończ trasę kontrolną w mieście.",
     "campaign": "Ukończona kampania jednego miasta",
     "rank": "Ranga Mistrz Szlaku",
-    "mastery": "Opanowanie każdego modułu ≥ {min}%",
+    "mastery": "Opanowanie każdego modułu w co najmniej {min}%",
     "ready": "Spełnione",
     "missing": "Brak",
     "startTheory": "Rozpocznij teorię",

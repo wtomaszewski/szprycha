@@ -159,7 +159,9 @@ Wzory oznakowania pochodzą z [załącznika nr 2 do rozporządzenia o szczegół
 Sprite'y znaków 16×16 (na mapie) i 64×64 (Album, quiz, stop-klatka). Rysowane **wg wzorów z rozporządzenia** (kształt, kolor, piktogram) w pixel-arcie — muszą być jednoznacznie rozpoznawalne. Lista w `content/znaki.yaml`. W stop-klatce znak, którego dotyczy błąd, pulsuje.
 
 ## 9. UI i font
-- Font: pikselowy, licencja OFL, **z pełnym wsparciem polskich znaków** (kandydat: *Pixelify Sans*; zweryfikuj glify ą ę ć ł ń ó ś ź ż Ą Ę Ć Ł Ń Ó Ś Ź Ż; alternatywa: własny bitmap font 8×8/8×12 wygenerowany w `tools/`).
+- **Press Start 2P** w logo, tytułach, nagłówkach paneli, krótkich etykietach przycisków, wartościach HUD-u, licznikach sygnalizacji i napisie „OBLAŁEŚ!”. Rozmiary są wielokrotnościami 8 px. Tekst nakładki DOM ma rozmiar niezależny od skali płótna gry.
+- **VT323** w dialogach i dymkach Sierżant Oli, odpowiedziach quizu, opisach misji, Albumie, Strefie Rodzica, notach licencyjnych i treści certyfikatu. Tekst UI ma domyślnie 20 lub 24 px, a wyróżnienia 32 px. Etykiety na planszy używają rozmiarów dopasowanych do znaków i rekwizytów.
+- Oba fonty mają polskie glify i licencję SIL OFL 1.1. Skład paczki PWA obejmuje lokalne subsety WOFF2 latin i latin-ext. Build sprawdza znaki z `i18n/pl.json` i `content/` w źródłowych plikach TTF.
 - W lewym górnym rogu są punkty i mnożnik Serii Bezpieczeństwa, w prawym Uwaga Drogówki (trzy gwizdki i odczyt liczbowy) oraz zegar misji. Strzałka przy krawędzi pokazuje kierunek i odległość do celu. Ikony pauzy i SzprychaApp są przy dolnej krawędzi. Minimapa pozostaje opcjonalna.
 - Kolory UI: granat `#1a1c2c` tło paneli, żółć `#ffcd75` akcent, biel tekst. Kontrast min. 4.5:1.
 - Ikony jazdy korzystają z masek 12×12 generowanych przez `tools/ui-art.ts`.

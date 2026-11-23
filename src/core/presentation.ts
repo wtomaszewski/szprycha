@@ -1,6 +1,5 @@
 import pl from '../../i18n/pl.json';
 import { textAt } from '../content/translation';
-export const FONT = 'Pixelify Sans';
 export const ui = pl;
 export function translate(
   key: string,
