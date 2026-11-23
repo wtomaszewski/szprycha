@@ -145,6 +145,7 @@ test('a waiting release leaves the current mission intact and retains the local 
   const build = await deployableBuild();
   try {
     await page.goto(build.url);
+    await page.getByRole('button', { name: pl.tutorial.skip }).click();
     await page.waitForFunction(
       () => navigator.serviceWorker.controller !== null,
     );

@@ -1,3 +1,4 @@
+import { legacyProgressKey } from '../src/core/progressStore';
 import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import pl from '../i18n/pl.json' with { type: 'json' };
@@ -120,17 +121,14 @@ async function runTrial() {
         },
       );
     }
-    if (mission) {
-      const completed = mission === 'WAW-A1-04' ? orders.slice(0, -1) : orders;
-      await page.addInitScript(
-        (ids) =>
-          localStorage.setItem(
-            'szprycha.mission-progress.v1',
-            JSON.stringify({ completed: ids }),
-          ),
-        completed,
-      );
-    }
+    const completed =
+      mission === 'WAW-A1-04' ? orders.slice(0, -1) : mission ? orders : [];
+    // Both revisions begin the benchmark on the same returning profile.
+    await page.addInitScript(
+      ({ key, completed }) =>
+        localStorage.setItem(key, JSON.stringify({ completed })),
+      { key: legacyProgressKey, completed },
+    );
     const cdp = await page.context().newCDPSession(page);
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
     await page.goto(process.env.BENCH_URL ?? 'http://127.0.0.1:5173/');

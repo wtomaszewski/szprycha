@@ -66,7 +66,10 @@ export class MissionPhone {
     return this.panel.open;
   }
 
-  show(orders: readonly MissionDefinition[], active: boolean) {
+  show(
+    orders: readonly MissionDefinition[],
+    mode: 'available' | 'active' | 'tutorial',
+  ) {
     this.starts = [];
     this.list.replaceChildren();
     for (const order of orders) {
@@ -86,16 +89,22 @@ export class MissionPhone {
         'aria-label',
         `${ui.phone.start} · ${title.textContent}`,
       );
-      button.disabled = active;
-      button.addEventListener('click', () => this.start(order.id));
-      item.append(button);
+      if (mode !== 'tutorial') {
+        button.disabled = mode === 'active';
+        button.addEventListener('click', () => this.start(order.id));
+        item.append(button);
+      }
       this.list.append(item);
-      if (!active) this.starts.push(button);
+      if (mode === 'available') this.starts.push(button);
     }
-    if (orders.length === 0 || active) {
+    if (orders.length === 0 || mode !== 'available') {
       const message = document.createElement('li');
       message.textContent =
-        orders.length === 0 ? ui.phone.empty : ui.phone.active;
+        mode === 'tutorial'
+          ? ui.tutorial.phonePreview
+          : orders.length === 0
+            ? ui.phone.empty
+            : ui.phone.active;
       this.list.prepend(message);
     }
     this.panel.showModal();

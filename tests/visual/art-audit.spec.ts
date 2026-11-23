@@ -1,3 +1,4 @@
+import { waitForMainMenu } from '../../tools/skip-tutorial';
 import { expect, test, type Page } from '@playwright/test';
 import { resolve } from 'node:path';
 import pl from '../../i18n/pl.json' with { type: 'json' };
@@ -112,10 +113,7 @@ async function auditWeather(page: Page, map: MapId, condition: Condition) {
     await route.fulfill({ response, json: content });
   });
   await page.goto('/');
-  await expect(page.locator('canvas')).toHaveAttribute(
-    'data-scene',
-    'MainMenu',
-  );
+  await waitForMainMenu(page);
   await chooseCity(page, city, 'campaign');
   await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
   if (condition === 'noc') await page.keyboard.press('KeyL');
@@ -154,13 +152,9 @@ for (const [map, name, x, y] of landmarks)
   test(map + ' landmark ' + name, async ({ page }) => {
     await moveStart(page, map, x, y);
     await page.goto('/');
-    if (map === 'miasteczko') {
-      await expect(page.locator('canvas')).toHaveAttribute(
-        'data-scene',
-        'MainMenu',
-      );
-      await page.keyboard.press('Enter');
-    } else await chooseCity(page, map);
+    await waitForMainMenu(page);
+    if (map === 'miasteczko') await page.keyboard.press('Enter');
+    else await chooseCity(page, map);
     await expect(page.locator('canvas')).toHaveAttribute('data-x', String(x));
     await screenshot(page, map + '-' + name);
   });
@@ -171,10 +165,7 @@ const button = (page: Page, name: string) =>
 test('menu, picker, quiz, exam, album and parent zone', async ({ page }) => {
   await moveStart(page, 'miasteczko', 364, 1260);
   await page.goto('/');
-  await expect(page.locator('canvas')).toHaveAttribute(
-    'data-scene',
-    'MainMenu',
-  );
+  await waitForMainMenu(page);
   await screenshot(page, 'menu');
   await button(page, pl.cityPicker.freeRide).click();
   await expect(button(page, pl.cityPicker.warszawa)).toBeVisible();
@@ -251,10 +242,7 @@ test('menu, picker, quiz, exam, album and parent zone', async ({ page }) => {
 
 test('progress, settings and licence screens', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('canvas')).toHaveAttribute(
-    'data-scene',
-    'MainMenu',
-  );
+  await waitForMainMenu(page);
   for (const [name, title, close] of [
     ['mapa-umiejetnosci', pl.skillMap.title, pl.skillMap.close],
     ['osiagniecia', pl.m5c.achievements, pl.m5c.close],
@@ -282,6 +270,7 @@ test('progress, settings and licence screens', async ({ page }) => {
 
 test('practice yard and results', async ({ page }) => {
   await page.goto('/');
+  await waitForMainMenu(page);
   await button(page, pl.plac.title).click();
   const canvas = page.locator('canvas[data-scene="Plac"]');
   await page
@@ -313,6 +302,7 @@ test('mission dialogue and results', async ({ page }) => {
     await route.fulfill({ response, json: content });
   });
   await page.goto('/');
+  await waitForMainMenu(page);
   await chooseCity(page, 'warszawa', 'campaign');
   await expect(
     page.getByRole('dialog', { name: pl.dialogueUi.title }),
@@ -334,10 +324,7 @@ test.describe('landscape phone', () => {
   });
   test('menu, ride and pause on a non-integer scale', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('canvas')).toHaveAttribute(
-      'data-scene',
-      'MainMenu',
-    );
+    await waitForMainMenu(page);
     await screenshot(page, 'telefon-menu');
     const { open, gate, settings } = parentZone(page);
     await open.tap();

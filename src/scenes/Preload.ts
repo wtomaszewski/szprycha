@@ -1,3 +1,4 @@
+import { isTutorialStep } from '../gameplay/Tutorial';
 import versions from 'virtual:ranking-versions';
 import { RankingClient } from '../rankings/RankingClient';
 import { rankingUrl } from '../platform/parentZoneConfig';
@@ -30,7 +31,10 @@ export class Preload extends Scene {
         applyAccessibility(progress.store.profile);
         this.registry.set('missionProgress', progress);
         document.getElementById('pwa-splash')?.remove();
-        this.scene.start('MainMenu', content);
+        this.registry.set('content', content);
+        const tutorial = progress.store.profile.tutorial;
+        if (isTutorialStep(tutorial)) this.scene.start('City', { tutorial });
+        else this.scene.start('MainMenu');
       })
       .catch(showError);
   }

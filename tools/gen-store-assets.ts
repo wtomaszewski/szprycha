@@ -1,3 +1,4 @@
+import { waitForMainMenu } from './skip-tutorial';
 import { cp, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -70,7 +71,7 @@ async function captureDevice(
 
   async function menu() {
     await page.goto(origin);
-    await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
+    await waitForMainMenu(page);
   }
 
   async function startTraining(x: number, y: number) {

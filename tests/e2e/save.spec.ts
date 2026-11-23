@@ -11,7 +11,11 @@ test('reports a damaged legacy save and starts a fresh profile', async ({
     legacyProgressKey,
   );
   await page.goto('/');
-  await expect(page.getByRole('status')).toContainText(pl.skillMap.reset);
+  await page.getByRole('button', { name: pl.tutorial.skip }).click();
+  // The driving HUD may still be mounted for a frame after skipping the tutorial.
+  await expect(
+    page.getByRole('status').filter({ hasText: pl.skillMap.reset }),
+  ).toBeVisible();
   await page.getByRole('button', { name: pl.skillMap.title }).click();
   await expect(page.getByRole('dialog')).toContainText(`${pl.skillMap.xp} 0`);
   expect(

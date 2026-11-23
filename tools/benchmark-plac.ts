@@ -1,3 +1,4 @@
+import { waitForMainMenu } from './skip-tutorial';
 import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import pl from '../i18n/pl.json' with { type: 'json' };
@@ -13,6 +14,7 @@ try {
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
   await page.goto(process.env.BENCH_URL ?? 'http://127.0.0.1:5173/');
+  await waitForMainMenu(page);
   await page.getByRole('button', { name: pl.plac.title }).click();
   await page.getByRole('button', { name: pl.plac.arcade }).click();
   const canvas = page.locator(

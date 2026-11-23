@@ -1,3 +1,5 @@
+import { isTutorialStep } from '../gameplay/Tutorial';
+import { tutorialHelp } from '../ui/TutorialPanel';
 import { audio } from '../audio/GameAudio';
 import { Scene } from 'phaser';
 import type { GameContent } from '../content/schemas';
@@ -22,6 +24,17 @@ export class MainMenu extends Scene {
     const gameContent = this.registry.get('content') as GameContent;
     const progress = this.registry.get('missionProgress') as MissionProgress;
     const about = aboutGame(gameContent);
+    const tutorial = progress.store.profile.tutorial;
+    const help = tutorialHelp(
+      isTutorialStep(tutorial),
+      () => this.scene.start('City', { tutorial }),
+      () => {
+        progress.store.change((profile) => {
+          profile.tutorial = 'move';
+        });
+        this.scene.start('City', { tutorial: 'move' });
+      },
+    );
     const rankings = rankingsPanel(
       progress.rankings,
       gameContent.misje,
@@ -46,7 +59,8 @@ export class MainMenu extends Scene {
       exam.dialog.open ||
       rankings.dialog.open ||
       parents.dialog.open ||
-      about.dialog.open;
+      about.dialog.open ||
+      help.dialog.open;
     const notice = document.createElement('p');
     notice.className = 'menu-save-notice';
     notice.setAttribute('role', 'status');
@@ -112,6 +126,7 @@ export class MainMenu extends Scene {
       skills.button,
       rankings.button,
       parents.button,
+      help.button,
       about.trigger(),
     );
     menu.append(intro, ride, training, panels.navigation, options, notice);
@@ -124,6 +139,7 @@ export class MainMenu extends Scene {
       rankings.dialog,
       parents.dialog,
       about.dialog,
+      help.dialog,
     );
     const startDrive = (event: KeyboardEvent) => {
       if (
@@ -145,6 +161,7 @@ export class MainMenu extends Scene {
       rankings.dialog.remove();
       parents.dialog.remove();
       about.dialog.remove();
+      help.dialog.remove();
     });
     const canvas = this.game.canvas;
     canvas.setAttribute(
