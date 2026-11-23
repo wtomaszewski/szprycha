@@ -127,7 +127,12 @@ export class CityPicker extends Scene {
       await progress.selectCity(city);
       const mission =
         mode === 'campaign' ? progress.nextMission(city, content) : undefined;
-      this.scene.start('City', { city, map: city, missionId: mission?.id });
+      this.scene.start('City', {
+        city,
+        map: city,
+        missionId: mission?.id,
+        freeRide: mode === 'freeRide',
+      });
     };
 
     const back = document.createElement('button');

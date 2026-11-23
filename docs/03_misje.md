@@ -85,6 +85,20 @@ Losowanie używa ziarna i stałego kroku symulacji. Rozpatruje tylko zdarzenia p
 
 ---
 
+## Zlecenia dnia
+
+SzprychaApp pokazuje trzy oferty w Wolnej jeździe oraz w kampanii po ukończeniu wszystkich głównych misji danego miasta. Dzień według lokalnego kalendarza, miasto i zapisane ziarno profilu wyznaczają losowanie. W pierwszej ofercie pierwszeństwo mają reguły o najniższej łącznej wartości mastery reguły i modułu. Pozostałe oferty są ważone mastery i mają inne archetypy oraz trasy.
+
+Katalog powstaje podczas budowania gry na podstawie kierunkowego grafu pasów, ścieżek i punktów na mapach Tiled. Każdy odcinek i cała złożona trasa przechodzą symulację w silniku reguł, z kontrolą geometrii, kierunku, zatrzymania na STOP, świateł i zapór. Do katalogu trafiają wyłącznie przejazdy bez naruszeń. Zlecenia odbywają się bez losowych zdarzeń i ruchu tła, dzięki czemu gracz może odtworzyć sprawdzony przejazd. Przy przejściach wymagających prowadzenia roweru wskazówka w HUD przypomina o zsiadaniu.
+
+Generator wybiera dostawę, odbiór, eskortę, fotografowanie znaku, zbieranie przedmiotów, wyścig punktowy lub delikatną przesyłkę. Zlecenia nocne zaczynają się od przygotowania kasku i świateł. Pierwszą pomoc ćwiczy się przy bezpiecznym postoju na podstawie pytań z banku gry. Opisy składają się z szablonów w `i18n/pl.json`, które podstawiają miejsce, przedmiot i nadawcę. Całość działa offline.
+
+Premię czasową w Zleceniach dnia otrzymuje się za przejazd bez błędów. W wyścigu liczą się punkty, a naruszenie zasad kończy próbę. Oznaczony skrót pojawia się w podsumowaniu tak jak w M4d. Wynik Turbo ma pułap poniżej punktów gwarantowanych przez ukończenie legalnej trasy w czasie `par_s`. Ukończone zlecenia zasilają reputację oraz mastery. Zapis profilu i ranking kampanii zachowują osobne identyfikatory kampanii.
+
+[SzprychaApp przed zmianą](screenshots/102-szprychaapp-przed.png) · [SzprychaApp ze Zleceniami dnia](screenshots/102-szprychaapp-po.png)
+
+---
+
 ## Lista misji MVP — WARSZAWA
 
 | ID | Tytuł | Typ | Dzielnica | Reguły (główne) |

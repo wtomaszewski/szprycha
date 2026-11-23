@@ -5,16 +5,20 @@ import { buildRankingRules } from './tools/ranking-rules.ts';
 import { rankingUrl } from './src/platform/parentZoneConfig.ts';
 import { rankingVersions } from './src/rankings/versions.ts';
 import { buildThirdPartyNotices } from './tools/check-licenses.ts';
+import { buildOrderRoutes } from './tools/procedural-orders.ts';
 import { buildContent } from './tools/content.ts';
 import { offlineApp } from './tools/offline.ts';
 
 const rankingModule = 'virtual:ranking-versions';
 const noticesModule = 'virtual:third-party-notices';
+const routesModule = 'virtual:procedural-routes';
+const routesId = '\0' + routesModule;
 const noticesId = '\0' + noticesModule;
 let notices: string;
 
 export default defineConfig(({ mode }) => {
   const url = rankingUrl(loadEnv(mode, process.cwd()).VITE_RANKING_URL);
+  let gameContent: Awaited<ReturnType<typeof buildContent>>;
   return {
     base: './',
     resolve: {
@@ -66,7 +70,14 @@ export default defineConfig(({ mode }) => {
       {
         name: 'validated-game-content',
         async buildStart() {
-          await buildContent();
+          gameContent = await buildContent();
+        },
+        resolveId(id) {
+          if (id === routesModule) return routesId;
+        },
+        async load(id) {
+          if (id === routesId)
+            return `export default ${JSON.stringify(await buildOrderRoutes(gameContent))};`;
         },
         configureServer(server) {
           const watched = [

@@ -33,6 +33,7 @@ export class MissionRace {
     private readonly definition: MissionDefinition,
     world: WorldModel,
     private readonly content: GameContent,
+    private readonly scoreCeiling = Infinity,
   ) {
     const route = world.raceRoutes.get(routeId);
     if (!route) throw new Error(`Unknown race route: ${routeId}`);
@@ -82,7 +83,7 @@ export class MissionRace {
     if (this.distance !== path.length) return;
 
     this.rules.finish();
-    this.opponentScore = missionScore(
+    const score = missionScore(
       this.content.balans,
       this.definition,
       this.ticks / TICKS_PER_SECOND,
@@ -96,6 +97,7 @@ export class MissionRace {
           this.shortcutSign !== undefined,
       ),
     ).points;
+    this.opponentScore = Math.min(score, this.scoreCeiling);
     this.rider.speed = 0;
   }
 }

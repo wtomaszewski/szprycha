@@ -1,4 +1,4 @@
-import { missionClock, translate, ui } from '../core/presentation';
+import { missionClock, ui } from '../core/presentation';
 import type { ProgressStore } from '../core/progressStore';
 import type { MissionResult } from '../gameplay/MissionSystem';
 
@@ -123,7 +123,7 @@ export class MissionResults {
     this.confetti.hidden = reduced;
     this.heading.textContent = mission.completed;
 
-    const missionName = textElement('p', translate(title));
+    const missionName = textElement('p', title);
     missionName.className = 'result-mission-name';
     const highlights = document.createElement('dl');
     highlights.className = 'result-highlights';

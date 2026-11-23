@@ -2,8 +2,16 @@ import pl from '../../i18n/pl.json';
 import { textAt } from '../content/translation';
 export const FONT = 'Pixelify Sans';
 export const ui = pl;
-export function translate(key: string): string {
-  return textAt(pl, key) ?? key;
+export function translate(
+  key: string,
+  values?: Readonly<Record<string, string>>,
+): string {
+  const text = textAt(pl, key) ?? key;
+  if (!values) return text;
+  return text.replace(/\{([a-z]+)\}/g, (placeholder, name: string) => {
+    const value = Object.hasOwn(values, name) ? values[name] : undefined;
+    return value === undefined ? placeholder : (textAt(pl, value) ?? value);
+  });
 }
 
 export function missionClock(seconds: number) {

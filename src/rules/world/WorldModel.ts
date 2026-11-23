@@ -240,6 +240,10 @@ export function lateralOffset(lane: Lane, pos: Vec2) {
 
 export class WorldModel {
   readonly metersPerPixel: number;
+  readonly width: number;
+  readonly height: number;
+  readonly walls: readonly Box[];
+  readonly districts: readonly Box[];
   readonly zones: readonly Zone[];
   readonly pois: ReadonlyMap<string, PointOfInterest>;
   readonly triggers: ReadonlyMap<string, Box>;
@@ -294,6 +298,16 @@ export class WorldModel {
       }
       return areas;
     };
+    this.width = map.width * map.tilewidth * scale;
+    this.height = map.height * map.tileheight * scale;
+    this.walls = [
+      ...layer('blocks'),
+      ...layer('collisions').filter(
+        (object) => properties(object).kind === 'wall',
+      ),
+      ...layer('parked_cars'),
+    ].map(box);
+    this.districts = layer('districts').map(box);
     this.pois = namedAreas('pois', (object) => ({
       ...box(object),
       heading: z
