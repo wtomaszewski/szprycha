@@ -23,12 +23,6 @@ jobs:
           packages: 'platform-tools platforms;android-36 build-tools;35.0.0 build-tools;36.0.0'
           log-accepted-android-sdk-licenses: false
       - run: npm ci
-      - name: Set up FFmpeg
-        run: |
-          if ! command -v ffmpeg > /dev/null; then
-            sudo apt-get update
-            sudo apt-get install -y ffmpeg
-          fi
       - run: npm run build -- --mode mobile
       - run: npx --no-install cap sync android
       - run: ./gradlew --no-daemon :app:assembleDebug
@@ -49,12 +43,6 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - name: Set up FFmpeg
-        run: |
-          if ! command -v ffmpeg > /dev/null; then
-            sudo apt-get update
-            sudo apt-get install -y ffmpeg
-          fi
       - run: npm run build -- --mode mobile
       - run: npx --no-install cap sync ios
       - run: python3 tools/check-mobile.py ios

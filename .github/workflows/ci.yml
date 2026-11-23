@@ -15,31 +15,32 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run licenses:check
+      - run: npm run radio:check
       - run: npm run voice:check
       - run: npm run lint
       - run: npm run format:check
-      - name: Set up FFmpeg
-        run: |
-          if ! command -v ffmpeg > /dev/null; then
-            sudo apt-get update
-            sudo apt-get install -y ffmpeg
-          fi
       - run: npm run build
       - run: npm test
       - run: npm run coverage:maps -- --strict
       - run: npx playwright install --with-deps chromium
-      - run: npm run radio:previews
-      - uses: actions/upload-artifact@v4
-        with:
-          name: radio-previews
-          path: test-results/radio-previews/
-          if-no-files-found: error
       - run: npm run test:e2e
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: web-smoke
           path: test-results/
+      - name: Set up FFmpeg for radio previews
+        run: |
+          if ! command -v ffmpeg > /dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+      - run: npm run radio:previews
+      - uses: actions/upload-artifact@v4
+        with:
+          name: radio-previews
+          path: test-results/radio-previews/
+          if-no-files-found: error
   server:
     runs-on: ubuntu-latest
     steps:
