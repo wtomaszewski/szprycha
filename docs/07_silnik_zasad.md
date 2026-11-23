@@ -103,6 +103,8 @@ Ważność (`kind`) domyślnie z `przepisy.yaml` (`waga_bledu`), detektor może 
 
 **Ocena pierwszeństwa w M3c, część 1.** PIER-03 wykorzystuje geometrię manewrów i TTC. Gdy gracz nie ma przypisanego manewru w scenariuszu, silnik zachowuje dowody z wjazdu i sprawdza faktyczny skręt. PIER-04 obserwuje pieszych i rowerzystów na oznakowanym przejściu lub przejeździe na drodze wyjazdowej. PIER-05 ocenia ryzyko podczas wjazdu na przejazd rowerowy. PIER-08 przyznaje pierwszeństwo pojazdowi na rondzie przy wlocie z A-7. PIER-09 korzysta z pierwszeństwa tramwaju na równorzędnym po sprawdzeniu świateł i znaków. Feedback PIER-04, PIER-05 i PIER-09 opisuje bezpieczne zachowanie w ćwiczeniu, a ich flagi do konsultacji są zachowane.
 
+**Zebra na wysepkę.** Na przejściu oznaczonym `tramPlatform` PIER-10 ocenia ustąpienie pieszym, którzy wchodzą lub idą przez pas rowerzysty. Przystanek z wysepką i przystanek bez wysepki używają odrębnych kontroli ruchu.
+
 **Ustępowanie poza skrzyżowaniem.** PIER-06 sprawdza włączanie się po postoju przy krawędzi i przy wyjazdach zaznaczonych warstwą `driveways`; kierunek wyjazdu jest zapisany w `direction`. MSC-03 wymaga postoju przed przecięciem chodnika i przepuszczenia uczestników ruchu. MSC-02 korzysta z aktywnego przystanku bez wysepki zgłaszanego przez tramwaj. PIER-07 ocenia zjazd w prawo i hamowanie ochronne pojazdu nadjeżdżającego z tyłu z aktywnymi sygnałami.
 
 **Stan roweru i nawyki.** MAN-06 mierzy boczny odstęp od obrysów pojazdów w warstwie `parked_cars`. Światła oceniają WYP-04, WYP-05 i MSC-04. Pora dnia i pogoda wynikają z danych misji, a w wolnej jeździe zmrok ustawia także parametr mapy `dusk_at_s`. Mnożniki hamowania z `balans.yaml` stosują się do jazdy i oceny drogi hamowania. WYP-06 przyznaje raz na przejazd premię za kamizelkę podczas jazdy po ciemku z obiema lampkami. MAN-09, MAN-10 i MAN-11 odczytują stan rąk i nóg, przytrzymanie pojazdu, pasażera na jednoosobowym rowerze i telefon w ręku. Scenariusze mogą podać te stany bezpośrednio. Zdarzenia z propozycją podwózki i telefonem będą dostarczane przez misje.
@@ -118,7 +120,7 @@ Znaki B-1, B-2 i B-9 wskazują objęty odcinek przez `signs.affects` (identyfika
 ## 6. Dobre nawyki (werdykty `good`) — lista obowiązkowa
 Werdykt `good` wymaga zachowania z tej listy oraz pola `dobry_nawyk` przy regule.
 
-Zasygnalizowany manewr · ustąpione pierwszeństwo · zatrzymanie na STOP · zatrzymanie na czerwonym · przeprowadzenie roweru przez przejście · obejrzenie się przed manewrem · włączenie świateł o zmroku (raz na misję) · zachowanie odstępu od zaparkowanych aut (> 1 m) · zjazd na prawo przed pojazdem uprzywilejowanym · przepuszczenie pieszych na przystanku bez wysepki · wybór DDR zamiast jezdni · zwolnienie na chodniku przy pieszych · odebranie telefonu dopiero po zatrzymaniu.
+Zasygnalizowany manewr · ustąpione pierwszeństwo · zatrzymanie na STOP · zatrzymanie na czerwonym · przeprowadzenie roweru przez przejście · obejrzenie się przed manewrem · włączenie świateł o zmroku (raz na misję) · zachowanie odstępu od zaparkowanych aut (> 1 m) · zjazd na prawo przed pojazdem uprzywilejowanym · przepuszczenie pieszych na przystanku bez wysepki lub na zebrze do wysepki · wybór DDR zamiast jezdni · zwolnienie na chodniku przy pieszych · odebranie telefonu dopiero po zatrzymaniu.
 
 MAN-04 daje pochwałę za odpowiednio wczesne obejrzenie się i zasygnalizowanie zmiany toru w lewo przed bezpiecznym ominięciem lub wyprzedzeniem.
 

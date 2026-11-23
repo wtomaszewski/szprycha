@@ -1171,6 +1171,28 @@
   "poprawna": 0,
   "wyjasnienie": "Idąc poboczem, używaj odblasku widocznego dla nadjeżdżających kierowców.",
   "zrodlo": "PoRD, art. 11 ust. 4a"
+ },
+ {
+  "id": "Q066",
+  "modul": "M02",
+  "przepisy": ["GDZIE-13"],
+  "poziom": 1,
+  "pytanie": "Co robisz po ruszeniu ze śluzy rowerowej na zielonym?",
+  "odpowiedzi": ["Jadę dalej dowolną częścią jezdni", "Zajmuję właściwe miejsce na jezdni", "Zatrzymuję się na środku skrzyżowania"],
+  "poprawna": 1,
+  "wyjasnienie": "Opuść śluzę i zajmij miejsce odpowiednie do kierunku jazdy.",
+  "zrodlo": "PoRD, art. 33 ust. 1a"
+ },
+ {
+  "id": "Q067",
+  "modul": "M04",
+  "przepisy": ["PIER-10"],
+  "poziom": 1,
+  "pytanie": "Pasażer wchodzi na zebrę do wysepki tramwajowej. Jak zachowasz się na rowerze?",
+  "odpowiedzi": ["Ustąpię mu pierwszeństwa", "Przyspieszę, zanim dojdzie do wysepki", "Ustąpię tylko wtedy, gdy tramwaj stoi"],
+  "poprawna": 0,
+  "wyjasnienie": "Ustąp pieszemu wchodzącemu na przejście i pieszemu, który już po nim idzie.",
+  "zrodlo": "PoRD, art. 13 ust. 7 i art. 26 ust. 1"
  }
  ]
 }

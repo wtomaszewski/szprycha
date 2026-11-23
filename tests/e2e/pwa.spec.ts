@@ -72,7 +72,7 @@ test('Chromium can install the build and play offline after the first visit', as
 
   expect(
     (await cachedPaths()).filter((path) =>
-      /\/radio\/|\.(ogg|m4a)$|\/(warszawa|wroclaw|krakow|gdansk|wies)-[^/]+\.tmj$/.test(
+      /\/radio\/|\.(ogg|m4a)$|\/(warszawa|wroclaw|krakow|gdansk|wies|poznan)-[^/]+\.tmj$/.test(
         path,
       ),
     ),

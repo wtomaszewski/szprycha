@@ -264,25 +264,61 @@ Zrzuty pokazują [wybór mapy](screenshots/127-mapa-polski.webp), [drogę gminn�
 
 Zrzuty kampanii pokazują [wybór kampanii](screenshots/128-kampania.webp), [szyszki przy szkole](screenshots/128-szyszki.webp), [przygotowanie do jazdy o zmroku](screenshots/128-kamizelka.webp) i [pierwszą pomoc przy polu](screenshots/128-pierwsza-pomoc.webp).
 
+## POZNAŃ
+
+**Wolna jazda → Poznań** rozpoczyna się na Starym Rynku. Kolaż zajmuje 152 × 112 kafli. Wszystkie dzielnice można odwiedzić od pierwszej jazdy. PWA pobiera miasto przy pierwszej wizycie i przechowuje je do jazdy offline. Generator `npm run map:generate:poznan` odtwarza [poznan.tmj](../maps/poznan.tmj).
+
+| Miejsce | Układ i praktyka |
+| --- | --- |
+| Stary Rynek | Ratusz z zegarem i koziołkami, kolorowe domki budnicze, oznakowana strefa zamieszkania D-40/D-41 i pasaż z B-1. |
+| Aleja tramwajowa | Śluza przed S-1 z dwiema liniami zatrzymania, osobny przejazd z S-6 i przystanek na wysepce. Na wysepkę prowadzi zebra z chodnika. Dalej działa przystanek bez wysepki. |
+| Dawny browar | Ceglany dziedziniec, komin, ulica z kontrapasem i wyjazd z drogi wewnętrznej. |
+| Bulwar Warty i Ostrów Tumski | Nabrzeże z ławkami i wspólną drogą C-13/C-16, czerwony most na Ostrów, katedra z dwiema wieżami i nadrzeczna DDR z przejazdami przez jezdnię. |
+| Kolejowa i Ogrody | Przejazd kolejowy z zaporami, przejezdne pobocze, skrzyżowania równorzędne i rondo przy ogrodach. |
+
+Na mapie jeżdżą auta, rowerzysta i srebrno-grafitowy tramwaj. Piesi chodzą po rynku, nabrzeżu i zebrze na peron. Piesi na zebrze do wysepki korzystają z pierwszeństwa wobec rowerzysty zgodnie z art. 26 ust. 1 PoRD. Osobny przystanek bez wysepki uruchamia regułę MSC-02. [Prawo o ruchu drogowym](https://eli.gov.pl/eli/DU/2024/1251/ogl)
+
+Zegar Ratusza zaczyna od 11:00 i po 12 sekundach symulacji wskazuje południe. Pokaz trwa trzy sekundy. W Wolnej jeździe po 90 sekundach zapada zmrok.
+
+| Ćwiczenie w SzprychaApp | Przejezdna trasa |
+| --- | --- |
+| `POZ-B-01` | Zapnij kask, ustąp pieszym na rynku i objedź pasaż oznaczony B-1. Wjazd w zakaz kończy próbę bez premii czasowej. |
+| `POZ-B-02` | Wjedź pasem do śluzy, poczekaj na sygnał zezwalający i po przejechaniu skrzyżowania trzymaj się prawej strony jezdni. |
+| `POZ-B-03` | Zatrzymaj się przed zebrą i przejedź, gdy piesza idąca na peron zwolni twój pas. |
+| `POZ-B-04` | Włącz lampki, zasygnalizuj zamiar skrętu i jedź wspólną drogą przez most. Przy katedrze wybierz bezpieczną kolejność udzielania pomocy. |
+
+`npm run coverage:maps -- --strict` sprawdza 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/poznan.test.ts` sprawdza legalne trasy czterech ćwiczeń, zakazany skrót, czerwone światło w śluzie i dziesięć minut ruchu na każdym z trzech ziaren. `npm run test:e2e -- tests/e2e/poznan.spec.ts` sprawdza wybór miasta w Wolnej jeździe, zapis wyboru, uruchomienie szkolenia i renderowanie miejsc. [Raport pokrycia](coverage.md#poznań)
+
+Pomiary wykonano kolejno na tej samej maszynie na buildzie produkcyjnym. Chromium 156.0.8078.79 działał w trybie headless z WebGL, pełną grafiką, widokiem 640 × 360 i ograniczeniem CPU 4×. Tabela podaje mediany dwóch prób w Wolnej jeździe.
+
+| Odcinek | Średnie FPS | p95 klatki |
+| --- | ---: | ---: |
+| Poznań, Stary Rynek | 46,19 | 33,4 ms |
+| Warszawa, Starówka | 43,62 | 33,4 ms |
+
+Po `npm run build && npm run preview` uruchom `BENCH_URL=http://127.0.0.1:4173/ BENCH_VIEWPORT=640x360 BENCH_MAP=poznan BENCH_RUNS=2 npm run benchmark:driving`. Dla Warszawy ustaw `BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free`.
+
+Zrzuty z gry pokazują [wybór miasta](screenshots/137-mapa-polski.webp), [Stary Rynek przed południem](screenshots/137-przed-poludniem.webp), [pokaz koziołków](screenshots/137-rynek.webp), [Ostrów Tumski](screenshots/137-ostrow.webp), [dawny browar](screenshots/137-browar.webp), [bulwar Warty](screenshots/137-bulwar.webp), [tramwaj na przystanku](screenshots/137-tramwaj.webp) i [śluzę rowerową](screenshots/137-sluza.webp).
+
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
 Wzorowane na prawdziwych szkolnych miasteczkach ruchu: małe skrzyżowania każdego typu, mini-rondo, sygnalizacja, przejazd kolejowy z zaporami, znaki z Albumu na tablicach, **plac manewrowy** (ósemka, slalom, tor wąski, pole zatrzymania). Tu: samouczek, plac, quiz w budynku szkoły, egzamin Licencji.
 
 ## Tabela pokrycia (każde miasto musi mieć ✓ w każdym wierszu)
-| Sytuacja | Warszawa | Wrocław | Kraków | Gdańsk | Wieś i las |
-|---|---|---|---| --- | --- |
-| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody | Ołowianka i Brzeźno | Skrzyżowanie pod lasem |
-| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu | Skrzyżowanie przy Długim Targu | Droga gminna przy osadzie |
-| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Skansen |
-| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku | Rondo przy stoczni | Rondo przy lesie |
-| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Tramwaj przy skansenie |
-| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz | DDR nad Motławą, kontrapas w stoczni i promenada | Zagrody i las |
-| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary | Aleja i przeprawy przez Motławę | Skansen |
-| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz | Dojście do Długiego Targu | Plac osady |
-| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu | Wyjazd z placu magazynowego | Gospodarstwo |
-| Przejazd kolejowy | Mokotów | Zachód | Dębniki | Tory towarowe na południowym zachodzie | Droga gminna |
-| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec | Pobocze przy torach i kładka przy Żurawiu | Północ drogi gminnej i rezerwat |
-| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz | Stocznia | Uliczka osady |
-| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary | Kładka przy Żurawiu | Ćwiczenie WIE-B-03 |
+| Sytuacja | Warszawa | Wrocław | Kraków | Gdańsk | Wieś i las | Poznań |
+|---|---|---|---| --- | --- | --- |
+| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody | Ołowianka i Brzeźno | Skrzyżowanie pod lasem | Kolejowa i Ogrody |
+| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu | Skrzyżowanie przy Długim Targu | Droga gminna przy osadzie | Skrzyżowanie przy rynku |
+| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Skansen | Aleja tramwajowa |
+| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku | Rondo przy stoczni | Rondo przy lesie | Rondo przy ogrodach |
+| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Tramwaj przy skansenie | Aleja tramwajowa |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz | DDR nad Motławą, kontrapas w stoczni i promenada | Zagrody i las | Bulwar Warty, śluza i kontrapas przy browarze |
+| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary | Aleja i przeprawy przez Motławę | Skansen | Aleja i bulwary |
+| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz | Dojście do Długiego Targu | Plac osady | Stary Rynek i Ostrów Tumski |
+| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu | Wyjazd z placu magazynowego | Gospodarstwo | Dziedziniec dawnego browaru |
+| Przejazd kolejowy | Mokotów | Zachód | Dębniki | Tory towarowe na południowym zachodzie | Droga gminna | Kolejowa |
+| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec | Pobocze przy torach i kładka przy Żurawiu | Północ drogi gminnej i rezerwat | Kolejowa i alejka przy katedrze |
+| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz | Stocznia | Uliczka osady | Uliczka przy dawnym browarze |
+| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary | Kładka przy Żurawiu | Ćwiczenie WIE-B-03 | Bulwar Warty i most Tumski |
 
 ## Kolejne mapy (po MVP, kolejność wg popularności)
-Poznań (Ratusz z koziołkami, Stary Browar) · Łódź (Piotrkowska, Manufaktura) · Zakopane (Krupówki, Giewont w tle).
+Łódź (Piotrkowska, Manufaktura) · Zakopane (Krupówki, Giewont w tle).

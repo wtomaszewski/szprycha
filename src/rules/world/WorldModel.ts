@@ -46,6 +46,7 @@ const prioritySchema = z.enum([
 const zoneSchema = z.enum([
   'roadway',
   'sidewalk',
+  'tram_platform',
   'bike_path',
   'bike_lane',
   'shared_path',
@@ -97,6 +98,7 @@ const laneProperties = z.object({
   side: sideSchema,
   priorityClass: prioritySchema,
   width_px: z.number().positive(),
+  stopOffset_px: z.number().positive().optional(),
   type: z.enum(['car', 'tram', 'bike']),
   speedLimit: z.number().positive(),
   from: z.string().min(1).optional(),
@@ -159,6 +161,7 @@ export interface Crossing extends Box {
   kind: z.infer<typeof crossingSchema>;
   axis: 'x' | 'y';
   signal?: CrossingSignal;
+  tramPlatform?: true;
   rail?: z.infer<typeof railSchedule>;
   train?: z.infer<typeof railTrain>;
   trafficArea?: Box;
@@ -180,7 +183,7 @@ export interface Intersection extends Box {
 export type Side = z.infer<typeof sideSchema>;
 export interface Lane extends Omit<
   z.infer<typeof laneProperties>,
-  'width_px' | 'intersection'
+  'width_px' | 'intersection' | 'stopOffset_px'
 > {
   id: string;
   intersection: Intersection;
@@ -190,6 +193,7 @@ export interface Lane extends Omit<
   forward: Vec2;
   length: number;
   width: number;
+  stopOffset?: number;
   stopSign?: Sign;
   accessSign?: Sign;
   shoulder?: Zone;
@@ -239,6 +243,7 @@ export const zoneOrder: Record<Zone['kind'], number> = {
   bike_path: 0,
   bike_lane: 0,
   shared_path: 1,
+  tram_platform: 1,
   roadway: 2,
   sidewalk: 3,
   shoulder: 4,
@@ -457,6 +462,7 @@ export class WorldModel {
         kind: crossingSchema.parse(props.kind),
         axis: z.enum(['x', 'y']).parse(props.axis),
         signal: crossingLights.get(object.name),
+        tramPlatform: z.literal(true).optional().parse(props.tramPlatform),
         rail:
           props.kind === 'rail' && props.open_s !== undefined
             ? railSchedule.parse(props)
@@ -469,6 +475,8 @@ export class WorldModel {
               })
             : undefined,
       };
+      if (crossing.tramPlatform && crossing.kind !== 'pedestrian')
+        throw new Error(`Invalid tram platform crossing: ${crossing.id}`);
       if (
         crossing.train &&
         (!crossing.rail ||
@@ -563,7 +571,16 @@ export class WorldModel {
       }
       if (props.role !== undefined && props.role !== 'approach')
         throw new Error(`Lane ${object.name}: unknown role ${props.role}`);
-      const { width_px, ...approach } = laneProperties.parse(props);
+      const { width_px, stopOffset_px, ...approach } =
+        laneProperties.parse(props);
+      const stopOffset = stopOffset_px && stopOffset_px * scale;
+      if (
+        stopOffset &&
+        (approach.type !== 'car' ||
+          approach.priorityClass !== 'signal' ||
+          stopOffset >= path.length)
+      )
+        throw new Error(`Invalid stop offset: ${object.name}`);
       if (
         approach.parallelBikeInfra &&
         !this.zones.some(
@@ -583,6 +600,7 @@ export class WorldModel {
         throw new Error(`Unknown shoulder: ${object.name}`);
       const lane: Lane = {
         shoulder,
+        stopOffset,
         ...approach,
         id: object.name,
         intersection,

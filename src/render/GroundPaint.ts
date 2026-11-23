@@ -316,6 +316,10 @@ export function paintRoad(
         2 * halfWidth,
         TILE,
       );
+      if (lane.stopOffset) {
+        ctx.translate(0, lane.stopOffset * scale);
+        texture(tiles.stop, -halfWidth, -16, 2 * halfWidth, TILE);
+      }
       ctx.restore();
     }
     if (lane.type !== 'car' || lane.length * scale < 84 || !lane.turns)
@@ -328,7 +332,7 @@ export function paintRoad(
           .sort()
           .join(',')
       ];
-    if (!arrow) continue;
+    if (!arrow || lane.stopOffset) continue;
     ctx.save();
     ctx.translate(
       Math.round(x - lane.forward.x * 47),

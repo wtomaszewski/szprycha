@@ -114,6 +114,8 @@ export function buildTrafficRoutes(
     const walkZones = zones.filter(
       ({ kind, sharedSide }) =>
         kind === 'sidewalk' ||
+        kind === 'tram_platform' ||
+        kind === 'living_zone' ||
         kind === 'pedestrian_zone' ||
         (kind === 'shared_path' && sharedSide !== 'bike'),
     );
@@ -151,8 +153,12 @@ export function buildTrafficRoutes(
               (foot ? walkZones : bikeZones).some((zone) => {
                 if (!contains(zone, sample)) return false;
                 if (!bike)
-                  return !zones.some(
-                    (road) => road.kind === 'roadway' && contains(road, sample),
+                  return (
+                    zone.kind === 'tram_platform' ||
+                    !zones.some(
+                      (road) =>
+                        road.kind === 'roadway' && contains(road, sample),
+                    )
                   );
                 if (!zone.direction) return true;
                 const degrees = {

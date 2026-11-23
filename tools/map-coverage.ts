@@ -169,6 +169,7 @@ function mapRules(world: WorldModel, f: ReturnType<typeof mapFeatures>) {
     [f.roundabout.length, ['PIER-08']],
     [f.tramJunction, ['PIER-09']],
     [f.tramStop.length, ['MSC-02']],
+    [world.crossings.some(({ tramPlatform }) => tramPlatform), ['PIER-10']],
     [f.bikeCrossing.length, ['PIER-05']],
     [f.pedestrianCrossing.length, ['GDZIE-06']],
     [f.driveway.length, ['PIER-06', 'MSC-03']],

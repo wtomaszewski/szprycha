@@ -450,6 +450,7 @@ export class TrafficParticipants {
       agent,
       journey: { path, gates },
     } = actor;
+    if (actor.departureAt !== undefined && at < actor.departureAt) return;
     const gate = gates[actor.gateIndex];
     const speed =
       agent.kind === 'cyclist' && gate && gate.entry - actor.distance < 2
@@ -507,6 +508,10 @@ export class TrafficParticipants {
       actor.distance = 0;
       actor.gateIndex = 0;
       this.place(actor);
+      if (actor.route.repeat_s) {
+        agent.speed = 0;
+        actor.departureAt = at + actor.route.repeat_s;
+      }
     } else this.restart(actor, at + 2);
   }
 

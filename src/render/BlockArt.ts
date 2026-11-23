@@ -111,6 +111,7 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
         return;
       }
       if (
+        b.landmarkId?.startsWith('poznan-budnicza-') ||
         b.landmarkId === 'gdansk-kamienica' ||
         b.landmarkId === 'zuraw-wieza'
       ) {
@@ -415,6 +416,28 @@ export function wallTexture(
           FLOOR_PX,
         );
       }
+    }
+    const merchantHouseColors: Readonly<Partial<Record<string, string>>> = {
+      'poznan-budnicza-gold': '#e7b45f',
+      'poznan-budnicza-rose': '#d77e7c',
+      'poznan-budnicza-mint': '#8db789',
+      'poznan-budnicza-blue': '#83adce',
+    };
+    const merchantColor = merchantHouseColors[b.landmarkId ?? ''];
+    const townHall = b.landmarkId === 'poznan-ratusz' && b.floors === 5;
+    if (merchantColor || townHall) {
+      ctx.fillStyle = merchantColor ?? '#e9d9bb';
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = '#69514d';
+      for (let y = 0; y < height; y += FLOOR_PX) {
+        for (let x = 7; x < width - 8; x += 17) {
+          const opening = townHall ? 10 : 7;
+          ctx.fillRect(x, y + 5, opening, FLOOR_PX - 7);
+          ctx.fillRect(x + 2, y + 3, opening - 4, 2);
+        }
+      }
+      ctx.fillStyle = '#f2e2c4';
+      for (let y = 0; y < height; y += FLOOR_PX) ctx.fillRect(0, y, width, 2);
     }
     if (b.landmarkId === 'zuraw-korpus') {
       ctx.fillStyle = '#3e2c28';

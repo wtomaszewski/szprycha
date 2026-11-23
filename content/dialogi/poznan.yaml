@@ -1,0 +1,3 @@
+zapowiedzi:
+  - { regula: GDZIE-13, emocja: neutral, tekst: dialogi.poznan_zapowiedzi.GDZIE-13 }
+  - { regula: PIER-10, emocja: neutral, tekst: dialogi.poznan_zapowiedzi.PIER-10 }

@@ -25,7 +25,7 @@ M4c udostępnia osiem zdarzeń z `ruleIds` oraz wymuszane ćwiczenie STOP. Piesz
 | `typ` | `ruleIds` |
 |---|---|
 | `pojazd_uprzywilejowany` | `PIER-07` |
-| `pieszy_na_pasach` | `PIER-04`, `MAN-08` |
+| `pieszy_na_pasach` | `PIER-04`, `PIER-10`, `MAN-08` |
 | `pilka_na_jezdni` | `MAN-08` |
 | `drzwi_auta` | `MAN-06` |
 | `tramwaj_bez_wysepki` | `MSC-02` |

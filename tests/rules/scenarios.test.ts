@@ -95,6 +95,7 @@ const simGood = new Set([
   'PIER-07',
   'PIER-08',
   'PIER-09',
+  'PIER-10',
   'ZNAK-STOP',
   'ZNAK-S2',
   'SYG-01',

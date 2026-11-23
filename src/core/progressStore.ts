@@ -198,6 +198,7 @@ const profileVersion = 12;
 const profileSchema = krakowProfileSchema.extend({
   version: z.literal(profileVersion),
   selectedCity: campaignCity.optional(),
+  freeRideCity: z.enum(['krakow', 'gdansk', 'wies', 'poznan']).optional(),
   bursztyny: z.array(id).optional(),
   szyszki: z.array(id).optional(),
 });

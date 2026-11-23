@@ -110,7 +110,8 @@ export class TrafficArt {
           tramCities.findIndex(
             (city) =>
               mapId.startsWith(city) ||
-              (city === 'krakow' && (mapId === 'gdansk' || mapId === 'wies')),
+              (city === 'krakow' &&
+                (mapId === 'gdansk' || mapId === 'wies' || mapId === 'poznan')),
           ),
         );
         this.rear = scene.add

@@ -348,7 +348,12 @@ export class TrafficSimulation {
   }
 
   private stopDistance(car: Car) {
-    return car.edge.path.length - car.footprint.halfLength - STOP_CLEARANCE;
+    return (
+      car.edge.path.length -
+      (car.edge.lane?.stopOffset ?? 0) -
+      car.footprint.halfLength -
+      STOP_CLEARANCE
+    );
   }
 
   private gapAhead(car: Car) {

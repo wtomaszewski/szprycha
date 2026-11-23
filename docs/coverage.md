@@ -76,6 +76,40 @@ Mapa [krakow.tmj](../maps/krakow.tmj)
 
 **Pokrycie** 13/13 sytuacji, 7/7 modułów.
 
+## Poznań
+
+Mapa [poznan.tmj](../maps/poznan.tmj)
+
+**Misje na mapie** `POZ-B-01`, `POZ-B-02`, `POZ-B-03`, `POZ-B-04`
+
+| Sytuacja drogowa | Pokrycie | Wykryte obiekty lub misje | Brakujące elementy |
+| --- | :---: | --- | --- |
+| Skrzyżowanie równorzędne | ✓ | `kolejowa`, `ogrody` | — |
+| Droga z pierwszeństwem + STOP | ✓ | `rynek` | — |
+| Sygnalizacja + S-2 + S-6/S-7 | ✓ | `aleja-E-s1`, `aleja-N-s1`, `aleja-S-s1`, `aleja-W-s1`, `aleja-przejazd`, `aleja-strzalka`, `aleja-tram-N-s1` | — |
+| Rondo | ✓ | `rondo-E`, `rondo-N`, `rondo-S`, `rondo-W` | — |
+| Tramwaj + przystanek bez wysepki | ✓ | `przystanek-bez-wysepki`, `tramwaj-warta` | — |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | ✓ | `aleja-ddr-polnoc`, `aleja-ddr-poludnie`, `browar-kontrapas`, `bulwar-pieszo-rowerowy`, `ddr-warta-0`, `ddr-warta-1088`, `ddr-warta-2560`, `ddr-warta-4064`, `dojazd-do-sluzy`, `most-tumski`, `ostrow-dojscie`, `sluza-rowerowa` | — |
+| Przejazd dla rowerzystów | ✓ | `aleja-przejazd`, `warta-przejazd-1024`, `warta-przejazd-2432`, `warta-przejazd-4000` | — |
+| Strefa zamieszkania / pieszych | ✓ | `dziedziniec-browaru`, `ostrow-tumski`, `skrot-przez-pasaz`, `stary-rynek` | — |
+| Wyjazd z drogi wewnętrznej | ✓ | `browar-wyjazd` | — |
+| Przejazd kolejowy | ✓ | `kolej-przejazd` | — |
+| Pobocze, zakaz wjazdu rowerów | ✓ | `alejka-przy-katedrze`, `alejka-przy-katedrze-B-9-N`, `pobocze-e`, `pobocze-w` | — |
+| Kontraruch | ✓ | `browar-wyjazd-B-2-N` | — |
+| Nocna jazda | ✓ | `POZ-B-04`, `dusk_at_s` | — |
+
+| Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
+| --- | :---: | --- | --- |
+| M01 | ✓ | `WYP-04`, `WYP-05`, `WYP-06` | `KASK-01`, `WYP-04`, `WYP-05`, `WYP-06` |
+| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-02`, `GDZIE-07`, `GDZIE-11`, `GDZIE-13` |
+| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `SYG-01`, `ZNAK-B1` |
+| M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09`, `PIER-10` | `PIER-10` |
+| M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03` | `MAN-01` |
+| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | `MSC-04` |
+| M07 | ✓ | — | `PP-01` |
+
+**Pokrycie** 13/13 sytuacji, 7/7 modułów.
+
 ## Warszawa
 
 Mapa [warszawa.tmj](../maps/warszawa.tmj)
