@@ -53,7 +53,7 @@ export class EventArt {
       drawCyclist(
         this.cyclist,
         cyclist.heading,
-        Math.floor(Math.max(0, at) * 9) % 4,
+        (Math.max(0, at) * 2.25) % 1,
         2,
       );
       art.lineStyle(2, 0xffcd75).strokeCircle(x, y, 15);

@@ -16,6 +16,11 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Postacie i portrety (#101)
+
+- Atlas 32×32 przedstawia gracza i rowerzystów AI w sześciu klatkach pedałowania. Gest skrętu i obejrzenie się mają pozy pośrednie.
+- Atlas 24×24 zawiera dwanaście wariantów pieszych, zimowe kurtki oraz sześć klatek ruchu w ośmiu kierunkach. Każda postać fabularna ma pięć portretów 64×64. [Zrzuty i opis oprawy](docs/06_art_direction.md#stan-spriteów-uczestników-ruchu)
+
 ## Audyt grafiki (#100)
 
 - Zrzuty Playwright obejmują trzy mapy w dzień, w nocy i podczas opadów, landmarki, ekrany gry oraz wariant dotykowy. Porównania i wyniki są w [raporcie audytu](docs/AUDYT_GRAFIKI.md).

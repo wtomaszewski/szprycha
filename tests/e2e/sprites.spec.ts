@@ -7,8 +7,8 @@ function sleeve(image: PNG, left: boolean) {
   const edge = image.width / 2;
   for (let y = 0; y < image.height; y++)
     for (
-      let x = left ? 0 : edge + 7;
-      x < (left ? edge - 7 : image.width);
+      let x = left ? 0 : edge + 10;
+      x < (left ? edge - 10 : image.width);
       x++
     ) {
       const p = (y * image.width + x) * 4;
@@ -47,17 +47,24 @@ test('both hand signals draw a visible arm and the customized helmet in City', a
       'data-actions',
       new RegExp(`"signal":"${side}"`),
     );
-    const screenshot = await page.screenshot({
-      clip,
-      path: testInfo.outputPath(`${side}.png`),
-    });
-    const image = PNG.sync.read(screenshot);
-    expect(sleeve(image, side === 'left')).toBeGreaterThan(4);
+    await expect
+      .poll(async () =>
+        sleeve(PNG.sync.read(await page.screenshot({ clip })), side === 'left'),
+      )
+      .toBeGreaterThan(4);
+    const image = PNG.sync.read(
+      await page.screenshot({ clip, path: testInfo.outputPath(`${side}.png`) }),
+    );
     expect(sleeve(image, side !== 'left')).toBeLessThan(4);
     let helmetPixels = 0;
     for (let i = 0; i < image.data.length; i += 4)
       if (image.data.toString('hex', i, i + 3) === 'ff77a8') helmetPixels++;
     expect(helmetPixels).toBeGreaterThan(4);
     await page.keyboard.up(key);
+    await expect
+      .poll(async () =>
+        sleeve(PNG.sync.read(await page.screenshot({ clip })), side === 'left'),
+      )
+      .toBeLessThan(4);
   }
 });
