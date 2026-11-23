@@ -9,6 +9,12 @@
 6. **Linki zewnętrzne** (polityka prywatności, strona projektu) wyłącznie w Strefie Rodzica, za bramką.
 7. **Dane na serwerze** w UE, możliwość usunięcia profilu z serwera jednym przyciskiem.
 
+## Zasoby PWA dostępne offline
+
+Instalacja przygotowuje menu, Miasteczko, wspólne treści i kod gry. PWA pobiera mapy pozostałych miast, utwory włączonej stacji oraz dostępne nagrania lektora z tego samego adresu, z którego ładuje grę. Zapisuje je w Cache Storage w obrębie instalacji. Zasoby zachowują dostępność offline, dopóki przeglądarka przechowuje dane witryny i wersja gry nadal używa danego pliku. Aplikacje Capacitor dostają wszystkie te pliki w paczce.
+
+Dobór jakości grafiki używa lokalnie liczby logicznych rdzeni podanej przez przeglądarkę i czasu pierwszych klatek. Profil przechowuje wyłącznie ręczny wybór jakości. Pomiary i sygnały urządzenia pozostają w pamięci bieżącej sesji.
+
 ## Dokumenty do przygotowania (przez człowieka, Codex tworzy szablony w `legal/`)
 - Polityka prywatności (wersja dla rodzica + wersja obrazkowa dla dziecka).
 - Regulamin.

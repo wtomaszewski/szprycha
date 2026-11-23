@@ -7,6 +7,7 @@ import {
 } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { cityPin } from './city-picker';
+import { profile } from './helpers/profile';
 import {
   progressDatabase,
   progressRecordKey,
@@ -15,6 +16,46 @@ import {
 
 const screenshots = process.env.UPDATE_MOBILE_SCREENSHOTS;
 const insets = { top: 6, right: 24, bottom: 18, left: 36 };
+
+test.describe('automatic graphics quality', () => {
+  const { isMobile, hasTouch, viewport } = devices['Pixel 7 landscape']!;
+  test.use({ isMobile, hasTouch, viewport });
+
+  test('uses simplified graphics on a low-core device and keeps a manual override', async ({
+    page,
+  }, info) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'hardwareConcurrency', { value: 4 });
+    });
+    const practice = page.getByRole('button', {
+      name: pl.driving.title,
+      exact: true,
+    });
+    const controls = page.locator('.driving-ui');
+    await page.goto('/');
+    await practice.tap();
+    await expect(controls).toHaveAttribute('data-lite', '');
+    await controls
+      .getByRole('button', { name: pl.driving.pause, exact: true })
+      .tap();
+    const quality = page.getByRole('button', {
+      name: pl.driving.lite,
+      exact: true,
+    });
+    await expect(quality).toBeVisible();
+    await page.screenshot({
+      path: info.outputPath('123-automatyczna-grafika.png'),
+    });
+    await quality.tap();
+    await expect
+      .poll(async () => (await profile(page)).graphicsQuality)
+      .toBe('full');
+    await page.reload();
+    await practice.tap();
+    await expect(controls).toBeVisible();
+    await expect(controls).not.toHaveAttribute('data-lite', '');
+  });
+});
 
 async function shot(page: Page, profile: string, screen: string) {
   await page.screenshot({

@@ -7,6 +7,7 @@ import type { readProps } from './CityProps';
 import { EFFECT_TILE, effectFrame, sceneDepth } from './effectFrames';
 
 const trailLength = 8;
+const puddleGrid = 32;
 
 export class CityAtmosphere {
   private readonly precipitation;
@@ -27,6 +28,13 @@ export class CityAtmosphere {
   private reduced = false;
   private weather: Weather = 'clear';
   private precipitationFrame = effectFrame.rain;
+  private puddleView?: {
+    x: number;
+    y: number;
+    halfW: number;
+    halfH: number;
+    night: boolean;
+  };
 
   constructor(
     scene: Scene,
@@ -140,11 +148,26 @@ export class CityAtmosphere {
   }
 
   private drawPuddles(camera: Cameras.Scene2D.Camera, night: boolean) {
+    // Puddles stay fixed in the world. The padded view covers the visible
+    // geometry between grid crossings without rebuilding it every rain tick.
+    const cx =
+      Math.round((camera.scrollX + camera.width / 2) / puddleGrid) * puddleGrid;
+    const cy =
+      Math.round((camera.scrollY + camera.height / 2) / puddleGrid) *
+      puddleGrid;
+    const halfW = camera.width / (2 * camera.zoom) + 52;
+    const halfH = camera.height / (2 * camera.zoom) + 52;
+    const previous = this.puddleView;
+    if (
+      previous?.x === cx &&
+      previous.y === cy &&
+      previous.halfW === halfW &&
+      previous.halfH === halfH &&
+      previous.night === night
+    )
+      return;
+    this.puddleView = { x: cx, y: cy, halfW, halfH, night };
     const ctx = this.puddles.clear();
-    const cx = camera.scrollX + camera.width / 2;
-    const cy = camera.scrollY + camera.height / 2;
-    const halfW = camera.width / (2 * camera.zoom) + 50;
-    const halfH = camera.height / (2 * camera.zoom) + 50;
     for (const { x, y, turn } of this.drops) {
       if (Math.abs(x - cx) > halfW || Math.abs(y - cy) > halfH) continue;
       const px = x + (turn === 0 ? 18 : -18);

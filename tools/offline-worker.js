@@ -31,6 +31,15 @@ self.addEventListener('activate', (event) => {
       for (const key of await caches.keys())
         if (key.startsWith(prefix) && key !== cacheName)
           await caches.delete(key);
+      const runtime = `szprycha-assets:${scope}`;
+      if (await caches.has(runtime)) {
+        const keep = new Set(
+          manifest.onDemand.map((file) => new URL(file, scope).href),
+        );
+        const cache = await caches.open(runtime);
+        for (const request of await cache.keys())
+          if (!keep.has(request.url)) await cache.delete(request);
+      }
       await self.clients.claim();
     })(),
   );

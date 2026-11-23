@@ -3,6 +3,7 @@ import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, relative, sep } from 'node:path';
 import type { Plugin } from 'vite';
 import pl from '../i18n/pl.json' with { type: 'json' };
+import radio from '../assets/generated/radio/manifest.json' with { type: 'json' };
 import {
   appBackground,
   appIcons,
@@ -136,14 +137,31 @@ export function offlineApp(mobile = false, rankingOrigin?: string): Plugin {
         'utf8',
       );
       const revision = createHash('sha256').update(worker);
+      const onDemand: string[] = [];
+      const precache: string[] = [];
       for (const file of files) {
-        const digest = createHash('sha256')
-          .update(await readFile(join(dir, file)))
-          .digest();
-        revision.update(file).update('\0').update(digest);
+        if (file.startsWith('assets/radio/')) {
+          const name = file.slice('assets/radio/'.length);
+          const hash = (radio.files as Record<string, string>)[name];
+          if (!hash) throw new Error(`Missing radio hash for ${file}`);
+          onDemand.push(`${file}?v=${hash}`);
+        } else if (
+          /^assets\/(warszawa|wroclaw|krakow)-.*\.tmj$/.test(file) ||
+          /\.(ogg|m4a)$/.test(file)
+        ) {
+          onDemand.push(file);
+        } else {
+          precache.push(file);
+          const digest = createHash('sha256')
+            .update(await readFile(join(dir, file)))
+            .digest();
+          revision.update(file).update('\0').update(digest);
+        }
       }
+      revision.update(JSON.stringify(onDemand));
       const manifest = JSON.stringify({
-        files,
+        files: precache,
+        onDemand,
         version: revision.digest('hex').slice(0, 16),
       });
       await writeFile(

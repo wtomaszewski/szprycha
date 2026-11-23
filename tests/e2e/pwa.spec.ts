@@ -61,11 +61,27 @@ test('Chromium can install the build and play offline after the first visit', as
   ).toEqual([]);
   await cdp.detach();
 
+  expect(
+    await page.evaluate(async () => {
+      const keys = await caches.keys();
+      const shell = await caches.open(
+        keys.find((key) => key.startsWith('szprycha-quiz:'))!,
+      );
+      return (await shell.keys()).map(({ url }) => new URL(url).pathname);
+    }),
+  ).not.toEqual(
+    expect.arrayContaining([
+      expect.stringMatching(/\/radio\/|\/(warszawa|wroclaw|krakow)-.*\.tmj$/),
+    ]),
+  );
+
   await context.setOffline(true);
   await page.reload();
   await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
-  await chooseCity(page, 'warszawa');
-  await expect(canvas).toHaveAttribute('data-map', 'warszawa');
+  await page
+    .getByRole('button', { name: pl.driving.title, exact: true })
+    .click();
+  await expect(canvas).toHaveAttribute('data-map', 'miasteczko');
   await ride(page);
   expect(requests.length).toBeGreaterThan(0);
   expect(
@@ -74,6 +90,37 @@ test('Chromium can install the build and play offline after the first visit', as
         origin !== new URL(page.url()).origin || method !== 'GET',
     ),
   ).toEqual([]);
+});
+
+test('first loads only the chosen city and opens it offline after reloading', async ({
+  page,
+  context,
+}) => {
+  const mapRequests: string[] = [];
+  page.on('request', (request) => {
+    const path = new URL(request.url()).pathname;
+    if (path.endsWith('.tmj')) mapRequests.push(path);
+  });
+  await page.goto('/');
+  const canvas = page.locator('canvas');
+  await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
+  await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
+  await context.setOffline(true);
+  await page.getByRole('button', { name: pl.cityPicker.freeRide }).click();
+  await cityPin(page, 'warszawa').click();
+  await expect(page.getByRole('alert')).toHaveText(pl.cityPicker.loadError);
+  await expect(canvas).toHaveAttribute('data-scene', 'CityPicker');
+  await context.setOffline(false);
+  mapRequests.length = 0;
+  await cityPin(page, 'warszawa').click();
+  await expect(canvas).toHaveAttribute('data-map', 'warszawa');
+  expect(mapRequests).toEqual([expect.stringMatching(/\/warszawa-.*\.tmj$/)]);
+  await context.setOffline(true);
+  await page.reload();
+  await chooseCity(page, 'warszawa');
+  await expect(canvas).toHaveAttribute('data-map', 'warszawa');
+  await ride(page);
+  expect(mapRequests).toHaveLength(1);
 });
 
 const mimeTypes: Record<string, string> = {
@@ -205,7 +252,9 @@ test('a waiting release leaves the current mission intact and retains the local 
           return {
             state: registration?.active?.state,
             script: registration?.active?.scriptURL,
-            caches: await caches.keys(),
+            caches: (await caches.keys()).filter((key) =>
+              key.startsWith('szprycha-quiz:'),
+            ),
           };
         }, build.url),
       )

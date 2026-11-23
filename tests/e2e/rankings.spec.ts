@@ -15,6 +15,7 @@ import { PlacRun, placIds } from '../../src/gameplay/plac/PlacRun';
 import { readContent } from '../../tools/content';
 import { cleanPlacInput } from '../plac/clean-course';
 import { answer, parentZone } from './helpers/parent-gate';
+import { chooseCity } from './city-picker';
 
 test.use({ baseURL: 'http://127.0.0.1:4175', reducedMotion: 'reduce' });
 const api = 'http://127.0.0.1:8787';
@@ -58,10 +59,13 @@ type Scene = {
   sys: { sceneUpdate(time: number, delta: number): void };
   controls: { actions: RiderState; read(): DriveInput };
   tickForTest(time: number, delta: number): void;
-  scene: { start(key: string, data: object): void };
 };
 type Game = { scene: { getScene(name: string): Scene } };
-type SceneManager = { game: Game; update(time: number, delta: number): void };
+type SceneManager = {
+  game: Game;
+  keys: Record<string, Scene | undefined>;
+  update(time: number, delta: number): void;
+};
 
 async function fixedTicks(page: Page, sceneName: 'Plac' | 'City') {
   return page.evaluateHandle(async (sceneName) => {
@@ -76,12 +80,14 @@ async function fixedTicks(page: Page, sceneName: 'Plac' | 'City') {
     const original = prototype.update;
     return await new Promise<Game>((resolve) => {
       prototype.update = function (time, delta) {
-        prototype.update = original;
-        const scene = this.game.scene.getScene(sceneName);
-        scene.events.once('create', () => {
-          scene.tickForTest = scene.sys.sceneUpdate.bind(scene);
-          scene.sys.sceneUpdate = () => {};
-        });
+        const scene = this.keys[sceneName];
+        if (scene) {
+          prototype.update = original;
+          scene.events.once('create', () => {
+            scene.tickForTest = scene.sys.sceneUpdate.bind(scene);
+            scene.sys.sceneUpdate = () => {};
+          });
+        }
         original.call(this, time, delta);
         resolve(this.game);
       };
@@ -248,9 +254,7 @@ test('publishes a completed tutorial mission and the XP earned that week', async
   await close(page);
   const game = await fixedTicks(page, 'City');
   const missionId = 'WAW-T-01';
-  await game.evaluate((game, missionId) => {
-    game.scene.getScene('MainMenu').scene.start('City', { missionId });
-  }, missionId);
+  await chooseCity(page, 'warszawa', 'campaign');
   await expect(page.locator('canvas')).toHaveAttribute(
     'data-mission',
     missionId,

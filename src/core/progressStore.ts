@@ -189,6 +189,7 @@ const profileSchema = storyProfileSchema.extend({
   version: z.literal(profileVersion),
   selectedCity: playableCity.optional(),
   obwarzanki: z.array(id).optional(),
+  graphicsQuality: z.enum(['full', 'lite']).optional().catch(undefined),
 });
 
 function addStories(

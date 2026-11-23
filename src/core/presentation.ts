@@ -17,12 +17,12 @@ export function translate(
 export function missionClock(seconds: number) {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 }
-export function showError(error: unknown) {
+export function showError(error: unknown, message = ui.loadError) {
   console.error(error);
   document.getElementById('pwa-splash')?.remove();
   const status = document.getElementById('status');
   if (status) {
-    status.textContent = ui.loadError;
+    status.textContent = message;
     status.setAttribute('role', 'alert');
   }
 }

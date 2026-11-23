@@ -12,6 +12,7 @@ import { readContent } from '../../tools/content';
 import { approachWaypoint, warsawRoutes } from '../missions/warsaw-routes';
 import { cleanPlacInput } from '../plac/clean-course';
 import { profile } from './helpers/profile';
+import { chooseCity } from './city-picker';
 
 test.use({ baseURL: 'http://127.0.0.1:4174', reducedMotion: 'reduce' });
 
@@ -30,7 +31,11 @@ type DriveScene = {
   tickForTest(time: number, delta: number): void;
 };
 type Game = { scene: { getScene(name: string): DriveScene } };
-type SceneManager = { game: Game; update(time: number, delta: number): void };
+type SceneManager = {
+  game: Game;
+  keys: Record<string, DriveScene | undefined>;
+  update(time: number, delta: number): void;
+};
 
 async function offlineGame(page: Page) {
   // Use the Phaser module already loaded by production to run deterministic
@@ -46,16 +51,19 @@ async function offlineGame(page: Page) {
     const phaser = Object.values(module)[0]!();
     const prototype = phaser.Scenes.SceneManager.prototype;
     const original = prototype.update;
+    const remaining = new Set(['Plac', 'City']);
     return await new Promise<Game>((resolve) => {
       prototype.update = function (time, delta) {
-        prototype.update = original;
-        for (const name of ['Plac', 'City']) {
-          const scene = this.game.scene.getScene(name);
+        for (const name of remaining) {
+          const scene = this.keys[name];
+          if (!scene) continue;
+          remaining.delete(name);
           scene.events.once('create', () => {
             scene.tickForTest = scene.sys.sceneUpdate.bind(scene);
             scene.sys.sceneUpdate = () => {};
           });
         }
+        if (!remaining.size) prototype.update = original;
         original.call(this, time, delta);
         resolve(this.game);
       };
@@ -76,6 +84,16 @@ test('earns, prints and reopens the licence entirely offline', async ({
   await expect(
     panel.getByRole('button', { name: exam.startTheory }),
   ).toBeDisabled();
+  await panel.getByRole('button', { name: quiz.close }).click();
+  await chooseCity(page, 'warszawa');
+  await page.keyboard.press('Escape');
+  await page
+    .getByRole('button', { name: pl.driving.menu, exact: true })
+    .click();
+  await expect(page.locator('canvas')).toHaveAttribute(
+    'data-scene',
+    'MainMenu',
+  );
 
   const saved = await profile(page, {
     nickname: 'Szybki Jeż 1',

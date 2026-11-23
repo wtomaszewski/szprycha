@@ -5,6 +5,7 @@ import { ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 
 import { menuGamepad } from '../ui/KeyboardGamepad';
+import { startCity } from './RideScenes';
 
 type Mode = 'campaign' | 'freeRide';
 const pins = [
@@ -137,7 +138,7 @@ export class CityPicker extends Scene {
       const mission = !freeRide
         ? progress.nextMission(city, content)
         : undefined;
-      this.scene.start('City', {
+      leaving = await startCity(this, {
         city,
         map: city,
         missionId: mission?.id,

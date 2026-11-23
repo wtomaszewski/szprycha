@@ -67,6 +67,7 @@ export class DrivingControls {
   readonly notice = document.createElement('p');
   private readonly pauseButton: HTMLButtonElement;
   private readonly lightButton: HTMLButtonElement;
+  private readonly qualityButton: HTMLButtonElement;
   private readonly plac: boolean;
   private toggleLabel!: HTMLButtonElement;
   constructor(
@@ -129,15 +130,14 @@ export class DrivingControls {
       this.clear();
     });
     scheme.textContent = ui.driving[this.scheme];
-    const applyQuality = () => {
-      this.root.toggleAttribute('data-lite', this.lite);
-      lite.textContent = this.lite ? ui.driving.lite : ui.driving.full;
-    };
-    const lite = button('', () => {
-      this.visuals.lite = !this.lite;
-      applyQuality();
-    });
-    applyQuality();
+    const lite = (this.qualityButton = button('', () => {
+      const low = !this.lite;
+      progress.change((profile) => {
+        profile.graphicsQuality = low ? 'lite' : 'full';
+      });
+      this.setLite(low);
+    }));
+    this.setLite(this.lite);
     const rain = button(ui.driving.rain, () => {
       this.visuals.rain = !this.rain;
       rain.setAttribute('aria-pressed', String(this.rain));
@@ -418,6 +418,12 @@ export class DrivingControls {
   }
   get lite() {
     return this.visuals.lite;
+  }
+
+  setLite(lite: boolean) {
+    this.visuals.lite = lite;
+    this.root.toggleAttribute('data-lite', lite);
+    this.qualityButton.textContent = lite ? ui.driving.lite : ui.driving.full;
   }
 
   get rain() {

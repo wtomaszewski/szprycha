@@ -6,14 +6,14 @@ import { promisify } from 'node:util';
 import { PNG } from 'pngjs';
 import { expect, it } from 'vitest';
 import { radioCatalog, radioPath, stations } from '../src/audio/radio/catalog';
+import radio from '../assets/generated/radio/manifest.json';
 
 async function checkPrecache(dist: string) {
   const worker = await readFile(join(dist, 'quiz-worker.js'), 'utf8');
   const header = /^const manifest = (.+);/m.exec(worker);
   expect(header).not.toBeNull();
-  const precache: { files: string[]; version: string } = JSON.parse(
-    header![1]!,
-  );
+  const precache: { files: string[]; onDemand: string[]; version: string } =
+    JSON.parse(header![1]!);
   const files = await readdir(dist, { recursive: true, withFileTypes: true });
   const published = files
     .filter((file) => file.isFile())
@@ -32,17 +32,28 @@ async function checkPrecache(dist: string) {
       expect.stringMatching(/^assets\/nauczyciel-.*\.css$/),
     ]),
   );
-  expect(precache.files).toEqual(
+  const deferredPaths = precache.onDemand.map((file) => file.split('?')[0]!);
+  expect([...precache.files, ...deferredPaths].sort()).toEqual(
     published.filter((file) => !teacherFiles.includes(file)),
   );
   const broadcasts = stations.flatMap((station) =>
-    (['jingle', ...radioCatalog[station].seeds] as const).map((seed) =>
-      radioPath(station, seed),
-    ),
+    (['jingle', ...radioCatalog[station].seeds] as const).map((seed) => {
+      const path = radioPath(station, seed);
+      const name = path.slice('assets/radio/'.length);
+      return `${path}?v=${(radio.files as Record<string, string>)[name]}`;
+    }),
   );
   expect(
-    precache.files.filter((file) => file.startsWith('assets/radio/')),
+    precache.onDemand.filter((file) => file.startsWith('assets/radio/')),
   ).toEqual(broadcasts.sort());
+  expect(precache.files.filter((file) => file.endsWith('.tmj'))).toEqual([
+    expect.stringMatching(/^assets\/miasteczko-.*\.tmj$/),
+  ]);
+  expect(deferredPaths.filter((file) => file.endsWith('.tmj'))).toEqual(
+    ['krakow', 'warszawa', 'wroclaw'].map((city) =>
+      expect.stringMatching(new RegExp(`^assets/${city}-.*\\.tmj$`)),
+    ),
+  );
   const teacherHtml = await readFile(join(dist, 'nauczyciel.html'), 'utf8');
   expect(teacherHtml).not.toContain('app.webmanifest');
   expect(teacherHtml).not.toContain('pwa-splash');
@@ -111,7 +122,7 @@ async function checkPrecache(dist: string) {
   }
 }
 
-it('writes the noindex header, third-party notices and complete PWA cache to the web build', async () => {
+it('writes the noindex header, third-party notices and both PWA resource lists', async () => {
   const root = await mkdtemp(join(tmpdir(), 'szprycha-web-'));
   const dist = join(root, 'dist');
 

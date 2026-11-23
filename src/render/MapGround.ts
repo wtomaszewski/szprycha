@@ -232,10 +232,20 @@ export function cullMapChunks(
   const centerY = camera.clampY(camera.scrollY) + camera.height / 2;
   const halfWidth = camera.width / (2 * camera.zoom) + TILE;
   const halfHeight = camera.height / (2 * camera.zoom) + TILE;
-  const left = centerX - halfWidth;
-  const right = centerX + halfWidth;
-  const top = centerY - halfHeight;
-  const bottom = centerY + halfHeight;
+  // Round outwards so the chunks cover the full viewport between crossings.
+  const left = Math.floor((centerX - halfWidth) / TILE) * TILE;
+  const right = Math.ceil((centerX + halfWidth) / TILE) * TILE;
+  const top = Math.floor((centerY - halfHeight) / TILE) * TILE;
+  const bottom = Math.ceil((centerY + halfHeight) / TILE) * TILE;
+  const previous = chunkViews.get(chunks);
+  if (
+    previous?.left === left &&
+    previous.right === right &&
+    previous.top === top &&
+    previous.bottom === bottom
+  )
+    return;
+  chunkViews.set(chunks, { left, right, top, bottom });
   for (const chunk of chunks) {
     const visible =
       chunk.x + chunk.width >= left &&
@@ -245,3 +255,8 @@ export function cullMapChunks(
     if (chunk.visible !== visible) chunk.setVisible(visible);
   }
 }
+
+const chunkViews = new WeakMap<
+  readonly GameObjects.Image[],
+  { left: number; right: number; top: number; bottom: number }
+>();

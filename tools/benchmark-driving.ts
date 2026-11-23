@@ -6,6 +6,9 @@ import pl from '../i18n/pl.json' with { type: 'json' };
 const runs = Number(process.env.BENCH_RUNS ?? 1);
 if (!Number.isSafeInteger(runs) || runs < 1)
   throw new Error('BENCH_RUNS must be a positive integer');
+const settle = Number(process.env.BENCH_SETTLE_MS ?? 0);
+if (!Number.isSafeInteger(settle) || settle < 0)
+  throw new Error('BENCH_SETTLE_MS must be a nonnegative integer');
 
 const viewport = /^(\d+)x(\d+)$/.exec(process.env.BENCH_VIEWPORT ?? '1280x720');
 if (!viewport || !Number(viewport[1]) || !Number(viewport[2]))
@@ -30,6 +33,8 @@ const wroclaw = map === 'wroclaw';
 const fragment =
   process.env.BENCH_FRAGMENT ??
   (warsaw || map === 'miasteczko' ? 'praga' : 'rynek');
+const signals = map === 'miasteczko' && fragment === 'sygnalizacja';
+const countdowns = process.env.BENCH_COUNTDOWNS !== '0';
 const missions = { most: 'WAW-A1-04', starowka: 'WAW-A1-05' } as const;
 const warsawSpawns: Record<string, { x: number; y: number; heading: number }> =
   {
@@ -54,7 +59,7 @@ const krakowSpawns: typeof warsawSpawns = {
 const freeSpawns =
   map === 'krakow' ? krakowSpawns : wroclaw ? wroclawSpawns : warsawSpawns;
 if (
-  (map === 'miasteczko' && process.env.BENCH_FRAGMENT) ||
+  (map === 'miasteczko' && process.env.BENCH_FRAGMENT && !signals) ||
   (map !== 'miasteczko' &&
     !(warsaw && fragment === 'praga') &&
     !Object.hasOwn(freeSpawns, fragment))
@@ -80,7 +85,9 @@ const mission =
   mode === 'mission' ? missions[fragment as keyof typeof missions] : undefined;
 const spawn =
   map === 'miasteczko'
-    ? { x: 624, y: 1120, heading: -Math.PI / 2 }
+    ? signals
+      ? { x: 2170, y: 637, heading: -Math.PI / 2 }
+      : { x: 624, y: 1120, heading: -Math.PI / 2 }
     : mode === 'free'
       ? freeSpawns[fragment]
       : undefined;
@@ -99,6 +106,7 @@ async function runTrial() {
     const page = await browser.newPage({
       viewport: { width: Number(width), height: Number(height) },
       hasTouch: true,
+      serviceWorkers: 'block',
     });
     if (spawn || light === 'night') {
       // Start on the route with the complete map and all its traffic.
@@ -180,32 +188,45 @@ async function runTrial() {
     const position = page.locator('canvas[data-x]');
     await position.waitFor();
     if (light === 'night') await page.keyboard.press('KeyL');
-    if (lite || rain) {
-      await page.keyboard.press('Escape');
-      if (lite)
-        await page.getByRole('button', { name: pl.driving.full }).click();
-      if (rain)
-        await page.getByRole('button', { name: pl.driving.rain }).click();
-      await page.keyboard.press('Escape');
+    await page.keyboard.press('Escape');
+    // Exercise the manual override so both revisions use the same profile.
+    const quality = page.getByRole('button', {
+      name: new RegExp(`^(${pl.driving.full}|${pl.driving.lite})$`),
+    });
+    if ((await quality.textContent()) === pl.driving[lite ? 'lite' : 'full'])
+      await quality.click();
+    await quality.click();
+    if (rain) await page.getByRole('button', { name: pl.driving.rain }).click();
+    if (signals && !countdowns) {
+      await page.getByText(pl.settings.accessibility, { exact: true }).click();
+      await page
+        .getByRole('checkbox', { name: pl.settings.signalCountdowns })
+        .uncheck();
     }
+    await page.getByRole('button', { name: pl.driving.resume }).click();
+    await page.locator(`canvas[data-lighting="${light}"]`).waitFor();
+    if (rain) await page.locator('canvas[data-weather^="rain_"]').waitFor();
+    if (settle) await page.waitForTimeout(settle);
     // Stick slightly off-centre for a continuous ride below the random event speed.
-    const stick = await page
-      .locator('.touch-controls')
-      .getByLabel(pl.driving.joystick)
-      .boundingBox();
-    if (!stick) throw new Error('Missing steering control');
-    await page.mouse.move(
-      stick.x + stick.width / 2,
-      stick.y + stick.height / 2,
-    );
-    await page.mouse.down();
-    await page.mouse.move(
-      stick.x + stick.width * (horizontal ? 0.5 + direction * 0.065 : 0.5),
-      stick.y + stick.height * (horizontal ? 0.5 : 0.5 + direction * 0.065),
-    );
-    await page.waitForFunction(
-      () => Number(document.querySelector('canvas')?.dataset.speed) > 0,
-    );
+    if (!signals) {
+      const stick = await page
+        .locator('.touch-controls')
+        .getByLabel(pl.driving.joystick)
+        .boundingBox();
+      if (!stick) throw new Error('Missing steering control');
+      await page.mouse.move(
+        stick.x + stick.width / 2,
+        stick.y + stick.height / 2,
+      );
+      await page.mouse.down();
+      await page.mouse.move(
+        stick.x + stick.width * (horizontal ? 0.5 + direction * 0.065 : 0.5),
+        stick.y + stick.height * (horizontal ? 0.5 : 0.5 + direction * 0.065),
+      );
+      await page.waitForFunction(
+        () => Number(document.querySelector('canvas')?.dataset.speed) > 0,
+      );
+    }
     if (mission)
       await page.waitForFunction(
         (x) => Number(document.querySelector('canvas')?.dataset.x) >= x,
@@ -214,22 +235,23 @@ async function runTrial() {
       );
     const start = Number(await position.getAttribute(axis));
     // Raw browser source avoids TS runner helper injection into serialized callbacks.
+    const duration = map === 'miasteczko' && !signals ? 5500 : 12000;
     const frames = await page.evaluate<number[]>(`new Promise(resolve => {
     const times = []; let last = 0; let start = 0;
     function frame(t) {
       if (!start) start = t;
       if (last && t - start > 1000) times.push(t - last);
       last = t;
-      if (t - start < 12000) requestAnimationFrame(frame); else resolve(times);
+      if (t - start < ${duration}) requestAnimationFrame(frame); else resolve(times);
     }
     requestAnimationFrame(frame);
   })`);
-    await page.mouse.up();
+    if (!signals) await page.mouse.up();
     const end = Number(await position.getAttribute(axis));
     const travelledPx = (end - start) * direction;
     if (
       !frames.length ||
-      travelledPx < 200 ||
+      (!signals && travelledPx < (map === 'miasteczko' ? 100 : 200)) ||
       (await page.locator('dialog[open]').count())
     )
       throw new Error(`${map} benchmark interrupted at ${axis}=${end}`);
@@ -239,10 +261,12 @@ async function runTrial() {
       environment: `Chromium ${browser.version()} headless, ${width}x${height}, CPU 4x`,
       renderer,
       map,
-      fragment: map !== 'miasteczko' ? fragment : undefined,
+      fragment: map !== 'miasteczko' || signals ? fragment : undefined,
+      countdowns: signals ? countdowns : undefined,
       mode,
       light,
       quality: lite ? 'lite' : 'full',
+      settleMs: settle,
       rain,
       travelledPx,
       samples: frames.length,
@@ -286,7 +310,9 @@ const route = warsaw
   ? `-${fragment}${mode === 'free' && fragment !== 'praga' ? '-free' : ''}`
   : map !== 'miasteczko'
     ? `-${map}-${fragment}`
-    : '';
+    : signals
+      ? `-sygnalizacja-${countdowns ? 'on' : 'off'}`
+      : '';
 await writeFile(
   `test-results/performance${route}${light === 'night' ? '-night' : ''}${lite ? '-lite' : ''}${rain ? '-rain' : ''}.json`,
   JSON.stringify(runs === 1 ? trials[0] : summary, null, 2),

@@ -15,6 +15,7 @@ import { parentZone } from '../ui/ParentZone';
 import { aboutGame } from '../ui/AboutGame';
 import { menuGamepad } from '../ui/KeyboardGamepad';
 import { helmetColors } from '../render/spriteFrames';
+import { startCity, startPlac } from './RideScenes';
 export class MainMenu extends Scene {
   private readGamepad?: () => void;
 
@@ -34,12 +35,14 @@ export class MainMenu extends Scene {
     const tutorial = progress.store.profile.tutorial;
     const help = tutorialHelp(
       isTutorialStep(tutorial),
-      () => this.scene.start('City', { tutorial }),
+      () => {
+        if (isTutorialStep(tutorial)) void startCity(this, { tutorial });
+      },
       () => {
         progress.store.change((profile) => {
           profile.tutorial = 'move';
         });
-        this.scene.start('City', { tutorial: 'move' });
+        void startCity(this, { tutorial: 'move' });
       },
     );
     const rankings = rankingsPanel(
@@ -56,8 +59,10 @@ export class MainMenu extends Scene {
     const skills = skillMapButton(progress, gameContent);
     const panels = progressPanels(progress, gameContent, about.trigger());
     const quiz = quizPanel(progress, gameContent);
-    const exam = examPanel(progress, gameContent, (attempt) =>
-      this.scene.start('Plac', { attempt, rehearsal: !attempt }),
+    const exam = examPanel(
+      progress,
+      gameContent,
+      (attempt) => void startPlac(this, { attempt, rehearsal: !attempt }),
     );
     const menuDialogOpen = () =>
       skills.dialog.open ||
@@ -89,7 +94,7 @@ export class MainMenu extends Scene {
     const plac = document.createElement('button');
     plac.type = 'button';
     plac.textContent = ui.plac.title;
-    plac.addEventListener('click', () => this.scene.start('Plac', {}));
+    plac.addEventListener('click', () => void startPlac(this));
     const training = document.createElement('div');
     training.className = 'menu-training';
     training.append(plac, quiz.button, exam.button);
@@ -125,7 +130,7 @@ export class MainMenu extends Scene {
     const practice = document.createElement('button');
     practice.type = 'button';
     practice.textContent = ui.driving.title;
-    practice.addEventListener('click', () => this.scene.start('City'));
+    practice.addEventListener('click', () => void startCity(this));
     ride.append(campaign, freeRide, practice);
     const options = document.createElement('div');
     options.className = 'menu-options';
@@ -159,7 +164,7 @@ export class MainMenu extends Scene {
           event.target.closest('button, select, input, summary, a[href]')
         )
       )
-        this.scene.start('City');
+        void startCity(this);
     };
     this.input.keyboard?.on('keydown-ENTER', startDrive);
     this.events.once('shutdown', () => {

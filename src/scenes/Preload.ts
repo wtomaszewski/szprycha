@@ -8,6 +8,7 @@ import { loadContent } from '../content/load';
 import { loadMissionProgress } from '../gameplay/MissionProgress';
 import { applyAccessibility } from '../ui/RidePreferences';
 import { FONT, ui, showError } from '../core/presentation';
+import { startCity } from './RideScenes';
 export class Preload extends Scene {
   constructor() {
     super('Preload');
@@ -21,7 +22,7 @@ export class Preload extends Scene {
       })
       .setOrigin(0.5);
     void Promise.all([loadContent(), loadMissionProgress()])
-      .then(([content, progress]) => {
+      .then(async ([content, progress]) => {
         const url = rankingUrl(import.meta.env.VITE_RANKING_URL);
         if (url && versions) {
           progress.rankings = new RankingClient(progress.store, url, versions);
@@ -33,8 +34,9 @@ export class Preload extends Scene {
         document.getElementById('pwa-splash')?.remove();
         this.registry.set('content', content);
         const tutorial = progress.store.profile.tutorial;
-        if (isTutorialStep(tutorial)) this.scene.start('City', { tutorial });
-        else this.scene.start('MainMenu');
+        if (isTutorialStep(tutorial) && (await startCity(this, { tutorial })))
+          return;
+        this.scene.start('MainMenu');
       })
       .catch(showError);
   }

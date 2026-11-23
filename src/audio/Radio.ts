@@ -1,5 +1,15 @@
 import { radioCatalog, radioPath, type Station } from './radio/catalog';
 import { createRadioMix } from './radio/mix';
+import { files } from '../../assets/generated/radio/manifest.json';
+import { cachesRideAssets, fetchOfflineAsset } from '../platform/offlineAssets';
+
+function trackUrl(station: Station, seed: number | 'jingle') {
+  const path = radioPath(station, seed);
+  const hash = (files as Record<string, string>)[
+    path.slice('assets/radio/'.length)
+  ];
+  return `${path}?v=${hash}`;
+}
 
 type Broadcast = {
   abort: AbortController;
@@ -63,6 +73,7 @@ export class Radio {
     if (jingle && !signal.aborted)
       await this.playJingle(broadcast, station, jingle, onTip);
     let failures = 0;
+    let caching = false;
 
     while (!signal.aborted && failures < seeds.length) {
       const track = await next;
@@ -78,6 +89,10 @@ export class Radio {
       }
 
       failures = 0;
+      if (!caching && cachesRideAssets() && navigator.onLine) {
+        caching = true;
+        void this.cacheStation(station, signal);
+      }
       // Defer the next decode so tuning starts with only the ident and current track.
       let preload: Promise<AudioBuffer | undefined> | undefined;
       broadcast.preload = window.setTimeout(
@@ -106,12 +121,34 @@ export class Radio {
     signal: AbortSignal,
   ) {
     try {
-      const response = await fetch(radioPath(station, seed), { signal });
+      const response = await fetchOfflineAsset(trackUrl(station, seed), {
+        signal,
+      });
       if (!response.ok) return undefined;
       const data = await response.arrayBuffer();
       if (!signal.aborted) return await this.context.decodeAudioData(data);
     } catch {
       // A retune aborts both fetches. A missing track is skipped.
+    }
+  }
+
+  private async cacheStation(station: Station, signal: AbortSignal) {
+    try {
+      for (const seed of ['jingle', ...radioCatalog[station].seeds] as const) {
+        // Give frames and the currently playing track priority over prefetch.
+        if (typeof window.requestIdleCallback === 'function')
+          await new Promise<void>((resolve) =>
+            window.requestIdleCallback(() => resolve(), { timeout: 1500 }),
+          );
+        signal.throwIfAborted();
+        const response = await fetchOfflineAsset(trackUrl(station, seed), {
+          signal,
+          priority: 'low',
+        });
+        await response.body?.cancel();
+      }
+    } catch {
+      // The next visit can resume an interrupted download from the saved tracks.
     }
   }
 

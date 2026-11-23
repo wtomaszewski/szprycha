@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
+Stan na 23.11.2026.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -15,6 +15,11 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M8     | Audio i szlif                               | Ukończony. M8a (#71), M8b (#72) i M8c (#73) w `main`.                                        |
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
+
+## Wydanie 2/2 — audyt wydajności (#123)
+
+- PWA pobiera mapy miast, włączone stacje radia i dostępne nagrania lektora przy użyciu. CI sprawdza budżet plików i czas startu pod obciążeniem, a E2E wraca do pobranych zasobów po przeładowaniu offline.
+- Start jazdy ładuje osobny moduł sceny i wybraną mapę. Zmiana mapy zwalnia tekstury poprzedniej. Na słabszych urządzeniach gra wybiera uproszczoną grafikę z możliwością ręcznego przełączenia. [Pomiary przed i po](docs/AUDYT_WYDAJNOSCI.md)
 
 ## Wydanie 2/2 — audyt dostępności (#122)
 
@@ -39,7 +44,7 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 
 ## Radio Szprycha FM 2.0 (#99)
 
-- Sześć stacji ma łącznie 36 deterministycznych utworów i sześć autorskich dżingli. Gra odtwarza wygenerowane podczas budowania pliki także offline. Podkład ścisza się pod lektorem.
+- Sześć stacji ma łącznie 36 deterministycznych utworów i sześć autorskich dżingli. Build pakuje gotowe MP3 z repozytorium, a PWA zapisuje je do odtwarzania offline po pierwszym dostrojeniu stacji. Podkład ścisza się pod lektorem.
 - CI generuje sześć próbek OGG do odsłuchu. [Stacje, miks i polecenia](docs/08_ux_sterowanie_audio.md#radio-szprycha-fm-20-99)
 
 ## Zlecenia proceduralne 2/3 (#103)
@@ -84,7 +89,7 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 
 ## M9a — PWA
 
-- Manifest i service worker obejmują pełny build, w tym treści, mapy, atlasy i font. Proceduralne audio działa z kodu w pamięci podręcznej. Generator tworzy ikony i ekrany startowe z palety projektu.
+- M9a wprowadził manifest i service worker dla treści, map, atlasów i fontu. Bieżący zakres precache i zasobów na żądanie opisuje audyt #123. Generator tworzy ikony i ekrany startowe z palety projektu.
 - Po wykryciu nowej wersji gra wyświetla komunikat. Przejazd trwa dalej, a wersja zmienia się po zamknięciu wszystkich okien gry. Profil pozostaje w IndexedDB.
 - Playwright w CI sprawdza warunki instalacji Chromium, przejazd offline i zapis po aktualizacji. Instrukcja instalacji jest w [BUILD_WEB.md](docs/BUILD_WEB.md).
 

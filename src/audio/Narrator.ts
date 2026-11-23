@@ -1,5 +1,6 @@
 import { recordingUrls } from './recordings';
 import type { VoiceLine } from './voiceLines';
+import { fetchOfflineAsset } from '../platform/offlineAssets';
 
 export type Reading = 'radio' | 'feedback' | 'lesson' | 'dialogue' | 'results';
 const priority: Record<Reading, number> = {
@@ -62,7 +63,9 @@ export class Narrator {
     for (const url of urls) {
       if (this.request !== request) return;
       try {
-        const response = await fetch(url, { signal: request.abort.signal });
+        const response = await fetchOfflineAsset(url, {
+          signal: request.abort.signal,
+        });
         if (this.request !== request) return;
         if (!response.ok) continue;
         const buffer = await this.context.decodeAudioData(

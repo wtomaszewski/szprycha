@@ -295,49 +295,61 @@ test('ducks radio during a dialogue and preserves captions without recordings', 
   expect((await log(page)).recordingDecodes).toBe(0);
 });
 
-test('cycles all six broadcasts and plays the ident and first song completely offline', async ({
+test('downloads each tuned broadcast and plays it after an offline reload', async ({
   page,
   context,
 }) => {
+  test.setTimeout(90_000);
   await observeAudio(page);
   await page.goto('http://127.0.0.1:4174/');
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
-  await context.setOffline(true);
-  await page.reload();
   await chooseCity(page, 'warszawa');
   const stationButton = page.getByRole('button', {
     name: new RegExp(pl.audio.changeStation),
   });
-  await expect(stationButton).toHaveAccessibleName(
-    new RegExp(pl.audio.stations.hits),
-  );
-  await expect
-    .poll(async () => (await log(page)).radioStarts)
-    .toBeGreaterThanOrEqual(2);
-
-  for (const station of [...stations.slice(1), stations[0]]) {
-    const before = (await log(page)).radioStarts;
-    const jingle = page.waitForResponse(
-      (response) =>
-        response.url().endsWith('/' + radioPath(station, 'jingle')) &&
-        response.ok(),
-    );
-    const track = page.waitForResponse(
-      (response) =>
-        radioCatalog[station].seeds.some((seed: number) =>
-          response.url().endsWith('/' + radioPath(station, seed)),
-        ) && response.ok(),
-    );
-    await stationButton.click();
-    expect((await jingle).fromServiceWorker()).toBe(true);
-    expect((await track).fromServiceWorker()).toBe(true);
+  for (const [index, station] of stations.entries()) {
     await expect(stationButton).toHaveAccessibleName(
       new RegExp(pl.audio.stations[station]),
     );
     await expect
-      .poll(async () => (await log(page)).radioStarts)
-      .toBeGreaterThanOrEqual(before + 2);
+      .poll(
+        async () => {
+          const paths = await page.evaluate(async () => {
+            const name = `szprycha-assets:${location.origin}/`;
+            const cache = await caches.open(name);
+            return (await cache.keys())
+              .map(({ url }) => new URL(url).pathname.slice(1))
+              .filter((path) => path.startsWith('assets/radio/'));
+          });
+          return paths.sort();
+        },
+        { timeout: 12_000 },
+      )
+      .toEqual(
+        stations
+          .slice(0, index + 1)
+          .flatMap((id) =>
+            ['jingle', ...radioCatalog[id].seeds].map((seed) =>
+              radioPath(id, seed as number | 'jingle'),
+            ),
+          )
+          .sort(),
+      );
+    await stationButton.click();
   }
 
+  await context.setOffline(true);
+  await page.reload();
+  await chooseCity(page, 'warszawa');
+  for (const station of stations) {
+    await expect(stationButton).toHaveAccessibleName(
+      new RegExp(pl.audio.stations[station]),
+    );
+    const started = 2 * stations.indexOf(station);
+    await expect
+      .poll(async () => (await log(page)).radioStarts)
+      .toBeGreaterThanOrEqual(started + 2);
+    if (station !== stations.at(-1)) await stationButton.click();
+  }
   expect((await log(page)).notes).toBe(0);
 });

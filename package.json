@@ -41,7 +41,10 @@
     "start:server": "npm run start --workspace @szprycha/rankings",
     "test:server": "vitest run server/tests",
     "screenshots:audit": "playwright test --config playwright.audit.config.ts",
-    "map:generate:krakow": "tsx tools/gen-krakow-map.ts"
+    "map:generate:krakow": "tsx tools/gen-krakow-map.ts",
+    "budget:bundle": "tsx tools/check-bundle-budget.ts",
+    "benchmark:startup": "tsx tools/benchmark-startup.ts",
+    "benchmark:memory": "tsx tools/benchmark-memory.ts"
   },
   "dependencies": {
     "@capacitor/android": "8.6.2",

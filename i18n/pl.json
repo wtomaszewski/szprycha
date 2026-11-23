@@ -489,6 +489,7 @@
     "map": "Mapa Polski",
     "campaign": "Kampania",
     "freeRide": "Wolna jazda",
+    "loadError": "Nie udało się pobrać mapy. Połącz się z internetem i spróbuj ponownie.",
     "back": "Wróć",
     "soon": "Wkrótce",
     "warszawa": "Warszawa",

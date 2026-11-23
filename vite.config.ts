@@ -9,6 +9,7 @@ import { buildOrderRoutes } from './tools/procedural-orders.ts';
 import { buildContent } from './tools/content.ts';
 import { offlineApp } from './tools/offline.ts';
 import { radioAssets } from './tools/radio/assets.ts';
+import { cityMapAssets } from './tools/city-map-assets.ts';
 
 const rankingModule = 'virtual:ranking-versions';
 const noticesModule = 'virtual:third-party-notices';
@@ -98,6 +99,7 @@ export default defineConfig(({ mode }) => {
         },
       },
       radioAssets(),
+      cityMapAssets(),
       offlineApp(mode === 'mobile', url ? new URL(url).origin : undefined),
     ],
     build: {

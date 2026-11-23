@@ -36,6 +36,7 @@ import {
 import { loadRiderArt } from '../render/TrafficArt';
 import { DrivingControls } from '../ui/DrivingControls';
 import { progressNotice } from '../ui/SkillMap';
+import { startCity, type PlacEntry } from './RideScenes';
 
 const pointsFormat = new Intl.NumberFormat('pl-PL', {
   maximumFractionDigits: 2,
@@ -88,15 +89,7 @@ export class Plac extends Scene {
     this.load.once('complete', () => this.load.off('loaderror', showError));
   }
 
-  create({
-    origin = 'MainMenu',
-    attempt,
-    rehearsal = false,
-  }: {
-    origin?: 'MainMenu' | 'City';
-    attempt?: ExamAttempt;
-    rehearsal?: boolean;
-  } = {}) {
+  create({ origin = 'MainMenu', attempt, rehearsal = false }: PlacEntry = {}) {
     this.run = undefined;
     this.attempt = attempt;
     this.rehearsal = rehearsal;
@@ -203,7 +196,8 @@ export class Plac extends Scene {
   }
 
   private leave() {
-    this.scene.start(this.origin);
+    if (this.origin === 'City') void startCity(this);
+    else this.scene.start(this.origin);
   }
 
   private leaveRun() {
@@ -392,8 +386,9 @@ export class Plac extends Scene {
       const result: ExamRide = { ...this.attempt, plac: run.results };
       actions.append(
         score.passed
-          ? this.button(ui.exam.startRide, () =>
-              this.scene.start('City', { examRide: result }),
+          ? this.button(
+              ui.exam.startRide,
+              () => void startCity(this, { examRide: result }),
             )
           : this.button(ui.exam.showResult, () =>
               this.scene.start('MainMenu', { examResult: result }),
