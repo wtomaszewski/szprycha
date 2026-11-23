@@ -1,6 +1,7 @@
 import { waitForMainMenu } from '../../tools/skip-tutorial';
 import { expect, test, type Page } from '@playwright/test';
 import { resolve } from 'node:path';
+import { PNG } from 'pngjs';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
 import { chooseCity } from '../e2e/city-picker';
@@ -25,6 +26,7 @@ const conditions = {
   noc: ['night', 'clear', undefined],
   deszcz: ['day', 'rain_heavy', 'ulewa'],
   snieg: ['day', 'snow', 'snieg'],
+  'noc-ulewa': ['night', 'rain_heavy', 'ulewa'],
 } as const;
 type Condition = keyof typeof conditions;
 type MapLayer = {
@@ -93,10 +95,16 @@ async function moveStart(
   });
 }
 
-async function auditWeather(page: Page, map: MapId, condition: Condition) {
+async function auditWeather(
+  page: Page,
+  map: MapId,
+  condition: Condition,
+  [x, y]: readonly [number, number] = maps[map],
+  signalOutage?: boolean,
+) {
   const city = map === 'wroclaw' ? 'wroclaw' : 'warszawa';
   const id = city === 'warszawa' ? 'WAW-T-01' : 'WRO-T-01';
-  const [x, y] = maps[map];
+  const [lighting, weather, precipitation] = conditions[condition];
   await moveStart(page, map, x, y, true);
   await page.route('**/data/content.json', async (route) => {
     const response = await route.fetch();
@@ -107,8 +115,9 @@ async function auditWeather(page: Page, map: MapId, condition: Condition) {
     mission.start = {
       ...mission.start,
       kask_zapiety: true,
-      noc: condition === 'noc' ? true : undefined,
-      pogoda: conditions[condition][2],
+      noc: lighting === 'night' ? true : undefined,
+      pogoda: precipitation,
+      awaria_swiatel: signalOutage,
     };
     mission.cele = [{ ...objective, poi: 'audit-target' }];
     mission.checkpointy = [];
@@ -119,26 +128,83 @@ async function auditWeather(page: Page, map: MapId, condition: Condition) {
   await waitForMainMenu(page);
   await chooseCity(page, city, 'campaign');
   await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
-  if (condition === 'noc') await page.keyboard.press('KeyL');
+  if (lighting === 'night') await page.keyboard.press('KeyL');
   const canvas = page.locator('canvas');
   await expect(canvas).toHaveAttribute('data-map', map);
-  await expect(canvas).toHaveAttribute('data-x', String(maps[map][0]));
-  await expect(canvas).toHaveAttribute(
-    'data-lighting',
-    conditions[condition][0],
-  );
-  await expect(canvas).toHaveAttribute(
-    'data-weather',
-    conditions[condition][1],
-  );
+  await expect(canvas).toHaveAttribute('data-x', String(x));
+  await expect(canvas).toHaveAttribute('data-y', String(y));
+  await expect(canvas).toHaveAttribute('data-lighting', lighting);
+  await expect(canvas).toHaveAttribute('data-weather', weather);
 }
 
 for (const map of Object.keys(maps) as MapId[])
-  for (const condition of Object.keys(conditions) as Condition[])
+  for (const condition of ['dzien', 'noc', 'deszcz', 'snieg'] as const)
     test(map + ' ' + condition, async ({ page }) => {
       await auditWeather(page, map, condition);
       await screenshot(page, map + '-' + condition);
     });
+
+const signViews = [
+  ['warszawa', 'praga', [1115, 445]],
+  ['wroclaw', 'rynek', [3432, 1720]],
+] as const;
+
+for (const [map, place, point] of signViews) {
+  test.describe(`oznakowanie ${place}`, () => {
+    test.use({ reducedMotion: 'no-preference' });
+    for (const condition of ['dzien', 'noc', 'deszcz'] as const)
+      test(condition, async ({ page }) => {
+        await auditWeather(page, map, condition, point);
+        await screenshot(page, `${place}-${condition}`);
+      });
+
+    test.describe('na telefonie', () => {
+      test.use({
+        viewport: { width: 640, height: 360 },
+        hasTouch: true,
+        isMobile: true,
+      });
+      test('noc i ulewa', async ({ page }) => {
+        await auditWeather(page, map, 'noc-ulewa', point);
+        await expect(
+          page.getByLabel(pl.driving.joystick).filter({ visible: true }),
+        ).toBeVisible();
+        await screenshot(page, `${place}-telefon`);
+      });
+    });
+  });
+}
+
+test.describe('sygnalizacja na Rynku na telefonie', () => {
+  test.use({
+    viewport: { width: 640, height: 360 },
+    hasTouch: true,
+    isMobile: true,
+    reducedMotion: 'no-preference',
+  });
+
+  for (const outage of [false, true])
+    test(outage ? 'wygaszona' : 'zielona', async ({ page }) => {
+      await auditWeather(page, 'wroclaw', 'noc-ulewa', [3432, 1720], outage);
+      const canvas = page.locator('canvas');
+      // Bike head at (3532, 1684) with the 0.75× riding camera at (3432, 1720).
+      await expect
+        .poll(async () => {
+          const frame = PNG.sync.read(
+            await canvas.screenshot({ scale: 'css' }),
+          );
+          let green = 0;
+          for (let y = 149; y <= 157; y++)
+            for (let x = 390; x <= 400; x++) {
+              const i = (y * frame.width + x) * 4;
+              const [r, g, b] = frame.data.subarray(i, i + 3);
+              if (g! > r! + 24 && g! > b! + 24) green++;
+            }
+          return green >= 5;
+        })
+        .toBe(!outage);
+    });
+});
 
 const landmarks = [
   ['miasteczko', 'palac', 815, 1125],

@@ -2,6 +2,7 @@ import { PNG } from 'pngjs';
 import {
   artHash,
   BALL_FRAME,
+  bikeCrossingEdge,
   corners,
   propKinds,
   roofDetails,
@@ -273,27 +274,35 @@ function drawTerrain(sheet: PNG, seed: number) {
   tile(tiles.solidVertical).box(0, 0, 2, 32, white);
   tile(tiles.solidHorizontal).box(0, 0, 32, 2, white);
   const zebra = tile(tiles.zebra);
-  for (let y = 3; y < 32; y += 16) zebra.box(0, y, 32, 8, white);
+  for (let y = 3; y < TILE; y += 16) {
+    zebra.box(0, y - 1, TILE, 10, dark);
+    zebra.box(0, y, TILE, 8, white);
+  }
   const crossing = tile(tiles.bikeCrossing);
-  for (const x of [0, 27])
-    for (const y of [2, 18]) crossing.box(x, y, 5, 5, white);
+  const field = bikeCrossingEdge - 1;
+  for (const x of [0, TILE - bikeCrossingEdge])
+    for (const y of [2, 18]) {
+      crossing.box(x, y - 1, bikeCrossingEdge, field + 2, dark);
+      crossing.box(x === 0 ? x + 1 : x, y, field, field, white);
+    }
   tile(tiles.stop).box(0, 14, 32, 4, white);
   const yieldLine = tile(tiles.yield);
   for (const x of [3, 19])
     for (let y = 0; y < 7; y++)
       yieldLine.box(x + y, 12 + y, 13 - y * 2, 1, white);
   const cycle = tile(tiles.bicycle);
-  for (const x of [7, 25]) {
+  for (const x of [7, 24]) {
+    cycle.oval(x, 19, 7, 7, ink);
     cycle.oval(x, 19, 6, 6, white);
-    cycle.oval(x, 19, 4, 4, red, 0);
+    cycle.oval(x, 19, 3, 3, red, 0);
   }
-  cycle.line(7, 19, 13, 12, white, 2);
-  cycle.line(13, 12, 19, 19, white, 2);
-  cycle.line(19, 19, 8, 19, white, 2);
-  cycle.line(19, 19, 22, 11, white, 2);
-  cycle.line(22, 11, 25, 19, white, 2);
-  cycle.box(11, 10, 6, 2, white);
-  cycle.box(20, 9, 6, 2, white);
+  cycle.line(6, 18, 12, 11, white, 3);
+  cycle.line(12, 11, 18, 18, white, 3);
+  cycle.line(18, 18, 7, 18, white, 3);
+  cycle.line(18, 18, 21, 10, white, 3);
+  cycle.line(21, 10, 23, 18, white, 3);
+  cycle.box(11, 9, 6, 3, white);
+  cycle.box(20, 8, 6, 3, white);
   for (const [id, forward, left, right] of [
     [tiles.arrowStraight, true, false, false],
     [tiles.arrowLeft, false, true, false],

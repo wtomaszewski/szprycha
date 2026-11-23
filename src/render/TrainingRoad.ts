@@ -2,17 +2,15 @@ import { arcadeFont, readingFont } from '../core/fonts';
 import type { Cameras, GameObjects, Scene } from 'phaser';
 import { cacheMapGraphics } from './MapGround';
 import { ui } from '../core/presentation';
-import type { EnvState, SignalPhase, Vec2 } from '../rules/types';
+import type { EnvState, Vec2 } from '../rules/types';
 import type { Box, WorldModel } from '../rules/world/WorldModel';
 import { vehicleFrame } from './spriteFrames';
-
-const lightColor: Record<SignalPhase, number> = {
-  red: 0xe43b44,
-  arrow: 0xe43b44,
-  green: 0xa7f070,
-  yellow: 0xfeae34,
-  off: 0x566c86,
-};
+import {
+  drawCrossingSignal,
+  drawLaneSignal,
+  signalHousing,
+  signalLamp,
+} from './TrafficSignalArt';
 
 const countdownTexture = 'signal-countdown-digits';
 const digitWidth = 8;
@@ -50,12 +48,14 @@ function bicyclePictogram(
   size: number,
 ) {
   art
-    .lineStyle(1.5, color)
+    .lineStyle(1.75, color)
     .strokeCircle(x - 5 * size, y + 3 * size, 3 * size)
     .strokeCircle(x + 5 * size, y + 3 * size, 3 * size)
-    .lineBetween(x - 5 * size, y + 3 * size, x, y - 3 * size)
-    .lineBetween(x, y - 3 * size, x + 5 * size, y + 3 * size)
-    .lineBetween(x - 5 * size, y + 3 * size, x + 5 * size, y + 3 * size);
+    .lineBetween(x - 5 * size, y + 3 * size, x - size, y - 3 * size)
+    .lineBetween(x - size, y - 3 * size, x + 2 * size, y + 3 * size)
+    .lineBetween(x - 5 * size, y + 3 * size, x + 2 * size, y + 3 * size)
+    .lineBetween(x + 2 * size, y + 3 * size, x + 3 * size, y - 4 * size)
+    .lineBetween(x + 3 * size, y - 4 * size, x + 5 * size, y + 3 * size);
 }
 
 function pedestrianPictogram(
@@ -67,7 +67,7 @@ function pedestrianPictogram(
   art
     .fillStyle(color)
     .fillCircle(x, y - 4, 2)
-    .lineStyle(1, color)
+    .lineStyle(1.5, color)
     .lineBetween(x, y - 2, x, y + 2)
     .lineBetween(x - 2, y, x + 2, y)
     .lineBetween(x, y + 2, x - 2, y + 5)
@@ -142,6 +142,8 @@ export class TrainingRoad {
       }
       if (sign.code === 'A-7') {
         signs
+          .fillStyle(0x1a1c2c)
+          .fillTriangle(x - 20, y - 13, x + 20, y - 13, x, y + 17)
           .fillStyle(0xe43b44)
           .fillTriangle(x - 17, y - 11, x + 17, y - 11, x, y + 14);
         signs
@@ -149,6 +151,7 @@ export class TrainingRoad {
           .fillTriangle(x - 11, y - 7, x + 11, y - 7, x, y + 10);
       } else if (sign.code === 'B-20') {
         for (const [radius, color] of [
+          [19, 0x1a1c2c],
           [17, 0xf4f4f4],
           [15, 0xe43b44],
           [12, 0xb13e53],
@@ -163,18 +166,28 @@ export class TrainingRoad {
           signs.fillStyle(color).fillPoints(points, true);
         }
         scene.add
-          .text(x, y, 'STOP', { fontFamily: readingFont, fontSize: '16px' })
+          .text(x, y, 'STOP', {
+            fontFamily: readingFont,
+            fontSize: '16px',
+            color: '#ffffff',
+          })
           .setOrigin(0.5)
           .setDepth(7);
       } else if (sign.code === 'B-2') {
         signs
+          .fillStyle(0x1a1c2c)
+          .fillCircle(x, y, 16)
           .fillStyle(0xe43b44)
           .fillCircle(x, y, 14)
           .fillStyle(0xf4f4f4)
-          .fillRect(x - 9, y - 2, 18, 4);
+          .fillRect(x - 9, y - 2, 18, 5);
         if (sign.exceptBicycles) {
-          signs.fillStyle(0xf4f4f4).fillRect(x - 13, y + 15, 26, 13);
-          bicyclePictogram(signs, x, y + 20, 0x1a1c2c, 0.65);
+          signs
+            .fillStyle(0x1a1c2c)
+            .fillRect(x - 14, y + 15, 28, 15)
+            .fillStyle(0xf4f4f4)
+            .fillRect(x - 13, y + 16, 26, 13);
+          bicyclePictogram(signs, x, y + 21, 0x1a1c2c, 0.85);
         }
       } else if (sign.code === 'C-13/C-16') {
         const divided = world.zones.some(
@@ -186,12 +199,12 @@ export class TrainingRoad {
           .fillStyle(0x3b5dc9)
           .fillCircle(x, y, 14);
         if (divided) {
-          signs.lineStyle(1, 0xf4f4f4).lineBetween(x, y - 12, x, y + 12);
+          signs.lineStyle(1.5, 0xf4f4f4).lineBetween(x, y - 12, x, y + 12);
           pedestrianPictogram(signs, x - 6, y, 0xf4f4f4);
           bicyclePictogram(signs, x + 7, y, 0xf4f4f4, 0.65);
         } else {
           signs
-            .lineStyle(1, 0xf4f4f4)
+            .lineStyle(1.5, 0xf4f4f4)
             .lineBetween(x - 11, y + 1, x + 11, y + 1);
           pedestrianPictogram(signs, x, y - 6, 0xf4f4f4);
           bicyclePictogram(signs, x, y + 7, 0xf4f4f4, 0.65);
@@ -259,17 +272,13 @@ export class TrainingRoad {
       } else if (sign.code === 'C-13' || sign.code === 'B-9') {
         const cyclePath = sign.code === 'C-13';
         signs
+          .fillStyle(0x1a1c2c)
+          .fillCircle(x, y, 16)
           .fillStyle(cyclePath ? 0xf4f4f4 : 0xe43b44)
           .fillCircle(x, y, 14)
           .fillStyle(cyclePath ? 0x3b5dc9 : 0xf4f4f4)
-          .fillCircle(x, y, 11)
-          .lineStyle(1.5, cyclePath ? 0xf4f4f4 : 0x1a1c2c)
-          .strokeCircle(x - 5, y + 3, 3)
-          .strokeCircle(x + 5, y + 3, 3)
-          .lineBetween(x - 5, y + 3, x, y - 3)
-          .lineBetween(x, y - 3, x + 5, y + 3)
-          .lineBetween(x - 5, y + 3, x + 5, y + 3)
-          .lineBetween(x + 2, y - 4, x + 5, y + 3);
+          .fillCircle(x, y, 11);
+        bicyclePictogram(signs, x, y, cyclePath ? 0xf4f4f4 : 0x1a1c2c, 1);
       } else if (sign.code === 'D-40' || sign.code === 'D-41') {
         signs
           .fillStyle(0xf4f4f4)
@@ -292,6 +301,8 @@ export class TrainingRoad {
             .lineBetween(x - 18, y + 9, x + 18, y - 9);
       } else if (sign.code === 'B-1') {
         signs
+          .fillStyle(0x1a1c2c)
+          .fillCircle(x, y, 16)
           .fillStyle(0xe43b44)
           .fillCircle(x, y, 14)
           .fillStyle(0xf4f4f4)
@@ -336,6 +347,8 @@ export class TrainingRoad {
             .lineBetween(x - 25, y + 8, x + 25, y - 8);
       } else if (['A-9', 'A-10', 'A-11a', 'A-17'].includes(sign.code)) {
         signs
+          .fillStyle(0x1a1c2c)
+          .fillTriangle(x, y - 17, x - 20, y + 14, x + 20, y + 14)
           .fillStyle(0xe43b44)
           .fillTriangle(x, y - 14, x - 17, y + 12, x + 17, y + 12);
         signs
@@ -343,7 +356,7 @@ export class TrainingRoad {
           .fillTriangle(x, y - 9, x - 12, y + 9, x + 12, y + 9);
         if (sign.code === 'A-9')
           signs
-            .lineStyle(1, 0x1a1c2c)
+            .lineStyle(1.5, 0x1a1c2c)
             .lineBetween(x - 7, y + 1, x + 7, y + 1)
             .lineBetween(x - 7, y + 5, x + 7, y + 5)
             .lineBetween(x - 5, y, x - 5, y + 8)
@@ -505,22 +518,28 @@ export class TrainingRoad {
       const secondVisible =
         (pedestrian || signal.twoWay) && visible(oppositeX, oppositeY);
       if (!firstVisible && !secondVisible) continue;
-      const open = this.world.crossingAllowsEntry(
+      // A dark signal can allow entry under the usual priority rules.
+      const phase = this.world.crossingPhase(
         crossing,
         this.lightAt,
         environment,
       );
-      const color = lightColor[open ? 'green' : 'red'];
       const seconds = countdowns
         ? this.world.crossingCountdown(crossing, this.lightAt, environment)
         : undefined;
       if (firstVisible) {
-        this.drawCrossingSignal(x, y, color, pedestrian, open);
-        this.drawCountdown(x, y + 16, seconds);
+        drawCrossingSignal(this.lights, x, y, phase, pedestrian);
+        this.drawCountdown(x, y + 17, seconds);
       }
       if (secondVisible) {
-        this.drawCrossingSignal(oppositeX, oppositeY, color, pedestrian, open);
-        this.drawCountdown(oppositeX, oppositeY + 16, seconds);
+        drawCrossingSignal(
+          this.lights,
+          oppositeX,
+          oppositeY,
+          phase,
+          pedestrian,
+        );
+        this.drawCountdown(oppositeX, oppositeY + 17, seconds);
       }
     }
     for (const signal of this.world.signals) {
@@ -529,30 +548,17 @@ export class TrainingRoad {
       if (!visible(x, y)) continue;
       const lane = this.world.getLane(signal.affects)!;
       const phase = this.world.phase(lane, this.lightAt, environment);
-      this.lights.fillStyle(0x1a1c2c).fillRect(x - 8, y - 12, 16, 24);
-      if (lane.type === 'tram') {
-        this.lights.lineStyle(3, 0xf4f4f4);
-        if (phase === 'green') this.lights.lineBetween(x, y - 5, x, y + 5);
-        else if (phase !== 'off') this.lights.lineBetween(x - 5, y, x + 5, y);
-      } else if (signal.code === 'S-1') {
-        for (const [index, lamp] of (
-          ['red', 'yellow', 'green'] as const
-        ).entries()) {
-          const active = (phase === 'arrow' ? 'red' : phase) === lamp;
-          const lampY = y + (index - 1) * 7;
-          if (active)
-            this.lights.fillStyle(lightColor[lamp]).fillCircle(x, lampY, 3);
-          else
-            this.lights.lineStyle(1, lightColor.off).strokeCircle(x, lampY, 2);
-        }
-      } else if (phase === 'arrow') {
-        const d = signal.direction === 'right' ? 1 : -1;
-        this.lights
-          .lineStyle(2, 0xa7f070)
-          .lineBetween(x - 5 * d, y, x + 5 * d, y)
-          .lineBetween(x + 5 * d, y, x, y - 5)
-          .lineBetween(x + 5 * d, y, x, y + 5);
-      }
+      drawLaneSignal(
+        this.lights,
+        x,
+        y,
+        phase,
+        lane.type === 'tram'
+          ? 'tram'
+          : signal.code === 'S-1'
+            ? 'S-1'
+            : signal.direction,
+      );
       if (countdowns && lane.type !== 'tram') {
         const seconds = this.world.signalCountdown(
           lane,
@@ -562,7 +568,7 @@ export class TrainingRoad {
         );
         if (signal.code === 'S-2') this.drawCountdown(x + 18, y, seconds);
         else if (lane.arrow) this.drawCountdown(x - 18, y, seconds);
-        else this.drawCountdown(x, y - 19, seconds);
+        else this.drawCountdown(x, y - 20, seconds);
       }
     }
     for (let i = this.digitCount; i < previousDigitCount; i++)
@@ -672,54 +678,22 @@ export class TrainingRoad {
             postY,
           );
       }
-      this.lights
-        .fillStyle(0x1a1c2c)
-        .fillRoundedRect(postX - 12, postY - 7, 24, 14, 3);
+      signalHousing(this.lights, postX, postY, 24, 14);
       const phase = Math.floor(at * 2) % 2;
       for (const [index, offset] of [-5, 5].entries()) {
-        const lampX = postX + offset;
-        if (flashing && (reducedEffects || phase === index))
-          this.lights.fillStyle(lightColor.red).fillCircle(lampX, postY, 3);
-        else
-          this.lights
-            .lineStyle(1, lightColor.off)
-            .strokeCircle(lampX, postY, 2);
+        const active = flashing && (reducedEffects || phase === index);
+        signalLamp(
+          this.lights,
+          postX + offset,
+          postY,
+          active ? 'red' : undefined,
+        );
       }
       if (flashing) {
         this.lights
           .lineStyle(1, 0xf4f4f4)
           .lineBetween(postX - 7, postY + 5, postX + 7, postY + 5);
       }
-    }
-  }
-
-  private drawCrossingSignal(
-    x: number,
-    y: number,
-    color: number,
-    pedestrian: boolean,
-    open: boolean,
-  ) {
-    this.lights.fillStyle(0x1a1c2c).fillRoundedRect(x - 8, y - 9, 16, 18, 2);
-    if (!open) {
-      this.lights.lineStyle(2, color).lineBetween(x - 5, y - 6, x + 5, y - 6);
-    }
-    if (pedestrian) {
-      this.lights.fillStyle(color).fillCircle(x, y - 4, 2);
-      this.lights
-        .lineStyle(2, color)
-        .lineBetween(x, y - 2, x, y + 2)
-        .lineBetween(x, y, x - 3, y + 1)
-        .lineBetween(x, y, x + 3, y + 1)
-        .lineBetween(x, y + 2, x - 2, y + 5)
-        .lineBetween(x, y + 2, x + 2, y + 5);
-    } else {
-      this.lights
-        .lineStyle(1, color)
-        .strokeCircle(x - 3, y + 1, 2)
-        .strokeCircle(x + 3, y + 1, 2)
-        .lineBetween(x - 3, y + 1, x, y - 3)
-        .lineBetween(x, y - 3, x + 3, y + 1);
     }
   }
 }
