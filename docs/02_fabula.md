@@ -84,6 +84,14 @@ Kryjówka gangu na przedmieściach za przejazdem kolejowym (przejazd, pobocze, z
 
 ---
 
+## WIEŚ I LAS — „Mapa bez skrótów”
+
+Sierżant Ola prowadzi cztery szkolenia. Potem zespół SzprychaApp sprawdza, skąd wziął się skrót w aplikacji prowadzący przez zamkniętą drogę.
+
+1. **Droga do szkoły.** Pan Kazik wysyła pudełko szyszek drogą gminną. Lena zostawia przy szkole zagadki o tym, jak poruszają się rowerzyści, piesi i kierowcy.
+2. **Tory i zmrok.** Gracz dostarcza szkic Zawiły przez przejazd bez zapór. Zawiła porównuje szkic z oznakowaniem i rozpoznaje skrót ze swojej dawnej próby jako Zakłócacz. Po zmroku Ola pokazuje, jak lampki i kamizelka poprawiają widoczność.
+3. **Mapa bez skrótów.** Przy polu gracz pomaga rowerzyście po upadku. Potem dostarcza sprawdzoną mapę drogą gminną i SzprychaApp poprawia trasę.
+
 ## Finał wspólny — „Licencja Szprychy”
 Egzamin odblokowuje się po ukończeniu kampanii co najmniej jednego miasta, osiągnięciu rangi Mistrz Szlaku oraz mastery ≥70% w każdym module (M01–M08). Sierżant Ola prowadzi teorię (quiz), próbę na placu i przejazd kontrolny w mieście ukończonej kampanii. Po zaliczeniu Kazik wręcza Licencję, Turbo bije brawo, DJ Dzwonek komentuje na żywo, a gracz zdobywa rangę **Legenda Szprychy** i złoty dzwonek.
 

@@ -22,6 +22,7 @@ export class MissionHud {
   private readonly shocks = document.createElement('progress');
   private readonly photo = document.createElement('button');
   private readonly lights = document.createElement('button');
+  private readonly vest = document.createElement('button');
   private readonly resume = document.createElement('button');
   private displayedTitle?: string;
   private displayedSeconds?: number;
@@ -31,6 +32,7 @@ export class MissionHud {
     timerSlot: HTMLElement,
     equipHelmet: () => void,
     turnOnLights: () => void,
+    equipVest: () => void,
     resumeFromCheckpoint: () => void,
     photograph: () => void,
     private readonly orderText?: OrderText,
@@ -50,6 +52,7 @@ export class MissionHud {
       this.instruction,
       this.equip,
       this.lights,
+      this.vest,
       this.resume,
       this.parcel,
       this.photo,
@@ -59,7 +62,13 @@ export class MissionHud {
     this.timer.setAttribute('aria-label', ui.missionUi.timer);
     this.timer.setAttribute('aria-live', 'off');
 
-    this.equip.type = this.lights.type = this.resume.type = 'button';
+    this.vest.type =
+      this.equip.type =
+      this.lights.type =
+      this.resume.type =
+        'button';
+    this.vest.textContent = ui.missionUi.equipVest;
+    this.vest.addEventListener('click', equipVest);
     this.lights.textContent = ui.missionUi.turnOnLights;
     this.lights.addEventListener('click', turnOnLights);
     this.equip.textContent = ui.missionUi.equip;
@@ -79,6 +88,7 @@ export class MissionHud {
   focusEquipment() {
     if (!this.equip.hidden) this.equip.focus();
     else if (!this.lights.hidden) this.lights.focus();
+    else if (!this.vest.hidden) this.vest.focus();
   }
 
   update(
@@ -86,6 +96,7 @@ export class MissionHud {
     position: Vec2,
     helmetFastened: boolean,
     lightsOn: boolean,
+    vestWorn: boolean,
     interrupted: boolean,
     checkpointHint: string | undefined,
     speed: number,
@@ -101,6 +112,7 @@ export class MissionHud {
     setHidden(this.instruction, !target);
     setHidden(this.equip, !!result || helmetFastened);
     setHidden(this.lights, !preparing || lightsOn);
+    setHidden(this.vest, !mission.preparingVest || vestWorn);
     setHidden(this.resume, !!result || !interrupted);
     setHidden(this.timer, !!result);
     setHidden(this.arrow.root, !!result || preparing);

@@ -242,6 +242,9 @@
     "wiesTitle": "Wieś i las",
     "districtLocked": "Przejście zamknięte. Zatrzymaj się i otwórz ćwiczenia w SzprychaApp.",
     "districtsOpened": "Nowe przejście otwarte! Wróć do Wolnej jazdy, żeby je odkryć.",
+    "szyszki": "Szyszki",
+    "szyszkiHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać szyszkę.",
+    "szyszkaQuestion": "Zagadka szyszki",
     "bursztyny": "Bursztyny",
     "bursztynyHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać bursztyn.",
     "bursztynQuestion": "Zagadka bursztynu",
@@ -475,12 +478,14 @@
       "odbierz": "Odbierz przesyłkę w zaznaczonym miejscu.",
       "oddaj": "Oddaj przesyłkę w zaznaczonym miejscu.",
       "zbierz_obwarzanka": "Zsiądź z roweru i podejdź do obwarzanka.",
+      "zbierz_szyszke": "Zsiądź z roweru i podejdź do szyszki.",
       "zbierz_bursztyn": "Zsiądź z roweru i podejdź do bursztynu.",
       "zbierz_krasnala": "Zsiądź z roweru i podejdź do krasnala.",
       "przygotuj_rower": "Załóż kask i włącz światła.",
       "sfotografuj": "Zrób zdjęcie znaku",
       "wybor": "Zatrzymaj się i odpowiedz."
     },
+    "equipVest": "Załóż kamizelkę odblaskową",
     "turnOnLights": "Włącz przednie i tylne światła",
     "illegalShortcut": "Jazda rowerem tym skrótem była niezgodna z przepisami.",
     "shocks": "Wstrząsy",
@@ -564,6 +569,56 @@
       "odp2": "Natychmiast wjeżdżam, bo mam zielone.",
       "wyjasnienie": "Rusz na zielonym, gdy przejazd jest wolny. Nigdy nie wjeżdżaj tuż przed jadące auto.",
       "meta": "Poczekaj na zielone dla rowerów i przejedź po P-11."
+    },
+    "WIE-A1-01": {
+      "tytul": "Pudełko do szkoły",
+      "opis": "Dowieź szyszki do wiejskiej szkoły drogą bez chodnika.",
+      "odbior": "Odbierz od pana Kazika pudełko szyszek.",
+      "meta": "Jedź prawym poboczem do bramy szkoły i oddaj pudełko."
+    },
+    "WIE-A1-02": {
+      "tytul": "Trzy szyszki, jeden trop",
+      "opis": "Rozwiąż trzy zagadki na szkolnym dziedzińcu.",
+      "bramka": "Zsiądź z roweru i podejdź do szyszki przy bramce.",
+      "lawka": "Podejdź do szyszki przy ławce.",
+      "ganek": "Podejdź do szyszki przed gankiem."
+    },
+    "WIE-A2-01": {
+      "tytul": "Szkic po drugiej stronie torów",
+      "opis": "Dostarcz szkic Zawiły przez niestrzeżony przejazd.",
+      "odbior": "Zabierz szkic Zawiły.",
+      "meta": "Sprawdź obie strony i dostarcz szkic za torami, gdy droga będzie wolna."
+    },
+    "WIE-A2-02": {
+      "tytul": "Powrót przed nocą",
+      "opis": "Wróć przez osadę o zmroku w kamizelce i z włączonymi lampkami.",
+      "start": "Do tego ćwiczenia zapnij kask, włącz obie lampki i załóż kamizelkę.",
+      "meta": "Jedź przy prawej krawędzi jezdni z włączonymi lampkami."
+    },
+    "WIE-A3-01": {
+      "tytul": "Upadek przy polu",
+      "opis": "Na drodze gruntowej ktoś się przewrócił. Zatrzymaj się i pomóż.",
+      "postoj": "Zwolnij i zatrzymaj się przy prawej krawędzi, obok przewróconego roweru.",
+      "pytanie": "Przy drodze gruntowej przewrócił się rowerzysta. Co robisz najpierw?",
+      "odp1": "Zostawiam rower na drodze i od razu podbiegam.",
+      "odp2": "Odstawiam rower poza drogę, rozglądam się i ostrzegam innych.",
+      "wyjasnienie": "Najpierw zadbaj o bezpieczeństwo swoje i innych.",
+      "dorosly": "Zawołaj dorosłego i sprawdź, czy rowerzysta odpowiada.",
+      "dalej": "Miejsce jest bezpieczne. Co robisz teraz?",
+      "dalej1": "Wołam dorosłego i pytam rowerzystę, czy mnie słyszy.",
+      "dalej2": "Od razu podnoszę rowerzystę i sadzam go na rowerze.",
+      "dalejWyjasnienie": "Zawołaj dorosłego i sprawdź, czy rowerzysta reaguje na głos."
+    },
+    "WIE-A3-02": {
+      "tytul": "Mapa bez skrótów",
+      "opis": "Dostarcz sprawdzoną mapę i omiń drogę zamkniętą znakiem B-1.",
+      "odbior": "Odbierz od pana Kazika mapę dla SzprychaApp.",
+      "sprzecznosc": "Porównaj skrót z aplikacji ze znakiem przy bramie.",
+      "pytanie": "Aplikacja podpowiada skrót, ale przy wjeździe stoi znak B-1 bez wyjątków. Co robisz?",
+      "odp1": "Omijam zamknięty odcinek i jadę drogą gminną.",
+      "odp2": "Wjeżdżam na skrót, bo znak dotyczy tylko samochodów.",
+      "wyjasnienie": "B-1 zakazuje ruchu także rowerom. Zostań na dozwolonej trasie.",
+      "meta": "Wyjedź z gospodarstwa, skręć w prawo w drogę gminną i oddaj mapę przy znaczniku."
     },
     "WIE-B-01": {
       "tytul": "Pobocze i bezpieczny odstęp",
@@ -1651,6 +1706,30 @@
     "readMore": "Przewiń tekst"
   },
   "dialogi": {
+    "WIE-A1-01": {
+      "start": "Przy szkole czekają na nasze szyszki do zajęć. Jedź poboczem, aż zobaczysz bramkę.",
+      "koniec": "Dzięki! Lena znalazła na dziedzińcu trzy szyszki z zagadkami."
+    },
+    "WIE-A1-02": {
+      "start": "Każda szyszka ma zagadkę o drodze do szkoły. Sprawdź bramkę, ławkę i ganek.",
+      "koniec": "Zagadki pasują do prawdziwej trasy. Tymczasem w aplikacji ktoś dopisał skrót przez gospodarstwo."
+    },
+    "WIE-A2-01": {
+      "start": "Porównamy szkic z mapą w telefonie. Zawieź go na drugą stronę torów i uważaj na pociąg.",
+      "koniec": "Szkic pasuje do znaków. Pamiętam ten skrót z dawnej próby Zakłócacza."
+    },
+    "WIE-A2-02": {
+      "start": "Zrobiło się ciemno. Włącz lampki, a kamizelka pomoże kierowcom zobaczyć Cię wcześniej.",
+      "koniec": "W świetle reflektorów kamizelka była dobrze widoczna."
+    },
+    "WIE-A3-01": {
+      "start": "Przy polu ktoś przewrócił się na drodze gruntowej. Zwolnij i rozejrzyj się, zanim podejdziesz.",
+      "koniec": "Rowerzysta odpowiada, a dorosły już z nim jest. Najpierw zadbałeś o bezpieczne miejsce."
+    },
+    "WIE-A3-02": {
+      "start": "Tu jest sprawdzona mapa. Przy bramie zobaczysz znak, którego brakowało w mapie z próby Zakłócacza.",
+      "koniec": "Mapa dotarła. SzprychaApp znów prowadzi do szkoły i przez wieś otwartymi drogami."
+    },
     "wies_zapowiedzi": {
       "GDZIE-12": "Piesi idą lewą stroną, żeby widzieć nadjeżdżające pojazdy.",
       "MAN-13": "Kierowca musi zostawić co najmniej metr, kiedy Cię wyprzedza.",

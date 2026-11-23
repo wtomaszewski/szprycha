@@ -27,7 +27,7 @@ type Failure =
   | 'uwaga_drogowki'
   | 'wstrzasy_paczki'
   | 'wynik_wyscigu';
-type Equipment = { helmet: boolean; lights: boolean };
+type Equipment = { helmet: boolean; lights: boolean; vest?: boolean };
 type Outcome =
   | { status: 'completed' }
   | { status: 'failed'; reason: Failure; verdict?: Verdict };
@@ -227,13 +227,19 @@ export class MissionSystem {
     const goal = this.goalTarget?.goal;
     return goal?.typ === 'zbierz_krasnala' ||
       goal?.typ === 'zbierz_obwarzanka' ||
-      goal?.typ === 'zbierz_bursztyn'
+      goal?.typ === 'zbierz_bursztyn' ||
+      goal?.typ === 'zbierz_szyszke'
       ? goal.poi
       : undefined;
   }
 
   get preparingBike() {
     return this.goalTarget?.goal.typ === 'przygotuj_rower';
+  }
+
+  get preparingVest() {
+    const goal = this.goalTarget?.goal;
+    return goal?.typ === 'przygotuj_rower' && goal.wymagana_kamizelka === true;
   }
 
   get pendingChoice() {
@@ -426,7 +432,11 @@ export class MissionSystem {
       return;
     }
     const atTarget = this.preparingBike
-      ? Boolean(equipment?.helmet && equipment.lights)
+      ? Boolean(
+          equipment?.helmet &&
+          equipment.lights &&
+          (!this.preparingVest || equipment.vest),
+        )
       : target.goal.typ === 'sfotografuj'
         ? this.photos.has(target.goal.znak)
         : target.goal.typ === 'wybor'

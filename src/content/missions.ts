@@ -8,9 +8,10 @@ export const campaignCity = z.enum([
   ...missionCity.options,
   'krakow',
   'gdansk',
+  'wies',
 ]);
 export type CampaignCity = z.infer<typeof campaignCity>;
-export const playableCity = z.enum([...campaignCity.options, 'wies']);
+export const playableCity = campaignCity;
 export type PlayableCity = z.infer<typeof playableCity>;
 const key = z.string().regex(/^(misje|dialogi)(\.[A-Za-z0-9_-]+)+$/);
 const seconds = z.number().positive();
@@ -22,7 +23,11 @@ const goalFields = {
   wskazowka_powrotu: key.optional(),
 };
 const missionGoal = z.discriminatedUnion('typ', [
-  z.strictObject({ ...goalFields, typ: z.literal('przygotuj_rower') }),
+  z.strictObject({
+    ...goalFields,
+    typ: z.literal('przygotuj_rower'),
+    wymagana_kamizelka: z.literal(true).optional(),
+  }),
   z.strictObject({ ...goalFields, typ: z.literal('dojedz'), poi: id }),
   z.strictObject({ ...goalFields, typ: z.literal('zbierz_krasnala'), poi: id }),
   z.strictObject({
@@ -31,6 +36,7 @@ const missionGoal = z.discriminatedUnion('typ', [
     poi: id,
   }),
   z.strictObject({ ...goalFields, typ: z.literal('zbierz_bursztyn'), poi: id }),
+  z.strictObject({ ...goalFields, typ: z.literal('zbierz_szyszke'), poi: id }),
   z
     .strictObject({
       ...goalFields,
@@ -141,20 +147,12 @@ export const missionSchema = z
       gdansk: 'GDA',
       wies: 'WIE',
     }[mission.miasto];
-    if (
-      !campaignCity.safeParse(mission.miasto).success &&
-      (mission.akt !== 0 || act !== 'B')
-    )
-      ctx.addIssue({
-        code: 'custom',
-        path: ['akt'],
-        message: 'This city currently supports free-ride exercises only',
-      });
     // Original free-ride exercises retain their saved IDs in the campaigns.
     const legacyCityTraining =
       act === 'T' &&
       ((mission.miasto === 'krakow' && /^KRA-B-0[1-3]$/.test(mission.id)) ||
-        (mission.miasto === 'gdansk' && /^GDA-B-0[1-4]$/.test(mission.id)));
+        (mission.miasto === 'gdansk' && /^GDA-B-0[1-4]$/.test(mission.id)) ||
+        (mission.miasto === 'wies' && /^WIE-B-0[1-4]$/.test(mission.id)));
     if (!legacyCityTraining && !mission.id.startsWith(`${prefix}-${act}-`))
       ctx.addIssue({
         code: 'custom',

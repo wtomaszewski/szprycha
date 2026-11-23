@@ -2,8 +2,23 @@ import { expect, test, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { chooseCity, cityPin, driveTo, startAt } from './city-picker';
 import { readProfile } from './progress-profile';
+import { legacyProgressKey } from '../../src/core/progressStore';
+import questions from '../../content/pytania.json' with { type: 'json' };
 
 const night = pl.misje['WIE-B-03'];
+const training = ['WIE-B-01', 'WIE-B-02', 'WIE-B-03', 'WIE-B-04'] as const;
+
+async function seedCompleted(page: Page, completed: readonly string[]) {
+  await page.addInitScript(
+    ({ key, completed }) => {
+      if (!sessionStorage.getItem(key)) {
+        localStorage.setItem(key, JSON.stringify({ completed }));
+        sessionStorage.setItem(key, '1');
+      }
+    },
+    { key: legacyProgressKey, completed },
+  );
+}
 
 async function openExercise(page: Page, id: keyof typeof pl.misje) {
   await page.keyboard.press('KeyM');
@@ -23,7 +38,7 @@ test('offers Wieś i las in free ride and persists the map independently of camp
   await page
     .getByRole('button', { name: pl.cityPicker.campaign, exact: true })
     .click();
-  await expect(page.getByRole('button', { name: /Wieś i las/ })).toBeDisabled();
+  await expect(cityPin(page, 'wies')).toBeEnabled();
   await page.keyboard.press('Escape');
   await page
     .getByRole('button', { name: pl.cityPicker.freeRide, exact: true })
@@ -33,14 +48,16 @@ test('offers Wieś i las in free ride and persists the map independently of camp
   await page.screenshot({ path: info.outputPath('127-mapa-polski.png') });
   await pin.click();
   const canvas = page.locator('canvas[data-map="wies"]');
-  await expect(canvas).toHaveAttribute('aria-label', pl.driving.wiesTitle);
+  await expect(canvas).toHaveAttribute('aria-label', pl.driving.wiesTitle, {
+    timeout: 12_000,
+  });
   await expect(canvas).not.toHaveAttribute('data-mission', /./);
   await expect
     .poll(async () => (await readProfile(page)).freeRideCity)
     .toBe('wies');
   expect((await readProfile(page)).selectedCity).not.toBe('wies');
   await page.keyboard.press('KeyM');
-  for (const id of ['WIE-B-01', 'WIE-B-02', 'WIE-B-03', 'WIE-B-04'] as const)
+  for (const id of training)
     await expect(
       page.getByRole('button', {
         name: `${pl.phone.start} · ${pl.misje[id].tytul}`,
@@ -138,3 +155,133 @@ for (const [name, x, y, heading, time] of views) {
     expect(errors).toEqual([]);
   });
 }
+
+test('starts the Wieś i las campaign at the first training mission', async ({
+  page,
+}, info) => {
+  await page.goto('/');
+  await page
+    .getByRole('button', { name: pl.cityPicker.campaign, exact: true })
+    .click();
+  const pin = cityPin(page, 'wies');
+  await expect(pin).toBeEnabled();
+  await pin.hover();
+  await page.screenshot({ path: info.outputPath('128-kampania.png') });
+  await pin.press('Enter');
+  await expect(page.locator('canvas[data-map="wies"]')).toHaveAttribute(
+    'data-mission',
+    'WIE-B-01',
+    { timeout: 12_000 },
+  );
+  await expect
+    .poll(async () => (await readProfile(page)).selectedCity)
+    .toBe('wies');
+});
+
+test('resumes the campaign, saves a pine cone after its riddle and keeps it after reload', async ({
+  page,
+}, info) => {
+  await seedCompleted(page, [...training, 'WIE-A1-01']);
+  await page.goto('/');
+  await chooseCity(page, 'wies', 'campaign');
+  const canvas = page.locator('canvas[data-map="wies"]');
+  await expect(canvas).toHaveAttribute('data-mission', 'WIE-A1-02');
+  await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
+  const count = page.getByRole('status', { name: pl.driving.szyszki });
+  await expect(count).toHaveText('Szyszki 0/4');
+  await page.keyboard.press('KeyX');
+  await expect(canvas).toHaveAttribute('data-walking', 'true');
+  await page.screenshot({ path: info.outputPath('128-szyszki.png') });
+  const puzzle = page.getByRole('dialog', { name: pl.driving.szyszkaQuestion });
+  await page.keyboard.down('ArrowUp');
+  try {
+    await expect(puzzle).toBeVisible();
+  } finally {
+    await page.keyboard.up('ArrowUp');
+  }
+  const question = questions.pytania.find(({ id }) => id === 'Q063')!;
+  await expect(puzzle).toContainText(question.pytanie);
+  await puzzle
+    .getByRole('button', {
+      name: question.odpowiedzi[question.poprawna],
+      exact: true,
+    })
+    .click();
+  await puzzle.getByRole('button', { name: pl.progression.continue }).click();
+  await expect(count).toHaveText('Szyszki 1/4');
+  await expect
+    .poll(async () => (await readProfile(page)).szyszki)
+    .toEqual(['wie-szyszka-bramka']);
+
+  await page.reload();
+  await chooseCity(page, 'wies', 'campaign');
+  await expect(canvas).toHaveAttribute('data-mission', 'WIE-A1-02');
+  await expect(count).toHaveText('Szyszki 1/4');
+});
+
+test('requires the vest in the dusk exercise alongside both lamps and a helmet', async ({
+  page,
+}, info) => {
+  await seedCompleted(page, [
+    ...training,
+    'WIE-A1-01',
+    'WIE-A1-02',
+    'WIE-A2-01',
+  ]);
+  await page.goto('/');
+  await chooseCity(page, 'wies', 'campaign');
+  const canvas = page.locator('canvas[data-map="wies"]');
+  await expect(canvas).toHaveAttribute('data-mission', 'WIE-A2-02');
+  await expect(canvas).toHaveAttribute('data-lighting', 'night');
+  await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
+  await page
+    .getByRole('button', { name: pl.missionUi.equip, exact: true })
+    .click();
+  await page
+    .getByRole('button', { name: pl.missionUi.turnOnLights, exact: true })
+    .click();
+  const vest = page.getByRole('button', {
+    name: pl.missionUi.equipVest,
+    exact: true,
+  });
+  await expect(vest).toBeVisible();
+  await page.screenshot({ path: info.outputPath('128-kamizelka.png') });
+  await vest.click();
+  await expect(
+    page.getByText(pl.misje['WIE-A2-02'].meta, { exact: true }),
+  ).toBeVisible();
+  await expect
+    .poll(async () => (await readProfile(page)).reflectiveVest)
+    .toBe(true);
+});
+
+test('practises helping a fallen cyclist beside the dirt road', async ({
+  page,
+}, info) => {
+  await seedCompleted(page, [
+    ...training,
+    'WIE-A1-01',
+    'WIE-A1-02',
+    'WIE-A2-01',
+    'WIE-A2-02',
+  ]);
+  await page.goto('/');
+  await chooseCity(page, 'wies', 'campaign');
+  const canvas = page.locator('canvas[data-map="wies"]');
+  await expect(canvas).toHaveAttribute('data-mission', 'WIE-A3-01');
+  await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
+  await page.keyboard.press('KeyX');
+  await expect(canvas).toHaveAttribute('data-walking', 'true');
+  await driveTo(page, 'ArrowUp', 'y', 653, true);
+  const aid = pl.misje['WIE-A3-01'];
+  await expect(page.getByText(aid.pytanie, { exact: true })).toBeVisible();
+  await page.screenshot({ path: info.outputPath('128-pierwsza-pomoc.png') });
+  await page.getByRole('button', { name: aid.odp2, exact: true }).click();
+  await page.getByRole('button', { name: pl.progression.continue }).click();
+  await expect(page.getByText(aid.dalej, { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: aid.dalej1, exact: true }).click();
+  await page.getByRole('button', { name: pl.progression.continue }).click();
+  await expect
+    .poll(async () => (await readProfile(page)).completed)
+    .toContain('WIE-A3-01');
+});

@@ -71,8 +71,8 @@ Losowanie używa ziarna i stałego kroku symulacji. Rozpatruje tylko zdarzenia p
 ### Uruchamianie misji
 
 - `mapa` wskazuje plik Tiled bez rozszerzenia (domyślnie wartość z `miasto`). Samouczki używają `akt: 0`. `start.kask_zapiety` określa stan kasku przed ruszeniem, a `ruch_ai: false` pozwala przećwiczyć manewr bez ruchu AI.
-- Cele są wykonywane kolejno, po osiągnięciu obszaru POI. `zbierz_obwarzanka` i `zbierz_bursztyn` wymagają dojścia z rowerem do oznaczonej znajdźki i odpowiedzi na pytanie przypisane w warstwie `collectibles`. Zdobycz z profilu liczy się przy ponownym przejeździe. `odbierz` i `oddaj` bez własnego `poi` korzystają z ostatniego wskazanego POI. `wymagany_nawyk` wymaga werdyktu `good` dla wskazanej reguły w trakcie danego celu.
-- `przygotuj_rower` może być pierwszym celem misji. Do jego ukończenia trzeba zapiąć kask i włączyć obie lampy. `start.zmrok: true` ustawia warunki ćwiczenia.
+- Cele są wykonywane kolejno, po osiągnięciu obszaru POI. `zbierz_obwarzanka`, `zbierz_bursztyn` i `zbierz_szyszke` wymagają dojścia z rowerem do oznaczonej znajdźki i odpowiedzi na pytanie przypisane w warstwie `collectibles`. Zdobycz z profilu liczy się przy ponownym przejeździe. `odbierz` i `oddaj` bez własnego `poi` korzystają z ostatniego wskazanego POI. `wymagany_nawyk` wymaga werdyktu `good` dla wskazanej reguły w trakcie danego celu.
+- `przygotuj_rower` może być pierwszym celem misji. Do jego ukończenia trzeba zapiąć kask i włączyć obie lampy. Pole `wymagana_kamizelka: true` dodaje kamizelkę do wyposażenia konkretnego ćwiczenia. `start.zmrok: true` ustawia warunki ćwiczenia.
 - `skrot.odcinek` wskazuje strefę Tiled objętą znakiem B-1 lub B-2 bez wyjątku dla rowerów. Za jazdę rowerem przez tę strefę silnik wystawia zwykły werdykt zgodnie z wagą reguły. Podsumowanie misji informuje o nielegalnym przejeździe i odjęciu premii za czas. Prowadzenie roweru pozostaje dozwolone.
 - `wyscig.trasa_rywala` wskazuje polilinię Tiled w warstwie `race_routes`. Wynik rywala uwzględnia werdykty z jego przejazdu. Do zaliczenia wyścigu trzeba zdobyć od niego więcej punktów.
 - `przesylka.delikatna` włącza pasek wstrząsów. Szybka jazda po nierównościach, ostre hamowanie i uderzenie w krawężnik podnoszą jego poziom między odbiorem a oddaniem. Balans wyznacza progi premii za płynność i zakończenia próby.
@@ -188,6 +188,16 @@ Finał przyznaje 8–12 żetonów i naklejkę do kolekcji, raz na wątek w każd
 | Akt 1 | `GDA-A1-01` Latarenki na Długi Targ · `GDA-A1-02` Bursztynowa układanka · `GDA-A1-03` Trzy błyski Żurawia | Delikatna dostawa po kostce i objazd B-1, trzy zagadki drogowe i prowadzenie roweru na kładce po zmroku |
 | Akt 2 | `GDA-A2-01` Zapis sygnału · `GDA-A2-02` Przystanek nad Motławą · `GDA-A2-03` Wtyk zza torów | Sprawdzenie, czy przejazd rowerowy jest wolny, ustąpienie wysiadającym na przystanku bez wysepki, jazda poboczem i oczekiwanie na otwarcie zapór |
 | Akt 3 | `GDA-A3-01` Obudowa na wietrze · `GDA-A3-02` Pomoc dla Turbo · `GDA-A3-03` Światło nad stocznią | Prędkość i objazd na zapiaszczonej drodze, bezpieczna reakcja po upadku i rozmowa z 112, przejazd kolumny otwartą alejką |
+
+## Kampania — WIEŚ I LAS
+
+Kampania i Wolna jazda używają tych samych identyfikatorów szkoleń. Po `WIE-B-01`–`WIE-B-04` SzprychaApp odblokowuje sześć misji głównych.
+
+| Akt | Misje | Ćwiczenie |
+| --- | --- | --- |
+| 1 | `WIE-A1-01`–`WIE-A1-02` | Dostawa do szkoły prawym poboczem, odstęp przy wyprzedzaniu i trzy zagadki na dziedzińcu. |
+| 2 | `WIE-A2-01`–`WIE-A2-02` | Postój i bezpieczny wjazd na niestrzeżony przejazd oraz powrót o zmroku w kasku, z lampkami i kamizelką. |
+| 3 | `WIE-A3-01`–`WIE-A3-02` | Pierwsza pomoc przy drodze gruntowej, włączenie się do ruchu z gospodarstwa i objazd odcinka z B-1. |
 
 ## Wspólne — Miasteczko Ruchu Drogowego
 - **Plac manewrowy:** PLAC-01 ósemka, PLAC-02 slalom, PLAC-03 wąski tor, PLAC-04 zatrzymanie w polu, PLAC-05 ruszanie i sygnalizacja, PLAC-06 jazda z jedną ręką (sygnalizowanie skrętu). Każdy element: brąz/srebro/złoto czasowe, ale tylko przejazd bez dotknięcia linii/pachołka i bez podparcia nogą się liczy.

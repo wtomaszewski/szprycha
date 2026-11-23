@@ -471,7 +471,7 @@ export class City extends Scene {
       this.traffic.road.agents,
     );
     const tilemap = this.make.tilemap({ key: mapId });
-    const scenery = drawMapDecorations(this, tilemap, mapId);
+    const scenery = drawMapDecorations(this, tilemap, mapId, definition?.id);
     this.citySound = new CitySound(this.world, scenery.peacocks);
     this.worldWidth = tilemap.widthInPixels;
     this.worldHeight = tilemap.heightInPixels;
@@ -827,6 +827,12 @@ export class City extends Scene {
         },
         () => {
           this.controls.setLights(true);
+          this.updateMissionHud();
+        },
+        () => {
+          this.progress.store.change((profile) => {
+            profile.reflectiveVest = true;
+          });
           this.updateMissionHud();
         },
         () => {
@@ -1929,6 +1935,7 @@ export class City extends Scene {
       { x: this.rider.x * scale, y: this.rider.y * scale },
       this.rulesRider.helmet.fastened,
       this.controls.actions.lights,
+      this.progress.store.profile.reflectiveVest,
       this.missionInterrupted,
       this.checkpointHint,
       this.rider.speed,
@@ -2045,6 +2052,7 @@ export class City extends Scene {
         ? {
             helmet: rider.helmet.worn && rider.helmet.fastened,
             lights: rider.lights!.front && rider.lights!.rear,
+            vest: rider.reflectiveVest,
           }
         : undefined,
       rider.speed,

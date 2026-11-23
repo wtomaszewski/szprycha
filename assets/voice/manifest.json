@@ -466,6 +466,54 @@
       "text": "Już się ściemnia. Zapnij kask, włącz światła i zrób próbne kółko po placu.",
       "hash": "626c885ba883f2ba36939134939e7765dc1141825f0a8cd2d9b7df4cbdf261df"
     },
+    "dialogi.WIE-A1-01.koniec": {
+      "text": "Dzięki! Lena znalazła na dziedzińcu trzy szyszki z zagadkami.",
+      "hash": "aa32a20702888d5830bdc16de557fc35a4b3ffbbee2f1d66c3592488d54fedbb"
+    },
+    "dialogi.WIE-A1-01.start": {
+      "text": "Przy szkole czekają na nasze szyszki do zajęć. Jedź poboczem, aż zobaczysz bramkę.",
+      "hash": "4de4fcbe5be0d52a98230e803c79ec585f1665a52ae652e4217e5406fb8940ce"
+    },
+    "dialogi.WIE-A1-02.koniec": {
+      "text": "Zagadki pasują do prawdziwej trasy. Tymczasem w aplikacji ktoś dopisał skrót przez gospodarstwo.",
+      "hash": "358de9c5f8ed7335066521cf3f4489c5501fae3822881c93634441fc90784e66"
+    },
+    "dialogi.WIE-A1-02.start": {
+      "text": "Każda szyszka ma zagadkę o drodze do szkoły. Sprawdź bramkę, ławkę i ganek.",
+      "hash": "aaf539e8bd18141dfa52f8f717015150538e73a61b0a00bfe838dfd8fd575a44"
+    },
+    "dialogi.WIE-A2-01.koniec": {
+      "text": "Szkic pasuje do znaków. Pamiętam ten skrót z dawnej próby Zakłócacza.",
+      "hash": "eb074aa4ed6a9a0b1c6cc8b20eb7213d9dc80656dc27de9c9a7521659ad9c94d"
+    },
+    "dialogi.WIE-A2-01.start": {
+      "text": "Porównamy szkic z mapą w telefonie. Zawieź go na drugą stronę torów i uważaj na pociąg.",
+      "hash": "d62817a76f982f424334dbf0429b82543011f1ff97148459403d1476581e9afd"
+    },
+    "dialogi.WIE-A2-02.koniec": {
+      "text": "W świetle reflektorów kamizelka była dobrze widoczna.",
+      "hash": "11c5a1e8cf6071b5601bd2ff1a8c17f17a4fb1a56a484217614d30c38d0ef382"
+    },
+    "dialogi.WIE-A2-02.start": {
+      "text": "Zrobiło się ciemno. Włącz lampki, a kamizelka pomoże kierowcom zobaczyć Cię wcześniej.",
+      "hash": "18c8e22175bcedb892f70efb895db9019ed4d18407031b670a814214142281b7"
+    },
+    "dialogi.WIE-A3-01.koniec": {
+      "text": "Rowerzysta odpowiada, a dorosły już z nim jest. Najpierw zadbałeś o bezpieczne miejsce.",
+      "hash": "d54a708ff83dca0e61cd6e5a9965511951a7fba1bc8d41776bcc4059b05288ab"
+    },
+    "dialogi.WIE-A3-01.start": {
+      "text": "Przy polu ktoś przewrócił się na drodze gruntowej. Zwolnij i rozejrzyj się, zanim podejdziesz.",
+      "hash": "3949ea12014420e4b914f4f23c7921a56af2888746d8feb54483ec5ae37eddbe"
+    },
+    "dialogi.WIE-A3-02.koniec": {
+      "text": "Mapa dotarła. SzprychaApp znów prowadzi do szkoły i przez wieś otwartymi drogami.",
+      "hash": "3e8cead48a67cd70d1a98642e1cc92c1cb88cac0a46f4d334390a1fad06cc270"
+    },
+    "dialogi.WIE-A3-02.start": {
+      "text": "Tu jest sprawdzona mapa. Przy bramie zobaczysz znak, którego brakowało w mapie z próby Zakłócacza.",
+      "hash": "dea00b08e763eb53df138706126331aa0c923191d1be1b1bc90d1b4ccf0afe06"
+    },
     "dialogi.WRO-A1-01.koniec_tekst": {
       "text": "Są wszyscy! Kwiaciarka widziała kogoś, kto chował krasnale także przy placu Solnym.",
       "hash": "302a87a59865ddbddbb0b7f05d0c9fd52328c825c31277cc7a685124522d6d1b"
@@ -1097,6 +1145,30 @@
     "misje.WAW-T-01.powrot_stop": {
       "text": "Wróć i zatrzymaj się całkowicie przed linią STOP.",
       "hash": "3643187a7164c57f8858f9567904f252c2514d98004afc4e29a46c16e84141cf"
+    },
+    "misje.WIE-A3-01.dalej": {
+      "text": "Miejsce jest bezpieczne. Co robisz teraz?",
+      "hash": "0565627c1e3bd4fd263cd9e17abd9b71cead1f45d75ccac115fedc83ca6a8df9"
+    },
+    "misje.WIE-A3-01.dalejWyjasnienie": {
+      "text": "Zawołaj dorosłego i sprawdź, czy rowerzysta reaguje na głos.",
+      "hash": "3c9fe590bbb63e1116aa7e61db17aae1366bdb6040ca39ac883afa249cc2dc20"
+    },
+    "misje.WIE-A3-01.pytanie": {
+      "text": "Przy drodze gruntowej przewrócił się rowerzysta. Co robisz najpierw?",
+      "hash": "044f344ebea5ee256fee37170657d3293eefd68b4349c75ae314ca28964de53c"
+    },
+    "misje.WIE-A3-01.wyjasnienie": {
+      "text": "Najpierw zadbaj o bezpieczeństwo swoje i innych.",
+      "hash": "923253f83ae9ef36265e21d115241b4672bd149e7ecb255454235ea0b74bc535"
+    },
+    "misje.WIE-A3-02.pytanie": {
+      "text": "Aplikacja podpowiada skrót, ale przy wjeździe stoi znak B-1 bez wyjątków. Co robisz?",
+      "hash": "2eb971b9545fa04475553acd8e92fffc218346606e37e526db6b9374f09bc856"
+    },
+    "misje.WIE-A3-02.wyjasnienie": {
+      "text": "B-1 zakazuje ruchu także rowerom. Zostań na dozwolonej trasie.",
+      "hash": "8c5852d2d493e54d44570f0c52f225bbfd98e116a52a19cad756f095c23de6d8"
     },
     "misje.WIE-B-01.pytanie": {
       "text": "Jaki odstęp od rowerzysty musi zachować kierowca przy wyprzedzaniu?",

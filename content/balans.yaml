@@ -61,6 +61,9 @@ licencja:
     gdansk:
       start: gda-przejazd-start
       punkty: [gda-przejazd-postoj, gda-przejazd-meta]
+    wies:
+      start: wie-tory-start
+      punkty: [wie-stop-przed-torami, wie-za-torami]
 silnik:
   ttc_minor_s: 2.0
   ttc_major_s: 1.0
