@@ -18,6 +18,7 @@ const pins = [
   { id: 'gdansk', x: 319, y: 79 },
   { id: 'poznan', x: 208, y: 144 },
   { id: 'krakow', x: 365, y: 258 },
+  { id: 'wies', x: 317, y: 155 },
 ] as const;
 
 // A simplified outline of Poland in four-pixel steps, from the Baltic coast

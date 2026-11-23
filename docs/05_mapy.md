@@ -229,25 +229,52 @@ Przy uruchomionym Vite pomiar odtwarza `BENCH_VIEWPORT=640x360 BENCH_MAP=gdansk 
 
 Zrzuty pokazują [wybór miasta](screenshots/125-mapa-polski.webp), [Długi Targ](screenshots/125-dlugi-targ.webp), [Żuraw](screenshots/125-zuraw.webp), [kładkę](screenshots/125-kladka.webp), [stocznię](screenshots/125-stocznia.webp), [promenadę](screenshots/125-promenada.webp), [plażę](screenshots/125-plaza.webp) i [tramwaj](screenshots/125-tramwaj.webp).
 
+## Wieś i las
+
+Wybierz **Wolna jazda → Wieś i las**, aby zacząć na poboczu drogi gminnej. Po 85 sekundach zapada zmrok. Ćwiczenia są w SzprychaApp. PWA pobiera mapę przy pierwszej wizycie, po której można ją otworzyć offline. Kolaż ma 128 × 96 kafli. Polecenie `npm run map:generate:wies` odtwarza mapę z danych generatora. [Mapa Tiled](../maps/wies.tmj)
+
+| Odcinek | Sytuacje |
+| --- | --- |
+| Droga gminna | Jezdnia bez chodnika i linii. Na północy utwardzone pobocza, które rowerzysta wykorzystuje, gdy są przejezdne. Po końcu pobocza jedzie przy prawej krawędzi jezdni. Piesi idą po lewej stronie. Auta zachowują co najmniej metr bocznego odstępu przy wyprzedzaniu. |
+| Przystanek i pole | Szary autobus regionalny zatrzymuje się przy wiacie. Ciągnik jeździ drogą gruntową przy polu. |
+| Tory i mostek | Jednotorowy przejazd bez zapór i świateł z A-10 i G-3 z obu stron. Pociąg okresowo przecina drogę. Drewniany mostek prowadzi nad strumieniem. |
+| Osada i las | Gospodarstwo z wyjazdem z drogi wewnętrznej, skrzyżowania równorzędne i ze STOP-em na podporządkowanej, małe rondo, strefa zamieszkania, leśny ciąg wspólny i ścieżka z B-9. |
+| Przy skansenie | Tramwaj i przystanek bez wysepki, sygnalizacja S-1 i S-2, DDR z przejazdem i S-6. |
+
+**Ćwiczenia.** WIE-B-01 obejmuje pobocze i odstęp przy wyprzedzaniu. WIE-B-02 zalicza przejazd po zatrzymaniu się przed torami i sprawdzeniu, czy są wolne. W tym ćwiczeniu na drodze wyłączono pozostały ruch, a pociąg kursuje według rozkładu mapy. WIE-B-03 wymaga kasku i świateł po zmroku. Kamizelka jest zalecana podczas jazdy, a pieszy na poboczu poza obszarem zabudowanym po zmroku używa widocznego odblasku. WIE-B-04 ćwiczy wyjazd z gospodarstwa i wybór bezpiecznego miejsca do udzielenia pomocy. Wjazd w skrót z B-1 kończy próbę bez premii czasowej.
+
+`npm run coverage:maps -- --strict` sprawdza 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/wies.test.ts` obejmuje przejście wszystkich ćwiczeń, odstęp przy wyprzedzaniu i trzy próby po dziesięć minut ruchu. `npm run test:e2e -- tests/e2e/wies.spec.ts` sprawdza wybór mapy i ćwiczeń oraz tworzy zrzuty. [Raport pokrycia](coverage.md#wieś-i-las)
+
+Pomiar wykonano kolejno na tej samej maszynie w Chromium 156.0.8078.79 headless, w Wolnej jeździe, z WebGL, pełną grafiką, rozdzielczością 640 × 360 i ograniczeniem CPU 4×.
+
+| Odcinek | Średnie FPS | p95 klatki |
+| --- | ---: | ---: |
+| Wieś i las, droga gminna | 56,38 | 16,8 ms |
+| Warszawa, Starówka | 54,65 | 33,2 ms |
+
+Przy uruchomionym Vite pomiar odtwarza `BENCH_VIEWPORT=640x360 BENCH_MAP=wies npm run benchmark:driving`. Dla Warszawy ustaw `BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free`.
+
+Zrzuty pokazują [wybór mapy](screenshots/127-mapa-polski.webp), [drogę gminną](screenshots/127-gminna.webp), [przystanek](screenshots/127-przystanek.webp), [przejazd kolejowy](screenshots/127-kolej.webp), [mostek](screenshots/127-mostek.webp), [ciągnik przy polu](screenshots/127-ciagnik.webp), [gospodarstwo](screenshots/127-gospodarstwo.webp) i [jazdę po zmroku](screenshots/127-noc.webp).
+
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
 Wzorowane na prawdziwych szkolnych miasteczkach ruchu: małe skrzyżowania każdego typu, mini-rondo, sygnalizacja, przejazd kolejowy z zaporami, znaki z Albumu na tablicach, **plac manewrowy** (ósemka, slalom, tor wąski, pole zatrzymania). Tu: samouczek, plac, quiz w budynku szkoły, egzamin Licencji.
 
 ## Tabela pokrycia (każde miasto musi mieć ✓ w każdym wierszu)
-| Sytuacja | Warszawa | Wrocław | Kraków | Gdańsk |
-|---|---|---|---| --- |
-| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody | Ołowianka i Brzeźno |
-| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu | Skrzyżowanie przy Długim Targu |
-| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa |
-| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku | Rondo przy stoczni |
-| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa |
-| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz | DDR nad Motławą, kontrapas w stoczni i promenada |
-| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary | Aleja i przeprawy przez Motławę |
-| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz | Dojście do Długiego Targu |
-| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu | Wyjazd z placu magazynowego |
-| Przejazd kolejowy | Mokotów | Zachód | Dębniki | Tory towarowe na południowym zachodzie |
-| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec | Pobocze przy torach i kładka przy Żurawiu |
-| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz | Stocznia |
-| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary | Kładka przy Żurawiu |
+| Sytuacja | Warszawa | Wrocław | Kraków | Gdańsk | Wieś i las |
+|---|---|---|---| --- | --- |
+| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody | Ołowianka i Brzeźno | Skrzyżowanie pod lasem |
+| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu | Skrzyżowanie przy Długim Targu | Droga gminna przy osadzie |
+| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Skansen |
+| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku | Rondo przy stoczni | Rondo przy lesie |
+| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Tramwaj przy skansenie |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz | DDR nad Motławą, kontrapas w stoczni i promenada | Zagrody i las |
+| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary | Aleja i przeprawy przez Motławę | Skansen |
+| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz | Dojście do Długiego Targu | Plac osady |
+| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu | Wyjazd z placu magazynowego | Gospodarstwo |
+| Przejazd kolejowy | Mokotów | Zachód | Dębniki | Tory towarowe na południowym zachodzie | Droga gminna |
+| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec | Pobocze przy torach i kładka przy Żurawiu | Północ drogi gminnej i rezerwat |
+| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz | Stocznia | Uliczka osady |
+| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary | Kładka przy Żurawiu | Ćwiczenie WIE-B-03 |
 
 ## Kolejne mapy (po MVP, kolejność wg popularności)
-Poznań (Ratusz z koziołkami, Stary Browar) · Łódź (Piotrkowska, Manufaktura) · **Wieś i las** (droga gminna, PKS, przejazd niestrzeżony, pole, las, ciągnik — szczególnie ważne dla dzieci spoza dużych miast) · Zakopane (Krupówki, Giewont w tle).
+Poznań (Ratusz z koziołkami, Stary Browar) · Łódź (Piotrkowska, Manufaktura) · Zakopane (Krupówki, Giewont w tle).

@@ -5,7 +5,12 @@ import {
   type EnvState,
   type RiderState,
 } from '../types';
-import { contains, type Crossing, type WorldModel } from '../world/WorldModel';
+import {
+  contains,
+  railBlocksEntry,
+  type Crossing,
+  type WorldModel,
+} from '../world/WorldModel';
 import { distanceInto } from '../priority/ConflictGeometry';
 
 export class RailwayDetector {
@@ -14,6 +19,8 @@ export class RailwayDetector {
   private penalized = false;
   private passed = false;
   private stoppedAt?: number;
+  private stoppedBefore = false;
+  private entrySide?: boolean;
   private readonly ahead = new Set<string>();
 
   constructor(private readonly world: WorldModel) {}
@@ -25,7 +32,9 @@ export class RailwayDetector {
     env: EnvState,
   ) {
     let crossing: Crossing | undefined;
+    if (this.inside && this.crossing?.rail?.passive) crossing = this.crossing;
     for (const box of this.world.crossings) {
+      if (crossing) break;
       if (
         box.kind !== 'rail' ||
         (!contains(box, rider.pos) &&
@@ -41,16 +50,29 @@ export class RailwayDetector {
       this.penalized = false;
       this.passed = false;
       this.stoppedAt = undefined;
+      this.stoppedBefore = false;
+      this.entrySide = undefined;
       this.ahead.clear();
     }
     if (!crossing) return;
     const inside = contains(crossing, rider.pos);
+    const entering = inside && !this.inside;
+    const leaving = !inside && this.inside;
+    const passive = crossing.rail?.passive;
+    const axis = crossing.axis;
+    const start = crossing[axis];
+    const end = start + (axis === 'x' ? crossing.width : crossing.height);
+    const side = rider.pos[axis] < (start + end) / 2;
+    const distance = distanceInto(crossing, rider.pos, rider.heading);
+    if (passive && !inside && !leaving && distance <= 4 && rider.speed < 0.1)
+      this.stoppedBefore = true;
+    if (passive && entering) this.entrySide = side;
+    this.inside = inside;
     const rail =
-      inside && !this.inside
+      entering || (passive && inside)
         ? this.world.railState(crossing, at, env)
         : undefined;
-    this.inside = inside;
-    if (!this.penalized && rail && (rail.flashing || rail.barrier !== 'open')) {
+    if (!this.penalized && railBlocksEntry(rail)) {
       this.penalized = true;
       return verdict(
         'MSC-01',
@@ -61,7 +83,27 @@ export class RailwayDetector {
         { zoneId: crossing.id },
       );
     }
-    if (inside && rider.mode === 'riding' && rider.speed < 0.1) {
+    if (passive && leaving) {
+      const safelyCrossed =
+        this.stoppedBefore &&
+        this.entrySide !== undefined &&
+        (this.entrySide ? rider.pos[axis] >= end : rider.pos[axis] < start) &&
+        !this.penalized &&
+        !this.passed;
+      this.stoppedBefore = false;
+      if (safelyCrossed) {
+        this.passed = true;
+        return verdict(
+          'MSC-01',
+          'good',
+          at,
+          rider,
+          { stoppedBeforeTracks: true },
+          { zoneId: crossing.id },
+        );
+      }
+    }
+    if (inside && (passive || rider.mode === 'riding') && rider.speed < 0.1) {
       this.stoppedAt ??= Math.round(at * TICKS_PER_SECOND);
       if (
         !this.penalized &&
@@ -86,7 +128,10 @@ export class RailwayDetector {
     const dy = Math.sin(rider.heading);
     for (const agent of agents) {
       if (
-        (agent.kind !== 'car' && agent.kind !== 'cyclist') ||
+        (agent.kind !== 'car' &&
+          agent.kind !== 'cyclist' &&
+          agent.kind !== 'bus' &&
+          agent.kind !== 'tractor') ||
         agent.speed <= 0 ||
         Math.cos(rider.heading - agent.heading) < 0.9 ||
         distanceInto(crossing, agent.pos, agent.heading) > 100

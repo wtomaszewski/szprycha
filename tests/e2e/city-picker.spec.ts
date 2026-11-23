@@ -24,7 +24,10 @@ test('selects a city, keeps the latest choice, and limits orders to its campaign
   await page.mouse.move(0, 0);
   await page.screenshot({ path: info.outputPath('mapa-polski.png') });
   await cityPin(page, 'wroclaw').press('Enter');
-  await expect(canvas).toHaveAttribute('data-mission', 'WRO-T-01');
+  // The first entry loads the driving scene on demand, within the 12 s startup budget.
+  await expect(canvas).toHaveAttribute('data-mission', 'WRO-T-01', {
+    timeout: 12_000,
+  });
   await expect(canvas).toHaveAttribute('data-map', 'miasteczko');
 
   await page.reload();

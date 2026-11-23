@@ -2,7 +2,7 @@ import type { GameContent } from '../../content/schemas';
 import { preferVerdict } from '../deduplication';
 import { bikeLaneDirection } from '../detectors/GDZIE-02';
 import { keepRight } from '../detectors/GDZIE-03';
-import { useShoulder } from '../detectors/GDZIE-03b';
+import { shoulderApplies, useShoulder } from '../detectors/GDZIE-03b';
 import { livingZone } from '../detectors/GDZIE-07';
 import { ridingAbreast } from '../detectors/GDZIE-08';
 import { prohibitedRoad } from '../detectors/GDZIE-09';
@@ -108,13 +108,20 @@ export class RoadVisit {
     )
       this.report(bikeLaneDirection(zone, rider, at), emit);
 
+    const rural = roadway && this.world.ruralShoulders.get(roadway);
+    const shoulder = rural
+      ? rural.find((candidate) => shoulderApplies(candidate, rider))
+      : lane?.shoulder;
     if (
       moving &&
       !excluded &&
-      lane?.shoulder &&
-      this.canReport('GDZIE-03b', lane.shoulder.id, tick)
+      shoulder &&
+      this.canReport('GDZIE-03b', shoulder.id, tick)
     )
-      this.report(useShoulder(lane, rider, agents, at), emit);
+      this.report(
+        useShoulder(shoulder, rider, agents, at, rural ? undefined : lane),
+        emit,
+      );
 
     const clearRoad =
       moving &&
@@ -122,7 +129,7 @@ export class RoadVisit {
       !excluded &&
       !living &&
       !lane?.parallelBikeInfra &&
-      !lane?.shoulder?.shoulderUsable &&
+      !shoulder?.shoulderUsable &&
       !this.nearParkedCar(rider.pos)
         ? roadway
         : undefined;

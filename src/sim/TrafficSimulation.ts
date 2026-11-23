@@ -18,6 +18,7 @@ import type { LaneEdge, Movement } from '../rules/world/LaneGraph';
 import { RoadPath } from '../rules/world/RoadPath';
 import {
   contains,
+  railBlocksEntry,
   distanceToLine,
   type Box,
   type Crossing,
@@ -272,8 +273,7 @@ export class TrafficSimulation {
     for (const crossing of this.world.crossings) {
       if (crossing.kind === 'rail') {
         const rail = this.world.railState(crossing, at, env);
-        if (rail && (rail.flashing || rail.barrier !== 'open'))
-          this.closedCrossings.push(crossing);
+        if (railBlocksEntry(rail)) this.closedCrossings.push(crossing);
       } else if (
         crossing.signal?.stopRoadTraffic &&
         this.world.crossingPhase(crossing, at, env) === 'green'
@@ -554,6 +554,11 @@ export class TrafficSimulation {
     const next = car.crossing ? car.route!.to.path : car.route?.path;
     const footprint =
       trafficFootprints['kind' in other ? other.kind : 'cyclist'];
+    if (
+      car.agent.kind === 'car' &&
+      (!('kind' in other) || other.kind === 'cyclist')
+    )
+      clearance = Math.max(clearance, this.world.cyclingClearance);
     const lateral = this.lateralOffset(car);
     return Math.min(
       path.obstacleAhead(
@@ -616,7 +621,8 @@ export class TrafficSimulation {
   ) {
     const speed = car.agent.speed;
     const speedLimit = Math.min(
-      (car.entry ? 4.2 : CRUISE_SPEED) * car.cruiseFactor,
+      (car.entry ? 4.2 : (this.world.trafficCruise ?? CRUISE_SPEED)) *
+        car.cruiseFactor,
       car.edge.speedLimit / 3.6,
     );
     const hasRightOfEntry =

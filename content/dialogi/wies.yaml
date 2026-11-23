@@ -1,0 +1,5 @@
+zapowiedzi:
+  - { regula: GDZIE-12, emocja: neutral, tekst: dialogi.wies_zapowiedzi.GDZIE-12 }
+  - { regula: MAN-13, emocja: neutral, tekst: dialogi.wies_zapowiedzi.MAN-13 }
+  - { regula: GDZIE-03, emocja: neutral, tekst: dialogi.wies_zapowiedzi.GDZIE-03 }
+  - { regula: WYP-06, emocja: neutral, tekst: dialogi.wies_zapowiedzi.WYP-06 }

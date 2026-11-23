@@ -136,12 +136,12 @@
       "id": "traffic-large",
       "file": "generated/traffic-large.png",
       "width": 192,
-      "height": 384,
+      "height": 576,
       "frameWidth": 32,
       "frameHeight": 64,
-      "frames": 36,
+      "frames": 54,
       "directions": 1,
-      "description": "Dostawczak i autobus; po trzy malowania. Układ świateł jak w atlasie aut. Kierunek źródłowy: północ."
+      "description": "Dostawczak, autobus i ciągnik; po trzy malowania. Układ świateł jak w atlasie aut. Kierunek źródłowy: północ."
     },
     {
       "id": "traffic-emergency",

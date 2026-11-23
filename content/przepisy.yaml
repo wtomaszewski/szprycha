@@ -202,6 +202,16 @@ przepisy:
     waga_bledu: minor
     feedback: "Zwolnij i zostaw miejsce pieszym, a jeśli ścieżka jest podzielona, wybierz część dla rowerów."
 
+  - id: GDZIE-12
+    modul: M02
+    tytul: Pieszy na drodze bez chodnika
+    dla_dziecka: "Bez chodnika lub drogi dla pieszych idź lewym poboczem, a gdy nie da się nim iść, lewą krawędzią jezdni i ustępuj pojazdom. Gdy po zmroku idziesz poboczem poza obszarem zabudowanym, używaj widocznego odblasku."
+    podstawa: "PoRD, art. 11 ust. 1, 2, 4a i 5"
+    weryfikacja: false
+    detektor: quiz-only
+    waga_bledu: null
+    feedback: "Idź lewą stroną drogi, żeby widzieć nadjeżdżające pojazdy."
+
   # ───────────── M03 — Znaki i sygnały ─────────────
   - id: SYG-03
     modul: M03
@@ -523,17 +533,27 @@ przepisy:
     waga_bledu: major
     feedback: "Nie wyprzedzaj na przejściu, przejeździe, skrzyżowaniu bez świateł ani przed torami i nie omijaj auta, które stoi, by przepuścić pieszych."
 
+  - id: MAN-13
+    modul: M05
+    tytul: Odstęp kierowcy przy wyprzedzaniu roweru
+    dla_dziecka: "Kierowca wyprzedzający rower musi zostawić co najmniej metr odstępu."
+    podstawa: "PoRD, art. 24 ust. 2"
+    weryfikacja: false
+    detektor: quiz-only
+    waga_bledu: null
+    feedback: "Kierowca zostawia co najmniej metr, a gdy brakuje miejsca, czeka."
+
   # ───────────── M06 — Szczególne miejsca i warunki ─────────────
   - id: MSC-01
     modul: M06
     tytul: Przejazd kolejowy
-    dla_dziecka: "Przed przejazdem kolejowym zwolnij i rozejrzyj się. Nie wjeżdżaj, gdy migają czerwone światła, dzwoni sygnał albo zapory się opuszczają lub podnoszą. Przejedź sprawnie, bez zatrzymywania na torach."
+    dla_dziecka: "Przed przejazdem zwolnij i sprawdź, czy nie jedzie pociąg. Czekaj, gdy nadjeżdża pociąg, migają światła, dzwoni sygnał lub ruszają zapory. Przejedź bez zatrzymywania się na torach."
     podstawa: "PoRD — przejazd kolejowy; znaki A-9, A-10, G-1, G-3"
     weryfikacja: false
     detektor: sim
     waga_bledu: major
-    dobry_nawyk: "Zatrzymanie przed przejazdem przy sygnale"
-    feedback: "Gdy migają czerwone światła, dzwoni sygnał lub zapory się ruszają, stój przed torami, a przez tory przejedź bez zatrzymywania."
+    dobry_nawyk: "Zatrzymanie przed torami i przejazd po upewnieniu się, że są wolne"
+    feedback: "Gdy nadjeżdża pociąg, migają czerwone światła, dzwoni sygnał lub ruszają zapory, czekaj, a przez tory przejedź bez zatrzymywania."
   - id: MSC-02
     modul: M06
     tytul: Przystanek tramwajowy bez wysepki

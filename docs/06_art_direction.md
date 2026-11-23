@@ -121,6 +121,14 @@ Tramwaje Krakowa i Gdańska mają srebrne pasy wzdłuż grafitowej bryły, ciemn
 
 **Obwarzanki (Kraków).** Drewniana pamiątka 16×16 w kształcie plecionego pierścienia. Ciepły bursztynowy kolor, jasne okruszki i ciemny obrys odcinają ją od szarej kostki. Własny sprite w `src/render/CityCollectibles.ts`.
 
+### Wieś i las
+
+- **Gospodarstwo**: długa ceglana stodoła z wysokim, dwuspadowym dachem, niższy jasny dom i mały kamienny spichlerz.
+- **Pole i las**: regularne rzędy sadzonek na pasach brązowej ziemi, nieregularne skupiska koron drzew na skraju drogi, droga gruntowa w ciepłych odcieniach.
+- **Mostek**: krótka, wąska przeprawa nad strumieniem z brązowymi balustradami i widocznymi poprzeczkami.
+- **Przystanek i ruch drogowy**: niska wiata z ławką i niebieski znak D-15. Autobus jest srebrnoszary. Zielony ciągnik ma krótki przód, oszkloną kabinę i duże tylne koła.
+- **Tory**: na podsypce leży jedna para szyn. Z obu podejść widać A-10 i biało-czerwony krzyż św. Andrzeja.
+
 ## 7. Kafelki (tileset minimum)
 Asfalt (zwykły, łatany, mokry), linie (ciągła, przerywana, P-10 zebra, P-11 przejazd rowerowy — czerwony/kratka, P-12, P-13 trójkąty, P-23 symbol roweru, strzałki), chodnik (płyty), kostka, kocie łby, krawężniki (z przejściami obniżonymi), DDR (czerwona nawierzchnia), trawa, żwir, pobocze, tory tramwajowe (w jezdni i na zieleni), tory kolejowe, zapory (animowane), woda (animowana 4 klatki), nabrzeże, schodki, piasek plaży miejskiej, liście jesienią, śnieg (wariant zimowy).
 

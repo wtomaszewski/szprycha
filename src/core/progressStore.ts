@@ -190,7 +190,7 @@ const profileVersion = 11;
 const profileSchema = storyProfileSchema.extend({
   version: z.literal(profileVersion),
   selectedCity: campaignCity.optional(),
-  freeRideCity: z.enum(['krakow', 'gdansk']).optional(),
+  freeRideCity: z.enum(['krakow', 'gdansk', 'wies']).optional(),
   obwarzanki: z.array(id).optional(),
   graphicsQuality: z.enum(graphicsQualities).optional().catch(undefined),
 });

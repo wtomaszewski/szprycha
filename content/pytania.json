@@ -1138,6 +1138,39 @@
   "wyjasnienie": "Biały symbol roweru wskazuje miejsce przeznaczone dla rowerzystów.",
   "zrodlo": "wlasne",
   "weryfikacja": true
+ },
+ {
+  "id": "Q063",
+  "modul": "M02",
+  "przepisy": ["GDZIE-12"],
+  "poziom": 1,
+  "pytanie": "Którędy idziesz na zwykłej drodze bez chodnika, jeśli po obu stronach jest pobocze?",
+  "odpowiedzi": ["Lewym poboczem", "Prawym poboczem", "Środkiem jezdni"],
+  "poprawna": 0,
+  "wyjasnienie": "Idź lewym poboczem, żeby widzieć nadjeżdżające pojazdy.",
+  "zrodlo": "PoRD, art. 11 ust. 1 i 2"
+ },
+ {
+  "id": "Q064",
+  "modul": "M05",
+  "przepisy": ["MAN-13"],
+  "poziom": 1,
+  "pytanie": "Jaki odstęp od roweru musi zachować kierowca przy wyprzedzaniu?",
+  "odpowiedzi": ["40 centymetrów", "Co najmniej metr", "Wystarczy szerokość dłoni"],
+  "poprawna": 1,
+  "wyjasnienie": "Kierowca zostawia co najmniej metr, a gdy brakuje miejsca, czeka.",
+  "zrodlo": "PoRD, art. 24 ust. 2"
+ },
+ {
+  "id": "Q065",
+  "modul": "M02",
+  "przepisy": ["GDZIE-12"],
+  "poziom": 1,
+  "pytanie": "Co musi mieć pieszy po zmroku poza obszarem zabudowanym, gdy idzie poboczem?",
+  "odpowiedzi": ["Widoczny odblask", "Tylko jasną czapkę", "Wystarczy dowolny plecak"],
+  "poprawna": 0,
+  "wyjasnienie": "Idąc poboczem, używaj odblasku widocznego dla nadjeżdżających kierowców.",
+  "zrodlo": "PoRD, art. 11 ust. 4a"
  }
  ]
 }

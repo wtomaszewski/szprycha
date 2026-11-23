@@ -58,6 +58,7 @@ const zoneSchema = z.enum([
 ]);
 const railSchedule = z.object({
   barriers: z.boolean().default(true),
+  passive: z.literal(true).optional(),
   open_s: z.number().positive(),
   lowering_s: z.number().positive(),
   closed_s: z.number().positive(),
@@ -75,6 +76,16 @@ const railStates = {
   raising: { barrier: 'raising', flashing: true },
 } as const satisfies Record<RailState['barrier'], RailState>;
 const flashingWithoutBarrier: RailState = { barrier: 'open', flashing: true };
+const trainApproaching: RailState = {
+  barrier: 'open',
+  flashing: false,
+  trainApproaching: true,
+};
+export function railBlocksEntry(rail?: RailState) {
+  return Boolean(
+    rail && (rail.flashing || rail.trainApproaching || rail.barrier !== 'open'),
+  );
+}
 const crossingSchema = z.enum(['pedestrian', 'bike', 'combined', 'rail']);
 const intersectionSchema = z.enum([
   'equal',
@@ -125,6 +136,7 @@ const zoneProperties = z.object({
   direction: sideSchema.optional(),
   parallelBikeInfra: z.string().optional(),
   shoulderUsable: z.boolean().optional(),
+  ruralShoulders: z.string().optional(),
   sharedSide: z.enum(['pedestrian', 'bike']).optional(),
   surface: z.enum(['rough']).optional(),
 });
@@ -291,6 +303,9 @@ export class WorldModel {
   readonly driveways: readonly Driveway[];
   readonly parkedCars: readonly Box[];
   readonly duskAt: number;
+  readonly cyclingClearance: number;
+  readonly trafficCruise?: number;
+  readonly ruralShoulders = new Map<Zone, readonly Zone[]>();
   readonly duskInFreeRideOnly: boolean;
   readonly tramStops: readonly Box[];
   readonly intersections: readonly Intersection[];
@@ -393,6 +408,16 @@ export class WorldModel {
           (b.width_m ?? 0) - (a.width_m ?? 0),
       );
     const mapProperties = properties(map);
+    this.cyclingClearance = z
+      .number()
+      .nonnegative()
+      .default(0)
+      .parse(mapProperties.cycling_clearance_m);
+    this.trafficCruise = z
+      .number()
+      .positive()
+      .optional()
+      .parse(mapProperties.traffic_cruise_mps);
     this.duskAt =
       z.number().nonnegative().optional().parse(mapProperties.dusk_at_s) ??
       Infinity;
@@ -452,6 +477,8 @@ export class WorldModel {
           crossing.train.to_x <= crossing.x + crossing.width)
       )
         throw new Error(`Invalid train track: ${crossing.id}`);
+      if (crossing.rail?.passive && (crossing.rail.barriers || !crossing.train))
+        throw new Error(`Invalid passive rail crossing: ${crossing.id}`);
       if (typeof props.trafficGroup === 'string') {
         const group = crossingGroups.get(props.trafficGroup) ?? [];
         group.push(crossing);
@@ -468,6 +495,20 @@ export class WorldModel {
         Math.max(...group.map((crossing) => crossing.y + crossing.height)) - y;
       const area = { id, x, y, width, height };
       for (const crossing of group) crossing.trafficArea = area;
+    }
+    for (const road of this.zones) {
+      if (!road.ruralShoulders) continue;
+      this.ruralShoulders.set(
+        road,
+        road.ruralShoulders.split(',').map((id) => {
+          const shoulder = this.zones.find(
+            (zone) => zone.id === id && zone.kind === 'shoulder',
+          );
+          if (!shoulder?.shoulderUsable || !shoulder.direction)
+            throw new Error(`Invalid rural shoulder: ${id}`);
+          return shoulder;
+        }),
+      );
     }
     const intersections = layer('intersections').map(
       (object): Intersection => ({
@@ -597,8 +638,17 @@ export class WorldModel {
           )
             continue;
           if (
-            ['C-13', 'C-13/C-16', 'D-40', 'D-41', 'P-23'].includes(sign.code) &&
+            ['C-13', 'C-13/C-16', 'D-15', 'D-40', 'D-41', 'P-23'].includes(
+              sign.code,
+            ) &&
             this.zones.some(({ id }) => id === sign.affects)
+          )
+            continue;
+          if (
+            ['A-10', 'G-3'].includes(sign.code) &&
+            this.crossings.some(
+              ({ id, kind }) => id === sign.affects && kind === 'rail',
+            )
           )
             continue;
           throw new Error(`Unknown sign lane: ${sign.affects}`);
@@ -861,6 +911,7 @@ export class WorldModel {
     if (!rail) return undefined;
     const cycle = this.railCycle(rail, at);
     if (cycle < rail.open_s) return railStates.open;
+    if (rail.passive) return trainApproaching;
     if (!rail.barriers) return flashingWithoutBarrier;
     if (cycle < rail.open_s + rail.lowering_s) return railStates.lowering;
     if (cycle < rail.open_s + rail.lowering_s + rail.closed_s)

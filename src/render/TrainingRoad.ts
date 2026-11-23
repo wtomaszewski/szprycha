@@ -232,6 +232,18 @@ export class TrainingRoad {
             y + dy,
           );
         }
+      } else if (sign.code === 'D-15') {
+        signs
+          .fillStyle(0x3b5dc9)
+          .fillRect(x - 12, y - 14, 24, 25)
+          .fillStyle(0xf4f4f4)
+          .fillRect(x - 9, y - 11, 18, 19)
+          .fillStyle(0x1a1c2c)
+          .fillRect(x - 7, y - 7, 14, 11)
+          .fillCircle(x - 4, y + 4, 2)
+          .fillCircle(x + 4, y + 4, 2)
+          .fillStyle(0xf4f4f4)
+          .fillRect(x - 5, y - 5, 10, 4);
       } else if (sign.code === 'G-3') {
         for (const [width, color] of [
           [6, 0xe43b44],
@@ -455,7 +467,7 @@ export class TrainingRoad {
         )
       ) {
         const rail = this.world.railState(crossing, this.lightAt, environment);
-        if (rail)
+        if (rail && !crossing.rail?.passive)
           this.drawRailSignals(
             crossing,
             rail.flashing,

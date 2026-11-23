@@ -45,7 +45,8 @@
     "test:server": "vitest run server/tests",
     "screenshots:audit": "playwright test --config playwright.audit.config.ts",
     "map:generate:krakow": "tsx tools/gen-krakow-map.ts",
-    "map:generate:gdansk": "tsx tools/gen-gdansk-map.ts"
+    "map:generate:gdansk": "tsx tools/gen-gdansk-map.ts",
+    "map:generate:wies": "tsx tools/gen-wies-map.ts"
   },
   "dependencies": {
     "@capacitor/android": "8.6.2",

@@ -46,7 +46,7 @@ async function checkPrecache(dist: string) {
   );
   expect(lazy).toEqual(
     expect.arrayContaining(
-      ['warszawa', 'wroclaw', 'krakow', 'gdansk'].map((city) =>
+      ['warszawa', 'wroclaw', 'krakow', 'gdansk', 'wies'].map((city) =>
         expect.stringMatching(new RegExp(`^assets/${city}-.*\\.tmj$`)),
       ),
     ),
@@ -80,8 +80,9 @@ async function checkPrecache(dist: string) {
       expect.stringMatching(/^assets\/index-.*\.css$/),
       expect.stringMatching(/^assets\/rider-.*\.png$/),
       expect.stringMatching(/^assets\/PixelifySans-.*\.ttf$/),
-      ...['miasteczko', 'warszawa', 'wroclaw', 'krakow', 'gdansk'].map((city) =>
-        expect.stringMatching(new RegExp(`^assets/${city}-.*\\.tmj$`)),
+      ...['miasteczko', 'warszawa', 'wroclaw', 'krakow', 'gdansk', 'wies'].map(
+        (city) =>
+          expect.stringMatching(new RegExp(`^assets/${city}-.*\\.tmj$`)),
       ),
     ]),
   );

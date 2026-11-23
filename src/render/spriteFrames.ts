@@ -15,7 +15,7 @@ export const smallVehicleTypes = [
   'estate',
   'taxi',
 ] as const;
-export const largeVehicleTypes = ['van', 'bus'] as const;
+export const largeVehicleTypes = ['van', 'bus', 'tractor'] as const;
 export const vehiclePaints = 3;
 export const vehicleLampStates = 6;
 export const emergencyTypes = ['ambulance', 'fire', 'police'] as const;

@@ -405,6 +405,7 @@ const bodyStyles = {
   taxi: [3, 42, 11, 11, 5],
   van: [6, 51, 12, 31, 2],
   bus: [5, 54, 13, 38, 2],
+  tractor: [8, 47, 13, 28, 2],
   ambulance: [9, 46, 11, 25, 2],
   fire: [7, 50, 13, 28, 2],
   police: [13, 37, 11, 12, 5],
@@ -435,6 +436,26 @@ function drawVehicle(
   const right = 15 + half;
   const bottom = top + length - 1;
   const wide = half * 2;
+  if (type === 'tractor') {
+    tile.bevel(7, 13, 20, 43, shadow);
+    for (const x of [3, 23]) {
+      tile.bevel(x, 14, 6, 11, ink);
+      tile.bevel(x - 2, 35, 9, 19, ink);
+      for (let y = 37; y < 52; y += 4) tile.rect(x - 1, y, 7, 1, shade);
+    }
+    tile.bevel(9, 11, 14, 24, shade);
+    tile.bevel(10, 12, 12, 21, color);
+    tile.rect(13, 13, 6, 11, highlight);
+    tile.rect(20, 21, 3, 6, ink);
+    tile.bevel(7, 32, 18, 20, color);
+    glass(tile, 9, 33, 14, 8);
+    tile.bevel(9, 41, 14, 8, shade);
+    tile.rect(9, 51, 3, 2, lamps >= 3 ? red : burgundy);
+    tile.rect(20, 51, 3, 2, lamps >= 3 ? red : burgundy);
+    tile.rect(10, 13, 3, 2, cream);
+    tile.rect(19, 13, 3, 2, cream);
+    return;
+  }
   const bus = type === 'bus';
   const high = bus || type === 'van' || type === 'ambulance' || type === 'fire';
   const windscreen = top + (high ? 4 : 8);
@@ -605,7 +626,9 @@ export function spriteArt() {
       drawVehicle(
         t,
         largeVehicleTypes[Math.floor(row / vehiclePaints)]!,
-        [3, 0, 4][row % vehiclePaints]!,
+        (largeVehicleTypes[Math.floor(row / vehiclePaints)] === 'tractor'
+          ? [2, 4, 3]
+          : [3, 0, 4])[row % vehiclePaints]!,
         column,
       ),
     ),

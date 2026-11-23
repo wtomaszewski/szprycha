@@ -77,10 +77,15 @@ export class TrafficArt {
     variant: number,
     mapId: string,
   ) {
-    let key: SpriteSheet = `traffic-${kind}`;
+    let key: SpriteSheet =
+      kind === 'bus' || kind === 'tractor'
+        ? 'traffic-large'
+        : `traffic-${kind}`;
     switch (kind) {
       case 'car': {
-        const types = smallVehicleTypes.length + largeVehicleTypes.length;
+        // Preserve the ordinary city traffic mix; tractors use dedicated routes.
+        const types =
+          smallVehicleTypes.length + largeVehicleTypes.indexOf('bus') + 1;
         const type = variant % types;
         const paint = Math.floor(variant / types) % vehiclePaints;
         const large = type >= smallVehicleTypes.length;
@@ -90,6 +95,12 @@ export class TrafficArt {
           paint;
         break;
       }
+      case 'bus':
+      case 'tractor':
+        this.row =
+          largeVehicleTypes.indexOf(kind) * vehiclePaints +
+          (kind === 'bus' ? 0 : 1);
+        break;
       case 'emergency':
         this.row = variant % emergencyTypes.length;
         break;
@@ -99,7 +110,7 @@ export class TrafficArt {
           tramCities.findIndex(
             (city) =>
               mapId.startsWith(city) ||
-              (city === 'krakow' && mapId === 'gdansk'),
+              (city === 'krakow' && (mapId === 'gdansk' || mapId === 'wies')),
           ),
         );
         this.rear = scene.add
@@ -169,6 +180,8 @@ export class TrafficArt {
                 : 2),
         );
         break;
+      case 'bus':
+      case 'tractor':
       case 'car':
         image.setRotation(pose.heading + Math.PI / 2);
         useFrame(

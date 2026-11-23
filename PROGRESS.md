@@ -16,6 +16,12 @@ Stan na 23.11.2026.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Wieś i las 1/2 — mapa (#127)
+
+- Kolaż wsi jest dostępny w Wolnej jeździe. Obejmuje drogę gminną, odkryty przejazd kolejowy, przystanek regionalny, pole, las, gospodarstwo i mostek.
+- SzprychaApp udostępnia cztery ćwiczenia `WIE-B-01`–`WIE-B-04`. Raport ścisły obejmuje 13/13 sytuacji i wszystkie moduły M01–M07, a testy sprawdzają cztery trasy oraz po dziesięć minut ruchu dla trzech ziaren. [Mapa, pomiary i zrzuty](docs/05_mapy.md#wieś-i-las)
+- Kampania i wiejskie znajdźki są zakresem [#128](https://github.com/wtomaszewski/szprycha/issues/128).
+
 ## Wydanie 2/2 — audyt wydajności (#123)
 
 - PWA mieści się w budżecie 8 MB. Warszawa, Wrocław, Kraków, playlisty i nagrania lektora pobierają się przy użyciu i zostają w lokalnym cache. Miasteczko działa po pierwszej instalacji.

@@ -41,6 +41,7 @@ znaki:
   - { kod: C-13/C-16, kategoria: nakazu, nazwa: "Droga dla pieszych i rowerów", dla_dziecka: "Wspólna droga (symbole jeden nad drugim) — ustępuj pieszym; z podziałem (symbole obok siebie, pionowa kreska) — jedź swoją częścią.", rzadkosc: rzadki, reguly: [GDZIE-11], weryfikacja: true }
 
   # Informacyjne (niebieskie prostokąty) i D-1
+  - { kod: D-15, kategoria: informacyjny, nazwa: "Przystanek autobusowy", dla_dziecka: "Tu zatrzymuje się autobus. Obserwuj pasażerów w pobliżu drogi.", rzadkosc: zwykly, reguly: [] }
   - { kod: D-1,  kategoria: informacyjny, nazwa: "Droga z pierwszeństwem", dla_dziecka: "Jesteś na drodze z pierwszeństwem.", rzadkosc: zwykly, reguly: [ZNAK-D1] }
   - { kod: D-2,  kategoria: informacyjny, nazwa: "Koniec drogi z pierwszeństwem", dla_dziecka: "Tu kończy się Twoje pierwszeństwo.", rzadkosc: zwykly, reguly: [ZNAK-D1] }
   - { kod: D-3,  kategoria: informacyjny, nazwa: "Droga jednokierunkowa", dla_dziecka: "Ruch odbywa się tylko w jednym kierunku.", rzadkosc: zwykly, reguly: [ZNAK-B2T22] }
