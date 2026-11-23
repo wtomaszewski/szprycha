@@ -232,6 +232,9 @@
     "lights": "Światła",
     "warsawTitle": "Warszawa",
     "wroclawTitle": "Wrocław",
+    "krakowTitle": "Kraków",
+    "districtLocked": "Przejście zamknięte. Zatrzymaj się i otwórz ćwiczenia w SzprychaApp.",
+    "districtsOpened": "Nowe przejście otwarte! Wróć do Wolnej jazdy, żeby je odkryć.",
     "gnomes": "Krasnale",
     "gnomesHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać krasnala.",
     "gnomeQuestion": "Zagadka krasnala",
@@ -495,6 +498,34 @@
     "gloryVoice": "Misja ukończona. Zobacz swój dobry nawyk w momencie chwały!"
   },
   "misje": {
+    "KRA-B-01": {
+      "tytul": "Wieczorny spacer po Rynku",
+      "opis": "Przygotuj rower po zmroku i podejdź pod Sukiennice. To ćwiczenie otwiera Wawel i Kazimierz.",
+      "start": "Zapnij kask i włącz obie lampki.",
+      "deptak": "Przed znakiem B-9 zejdź z roweru i poprowadź go pod Sukiennice.",
+      "meta": "Po opuszczeniu deptaku jedź powoli po kocich łbach w stronę Plant."
+    },
+    "KRA-B-02": {
+      "tytul": "Kontrapas na Kazimierzu",
+      "opis": "Sprawdź znaki w uliczce jednokierunkowej i sygnalizację rowerową przy alei. To ćwiczenie otwiera bulwary.",
+      "kontrapas": "Jedź pod prąd tylko kontrapasem, po swojej prawej.",
+      "postoj": "Zatrzymaj się na drodze rowerowej przed przejazdem.",
+      "pytanie": "Przed skrzyżowaniem widzisz znak A-7. Komu ustępujesz?",
+      "odp1": "Tylko pojazdom z prawej strony.",
+      "odp2": "Uczestnikom ruchu na drodze z pierwszeństwem.",
+      "wyjasnienie": "Znak A-7 oznacza, że musisz ustąpić jadącym drogą z pierwszeństwem.",
+      "przejazd": "Przejedź po P-11, gdy sygnalizator rowerowy pokaże zielone."
+    },
+    "KRA-B-03": {
+      "tytul": "Pomoc na bulwarach",
+      "opis": "Poćwicz bezpieczną jazdę wśród pieszych i pierwszą reakcję na upadek. To ćwiczenie otwiera alejki pod Kopcem.",
+      "postoj": "Zwolnij przy pieszych i zatrzymaj się przy znaczniku.",
+      "pytanie": "Widzisz upadek rowerzysty obok drogi. Co robisz najpierw?",
+      "odp1": "Zatrzymuję się w bezpiecznym miejscu i ostrzegam innych.",
+      "odp2": "Natychmiast wbiegam na jezdnię.",
+      "wyjasnienie": "Zadbaj o swoje bezpieczeństwo i ostrzeż innych, zanim podejdziesz z pomocą.",
+      "meta": "Dokończ przejazd ciągiem wspólnym, ustępując pieszym."
+    },
     "WRO-T-01": {
       "tytul": "Krasnal, który mówi",
       "opis": "Jestem Dzwoneczek i szukam ekipy na wrocławski festiwal. Zapnij kask i pokaż mi, jak zatrzymujesz się na STOP-ie.",

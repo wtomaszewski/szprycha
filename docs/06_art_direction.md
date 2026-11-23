@@ -101,6 +101,14 @@ Wspólny prompt bazowy: *„top-down pixel art building in the style of 1999 GTA
 | **Sky Tower** | 6×6 + skrzydła | 40 (najwyższy blok mapy) | Smukła szklana wieża `#0099db`/`#c0cbdc`, schodkowe niższe skrzydła u podstawy. |
 | **Dworzec Główny** | 20×5 | 3, wieżyczki 5 | Długa kremowa fasada „jak zamek”: wieżyczki, blanki, wysokie okna, zadaszone perony z tyłu. |
 | **Stadion Wrocław** | 14×11 (prostokąt z zaokrągleniami) | 6 | Półprzezroczysta fasada-membrana, która nocą świeci zmieniającymi się kolorami (animacja palety). |
+| **Wawel** | 14×8 | 2–10 | Piaskowe skrzydła wokół dziedzińca, czerwone dachy, okrągła zielona baszta i złota kopuła. Pod zamkiem kamienny mur oporowy. |
+| **Smok Wawelski** | 2×1 | — | Autorska patynowana figura na własnym owalu z piaskowca. Wyciągnięta głowa, rozpostarte trójkątne skrzydło i zawinięty ogon. |
+| **Sukiennice i Rynek** | 12×4 | 4–6 | Podłużna piaskowa hala z ceglanym dachem i ząbkowaną attyką po obu długich stronach. Plac z kostki, szereg kamienic i dwie wieże kościoła Mariackiego o różnej wysokości. |
+| **Kazimierz** | 5×3 (dom modlitwy) | 2–5 | Piaskowa bryła z wyniesionym szczytem, pobliskie ceglane i tynkowane kamienice oraz parterowy targ. |
+| **Kopiec** | 8×4 | — | Zielone poziomice zbiegają się ku jasnemu głazowi na szczycie. Piaskowa ścieżka wije się po zboczu. |
+| **Bulwary Wisły** | 40×6 | — | Rytm kamiennych schodów, ławek i latarni. Ceglasta DDR wzdłuż brzegu, jasna nawierzchnia na ciągu wspólnym. |
+
+Krakowski tramwaj ma srebrne pasy wzdłuż grafitowej bryły, ciemny dach i te same klatki przegubowe co pozostałe warianty. Grafika powstała z generatorów i kształtów w repozytorium, bez logotypów i barw przewoźnika.
 
 **Krasnale:** własne projekty 16×16, ~20 zawodów (rowerzysta, listonosz, kucharz, strażak, malarz…), każdy z jednym atrybutem rozpoznawczym. **Nie kopiujemy** istniejących rzeźb wrocławskich krasnali.
 **Syrenki (Warszawa):** własna figurka-maskotka 16×16 z tarczą i mieczem w formie zabawnej, nie kopia pomnika.

@@ -1,14 +1,14 @@
 import type { Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
-import type { MissionCity } from '../../src/content/missions';
+import type { PlayableCity } from '../../src/content/missions';
 
-export function cityPin(page: Page, city: MissionCity) {
+export function cityPin(page: Page, city: PlayableCity) {
   return page.getByRole('button', { name: pl.cityPicker[city], exact: true });
 }
 
 export async function chooseCity(
   page: Page,
-  city: MissionCity,
+  city: PlayableCity,
   mode: 'campaign' | 'freeRide' = 'freeRide',
 ) {
   await page

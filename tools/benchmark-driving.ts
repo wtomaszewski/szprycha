@@ -16,12 +16,20 @@ if (light !== 'day' && light !== 'night')
   throw new Error('BENCH_LIGHT must be day or night');
 const lite = process.env.BENCH_QUALITY === 'lite';
 const rain = process.env.BENCH_RAIN === '1';
-const map = process.env.BENCH_MAP ?? 'miasteczko';
-if (map !== 'miasteczko' && map !== 'warszawa' && map !== 'wroclaw')
-  throw new Error(`Unknown benchmark map: ${map}`);
+const requestedMap = process.env.BENCH_MAP ?? 'miasteczko';
+if (
+  requestedMap !== 'miasteczko' &&
+  requestedMap !== 'warszawa' &&
+  requestedMap !== 'wroclaw' &&
+  requestedMap !== 'krakow'
+)
+  throw new Error(`Unknown benchmark map: ${requestedMap}`);
+const map = requestedMap;
 const warsaw = map === 'warszawa';
 const wroclaw = map === 'wroclaw';
-const fragment = process.env.BENCH_FRAGMENT ?? (wroclaw ? 'rynek' : 'praga');
+const fragment =
+  process.env.BENCH_FRAGMENT ??
+  (warsaw || map === 'miasteczko' ? 'praga' : 'rynek');
 const missions = { most: 'WAW-A1-04', starowka: 'WAW-A1-05' } as const;
 const warsawSpawns: Record<string, { x: number; y: number; heading: number }> =
   {
@@ -39,7 +47,12 @@ const wroclawSpawns: typeof warsawSpawns = {
   zachod: { x: 300, y: 800, heading: 0 },
   bulwary: { x: 1440, y: 1536, heading: 0 },
 };
-const freeSpawns = wroclaw ? wroclawSpawns : warsawSpawns;
+const krakowSpawns: typeof warsawSpawns = {
+  rynek: { x: 1290, y: 808, heading: 0 },
+  bulwary: { x: 2674, y: 2144, heading: 0 },
+};
+const freeSpawns =
+  map === 'krakow' ? krakowSpawns : wroclaw ? wroclawSpawns : warsawSpawns;
 if (
   (map === 'miasteczko' && process.env.BENCH_FRAGMENT) ||
   (map !== 'miasteczko' &&
@@ -122,7 +135,13 @@ async function runTrial() {
       );
     }
     const completed =
-      mission === 'WAW-A1-04' ? orders.slice(0, -1) : mission ? orders : [];
+      map === 'krakow'
+        ? ['KRA-B-01', 'KRA-B-02', 'KRA-B-03']
+        : mission === 'WAW-A1-04'
+          ? orders.slice(0, -1)
+          : mission
+            ? orders
+            : [];
     // Both revisions begin the benchmark on the same returning profile.
     await page.addInitScript(
       ({ key, completed }) =>
@@ -133,11 +152,11 @@ async function runTrial() {
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
     await page.goto(process.env.BENCH_URL ?? 'http://127.0.0.1:5173/');
     await page.locator('canvas[data-scene="MainMenu"]').waitFor();
-    if (warsaw || wroclaw) {
+    if (map !== 'miasteczko') {
       await page.getByRole('button', { name: pl.cityPicker.freeRide }).click();
       await page
         .getByRole('button', {
-          name: warsaw ? pl.cityPicker.warszawa : pl.cityPicker.wroclaw,
+          name: pl.cityPicker[map],
           exact: true,
         })
         .click();
@@ -265,8 +284,8 @@ if (runs > 1)
 await mkdir('test-results', { recursive: true });
 const route = warsaw
   ? `-${fragment}${mode === 'free' && fragment !== 'praga' ? '-free' : ''}`
-  : wroclaw
-    ? `-wroclaw-${fragment}`
+  : map !== 'miasteczko'
+    ? `-${map}-${fragment}`
     : '';
 await writeFile(
   `test-results/performance${route}${light === 'night' ? '-night' : ''}${lite ? '-lite' : ''}${rain ? '-rain' : ''}.json`,

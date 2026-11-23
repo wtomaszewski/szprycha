@@ -58,6 +58,9 @@ export function visitRoofDetails(
     b.landmarkId === 'stadion-narodowy' ||
     b.landmarkId === 'zamek-krolewski' ||
     b.landmarkId === 'ratusz-wroclawski' ||
+    b.landmarkId === 'sukiennice' ||
+    b.landmarkId === 'wawel-kopula' ||
+    b.landmarkId === 'wawel-baszta' ||
     b.landmarkId?.startsWith('katedra-wieza-')
   )
     return;
@@ -165,6 +168,41 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
         }
         ctx.fillStyle = '#f0dca8';
         ctx.fillRect(mid - 1, middleY - 1, 3, 3);
+        return;
+      }
+      if (b.landmarkId === 'sukiennice' && b.width > 64) {
+        ctx.fillStyle = '#f0dca8';
+        for (const y of [3, b.height - 10]) {
+          ctx.fillRect(3, y + 4, b.width - 6, 4);
+          for (let x = 8; x < b.width - 7; x += 13) {
+            ctx.fillRect(x, y, 7, 5);
+            ctx.fillRect(x + 2, y - 2, 3, 3);
+          }
+        }
+        ctx.fillStyle = '#a65e46';
+        ctx.fillRect(18, Math.floor(b.height / 2), b.width - 36, 4);
+        return;
+      }
+      if (b.landmarkId === 'wawel-kopula' || b.landmarkId === 'wawel-baszta') {
+        const gold = b.landmarkId === 'wawel-kopula';
+        const cx = Math.floor(b.width / 2);
+        const cy = Math.floor(b.height / 2);
+        const radius = Math.min(cx, cy) - 1;
+        ctx.fillStyle = gold ? '#8c643d' : '#254c44';
+        ctx.fillRect(0, 0, b.width, b.height);
+        for (let dy = -radius; dy <= radius; dy++) {
+          const span = Math.floor(Math.sqrt(radius ** 2 - dy ** 2));
+          ctx.fillStyle = gold
+            ? dy <= 0
+              ? '#ffcd75'
+              : '#c5944e'
+            : dy <= 0
+              ? '#6ab08a'
+              : '#3e8948';
+          ctx.fillRect(cx - span, cy + dy, span * 2 + 1, 1);
+        }
+        ctx.fillStyle = gold ? '#f4f4f4' : '#a7c974';
+        ctx.fillRect(cx - 2, cy - 2, 5, 5);
         return;
       }
       if (b.landmarkId === 'stadion-narodowy') {

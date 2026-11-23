@@ -96,10 +96,13 @@ export async function buildRankingRules(root: string): Promise<RankingRules> {
     content('przepisy.yaml'),
     content('osiagniecia.yaml').then((file) => parse(file) as unknown),
   ]);
+  const rankedMissions = missions.flatMap((mission) =>
+    mission.miasto === 'krakow' ? [] : [{ ...mission, miasto: mission.miasto }],
+  );
   const mapIds = [
     ...new Set([
       ...missionCity.options,
-      ...missions.map((mission) => mission.mapa ?? mission.miasto),
+      ...rankedMissions.map((mission) => mission.mapa ?? mission.miasto),
     ]),
   ];
   const maps = new Map(
@@ -150,7 +153,7 @@ export async function buildRankingRules(root: string): Promise<RankingRules> {
   };
   return {
     missions: Object.fromEntries(
-      missions.map((mission) => {
+      rankedMissions.map((mission) => {
         const map = maps.get(mission.mapa ?? mission.miasto)!;
         const poi = (name: string) => {
           const area = map.world.pois.get(name);

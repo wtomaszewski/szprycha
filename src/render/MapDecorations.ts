@@ -114,6 +114,74 @@ export function drawMapDecorations(
         .fillCircle(x + 8, y, 5)
         .fillStyle(0x6ab08a)
         .fillRect(x - 13, y - 7, 4, 14);
+    } else if (kind === 'wawel-mur-oporowy') {
+      scenery.fillStyle(0x5a3a2e).fillRect(x, y + 5, width, height - 5);
+      scenery.fillStyle(0xd9b48a).fillRect(x, y, width, 12);
+      for (let dx = 0; dx < width; dx += 24) {
+        scenery
+          .fillStyle(dx % 48 ? 0x9b7352 : 0xb48661)
+          .fillRect(x + dx + 2, y + 13, 21, 10);
+        scenery.fillStyle(0x8b6d5c).fillRect(x + dx + 8, y + 25, 16, 9);
+        centers.push({ x: x + dx + 12, y: y + 16 });
+      }
+    } else if (kind === 'smok-wawelski') {
+      scenery.fillStyle(0x8b6d5c).fillEllipse(x, y + 4, 63, 32);
+      scenery.fillStyle(0xc1a486).fillEllipse(x, y, 58, 25);
+      scenery.fillStyle(0x254c44).fillPoints(
+        [
+          [-25, 5],
+          [-20, -4],
+          [-8, -1],
+          [-4, -13],
+          [-19, -33],
+          [0, -27],
+          [5, -19],
+          [9, -36],
+          [23, -41],
+          [21, -33],
+          [32, -31],
+          [30, -23],
+          [19, -22],
+          [15, -6],
+          [26, 0],
+          [26, 8],
+          [14, 8],
+          [8, 1],
+          [1, 10],
+          [-10, 10],
+          [-8, 3],
+          [-17, 7],
+        ].map(([dx, dy]) => ({ x: x + dx!, y: y + dy! })),
+        true,
+      );
+      scenery
+        .fillStyle(0x6ab08a)
+        .fillTriangle(x - 16, y - 30, x + 3, y - 21, x - 3, y - 12);
+      scenery.fillStyle(0xa7c974).fillRect(x + 21, y - 32, 3, 2);
+      centers.push({ x, y: y - 36 });
+    } else if (kind === 'kopiec') {
+      for (const [offset, w, h, tone] of [
+        [12, 258, 87, 0x254c44],
+        [5, 236, 70, 0x3e8948],
+        [-14, 194, 64, 0x559859],
+        [-31, 155, 56, 0x6ab069],
+        [-49, 109, 48, 0x80bd72],
+        [-65, 48, 31, 0xa7c974],
+      ] as const) {
+        scenery.fillStyle(tone).fillEllipse(x, y + offset, w, h, 32);
+        centers.push(
+          { x: x - w / 2, y: y + offset },
+          { x: x + w / 2, y: y + offset },
+        );
+      }
+      scenery
+        .lineStyle(5, 0xd9b48a)
+        .lineBetween(x + 108, y + 20, x - 57, y + 3)
+        .lineBetween(x - 57, y + 3, x + 50, y - 22)
+        .lineBetween(x + 50, y - 22, x - 25, y - 44)
+        .lineBetween(x - 25, y - 44, x + 6, y - 61);
+      scenery.fillStyle(0xf0dca8).fillRect(x - 6, y - 72, 12, 9);
+      centers.push({ x, y: y - 68 }, { x, y: y + 44 });
     } else if (kind === 'peacock') {
       peacocks.push({ x, y });
       scenery

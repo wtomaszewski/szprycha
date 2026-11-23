@@ -31,6 +31,20 @@ export async function readMaps(root: string, metersPerTile: number) {
 
 export async function validateMaps(root: string, content: GameContent) {
   const worlds = await readMaps(root, content.balans.silnik.kafel_m);
+  for (const [map, world] of worlds)
+    for (const { id, unlock } of world.districts) {
+      if (!unlock) continue;
+      if (
+        !content.misje.some(
+          (mission) =>
+            mission.id === unlock.missionId &&
+            (mission.mapa ?? mission.miasto) === map,
+        )
+      )
+        throw new Error(
+          `Map ${map}: unknown unlock mission for district ${id}`,
+        );
+    }
   const signCodes = new Set(content.znaki.znaki.map(({ kod }) => kod));
   const examRoutes = missionCity.options.map((city) =>
     examRoute(city, content.balans.licencja),

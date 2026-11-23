@@ -49,6 +49,7 @@ const situationLabels = {
 const mapNames: Readonly<Partial<Record<string, string>>> = {
   warszawa: 'Warszawa',
   wroclaw: 'Wrocław',
+  krakow: 'Kraków',
   miasteczko: 'Miasteczko',
 };
 const hub = 'miasteczko';

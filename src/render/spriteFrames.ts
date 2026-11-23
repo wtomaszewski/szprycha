@@ -20,7 +20,7 @@ export const vehiclePaints = 3;
 export const vehicleLampStates = 6;
 export const emergencyTypes = ['ambulance', 'fire', 'police'] as const;
 export const tramSegmentLength = 80;
-export const tramCities = ['warszawa', 'wroclaw'] as const;
+export const tramCities = ['warszawa', 'wroclaw', 'krakow'] as const;
 export const pedestrianTypes = [
   'child',
   'adult',

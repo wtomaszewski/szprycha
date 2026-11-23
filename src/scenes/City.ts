@@ -26,9 +26,11 @@ import { showBreakReminder } from '../ui/BreakReminder';
 import { verdictHaptics } from '../platform/haptics';
 import { Scene, GameObjects } from 'phaser';
 import { drawMapDecorations } from '../render/MapDecorations';
+import { DistrictGates } from '../render/DistrictGates';
 import trainingUrl from '../../maps/miasteczko.tmj?url';
 import warsawUrl from '../../maps/warszawa.tmj?url';
 import wroclawUrl from '../../maps/wroclaw.tmj?url';
+import krakowUrl from '../../maps/krakow.tmj?url';
 import blockWallsUrl from '../../assets/generated/walls.png?url';
 import blockRoofsUrl from '../../assets/generated/roofs.png?url';
 import roofDetailsUrl from '../../assets/generated/roof-details.png?url';
@@ -75,7 +77,7 @@ import {
   missionLines,
   type MissionProgress,
 } from '../gameplay/MissionProgress';
-import type { MissionCity } from '../content/missions';
+import type { MissionCity, PlayableCity } from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { RuleDebugOverlay } from '../render/RuleDebugOverlay';
 import { TrainingRoad } from '../render/TrainingRoad';
@@ -179,7 +181,8 @@ export class City extends Scene {
   private series!: SafetySeries;
   private attention!: RoadAttention;
   private questionDialog!: ControlQuestionDialog;
-  private campaignCity!: MissionCity;
+  private city!: PlayableCity;
+  private districtGates?: DistrictGates;
   private examRide?: ExamRide;
   private freeRidePoints = 0;
   private rankingRide?: RideEvidence;
@@ -264,6 +267,7 @@ export class City extends Scene {
       [defaultMap, trainingUrl],
       ['warszawa', warsawUrl],
       ['wroclaw', wroclawUrl],
+      ['krakow', krakowUrl],
     ] as const) {
       if (!this.cache.tilemap.exists(id)) this.load.tilemapTiledJSON(id, url);
     }
@@ -296,7 +300,7 @@ export class City extends Scene {
   }: {
     missionId?: string;
     map?: string;
-    city?: MissionCity;
+    city?: PlayableCity;
     examRide?: ExamRide;
     freeRide?: boolean;
     dailyOrder?: DailyOrder;
@@ -314,7 +318,7 @@ export class City extends Scene {
     this.messageUntil = 0;
     this.content = this.registry.get('content') as GameContent;
     this.progress = this.registry.get('missionProgress') as MissionProgress;
-    this.campaignCity = examRide?.city ?? city ?? this.progress.selectedCity;
+    this.city = examRide?.city ?? city ?? this.progress.selectedCity;
     if (!tutorial) this.progress.milestones(this.content);
     this.breakMinutes = this.progress.breakMinutes(
       this.content.balans.zdrowe_granie,
@@ -345,7 +349,11 @@ export class City extends Scene {
       this.gloryClip =
       this.resultsElapsed =
         undefined;
-    const mapId = definition?.mapa ?? definition?.miasto ?? map ?? defaultMap;
+    const mapId =
+      definition?.mapa ??
+      definition?.miasto ??
+      map ??
+      (this.city === 'krakow' ? this.city : defaultMap);
     this.rankingCity =
       mapId === 'warszawa' || mapId === 'wroclaw' ? mapId : undefined;
     this.startRankingRide(Boolean(definition));
@@ -355,6 +363,10 @@ export class City extends Scene {
       cached.data,
       this.content.balans.silnik.kafel_m,
     );
+    this.districtGates = this.world.districts.some(({ unlock }) => unlock)
+      ? new DistrictGates(this, this.world, this.obstacles)
+      : undefined;
+    this.districtGates?.update(this.progress.store.profile.completed);
     this.phoneFeedback = ruleFeedbackLine(
       'przepisy.MAN-11.feedback',
       this.content.przepisy.przepisy.find(({ id }) => id === 'MAN-11')!
@@ -384,7 +396,7 @@ export class City extends Scene {
       rankingSeed,
       !ambientTraffic
         ? 'mission-only'
-        : mapId === 'wroclaw' && !definition
+        : (mapId === 'wroclaw' || mapId === 'krakow') && !definition
           ? 'ambient'
           : 'scheduled',
     );
@@ -572,7 +584,9 @@ export class City extends Scene {
         ? ui.driving.warsawTitle
         : mapId === 'wroclaw'
           ? ui.driving.wroclawTitle
-          : ui.driving.title;
+          : mapId === 'krakow'
+            ? ui.driving.krakowTitle
+            : ui.driving.title;
     this.controls = new DrivingControls(
       tutorial ? ui.tutorial.title : examRide ? ui.exam.ride : areaTitle,
       this.graphics,
@@ -673,7 +687,7 @@ export class City extends Scene {
         )
           this.scene.restart({
             missionId: id,
-            city: this.campaignCity,
+            city: this.city,
             freeRide: this.freeRide,
             dailyOrder: order,
           });
@@ -771,13 +785,16 @@ export class City extends Scene {
           () => this.finishResultsAnimation(),
           () => this.reset(),
           () => this.togglePhone(),
-          () => this.scene.start('CityPicker', { mode: 'campaign' }),
+          () =>
+            this.scene.start('CityPicker', {
+              mode: this.city === 'krakow' ? 'freeRide' : 'campaign',
+            }),
         );
       }
       this.updateMissionHud();
     }
     this.resetRules();
-    if (mapId === this.campaignCity && !tutorial && !examRide) {
+    if (mapId === this.city && mapId !== 'krakow' && !tutorial && !examRide) {
       this.dailyClientSprites = new DailyClientSprites(
         this,
         this.world.metersPerPixel,
@@ -882,14 +899,15 @@ export class City extends Scene {
   private availableOrders() {
     return this.content.misje.filter(
       (mission) =>
-        mission.miasto === this.campaignCity &&
+        mission.miasto === this.city &&
         this.cache.tilemap.exists(mission.mapa ?? mission.miasto) &&
         this.progress.isAvailable(mission, this.content),
     );
   }
 
   private refreshDailyOffers() {
-    const city = this.campaignCity;
+    const city = this.city;
+    if (city === 'krakow') return;
     const profile = this.progress.store.profile;
     if (!this.freeRide && !campaignCompleted(city, profile, this.content))
       return;
@@ -1168,7 +1186,7 @@ export class City extends Scene {
     } else {
       const { definition } = mission;
       const ride = this.rankingRide;
-      if (ride?.valid) {
+      if (ride?.valid && definition.miasto !== 'krakow') {
         const stats = RideEvidence.verdictStats(result.verdicts);
         void this.progress.rankings?.record(
           {
@@ -1193,7 +1211,7 @@ export class City extends Scene {
       const unlocks = progress.unlocks(content);
       const nextOrders = content.misje.filter(
         (order) =>
-          order.miasto === this.campaignCity &&
+          order.miasto === this.city &&
           !progress.store.profile.completed.includes(order.id) &&
           !progress.isAvailable(order, content),
       );
@@ -1205,13 +1223,14 @@ export class City extends Scene {
           kind !== 'good' && !Object.hasOwn(evidence, 'answer'),
       );
       const daily =
-        order &&
-        progress.completeDailyOrder(
-          definition.miasto,
-          result.points,
-          legal,
-          order.story,
-        );
+        order && this.city !== 'krakow'
+          ? progress.completeDailyOrder(
+              this.city,
+              result.points,
+              legal,
+              order.story,
+            )
+          : undefined;
       const tokens =
         daily?.tokens ??
         progress.complete(definition, {
@@ -1220,19 +1239,25 @@ export class City extends Scene {
           balance: this.content.balans.gwiazdki,
           clean,
         });
+      const districtsOpened = this.districtGates?.update(
+        progress.store.profile.completed,
+      );
       this.updateMissionHud();
       const unlocked =
+        districtsOpened ||
         daily?.unlocked ||
         Boolean(daily?.sticker) ||
         nextOrders.some((order) => progress.isAvailable(order, content)) ||
         [...progress.unlocks(content)].some((item) => !unlocks.has(item));
-      const storyMessage = daily?.sticker
-        ? translate('procedural.stories.reward', {
-            sticker: `m5c.stickerNames.${daily.sticker}`,
-          })
-        : daily?.unlocked
-          ? ui.procedural.stories.unlocked
-          : undefined;
+      const storyMessage = districtsOpened
+        ? ui.driving.districtsOpened
+        : daily?.sticker
+          ? translate('procedural.stories.reward', {
+              sticker: `m5c.stickerNames.${daily.sticker}`,
+            })
+          : daily?.unlocked
+            ? ui.procedural.stories.unlocked
+            : undefined;
       this.dialogue.show(
         order
           ? [
@@ -1525,7 +1550,7 @@ export class City extends Scene {
     if (this.mission) {
       this.scene.restart({
         missionId: this.mission.definition.id,
-        city: this.campaignCity,
+        city: this.city,
         freeRide: this.freeRide,
         dailyOrder: this.dailyOrder,
       });
@@ -2155,7 +2180,13 @@ export class City extends Scene {
           FIXED_STEP,
           this.rider.walking ? undefined : this.weatherTuning,
         );
-      if (collided && !this.tutorial) this.message('driving.collision');
+      if (collided && !this.tutorial) {
+        const locked = this.districtGates?.near(this.rider.x, this.rider.y);
+        if (locked) {
+          this.controls.notice.textContent = ui.driving.districtLocked;
+          this.messageUntil = time + 2500;
+        } else this.message('driving.collision');
+      }
       const meters =
         this.rankingRide && !walking
           ? Math.hypot(this.rider.x - x, this.rider.y - y) *

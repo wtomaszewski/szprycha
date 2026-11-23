@@ -7,7 +7,11 @@ import {
 import type { RankingClient } from '../rankings/RankingClient';
 import { nativeProgress } from '../platform/preferencesProgress';
 import type { DialogueLine, Dialogues } from '../content/dialogues';
-import type { MissionCity, MissionDefinition } from '../content/missions';
+import type {
+  MissionCity,
+  MissionDefinition,
+  PlayableCity,
+} from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { BreakReminder } from '../progression/breakReminder';
 import { Milestones } from '../progression/milestones';
@@ -347,9 +351,17 @@ export class MissionProgress {
     return this.store.profile.selectedCity ?? 'warszawa';
   }
 
-  async selectCity(city: MissionCity) {
+  get freeRideCity(): PlayableCity {
+    return this.store.profile.freeRideCity ?? this.selectedCity;
+  }
+
+  async selectCity(city: PlayableCity, freeRide = false) {
     this.store.change((profile) => {
-      profile.selectedCity = city;
+      if (city === 'krakow') profile.freeRideCity = city;
+      else {
+        if (freeRide) delete profile.freeRideCity;
+        profile.selectedCity = city;
+      }
     });
     await this.store.flush();
   }
