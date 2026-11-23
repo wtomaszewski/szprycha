@@ -150,56 +150,73 @@ type MovingCameraScene = {
   centerRideCamera(x: number, y: number): void;
 };
 
-test.describe('map chunks during a slow pan', () => {
-  test.use({
-    baseURL: 'http://127.0.0.1:4174',
+for (const { label, viewport, deviceScaleFactor, zoom } of [
+  {
+    label: 'map chunks during a slow pan',
     viewport: { width: 740, height: 390 },
-    hasTouch: true,
-    serviceWorkers: 'block',
-  });
+    deviceScaleFactor: 1,
+    zoom: 0.75,
+  },
+  {
+    label: 'map chunks on a DPR 2 tablet',
+    viewport: { width: 1024, height: 768 },
+    deviceScaleFactor: 2,
+    zoom: 1,
+  },
+]) {
+  test.describe(label, () => {
+    test.use({
+      baseURL: 'http://127.0.0.1:4174',
+      viewport,
+      deviceScaleFactor,
+      hasTouch: true,
+      serviceWorkers: 'block',
+    });
 
-  test('keeps the same road pixels through different phases of the pan', async ({
-    page,
-  }) => {
-    await page.addInitScript(() => {
-      const getContext = HTMLCanvasElement.prototype.getContext;
-      HTMLCanvasElement.prototype.getContext = new Proxy(getContext, {
-        apply: (target, canvas, args) =>
-          args[0].includes('webgl')
-            ? null
-            : Reflect.apply(target, canvas, args),
+    test('keeps the same road pixels through different phases of the pan', async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        const getContext = HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext = new Proxy(getContext, {
+          apply: (target, canvas, args) =>
+            args[0].includes('webgl')
+              ? null
+              : Reflect.apply(target, canvas, args),
+        });
       });
+      await startAt(page, 'warszawa', 3540, 1807);
+      await page.goto('/');
+      const game = await fixedSceneTicks<MovingCameraScene>(page, ['City']);
+      await chooseCity(page, 'warszawa');
+      const samples = await game.evaluate((game) => {
+        const city = game.scene.getScene('City');
+        const { canvas, renderer, scene } = city.game;
+        const camera = city.cameras.main;
+        const ctx = canvas.getContext('2d')!;
+        const positions = new Set<number>();
+        let reference: Uint8ClampedArray | undefined;
+        let changed = 0;
+        for (let x = 3580; x < 3596; x++) {
+          city.centerRideCamera(x, 1807);
+          renderer.preRender();
+          scene.render(renderer);
+          renderer.postRender();
+          // Sample the same stretch of road across the x=3584 chunk boundary.
+          const origin = camera.getWorldPoint(0, 0);
+          const left = Math.round((3584 - origin.x) * camera.zoom) - 64;
+          const top = Math.round((1830 - origin.y) * camera.zoom);
+          const pixels = ctx.getImageData(left, top, 128, 54).data;
+          reference ??= pixels;
+          if (pixels.some((channel, index) => channel !== reference![index]))
+            changed++;
+          positions.add(left);
+        }
+        return { changed, positions: positions.size, zoom: camera.zoom };
+      });
+      expect(samples.positions).toBeGreaterThan(8);
+      expect(samples.changed).toBe(0);
+      expect(samples.zoom).toBe(zoom);
     });
-    await startAt(page, 'warszawa', 3540, 1807);
-    await page.goto('/');
-    const game = await fixedSceneTicks<MovingCameraScene>(page, ['City']);
-    await chooseCity(page, 'warszawa');
-    const samples = await game.evaluate((game) => {
-      const city = game.scene.getScene('City');
-      const { canvas, renderer, scene } = city.game;
-      const camera = city.cameras.main;
-      const ctx = canvas.getContext('2d')!;
-      const positions = new Set<number>();
-      let reference: Uint8ClampedArray | undefined;
-      let changed = 0;
-      for (let x = 3580; x < 3596; x++) {
-        city.centerRideCamera(x, 1807);
-        renderer.preRender();
-        scene.render(renderer);
-        renderer.postRender();
-        // Sample the same stretch of road across the x=3584 chunk boundary.
-        const origin = camera.getWorldPoint(0, 0);
-        const left = Math.round((3584 - origin.x) * camera.zoom) - 64;
-        const top = Math.round((1830 - origin.y) * camera.zoom);
-        const pixels = ctx.getImageData(left, top, 128, 54).data;
-        reference ??= pixels;
-        if (pixels.some((channel, index) => channel !== reference![index]))
-          changed++;
-        positions.add(left);
-      }
-      return { changed, positions: positions.size };
-    });
-    expect(samples.positions).toBeGreaterThan(8);
-    expect(samples.changed).toBe(0);
   });
-});
+}
