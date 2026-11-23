@@ -3,6 +3,7 @@ import { localizedVoiceLine, questionVoiceLine } from '../audio/voiceLines';
 import olaPortrait from '../../assets/generated/portraits/sierzant_ola.png?url';
 import { ui } from '../core/presentation';
 import type { ControlQuestion } from '../progression/RoadAttention';
+import { gamepadMenu, type ButtonEdge } from './KeyboardGamepad';
 import { questionPrompt } from './SignIllustration';
 
 export class ControlQuestionDialog {
@@ -137,15 +138,8 @@ export class ControlQuestionDialog {
     }
   }
 
-  gamepad(justPressed: (button: number) => boolean) {
-    if (justPressed(0)) {
-      const active = document.activeElement;
-      if (active === this.resume && !this.resume.hidden) this.resume.click();
-      else this.buttons.find((button) => button === active)?.click();
-    } else if (this.resume.hidden) {
-      if (justPressed(12)) this.focusAnswer(-1);
-      else if (justPressed(13)) this.focusAnswer(1);
-    }
+  gamepad(justPressed: ButtonEdge) {
+    gamepadMenu(this.panel, justPressed, { focusOnConfirm: false });
   }
 
   private focusAnswer(direction: number) {

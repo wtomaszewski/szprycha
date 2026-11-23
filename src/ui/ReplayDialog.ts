@@ -2,6 +2,7 @@ import { ui } from '../core/presentation';
 
 export class ReplayDialog {
   private readonly dialog = document.createElement('dialog');
+  private readonly reason = document.createElement('p');
   private readonly text = document.createElement('p');
   private readonly replay = document.createElement('button');
   private readonly retry = document.createElement('button');
@@ -31,17 +32,28 @@ export class ReplayDialog {
     }
     this.dialog.className = 'game-dialog replay-dialog';
     this.dialog.setAttribute('aria-label', ui.replay.title);
-    this.dialog.setAttribute('aria-describedby', 'replay-feedback');
+    this.dialog.setAttribute(
+      'aria-describedby',
+      'replay-reason replay-feedback',
+    );
+    this.reason.id = 'replay-reason';
     this.text.id = 'replay-feedback';
     this.dialog.addEventListener('cancel', (event) => {
       event.preventDefault();
       if (!this.proceed.hidden) this.proceed.click();
     });
-    this.dialog.append(title, speaker, this.text, actions);
+    this.dialog.append(title, this.reason, speaker, this.text, actions);
     parent.append(this.dialog);
   }
 
-  show(text: string, minor: boolean, canReplay: boolean, exhausted: boolean) {
+  show(
+    reason: string,
+    text: string,
+    minor: boolean,
+    canReplay: boolean,
+    exhausted: boolean,
+  ) {
+    this.reason.textContent = reason;
     this.text.textContent = text;
     this.replay.hidden = !canReplay;
     this.retry.textContent = exhausted ? ui.missionUi.result : ui.replay.retry;

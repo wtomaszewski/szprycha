@@ -104,6 +104,7 @@ import { drawCyclist, loadTrafficArt, TrafficArt } from '../render/TrafficArt';
 import { RiderArt } from '../render/RiderArt';
 import { audio } from '../audio/GameAudio';
 import { CitySound } from '../audio/CitySound';
+import { activeDialog, gamepadMenu } from '../ui/KeyboardGamepad';
 import { radioControls } from '../ui/AudioControls';
 import { RuleFeedback } from '../ui/RuleFeedback';
 import { DrivingHud } from '../ui/DrivingHud';
@@ -1019,13 +1020,7 @@ export class City extends Scene {
       event.preventDefault();
       return true;
     }
-    const onControl =
-      event.target instanceof Element &&
-      event.target.matches('button,input,select,textarea,a[href]');
-    const toggle =
-      event.code === 'KeyM' ||
-      (event.code === 'Tab' && !event.shiftKey && !onControl);
-    if (!toggle) return false;
+    if (event.code !== 'KeyM') return false;
     event.preventDefault();
     if (!event.repeat) this.togglePhone();
     return true;
@@ -1035,12 +1030,21 @@ export class City extends Scene {
     pressed: (button: number) => boolean,
     justPressed: (button: number) => boolean,
   ) {
+    const navigate = () => {
+      const dialog = activeDialog();
+      if (dialog) gamepadMenu(dialog, justPressed);
+    };
     if (this.failureDialog?.open) {
-      this.failureDialog.gamepad(justPressed);
+      if (justPressed(1)) this.failureDialog.gamepad(justPressed);
+      else navigate();
       return true;
     }
     if (this.review) {
-      if (this.review.shown) this.replayDialog.gamepad(justPressed);
+      if (this.review.shown) {
+        if (justPressed(1) || justPressed(2))
+          this.replayDialog.gamepad(justPressed);
+        else navigate();
+      }
       return true;
     }
     if (this.questionDialog.open) {
@@ -1056,11 +1060,7 @@ export class City extends Scene {
       return true;
     if (this.dialogue.open) {
       if (justPressed(1)) this.dialogue.skip();
-      else {
-        if (justPressed(12)) this.dialogue.scroll(-1);
-        if (justPressed(13)) this.dialogue.scroll(1);
-        this.dialogue.gamepad(pressed(0), justPressed(0));
-      }
+      else this.dialogue.gamepad(pressed(0), justPressed);
       return true;
     }
     if (justPressed(8)) {
@@ -1068,7 +1068,8 @@ export class City extends Scene {
       return true;
     }
     if (!this.phone.open && this.results?.open) {
-      this.results.gamepad(justPressed);
+      if (justPressed(1) || justPressed(2)) this.results.gamepad(justPressed);
+      else navigate();
       return true;
     }
     if (!this.phone.open && this.tutorial)
@@ -1078,9 +1079,7 @@ export class City extends Scene {
         ? justPressed(0) && this.takePhoto()
         : justPressed(15) && this.takePhoto(true);
     if (justPressed(1)) this.phone.close();
-    else if (justPressed(0)) this.phone.activate();
-    else if (justPressed(12)) this.phone.focusOrder(-1);
-    else if (justPressed(13)) this.phone.focusOrder(1);
+    else navigate();
     return true;
   }
 
@@ -1163,8 +1162,11 @@ export class City extends Scene {
     const tip =
       (verdict && this.feedback.explanation(verdict)) ||
       localizedVoiceLine(`missionFailure.tips.${reason}`);
+    const rule = verdict && this.feedback.ruleTitle(verdict);
     this.failureDialog?.show(
-      ui.missionFailure.reasons[reason],
+      rule
+        ? `${ui.missionFailure.reasons[reason]} · ${rule}`
+        : ui.missionFailure.reasons[reason],
       tip.text,
       this.progress.store.profile.gentleFailure === true,
       reduced,
@@ -2101,6 +2103,7 @@ export class City extends Scene {
       const explanation = this.feedback.explanation(review.verdict);
       audio.read('lesson', explanation);
       this.replayDialog.show(
+        this.feedback.ruleTitle(review.verdict) ?? review.verdict.ruleId,
         explanation.text,
         review.verdict.kind === 'minor',
         this.replay.size > 1,
@@ -2412,7 +2415,7 @@ export class City extends Scene {
         pose.active &&
         Math.abs(x - centerX) <= halfWidth + art.reach &&
         Math.abs(y - centerY) <= halfHeight + art.reach;
-      art.draw(x, y, visible, pose, at, weather === 'snow');
+      art.draw(x, y, visible, pose, at, weather === 'snow', reduced);
       if (
         lowLight &&
         visible &&
@@ -2511,6 +2514,7 @@ export class City extends Scene {
       Math.max(0, at),
       this.renderEnvironment,
       showSignalCountdowns(this.progress.store.profile, Boolean(this.examRide)),
+      reduced,
     );
     return sirenVolume;
   }

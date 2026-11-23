@@ -13,6 +13,13 @@ import {
   touchSymbols,
 } from './TouchLayout';
 import type { TouchAction } from '../core/touchLayout';
+import {
+  activeDialog,
+  cancelDialog,
+  connectedGamepad,
+  gamepadMenu,
+  showGamepadFocus,
+} from './KeyboardGamepad';
 import { audioSettings } from './AudioControls';
 export type InputDevice = 'keyboard' | 'touch' | 'gamepad';
 
@@ -25,7 +32,7 @@ interface OverlayControls {
 }
 
 export class DrivingControls {
-  readonly root = document.createElement('section');
+  readonly root = document.createElement('main');
   readonly keys = new Set<string>();
   scheme: Scheme = matchMedia('(pointer: coarse)').matches
     ? 'simple'
@@ -52,6 +59,7 @@ export class DrivingControls {
   private x = 0;
   private y = 0;
   private readonly touchKeys = new Set<string>();
+  private pointerButton?: HTMLButtonElement;
   private padButtons: boolean[] = [];
   private abort = new AbortController();
   readonly speed = document.createElement('output');
@@ -76,7 +84,7 @@ export class DrivingControls {
   ) {
     const plac = (this.plac = area === 'plac');
     const signal = this.abort.signal;
-    const pad = navigator.getGamepads?.().find((gamepad) => gamepad?.connected);
+    const pad = connectedGamepad();
     this.padButtons = pad?.buttons.map((button) => button.pressed) ?? [];
     this.root.className = plac ? 'driving-ui driving-plac' : 'driving-ui';
     this.root.setAttribute('aria-label', ui.driving.controls);
@@ -92,6 +100,7 @@ export class DrivingControls {
     const title = document.createElement('p');
     title.textContent = areaTitle;
     this.speed.setAttribute('aria-label', ui.driving.speed);
+    this.speed.setAttribute('aria-live', 'off');
     const button = (
       text: string,
       action: () => void,
@@ -312,8 +321,19 @@ export class DrivingControls {
       'pointerdown',
       (event) => {
         if (event.pointerType === 'touch') this.device = 'touch';
+        this.pointerButton =
+          event.target instanceof Element
+            ? (event.target.closest('button') ?? undefined)
+            : undefined;
       },
       { signal, capture: true },
+    );
+    this.root.addEventListener(
+      'focusin',
+      (event) => {
+        if (event.target !== this.pointerButton) this.pointerButton = undefined;
+      },
+      { signal },
     );
     window.addEventListener(
       'keydown',
@@ -346,8 +366,9 @@ export class DrivingControls {
           return;
         if (
           e.target instanceof Element &&
-          e.target.matches('button') &&
-          e.code === 'Enter'
+          e.target.matches('button, summary, a[href]') &&
+          (e.code === 'Enter' ||
+            (e.code === 'Space' && e.target !== this.pointerButton))
         )
           return;
         if (
@@ -356,6 +377,13 @@ export class DrivingControls {
           )
         )
           e.preventDefault();
+        if (
+          /^(Arrow(Up|Down|Left|Right)|Key[WASD])$/.test(e.code) &&
+          e.target instanceof HTMLButtonElement &&
+          this.root.contains(e.target)
+        )
+          e.target.blur();
+        if (e.code === 'Tab') this.pointerButton = undefined;
         this.keys.add(e.code);
         if (e.repeat) return;
         if (!plac && e.code === 'KeyL') lights.click();
@@ -445,7 +473,7 @@ export class DrivingControls {
     this.touchKeys.clear();
   }
   read(): DriveInput {
-    const pad = navigator.getGamepads?.().find((p) => p?.connected);
+    const pad = connectedGamepad();
     const pressed = (button: number) => Boolean(pad?.buttons[button]?.pressed);
     const previous = this.padButtons;
     this.padButtons = pad?.buttons.map((button) => button.pressed) ?? [];
@@ -458,12 +486,23 @@ export class DrivingControls {
         pad.buttons.some((_, index) => justPressed(index)))
     )
       this.device = 'gamepad';
+    if (justPressed(8) || justPressed(9)) showGamepadFocus();
     if (this.paused) {
-      if (!this.layoutEditor.open && justPressed(9)) this.togglePause();
+      if (this.layoutEditor.open) {
+        if (justPressed(1)) cancelDialog(this.layoutEditor);
+        else gamepadMenu(this.layoutEditor, justPressed);
+      } else if (justPressed(9) || justPressed(1)) this.togglePause();
+      else gamepadMenu(this.pauseMenu, justPressed);
       return { x: 0, y: 0, brake: false, scheme: this.scheme };
     }
     if (this.overlays.gamepad(pressed, justPressed))
       return { x: 0, y: 0, brake: false, scheme: this.scheme };
+    const dialog = this.plac ? activeDialog() : undefined;
+    if (dialog) {
+      if (justPressed(1)) cancelDialog(dialog);
+      else gamepadMenu(dialog, justPressed);
+      return { x: 0, y: 0, brake: false, scheme: this.scheme };
+    }
     const has = (...codes: string[]) =>
       codes.some((c) => this.keys.has(c) || this.touchKeys.has(c));
     let x =

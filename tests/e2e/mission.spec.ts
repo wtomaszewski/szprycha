@@ -4,6 +4,7 @@ import pl from '../../i18n/pl.json' with { type: 'json' };
 import questions from '../../content/pytania.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
 import { expectQuestionSign } from './question-dialog';
+import { mockGamepad } from './helpers/gamepad';
 import { answer, parentZone } from './helpers/parent-gate';
 import { readProfile } from './progress-profile';
 
@@ -18,30 +19,6 @@ const failure = (page: Page, title = pl.missionFailure.title) =>
   page.getByRole('dialog', { name: title, exact: true });
 const questionFor = (rule: string) =>
   questions.pytania.find(({ przepisy }) => przepisy.includes(rule))!;
-
-async function mockGamepad(page: Page) {
-  await page.addInitScript(() => {
-    const state = { button: -1 };
-    window.addEventListener('test:gamepad', (event) => {
-      state.button = (event as CustomEvent<number>).detail;
-    });
-    Object.defineProperty(navigator, 'getGamepads', {
-      value: () => [
-        {
-          connected: true,
-          axes: [0, 0],
-          buttons: Array.from({ length: 17 }, (_, i) => ({
-            pressed: i === state.button,
-          })),
-        },
-      ],
-    });
-  });
-  return (button: number) =>
-    page.evaluate((detail) => {
-      window.dispatchEvent(new CustomEvent('test:gamepad', { detail }));
-    }, button);
-}
 
 test('starts WAW-T-01 from the menu with a visible goal arrow and timer', async ({
   page,
@@ -245,7 +222,7 @@ test('clears full Road Attention on a correct answer and grants stars', async ({
   page,
 }) => {
   test.setTimeout(45_000);
-  const press = await mockGamepad(page);
+  const { tap } = await mockGamepad(page);
   const { canvas, resume, attention, question, stop } = await reachStopQuestion(
     page,
     'ArrowUp',
@@ -253,24 +230,21 @@ test('clears full Road Attention on a correct answer and grants stars', async ({
   );
   await expectQuestionSign(question, 'B-20');
   const clock = await page.getByLabel(pl.missionUi.timer).textContent();
-  await press(0);
+  await tap(0);
   await expect(question.getByRole('button').first()).not.toBeFocused();
-  await press(-1);
-  await press(13);
+  await tap(13);
   await expect(question.getByRole('button').first()).toBeFocused();
-  await press(-1);
   const correct = question.getByRole('button', {
     name: stop.odpowiedzi[stop.poprawna],
     exact: true,
   });
   await correct.focus();
-  await press(0);
+  await tap(0);
   await expect(question.getByRole('status')).toHaveText(
     `${pl.progression.wiseHead} +100`,
   );
   await expect(attention).toContainText('0/3');
   await expect(page.getByLabel(pl.missionUi.timer)).toHaveText(clock!);
-  await press(-1);
   await question.getByRole('button', { name: pl.progression.continue }).click();
   await expect(question).toBeHidden();
   await page.keyboard.down('ArrowUp');
@@ -475,29 +449,26 @@ test('opens SzprychaApp at a stop and plays the opening and closing dialogues', 
 test('uses Select and A on a gamepad without passing A through to the bicycle', async ({
   page,
 }) => {
-  const press = await mockGamepad(page);
+  const { setButton, tap } = await mockGamepad(page);
   await page.goto('/');
   const canvas = page.locator('canvas');
   await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
   await page.keyboard.press('Enter');
   await expect(canvas).toHaveAttribute('data-scene', 'City');
-  await press(8);
+  await tap(8);
   await expect(
     page.getByRole('dialog', { name: pl.phone.title }),
   ).toBeVisible();
-  await press(0);
+  await setButton(0);
   const text = dialogue(page).locator('.dialogue-text');
   await expect(text).toHaveText(pl.dialogi.reguly['KASK-01']);
-  await press(-1);
-  await page.waitForTimeout(100);
+  await setButton(-1);
   await expect(text).toHaveText(pl.dialogi.reguly['KASK-01']);
-  await press(0);
-  await page.waitForTimeout(100);
-  await press(-1);
+  await tap(0);
   await expect(text).toHaveText(pl.dialogi.reguly['ZNAK-STOP']);
-  await press(0);
+  await setButton(0);
   await expect(dialogue(page)).toBeHidden();
-  await press(-1);
+  await setButton(-1);
   await expect(canvas).toHaveAttribute('data-walking', 'false');
 });
 

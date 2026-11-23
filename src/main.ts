@@ -9,9 +9,11 @@ import { Plac } from './scenes/Plac';
 import { audio } from './audio/GameAudio';
 import { ui } from './core/presentation';
 import { showUpdateNotice } from './platform/pwa';
+import { enableDialogFocus } from './ui/KeyboardGamepad';
 import './style.css';
 
 audio.listen();
+enableDialogFocus();
 
 if (
   import.meta.env.PROD &&

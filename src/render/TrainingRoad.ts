@@ -85,6 +85,7 @@ export class TrainingRoad {
   private digitCount = 0;
   private lastLightFrame = -1;
   private lastCountdowns = false;
+  private lastReducedEffects = false;
   private lightAt = 0;
   private readonly lightView = {
     left: Infinity,
@@ -402,6 +403,7 @@ export class TrainingRoad {
     at: number,
     environment: EnvState,
     countdowns: boolean,
+    reducedEffects: boolean,
   ) {
     const cx = camera.clampX(camera.scrollX) + camera.width / 2;
     const cy = camera.clampY(camera.scrollY) + camera.height / 2;
@@ -417,10 +419,12 @@ export class TrainingRoad {
     if (
       !moved &&
       this.lastLightFrame === frame &&
-      this.lastCountdowns === countdowns
+      this.lastCountdowns === countdowns &&
+      this.lastReducedEffects === reducedEffects
     )
       return;
     this.lastCountdowns = countdowns;
+    this.lastReducedEffects = reducedEffects;
     if (frame !== this.lastLightFrame) {
       this.lastLightFrame = frame;
       this.lightAt = at;
@@ -458,6 +462,7 @@ export class TrainingRoad {
             rail.barrier === 'closed',
             scale,
             this.lightAt,
+            reducedEffects,
           );
       }
       const trainX = this.world.railTrainX(crossing, this.lightAt);
@@ -494,11 +499,11 @@ export class TrainingRoad {
         ? this.world.crossingCountdown(crossing, this.lightAt, environment)
         : undefined;
       if (firstVisible) {
-        this.drawCrossingSignal(x, y, color, pedestrian);
+        this.drawCrossingSignal(x, y, color, pedestrian, open);
         this.drawCountdown(x, y + 16, seconds);
       }
       if (secondVisible) {
-        this.drawCrossingSignal(oppositeX, oppositeY, color, pedestrian);
+        this.drawCrossingSignal(oppositeX, oppositeY, color, pedestrian, open);
         this.drawCountdown(oppositeX, oppositeY + 16, seconds);
       }
     }
@@ -514,7 +519,16 @@ export class TrainingRoad {
         if (phase === 'green') this.lights.lineBetween(x, y - 5, x, y + 5);
         else if (phase !== 'off') this.lights.lineBetween(x - 5, y, x + 5, y);
       } else if (signal.code === 'S-1') {
-        this.lights.fillStyle(lightColor[phase]).fillCircle(x, y, 5);
+        for (const [index, lamp] of (
+          ['red', 'yellow', 'green'] as const
+        ).entries()) {
+          const active = (phase === 'arrow' ? 'red' : phase) === lamp;
+          const lampY = y + (index - 1) * 7;
+          if (active)
+            this.lights.fillStyle(lightColor[lamp]).fillCircle(x, lampY, 3);
+          else
+            this.lights.lineStyle(1, lightColor.off).strokeCircle(x, lampY, 2);
+        }
       } else if (phase === 'arrow') {
         const d = signal.direction === 'right' ? 1 : -1;
         this.lights
@@ -619,6 +633,7 @@ export class TrainingRoad {
     closed: boolean,
     scale: number,
     at: number,
+    reducedEffects: boolean,
   ) {
     const x = box.x * scale;
     const y = box.y * scale;
@@ -645,12 +660,20 @@ export class TrainingRoad {
         .fillStyle(0x1a1c2c)
         .fillRoundedRect(postX - 12, postY - 7, 24, 14, 3);
       const phase = Math.floor(at * 2) % 2;
-      this.lights
-        .fillStyle(lightColor[flashing && phase === 0 ? 'red' : 'off'])
-        .fillCircle(postX - 5, postY, 3);
-      this.lights
-        .fillStyle(lightColor[flashing && phase === 1 ? 'red' : 'off'])
-        .fillCircle(postX + 5, postY, 3);
+      for (const [index, offset] of [-5, 5].entries()) {
+        const lampX = postX + offset;
+        if (flashing && (reducedEffects || phase === index))
+          this.lights.fillStyle(lightColor.red).fillCircle(lampX, postY, 3);
+        else
+          this.lights
+            .lineStyle(1, lightColor.off)
+            .strokeCircle(lampX, postY, 2);
+      }
+      if (flashing) {
+        this.lights
+          .lineStyle(1, 0xf4f4f4)
+          .lineBetween(postX - 7, postY + 5, postX + 7, postY + 5);
+      }
     }
   }
 
@@ -659,8 +682,12 @@ export class TrainingRoad {
     y: number,
     color: number,
     pedestrian: boolean,
+    open: boolean,
   ) {
     this.lights.fillStyle(0x1a1c2c).fillRoundedRect(x - 8, y - 9, 16, 18, 2);
+    if (!open) {
+      this.lights.lineStyle(2, color).lineBetween(x - 5, y - 6, x + 5, y - 6);
+    }
     if (pedestrian) {
       this.lights.fillStyle(color).fillCircle(x, y - 4, 2);
       this.lights

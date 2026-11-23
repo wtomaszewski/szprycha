@@ -130,6 +130,7 @@ export class TrafficArt {
     pose: ReplayActor,
     at: number,
     winter: boolean,
+    reducedEffects: boolean,
   ) {
     const { image, rear } = this;
     if (image.visible !== visible) {
@@ -161,7 +162,11 @@ export class TrafficArt {
         useFrame(
           image,
           ((this.row + pose.trips) % emergencyTypes.length) * 3 +
-            (!pose.signalActive ? 0 : emergencyLightPhase(at) ? 1 : 2),
+            (!pose.signalActive
+              ? 0
+              : reducedEffects || emergencyLightPhase(at)
+                ? 1
+                : 2),
         );
         break;
       case 'car':
@@ -172,7 +177,7 @@ export class TrafficArt {
             this.row,
             pose.braking,
             pose.maneuver,
-            Math.floor(at * 3) % 2 === 0,
+            reducedEffects || Math.floor(at * 3) % 2 === 0,
           ),
         );
         break;
