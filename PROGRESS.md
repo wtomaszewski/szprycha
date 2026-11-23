@@ -16,6 +16,11 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Zlecenia proceduralne 3/3 (#104)
+
+- Po pierwszym legalnym Zleceniu dnia SzprychaApp odblokowuje cztery wątki fabularne w każdym mieście. Każdy ma 3–5 etapów, jednego powracającego klienta i ćwiczenia z co najmniej trzech modułów.
+- Postęp w mieście zapisuje się w profilu, a finał przyznaje żetony i naklejkę. Schemat profilu migruje do wersji 10. [Opis i zrzuty](docs/03_misje.md#wątki-fabularne)
+
 ## Zlecenia proceduralne 2/3 (#103)
 
 - Zlecenia dnia mają fikcyjnych klientów przypisanych do POI w obu miastach. Wracają oni w kolejnych ofertach związanych z tym samym miejscem.

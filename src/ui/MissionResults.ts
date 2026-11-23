@@ -110,7 +110,9 @@ export class MissionResults {
     habit: string | undefined,
     tip: string,
     reduced: boolean,
+    { storyMessage, storyStep }: { storyMessage?: string; storyStep: boolean },
   ) {
+    this.retry.hidden = storyStep;
     this.preferences.open = false;
     this.preferences.replaceChildren(
       textElement('summary', ui.settings.accessibility),
@@ -182,7 +184,9 @@ export class MissionResults {
     }
 
     const overview = document.createElement('section');
-    overview.append(missionName, highlights, glory);
+    overview.append(missionName, highlights);
+    if (storyMessage) overview.append(textElement('p', storyMessage));
+    overview.append(glory);
     const breakdown = document.createElement('section');
     breakdown.append(textElement('h3', labels.score), scores);
     this.body.replaceChildren(overview, breakdown);
@@ -219,7 +223,7 @@ export class MissionResults {
   gamepad(pressed: (button: number) => boolean) {
     if (pressed(1) && !this.skip.hidden) this.skip.click();
     else if (pressed(0)) this.map.click();
-    else if (pressed(2)) this.retry.click();
+    else if (pressed(2) && !this.retry.hidden) this.retry.click();
   }
 
   close() {

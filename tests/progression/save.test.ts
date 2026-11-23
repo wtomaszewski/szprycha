@@ -9,6 +9,11 @@ import {
   progressStoreName,
   ProgressStore,
 } from '../../src/core/progressStore';
+import {
+  storySeed,
+  storySticker,
+  storyTemplates,
+} from '../../src/gameplay/procedural/storyTemplates';
 import { MissionProgress } from '../../src/gameplay/MissionProgress';
 import { TICKS_PER_SECOND, type Verdict } from '../../src/rules/types';
 import { readContent } from '../../tools/content';
@@ -40,6 +45,7 @@ function previousProfile() {
     'avatarId',
     'onlineRankings',
     'tutorial',
+    'stories',
   ])
     Reflect.deleteProperty(profile, field);
   return profile;
@@ -102,7 +108,8 @@ it('migrates the M5a localStorage profile and retires it after the commit', asyn
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 9,
+    version: 10,
+    stories: {},
     missionPoints: 0,
     mastery: {},
   });
@@ -134,7 +141,8 @@ it('upgrades an IndexedDB v1 record and prefers it over remaining localStorage',
   expect(store.profile).toMatchObject({
     ...legacy,
     completed: [first.id],
-    version: 9,
+    version: 10,
+    stories: {},
     bestScores: {},
     quizXp: 0,
   });
@@ -157,7 +165,8 @@ it.each(['legacy', 'indexeddb'])(
     const store = await ProgressStore.open(factory, storage);
     expect(store).toMatchObject({ reset: true, sessionOnly: false });
     expect(store.profile).toMatchObject({
-      version: 9,
+      version: 10,
+      stories: {},
       completed: [],
       missionPoints: 0,
     });
@@ -208,7 +217,8 @@ it('preserves M5b progress when adding the album and milestone counters', async 
   expect(store.reset).toBe(false);
   expect(store.profile).toMatchObject({
     ...profile,
-    version: 9,
+    version: 10,
+    stories: {},
     signPhotos: {},
     goodHabits: {},
     cleanMissions: {},
@@ -251,7 +261,8 @@ it('adds empty quiz progress to a v3 profile without changing its existing field
   expect(store.profile).toEqual({
     ...v3,
     ...migratedIdentity,
-    version: 9,
+    version: 10,
+    stories: {},
     audio,
     reducedEffects,
     reflectiveVest,
@@ -269,6 +280,7 @@ it('carries quiz cards, streak and an existing rank from v4 into the audio profi
   expect((await ProgressStore.open(factory)).profile).toEqual({
     ...profile,
     ...migratedIdentity,
+    stories: {},
     audio,
     reducedEffects,
     reflectiveVest,
@@ -294,7 +306,8 @@ it('migrates a v5 licence profile and saves audio changes alongside existing pro
   expect(first.profile).toEqual({
     ...previous,
     ...migratedIdentity,
-    version: 9,
+    version: 10,
+    stories: {},
     audio: defaultAudio,
     reducedEffects,
     reflectiveVest,
@@ -313,7 +326,8 @@ it('migrates a v5 licence profile and saves audio changes alongside existing pro
   expect((await ProgressStore.open(factory)).profile).toEqual({
     ...previous,
     ...migratedIdentity,
-    version: 9,
+    version: 10,
+    stories: {},
     audio: { ...audio, music: 0.34, station: 'talk', muted: true },
     reducedEffects,
     reflectiveVest,
@@ -348,7 +362,8 @@ it('migrates audio settings from v6 and persists the ride preferences', async ()
   const store = await ProgressStore.open(factory);
   expect(store.reset).toBe(false);
   expect(store.profile).toMatchObject({
-    version: 9,
+    version: 10,
+    stories: {},
     reducedEffects,
     reflectiveVest,
     audio: { music: 0.34 },
@@ -381,7 +396,8 @@ it('upgrades the existing accessibility preferences and saves a touch layout alo
   expect(store.profile).toEqual({
     ...previous,
     ...migratedIdentity,
-    version: 9,
+    version: 10,
+    stories: {},
   });
   const touchLayout = [
     'brake',
@@ -399,7 +415,8 @@ it('upgrades the existing accessibility preferences and saves a touch layout alo
   expect((await ProgressStore.open(factory)).profile).toEqual({
     ...previous,
     ...migratedIdentity,
-    version: 9,
+    version: 10,
+    stories: {},
     touchLayout,
   });
 });
@@ -435,7 +452,8 @@ it.each(['IndexedDB', 'Preferences'])(
     expect(first.reset).toBe(false);
     expect(first.profile).toEqual({
       ...previous,
-      version: 9,
+      version: 10,
+      stories: {},
       profileId: expect.stringMatching(uuidV4),
       nickname: 'Dzielna Szprycha 42',
       avatarId: 'pink',
@@ -455,6 +473,76 @@ it.each(['IndexedDB', 'Preferences'])(
   },
 );
 
+it('migrates the version 9 profile to story progress without changing identity or rewards', async () => {
+  const factory = new IDBFactory();
+  const { stories, ...identity } = new ProgressStore().profile;
+  expect(stories).toEqual({});
+  const previous = {
+    ...identity,
+    version: 9,
+    onlineRankings: true,
+    selectedCity: 'wroclaw',
+    completed: [first.id],
+    missionPoints: 1011,
+    progression: legacy.progression,
+    stickers: ['kolo'],
+  };
+  await seed(factory, previous);
+  const store = await ProgressStore.open(factory);
+  expect(store.reset).toBe(false);
+  expect(store.profile).toEqual({ ...previous, version: 10, stories: {} });
+  expect((await ProgressStore.open(factory)).profile).toEqual(store.profile);
+});
+
+it('persists story steps and grants a finale reward only once across open profiles', async () => {
+  const city = 'warszawa';
+  const factory = new IDBFactory();
+  const store = await ProgressStore.open(factory);
+  const progress = new MissionProgress(store);
+  const seedValue = storySeed(city, store.profile.nicknameSeed);
+  const { id: template, kinds, tokens } = storyTemplates[0];
+  const story = { seed: seedValue, index: 0, total: kinds.length, template };
+  progress.completeDailyOrder(city, 100, false);
+  expect(store.profile.stories).toEqual({});
+  expect(progress.completeDailyOrder(city, 100, true)).toEqual({
+    tokens: 0,
+    unlocked: true,
+  });
+  progress.completeDailyOrder(city, 100, true, { ...story, step: 1 });
+  progress.completeDailyOrder(city, 100, false, { ...story, step: 0 });
+  expect(store.profile.stories[city]?.step).toBe(0);
+  progress.completeDailyOrder(city, 100, true, { ...story, step: 0 });
+  progress.completeDailyOrder(city, 100, true, { ...story, step: 0 });
+  await store.flush();
+
+  const resumed = await ProgressStore.open(factory);
+  const resumedProgress = new MissionProgress(resumed);
+  expect(resumed.profile.stories).toEqual({
+    [city]: { seed: seedValue, finished: 0, step: 1 },
+  });
+  resumedProgress.completeDailyOrder(city, 100, true, { ...story, step: 1 });
+  await resumed.flush();
+  const concurrent = await ProgressStore.open(factory);
+  const finale = { ...story, step: 2 };
+  const sticker = storySticker(city, template);
+
+  expect(resumedProgress.completeDailyOrder(city, 100, true, finale)).toEqual({
+    tokens,
+    sticker,
+  });
+  new MissionProgress(concurrent).completeDailyOrder(city, 100, true, finale);
+  await Promise.all([resumed.flush(), concurrent.flush()]);
+
+  const saved = (await ProgressStore.open(factory)).profile;
+  expect(saved.progression.tokens).toBe(tokens);
+  expect(saved.stickers).toEqual([sticker]);
+  expect(saved.stories).toEqual({
+    [city]: { seed: seedValue, finished: 1, step: 0 },
+  });
+  expect(saved.missionPoints).toBe(500);
+  expect(saved.completed).toEqual([]);
+});
+
 it('creates a v4 UUID when a WebView only exposes random bytes', () => {
   vi.stubGlobal('crypto', {
     getRandomValues: crypto.getRandomValues.bind(crypto),
@@ -468,7 +556,7 @@ it('creates a v4 UUID when a WebView only exposes random bytes', () => {
 
 it('preserves an unsupported future save', async () => {
   const factory = new IDBFactory();
-  const future = { version: 10, data: 'future' };
+  const future = { version: 11, data: 'future' };
   await seed(factory, future);
   const store = await ProgressStore.open(factory);
   expect(store).toMatchObject({ reset: false, sessionOnly: true });

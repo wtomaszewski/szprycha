@@ -3,11 +3,14 @@ import type { DailyOrder } from '../gameplay/procedural/orders';
 import { translate, ui } from '../core/presentation';
 
 type PhoneMode = 'available' | 'active' | 'tutorial';
+export type PhoneStory = { order?: DailyOrder; finished?: boolean };
 
 export class MissionPhone {
   readonly button = document.createElement('button');
   private readonly panel = document.createElement('dialog');
   private readonly closeButton = document.createElement('button');
+  private readonly storyHeading = document.createElement('h3');
+  private readonly storyList = document.createElement('ul');
   private readonly dailyHeading = document.createElement('h3');
   private readonly dailyList = document.createElement('ul');
   private readonly list = document.createElement('ul');
@@ -46,11 +49,16 @@ export class MissionPhone {
     this.panel.id = 'mission-phone';
     this.panel.className = 'game-dialog mission-phone';
     this.panel.setAttribute('aria-labelledby', title.id);
+    this.storyHeading.textContent = ui.procedural.stories.heading;
+    this.storyHeading.id = 'story-orders-title';
+    this.storyList.setAttribute('aria-labelledby', this.storyHeading.id);
     this.dailyHeading.textContent = ui.procedural.heading;
     this.dailyHeading.id = 'daily-orders-title';
     this.dailyList.setAttribute('aria-labelledby', this.dailyHeading.id);
     this.panel.append(
       header,
+      this.storyHeading,
+      this.storyList,
       this.dailyHeading,
       this.dailyList,
       heading,
@@ -84,9 +92,21 @@ export class MissionPhone {
     orders: readonly MissionDefinition[],
     mode: PhoneMode,
     daily: readonly DailyOrder[] = [],
+    story?: PhoneStory,
   ) {
     this.starts = [];
     this.list.replaceChildren();
+    this.storyList.replaceChildren();
+    this.storyHeading.hidden = this.storyList.hidden = !story;
+    if (story?.order)
+      this.addOrder(this.storyList, story.order.definition, mode, story.order);
+    else if (story) {
+      const message = document.createElement('li');
+      message.textContent = story.finished
+        ? ui.procedural.stories.allFinished
+        : ui.procedural.stories.locked;
+      this.storyList.append(message);
+    }
     this.dailyList.replaceChildren();
     this.dailyHeading.hidden = this.dailyList.hidden = daily.length === 0;
     for (const order of daily)
@@ -116,6 +136,17 @@ export class MissionPhone {
     const item = document.createElement('li');
     const title = document.createElement('h4');
     title.textContent = translate(order.tytul, daily?.text);
+    if (daily?.story) {
+      const { template, step, total } = daily.story;
+      const thread = document.createElement('p');
+      thread.className = 'story-order-progress';
+      thread.textContent = translate('procedural.stories.progress', {
+        title: `procedural.stories.templates.${template}.title`,
+        current: String(step + 1),
+        total: String(total),
+      });
+      item.append(thread);
+    }
     item.append(title);
     if (daily) {
       const { name, age, occupation, trait } = daily.client;
