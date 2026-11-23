@@ -2420,8 +2420,6 @@ html[data-reduced-effects]
 }
 .ranking-avatar {
   display: inline-block;
-  width: 24px;
-  height: 24px;
   vertical-align: middle;
   background-image: url('../assets/generated/rider.png');
   image-rendering: pixelated;

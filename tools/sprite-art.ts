@@ -3,7 +3,12 @@ import {
   emergencyTypes,
   helmetColors,
   largeVehicleTypes,
+  pedalFrames,
+  pedestrianSeasonRows,
   pedestrianTypes,
+  ridingPoses,
+  signalStages,
+  walkFrames,
   riderPoses,
   riderDirections,
   pedestrianDirections,
@@ -73,6 +78,41 @@ export class Tile {
         pixel(this.image, px, py, color, alpha);
   }
 
+  oval(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: number,
+    alpha = 255,
+  ) {
+    for (let dy = Math.floor(y); dy < y + height; dy++)
+      for (let dx = Math.floor(x); dx < x + width; dx++) {
+        const u = ((dx + 0.5 - x) * 2) / width - 1;
+        const v = ((dy + 0.5 - y) * 2) / height - 1;
+        if (u * u + v * v <= 1) this.rect(dx, dy, 1, 1, color, alpha);
+      }
+  }
+
+  stroke(
+    x: number,
+    y: number,
+    toX: number,
+    toY: number,
+    radius: number,
+    color: number,
+  ) {
+    const steps = Math.max(Math.ceil(Math.hypot(toX - x, toY - y)), 1);
+    for (let i = 0; i <= steps; i++)
+      this.oval(
+        x + ((toX - x) * i) / steps - radius + 0.5,
+        y + ((toY - y) * i) / steps - radius + 0.5,
+        2 * radius,
+        2 * radius,
+        color,
+      );
+  }
+
   bevel(x: number, y: number, width: number, height: number, color: number) {
     this.rect(x + 1, y, width - 2, height, color);
     this.rect(x, y + 1, width, height - 2, color);
@@ -104,7 +144,11 @@ function sheet(id: SpriteSheet, paint: Paint, directions = 0) {
   const [width, height, columns, rows] = spriteSheets[id];
   const result = new PNG({ width: width * columns, height: height * rows });
   if (directions) {
-    for (let row = 0; row < (rows * columns) / directions; row++) {
+    const poses =
+      id === 'rider'
+        ? riderPoses * helmetColors.length
+        : (rows * columns) / directions;
+    for (let row = 0; row < poses; row++) {
       const tile = new Tile(width, height);
       paint(tile, row, 0);
       for (let direction = 0; direction < directions; direction++) {
@@ -123,7 +167,10 @@ function sheet(id: SpriteSheet, paint: Paint, directions = 0) {
             if (u < 0 || v < 0 || u >= width || v >= height) continue;
             const from = (v * width + u) * 4;
             const to = ((frameY + y) * result.width + frameX + x) * 4;
-            tile.image.data.copy(result.data, to, from, from + 4);
+            result.data[to] = tile.image.data[from]!;
+            result.data[to + 1] = tile.image.data[from + 1]!;
+            result.data[to + 2] = tile.image.data[from + 2]!;
+            result.data[to + 3] = tile.image.data[from + 3]!;
           }
       }
     }
@@ -149,146 +196,283 @@ function sheet(id: SpriteSheet, paint: Paint, directions = 0) {
 }
 
 const riderPaint = [
-  [orange, burgundy, steel, skin],
-  [green, teal, steel, tan],
-  [blue, navy, mint, skin],
-  [pink, purple, steel, tan],
+  [burgundy, orange, gold, steel, skin],
+  [teal, green, mint, steel, tan],
+  [navy, blue, cyan, mint, skin],
+  [purple, pink, cream, steel, tan],
 ] as const;
 const helmets = { gold, blue, pink };
+const helmetShade = new Map([
+  [gold, amber],
+  [blue, royal],
+  [pink, burgundy],
+  [white, steel],
+  [mint, green],
+]);
 
 function bicycle(tile: Tile, x: number, frameColor: number) {
-  tile.rect(x + 1, 3, 3, 19, ink, 90);
-  tile.bevel(x - 2, 1, 4, 7, ink);
-  tile.bevel(x - 2, 16, 4, 7, ink);
-  tile.rect(x - 1, 2, 1, 4, gray);
-  tile.rect(x - 1, 18, 1, 4, gray);
-  tile.rect(x - 1, 6, 2, 12, frameColor);
-  tile.rect(x - 4, 6, 8, 2, ink);
-  tile.rect(x - 3, 6, 6, 1, steel);
-  tile.rect(x - 2, 13, 4, 3, ink);
-  tile.rect(x - 1, 3, 2, 1, steel);
-  tile.rect(x - 1, 20, 2, 1, burgundy);
+  tile.oval(x - 1, 5, 6, 23, ink, 92);
+  for (const y of [5, 20]) {
+    tile.bevel(x - 2, y, 5, 7, ink);
+    tile.rect(x, y + 1, 2, 5, shadow);
+    tile.rect(x, y + 2, 1, 3, gray);
+  }
+  tile.rect(x - 1, 8, 3, 16, ink);
+  tile.rect(x, 8, 1, 16, frameColor);
+  tile.rect(x - 5, 8, 11, 3, ink);
+  tile.rect(x - 4, 8, 9, 1, steel);
+  tile.bevel(x - 2, 17, 5, 5, ink);
+  tile.rect(x - 1, 17, 3, 2, gray);
+  tile.rect(x, 6, 1, 2, steel);
+  tile.rect(x - 1, 24, 3, 1, burgundy);
 }
 
-const steps = [2, 1, -2, -1] as const;
+// Foot positions through one crank revolution. The second component
+// widens the knee as it rises, keeping the legs recognizable from above.
+const crank = [
+  [3, 0],
+  [2, 1],
+  [-2, 1],
+  [-3, 0],
+  [-2, -1],
+  [2, -1],
+] as const;
+const gait = [
+  [3, 0],
+  [2, 1],
+  [-1, 2],
+  [-3, 0],
+  [-2, 1],
+  [1, 2],
+] as const;
+
+function riderLayout(pose: number) {
+  const walking = pose >= ridingPoses && pose < ridingPoses + walkFrames;
+  const dismount = pose - ridingPoses - walkFrames;
+  return {
+    walking,
+    dismount,
+    bikeX: walking ? 10 : dismount >= 0 ? 14 - 3 * dismount : 16,
+    bodyX: walking ? 21 : dismount >= 0 ? 18 + 2 * dismount : 16,
+  };
+}
 
 function drawRider(tile: Tile, pose: number, palette: number, helmet: number) {
-  const [shirt, shade, frame, complexion] = riderPaint[palette]!;
-  const walking = pose >= 24 && pose < 28;
-  const dismounting = pose >= 28;
-  if (walking || dismounting) {
-    const bikeX = walking ? 8 : pose === 28 ? 11 : 9;
-    bicycle(tile, bikeX, frame);
-    const body = walking ? 16 : pose === 28 ? 13 : 15;
-    const step = walking ? steps[pose % 4]! : 1;
-    tile.bevel(body - 3, 9, 7, 10, ink);
-    tile.rect(body - 2, 14 - step, 2, 4, navy);
-    tile.rect(body + 1, 14 + step, 2, 4, navy);
-    tile.rect(body - 2, 17 - step, 2, 1, steel);
-    tile.rect(body + 1, 17 + step, 2, 1, steel);
-    tile.bevel(body - 3, 9, 7, 6, shirt);
-    tile.line(body - 2, 10, bikeX + 3, 7, shade, 2);
-    tile.rect(bikeX + 3, 7, 2, 2, complexion);
-    tile.bevel(body - 2, 6, 5, 6, ink);
-    tile.bevel(body - 2, 6, 4, 4, helmet);
-    tile.rect(body - 1, 6, 2, 1, white);
-    return;
-  }
-  bicycle(tile, 12, frame);
-  const step = steps[pose % 4]!;
-  tile.rect(8, 13 + step, 3, 4, ink);
-  tile.rect(13, 13 - step, 3, 4, ink);
-  tile.rect(9, 14 + step, 2, 2, navy);
-  tile.rect(13, 14 - step, 2, 2, navy);
-  tile.rect(8, 16 + step, 2, 1, steel);
-  tile.rect(14, 16 - step, 2, 1, steel);
-  tile.bevel(7, 8, 10, 7, ink);
-  tile.bevel(8, 9, 8, 5, shirt);
-  tile.bevel(9, 11, 6, 4, shade);
-  tile.rect(10, 13, 4, 1, gold);
-  const action = Math.floor((pose % 12) / 4);
+  const [shade, shirt, bright, frame, complexion] = riderPaint[palette]!;
+  const { walking, dismount, bikeX, bodyX } = riderLayout(pose);
+  const onFoot = walking || dismount >= 0;
+  const cycle = walking
+    ? (pose - ridingPoses) % walkFrames
+    : pose % pedalFrames;
+  const signal = onFoot
+    ? 0
+    : (Math.floor(pose / pedalFrames) % signalStages) - 2;
+  const look = onFoot ? 0 : Math.floor(pose / (pedalFrames * signalStages));
+  bicycle(tile, bikeX, frame);
   for (const side of [-1, 1]) {
-    const shoulder = side < 0 ? 8 : 14;
-    const hand = side < 0 ? 8 : 14;
-    if (action === (side < 0 ? 1 : 2)) {
-      const end = side < 0 ? 1 : 20;
-      tile.line(shoulder, 9, end, 9, ink, 3);
-      tile.line(shoulder, 9, end, 9, shirt, 2);
-      tile.rect(end, 9, 2, 2, complexion);
-    } else {
-      tile.line(shoulder, 10, hand, 6, shade, 2);
-      tile.rect(hand, 6, 2, 2, complexion);
-    }
+    const stride = (walking ? gait : crank)[
+      (cycle + (side === 1 ? 3 : 0)) % pedalFrames
+    ]!;
+    const footY = 21 + stride[0];
+    const hip = bodyX + side * 2;
+    const knee = hip + side * (onFoot ? 1 : 2 + stride[1]);
+    tile.stroke(hip, 17, knee, footY - 1, 2.1, ink);
+    tile.stroke(hip, 17, knee, footY - 1, 1.25, navy);
+    tile.line(hip, 17, knee, footY - 1, royal);
+    tile.oval(knee - 1, footY - 1, 4, 4, ink);
+    tile.rect(knee, footY, 2, 1, steel);
   }
-  const looking = pose >= 12;
-  const headX = looking ? 8 : 9;
-  tile.bevel(headX, 5, 6, 7, ink);
-  tile.bevel(headX + 1, 5, 5, 5, helmet);
-  tile.rect(
-    headX + (looking ? 0 : 2),
-    looking ? 9 : 8,
-    looking ? 2 : 1,
-    looking ? 2 : 1,
-    complexion,
-  );
-  tile.rect(headX + 2, 5, 2, 1, white);
-  tile.rect(headX + 3, 7, 2, 1, shadow);
+  const build = [0, 1, -1, 0][palette]!;
+  tile.oval(bodyX - 5 - build, 11, 11 + build * 2, 9, ink);
+  tile.oval(bodyX - 4 - build, 12, 9 + build * 2, 7, shade);
+  tile.oval(bodyX - 4 - build, 11, 8 + build * 2, 6, shirt);
+  tile.line(bodyX - 3, 13, bodyX - 1, 12, bright);
+  tile.rect(bodyX - 1, 17, 4, 1, shade);
+  for (const side of [-1, 1]) {
+    const shoulder = bodyX + side * (4 + build);
+    const reach = Math.sign(signal) === side ? Math.abs(signal) : 0;
+    const holdingBike = !onFoot || side < 0;
+    const handX = reach
+      ? bodyX + side * (reach === 2 ? 12 : 8)
+      : holdingBike
+        ? bikeX + side * (onFoot ? -5 : 4)
+        : bodyX + 5;
+    const handY = reach === 2 ? 13 : reach === 1 ? 10 : holdingBike ? 9 : 17;
+    const elbowX = reach === 2 ? bodyX + side * 8 : shoulder + side;
+    const elbowY = reach === 2 ? 13 : holdingBike ? 11 : 15;
+    tile.stroke(shoulder, 13, elbowX, elbowY, 2.1, ink);
+    tile.stroke(elbowX, elbowY, handX, handY, 2.1, ink);
+    tile.stroke(shoulder, 13, elbowX, elbowY, 1.3, shade);
+    tile.stroke(elbowX, elbowY, handX, handY, 1.3, shirt);
+    tile.line(shoulder, 12, elbowX, elbowY - 1, shirt);
+    tile.oval(handX - 1, handY - 1, 3, 3, complexion);
+    tile.rect(handX, handY + 1, 1, 1, tan);
+  }
+  if (palette !== 0) {
+    tile.bevel(bodyX - 3, 15, 7, 5, ink);
+    tile.bevel(bodyX - 2, 15, 5, 4, shade);
+    tile.rect(bodyX - 1, 16, 3, 1, bright);
+  }
+  const headX = bodyX - look;
+  const y = onFoot ? 7 : 6 + look;
+  tile.oval(headX - 4, y, 9, 9, ink);
+  tile.oval(headX - 3, y + 1, 7, 7, helmetShade.get(helmet) ?? amber);
+  tile.oval(headX - 3, y, 6, 6, helmet);
+  tile.line(headX - 2, y + 2, headX, y + 1, white);
+  tile.line(headX + 1, y + 3, headX + 2, y + 3 - look, shadow);
+  tile.line(headX, y + 5, headX + 1, y + 5 - look, shadow);
+  if (look) {
+    tile.rect(headX - 3, y + 5, 2, look, complexion);
+    tile.rect(headX - 2, y + 5, 1, 1, shade);
+  }
 }
 
 const walkers = [
-  [gold, navy, skin, brown],
-  [blue, navy, tan, ink],
-  [purple, shadow, skin, steel],
-  [green, navy, skin, brown],
-  [orange, teal, tan, gold],
-  [pink, navy, skin, ink],
-  [royal, shadow, tan, ink],
-  [teal, navy, tan, brown],
+  [5, 5, burgundy, orange, gold, navy, skin, brown],
+  [7, 7, royal, blue, cyan, navy, tan, ink],
+  [6, 7, purple, burgundy, pink, shadow, skin, steel],
+  [7, 7, teal, green, mint, navy, skin, brown],
+  [8, 7, brown, orange, cream, teal, tan, gold],
+  [6, 7, purple, pink, cream, navy, skin, ink],
+  [7, 7, navy, royal, blue, shadow, tan, ink],
+  [6, 6, teal, green, mint, navy, tan, brown],
+  [7, 7, burgundy, orange, gold, navy, skin, shadow],
+  [8, 8, navy, blue, cyan, shadow, tan, brown],
+  [8, 7, teal, green, mint, navy, skin, ink],
+  [6, 6, purple, burgundy, pink, navy, tan, gold],
 ] as const;
 
 function drawPedestrian(tile: Tile, row: number) {
-  const kind = pedestrianTypes[Math.floor(row / 4)]!;
-  const [shirt, trousers, complexion, hair] = walkers[Math.floor(row / 4)]!;
-  const step = steps[row % 4]!;
-  const x = kind === 'dog' ? 5 : 8;
-  const y = kind === 'stroller' || kind === 'child' ? 8 : 6;
-  tile.rect(x - 2, y + 4, 6, 4, ink, 93);
-  const stride = kind === 'runner' ? step + Math.sign(step) : step;
-  tile.rect(x - 2, y + 4 + stride, 2, 3, trousers);
-  tile.rect(x + 1, y + 4 - stride, 2, 3, trousers);
-  tile.rect(x - 2, y + 4 + stride, 2, 1, white);
-  tile.rect(x + 1, y + 4 - stride, 2, 1, white);
-  tile.bevel(x - 4, y, 8, 6, ink);
-  tile.bevel(x - 3, y + 1, 6, 4, shirt);
-  tile.rect(x - 4, y + 2 - Math.sign(step), 2, 2, complexion);
-  tile.rect(x + 2, y + 2 + Math.sign(step), 2, 2, complexion);
-  tile.bevel(x - 3, y - 3, 6, 6, ink);
-  tile.bevel(x - 2, y - 3, 4, 4, hair);
-  tile.rect(x - 2, y, 4, 1, complexion);
-  if (kind === 'child' || kind === 'runner')
-    tile.rect(x - 2, y - 2, 4, 1, white);
-  if (kind === 'student' || kind === 'child')
-    tile.bevel(x - 2, y + 2, 4, 4, kind === 'child' ? royal : gold);
-  if (kind === 'senior') {
-    tile.line(12, 5 + Math.sign(step), 13, 10 + Math.sign(step), brown);
-    tile.rect(12, 5 + Math.sign(step), 2, 1, steel);
+  const winter = row >= pedestrianSeasonRows;
+  const index = Math.floor((row % pedestrianSeasonRows) / walkFrames);
+  const kind = pedestrianTypes[index]!;
+  const [width, length, shade, shirt, bright, trousers, complexion, hair] =
+    walkers[index]!;
+  const phase = row % walkFrames;
+  const x = kind === 'dog' ? 8 : 12;
+  const y = kind === 'stroller' ? 14 : kind === 'child' ? 12 : 10;
+  const seated = kind === 'wheelchair';
+  const coat = width + Number(winter) * 2;
+  const half = (coat - 1) / 2;
+  tile.oval(x - 4, y - 1, 10, 11, ink, 80);
+  if (seated) {
+    tile.bevel(x - 6, y - 2, 13, 12, ink);
+    tile.rect(x - 4, y, 9, 8, gray);
+    tile.rect(x - 4, y + 1, 9, 6, teal);
+    for (const side of [-1, 1]) {
+      const wheel = x + side * 5;
+      tile.oval(wheel - 1, y - 2, 3, 12, ink);
+      tile.rect(wheel, y - 1, 1, 9, steel);
+      tile.rect(
+        wheel,
+        y + ((phase + 3 * Number(side > 0)) % walkFrames),
+        1,
+        2,
+        gray,
+      );
+      tile.rect(wheel - side, y - 4, 1, 2, ink);
+    }
+    tile.rect(x - 3, y - 3, 7, 2, shadow);
+  }
+  for (const side of [-1, 1]) {
+    const step = gait[(phase + (side === 1 ? 3 : 0)) % walkFrames]!;
+    const legX = x + side * (width > 6 ? 2 : 1.5);
+    const stepLength = kind === 'runner' ? 1.3 : kind === 'stroller' ? 0.75 : 1;
+    const footY = seated ? y - 4 : y + length / 2 + 3 + step[0] * stepLength;
+    const shoeX = legX + side * (seated ? 0 : step[1] * 0.35);
+    tile.stroke(legX, y + 2, shoeX, footY, 1.6, ink);
+    tile.stroke(legX, y + 2, shoeX, footY, 0.9, trousers);
+    tile.oval(shoeX - 1.25, footY - 1.5, 3.5, 3, ink);
+    tile.oval(shoeX - 0.75, footY - 1.5, 2, 1.5, steel);
+  }
+  tile.oval(x - half - 1, y - 2, coat + 2, length + 1, ink);
+  tile.oval(x - half, y - 1, coat, length - 1, shade);
+  tile.oval(x - half, y - 1, coat - 1, length - 2, shirt);
+  tile.stroke(x - half + 1, y + 1, x - 1, y - 0.5, 0.75, bright);
+  for (const side of [-1, 1]) {
+    const step = gait[(phase + (side === 1 ? 3 : 0)) % walkFrames]!;
+    const shoulder = x + side * half;
+    const handX = shoulder + side;
+    const handY =
+      kind === 'stroller'
+        ? y - 5
+        : kind === 'tourist' && side > 0
+          ? y - 3
+          : seated
+            ? y + step[0]
+            : y + 1 - step[0] * 0.8;
+    tile.stroke(shoulder, y + 1, handX, handY, winter ? 1.7 : 1.45, ink);
+    tile.stroke(shoulder, y + 1, handX, handY, winter ? 1.05 : 0.7, shade);
+    tile.oval(
+      handX - 0.75,
+      handY - 0.75,
+      2.5,
+      2.5,
+      winter ? shadow : complexion,
+    );
+  }
+  if (kind === 'student' || kind === 'child' || kind === 'commuter') {
+    const bag = kind === 'child' ? royal : kind === 'commuter' ? brown : gold;
+    tile.oval(x - 2, y + 2, 6, 5, ink);
+    tile.oval(x - 2, y + 2, 5, 4, bag);
+    tile.rect(x - 1, y + 3, 2, 1, bright);
+  }
+  if (winter) {
+    tile.oval(x - 3, y - 3, 7, 6, ink);
+    tile.oval(x - 2, y - 2, 5, 5, bright);
+    tile.rect(x, y + 1, 2, 3, bright);
+  }
+  const headY = y - (seated ? 4 : 5);
+  tile.oval(x - 3, headY, 7, 7, ink);
+  tile.oval(x - 2, headY, 5, 6, winter ? shade : hair);
+  tile.oval(x - 2, headY + 3, 5, 3, complexion);
+  tile.rect(x - 1, headY + 3, 2, 1, skin);
+  tile.rect(x + 2, headY + 4, 1, 1, tan);
+  if (winter) tile.rect(x - 1, headY + 1, 3, 1, shirt);
+  else if (kind === 'senior') tile.rect(x - 1, headY + 1, 3, 1, white);
+  else if (kind === 'runner') tile.rect(x - 2, headY + 2, 5, 1, bright);
+  if (seated) {
+    tile.rect(x - 2, y - 6, 5, 1, shadow);
+    tile.rect(x - 2, y - 5, 5, 1, gray);
   }
   if (kind === 'stroller') {
-    tile.rect(4, 2, 8, 5, ink);
-    tile.bevel(5, 1, 6, 6, teal);
-    tile.rect(6, 3, 4, 2, cream);
-    tile.rect(6, 7, 4, 1, steel);
+    for (const wheel of [x - 4, x + 4]) {
+      tile.bevel(wheel - 1, 3, 3, 6, ink);
+      tile.rect(wheel, 4 + (phase % 2), 1, 3, gray);
+    }
+    tile.bevel(x - 4, 1, 9, 9, ink);
+    tile.oval(x - 3, 2, 7, 7, teal);
+    tile.oval(x - 3, 2, 6, 5, green);
+    tile.rect(x - 2, 6, 5, 2, cream);
+    tile.rect(x - 3, 9, 7, 1, steel);
   }
   if (kind === 'tourist') {
-    tile.rect(10, 3, 4, 4, white);
-    tile.line(10, 4, 13, 5, green);
-    tile.rect(11, 6, 2, 1, blue);
+    tile.rect(x + 3, y - 6, 6, 5, ink);
+    tile.rect(x + 3, y - 6, 5, 4, cream);
+    tile.line(x + 4, y - 4, x + 7, y - 5, green);
+    tile.rect(x + 5, y - 5, 1, 3, blue);
+  }
+  if (kind === 'shopper') {
+    tile.bevel(x + 4, y + 1 + (phase % 2), 5, 5, ink);
+    tile.bevel(x + 5, y + 2 + (phase % 2), 4, 4, cream);
+    tile.rect(x + 6, y + 3 + (phase % 2), 2, 1, brown);
   }
   if (kind === 'dog') {
-    tile.line(7, 7, 12, 5, steel);
-    tile.bevel(11, 3, 4, 6, brown);
-    tile.rect(12, 3, 2, 2, cream);
-    tile.rect(11 + Math.sign(step), 8, 1, 2, ink);
+    const dogX = 17;
+    const dogY = 5 + Math.round(gait[phase]![0] / 3);
+    tile.line(x + 4, y + 1, dogX - 1, dogY + 5, steel);
+    tile.line(dogX + 2, dogY + 7, dogX + 3 + (phase % 2), dogY + 9, ink);
+    for (const side of [-1, 1]) {
+      const paw = dogX + side * 2;
+      tile.rect(paw, dogY + 2 + ((phase + side + 1) % 2), 2, 2, ink);
+      tile.rect(paw, dogY + 5 + ((phase + side + 2) % 2), 2, 2, brown);
+    }
+    tile.oval(dogX - 2, dogY, 6, 8, ink);
+    tile.oval(dogX - 1, dogY + 1, 4, 6, brown);
+    tile.rect(dogX, dogY + 3, 2, 1, tan);
+    tile.bevel(dogX - 2, dogY - 2, 5, 4, brown);
+    tile.rect(dogX, dogY - 2, 1, 2, cream);
+    tile.rect(dogX - 1, dogY + 1, 4, 1, burgundy);
   }
 }
 
@@ -460,18 +644,19 @@ export function spriteArt() {
     'rider-lights': sheet(
       'rider-lights',
       (t, row) => {
-        const pose = Math.floor((row % 16) / 4);
-        const x = [12, 8, 11, 9][pose]!;
+        const mode = Math.floor((row % 16) / 4);
+        const pose = [0, ridingPoses, ridingPoses + walkFrames, riderPoses - 1][
+          mode
+        ]!;
+        const { bikeX, bodyX } = riderLayout(pose);
         if (row & 1) {
-          t.rect(x - 1, 2, 2, 2, white);
-          t.rect(x - 1, 19, 2, 2, red);
+          t.rect(bikeX - 1, 6, 3, 2, white);
+          t.rect(bikeX - 1, 23, 3, 2, red);
         }
-        if (row & 2) t.rect(x - 2, 21, 4, 1, red);
+        if (row & 2) t.rect(bikeX - 2, 25, 5, 1, red);
         if (row & 16) {
-          const body = [12, 16, 13, 15][pose]!;
-          const y = pose === 0 ? 12 : 13;
-          t.rect(body - 2, y, 5, 2, amber);
-          t.rect(body - 2, y + 1, 5, 1, row & 2 ? white : gold);
+          t.rect(bodyX - 3, 16, 7, 2, amber);
+          t.rect(bodyX - 2, 17, 5, 1, row & 2 ? white : gold);
         }
       },
       riderDirections,
@@ -481,9 +666,9 @@ export function spriteArt() {
       (t, row) =>
         drawRider(
           t,
-          row % 4,
-          1 + Math.floor(row / 4),
-          [white, mint, gold][Math.floor(row / 4)]!,
+          2 * pedalFrames + (row % pedalFrames),
+          1 + Math.floor(row / pedalFrames),
+          [white, mint, gold][Math.floor(row / pedalFrames)]!,
         ),
       riderDirections,
     ),

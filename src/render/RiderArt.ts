@@ -3,9 +3,10 @@ import { sceneDepth } from './effectFrames';
 import type { ReplayFrame } from '../gameplay/ReplayBuffer';
 import {
   helmetColors,
+  idleRiderPose,
   riderDirections,
   riderPose,
-  riderPoses,
+  riderFrame,
   spriteDirection,
   type HelmetColor,
 } from './spriteFrames';
@@ -23,7 +24,9 @@ export class RiderArt {
     private readonly goldenBell = false,
   ) {
     this.helmet = helmetColors.indexOf(helmet);
-    this.image = scene.add.image(0, 0, 'rider', 0).setDepth(20);
+    this.image = scene.add
+      .image(0, 0, 'rider', riderFrame(this.helmet, idleRiderPose, 0))
+      .setDepth(20);
     this.lights = scene.add
       .image(0, 0, 'rider-lights', 0)
       .setDepth(sceneDepth.light + 1)
@@ -39,6 +42,8 @@ export class RiderArt {
       | 'dismountAt'
       | 'rider'
       | 'riderStride'
+      | 'signalReach'
+      | 'glance'
       | 'reflectiveVest'
     >,
     reflected: boolean,
@@ -50,15 +55,15 @@ export class RiderArt {
     const sinceDismount = at - frame.dismountAt;
     const dismount =
       sinceDismount < 0.34 ? Math.floor(sinceDismount / 0.17) : -1;
-    const stride = rider.speed > 0 ? Math.floor(frame.riderStride) : 1;
+    const stride = rider.speed > 0 ? frame.riderStride : 0;
     const pose = riderPose(
       stride,
-      actions.signal,
-      actions.looking,
+      frame.signalReach,
+      frame.glance,
       rider.walking,
       dismount,
     );
-    const index = (this.helmet * riderPoses + pose) * riderDirections + heading;
+    const index = riderFrame(this.helmet, pose, heading);
     this.image.setPosition(x, y);
     if (Number(this.image.frame.name) !== index) this.image.setFrame(index);
     const show = actions.lights || reflected || frame.reflectiveVest;

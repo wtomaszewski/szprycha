@@ -1,3 +1,4 @@
+import { animateGlance, animateSignal } from '../render/spriteFrames';
 import type { Rider, RiderState } from './bicycle';
 import {
   TICKS_PER_SECOND,
@@ -35,6 +36,8 @@ export interface ReplayFrame {
   reflectiveVest: boolean;
   rider: Rider;
   riderStride: number;
+  signalReach: number;
+  glance: number;
   dismountAt: number;
   actions: RiderState;
   actors: readonly ReplayActor[];
@@ -60,6 +63,8 @@ export class ReplayBuffer {
       reflectiveVest: false,
       rider: { x: 0, y: 0, heading: 0, speed: 0, walking: false },
       riderStride: 0,
+      signalReach: 0,
+      glance: 0,
       dismountAt: -Infinity,
       actions: { signal: null, looking: false, bell: false, lights: false },
       actors: Array.from({ length: actorCount }, () => ({
@@ -105,8 +110,14 @@ export class ReplayBuffer {
       : (previous?.dismountAt ?? -Infinity);
     frame.riderStride =
       ((modeChanged ? 0 : (previous?.riderStride ?? 0)) +
-        (rider.speed * elapsed) / (rider.walking ? 5 : 8)) %
-      4;
+        (rider.speed * elapsed) / (rider.walking ? 20 : 32)) %
+      1;
+    frame.signalReach = rider.walking
+      ? 0
+      : animateSignal(previous?.signalReach ?? 0, signal, elapsed);
+    frame.glance = rider.walking
+      ? 0
+      : animateGlance(previous?.glance ?? 0, actions.looking, elapsed);
     frame.at = at;
     frame.environment.time = environment.time;
     frame.environment.weather = environment.weather;
@@ -137,11 +148,11 @@ export class ReplayBuffer {
         pose.active &&
         (source.kind === 'pedestrian' || source.kind === 'cyclist')
       ) {
-        const strideRate = source.kind === 'pedestrian' ? 5 : 2.5;
+        const strideRate = source.kind === 'pedestrian' ? 1.25 : 0.625;
         pose.stride =
           ((movingBefore ? was.stride : 0) +
             source.speed * elapsed * strideRate) %
-          4;
+          1;
       }
       pose.braking =
         source.speed < 0.15 ||

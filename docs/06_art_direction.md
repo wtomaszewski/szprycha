@@ -61,20 +61,23 @@ GTA2 renderowało budynki jako bryły widziane z góry z perspektywą względem 
 7. Kafelki muszą idealnie pasować do siatki pikseli: przesunięcia zaokrąglane do pełnych pikseli logicznych, brak migotania przy ruchu kamery (testuj przy wolnym przesuwaniu).
 
 ## 5. Postacie i pojazdy
-- **Rower gracza:** widok z góry, widoczny kask (kolor/wzór z personalizacji), ręce na kierownicy, nogi pedałujące (4 klatki), **animacja sygnalizowania ręką lewą/prawą** (ręka wyciągnięta w bok — musi być czytelna na pierwszy rzut oka!), obejrzenie się (głowa obraca się), zsiadanie i prowadzenie roweru (postać idzie obok). 16 kierunków prerenderowanych (nie obracaj pixel-artu w czasie rzeczywistym w finalnej wersji; placeholdery mogą).
+- **Rower gracza:** widok z góry, widoczny kask (kolor/wzór z personalizacji), ręce na kierownicy, nogi pedałujące (6 klatek), **animacja sygnalizowania ręką lewą/prawą** (ręka wyciągnięta w bok — musi być czytelna na pierwszy rzut oka!), obejrzenie się (głowa obraca się), zsiadanie i prowadzenie roweru (postać idzie obok). 16 kierunków prerenderowanych (nie obracaj pixel-artu w czasie rzeczywistym w finalnej wersji; placeholdery mogą).
 - **Światła:** przednie białe (stożek światła nocą), tylne czerwone (może migać), odblask czerwony z tyłu błyska, gdy pada na niego światło auta.
 - **Auta:** 6 typów (mały hatchback, sedan, kombi, dostawczak, taksówka, autobus miejski), pojazdy uprzywilejowane (karetka, straż, policja — z animacją sygnałów), dorożka konna (Warszawa), rowerzyści AI (3 warianty), hulajnoga elektryczna.
 - **Tramwaje:** Warszawa — czerwono-żółte; Wrocław — niebiesko-białe/kremowe. Bez logotypów przewoźników.
-- **Piesi:** 12 wariantów (dzieci, dorośli, seniorzy z laską, osoba z wózkiem dziecięcym, turysta z mapą, biegacz, pies na smyczy), animacja chodu 4 klatki × 8 kierunków.
+- **Piesi:** 12 wariantów o różnych proporcjach i ubiorach. Wśród nich są dzieci, dorośli, seniorzy, osoba na wózku, osoba z psem, opiekun z wózkiem dziecięcym i turysta z mapą. Ruch ma 6 klatek × 8 kierunków.
 - **Portrety dialogowe:** 64×64, 5 emocji, dla wszystkich postaci z `docs/02`.
 
 ### Stan sprite’ów uczestników ruchu
 
-- Menu zapisuje lokalnie żółty, błękitny lub różowy kolor kasku. Rowerzysta 24×24 ma 16 gotowych kierunków, po cztery klatki pedałowania i prowadzenia, dwie fazy zsiadania oraz osobne pozy lewego i prawego gestu, także przy obejrzeniu się. Po zmroku włączone przednie światło rzuca stożek, a tylny odblask rozjaśnia się w wiązce nadjeżdżającego pojazdu.
+- Menu zapisuje lokalnie żółty, błękitny lub różowy kolor kasku. Rowerzysta 32×32 ma 16 gotowych kierunków, po sześć klatek pedałowania i prowadzenia oraz dwie fazy zsiadania. Ręka przechodzi przez pośrednią pozę przy wysuwaniu i chowaniu, a głowa obraca się w trzech fazach. Powtórka pokazuje fazę z zapisu. Po zmroku włączone przednie światło rzuca stożek, a tylny odblask rozjaśnia się w wiązce nadjeżdżającego pojazdu.
 - Cztery typy mniejszych aut są w atlasie 32×48, a dostawczak i autobus w 32×64. Każdy typ ma trzy malowania. Kierunkowskazy migają na podstawie `maneuver`, a światła stop reagują na hamowanie i zatrzymanie. Karetka, straż i policja mają animowane belki. Pozy i światła korzystają z tej samej próbki symulacji w jeździe i powtórce.
 - Tramwaj ma dwa segmenty 32×80 z przegubem, który pozwala im ustawić się wzdłuż toru niezależnie. Czerwono-żółte malowanie jest używane w Miasteczku. Niebiesko-kremowe jest przygotowane dla map Wrocławia.
-- Osiem wariantów pieszych 16×16 ma po cztery klatki chodu i osiem kierunków. Trzy warianty rowerzystów AI korzystają z 24×24, czterech klatek i 16 kierunków.
+- Atlas pieszych 24×24 zawiera stroje na cieplejszą pogodę i zimowe kurtki wybierane podczas śniegu. Osoba na wózku porusza obręczami kół. Trzy warianty rowerzystów AI korzystają z 32×32, sześciu klatek pedałowania i 16 kierunków. Rozmiary kolizji wynikają z dotychczasowej symulacji.
+- Czternaście portretów 64×64 z `docs/02` pokazuje pięć emocji. Mimika zmienia ułożenie brwi, oczu i ust. Światło z górnej lewej strony podkreśla kształt twarzy, kasków i ubrań.
 - `npm run assets:generate` odtwarza oryginalne atlasy z palety projektu. `assets/manifest.json` opisuje siatkę PNG oraz kolejność klatek potrzebną przy podmianie grafik.
+
+[Porównanie postaci przed zmianą i po niej](screenshots/101-postacie-przed-po.webp)
 
 ## 6. Landmarki — specyfikacja wizualna (również jako prompty dla artysty/narzędzia AI)
 

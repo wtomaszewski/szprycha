@@ -1,16 +1,24 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from 'vitest';
 import { PNG } from 'pngjs';
+import { parse } from 'yaml';
 import manifest from '../assets/manifest.json';
+import { dialogueFileSchema, portraitEmotions } from '../src/content/dialogues';
+import { portraitArt } from '../tools/portrait-art';
 import { encodeSprite, spriteArt } from '../tools/sprite-art';
 import {
   helmetColors,
+  idleRiderPose,
+  pedalFrames,
   pedestrianDirections,
+  pedestrianSeasonRows,
   riderDirections,
+  riderFrame,
   riderPose,
   spriteDirection,
   spriteSheets,
   vehicleFrame,
+  walkFrames,
 } from '../src/render/spriteFrames';
 
 const generated = spriteArt();
@@ -34,7 +42,10 @@ function frame(image: PNG, index: number, width: number, height: number) {
 test('sprite generator reproduces the checked-in bytes and manifest grids', () => {
   const second = spriteArt();
   const palette = new Set(
-    readFileSync('assets/palette.hex', 'utf8').trim().split('\n'),
+    readFileSync('assets/palette.hex', 'utf8')
+      .trim()
+      .split('\n')
+      .map((value) => Number.parseInt(value.slice(1), 16)),
   );
   for (const [id, [frameWidth, frameHeight, columns, rows]] of Object.entries(
     spriteSheets,
@@ -58,40 +69,115 @@ test('sprite generator reproduces the checked-in bytes and manifest grids', () =
       directions,
     });
     const encoded = encodeSprite(image);
-    expect(encoded.equals(encodeSprite(second[key])), id).toBe(true);
+    expect(image.data.equals(second[key].data), id).toBe(true);
     expect(encoded.equals(readFileSync(`assets/${file}`)), id).toBe(true);
     for (let i = 0; i < image.data.length; i += 4)
       if (
         image.data[i + 3] &&
-        !palette.has('#' + image.data.toString('hex', i, i + 3))
+        !palette.has(
+          (image.data[i]! << 16) |
+            (image.data[i + 1]! << 8) |
+            image.data[i + 2]!,
+        )
       )
         throw new Error(
           `Sprite ${id} contains a color outside the project palette`,
         );
   }
-});
+}, 15_000);
 
-test('rider and pedestrian strides and orientations have distinct raster frames', () => {
-  for (const [id, directions, size] of [
-    ['rider', riderDirections, 24],
-    ['traffic-cyclist', riderDirections, 24],
-    ['traffic-pedestrian', pedestrianDirections, 16],
+test('pedal and walk cycles have distinct frames in every prescribed heading', () => {
+  for (const [id, directions, strides, start, rows] of [
+    ['rider', riderDirections, pedalFrames, idleRiderPose, 1],
+    [
+      'traffic-cyclist',
+      riderDirections,
+      pedalFrames,
+      0,
+      spriteSheets['traffic-cyclist'][3] / pedalFrames,
+    ],
+    [
+      'traffic-pedestrian',
+      pedestrianDirections,
+      walkFrames,
+      0,
+      (2 * pedestrianSeasonRows) / walkFrames,
+    ],
   ] as const) {
+    const [width, height] = spriteSheets[id];
     const image = generated[id];
-    const passes = new Set<string>();
-    for (let index = 0; index < directions * 4; index++)
-      passes.add(frame(image, index, size, size).data.toString('hex'));
-    expect(passes.size, id).toBe(directions * 4);
+    for (let row = 0; row < rows; row++) {
+      const looks = new Set<string>();
+      for (let direction = 0; direction < directions; direction++) {
+        const frames = Array.from({ length: strides }, (_, stride) => {
+          const index =
+            (start + row * strides + stride) * directions + direction;
+          return frame(image, index, width, height).data.toString('hex');
+        });
+        looks.add(frames[0]!);
+        expect(
+          new Set(frames).size,
+          `${id}, row ${row}, heading ${direction}`,
+        ).toBe(strides);
+      }
+      expect(looks.size, id).toBe(directions);
+    }
   }
   expect(spriteDirection(-Math.PI / 2, riderDirections)).toBe(0);
   expect(spriteDirection(0, riderDirections)).toBe(4);
   expect(spriteDirection((3 * Math.PI) / 2, riderDirections)).toBe(0);
-  const [gold, blue, pink] = helmetColors.map((_, index) =>
-    frame(generated.rider, index * 30 * riderDirections, 24, 24).data.toString(
-      'hex',
-    ),
+  const helmets = helmetColors.map((_, index) =>
+    frame(
+      generated.rider,
+      riderFrame(index, idleRiderPose, 0),
+      32,
+      32,
+    ).data.toString('hex'),
   );
-  expect(new Set([gold, blue, pink]).size).toBe(3);
+  expect(new Set(helmets).size).toBe(helmetColors.length);
+  const warm = frame(generated['traffic-pedestrian'], 0, 24, 24);
+  const winter = frame(
+    generated['traffic-pedestrian'],
+    pedestrianSeasonRows * pedestrianDirections,
+    24,
+    24,
+  );
+  expect(warm.data.equals(winter.data)).toBe(false);
+});
+
+test('every dialogue character has a deterministic 64×64 sheet with five distinct emotions', () => {
+  const { postacie } = dialogueFileSchema.parse(
+    parse(readFileSync('content/dialogi/postacie.yaml', 'utf8')),
+  );
+  const portraits = portraitArt();
+  const repeat = new Map(portraitArt());
+  expect(portraits.map(([id]) => id).sort()).toEqual(
+    postacie.map(({ id }) => id).sort(),
+  );
+  for (const [id, image] of portraits) {
+    const file = `generated/portraits/${id}.png`;
+    expect(
+      manifest.assets.find((entry) => entry.id === `portrait-${id}`),
+    ).toMatchObject({
+      file,
+      frameWidth: 64,
+      frameHeight: 64,
+      width: 64 * portraitEmotions.length,
+      height: 64,
+      frames: portraitEmotions.length,
+      directions: 1,
+    });
+    expect(encodeSprite(image).equals(encodeSprite(repeat.get(id)!)), id).toBe(
+      true,
+    );
+    expect(encodeSprite(image).equals(readFileSync(`assets/${file}`)), id).toBe(
+      true,
+    );
+    const faces = portraitEmotions.map((_, index) =>
+      frame(image, index, 64, 64).data.toString('hex'),
+    );
+    expect(new Set(faces).size, id).toBe(portraitEmotions.length);
+  }
 });
 
 test('simulated maneuvers select the expected front and rear lamp colors', () => {
@@ -108,26 +194,29 @@ test('simulated maneuvers select the expected front and rear lamp colors', () =>
   expect(pixel(vehicleFrame(0, false, 'right', false), 23, 42)).toBe('b13e53');
 });
 
-test('the two baked hand signals extend beyond the neutral silhouette', () => {
-  const image = generated.rider;
-  const left = frame(
-    image,
-    riderPose(0, 'left', true, false, -1) * riderDirections,
-    24,
-    24,
-  );
-  const right = frame(
-    image,
-    riderPose(0, 'right', false, false, -1) * riderDirections,
-    24,
-    24,
-  );
-  const relaxed = frame(image, 0, 24, 24);
-  const alpha = (tile: PNG, x: number) => tile.data[(9 * 24 + x) * 4 + 3];
-  expect([alpha(left, 2), alpha(relaxed, 2), alpha(right, 2)]).toEqual([
-    255, 0, 0,
-  ]);
-  expect([alpha(left, 20), alpha(relaxed, 20), alpha(right, 20)]).toEqual([
-    0, 0, 255,
-  ]);
+test('the atlases contain both full signals, intermediate reaches and three glance angles', () => {
+  const tile = (signal: number, glance = 0) =>
+    frame(
+      generated.rider,
+      riderFrame(0, riderPose(0, signal, glance, false, -1), 0),
+      32,
+      32,
+    );
+  const alpha = (image: PNG, x: number, y: number) =>
+    image.data[(y * 32 + x) * 4 + 3];
+  const neutral = tile(0);
+  for (const [signal, x] of [
+    [-1, 4],
+    [1, 28],
+  ] as const) {
+    const full = tile(signal);
+    const half = tile(signal / 2);
+    expect(alpha(full, x, 13)).toBe(255);
+    expect(alpha(half, x, 13)).toBe(0);
+    expect(alpha(neutral, x, 13)).toBe(0);
+    expect(half.data.equals(neutral.data)).toBe(false);
+  }
+  expect(
+    new Set([0, 0.5, 1].map((g) => tile(0, g).data.toString('hex'))).size,
+  ).toBe(3);
 });

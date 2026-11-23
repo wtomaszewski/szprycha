@@ -1,7 +1,11 @@
 export const riderDirections = 16;
 export const pedestrianDirections = 8;
-export const strideFrames = 4;
-export const riderPoses = 30;
+export const pedalFrames = 6;
+export const walkFrames = 6;
+export const signalStages = 5;
+export const glanceStages = 3;
+export const ridingPoses = pedalFrames * signalStages * glanceStages;
+export const riderPoses = ridingPoses + walkFrames + 2;
 export const helmetColors = ['gold', 'blue', 'pink'] as const;
 export type HelmetColor = (typeof helmetColors)[number];
 
@@ -26,20 +30,33 @@ export const pedestrianTypes = [
   'runner',
   'dog',
   'student',
+  'wheelchair',
+  'commuter',
+  'shopper',
+  'teen',
 ] as const;
 export const cyclistVariants = 3;
+export const pedestrianSeasonRows = walkFrames * pedestrianTypes.length;
+const riderColumns = 4 * riderDirections;
 
 // Frames are row-major. Each pose occupies 16 or 8 headings clockwise from north.
 // Car columns are off, left, right, then the same three under braking.
 export const spriteSheets = {
-  rider: [24, 24, riderDirections * 2, (riderPoses * helmetColors.length) / 2],
-  'rider-lights': [24, 24, riderDirections, 32],
-  'traffic-cyclist': [24, 24, riderDirections, strideFrames * cyclistVariants],
+  rider: [
+    32,
+    32,
+    riderColumns,
+    Math.ceil(
+      (riderPoses * helmetColors.length * riderDirections) / riderColumns,
+    ),
+  ],
+  'rider-lights': [32, 32, riderDirections, 32],
+  'traffic-cyclist': [32, 32, riderDirections, pedalFrames * cyclistVariants],
   'traffic-pedestrian': [
-    16,
-    16,
-    pedestrianDirections,
-    strideFrames * pedestrianTypes.length,
+    24,
+    24,
+    pedestrianDirections * 2,
+    pedestrianSeasonRows,
   ],
   'traffic-car': [
     32,
@@ -65,17 +82,52 @@ export function spriteDirection(heading: number, directions: number) {
 
 export function riderPose(
   stride: number,
-  signal: 'left' | 'right' | null,
-  looking: boolean,
+  signalReach: number,
+  glance: number,
   walking: boolean,
   dismount: number,
 ) {
-  if (dismount >= 0) return 28 + dismount;
-  if (walking) return 24 + stride;
+  if (dismount >= 0) return ridingPoses + walkFrames + dismount;
+  if (walking) return ridingPoses + Math.floor(stride * walkFrames);
+  const signal =
+    2 + Math.sign(signalReach) * Math.round(Math.abs(signalReach) * 2);
+  const look = Math.round(glance * (glanceStages - 1));
   return (
-    stride +
-    (signal === 'left' ? 4 : signal === 'right' ? 8 : 0) +
-    (looking ? 12 : 0)
+    (look * signalStages + signal) * pedalFrames +
+    Math.floor(stride * pedalFrames)
+  );
+}
+
+export function riderFrame(helmet: number, pose: number, direction: number) {
+  return (helmet * riderPoses + pose) * riderDirections + direction;
+}
+
+export const idleRiderPose = riderPose(0, 0, 0, false, -1);
+
+export function animateSignal(
+  value: number,
+  signal: 'left' | 'right' | null,
+  elapsed: number,
+) {
+  return approach(
+    value,
+    signal === 'left' ? -1 : signal === 'right' ? 1 : 0,
+    elapsed,
+  );
+}
+
+export function animateGlance(
+  value: number,
+  looking: boolean,
+  elapsed: number,
+) {
+  return approach(value, Number(looking), elapsed);
+}
+
+function approach(value: number, target: number, elapsed: number) {
+  const step = elapsed / 0.15;
+  return (
+    value + Math.sign(target - value) * Math.min(step, Math.abs(target - value))
   );
 }
 

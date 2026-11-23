@@ -64,7 +64,8 @@ it('loads traffic sprite frames at manifest dimensions and creates them at nativ
 
   const [bike, car, , tramFront, tramRear, large, rider] = placed;
   expect(rider!.height).toBe(bike!.height);
-  expect(car!.height / bike!.height).toBeGreaterThanOrEqual(2);
+  expect(bike!.height).toBeGreaterThanOrEqual(32);
+  expect(car!.height).toBeGreaterThan(bike!.height);
   expect(large!.height / bike!.height).toBeLessThanOrEqual(3);
   expect(
     (tramFront!.height + tramRear!.height) / car!.height,

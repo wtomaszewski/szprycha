@@ -65,6 +65,10 @@ export class MissionRace {
     return this.verdicts;
   }
 
+  get distanceTravelled() {
+    return this.distance;
+  }
+
   step() {
     if (this.opponentScore !== undefined) return;
     this.ticks++;
