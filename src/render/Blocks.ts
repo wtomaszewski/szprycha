@@ -13,8 +13,10 @@ import {
   wallTexture,
 } from './BlockArt';
 import { sceneDepth } from './effectFrames';
+import type { WorldModel } from '../rules/world/WorldModel';
 import {
   CAMERA_HEIGHT_PX,
+  blockOpacity,
   roofOffset,
   supportingTier,
   type Block,
@@ -141,10 +143,28 @@ class Wall extends WallFace {
 export class Blocks {
   cameraHeight = CAMERA_HEIGHT_PX;
   private readonly items;
+  private readonly roads;
+  private readonly silhouette = { left: 0, right: 0, top: 0, bottom: 0 };
   readonly chimneys: { roof: GameObjects.Image; x: number; y: number }[] = [];
   private night = false;
 
-  constructor(scene: Scene, blocks: Block[], mapId: string) {
+  constructor(scene: Scene, blocks: Block[], mapId: string, world: WorldModel) {
+    const scale = 1 / world.metersPerPixel;
+    this.roads = world.zones
+      .filter(
+        ({ kind }) =>
+          kind === 'roadway' ||
+          kind === 'bike_path' ||
+          kind === 'bike_lane' ||
+          kind === 'shared_path' ||
+          kind === 'shoulder',
+      )
+      .map(({ x, y, width, height }) => ({
+        left: x * scale,
+        top: y * scale,
+        right: (x + width) * scale,
+        bottom: (y + height) * scale,
+      }));
     const landmarkTiers = new Map<string, Block[]>();
     this.items = [...blocks]
       .sort((a, b) => a.floors - b.floors)
@@ -221,6 +241,7 @@ export class Blocks {
   ) {
     const updateEmission = night || this.night;
     this.night = night;
+    const zoom = camera.zoom;
     const cx = camera.scrollX + camera.width / 2;
     const cy = camera.scrollY + camera.height / 2;
     const halfWidth = camera.width / (2 * camera.zoom);
@@ -234,9 +255,9 @@ export class Blocks {
     const bottom = viewY + halfHeight + 1;
     for (const item of this.items) {
       const { block: b, offset, base, horizontal, vertical, roof } = item;
-      roofOffset(b, cx, cy, lite, this.cameraHeight, offset);
+      roofOffset(b, cx, cy, lite, this.cameraHeight, offset, zoom);
       if (item.support)
-        roofOffset(item.support, cx, cy, lite, this.cameraHeight, base);
+        roofOffset(item.support, cx, cy, lite, this.cameraHeight, base, zoom);
       const dx = offset.x - base.x;
       const dy = offset.y - base.y;
       const margin = Math.max(
@@ -283,13 +304,12 @@ export class Blocks {
         }
         continue;
       }
-      const alpha =
-        playerX > b.x + offset.x - 16 &&
-        playerX < b.x + b.width + offset.x + 16 &&
-        playerY > b.y + offset.y - 16 &&
-        playerY < b.y + b.height + offset.y + 16
-          ? 0.35
-          : 1;
+      const silhouette = this.silhouette;
+      silhouette.left = x - Math.max(0, dx);
+      silhouette.right = x + b.width - Math.min(0, dx);
+      silhouette.top = y - Math.max(0, dy);
+      silhouette.bottom = y + b.height - Math.min(0, dy);
+      const alpha = blockOpacity(playerX, playerY, silhouette, this.roads);
       if (item.alpha !== alpha) {
         item.alpha = alpha;
         roof.setAlpha(alpha);

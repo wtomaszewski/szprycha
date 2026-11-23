@@ -1,4 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
+import type Phaser from 'phaser';
+import pl from '../../i18n/pl.json' with { type: 'json' };
+import { chooseCity, startAt } from './city-picker';
+import { fixedSceneTicks } from './helpers/fixed-scene-ticks';
 
 // Freeze decorative animation so the snapshots compare the projected geometry.
 test.use({ reducedMotion: 'reduce' });
@@ -82,7 +86,9 @@ async function openCity(
   await page.goto('/');
   const canvas = page.locator('canvas');
   await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
-  await page.keyboard.press('Enter');
+  await page
+    .getByRole('button', { name: pl.driving.title, exact: true })
+    .click();
   await expect(canvas).toHaveAttribute('data-x', String(928 + position.x));
   return canvas;
 }
@@ -131,4 +137,69 @@ test('F3 camera height slider updates the projection', async ({ page }) => {
     .toBe(false);
   await page.keyboard.press('F3');
   await expect(slider).toBeHidden();
+});
+
+type MovingCameraScene = {
+  sys: {
+    settings: { key: string };
+    sceneUpdate(time: number, delta: number): void;
+  };
+  tickForTest(time: number, delta: number): void;
+  game: Phaser.Game;
+  cameras: Phaser.Cameras.Scene2D.CameraManager;
+  centerRideCamera(x: number, y: number): void;
+};
+
+test.describe('map chunks during a slow pan', () => {
+  test.use({
+    baseURL: 'http://127.0.0.1:4174',
+    viewport: { width: 740, height: 390 },
+    hasTouch: true,
+    serviceWorkers: 'block',
+  });
+
+  test('keeps the same road pixels through different phases of the pan', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      const getContext = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = new Proxy(getContext, {
+        apply: (target, canvas, args) =>
+          args[0].includes('webgl')
+            ? null
+            : Reflect.apply(target, canvas, args),
+      });
+    });
+    await startAt(page, 'warszawa', 3540, 1807);
+    await page.goto('/');
+    const game = await fixedSceneTicks<MovingCameraScene>(page, ['City']);
+    await chooseCity(page, 'warszawa');
+    const samples = await game.evaluate((game) => {
+      const city = game.scene.getScene('City');
+      const { canvas, renderer, scene } = city.game;
+      const camera = city.cameras.main;
+      const ctx = canvas.getContext('2d')!;
+      const positions = new Set<number>();
+      let reference: Uint8ClampedArray | undefined;
+      let changed = 0;
+      for (let x = 3580; x < 3596; x++) {
+        city.centerRideCamera(x, 1807);
+        renderer.preRender();
+        scene.render(renderer);
+        renderer.postRender();
+        // Sample the same stretch of road across the x=3584 chunk boundary.
+        const origin = camera.getWorldPoint(0, 0);
+        const left = Math.round((3584 - origin.x) * camera.zoom) - 64;
+        const top = Math.round((1830 - origin.y) * camera.zoom);
+        const pixels = ctx.getImageData(left, top, 128, 54).data;
+        reference ??= pixels;
+        if (pixels.some((channel, index) => channel !== reference![index]))
+          changed++;
+        positions.add(left);
+      }
+      return { changed, positions: positions.size };
+    });
+    expect(samples.positions).toBeGreaterThan(8);
+    expect(samples.changed).toBe(0);
+  });
 });

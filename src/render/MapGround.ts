@@ -133,11 +133,8 @@ export function drawMapGround(
       if (scene.textures.exists(previous)) scene.textures.remove(previous);
       const rows = Math.min(chunkTiles, map.height - row);
       const columns = Math.min(chunkTiles, map.width - col);
-      // A two-pixel overlap covers fractional-zoom seams between texture quads.
-      const padX = col + columns < map.width ? 2 : 0;
-      const padY = row + rows < map.height ? 2 : 0;
-      const width = columns * TILE + padX;
-      const height = rows * TILE + padY;
+      const width = columns * TILE;
+      const height = rows * TILE;
       const existing = scene.textures.exists(name);
       const chunk = existing
         ? undefined
@@ -148,8 +145,8 @@ export function drawMapGround(
       if (ctx) {
         for (const [index, layer] of layers.entries()) {
           if (!layer) continue;
-          for (let dy = 0; dy < rows + (padY ? 1 : 0); dy++)
-            for (let dx = 0; dx < columns + (padX ? 1 : 0); dx++) {
+          for (let dy = 0; dy < rows; dy++)
+            for (let dx = 0; dx < columns; dx++) {
               const gid = layer.data[row + dy]?.[col + dx]?.index ?? 0;
               if (gid > 0 && (index !== 0 || gid !== tiles.water[0]))
                 stamp(
