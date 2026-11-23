@@ -286,6 +286,54 @@
       "text": "Na bulwarach spacerują piesi. Zatrzymaj się przy znaczniku i przećwicz, co zrobić, gdy ktoś upadnie.",
       "hash": "22595f0a6e33ec9d32a2e84357802fc64b1afa604e899aece9a653d64c05ad04"
     },
+    "dialogi.POZ-A1-01.koniec": {
+      "text": "Trzy rogale mają wycięte znaki. Lena pomoże ci odczytać, co znaczą.",
+      "hash": "1069ce62671dd41be3b488689b0f93b2c70da330b003f514f7ba85fbd145c1ae"
+    },
+    "dialogi.POZ-A1-01.start": {
+      "text": "Zawieź drewniane rogale na wystawę przy Ratuszu. Pasaż jest zamknięty, pojedź przez plac.",
+      "hash": "c1e06c77fcd10565c1b2fa8126d036bc5d073486d76b8af02d8caca93ad23d06"
+    },
+    "dialogi.POZ-A1-02.koniec": {
+      "text": "Znak zebry i kreski układają się w dojście do wysepki. Na brzegach widać podpis Zakłócacza.",
+      "hash": "29cb90a81d947d45ccf26bf285dd88bfa910ea51e05f3a315663a1ce59e9012d"
+    },
+    "dialogi.POZ-A1-02.start": {
+      "text": "Podejdź do trzech rogali na placu i rozwiąż ich zagadki.",
+      "hash": "b3b0e24816c2645681594593774e4ee24370fa8f727707bccd404311670bb271"
+    },
+    "dialogi.POZ-A2-01.koniec": {
+      "text": "Trasa wystawy prowadziła przez zebrę. Zawiła znalazła w aplikacji stary szkic dojazdu.",
+      "hash": "dca83944838a68487f54720954db3e3d79bb4a1a4d80e067382378c99b69a9fb"
+    },
+    "dialogi.POZ-A2-01.start": {
+      "text": "Przywieź mi kartkę Leny. Po drodze ustąp pieszym, którzy wchodzą na zebrę lub już po niej idą.",
+      "hash": "6c3a9571392f5425ecfe0ab1748b7f89df5430437fc4a8c0722e689349d673cc"
+    },
+    "dialogi.POZ-A2-02.koniec": {
+      "text": "W aplikacji jest już sprawdzony dojazd. Została nam jeszcze plansza na Ostrowie.",
+      "hash": "f0714e484347b0f9f8045ba2fa4180989f3b7890bbf1f9f6b386c1b84e2bbde4"
+    },
+    "dialogi.POZ-A2-02.start": {
+      "text": "Zakłócacz to podpis z moich prób. Sprawdź dojazd przez śluzę i zawieź poprawiony plan ekipie.",
+      "hash": "cf148373f08e7f1088c99325385665746435911a9f2ec2dcfe72240883b53063"
+    },
+    "dialogi.POZ-A3-01.koniec": {
+      "text": "Dobrze, że jest z nami ktoś dorosły. Zostanę z Turbo, a ekipa przygotuje planszę.",
+      "hash": "0aa3b29135207dc11e448f2674e7e225a0fe80ff6481a7368d940de9466da7f4"
+    },
+    "dialogi.POZ-A3-01.start": {
+      "text": "Turbo przewrócił się za mostem. Zapnij kask, włącz lampki i zatrzymaj się w bezpiecznym miejscu.",
+      "hash": "a6c5ab481756423c7813418c84a371c6d3ddc5f3e50baf64384288983fd2d6d8"
+    },
+    "dialogi.POZ-A3-02.koniec": {
+      "text": "Plansza jest na miejscu, a trasa w aplikacji sprawdzona. Możemy otwierać wystawę!",
+      "hash": "1eb484b3e708404db2f5987099229c84567a899fc9530992bd893a5ed0eb6170"
+    },
+    "dialogi.POZ-A3-02.start": {
+      "text": "Przywieź planszę z poprawionym dojazdem. Przed odcinkiem z zakazem wjazdu rowerów zsiądź.",
+      "hash": "dd2510ff2b51970bc13822d8a5086a940c413aa37fc31ff1837b6d40f2b4951c"
+    },
     "dialogi.WAW-A1-01.koniec_tekst": {
       "text": "Klucze dotarły. Lena ma dla ciebie kurs na bazar.",
       "hash": "2bdc0fb49bbda8bc9a99fdb3039304eba67d4ba43016525c089074075727a385"
@@ -1093,6 +1141,22 @@
     "misje.KRA-B-03.wyjasnienie": {
       "text": "Zadbaj o swoje bezpieczeństwo i ostrzeż innych, zanim podejdziesz z pomocą.",
       "hash": "b17c076808d9856694f47faca564a40dd0adeee353b3b5d11f9f1c75ec27a6f5"
+    },
+    "misje.POZ-A3-01.pytanie": {
+      "text": "Miejsce jest bezpieczne. Jak sprawdzisz, czy Turbo jest przytomny?",
+      "hash": "2c32f01a3d494421b9cd1b31b1b641f8aad70a1bffe221323c651cc6b0357961"
+    },
+    "misje.POZ-A3-01.wyjasnienie": {
+      "text": "Zawołaj dorosłego i sprawdź, czy Turbo odpowiada, bez przesuwania go.",
+      "hash": "fe22e9f86da2e05646cc69ed95c6d40da021656d6c8c93cc839e8c0be796d45b"
+    },
+    "misje.POZ-A3-02.pytanie": {
+      "text": "Jak przejdziesz przez odcinek oznaczony zakazem wjazdu rowerów?",
+      "hash": "d138feafe044a64a50a672945bdd4cd3d82dd1d05b2e2331150cfa88c3d7f746"
+    },
+    "misje.POZ-A3-02.wyjasnienie": {
+      "text": "Przy zakazie wjazdu rowerów możesz zsiąść i przeprowadzić rower chodnikiem.",
+      "hash": "59779ee26f63acc5a858acad1206c5a074a2d7129dc99f4798f2dc9deeab0d9d"
     },
     "misje.POZ-B-01.pytanie": {
       "text": "Kto ma pierwszeństwo w strefie zamieszkania?",

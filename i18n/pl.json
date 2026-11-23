@@ -245,6 +245,9 @@
     "szyszki": "Szyszki",
     "szyszkiHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać szyszkę.",
     "szyszkaQuestion": "Zagadka szyszki",
+    "rogale": "Drewniane rogale",
+    "rogaleHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać drewnianego rogala.",
+    "rogalQuestion": "Zagadka drewnianego rogala",
     "bursztyny": "Bursztyny",
     "bursztynyHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać bursztyn.",
     "bursztynQuestion": "Zagadka bursztynu",
@@ -479,6 +482,7 @@
       "oddaj": "Oddaj przesyłkę w zaznaczonym miejscu.",
       "zbierz_obwarzanka": "Zsiądź z roweru i podejdź do obwarzanka.",
       "zbierz_szyszke": "Zsiądź z roweru i podejdź do szyszki.",
+      "zbierz_rogala": "Zsiądź z roweru i podejdź do drewnianego rogala.",
       "zbierz_bursztyn": "Zsiądź z roweru i podejdź do bursztynu.",
       "zbierz_krasnala": "Zsiądź z roweru i podejdź do krasnala.",
       "przygotuj_rower": "Załóż kask i włącz światła.",
@@ -668,6 +672,54 @@
       "odp2": "Czy mogę bezpiecznie podejść.",
       "wyjasnienie": "Najpierw zadbaj o bezpieczeństwo swoje i miejsca zdarzenia.",
       "meta": "Dojedź do końca wspólnej drogi przy katedrze."
+    },
+    "POZ-A1-01": {
+      "tytul": "Pudełko na Rynek",
+      "opis": "Dostarcz drewniane pamiątki na wystawę i objedź zamknięty pasaż.",
+      "odbior": "Odbierz pudełko drewnianych rogali od pana Kazika.",
+      "meta": "Oddaj pudełko przy kolorowych domkach."
+    },
+    "POZ-A1-02": {
+      "tytul": "Trzy znaki na drewnie",
+      "opis": "Rozwiąż trzy zagadki przy Ratuszu i odczytaj wskazówkę do trasy wystawy.",
+      "ratusz": "Zsiądź z roweru i podejdź do rogala przy Ratuszu.",
+      "domki": "Podejdź do rogala na placu przed domkami.",
+      "latarnia": "Podejdź do ostatniego rogala po wschodniej stronie placu."
+    },
+    "POZ-A2-01": {
+      "tytul": "Trop przez zebrę",
+      "opis": "Zawieź wskazówkę Oli, przepuszczając pieszą idącą na wysepkę.",
+      "odbior": "Odbierz kartkę ze wskazówką od Leny.",
+      "meta": "Gdy piesza przejdzie przez twój pas, zawieź kartkę Oli."
+    },
+    "POZ-A2-02": {
+      "tytul": "Plan przed światłami",
+      "opis": "Sprawdź poprawiony dojazd przez śluzę i zawieź plan SzprychaApp.",
+      "odbior": "Odbierz poprawiony plan od Zawiły.",
+      "meta": "Na zielonym przejedź prosto i oddaj plan po drugiej stronie."
+    },
+    "POZ-A3-01": {
+      "tytul": "Światła na moście",
+      "opis": "Przejedź przez Wartę o zmroku i pomóż Turbo po upadku.",
+      "start": "Zapnij kask i włącz obie lampki przed ruszeniem.",
+      "most": "Zasygnalizuj skręt w prawo i wjedź na czerwony most.",
+      "dorosly": "Zawołaj dorosłego i sprawdź, czy Turbo odpowiada.",
+      "pytanie": "Miejsce jest bezpieczne. Jak sprawdzisz, czy Turbo jest przytomny?",
+      "odp1": "Wołam dorosłego i pytam głośno: „Czy mnie słyszysz?”.",
+      "odp2": "Od razu podnoszę Turbo i sadzam go na rowerze.",
+      "wyjasnienie": "Zawołaj dorosłego i sprawdź, czy Turbo odpowiada, bez przesuwania go."
+    },
+    "POZ-A3-02": {
+      "tytul": "Plansza na Ostrów",
+      "opis": "Dostarcz poprawioną planszę wystawy, respektując zakaz wjazdu rowerów.",
+      "odbior": "Odbierz planszę z poprawioną trasą.",
+      "znak": "Zatrzymaj się przed odcinkiem z zakazem wjazdu rowerów.",
+      "pytanie": "Jak przejdziesz przez odcinek oznaczony zakazem wjazdu rowerów?",
+      "odp1": "Przejadę powoli na rowerze, jeśli nikogo nie widzę.",
+      "odp2": "Zsiądę z roweru i go przeprowadzę.",
+      "wyjasnienie": "Przy zakazie wjazdu rowerów możesz zsiąść i przeprowadzić rower chodnikiem.",
+      "alejka": "Przeprowadź rower chodnikiem wzdłuż alejki.",
+      "meta": "Dostarcz planszę do Leny na końcu alejki."
     },
     "WIE-B-01": {
       "tytul": "Pobocze i bezpieczny odstęp",
@@ -1758,6 +1810,30 @@
     "poznan_zapowiedzi": {
       "GDZIE-13": "W śluzie zaczekaj przed autami i rusz dopiero, gdy sygnał na to pozwoli.",
       "PIER-10": "Przy wysepce obserwuj zebrę i ustąp pieszym, którzy wchodzą na nią lub już po niej idą."
+    },
+    "POZ-A1-01": {
+      "start": "Zawieź drewniane rogale na wystawę przy Ratuszu. Pasaż jest zamknięty, pojedź przez plac.",
+      "koniec": "Trzy rogale mają wycięte znaki. Lena pomoże ci odczytać, co znaczą."
+    },
+    "POZ-A1-02": {
+      "start": "Podejdź do trzech rogali na placu i rozwiąż ich zagadki.",
+      "koniec": "Znak zebry i kreski układają się w dojście do wysepki. Na brzegach widać podpis Zakłócacza."
+    },
+    "POZ-A2-01": {
+      "start": "Przywieź mi kartkę Leny. Po drodze ustąp pieszym, którzy wchodzą na zebrę lub już po niej idą.",
+      "koniec": "Trasa wystawy prowadziła przez zebrę. Zawiła znalazła w aplikacji stary szkic dojazdu."
+    },
+    "POZ-A2-02": {
+      "start": "Zakłócacz to podpis z moich prób. Sprawdź dojazd przez śluzę i zawieź poprawiony plan ekipie.",
+      "koniec": "W aplikacji jest już sprawdzony dojazd. Została nam jeszcze plansza na Ostrowie."
+    },
+    "POZ-A3-01": {
+      "start": "Turbo przewrócił się za mostem. Zapnij kask, włącz lampki i zatrzymaj się w bezpiecznym miejscu.",
+      "koniec": "Dobrze, że jest z nami ktoś dorosły. Zostanę z Turbo, a ekipa przygotuje planszę."
+    },
+    "POZ-A3-02": {
+      "start": "Przywieź planszę z poprawionym dojazdem. Przed odcinkiem z zakazem wjazdu rowerów zsiądź.",
+      "koniec": "Plansza jest na miejscu, a trasa w aplikacji sprawdzona. Możemy otwierać wystawę!"
     },
     "WIE-A1-01": {
       "start": "Przy szkole czekają na nasze szyszki do zajęć. Jedź poboczem, aż zobaczysz bramkę.",

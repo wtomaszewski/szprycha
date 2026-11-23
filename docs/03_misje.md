@@ -71,7 +71,7 @@ Losowanie używa ziarna i stałego kroku symulacji. Rozpatruje tylko zdarzenia p
 ### Uruchamianie misji
 
 - `mapa` wskazuje plik Tiled bez rozszerzenia (domyślnie wartość z `miasto`). Samouczki używają `akt: 0`. `start.kask_zapiety` określa stan kasku przed ruszeniem, a `ruch_ai: false` pozwala przećwiczyć manewr bez ruchu AI.
-- Cele są wykonywane kolejno, po osiągnięciu obszaru POI. `zbierz_obwarzanka`, `zbierz_bursztyn` i `zbierz_szyszke` wymagają dojścia z rowerem do oznaczonej znajdźki i odpowiedzi na pytanie przypisane w warstwie `collectibles`. Zdobycz z profilu liczy się przy ponownym przejeździe. `odbierz` i `oddaj` bez własnego `poi` korzystają z ostatniego wskazanego POI. `wymagany_nawyk` wymaga werdyktu `good` dla wskazanej reguły w trakcie danego celu.
+- Cele są wykonywane kolejno, po osiągnięciu obszaru POI. `zbierz_obwarzanka`, `zbierz_bursztyn`, `zbierz_szyszke` i `zbierz_rogala` wymagają dojścia z rowerem do oznaczonej znajdźki i odpowiedzi na pytanie przypisane w warstwie `collectibles`. Zdobycz z profilu liczy się przy ponownym przejeździe. `odbierz` i `oddaj` bez własnego `poi` korzystają z ostatniego wskazanego POI. `wymagany_nawyk` wymaga werdyktu `good` dla wskazanej reguły w trakcie danego celu.
 - `przygotuj_rower` może być pierwszym celem misji. Do jego ukończenia trzeba zapiąć kask i włączyć obie lampy. Pole `wymagana_kamizelka: true` dodaje kamizelkę do wyposażenia konkretnego ćwiczenia. `start.zmrok: true` ustawia warunki ćwiczenia.
 - `skrot.odcinek` wskazuje strefę Tiled objętą znakiem B-1 lub B-2 bez wyjątku dla rowerów. Za jazdę rowerem przez tę strefę silnik wystawia zwykły werdykt zgodnie z wagą reguły. Podsumowanie misji informuje o nielegalnym przejeździe i odjęciu premii za czas. Prowadzenie roweru pozostaje dozwolone.
 - `wyscig.trasa_rywala` wskazuje polilinię Tiled w warstwie `race_routes`. Wynik rywala uwzględnia werdykty z jego przejazdu. Do zaliczenia wyścigu trzeba zdobyć od niego więcej punktów.
@@ -198,6 +198,17 @@ Kampania i Wolna jazda używają tych samych identyfikatorów szkoleń. Po `WIE-
 | 1 | `WIE-A1-01`–`WIE-A1-02` | Dostawa do szkoły prawym poboczem, odstęp przy wyprzedzaniu i trzy zagadki na dziedzińcu. |
 | 2 | `WIE-A2-01`–`WIE-A2-02` | Postój i bezpieczny wjazd na niestrzeżony przejazd oraz powrót o zmroku w kasku, z lampkami i kamizelką. |
 | 3 | `WIE-A3-01`–`WIE-A3-02` | Pierwsza pomoc przy drodze gruntowej, włączenie się do ruchu z gospodarstwa i objazd odcinka z B-1. |
+
+## Kampania — POZNAŃ
+
+Kampania uwzględnia ukończone szkolenia z Wolnej jazdy. Kolejne misje główne odblokowują się po przejściu poprzednich.
+
+| Etap | Misje | Ćwiczenia |
+| --- | --- | --- |
+| Szkolenie | `POZ-B-01`–`POZ-B-04` | Strefa zamieszkania i objazd B-1, śluza rowerowa, ustąpienie pieszej na zebrze do wysepki, światła i pierwsza pomoc. |
+| Akt 1 | `POZ-A1-01` Pudełko na Rynek · `POZ-A1-02` Trzy znaki na drewnie | Zapięcie kasku, dostawa z objazdem zamkniętego pasażu i trzy zagadki o strefie zamieszkania, zebrze i sygnalizowaniu skrętu. |
+| Akt 2 | `POZ-A2-01` Trop przez zebrę · `POZ-A2-02` Plan przed światłami | Zatrzymanie i rzeczywiste ustąpienie pieszej idącej na peron. Dojazd do śluzy pasem i przejazd na zielonym. |
+| Akt 3 | `POZ-A3-01` Światła na moście · `POZ-A3-02` Plansza na Ostrów | Kask i lampki o zmroku, bezpieczne podejście po upadku, wezwanie dorosłego i sprawdzenie reakcji oraz przeprowadzenie roweru chodnikiem przy B-9. |
 
 ## Wspólne — Miasteczko Ruchu Drogowego
 - **Plac manewrowy:** PLAC-01 ósemka, PLAC-02 slalom, PLAC-03 wąski tor, PLAC-04 zatrzymanie w polu, PLAC-05 ruszanie i sygnalizacja, PLAC-06 jazda z jedną ręką (sygnalizowanie skrętu). Każdy element: brąz/srebro/złoto czasowe, ale tylko przejazd bez dotknięcia linii/pachołka i bez podparcia nogą się liczy.
