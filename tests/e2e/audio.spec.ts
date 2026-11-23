@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { chooseCity } from './city-picker';
+import { readProfile } from './progress-profile';
 import {
   radioCatalog,
   radioPath,
@@ -295,19 +296,48 @@ test('ducks radio during a dialogue and preserves captions without recordings', 
   expect((await log(page)).recordingDecodes).toBe(0);
 });
 
-test('cycles all six broadcasts and plays the ident and first song completely offline', async ({
+test('plays the ident and first song of each station offline after tuning in online', async ({
   page,
   context,
 }) => {
+  test.setTimeout(90_000);
   await observeAudio(page);
   await page.goto('http://127.0.0.1:4174/');
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
-  await context.setOffline(true);
-  await page.reload();
   await chooseCity(page, 'warszawa');
   const stationButton = page.getByRole('button', {
     name: new RegExp(pl.audio.changeStation),
   });
+
+  for (const [index, station] of stations.entries()) {
+    if (index) await stationButton.click();
+    await expect(stationButton).toHaveAccessibleName(
+      new RegExp(pl.audio.stations[station]),
+    );
+    const urls = (['jingle', ...radioCatalog[station].seeds] as const).map(
+      (seed) => radioPath(station, seed),
+    );
+    await expect
+      .poll(
+        () =>
+          page.evaluate(async (playlist) => {
+            const tracks = await Promise.all(
+              playlist.map((url) => caches.match(url, { ignoreSearch: true })),
+            );
+            return tracks.filter(Boolean).length;
+          }, urls),
+        { timeout: 15_000 },
+      )
+      .toBe(urls.length);
+  }
+  await stationButton.click();
+  await expect
+    .poll(async () => (await readProfile(page)).audio.station)
+    .toBe('hits');
+
+  await context.setOffline(true);
+  await page.reload();
+  await chooseCity(page, 'warszawa');
   await expect(stationButton).toHaveAccessibleName(
     new RegExp(pl.audio.stations.hits),
   );

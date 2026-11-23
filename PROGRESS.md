@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
+Stan na 23.11.2026.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -15,6 +15,12 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M8     | Audio i szlif                               | Ukończony. M8a (#71), M8b (#72) i M8c (#73) w `main`.                                        |
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
+
+## Wydanie 2/2 — audyt wydajności (#123)
+
+- PWA mieści się w budżecie 8 MB. Warszawa, Wrocław, Kraków, playlisty i nagrania lektora pobierają się przy użyciu i zostają w lokalnym cache. Miasteczko działa po pierwszej instalacji.
+- Rozdzielono kod menu i jazdy, ograniczono pracę przy generowaniu podłoża i zwalniane są tekstury poprzedniego miasta. Na słabszym urządzeniu dotykowym działa automatyczny profil niski z ręcznym wyborem w pauzie.
+- CI sprawdza rozmiar i czasy startu w Chromium. [Pomiary, budżety i odłożone pozycje](docs/AUDYT_WYDAJNOSCI.md)
 
 ## Wydanie 2/2 — audyt dostępności (#122)
 

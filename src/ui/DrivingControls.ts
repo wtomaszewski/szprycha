@@ -1,7 +1,7 @@
 import type { DriveInput, Scheme, RiderState } from '../gameplay/bicycle';
 import { ui } from '../core/presentation';
 import { CAMERA_HEIGHT_PX } from '../render/projection';
-import type { ProgressStore } from '../core/progressStore';
+import { graphicsQualities, type ProgressStore } from '../core/progressStore';
 import {
   accessibilityPreferences,
   ridePreference,
@@ -68,6 +68,7 @@ export class DrivingControls {
   private readonly pauseButton: HTMLButtonElement;
   private readonly lightButton: HTMLButtonElement;
   private readonly plac: boolean;
+  onQualityChanged?: () => void;
   private toggleLabel!: HTMLButtonElement;
   constructor(
     areaTitle: string,
@@ -129,15 +130,31 @@ export class DrivingControls {
       this.clear();
     });
     scheme.textContent = ui.driving[this.scheme];
-    const applyQuality = () => {
-      this.root.toggleAttribute('data-lite', this.lite);
-      lite.textContent = this.lite ? ui.driving.lite : ui.driving.full;
-    };
-    const lite = button('', () => {
-      this.visuals.lite = !this.lite;
-      applyQuality();
-    });
-    applyQuality();
+    if (!plac) {
+      const label = document.createElement('label');
+      label.className = 'ride-preference';
+      const quality = document.createElement('select');
+      for (const value of graphicsQualities)
+        quality.add(new Option(ui.driving[value], value));
+      quality.value = progress.profile.graphicsQuality ?? 'auto';
+      quality.addEventListener(
+        'change',
+        () => {
+          const selected = graphicsQualities.find(
+            (value) => value === quality.value,
+          );
+          if (!selected) return;
+          progress.change((profile) => {
+            profile.graphicsQuality = selected;
+          });
+          this.onQualityChanged?.();
+        },
+        { signal },
+      );
+      label.append(ui.driving.quality, quality);
+      options.append(label);
+    }
+    this.root.toggleAttribute('data-lite', this.lite);
     const rain = button(ui.driving.rain, () => {
       this.visuals.rain = !this.rain;
       rain.setAttribute('aria-pressed', String(this.rain));
@@ -145,7 +162,6 @@ export class DrivingControls {
     rain.setAttribute('aria-pressed', String(this.rain));
     if (plac) {
       rain.hidden = true;
-      lite.hidden = true;
     }
     if (reset)
       button(ui.driving.reset, () => {
@@ -416,6 +432,11 @@ export class DrivingControls {
       { signal },
     );
   }
+  setLowQuality(lite: boolean) {
+    this.visuals.lite = lite;
+    this.root.toggleAttribute('data-lite', lite);
+  }
+
   get lite() {
     return this.visuals.lite;
   }

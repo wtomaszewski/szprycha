@@ -184,11 +184,14 @@ const storyProfileSchema = identityProfileSchema.extend({
   ),
 });
 
+export const graphicsQualities = ['auto', 'full', 'lite'] as const;
+
 const profileVersion = 11;
 const profileSchema = storyProfileSchema.extend({
   version: z.literal(profileVersion),
   selectedCity: playableCity.optional(),
   obwarzanki: z.array(id).optional(),
+  graphicsQuality: z.enum(graphicsQualities).optional().catch(undefined),
 });
 
 function addStories(

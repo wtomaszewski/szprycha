@@ -170,7 +170,9 @@ test('resumes the campaign and saves an obwarzanek after its quiz', async ({
   await page.screenshot({ path: info.outputPath('106-kampania.png') });
   await pin.click();
   const canvas = page.locator('canvas[data-map="krakow"]');
-  await expect(canvas).toHaveAttribute('data-mission', 'KRA-A1-02');
+  await expect(canvas).toHaveAttribute('data-mission', 'KRA-A1-02', {
+    timeout: 15_000,
+  });
   await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
   await page.keyboard.press('Escape');
   await page
@@ -215,7 +217,9 @@ test('resumes the campaign and saves an obwarzanek after its quiz', async ({
     .click();
   await expect(pin).toBeFocused();
   await pin.click();
-  await expect(canvas).toHaveAttribute('data-mission', 'KRA-A1-02');
+  await expect(canvas).toHaveAttribute('data-mission', 'KRA-A1-02', {
+    timeout: 15_000,
+  });
   await expect(collection).toHaveText('Obwarzanki 1/7');
 });
 

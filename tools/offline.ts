@@ -17,6 +17,14 @@ import {
 const workerFile = 'quiz-worker.js';
 const manifestFile = 'app.webmanifest';
 
+function loadOnDemand(file: string) {
+  return (
+    file.startsWith('assets/radio/') ||
+    /^assets\/[^/]+\.(ogg|m4a)$/.test(file) ||
+    /^assets\/(warszawa|wroclaw|krakow)-[^/]+\.tmj$/.test(file)
+  );
+}
+
 const localOrigin = "'self' capacitor://localhost";
 function mobileContentPolicy(rankingOrigin?: string) {
   const connect = rankingOrigin
@@ -136,14 +144,18 @@ export function offlineApp(mobile = false, rankingOrigin?: string): Plugin {
         'utf8',
       );
       const revision = createHash('sha256').update(worker);
+      const lazy: Record<string, string> = {};
       for (const file of files) {
         const digest = createHash('sha256')
           .update(await readFile(join(dir, file)))
           .digest();
         revision.update(file).update('\0').update(digest);
+        if (loadOnDemand(file))
+          lazy[file] = digest.toString('hex').slice(0, 16);
       }
       const manifest = JSON.stringify({
-        files,
+        files: files.filter((file) => !Object.hasOwn(lazy, file)),
+        lazy,
         version: revision.digest('hex').slice(0, 16),
       });
       await writeFile(
