@@ -18,29 +18,58 @@ test('accepts and completes a daily pickup in Free Ride', async ({ page }) => {
   const phone = page.getByRole('dialog', { name: pl.phone.title });
   const daily = phone.getByRole('list', { name: pl.procedural.heading });
   await expect(daily.getByRole('button')).toHaveCount(3);
-  await daily
-    .getByRole('button', {
-      name: `${pl.phone.start} · ${pl.procedural.templates.pickup.title}`,
-    })
-    .click();
+  const pickup = daily.getByRole('listitem').filter({
+    has: page.getByRole('heading', {
+      name: pl.procedural.templates.pickup.title,
+    }),
+  });
+  const clientProfile = pickup.getByText(/ · \d+ lat · /);
+  await expect(clientProfile).toBeVisible();
+  const client = (await clientProfile.innerText()).split(' · ')[0]!;
+  await pickup.getByRole('button').click();
   await expect(canvas).toHaveAttribute(
     'data-mission',
     /^warszawa-daily-pickup-/,
   );
   await expect(canvas).toHaveAttribute('data-x', '3160');
   await expect(canvas).toHaveAttribute('data-y', '353');
+  const dialogue = page.getByRole('dialog', { name: pl.dialogueUi.title });
+  const portrait = dialogue.locator('.dialogue-portrait');
+  await expect(dialogue.getByText(client, { exact: true })).toBeVisible();
+  await expect(dialogue.locator('.dialogue-text')).toHaveText(
+    /^Czy możesz odebrać dla mnie [^{}]+\?$/,
+  );
+  await expect(portrait).toHaveAttribute('data-emotion', 'neutral');
+  await expect(portrait).toHaveCSS('width', '64px');
+  await expect(portrait).toHaveCSS('height', '64px');
+  const neutral = await portrait.evaluate(
+    (element) => getComputedStyle(element).backgroundImage,
+  );
+  expect(neutral).toContain('data:image/png;base64,');
+  await dialogue.getByRole('button', { name: pl.dialogueUi.skip }).click();
   await expect(
     page.getByText(pl.procedural.goals.ride, { exact: true }),
   ).toBeVisible();
   await page.keyboard.down('ArrowUp');
   const result = page.getByRole('region', { name: pl.missionUi.result });
   try {
-    await expect(
-      result.getByText(pl.missionUi.completed, { exact: true }),
-    ).toBeVisible({ timeout: 12_000 });
+    await expect(dialogue.getByText(pl.procedural.dialogue.finish)).toBeVisible(
+      { timeout: 12_000 },
+    );
   } finally {
     await page.keyboard.up('ArrowUp');
   }
+  await expect(dialogue.getByText(client, { exact: true })).toBeVisible();
+  await expect(portrait).toHaveAttribute('data-emotion', 'happy');
+  const happy = await portrait.evaluate(
+    (element) => getComputedStyle(element).backgroundImage,
+  );
+  expect(happy).toContain('data:image/png;base64,');
+  expect(happy).not.toBe(neutral);
+  await dialogue.getByRole('button', { name: pl.dialogueUi.skip }).click();
+  await expect(
+    result.getByText(pl.missionUi.completed, { exact: true }),
+  ).toBeVisible();
   await expect(result).toContainText(pl.procedural.templates.pickup.title);
   await expect
     .poll(async () => (await profile(page)).missionPoints)

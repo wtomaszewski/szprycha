@@ -8,6 +8,14 @@ import {
   type Dialogues,
 } from '../content/dialogues';
 import { translate, ui } from '../core/presentation';
+import type { DailyClient } from '../gameplay/procedural/clients';
+import { clientPortraitDesign } from '../render/dailyClientArt';
+import { PixelTile } from '../render/PixelTile';
+import { drawPortrait, portraitSize } from '../render/portraitArt';
+
+type DisplayedLine = DialogueLine & {
+  values?: Readonly<Record<string, string>>;
+};
 
 const portraits = import.meta.glob<string>(
   '../../assets/generated/portraits/*.png',
@@ -22,6 +30,7 @@ const holdMs = 550;
 export class DialogueWindow {
   private readonly panel = document.createElement('dialog');
   private readonly portrait = document.createElement('span');
+  private readonly generatedPortrait = document.createElement('canvas');
   private readonly speaker = document.createElement('strong');
   private readonly text = document.createElement('p');
   private readonly nextButton = document.createElement('button');
@@ -29,7 +38,8 @@ export class DialogueWindow {
   private readonly scrollButton = document.createElement('button');
   private readonly names: Map<string, string>;
   private readonly resize = new ResizeObserver(() => this.updateScrollButton());
-  private lines: readonly DialogueLine[] = [];
+  private lines: readonly DisplayedLine[] = [];
+  private client?: DailyClient;
   private index = 0;
   private done?: () => void;
   private hold?: number;
@@ -55,6 +65,7 @@ export class DialogueWindow {
     speech.className = 'dialogue-speech';
     this.portrait.className = 'dialogue-portrait';
     this.portrait.setAttribute('aria-hidden', 'true');
+    this.generatedPortrait.width = this.generatedPortrait.height = portraitSize;
     this.text.className = 'dialogue-text';
     speech.append(this.speaker, this.text);
     line.append(this.portrait, speech);
@@ -141,12 +152,17 @@ export class DialogueWindow {
     return this.panel.open;
   }
 
-  show(lines: readonly DialogueLine[], done: () => void) {
+  show(
+    lines: readonly DisplayedLine[],
+    done: () => void,
+    client?: DailyClient,
+  ) {
     if (!lines.length) {
       done();
       return;
     }
     this.lines = lines;
+    this.client = client;
     this.index = 0;
     this.done = done;
     this.panel.showModal();
@@ -210,13 +226,24 @@ export class DialogueWindow {
   }
 
   private render() {
-    const { postac, emocja, tekst } = this.lines[this.index]!;
-    const image = portraits[`../../assets/generated/portraits/${postac}.png`];
-    this.portrait.style.backgroundImage = `url("${image}")`;
-    this.portrait.style.backgroundPositionX = `${-64 * portraitEmotions.indexOf(emocja)}px`;
+    const { postac, emocja, tekst, values } = this.lines[this.index]!;
+    const client = this.client?.id === postac ? this.client : undefined;
     this.portrait.dataset.emotion = emocja;
-    this.speaker.textContent = this.names.get(postac) ?? '';
-    this.text.textContent = translate(tekst);
+    if (client) {
+      const context = this.generatedPortrait.getContext('2d')!;
+      const frame = context.createImageData(portraitSize, portraitSize);
+      drawPortrait(new PixelTile(frame), emocja, clientPortraitDesign(client));
+      context.putImageData(frame, 0, 0);
+      this.portrait.style.backgroundImage = `url("${this.generatedPortrait.toDataURL()}")`;
+      this.portrait.style.backgroundPositionX = '0px';
+      this.speaker.textContent = client.name;
+    } else {
+      const image = portraits[`../../assets/generated/portraits/${postac}.png`];
+      this.portrait.style.backgroundImage = `url("${image}")`;
+      this.portrait.style.backgroundPositionX = `${-portraitSize * portraitEmotions.indexOf(emocja)}px`;
+      this.speaker.textContent = this.names.get(postac) ?? '';
+    }
+    this.text.textContent = translate(tekst, values);
     this.text.scrollTop = 0;
     this.updateScrollButton();
     this.speak();
@@ -231,7 +258,7 @@ export class DialogueWindow {
       'aria-pressed',
       String(this.progress.profile.audio.readAloud),
     );
-    const { tekst, lektor } = this.lines[this.index]!;
-    audio.read('dialogue', localizedVoiceLine(lektor ?? tekst));
+    const { tekst, lektor, values } = this.lines[this.index]!;
+    audio.read('dialogue', localizedVoiceLine(lektor ?? tekst, values));
   }
 }

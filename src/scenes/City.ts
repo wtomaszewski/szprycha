@@ -47,6 +47,7 @@ import { Blocks, type Block } from '../render/Blocks';
 import { CityAtmosphere } from '../render/CityAtmosphere';
 import { NightLighting, loadCityEffects } from '../render/NightLighting';
 import { CityProps, readProps } from '../render/CityProps';
+import { DailyClientSprites } from '../render/DailyClientSprites';
 import { cullMapChunks, drawMapGround } from '../render/MapGround';
 import { DrivingControls } from '../ui/DrivingControls';
 import { showError, translate, ui } from '../core/presentation';
@@ -193,6 +194,7 @@ export class City extends Scene {
   private phone!: MissionPhone;
   private freeRide = false;
   private dailyOrder?: DailyOrder;
+  private dailyClientSprites?: DailyClientSprites;
   private dailyOffers: readonly DailyOrder[] = [];
   private readonly dailyGenerators = new Map<
     MissionCity,
@@ -765,6 +767,17 @@ export class City extends Scene {
       this.updateMissionHud();
     }
     this.resetRules();
+    if (mapId === this.campaignCity && !tutorial && !examRide) {
+      this.dailyClientSprites = new DailyClientSprites(
+        this,
+        this.world.metersPerPixel,
+      );
+      if (dailyOrder) this.dailyClientSprites.show([dailyOrder]);
+      else if (!definition) {
+        this.dailyOffers = this.dailyOrders();
+        this.dailyClientSprites.show(this.dailyOffers);
+      }
+    }
     if (tutorial) {
       this.tutorial = new CityTutorial(
         tutorial,
@@ -825,6 +838,8 @@ export class City extends Scene {
       this.replayDialog.close();
       this.questionDialog.close();
       this.dialogue.destroy();
+      this.dailyClientSprites?.destroy();
+      this.dailyClientSprites = undefined;
       this.phone.close();
       this.controls.destroy();
       this.examRide = undefined;
@@ -920,6 +935,7 @@ export class City extends Scene {
       audio.stopReading('results');
     }
     this.dailyOffers = this.dailyOrders();
+    if (!this.mission) this.dailyClientSprites?.show(this.dailyOffers);
     this.phone.show(
       this.availableOrders(),
       this.mission && !this.mission.result ? 'active' : 'available',
@@ -1041,7 +1057,27 @@ export class City extends Scene {
       this.mission.definition,
       this.content.dialogi,
     );
-    this.dialogue.show(lines, () => this.missionHud?.focusEquipment());
+    const order = this.dailyOrder;
+    this.dialogue.show(
+      order
+        ? [
+            ...lines,
+            {
+              postac: order.client.id,
+              emocja:
+                order.kind === 'fragile'
+                  ? 'worried'
+                  : order.kind === 'photo'
+                    ? 'surprised'
+                    : 'neutral',
+              tekst: `procedural.dialogue.start.${order.kind}`,
+              values: order.text,
+            },
+          ]
+        : lines,
+      () => this.missionHud?.focusEquipment(),
+      order?.client,
+    );
   }
 
   private recordMissionVerdicts(creditGoodVerdicts: boolean) {
@@ -1154,9 +1190,19 @@ export class City extends Scene {
       const unlocked =
         nextOrders.some((order) => progress.isAvailable(order, content)) ||
         [...progress.unlocks(content)].some((item) => !unlocks.has(item));
+      const order = this.dailyOrder;
       this.dialogue.show(
-        missionLines(this.content.dialogi, definition.dialog_koniec),
+        order
+          ? [
+              {
+                postac: order.client.id,
+                emocja: order.kind === 'race' ? 'proud' : 'happy',
+                tekst: 'procedural.dialogue.finish',
+              },
+            ]
+          : missionLines(this.content.dialogi, definition.dialog_koniec),
         () => this.showResults(result, definition, tokens, unlocked),
+        order?.client,
       );
     }
   }
@@ -1574,6 +1620,7 @@ export class City extends Scene {
           this.world,
           this.content,
           this.dailyOrder && dailyRivalScoreLimit(balance.misja),
+          this.dailyOrder && 'turbo',
         ),
       this.examRide ? 0 : this.series.consecutive,
       { cleanTimeBonus: Boolean(this.dailyOrder) },
@@ -2253,6 +2300,7 @@ export class City extends Scene {
     const centerY = camera.scrollY + camera.height / 2;
     const halfWidth = camera.width / (2 * camera.zoom);
     const halfHeight = camera.height / (2 * camera.zoom);
+    this.dailyClientSprites?.cull(centerX, centerY, halfWidth, halfHeight);
     const sirenArt = this.sirenArt.clear();
     let reflected = false;
     let sirenVolume = 0;

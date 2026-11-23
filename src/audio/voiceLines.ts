@@ -21,8 +21,11 @@ export const resultVoiceIds = {
   failed: 'missionUi.failed',
 } as const;
 
-export function localizedVoiceLine(id: string): VoiceLine {
-  return { id, text: translate(id) };
+export function localizedVoiceLine(
+  id: string,
+  values?: Readonly<Record<string, string>>,
+): VoiceLine {
+  return { id, text: translate(id, values) };
 }
 
 type Question = GameContent['pytania']['pytania'][number];

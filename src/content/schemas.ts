@@ -1,3 +1,4 @@
+import { clientContentSchema } from './clients.ts';
 import { z } from 'zod';
 import { weatherKinds } from '../rules/types.ts';
 import { placBalanceSchema, placSchema } from './plac.ts';
@@ -314,6 +315,7 @@ export const contentSchema = z
     }),
     misje: missionsSchema,
     dialogi: dialogueFileSchema,
+    zleceniodawcy: clientContentSchema,
   })
   .superRefine((data, ctx) => {
     function unique(values: string[], path: (string | number)[]) {

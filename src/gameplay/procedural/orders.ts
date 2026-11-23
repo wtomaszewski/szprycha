@@ -10,9 +10,14 @@ import {
   moduleMastery,
   type ModuleId,
 } from '../../progression/mastery';
+import type { Vec2 } from '../../rules/types';
 import type { QuizQuestion } from '../quiz/leitner';
+import { ClientGenerator, type DailyClient } from './clients';
+import { orderSeed } from './seed';
 import { signRules } from './focus';
 import type { CertifiedRoute, RouteCatalogData } from './RouteCatalog';
+
+export { orderSeed } from './seed';
 
 export const orderKinds = [
   'delivery',
@@ -27,18 +32,22 @@ export type OrderKind = (typeof orderKinds)[number];
 export type OrderText = {
   place: string;
   item: string;
-  sender: string;
   sign: string;
 };
 export type DailyOrder = {
-  definition: MissionDefinition;
+  definition: MissionDefinition & { opis: string };
+  client: DailyClient;
+  clientPosition: Vec2;
   kind: OrderKind;
   route: CertifiedRoute;
   text: OrderText;
   question?: QuizQuestion;
 };
-type Content = Pick<GameContent, 'balans' | 'pytania' | 'przepisy'>;
-type Candidate = Pick<DailyOrder, 'kind' | 'route'> & {
+type Content = Pick<
+  GameContent,
+  'balans' | 'pytania' | 'przepisy' | 'zleceniodawcy'
+>;
+type Candidate = Pick<DailyOrder, 'kind' | 'route' | 'clientPosition'> & {
   night?: boolean;
   sign?: CertifiedRoute['signs'][number];
   ruleId: string;
@@ -55,7 +64,6 @@ const types: Record<OrderKind, string> = {
   fragile: 'delikatna_przesylka',
 };
 const items = ['map', 'notebook', 'envelope'] as const;
-const senders = ['workshop', 'library', 'club'] as const;
 
 // Finishing a clean daily race within par always beats the rival, even
 // without habit points. The campaign keeps its original rival scoring.
@@ -63,16 +71,8 @@ export function dailyRivalScoreLimit(balance: Content['balans']['misja']) {
   return balance.ukonczenie + balance.bonus_czasu_max - 1;
 }
 
-export function orderSeed(text: string) {
-  let hash = 2166136261;
-  for (const char of text)
-    hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
-  hash = Math.imul(hash ^ (hash >>> 16), 0x7feb352d);
-  hash = Math.imul(hash ^ (hash >>> 15), 0x846ca68b);
-  return (hash ^ (hash >>> 16)) >>> 0;
-}
-
 export class DailyOrderGenerator {
+  private readonly clients: ClientGenerator;
   private readonly candidates: readonly Candidate[];
   private readonly rulesByModule = new Map<ModuleId, string[]>();
   private readonly questionsByRule = new Map<string, QuizQuestion[]>();
@@ -82,6 +82,7 @@ export class DailyOrderGenerator {
     catalog: RouteCatalogData,
     private readonly content: Content,
   ) {
+    this.clients = new ClientGenerator(content.zleceniodawcy);
     const modules = new Map<string, ModuleId>();
     for (const { id, modul } of content.przepisy.przepisy) {
       if (modul === 'M08') continue;
@@ -104,10 +105,20 @@ export class DailyOrderGenerator {
       night = false,
       sign?: Candidate['sign'],
     ) => {
+      const clientPosition = catalog.clientPositions[route.steps[0]!.poi.id];
+      if (!clientPosition) return;
       for (const ruleId of new Set(ruleIds)) {
         const module = modules.get(ruleId);
         if (module)
-          candidates.push({ kind, route, ruleId, module, night, sign });
+          candidates.push({
+            kind,
+            route,
+            ruleId,
+            module,
+            night,
+            sign,
+            clientPosition,
+          });
       }
     };
     const aidRules = (this.rulesByModule.get('M07') ?? []).filter((id) =>
@@ -207,7 +218,7 @@ export class DailyOrderGenerator {
   }
 
   private create(
-    { kind, route, ruleId, night, sign }: Candidate,
+    { kind, route, ruleId, night, sign, clientPosition }: Candidate,
     seed: number,
   ): DailyOrder {
     const hash = orderSeed(
@@ -215,9 +226,9 @@ export class DailyOrderGenerator {
     );
     const id = `${this.city}-daily-${kind}-${hash.toString(36)}`;
     const item = kind === 'fragile' ? 'model' : items[hash % items.length]!;
-    const sender = senders[(hash >>> 8) % senders.length]!;
     const start = route.steps[0]!.poi.id;
     const finish = route.steps.at(-1)!.poi.id;
+    const client = this.clients.atPoi(this.city, start);
     const labels = `procedural.templates.${kind}`;
     const goals: MissionGoal[] = [];
     if (night) goals.push({ typ: 'przygotuj_rower' });
@@ -293,12 +304,13 @@ export class DailyOrderGenerator {
       kind,
       route,
       question,
+      client,
+      clientPosition,
       text: {
         place: route.district
           ? `procedural.places.${this.city}.${route.district}`
           : `cityPicker.${this.city}`,
         item: `procedural.items.${item}`,
-        sender: `procedural.senders.${sender}`,
         sign: sign?.code ?? '',
       },
       definition: {
@@ -307,7 +319,7 @@ export class DailyOrderGenerator {
         akt: 0,
         tytul: `${labels}.title`,
         opis: `${labels}.description`,
-        zleceniodawca: route.race ? 'turbo' : sender,
+        zleceniodawca: client.id,
         typ: types[kind],
         start: { poi: start, ...(night && { noc: true, kask_zapiety: false }) },
         cele: goals,

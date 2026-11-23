@@ -24,6 +24,7 @@ export const contentFiles = [
   'plac.yaml',
   'osiagniecia.yaml',
   'wyzwania.yaml',
+  'zleceniodawcy.yaml',
   'o-grze.yaml',
 ] as const;
 export async function readMissions(root: string) {

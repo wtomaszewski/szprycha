@@ -16,6 +16,11 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Zlecenia proceduralne 2/3 (#103)
+
+- Zlecenia dnia mają fikcyjnych klientów przypisanych do POI w obu miastach. Wracają oni w kolejnych ofertach związanych z tym samym miejscem.
+- SzprychaApp pokazuje profil klienta, mapa jego sprite, a dialogi portret 64×64. Generator składa twarz, fryzurę, dodatki i ubiór oraz obsługuje pięć emocji. [Opis i zrzuty](docs/03_misje.md#fikcyjni-zleceniodawcy) · [Galeria 24 postaci](docs/screenshots/103-galeria.png)
+
 ## Zlecenia proceduralne 1/3 (#102)
 
 - SzprychaApp oferuje deterministyczne Zlecenia dnia dla Warszawy i Wrocławia w Wolnej jeździe oraz po kampanii miasta.
