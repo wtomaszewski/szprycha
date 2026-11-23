@@ -239,6 +239,9 @@
     "gdanskTitle": "Gdańsk",
     "districtLocked": "Przejście zamknięte. Zatrzymaj się i otwórz ćwiczenia w SzprychaApp.",
     "districtsOpened": "Nowe przejście otwarte! Wróć do Wolnej jazdy, żeby je odkryć.",
+    "bursztyny": "Bursztyny",
+    "bursztynyHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać bursztyn.",
+    "bursztynQuestion": "Zagadka bursztynu",
     "obwarzanki": "Obwarzanki",
     "obwarzankiHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać obwarzanek.",
     "obwarzanekQuestion": "Zagadka obwarzanka",
@@ -469,6 +472,7 @@
       "odbierz": "Odbierz przesyłkę w zaznaczonym miejscu.",
       "oddaj": "Oddaj przesyłkę w zaznaczonym miejscu.",
       "zbierz_obwarzanka": "Zsiądź z roweru i podejdź do obwarzanka.",
+      "zbierz_bursztyn": "Zsiądź z roweru i podejdź do bursztynu.",
       "zbierz_krasnala": "Zsiądź z roweru i podejdź do krasnala.",
       "przygotuj_rower": "Załóż kask i włącz światła.",
       "sfotografuj": "Zrób zdjęcie znaku",
@@ -555,6 +559,86 @@
       "odp2": "Natychmiast wjeżdżam, bo mam zielone.",
       "wyjasnienie": "Rusz na zielonym, gdy przejazd jest wolny. Nigdy nie wjeżdżaj tuż przed jadące auto.",
       "meta": "Poczekaj na zielone dla rowerów i przejedź po P-11."
+    },
+    "GDA-A1-01": {
+      "tytul": "Latarenki na Długi Targ",
+      "opis": "Dowieź latarenki na pokaz nad Motławą. Wybierz alejkę wokół odcinka z B-1.",
+      "odbior": "Odbierz pudełko z latarenkami.",
+      "dostawa": "Omiń odcinek zamknięty dla ruchu od strony kamienic i oddaj latarenki."
+    },
+    "GDA-A1-02": {
+      "tytul": "Bursztynowa układanka",
+      "opis": "Przeprowadź rower przez Długi Targ i rozwiąż zagadki trzech bursztynów.",
+      "targ": "Zsiądź i podejdź z rowerem do bursztynu przy stolikach.",
+      "kamienice": "Poszukaj następnego bursztynu przy kamienicach.",
+      "fontanna": "Zabierz trzeci bursztyn, mijając fontannę od strony kamienic."
+    },
+    "GDA-A1-03": {
+      "tytul": "Trzy błyski Żurawia",
+      "opis": "Sprawdź trop Leny po drugiej stronie Motławy.",
+      "start": "Zapnij kask i włącz światła z przodu i z tyłu.",
+      "kladka": "Przed znakiem B-9 zsiądź i wejdź z rowerem na kładkę.",
+      "meta": "Przeprowadź rower do znacznika na drugim brzegu."
+    },
+    "GDA-A2-01": {
+      "tytul": "Zapis sygnału",
+      "opis": "Dostarcz Zawile zapis błysków z Ołowianki. Przez aleję prowadzi przejazd ze światłami dla rowerów.",
+      "odbior": "Odbierz zapis błysków.",
+      "postoj": "Zatrzymaj się przed przejazdem z sygnalizatorem rowerowym.",
+      "meta": "Poczekaj na zielone dla rowerów i wolny przejazd. Oddaj zapis za aleją."
+    },
+    "GDA-A2-02": {
+      "tytul": "Przystanek nad Motławą",
+      "opis": "Dowieź notatki do radia i przepuść pasażerów przy przystanku bez wysepki.",
+      "odbior": "Odbierz notatki z nasłuchu.",
+      "swiatla": "Podjedź do sygnalizatora na alei.",
+      "przystanek": "Rusz na swoim zielonym i zwolnij przed przystankiem.",
+      "meta": "Zatrzymaj się przed wysiadającymi. Oddaj notatki, kiedy przejście będzie wolne."
+    },
+    "GDA-A2-03": {
+      "tytul": "Wtyk zza torów",
+      "opis": "Przewieź wtyk do wyłącznika przez przejazd kolejowy koło Ołowianki.",
+      "odbior": "Weź wtyk od Kazika.",
+      "postoj": "Podjedź przed przejazd kolejowy i rozejrzyj się.",
+      "przejazd": "Przejedź dopiero po wyłączeniu sygnałów i pełnym podniesieniu zapór.",
+      "meta": "Jedź dalej prawym poboczem i oddaj wtyk po drugiej stronie torów."
+    },
+    "GDA-A3-01": {
+      "tytul": "Obudowa na wietrze",
+      "opis": "Dostarcz obudowę wyłącznika na plażę trasą wokół wydm.",
+      "odbior": "Odbierz obudowę od Zawiły.",
+      "meta": "Wybierz zachodni zjazd i jedź powoli prawą stroną zapiaszczonej drogi."
+    },
+    "GDA-A3-02": {
+      "tytul": "Pomoc dla Turbo",
+      "opis": "Zatrzymaj się bezpiecznie na promenadzie i przećwicz pierwsze kroki pomocy.",
+      "postoj": "Zatrzymaj się w oznaczonym miejscu z boku wspólnej drogi.",
+      "pytanie": "Turbo się przewrócił, a drogą wciąż jadą rowery. Co robisz najpierw?",
+      "odp1": "Podbiegam środkiem drogi.",
+      "odp2": "Dbam o swoje bezpieczeństwo i ostrzegam nadjeżdżających.",
+      "wyjasnienie": "Zanim podejdziesz, zatrzymaj się bezpiecznie i ostrzeż innych.",
+      "dorosly": "Poproś dorosłego o pomoc.",
+      "dorosly_pytanie": "Jesteś już w bezpiecznym miejscu. Jak sprawdzisz, czy Turbo reaguje?",
+      "dorosly_odp1": "Wołam dorosłego i pytam Turbo głośno, czy mnie słyszy.",
+      "dorosly_odp2": "Samodzielnie podnoszę Turbo i sadzam go na rowerze.",
+      "dorosly_wyjasnienie": "Zawołaj dorosłego i sprawdź głosem, czy Turbo reaguje.",
+      "alarm": "Przećwicz rozmowę z dyspozytorem.",
+      "alarm_pytanie": "W ćwiczeniu Turbo potrzebuje pilnej pomocy. Co powiesz, dzwoniąc na 112?",
+      "alarm_odp1": "Mówię tylko, że ktoś upadł, i się rozłączam.",
+      "alarm_odp2": "Podaję miejsce, opisuję upadek i mówię, ilu osobom trzeba pomóc.",
+      "alarm_wyjasnienie": "Podaj miejsce, opisz zdarzenie i liczbę poszkodowanych. Czekaj na polecenia dyspozytora.",
+      "meta": "Po ćwiczeniu dokończ przejazd wspólną drogą."
+    },
+    "GDA-A3-03": {
+      "tytul": "Światło nad stocznią",
+      "opis": "Poprowadź kurierów otwartą alejką i dostarcz wyłącznik Zawile.",
+      "postoj": "Ustal z drużyną zasady jazdy w kolumnie.",
+      "pytanie": "Ile rowerów może jechać w jednej kolumnie?",
+      "odp1": "Najwyżej 15 rowerów.",
+      "odp2": "Dowolna liczba, jeśli jedziemy powoli.",
+      "wyjasnienie": "W kolumnie może jechać najwyżej 15 rowerów, a między kolumnami trzeba zostawić co najmniej 200 m.",
+      "odbior": "Zabierz złożony wyłącznik.",
+      "meta": "Poprowadź kolumnę północną alejką koło hali. Przekaż wyłącznik przy dźwigach."
     },
     "KRA-B-01": {
       "tytul": "Wieczorny spacer po Rynku",
@@ -1532,6 +1616,47 @@
     "GDA-B-04": {
       "start": "Spójrz na sygnalizator dla rowerów. Zielone dla innych uczestników może zapalić się w innej chwili.",
       "koniec": "Przejazd zaliczony. Możesz zajrzeć do stoczni."
+    },
+    "GDA-A1-01": {
+      "start": "Pokaz nad Motławą potrzebuje latarenek. Zawieź je na drugi koniec Targu.",
+      "koniec": "Wszystkie całe! W jednej coś grzechocze.",
+      "koniec2": "Bursztyn z pikselową błyskawicą. Na odwrocie jest plan Targu!"
+    },
+    "GDA-A1-02": {
+      "start": "Na planie są trzy kropki. Poprowadź rower po Targu i sprawdź zagadki.",
+      "koniec": "Bursztyny układają się w obraz Żurawia. Trzy kreski pod nim wyglądają jak sygnał."
+    },
+    "GDA-A1-03": {
+      "start": "Włącz obie lampki i zapnij kask. Na kładkę wejdź pieszo z rowerem.",
+      "koniec": "Trzy błyski z Ołowianki, jak na bursztynach. Zapiszemy rytm dla Zawiły."
+    },
+    "GDA-A2-01": {
+      "start": "Przywieź zapis rytmu. Przed wjazdem sprawdź światło dla rowerów i czy droga jest wolna.",
+      "koniec": "Trzy krótkie błyski. Tak oznaczałem próbę nadajnika, kiedy podpisywałem się jako Zakłócacz."
+    },
+    "GDA-A2-02": {
+      "start": "Radio też złapało trzy trzaski. Przywieź notatki z rejestratora.",
+      "start2": "Przy przystanku bez wysepki zatrzymaj się i przepuść wysiadających.",
+      "koniec": "Trzaski są na kanale pokazu. Sygnał wychodzi ze stoczni, spod dźwigów!"
+    },
+    "GDA-A2-03": {
+      "start": "Zawiła składa wyłącznik. Brakuje wtyku ze schowka przy torach.",
+      "start2": "Przez tory jedź, gdy sygnały zgasną, zapory się podniosą i przejazd będzie wolny.",
+      "koniec": "Wtyk pasuje. Zawiła czeka na obudowę, żeby wyłączyć antenę przed pokazem."
+    },
+    "GDA-A3-01": {
+      "start": "Zabierz obudowę na plażę. Wiatr nawiał piasek, więc zostaw sobie miejsce na hamowanie.",
+      "koniec": "Wyłącznik gotowy. Przy dźwigach czeka ekipa, ale nie widzę Turbo."
+    },
+    "GDA-A3-02": {
+      "start": "Turbo się przewrócił. Zatrzymaj się z boku i przećwicz ze mną, jak wezwać pomoc.",
+      "koniec": "Dobrze, wiesz, jak opisać miejsce dyspozytorowi. Teraz zostanę z Turbo.",
+      "koniec2": "Ola już się mną zajęła. Będę wam kibicował z ławki!"
+    },
+    "GDA-A3-03": {
+      "start": "Ekipa gotowa. Weź wyłącznik i poprowadź wszystkich otwartą alejką obok hal.",
+      "koniec": "Próba Zakłócacza wyłączona. Dzięki, że przywieźliście klucz bez ryzyka.",
+      "koniec2": "Kanał czysty! Raz, dwa, trzy… zapalamy latarenki nad Motławą!"
     },
     "wroclaw_zapowiedzi": {
       "MAN-03": "Przed zmianą pasa rozejrzyj się, zasygnalizuj i ustąp tym, którzy już jadą tym pasem.",

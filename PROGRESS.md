@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
+Stan na 23.11.2026.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -16,10 +16,15 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Gdańsk 2/2 — kampania (#126)
+
+- „Trzy błyski nad Motławą” obejmuje cztery zachowane szkolenia i dziewięć misji głównych. Profil w wersji 12 zapisuje wybór Gdańska w kampanii i sześć autorskich bursztynów z zagadkami. Migracja zachowuje dotychczasowe postępy.
+- Główne misje ćwiczą wszystkie moduły M01–M07, a CI sprawdza raport strict dla 13 sytuacji na mapie. Testy sprawdzają legalne trasy, przejazd egzaminacyjny i wynik trzech niedozwolonych skrótów. [Kampania, weryfikacja i zrzuty](docs/05_mapy.md#gdańsk)
+
 ## Gdańsk 1/2 — mapa (#125)
 
 - W Wolnej jeździe można wybrać Gdańsk i przejechać kolaż obejmujący Długi Targ, Żuraw, stocznię, kładki i plażę. Cztery ćwiczenia `GDA-B-*` prowadzą przez kolejne odblokowania.
-- Raport strict wykazuje 13/13 sytuacji i 7/7 modułów M01–M07. Testy obejmują dziesięć minut ruchu AI dla trzech ziaren oraz zapis odblokowań po przeładowaniu gry. Kampania stanowi część 2/2. [Mapa, weryfikacja i zrzuty](docs/05_mapy.md#gdańsk)
+- Raport strict wykazuje 13/13 sytuacji i 7/7 modułów M01–M07. Testy obejmują dziesięć minut ruchu AI dla trzech ziaren oraz zapis odblokowań po przeładowaniu gry. [Mapa, weryfikacja i zrzuty](docs/05_mapy.md#gdańsk)
 
 ## Wydanie 2/2 — audyt dostępności (#122)
 

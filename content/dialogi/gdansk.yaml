@@ -39,3 +39,108 @@ dialogi:
       - postac: sierzant_ola
         emocja: proud
         tekst: dialogi.GDA-B-04.koniec
+  - id: dialogi.GDA-A1-01.start
+    linie:
+      - postac: pan_kazik
+        emocja: happy
+        tekst: dialogi.GDA-A1-01.start
+  - id: dialogi.GDA-A1-01.koniec
+    linie:
+      - postac: pan_kazik
+        emocja: proud
+        tekst: dialogi.GDA-A1-01.koniec
+      - postac: lena_mapa
+        emocja: surprised
+        tekst: dialogi.GDA-A1-01.koniec2
+  - id: dialogi.GDA-A1-02.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.GDA-A1-02.start
+  - id: dialogi.GDA-A1-02.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: surprised
+        tekst: dialogi.GDA-A1-02.koniec
+  - id: dialogi.GDA-A1-03.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.GDA-A1-03.start
+  - id: dialogi.GDA-A1-03.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: surprised
+        tekst: dialogi.GDA-A1-03.koniec
+  - id: dialogi.GDA-A2-01.start
+    linie:
+      - postac: inzynier_zawila
+        emocja: neutral
+        tekst: dialogi.GDA-A2-01.start
+  - id: dialogi.GDA-A2-01.koniec
+    linie:
+      - postac: inzynier_zawila
+        emocja: worried
+        tekst: dialogi.GDA-A2-01.koniec
+  - id: dialogi.GDA-A2-02.start
+    linie:
+      - postac: dj_dzwonek
+        emocja: neutral
+        tekst: dialogi.GDA-A2-02.start
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.GDA-A2-02.start2
+  - id: dialogi.GDA-A2-02.koniec
+    linie:
+      - postac: dj_dzwonek
+        emocja: surprised
+        tekst: dialogi.GDA-A2-02.koniec
+  - id: dialogi.GDA-A2-03.start
+    linie:
+      - postac: pan_kazik
+        emocja: neutral
+        tekst: dialogi.GDA-A2-03.start
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.GDA-A2-03.start2
+  - id: dialogi.GDA-A2-03.koniec
+    linie:
+      - postac: pan_kazik
+        emocja: happy
+        tekst: dialogi.GDA-A2-03.koniec
+  - id: dialogi.GDA-A3-01.start
+    linie:
+      - postac: inzynier_zawila
+        emocja: neutral
+        tekst: dialogi.GDA-A3-01.start
+  - id: dialogi.GDA-A3-01.koniec
+    linie:
+      - postac: inzynier_zawila
+        emocja: proud
+        tekst: dialogi.GDA-A3-01.koniec
+  - id: dialogi.GDA-A3-02.start
+    linie:
+      - postac: sierzant_ola
+        emocja: worried
+        tekst: dialogi.GDA-A3-02.start
+  - id: dialogi.GDA-A3-02.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.GDA-A3-02.koniec
+      - postac: turbo
+        emocja: happy
+        tekst: dialogi.GDA-A3-02.koniec2
+  - id: dialogi.GDA-A3-03.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.GDA-A3-03.start
+  - id: dialogi.GDA-A3-03.koniec
+    linie:
+      - postac: inzynier_zawila
+        emocja: proud
+        tekst: dialogi.GDA-A3-03.koniec
+      - postac: dj_dzwonek
+        emocja: happy
+        tekst: dialogi.GDA-A3-03.koniec2

@@ -1,5 +1,9 @@
 # Notatki dla człowieka
 
+## Gdańsk 2/2 — kampania (#126)
+
+- Przed wydaniem konsultant sprawdza reguły z flagą `weryfikacja: true` użyte w Gdańsku: `GDZIE-03b`, `GDZIE-11`, `PIER-05`, `SYG-02` i `MSC-05`. Użyte brzmienie i warunki pochodzą z `content/przepisy.yaml`.
+
 ## Kraków 2/2 — kampania (#106)
 
 - W kampanii wykorzystano istniejące reguły z flagą konsultacji `GDZIE-03b`, `GDZIE-11`, `SYG-02` i `MSC-05`. Do potwierdzenia w szczególności zakres jazdy poboczem i zachowanie w ciągu wspólnym. Reguły i ich flagi pochodzą z `content/przepisy.yaml`.

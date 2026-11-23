@@ -225,7 +225,9 @@ export class MissionSystem {
 
   get collectibleTarget() {
     const goal = this.goalTarget?.goal;
-    return goal?.typ === 'zbierz_krasnala' || goal?.typ === 'zbierz_obwarzanka'
+    return goal?.typ === 'zbierz_krasnala' ||
+      goal?.typ === 'zbierz_obwarzanka' ||
+      goal?.typ === 'zbierz_bursztyn'
       ? goal.poi
       : undefined;
   }

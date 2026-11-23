@@ -358,7 +358,7 @@ export class MissionProgress {
 
   async selectCity(city: PlayableCity, freeRide = false) {
     this.store.change((profile) => {
-      if (city === 'gdansk' || (freeRide && city === 'krakow'))
+      if (freeRide && (city === 'krakow' || city === 'gdansk'))
         profile.freeRideCity = city;
       else {
         if (freeRide) delete profile.freeRideCity;

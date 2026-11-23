@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { cityPin } from './city-picker';
 
-const { campaign, freeRide, gdansk, map, poznan, soon } = pl.cityPicker;
+const { campaign, freeRide, map, poznan, soon } = pl.cityPicker;
 
 test('selects a city, keeps the latest choice, and limits orders to its campaign', async ({
   page,
@@ -13,10 +13,9 @@ test('selects a city, keeps the latest choice, and limits orders to its campaign
   await expect(canvas).toHaveAttribute('data-scene', 'CityPicker');
   await expect(canvas).toHaveAttribute('aria-label', map);
   await expect(cityPin(page, 'warszawa')).toBeFocused();
-  for (const city of [gdansk, poznan])
-    await expect(
-      page.getByRole('button', { name: `${city} ${soon}` }),
-    ).toBeDisabled();
+  await expect(
+    page.getByRole('button', { name: `${poznan} ${soon}` }),
+  ).toBeDisabled();
   await page.keyboard.press('Escape');
   await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
   await page.getByRole('button', { name: campaign }).click();

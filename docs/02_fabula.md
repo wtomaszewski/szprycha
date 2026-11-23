@@ -74,6 +74,16 @@ Kryjówka gangu na przedmieściach za przejazdem kolejowym (przejazd, pobocze, z
 
 ---
 
+## GDAŃSK — „Trzy błyski nad Motławą”
+
+**Akt 1 — Ślad w bursztynie.** Pan Kazik i Lena „Mapa” szykują pokaz latarenek nad Motławą. W pudełku na Długim Targu znajdują bursztyn z podpisem Zakłócacza. Trzy znajdźki składają się w obraz Żurawia z trzema kreskami. Kurier i Sierżant Ola obserwują trzy krótkie błyski z drugiego brzegu.
+
+**Akt 2 — Sygnał ze stoczni.** Inżynier Zawiła rozpoznaje rytm swojej dawnej próby. DJ Dzwonek słyszy ten sam sygnał na kanale pokazu i ustala, że dochodzi spod stoczniowych dźwigów. Kurier zawozi zapis, notatki z nasłuchu i wtyk do wyłącznika.
+
+**Akt 3 — Światło nad stocznią.** Zawiła kończy wyłącznik po dostawie znad plaży. Na promenadzie kurier pomaga Sierżant Oli po upadku Turbo i ćwiczy rozmowę z dyspozytorem 112. Kurierzy w kolumnie przewożą wyłącznik otwartą alejką. Zawiła odłącza dawny nadajnik, a DJ Dzwonek rozpoczyna pokaz.
+
+---
+
 ## Finał wspólny — „Licencja Szprychy”
 Egzamin odblokowuje się po ukończeniu kampanii co najmniej jednego miasta, osiągnięciu rangi Mistrz Szlaku oraz mastery ≥70% w każdym module (M01–M08). Sierżant Ola prowadzi teorię (quiz), próbę na placu i przejazd kontrolny w mieście ukończonej kampanii. Po zaliczeniu Kazik wręcza Licencję, Turbo bije brawo, DJ Dzwonek komentuje na żywo, a gracz zdobywa rangę **Legenda Szprychy** i złoty dzwonek.
 

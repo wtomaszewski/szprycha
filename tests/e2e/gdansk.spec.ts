@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import questions from '../../content/pytania.json' with { type: 'json' };
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { legacyProgressKey } from '../../src/core/progressStore';
 import {
@@ -10,21 +11,12 @@ import {
 } from './city-picker';
 import { readProfile } from './progress-profile';
 
-test('opens Gdańsk only in free ride and unlocks Ołowianka after training', async ({
+test('opens Gdańsk in free ride and unlocks Ołowianka after training', async ({
   page,
 }, info) => {
   test.setTimeout(65_000);
   await startAt(page, 'gdansk', 1712, 2154, Math.PI / 2);
   await page.goto('/');
-  await page
-    .getByRole('button', { name: pl.cityPicker.campaign, exact: true })
-    .click();
-  await expect(
-    page.getByRole('button', {
-      name: `${pl.cityPicker.gdansk} ${pl.cityPicker.soon}`,
-    }),
-  ).toBeDisabled();
-  await page.keyboard.press('Escape');
   await page
     .getByRole('button', { name: pl.cityPicker.freeRide, exact: true })
     .click();
@@ -102,6 +94,113 @@ test('opens Gdańsk only in free ride and unlocks Ołowianka after training', as
   await page.keyboard.press('KeyM');
   await expect(option('GDA-B-02')).toBeVisible();
   expect((await readProfile(page)).selectedCity).toBeUndefined();
+});
+
+test('starts the Gdańsk campaign with the first training mission', async ({
+  page,
+}, info) => {
+  await page.goto('/');
+  await page
+    .getByRole('button', { name: pl.cityPicker.campaign, exact: true })
+    .click();
+  const pin = cityPin(page, 'gdansk');
+  await expect(pin).toBeEnabled();
+  await pin.hover();
+  await page.screenshot({ path: info.outputPath('126-kampania.png') });
+  await pin.press('Enter');
+  await expect(page.locator('canvas[data-map="gdansk"]')).toHaveAttribute(
+    'data-mission',
+    'GDA-B-01',
+  );
+  await expect
+    .poll(async () => (await readProfile(page)).selectedCity)
+    .toBe('gdansk');
+});
+
+test('resumes Gdańsk after training and saves amber only after a correct answer', async ({
+  page,
+}, info) => {
+  test.setTimeout(75_000);
+  await page.addInitScript(
+    ({ key, completed }) => {
+      if (!sessionStorage.getItem(key)) {
+        localStorage.setItem(key, JSON.stringify({ completed }));
+        sessionStorage.setItem(key, '1');
+      }
+    },
+    {
+      key: legacyProgressKey,
+      completed: ['GDA-B-01', 'GDA-B-02', 'GDA-B-03', 'GDA-B-04', 'GDA-A1-01'],
+    },
+  );
+  const canvas = page.locator('canvas[data-map="gdansk"]');
+  const counter = page.getByRole('status', { name: pl.driving.bursztyny });
+  const startWalking = async () => {
+    await chooseCity(page, 'gdansk', 'campaign');
+    await expect(canvas).toHaveAttribute('data-mission', 'GDA-A1-02');
+    await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
+    await page.keyboard.press('Escape');
+    await page
+      .getByRole('button', { name: pl.driving.classic, exact: true })
+      .click();
+    await page.keyboard.press('Escape');
+    await expect(counter).toHaveText('Bursztyny 0/6');
+    await page.keyboard.press('KeyX');
+    await expect(canvas).toHaveAttribute('data-walking', 'true');
+    await driveTo(page, 'ArrowRight', 'x', 1420, true);
+  };
+  await page.goto('/');
+  await startWalking();
+  await page.screenshot({ path: info.outputPath('126-bursztyny.png') });
+
+  const puzzle = page.getByRole('dialog', {
+    name: pl.driving.bursztynQuestion,
+  });
+  const walkToPuzzle = async () => {
+    await page.keyboard.down('ArrowRight');
+    try {
+      await expect(puzzle).toBeVisible();
+    } finally {
+      await page.keyboard.up('ArrowRight');
+    }
+  };
+  await walkToPuzzle();
+  const question = questions.pytania.find(({ id }) => id === 'Q014')!;
+  await expect(puzzle).toContainText(question.pytanie);
+  await page.screenshot({ path: info.outputPath('126-zagadka.png') });
+  await puzzle
+    .getByRole('button', {
+      name: question.odpowiedzi.find((_, i) => i !== question.poprawna),
+      exact: true,
+    })
+    .click();
+  await expect(puzzle.getByRole('status')).toHaveText(question.wyjasnienie);
+  await puzzle.getByRole('button', { name: pl.progression.continue }).click();
+  await expect(counter).toHaveText('Bursztyny 0/6');
+
+  await page.reload();
+  await startWalking();
+  await walkToPuzzle();
+  await puzzle
+    .getByRole('button', {
+      name: question.odpowiedzi[question.poprawna],
+      exact: true,
+    })
+    .click();
+  await puzzle.getByRole('button', { name: pl.progression.continue }).click();
+  await expect(counter).toHaveText('Bursztyny 1/6');
+  await expect
+    .poll(async () => (await readProfile(page)).bursztyny)
+    .toEqual(['gda-bursztyn-targ']);
+  await page.reload();
+  await page
+    .getByRole('button', { name: pl.cityPicker.campaign, exact: true })
+    .click();
+  const pin = cityPin(page, 'gdansk');
+  await expect(pin).toBeFocused();
+  await pin.press('Enter');
+  await expect(canvas).toHaveAttribute('data-mission', 'GDA-A1-02');
+  await expect(counter).toHaveText('Bursztyny 1/6');
 });
 
 const views = [

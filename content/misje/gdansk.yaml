@@ -1,7 +1,6 @@
 - id: GDA-B-01
   miasto: gdansk
   akt: 0
-  poboczna: true
   tytul: misje.GDA-B-01.tytul
   opis: misje.GDA-B-01.opis
   zleceniodawca: sierzant_ola
@@ -22,6 +21,7 @@
       opis: misje.GDA-B-01.meta
   warunki_porazki: [dowolny_blad]
   reguly_cwiczone: [KASK-01, WYP-04, ZNAK-B9]
+  zdarzenia_wymuszone: [{ typ: kontrola_swiatel, przy: gda-zuraw-start, regula: WYP-04 }]
   par_s: 75
   min_dobre_nawyki: 0
   nagrody: { zetony: 0, xp: 0 }
@@ -31,7 +31,6 @@
 - id: GDA-B-02
   miasto: gdansk
   akt: 0
-  poboczna: true
   tytul: misje.GDA-B-02.tytul
   opis: misje.GDA-B-02.opis
   zleceniodawca: sierzant_ola
@@ -63,6 +62,7 @@
   warunki_porazki: [dowolny_blad]
   reguly_cwiczone: [GDZIE-11, PP-01]
   checkpointy: [gda-promenada-piesi]
+  zdarzenia_wymuszone: [{ typ: cwiczenie_trasy, przy: gda-promenada-piesi, regula: GDZIE-11 }]
   par_s: 110
   min_dobre_nawyki: 0
   nagrody: { zetony: 0, xp: 0 }
@@ -72,7 +72,6 @@
 - id: GDA-B-03
   miasto: gdansk
   akt: 0
-  poboczna: true
   tytul: misje.GDA-B-03.tytul
   opis: misje.GDA-B-03.opis
   zleceniodawca: sierzant_ola
@@ -96,6 +95,7 @@
   warunki_porazki: [dowolny_blad]
   reguly_cwiczone: [MAN-08, ZNAK-B1]
   skrot: { odcinek: skrot-przez-wydmy }
+  zdarzenia_wymuszone: [{ typ: czytaj_oznakowanie, przy: gda-wiatr-start, regula: ZNAK-B1 }]
   checkpointy: [gda-wiatr-zjazd, gda-wiatr-piasek]
   par_s: 110
   min_dobre_nawyki: 0
@@ -106,7 +106,6 @@
 - id: GDA-B-04
   miasto: gdansk
   akt: 0
-  poboczna: true
   tytul: misje.GDA-B-04.tytul
   opis: misje.GDA-B-04.opis
   zleceniodawca: sierzant_ola
@@ -131,8 +130,263 @@
   warunki_porazki: [dowolny_blad]
   reguly_cwiczone: [PIER-05, SYG-02]
   checkpointy: [gda-przejazd-postoj]
+  zdarzenia_wymuszone: [{ typ: swiatla_palac, przy: gda-przejazd-postoj, regula: SYG-02 }]
   par_s: 100
   min_dobre_nawyki: 0
   nagrody: { zetony: 0, xp: 0 }
   dialog_start: dialogi.GDA-B-04.start
   dialog_koniec: dialogi.GDA-B-04.koniec
+
+- id: GDA-A1-01
+  miasto: gdansk
+  akt: 1
+  tytul: misje.GDA-A1-01.tytul
+  opis: misje.GDA-A1-01.opis
+  zleceniodawca: pan_kazik
+  typ: delikatna
+  wymagania: { misje_ukonczone: [GDA-B-03, GDA-B-04] }
+  start: { poi: gda-targ-odbior }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: gda-targ-odbior, przedmiot: latarenki, opis: misje.GDA-A1-01.odbior }
+    - { typ: oddaj, poi: gda-targ-dostawa, przedmiot: latarenki, opis: misje.GDA-A1-01.dostawa }
+  przesylka: { delikatna: true }
+  reguly_cwiczone: [GDZIE-07, MAN-08, ZNAK-B1]
+  zdarzenia_wymuszone: [{ typ: czytaj_oznakowanie, przy: gda-targ-odbior, regula: ZNAK-B1 }]
+  skrot: { odcinek: skrot-przez-targ }
+  par_s: 115
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 12, xp: 100 }
+  dialog_start: dialogi.GDA-A1-01.start
+  dialog_koniec: dialogi.GDA-A1-01.koniec
+
+- id: GDA-A1-02
+  miasto: gdansk
+  akt: 1
+  tytul: misje.GDA-A1-02.tytul
+  opis: misje.GDA-A1-02.opis
+  zleceniodawca: lena_mapa
+  typ: detektyw
+  wymagania: { misje_ukonczone: [GDA-A1-01] }
+  start: { poi: gda-bursztyny-start }
+  ruch_ai: false
+  cele:
+    - { typ: zbierz_bursztyn, poi: gda-bursztyn-targ, opis: misje.GDA-A1-02.targ }
+    - { typ: zbierz_bursztyn, poi: gda-bursztyn-kamienice, opis: misje.GDA-A1-02.kamienice }
+    - { typ: zbierz_bursztyn, poi: gda-bursztyn-fontanna, opis: misje.GDA-A1-02.fontanna }
+  checkpointy: [gda-bursztyn-targ, gda-bursztyn-kamienice]
+  reguly_cwiczone: [GDZIE-07, KASK-01, ZNAK-B9]
+  zdarzenia_wymuszone: [{ typ: czytaj_oznakowanie, przy: gda-bursztyn-kamienice, regula: ZNAK-B9 }]
+  par_s: 125
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 14, xp: 120 }
+  dialog_start: dialogi.GDA-A1-02.start
+  dialog_koniec: dialogi.GDA-A1-02.koniec
+
+- id: GDA-A1-03
+  miasto: gdansk
+  akt: 1
+  tytul: misje.GDA-A1-03.tytul
+  opis: misje.GDA-A1-03.opis
+  zleceniodawca: sierzant_ola
+  typ: nocny
+  wymagania: { misje_ukonczone: [GDA-A1-02] }
+  start: { poi: gda-zuraw-start, noc: true, kask_zapiety: false }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.GDA-A1-03.start }
+    - { typ: dojedz, poi: gda-kladka, opis: misje.GDA-A1-03.kladka }
+    - { typ: dojedz, poi: gda-kladka-meta, opis: misje.GDA-A1-03.meta }
+  checkpointy: [gda-kladka]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [KASK-01, WYP-04, ZNAK-B9]
+  zdarzenia_wymuszone: [{ typ: czytaj_oznakowanie, przy: gda-kladka, regula: ZNAK-B9 }]
+  par_s: 95
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 16, xp: 140 }
+  dialog_start: dialogi.GDA-A1-03.start
+  dialog_koniec: dialogi.GDA-A1-03.koniec
+
+- id: GDA-A2-01
+  miasto: gdansk
+  akt: 2
+  tytul: misje.GDA-A2-01.tytul
+  opis: misje.GDA-A2-01.opis
+  zleceniodawca: inzynier_zawila
+  typ: dostawa_na_czas
+  wymagania: { misje_ukonczone: [GDA-A1-03] }
+  start: { poi: gda-przejazd-start }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: gda-przejazd-start, przedmiot: zapis_sygnalu, opis: misje.GDA-A2-01.odbior }
+    - typ: wybor
+      poi: gda-przejazd-postoj
+      opis: misje.GDA-A2-01.postoj
+      regula: PIER-05
+      pytanie: misje.GDA-B-04.pytanie
+      odpowiedzi: [misje.GDA-B-04.odp1, misje.GDA-B-04.odp2]
+      poprawna: 0
+      wyjasnienie: misje.GDA-B-04.wyjasnienie
+    - { typ: oddaj, poi: gda-przejazd-meta, przedmiot: zapis_sygnalu, opis: misje.GDA-A2-01.meta }
+  checkpointy: [gda-przejazd-postoj]
+  limit_s: 170
+  warunki_porazki: [czas_minal]
+  reguly_cwiczone: [PIER-05, SYG-02]
+  zdarzenia_wymuszone: [{ typ: swiatla_palac, przy: gda-przejazd-postoj, regula: SYG-02 }]
+  par_s: 115
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 18, xp: 150 }
+  dialog_start: dialogi.GDA-A2-01.start
+  dialog_koniec: dialogi.GDA-A2-01.koniec
+
+- id: GDA-A2-02
+  miasto: gdansk
+  akt: 2
+  tytul: misje.GDA-A2-02.tytul
+  opis: misje.GDA-A2-02.opis
+  zleceniodawca: dj_dzwonek
+  typ: dostawa_na_czas
+  wymagania: { misje_ukonczone: [GDA-A2-01] }
+  start: { poi: gda-tramwaj-start }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: gda-tramwaj-start, przedmiot: notatki, opis: misje.GDA-A2-02.odbior }
+    - { typ: dojedz, poi: gda-tramwaj-swiatla, opis: misje.GDA-A2-02.swiatla }
+    - { typ: dojedz, poi: gda-tramwaj-przystanek, opis: misje.GDA-A2-02.przystanek }
+    - { typ: oddaj, poi: gda-tramwaj-meta, przedmiot: notatki, opis: misje.GDA-A2-02.meta }
+  checkpointy: [gda-tramwaj-swiatla]
+  limit_s: 170
+  warunki_porazki: [czas_minal, dowolny_blad]
+  reguly_cwiczone: [MSC-02, SYG-01]
+  zdarzenia_wymuszone: [{ typ: tramwaj_bez_wysepki, przy: gda-tramwaj-przystanek, regula: MSC-02 }]
+  par_s: 120
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 18, xp: 160 }
+  dialog_start: dialogi.GDA-A2-02.start
+  dialog_koniec: dialogi.GDA-A2-02.koniec
+
+- id: GDA-A2-03
+  miasto: gdansk
+  akt: 2
+  tytul: misje.GDA-A2-03.tytul
+  opis: misje.GDA-A2-03.opis
+  zleceniodawca: pan_kazik
+  typ: dostawa_na_czas
+  wymagania: { misje_ukonczone: [GDA-A2-02] }
+  start: { poi: gda-kolej-start }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: gda-kolej-start, przedmiot: wtyk, opis: misje.GDA-A2-03.odbior }
+    - { typ: dojedz, poi: gda-kolej-postoj, opis: misje.GDA-A2-03.postoj }
+    - { typ: dojedz, poi: gda-kolej-za, opis: misje.GDA-A2-03.przejazd }
+    - { typ: oddaj, poi: gda-kolej-meta, przedmiot: wtyk, opis: misje.GDA-A2-03.meta }
+  checkpointy: [gda-kolej-postoj]
+  limit_s: 170
+  warunki_porazki: [czas_minal]
+  reguly_cwiczone: [MSC-01, GDZIE-03b]
+  zdarzenia_wymuszone: [{ typ: przejazd_kolejowy, przy: gda-kolej-postoj, regula: MSC-01 }]
+  par_s: 120
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 20, xp: 170 }
+  dialog_start: dialogi.GDA-A2-03.start
+  dialog_koniec: dialogi.GDA-A2-03.koniec
+
+- id: GDA-A3-01
+  miasto: gdansk
+  akt: 3
+  tytul: misje.GDA-A3-01.tytul
+  opis: misje.GDA-A3-01.opis
+  zleceniodawca: inzynier_zawila
+  typ: pogoda
+  wymagania: { misje_ukonczone: [GDA-A2-03] }
+  start: { poi: gda-wiatr-start, pogoda: silny_wiatr }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: gda-wiatr-start, przedmiot: obudowa, opis: misje.GDA-A3-01.odbior }
+    - { typ: oddaj, poi: gda-wiatr-meta, przedmiot: obudowa, opis: misje.GDA-A3-01.meta }
+  reguly_cwiczone: [MAN-08, GDZIE-11, ZNAK-B1]
+  zdarzenia_wymuszone: [{ typ: czytaj_oznakowanie, przy: gda-wiatr-start, regula: ZNAK-B1 }]
+  skrot: { odcinek: skrot-przez-wydmy }
+  par_s: 130
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 20, xp: 180 }
+  dialog_start: dialogi.GDA-A3-01.start
+  dialog_koniec: dialogi.GDA-A3-01.koniec
+
+- id: GDA-A3-02
+  miasto: gdansk
+  akt: 3
+  tytul: misje.GDA-A3-02.tytul
+  opis: misje.GDA-A3-02.opis
+  zleceniodawca: sierzant_ola
+  typ: pierwsza_pomoc
+  wymagania: { misje_ukonczone: [GDA-A3-01] }
+  start: { poi: gda-promenada-start }
+  ruch_ai: false
+  cele:
+    - typ: wybor
+      poi: gda-promenada-pomoc
+      opis: misje.GDA-A3-02.postoj
+      regula: PP-01
+      pytanie: misje.GDA-A3-02.pytanie
+      odpowiedzi: [misje.GDA-A3-02.odp1, misje.GDA-A3-02.odp2]
+      poprawna: 1
+      wyjasnienie: misje.GDA-A3-02.wyjasnienie
+    - typ: wybor
+      poi: gda-promenada-pomoc
+      opis: misje.GDA-A3-02.dorosly
+      regula: PP-03
+      pytanie: misje.GDA-A3-02.dorosly_pytanie
+      odpowiedzi: [misje.GDA-A3-02.dorosly_odp1, misje.GDA-A3-02.dorosly_odp2]
+      poprawna: 0
+      wyjasnienie: misje.GDA-A3-02.dorosly_wyjasnienie
+    - typ: wybor
+      poi: gda-promenada-pomoc
+      opis: misje.GDA-A3-02.alarm
+      regula: PP-02
+      pytanie: misje.GDA-A3-02.alarm_pytanie
+      odpowiedzi: [misje.GDA-A3-02.alarm_odp1, misje.GDA-A3-02.alarm_odp2]
+      poprawna: 1
+      wyjasnienie: misje.GDA-A3-02.alarm_wyjasnienie
+    - { typ: dojedz, poi: gda-promenada-meta, opis: misje.GDA-A3-02.meta }
+  checkpointy: [gda-promenada-pomoc]
+  reguly_cwiczone: [PP-01, PP-03, PP-02]
+  zdarzenia_wymuszone: [{ typ: po_zdarzeniu, przy: gda-promenada-pomoc, regula: PP-01 }]
+  par_s: 140
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 22, xp: 200 }
+  dialog_start: dialogi.GDA-A3-02.start
+  dialog_koniec: dialogi.GDA-A3-02.koniec
+
+- id: GDA-A3-03
+  miasto: gdansk
+  akt: 3
+  tytul: misje.GDA-A3-03.tytul
+  opis: misje.GDA-A3-03.opis
+  zleceniodawca: inzynier_zawila
+  typ: konwoj
+  wymagania: { misje_ukonczone: [GDA-A3-02] }
+  start: { poi: gda-stocznia-start }
+  ruch_ai: false
+  towarzysze: 4
+  cele:
+    - typ: wybor
+      poi: gda-stocznia-start
+      opis: misje.GDA-A3-03.postoj
+      regula: MSC-05
+      pytanie: misje.GDA-A3-03.pytanie
+      odpowiedzi: [misje.GDA-A3-03.odp1, misje.GDA-A3-03.odp2]
+      poprawna: 0
+      wyjasnienie: misje.GDA-A3-03.wyjasnienie
+    - { typ: odbierz, poi: gda-stocznia-start, przedmiot: wylacznik, opis: misje.GDA-A3-03.odbior }
+    - { typ: oddaj, poi: gda-stocznia-meta, przedmiot: wylacznik, opis: misje.GDA-A3-03.meta }
+  reguly_cwiczone: [MSC-05, GDZIE-07, ZNAK-B1]
+  zdarzenia_wymuszone:
+    - { typ: start_kolumny, przy: gda-stocznia-start, regula: MSC-05 }
+    - { typ: czytaj_oznakowanie, przy: gda-stocznia-start, regula: ZNAK-B1 }
+  skrot: { odcinek: skrot-miedzy-halami }
+  par_s: 115
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 30, xp: 280 }
+  dialog_start: dialogi.GDA-A3-03.start
+  dialog_koniec: dialogi.GDA-A3-03.koniec

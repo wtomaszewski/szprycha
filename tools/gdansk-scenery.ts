@@ -189,7 +189,19 @@ export function gdanskScenery({
       gateY: 1280,
     }),
   ];
+  const finds = [
+    ['bursztyn-targ', 1490, 635, 'Q014'],
+    ['bursztyn-kamienice', 1748, 618, 'Q002'],
+    ['bursztyn-fontanna', 2000, 650, 'Q026'],
+    ['bursztyn-zuraw', 1838, 1752, 'Q005'],
+    ['bursztyn-promenada', 3470, 2880, 'Q017'],
+    ['bursztyn-stocznia', 3700, 1540, 'Q024'],
+  ] as const;
+  const collectibles = finds.map(([id, x, y, question]) =>
+    rect(`gda-${id}`, x, y, 0, 0, { kind: 'bursztyn', question }),
+  );
   const pois = [
+    ...finds.map(([id, x, y]) => point(id, x, y)),
     point('zuraw-start', 1712, 1748, Math.PI / 2),
     point('kladka', 1712, 1936, Math.PI / 2),
     point('kladka-meta', 1712, 2161, Math.PI / 2),
@@ -204,6 +216,27 @@ export function gdanskScenery({
     point('przejazd-start', 2784, 1252, -Math.PI / 2),
     point('przejazd-postoj', 2784, 1176, -Math.PI / 2),
     point('przejazd-meta', 2784, 926, -Math.PI / 2),
+    point('targ-odbior', 1370, 858),
+    point('targ-dostawa', 2070, 858),
+    point('bursztyny-start', 1340, 635),
+    point('tramwaj-start', 2528, 1380, -Math.PI / 2),
+    point('tramwaj-swiatla', 2528, 1180, -Math.PI / 2),
+    point('tramwaj-przystanek', 2528, 968, -Math.PI / 2),
+    point('tramwaj-meta', 2528, 530, -Math.PI / 2),
+    point('kolej-start', 1104, 3376, -Math.PI / 2),
+    point('kolej-postoj', 1104, 3190, -Math.PI / 2),
+    point('kolej-za', 1104, 3050, -Math.PI / 2),
+    point('kolej-meta', 1104, 2820, -Math.PI / 2),
+    point('stocznia-start', 3312, 1568),
+    point('stocznia-meta', 3650, 1568),
   ];
-  return { blocks, props, collisions, districts, pois, map_decorations };
+  return {
+    blocks,
+    props,
+    collisions,
+    districts,
+    pois,
+    map_decorations,
+    collectibles,
+  };
 }
