@@ -22,7 +22,10 @@ test('desktop HUD uses the mission timer, goal arrow and compact pause menu', as
     page.locator('.touch-controls').getByLabel(pl.driving.joystick),
   ).toBeHidden();
   await expect(page.getByText(pl.driving.help, { exact: false })).toBeHidden();
-  await expect(left).toHaveCSS('font-family', '"Pixelify Sans", monospace');
+  await expect(left.locator('.ride-score')).toHaveCSS(
+    'font-family',
+    '"Press Start 2P", monospace',
+  );
 
   await page.keyboard.press('Escape');
   const pause = page.getByRole('dialog', { name: pl.driving.paused });

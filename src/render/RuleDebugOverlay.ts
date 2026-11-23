@@ -1,5 +1,6 @@
+import { readingFont } from '../core/fonts';
 import type { GameObjects, Scene } from 'phaser';
-import { FONT, ui } from '../core/presentation';
+import { ui } from '../core/presentation';
 import type { RuleEngine } from '../rules/RuleEngine';
 import type { EnvState, Vec2 } from '../rules/types';
 import type { WorldModel } from '../rules/world/WorldModel';
@@ -139,8 +140,8 @@ export class RuleDebugOverlay {
             y - dy * 26,
             label.priorities[lane.priorityClass],
             {
-              fontFamily: FONT,
-              fontSize: '14px',
+              fontFamily: readingFont,
+              fontSize: '16px',
               color: '#f4f4f4',
               backgroundColor: '#1a1c2c',
               padding: { x: 4, y: 2 },

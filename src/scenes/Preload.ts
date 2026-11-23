@@ -8,7 +8,8 @@ import { audio } from '../audio/GameAudio';
 import { loadContent } from '../content/load';
 import { loadMissionProgress } from '../gameplay/MissionProgress';
 import { applyAccessibility } from '../ui/RidePreferences';
-import { FONT, ui, showError } from '../core/presentation';
+import { ui, showError } from '../core/presentation';
+import { readingFont } from '../core/fonts';
 export class Preload extends Scene {
   constructor() {
     super('Preload');
@@ -16,8 +17,8 @@ export class Preload extends Scene {
   create() {
     this.add
       .text(320, 180, ui.loading, {
-        fontFamily: FONT,
-        fontSize: '20px',
+        fontFamily: readingFont,
+        fontSize: '24px',
         color: '#ffcd75',
       })
       .setOrigin(0.5);

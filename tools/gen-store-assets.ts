@@ -1,3 +1,4 @@
+import { arcadeFont, readingFont } from '../src/core/fonts';
 import { waitForMainMenu } from './skip-tutorial';
 import { cp, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -172,7 +173,10 @@ async function captureFeatureGraphic(
 ) {
   const scene = storeScreenshot(storeDevices[0], storeScenes[0]);
   const image = await readFile(join(output, scene.path));
-  const font = await readFile('assets/fonts/PixelifySans.ttf');
+  const [arcade, reading] = await Promise.all([
+    readFile('assets/fonts/press-start-2p/PressStart2P-Regular.ttf'),
+    readFile('assets/fonts/vt323/VT323-Regular.ttf'),
+  ]);
   const { width, height } = storeFeatureGraphic;
   const page = await browser.newPage({ viewport: { width, height } });
   try {
@@ -180,8 +184,12 @@ async function captureFeatureGraphic(
     await page.setContent(`
       <style>
         @font-face {
-          font-family: Pixelify;
-          src: url(data:font/ttf;base64,${font.toString('base64')});
+          font-family: '${arcadeFont}';
+          src: url(data:font/ttf;base64,${arcade.toString('base64')});
+        }
+        @font-face {
+          font-family: '${readingFont}';
+          src: url(data:font/ttf;base64,${reading.toString('base64')});
         }
         body {
           margin: 0;
@@ -192,7 +200,7 @@ async function captureFeatureGraphic(
           overflow: hidden;
           background: ${appBackground};
           color: #ffcd75;
-          font-family: Pixelify, sans-serif;
+          font-family: '${readingFont}', monospace;
         }
         header {
           padding-inline: 28px;
@@ -203,13 +211,15 @@ async function captureFeatureGraphic(
         }
         h1 {
           margin: 0;
-          font-size: 56px;
+          font-family: '${arcadeFont}', monospace;
+          font-weight: 400;
+          font-size: 32px;
           line-height: 1;
         }
         p {
           margin: 8px 0 0;
           color: #f4f4f4;
-          font-size: 28px;
+          font-size: 32px;
         }
         .game {
           box-sizing: border-box;
@@ -224,6 +234,7 @@ async function captureFeatureGraphic(
       </header>
       <img class="game" src="data:image/png;base64,${image.toString('base64')}" alt="">
     `);
+    await page.evaluate(() => document.fonts.ready.then(() => undefined));
     const buffer = await page.screenshot({ animations: 'disabled' });
     await writeStorePng(output, storeFeatureGraphic, buffer);
   } finally {

@@ -10,8 +10,8 @@ pelny_opis: |-
   Gra działa offline, bez reklam i zakupów w aplikacji.
 slowa_kluczowe: 'rower,karta rowerowa,znaki,bezpieczeństwo,quiz,plac manewrowy,kurier,przepisy'
 kategoria:
-  google_play: 'Gry → Edukacyjne'
-  app_store: 'Gry → Edukacyjne'
+  google_play: 'Gry / Edukacyjne'
+  app_store: 'Gry / Edukacyjne'
 reklamy: false
 zakupy_w_aplikacji: false
 dziala_offline: true

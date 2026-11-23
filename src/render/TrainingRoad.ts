@@ -1,6 +1,7 @@
+import { arcadeFont, readingFont } from '../core/fonts';
 import type { Cameras, GameObjects, Scene } from 'phaser';
 import { cacheMapGraphics } from './MapGround';
-import { FONT, ui } from '../core/presentation';
+import { ui } from '../core/presentation';
 import type { EnvState, SignalPhase, Vec2 } from '../rules/types';
 import type { Box, WorldModel } from '../rules/world/WorldModel';
 import { vehicleFrame } from './spriteFrames';
@@ -13,35 +14,31 @@ const lightColor: Record<SignalPhase, number> = {
   off: 0x566c86,
 };
 
-// Each number encodes the five rows of a 3×5 pixel digit.
-const digits = [
-  [7, 5, 5, 5, 7],
-  [2, 6, 2, 2, 7],
-  [7, 1, 7, 4, 7],
-  [7, 1, 7, 1, 7],
-  [5, 5, 7, 1, 1],
-  [7, 4, 7, 1, 7],
-  [7, 4, 7, 5, 7],
-  [7, 1, 1, 2, 2],
-  [7, 5, 7, 5, 7],
-  [7, 5, 7, 1, 7],
-];
 const countdownTexture = 'signal-countdown-digits';
+const digitWidth = 8;
+const digitHeight = 10;
 
 function loadCountdownDigits(scene: Scene) {
   if (scene.textures.exists(countdownTexture)) return;
-  const texture = scene.textures.createCanvas(countdownTexture, 60, 10)!;
+  const texture = scene.textures.createCanvas(
+    countdownTexture,
+    digitWidth * 10,
+    digitHeight,
+  )!;
   const ctx = texture.context;
+  ctx.font = `8px "${arcadeFont}"`;
   ctx.fillStyle = '#fff1ce';
-  for (const [digit, rows] of digits.entries()) {
-    const left = digit * 6;
-    texture.add(digit, 0, left, 0, 6, 10);
-    for (const [row, pixels] of rows.entries()) {
-      for (let col = 0; col < 3; col++) {
-        if (pixels & (4 >> col)) ctx.fillRect(left + col * 2, row * 2, 2, 2);
-      }
-    }
+  for (let digit = 0; digit < 10; digit++) {
+    const left = digit * digitWidth;
+    texture.add(digit, 0, left, 0, digitWidth, digitHeight);
+    ctx.fillText(String(digit), left, digitHeight - 2);
   }
+  // Canvas text has no antialiasing switch. Quantize alpha once for this atlas.
+  const pixels = ctx.getImageData(0, 0, texture.width, texture.height);
+  for (let i = 3; i < pixels.data.length; i += 4) {
+    pixels.data[i] = pixels.data[i]! >= 128 ? 255 : 0;
+  }
+  ctx.putImageData(pixels, 0, 0);
   texture.refresh();
 }
 
@@ -166,7 +163,7 @@ export class TrainingRoad {
           signs.fillStyle(color).fillPoints(points, true);
         }
         scene.add
-          .text(x, y, 'STOP', { fontFamily: FONT, fontSize: '12px' })
+          .text(x, y, 'STOP', { fontFamily: readingFont, fontSize: '16px' })
           .setOrigin(0.5)
           .setDepth(7);
       } else if (sign.code === 'B-2') {
@@ -313,23 +310,24 @@ export class TrainingRoad {
             .fillTriangle(...at(7, -4), ...at(4, 1), ...at(9, 1));
         }
       } else if (sign.code === 'D-46' || sign.code === 'D-47') {
-        signs.fillStyle(0xf4f4f4).fillRect(x - 26, y - 8, 52, 16);
-        signs.lineStyle(1, 0x333c57).strokeRect(x - 25, y - 7, 50, 14);
-        const label = scene.add
-          .text(x, y, ui.driving.internalRoadSign, {
-            fontFamily: FONT,
-            fontSize: '7px',
+        signs.fillStyle(0xf4f4f4).fillRect(x - 27, y - 10, 54, 20);
+        signs.lineStyle(1, 0x333c57).strokeRect(x - 26, y - 9, 52, 18);
+        scene.add
+          .text(x, y, ui.driving.internalRoadSign.replace(' ', '\n'), {
+            fontFamily: readingFont,
+            fontSize: '12px',
+            align: 'center',
+            lineSpacing: -4,
             color: '#1a1c2c',
           })
           .setOrigin(0.5)
           .setDepth(6);
-        label.setScale(Math.min(1, 46 / label.width), 1);
         if (sign.code === 'D-47')
           scene.add
             .graphics()
             .setDepth(7)
             .lineStyle(2, 0xe43b44)
-            .lineBetween(x - 24, y + 7, x + 24, y - 7);
+            .lineBetween(x - 25, y + 8, x + 25, y - 8);
       } else if (['A-9', 'A-10', 'A-11a', 'A-17'].includes(sign.code)) {
         signs
           .fillStyle(0xe43b44)
@@ -569,7 +567,7 @@ export class TrainingRoad {
     if (seconds === undefined) return;
     const value =
       seconds >= 1e21 ? BigInt(seconds).toString() : String(seconds);
-    const width = Math.max(18, value.length * 8 + 2);
+    const width = Math.max(18, value.length * digitWidth + 4);
     const left = Math.round(x) - width / 2;
     const top = Math.round(y) - 7;
     this.lights
@@ -577,7 +575,7 @@ export class TrainingRoad {
       .fillRect(left, top, width, 14)
       .fillStyle(0x1a1c2c)
       .fillRect(left + 1, top + 1, width - 2, 12);
-    let digitX = Math.round(x) - value.length * 4 + 1;
+    let digitX = Math.round(x) - (value.length * digitWidth) / 2;
     for (const digit of value) {
       const frame = Number(digit);
       const bob = this.countdownBobs[this.digitCount++];
@@ -590,7 +588,7 @@ export class TrainingRoad {
         this.countdownBobs.push(
           this.countdownDigits.create(digitX, top + 2, frame),
         );
-      digitX += 8;
+      digitX += digitWidth;
     }
   }
 

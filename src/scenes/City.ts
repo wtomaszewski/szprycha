@@ -60,6 +60,7 @@ import { CityProps, readProps } from '../render/CityProps';
 import { DailyClientSprites } from '../render/DailyClientSprites';
 import { cullMapChunks, drawMapGround } from '../render/MapGround';
 import { DrivingControls } from '../ui/DrivingControls';
+import { readingFont } from '../core/fonts';
 import { showError, translate, ui } from '../core/presentation';
 import { showSignalCountdowns } from '../core/progressStore';
 
@@ -612,7 +613,8 @@ export class City extends Scene {
       ? this.add
           .text(0, 0, ui.dialogi.postacie.turbo, {
             color: '#ffd4ae',
-            fontSize: '14px',
+            fontFamily: readingFont,
+            fontSize: '20px',
             backgroundColor: '#1a1c2c',
           })
           .setOrigin(0.5, 1)

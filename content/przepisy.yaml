@@ -122,7 +122,7 @@ przepisy:
     modul: M02
     tytul: Pobocze przed jezdnią
     dla_dziecka: "Gdy nie ma drogi ani pasa dla rowerów, a jest pobocze nadające się do jazdy — jedź poboczem. Jeśli nie ma pobocza — jezdnią."
-    podstawa: "PoRD — kolejność: droga/pas dla rowerów → pobocze → jezdnia"
+    podstawa: "PoRD — kolejność: droga/pas dla rowerów, potem pobocze, potem jezdnia"
     weryfikacja: true
     detektor: sim
     waga_bledu: minor
@@ -426,7 +426,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: minor
-    dobry_nawyk: "Zasygnalizowany manewr ≥ 1,5 s przed"
+    dobry_nawyk: "Zasygnalizowany manewr co najmniej 1,5 s przed"
     feedback: "Przed zmianą kierunku albo pasa pokaż ręką, dokąd jedziesz."
   - id: MAN-02
     modul: M05

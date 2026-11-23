@@ -1,17 +1,62 @@
 import { test, expect } from '@playwright/test';
+import { arcadeFont, readingFont } from '../../src/core/fonts';
+import { polishCharacters } from '../../tools/font-coverage';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 test('Boot → Preload → MainMenu renders local pixel font and Polish pangram', async ({
   page,
 }) => {
   const errors: string[] = [];
+  const fontRequests: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
+  page.on('request', (request) => {
+    if (
+      request.resourceType() === 'font' ||
+      /fonts\.google(?:apis|static)\.com/.test(request.url())
+    ) {
+      fontRequests.push(request.url());
+    }
+  });
   await page.goto('/');
   const canvas = page.locator('canvas');
   await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
   await expect(canvas).toHaveAttribute('data-pangram', pl.pangram);
-  expect(
-    await page.evaluate(() => document.fonts.check('20px "Pixelify Sans"')),
-  ).toBe(true);
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('DOM.enable');
+  await cdp.send('CSS.enable');
+  const { root } = await cdp.send('DOM.getDocument');
+  const sample = [...polishCharacters(process.cwd()).keys()].join(' ');
+  for (const [family, size] of [
+    [arcadeFont, 16],
+    [readingFont, 24],
+  ] as const) {
+    await page.evaluate(
+      async ({ family, size, sample }) => {
+        const specimen = document.createElement('div');
+        specimen.id = 'font-specimen';
+        specimen.style.cssText = `position:absolute; top:110vh; font:${size}px "${family}", monospace`;
+        specimen.textContent = sample;
+        document.body.append(specimen);
+        await document.fonts.ready;
+      },
+      { family, size, sample },
+    );
+    const { nodeId } = await cdp.send('DOM.querySelector', {
+      nodeId: root.nodeId,
+      selector: '#font-specimen',
+    });
+    const { fonts } = await cdp.send('CSS.getPlatformFontsForNode', { nodeId });
+    expect(fonts.length).toBeGreaterThan(0);
+    expect(
+      fonts.every((font) => font.isCustomFont && font.familyName === family),
+      JSON.stringify(fonts),
+    ).toBe(true);
+    await page.locator('#font-specimen').evaluate((node) => node.remove());
+  }
+  expect(fontRequests).toHaveLength(4);
+  for (const url of fontRequests) {
+    expect(new URL(url).origin).toBe(new URL(page.url()).origin);
+    expect(url).toMatch(/\.woff2$/);
+  }
   expect(
     await canvas.evaluate((c: HTMLCanvasElement) => [c.width, c.height]),
   ).toEqual([640, 360]);

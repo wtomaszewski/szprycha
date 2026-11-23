@@ -1,3 +1,4 @@
+import { localFonts } from './font-coverage.ts';
 import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
@@ -183,10 +184,12 @@ export function buildThirdPartyNotices(root: string) {
   ) {
     sections.add(readNotice(resolve(root, 'assets/licenses/Apache-2.0.txt')));
   }
-  sections.add(
-    'Pixelify Sans (OFL-1.1)\n\n' +
-      readNotice(resolve(root, 'assets/fonts/OFL.txt')),
-  );
+  for (const { family, directory } of localFonts) {
+    sections.add(
+      `${family} (OFL-1.1)\n\n` +
+        readNotice(resolve(root, 'assets/fonts', directory, 'OFL.txt')),
+    );
+  }
   return `THIRD_PARTY_NOTICES\n\n${[...sections].join('\n\n' + '='.repeat(48) + '\n\n')}\n`;
 }
 

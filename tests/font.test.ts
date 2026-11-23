@@ -1,17 +1,25 @@
-import { readFileSync } from 'node:fs';
-import { parse } from 'opentype.js';
+import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { expect, it } from 'vitest';
-import pl from '../i18n/pl.json';
-it('bundled pixel font contains outlines for pangram and all Polish letters', () => {
-  const bytes = readFileSync('assets/fonts/PixelifySans.ttf');
-  const font = parse(
-    bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength),
-  );
-  for (const char of new Set(pl.pangram + pl.glyphs)) {
-    if (char === ' ') continue;
-    expect(font.charToGlyphIndex(char), char).toBeGreaterThan(0);
-    expect(font.charToGlyph(char).path.commands.length, char).toBeGreaterThan(
-      0,
+import { checkFontCoverage } from '../tools/font-coverage';
+
+it('contains every glyph used by Polish UI and game content in both local fonts', () => {
+  expect(() => checkFontCoverage(process.cwd())).not.toThrow();
+});
+
+it('reports a missing glyph with its font, code point and source file', () => {
+  const root = mkdtempSync(join(tmpdir(), 'szprycha-font-'));
+  try {
+    cpSync('assets/fonts', join(root, 'assets/fonts'), { recursive: true });
+    mkdirSync(join(root, 'i18n'));
+    mkdirSync(join(root, 'content'));
+    writeFileSync(join(root, 'i18n/pl.json'), '{}');
+    writeFileSync(join(root, 'content/pytanie.yaml'), 'pytanie: "🚲"');
+    expect(() => checkFontCoverage(root)).toThrow(
+      /Press Start 2P: "🚲" \(U\+1F6B2\) in .*pytanie\.yaml\nVT323: "🚲"/u,
     );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
   }
 });
