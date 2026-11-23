@@ -32,7 +32,8 @@ export interface RiderState {
 
 export interface AgentState {
   id: string;
-  kind: 'pedestrian' | 'cyclist' | 'car' | 'tram' | 'emergency';
+  kind:
+    'pedestrian' | 'cyclist' | 'car' | 'bus' | 'tractor' | 'tram' | 'emergency';
   pos: Vec2;
   heading: number;
   speed: number;
@@ -72,6 +73,7 @@ export interface EnvState {
 export interface RailState {
   barrier: 'open' | 'lowering' | 'closed' | 'raising';
   flashing: boolean;
+  trainApproaching?: true;
 }
 
 export interface Verdict {

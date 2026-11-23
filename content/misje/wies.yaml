@@ -1,0 +1,129 @@
+- id: WIE-B-01
+  miasto: wies
+  akt: 0
+  poboczna: true
+  tytul: misje.WIE-B-01.tytul
+  opis: misje.WIE-B-01.opis
+  zleceniodawca: sierzant_ola
+  typ: trening
+  start:
+    poi: wie-pobocze-start
+  cele:
+    - typ: wybor
+      poi: wie-widocznosc-kierowcy
+      opis: misje.WIE-B-01.pobocze
+      regula: MAN-13
+      pytanie: misje.WIE-B-01.pytanie
+      odpowiedzi:
+        - misje.WIE-B-01.odp1
+        - misje.WIE-B-01.odp2
+      poprawna: 0
+      wyjasnienie: misje.WIE-B-01.wyjasnienie
+    - typ: dojedz
+      poi: wie-pobocze-meta
+      opis: misje.WIE-B-01.meta
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [GDZIE-03b, GDZIE-12, MAN-13]
+  par_s: 65
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 0, xp: 0 }
+- id: WIE-B-02
+  miasto: wies
+  akt: 0
+  poboczna: true
+  tytul: misje.WIE-B-02.tytul
+  opis: misje.WIE-B-02.opis
+  zleceniodawca: sierzant_ola
+  typ: trening
+  start:
+    poi: wie-tory-start
+  ruch_ai: false
+  cele:
+    - typ: wybor
+      poi: wie-stop-przed-torami
+      opis: misje.WIE-B-02.postoj
+      regula: MSC-01
+      pytanie: misje.WIE-B-02.pytanie
+      odpowiedzi:
+        - misje.WIE-B-02.odp1
+        - misje.WIE-B-02.odp2
+      poprawna: 1
+      wyjasnienie: misje.WIE-B-02.wyjasnienie
+    - typ: dojedz
+      poi: wie-za-torami
+      opis: misje.WIE-B-02.meta
+      wymagany_nawyk: MSC-01
+      wskazowka_powrotu: misje.WIE-B-02.powrot
+  checkpointy: [wie-stop-przed-torami]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [MSC-01, GDZIE-03]
+  par_s: 75
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 0, xp: 0 }
+- id: WIE-B-03
+  miasto: wies
+  akt: 0
+  poboczna: true
+  tytul: misje.WIE-B-03.tytul
+  opis: misje.WIE-B-03.opis
+  zleceniodawca: sierzant_ola
+  typ: trening
+  start:
+    poi: wie-noc-start
+    kask_zapiety: false
+    noc: true
+  cele:
+    - typ: przygotuj_rower
+      opis: misje.WIE-B-03.lampki
+    - typ: wybor
+      poi: wie-noc-meta
+      opis: misje.WIE-B-03.meta
+      regula: GDZIE-12
+      pytanie: misje.WIE-B-03.pytanie
+      odpowiedzi:
+        - misje.WIE-B-03.odp1
+        - misje.WIE-B-03.odp2
+      poprawna: 1
+      wyjasnienie: misje.WIE-B-03.wyjasnienie
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [KASK-01, WYP-06, MSC-04]
+  par_s: 75
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 0, xp: 0 }
+- id: WIE-B-04
+  miasto: wies
+  akt: 0
+  poboczna: true
+  tytul: misje.WIE-B-04.tytul
+  opis: misje.WIE-B-04.opis
+  zleceniodawca: sierzant_ola
+  typ: trening
+  start:
+    poi: wie-podworze-start
+  cele:
+    - typ: wybor
+      poi: wie-brama
+      opis: misje.WIE-B-04.brama
+      regula: PIER-06
+      pytanie: misje.WIE-B-04.pytanieBrama
+      odpowiedzi:
+        - misje.WIE-B-04.odpBrama1
+        - misje.WIE-B-04.odpBrama2
+      poprawna: 1
+      wyjasnienie: misje.WIE-B-04.wyjasnienieBrama
+    - typ: wybor
+      poi: wie-pomoc
+      opis: misje.WIE-B-04.meta
+      regula: PP-01
+      pytanie: misje.WIE-B-04.pytanie
+      odpowiedzi:
+        - misje.WIE-B-04.odp1
+        - misje.WIE-B-04.odp2
+      poprawna: 0
+      wyjasnienie: misje.WIE-B-04.wyjasnienie
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [MSC-03, PIER-06, PP-01, ZNAK-B1]
+  skrot: { odcinek: skrot-gospodarczy }
+  par_s: 90
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 0, xp: 0 }

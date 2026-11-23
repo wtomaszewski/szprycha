@@ -9,6 +9,8 @@ export interface Footprint {
 // Nominal physical dimensions in metres, independent of the sprite sheets.
 export const trafficFootprints = {
   car: { halfLength: 2.25, halfWidth: 0.9 },
+  bus: { halfLength: 5, halfWidth: 1.25 },
+  tractor: { halfLength: 2.3, halfWidth: 1.05 },
   cyclist: { halfLength: 0.9, halfWidth: 0.32 },
   pedestrian: { halfLength: 0.25, halfWidth: 0.25 },
   tram: { halfLength: 7.5, halfWidth: 1.2 },

@@ -10,7 +10,7 @@ export const campaignCity = z.enum([
   'gdansk',
 ]);
 export type CampaignCity = z.infer<typeof campaignCity>;
-export const playableCity = campaignCity;
+export const playableCity = z.enum([...campaignCity.options, 'wies']);
 export type PlayableCity = z.infer<typeof playableCity>;
 const key = z.string().regex(/^(misje|dialogi)(\.[A-Za-z0-9_-]+)+$/);
 const seconds = z.number().positive();
@@ -69,7 +69,7 @@ const missionGoal = z.discriminatedUnion('typ', [
 
 export const missionSchema = z
   .strictObject({
-    id: z.string().regex(/^(WAW|WRO|KRA|GDA)-(T|A[1-3]|B)-\d{2}$/),
+    id: z.string().regex(/^(WAW|WRO|KRA|GDA|WIE)-(T|A[1-3]|B)-\d{2}$/),
     miasto: playableCity,
     mapa: id.optional(),
     akt: count.max(3),
@@ -139,7 +139,17 @@ export const missionSchema = z
       wroclaw: 'WRO',
       krakow: 'KRA',
       gdansk: 'GDA',
+      wies: 'WIE',
     }[mission.miasto];
+    if (
+      !campaignCity.safeParse(mission.miasto).success &&
+      (mission.akt !== 0 || act !== 'B')
+    )
+      ctx.addIssue({
+        code: 'custom',
+        path: ['akt'],
+        message: 'This city currently supports free-ride exercises only',
+      });
     // Original free-ride exercises retain their saved IDs in the campaigns.
     const legacyCityTraining =
       act === 'T' &&

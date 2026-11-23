@@ -239,6 +239,7 @@
     "wroclawTitle": "Wrocław",
     "krakowTitle": "Kraków",
     "gdanskTitle": "Gdańsk",
+    "wiesTitle": "Wieś i las",
     "districtLocked": "Przejście zamknięte. Zatrzymaj się i otwórz ćwiczenia w SzprychaApp.",
     "districtsOpened": "Nowe przejście otwarte! Wróć do Wolnej jazdy, żeby je odkryć.",
     "bursztyny": "Bursztyny",
@@ -503,7 +504,8 @@
     "wroclaw": "Wrocław",
     "gdansk": "Gdańsk",
     "poznan": "Poznań",
-    "krakow": "Kraków"
+    "krakow": "Kraków",
+    "wies": "Wieś i las"
   },
   "missionResults": {
     "glory": "Moment chwały",
@@ -562,6 +564,51 @@
       "odp2": "Natychmiast wjeżdżam, bo mam zielone.",
       "wyjasnienie": "Rusz na zielonym, gdy przejazd jest wolny. Nigdy nie wjeżdżaj tuż przed jadące auto.",
       "meta": "Poczekaj na zielone dla rowerów i przejedź po P-11."
+    },
+    "WIE-B-01": {
+      "tytul": "Pobocze i bezpieczny odstęp",
+      "opis": "Przećwicz jazdę prawym poboczem i zostaw miejsce nadchodzącym pieszym.",
+      "pobocze": "Jedź prawym poboczem i zatrzymaj się przy znaczniku.",
+      "pytanie": "Jaki odstęp od rowerzysty musi zachować kierowca przy wyprzedzaniu?",
+      "odp1": "Co najmniej metr",
+      "odp2": "Wystarczy szerokość dłoni",
+      "wyjasnienie": "Kierowca zostawia co najmniej metr, a gdy brakuje miejsca, czeka.",
+      "meta": "Jedź dalej, zwalniając przy pieszych idących lewą stroną."
+    },
+    "WIE-B-02": {
+      "tytul": "Przejazd bez zapór",
+      "opis": "Krzyż św. Andrzeja wyznacza miejsce, przed którym czekasz na pociąg.",
+      "postoj": "Zatrzymaj się przed torami, żeby ocenić sytuację.",
+      "pytanie": "Na przejeździe nie ma zapór, a z lewej nadjeżdża pociąg. Co robisz?",
+      "odp1": "Przejeżdżam, bo nie ma czerwonego światła",
+      "odp2": "Czekam przed torami i sprawdzam obie strony przed przejazdem",
+      "wyjasnienie": "Przepuść pociąg, sprawdź obie strony i pokonaj tory bez zatrzymywania.",
+      "meta": "Sprawdź obie strony i jedź, gdy tory są wolne.",
+      "powrot": "Wróć przed tory i przejedź przez nie, gdy droga będzie wolna."
+    },
+    "WIE-B-03": {
+      "tytul": "Widoczna Szprycha",
+      "opis": "Po zmroku używaj świateł roweru, a dla lepszej widoczności załóż kamizelkę w ustawieniach jazdy.",
+      "lampki": "Zapnij kask i włącz przednią oraz tylną lampkę.",
+      "meta": "Jedź przy prawej krawędzi z lampkami i zatrzymaj się przy znaczniku.",
+      "pytanie": "Co musi mieć pieszy po zmroku poza obszarem zabudowanym, gdy idzie poboczem?",
+      "odp1": "Wystarczy, że idzie lewą stroną",
+      "odp2": "Widoczny odblask",
+      "wyjasnienie": "Na poboczu po zmroku pieszy poza obszarem zabudowanym musi używać widocznego odblasku."
+    },
+    "WIE-B-04": {
+      "tytul": "Bezpieczny wyjazd z gospodarstwa",
+      "opis": "Przećwicz włączanie się do ruchu i wybierz bezpieczne miejsce do udzielenia pomocy.",
+      "brama": "Zatrzymaj się przy bramie i oceń ruch na drodze.",
+      "pytanieBrama": "Wyjeżdżasz z podwórka. Komu ustępujesz pierwszeństwa?",
+      "odpBrama1": "Tylko tym, którzy nadjeżdżają z prawej",
+      "odpBrama2": "Wszystkim uczestnikom ruchu, którym mógłbym przeszkodzić",
+      "wyjasnienieBrama": "Wyjeżdżając z posesji, włączasz się do ruchu i ustępujesz innym uczestnikom ruchu.",
+      "meta": "Ustaw się przy prawej krawędzi i zatrzymaj przy znaczniku.",
+      "pytanie": "Ktoś przewrócił się na poboczu. Co robisz najpierw?",
+      "odp1": "Zatrzymuję się w bezpiecznym miejscu i oceniam sytuację",
+      "odp2": "Zostawiam rower na środku jezdni i od razu podbiegam",
+      "wyjasnienie": "Zadbaj o bezpieczeństwo własne i innych, zanim zaczniesz pomagać."
     },
     "GDA-A1-01": {
       "tytul": "Latarenki na Długi Targ",
@@ -1604,6 +1651,12 @@
     "readMore": "Przewiń tekst"
   },
   "dialogi": {
+    "wies_zapowiedzi": {
+      "GDZIE-12": "Piesi idą lewą stroną, żeby widzieć nadjeżdżające pojazdy.",
+      "MAN-13": "Kierowca musi zostawić co najmniej metr, kiedy Cię wyprzedza.",
+      "GDZIE-03": "Bez przejezdnego pobocza trzymaj się prawej krawędzi jezdni.",
+      "WYP-06": "Kamizelka pomaga kierowcom zobaczyć Cię po zmroku."
+    },
     "GDA-B-01": {
       "start": "Po zmroku zapnij kask i włącz światła. Zobacz, jaki znak stoi przy wejściu na kładkę.",
       "koniec": "Rower przeprowadzony! Otwieramy Ołowiankę i promenadę w Brzeźnie."

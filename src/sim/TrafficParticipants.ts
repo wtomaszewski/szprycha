@@ -155,7 +155,8 @@ export class TrafficParticipants {
         agent: {
           id: route.id,
           kind,
-          bikeInfrastructure: kind === 'cyclist' || undefined,
+          bikeInfrastructure:
+            (kind === 'cyclist' && !route.rural_edge) || undefined,
           pos: { x: 0, y: 0 },
           heading: 0,
           speed: 0,
@@ -296,7 +297,9 @@ export class TrafficParticipants {
       if (
         actor.agent.kind === 'tram' ||
         actor.agent.kind === 'emergency' ||
-        actor.agent.kind === 'car'
+        actor.agent.kind === 'car' ||
+        actor.agent.kind === 'bus' ||
+        actor.agent.kind === 'tractor'
       )
         continue;
       this.walkOrCycle(actor, at, env, player);
@@ -315,7 +318,9 @@ export class TrafficParticipants {
       if (
         actor.route.kind === 'tram' ||
         actor.route.kind === 'emergency' ||
-        actor.route.kind === 'car'
+        actor.route.kind === 'car' ||
+        actor.route.kind === 'bus' ||
+        actor.route.kind === 'tractor'
       )
         this.driveSpecial(actor, at, env, player);
     }
@@ -408,11 +413,16 @@ export class TrafficParticipants {
   private playerGap(actor: RouteActor, player?: RiderState) {
     if (!player) return Infinity;
     const { path } = actor.journey;
+    const roadMotor =
+      actor.agent.kind === 'bus' || actor.agent.kind === 'tractor';
+    const clearance = roadMotor
+      ? Math.max(0.2, this.world.cyclingClearance)
+      : 0.2;
     return Math.min(
       path.obstacleAhead(
         actor.distance,
         player.pos,
-        0.2,
+        clearance,
         actor.footprint,
         0,
         trafficFootprints.cyclist,
@@ -421,7 +431,7 @@ export class TrafficParticipants {
       path.obstacleAhead(
         actor.distance,
         this.playerAhead,
-        0.2,
+        clearance,
         actor.footprint,
         0,
         trafficFootprints.cyclist,
@@ -600,7 +610,10 @@ export class TrafficParticipants {
         route.path.obstacleAhead(
           distance,
           walker.pos,
-          0.1,
+          (route.kind === 'bus' || route.kind === 'tractor') &&
+            walker.kind === 'cyclist'
+            ? Math.max(0.1, this.world.cyclingClearance)
+            : 0.1,
           footprint,
           0,
           trafficFootprints[walker.kind],
@@ -608,7 +621,12 @@ export class TrafficParticipants {
         ),
       );
     }
-    if (emergency || route.kind === 'car') {
+    if (
+      emergency ||
+      route.kind === 'car' ||
+      route.kind === 'bus' ||
+      route.kind === 'tractor'
+    ) {
       for (const car of this.road.agents) {
         if (Math.cos(car.heading - agent.heading) < 0.98) continue;
         room = Math.min(

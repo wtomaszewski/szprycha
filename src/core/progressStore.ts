@@ -189,7 +189,7 @@ export const graphicsQualities = ['auto', 'full', 'lite'] as const;
 const krakowProfileSchema = storyProfileSchema.extend({
   version: z.literal(11),
   selectedCity: campaignCity.exclude(['gdansk']).optional(),
-  freeRideCity: z.enum(['krakow', 'gdansk']).optional(),
+  freeRideCity: z.enum(['krakow', 'gdansk', 'wies']).optional(),
   obwarzanki: z.array(id).optional(),
   graphicsQuality: z.enum(graphicsQualities).optional().catch(undefined),
 });

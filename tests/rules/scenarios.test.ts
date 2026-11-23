@@ -452,7 +452,7 @@ it('loads all M2 road features from the reproducible training map', () => {
 it('tells the rider when to wait before the railway crossing', () => {
   const rule = content.przepisy.przepisy.find(({ id }) => id === 'MSC-01');
   expect(rule?.feedback).toBe(
-    'Gdy migają czerwone światła, dzwoni sygnał lub zapory się ruszają, stój przed torami, a przez tory przejedź bez zatrzymywania.',
+    'Gdy nadjeżdża pociąg, migają czerwone światła, dzwoni sygnał lub ruszają zapory, czekaj, a przez tory przejedź bez zatrzymywania.',
   );
 });
 

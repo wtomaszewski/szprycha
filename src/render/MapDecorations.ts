@@ -45,7 +45,19 @@ export function drawMapDecorations(
       continue;
     }
     centers.push({ x, y });
-    if (kind === 'kladka-drewniana') {
+    if (kind === 'field-rows') {
+      scenery.fillStyle(0x76513b).fillRect(x, y, width, height);
+      for (let dx = 8; dx < width - 8; dx += 12) {
+        scenery.fillStyle(0xa9794f).fillRect(x + dx, y + 6, 7, height - 12);
+        for (let dy = 12; dy < height - 8; dy += 10) {
+          scenery
+            .fillStyle(dy % 20 === 2 ? 0xa7c974 : 0x849b54)
+            .fillRect(x + dx + (dy % 3), y + dy, 5, 3);
+        }
+        for (let dy = 0; dy <= height; dy += 32)
+          centers.push({ x: x + dx, y: y + dy });
+      }
+    } else if (kind === 'kladka-drewniana') {
       scenery.fillStyle(0x9b7352).fillRect(x, y, width, height);
       for (let dy = 2; dy < height - 2; dy += 8) {
         scenery

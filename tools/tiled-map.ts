@@ -76,6 +76,7 @@ export function tiledMap(width: number, height: number) {
     markings: number[],
     lighting?: { duskAt: number; freeRideOnly?: boolean },
     format: 'pretty' | 'compact' = 'pretty',
+    traffic?: { cyclingClearance: number; cruiseSpeed: number },
   ) {
     const mapLayers = [
       tileLayer(1, 'ground', terrain.ground),
@@ -89,6 +90,19 @@ export function tiledMap(width: number, height: number) {
       type: string;
       value: number | boolean;
     }[] = [{ name: 'trafficCars', type: 'int', value: trafficCars }];
+    if (traffic)
+      mapProperties.push(
+        {
+          name: 'cycling_clearance_m',
+          type: 'float',
+          value: traffic.cyclingClearance,
+        },
+        {
+          name: 'traffic_cruise_mps',
+          type: 'float',
+          value: traffic.cruiseSpeed,
+        },
+      );
     if (lighting)
       mapProperties.push({
         name: 'dusk_at_s',

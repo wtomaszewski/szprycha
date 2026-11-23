@@ -838,6 +838,22 @@
       "text": "Przy zielonej strzałce najpierw stań, a potem ustąp pieszym i pojazdom.",
       "hash": "23d8cc38a56f8f0b82080c6a64ba40f42bcc3f934c3166ca871fdcce0db723e1"
     },
+    "dialogi.wies_zapowiedzi.GDZIE-03": {
+      "text": "Bez przejezdnego pobocza trzymaj się prawej krawędzi jezdni.",
+      "hash": "c1d3fe423717c484b76e7f3214704c24ecebea94ee5ef52a3997f9b31d447843"
+    },
+    "dialogi.wies_zapowiedzi.GDZIE-12": {
+      "text": "Piesi idą lewą stroną, żeby widzieć nadjeżdżające pojazdy.",
+      "hash": "a13b33d48dd6e6bf45964022f175b33c478020ee3280c4278313c7ca24fb608f"
+    },
+    "dialogi.wies_zapowiedzi.MAN-13": {
+      "text": "Kierowca musi zostawić co najmniej metr, kiedy Cię wyprzedza.",
+      "hash": "67db2c3fbe5f37175ada9e70ec105064a65f3489880542c0d3502cfa044ef21c"
+    },
+    "dialogi.wies_zapowiedzi.WYP-06": {
+      "text": "Kamizelka pomaga kierowcom zobaczyć Cię po zmroku.",
+      "hash": "e031103ad92a226a929c2318405b1aea6e10c312b7c3e8f52f0b88e7cc6a7999"
+    },
     "dialogi.wroclaw_zapowiedzi.GDZIE-03b": {
       "text": "Korzystaj z pobocza, gdy nadaje się do jazdy i nie utrudnisz ruchu pieszym.",
       "hash": "9989e9968259461acaf4a3c9444cefde407c694749d7a7a091fe7521efa27c12"
@@ -1081,6 +1097,50 @@
     "misje.WAW-T-01.powrot_stop": {
       "text": "Wróć i zatrzymaj się całkowicie przed linią STOP.",
       "hash": "3643187a7164c57f8858f9567904f252c2514d98004afc4e29a46c16e84141cf"
+    },
+    "misje.WIE-B-01.pytanie": {
+      "text": "Jaki odstęp od rowerzysty musi zachować kierowca przy wyprzedzaniu?",
+      "hash": "27e35c3088be7631c16c68ca321951c12dd7a2d0d1e24cecd2c4ff89e530db76"
+    },
+    "misje.WIE-B-01.wyjasnienie": {
+      "text": "Kierowca zostawia co najmniej metr, a gdy brakuje miejsca, czeka.",
+      "hash": "f63ff6c204c5acfc01e966c8addb679b2591b20d163718e9f21a0fb8a1050cae"
+    },
+    "misje.WIE-B-02.powrot": {
+      "text": "Wróć przed tory i przejedź przez nie, gdy droga będzie wolna.",
+      "hash": "c2e45c6fd7abbc2da8607e9fc8be4ac64846280212691262fade0de368e91aa4"
+    },
+    "misje.WIE-B-02.pytanie": {
+      "text": "Na przejeździe nie ma zapór, a z lewej nadjeżdża pociąg. Co robisz?",
+      "hash": "2b8c86ec2338ad9d5493e5bacdbf994be4119c706382d00548613f6b51ce04dd"
+    },
+    "misje.WIE-B-02.wyjasnienie": {
+      "text": "Przepuść pociąg, sprawdź obie strony i pokonaj tory bez zatrzymywania.",
+      "hash": "323b8cb01380957b0f43bac3de0bc6e1a3dd9b4fdadee486b634869ab708fc4a"
+    },
+    "misje.WIE-B-03.pytanie": {
+      "text": "Co musi mieć pieszy po zmroku poza obszarem zabudowanym, gdy idzie poboczem?",
+      "hash": "73c2a071a17fe325916408c8e173dd383dd9c846f4086f9f17ada15fda6a4860"
+    },
+    "misje.WIE-B-03.wyjasnienie": {
+      "text": "Na poboczu po zmroku pieszy poza obszarem zabudowanym musi używać widocznego odblasku.",
+      "hash": "38c54ae0a49fd4640d41732bdc297035ca0374328ff16a9b42b44aa708fff4b4"
+    },
+    "misje.WIE-B-04.pytanie": {
+      "text": "Ktoś przewrócił się na poboczu. Co robisz najpierw?",
+      "hash": "1a5e8e7d578e370aa04c1a32b046be7e2c83fefbc196e635658bde4b5ad4107a"
+    },
+    "misje.WIE-B-04.pytanieBrama": {
+      "text": "Wyjeżdżasz z podwórka. Komu ustępujesz pierwszeństwa?",
+      "hash": "74aeeb663196a00a7076911e01e43f69ae36affd3a197b10406f5d9ca7bef3c5"
+    },
+    "misje.WIE-B-04.wyjasnienie": {
+      "text": "Zadbaj o bezpieczeństwo własne i innych, zanim zaczniesz pomagać.",
+      "hash": "b7402b0dde26acd52674643de5e4dba44fb9fa7404bb4bfe9297d788dfc255b7"
+    },
+    "misje.WIE-B-04.wyjasnienieBrama": {
+      "text": "Wyjeżdżając z posesji, włączasz się do ruchu i ustępujesz innym uczestnikom ruchu.",
+      "hash": "1c83c407c99172fcec2c8b08ece04bbf8b6010731706844be9614fb8117c98f6"
     },
     "misje.WRO-A3-02.cel2_pytanie": {
       "text": "Gdzie możesz pojechać rowerem?",
@@ -1326,6 +1386,14 @@
       "text": "Na wspólnej drodze dla pieszych i rowerów uważaj i ustępuj pieszym.",
       "hash": "12be151515611d1da18c231b5613e492a209bb697fdb5c823533bd13408a1740"
     },
+    "przepisy.GDZIE-12.feedback": {
+      "text": "Idź lewą stroną drogi, żeby widzieć nadjeżdżające pojazdy.",
+      "hash": "ce5b0203f5c93f21ffe4fa5c6fffed7f165e309d70e4a45edd932c44ee53f1ae"
+    },
+    "przepisy.GDZIE-12.quiz": {
+      "text": "Bez chodnika lub drogi dla pieszych idź lewym poboczem, a gdy nie da się nim iść, lewą krawędzią jezdni i ustępuj pojazdom.",
+      "hash": "44d6e7fabe2a51c1d640735570d1a482ab73e98b4bb34a827a158d4c795d8e77"
+    },
     "przepisy.KASK-01.feedback": {
       "text": "Zapnij pasek kasku, zanim ruszysz rowerem.",
       "hash": "a8a3dae5c5306707c2b253ed27b270d7930ca9296f455018fc14288ea076a735"
@@ -1434,13 +1502,21 @@
       "text": "Nie wyprzedzaj na przejściu, przejeździe, skrzyżowaniu bez świateł ani przed torami i nie omijaj auta, które stoi, by przepuścić pieszych.",
       "hash": "7a138c164d48581ec799161f38daad74ba3edb57949fda9d556ff9aee08c778e"
     },
+    "przepisy.MAN-13.feedback": {
+      "text": "Kierowca zostawia co najmniej metr, a gdy brakuje miejsca, czeka.",
+      "hash": "f63ff6c204c5acfc01e966c8addb679b2591b20d163718e9f21a0fb8a1050cae"
+    },
+    "przepisy.MAN-13.quiz": {
+      "text": "Kierowca wyprzedzający rower musi zostawić co najmniej metr odstępu.",
+      "hash": "c0fe95a61f386adea0b6f978969bb679db3cc03b5a83a00fdaa8c153a34aa351"
+    },
     "przepisy.MSC-01.feedback": {
-      "text": "Gdy migają czerwone światła, dzwoni sygnał lub zapory się ruszają, stój przed torami, a przez tory przejedź bez zatrzymywania.",
-      "hash": "3abe5ac1a419d8ab1465f0dc777d9f5a43aa48c964d79f113263bf51d824a1f0"
+      "text": "Gdy nadjeżdża pociąg, migają czerwone światła, dzwoni sygnał lub ruszają zapory, czekaj, a przez tory przejedź bez zatrzymywania.",
+      "hash": "c94e55d6548789e0e83662afa2fe472dfaabd86a94a2d4cc7ffc01875c6a651e"
     },
     "przepisy.MSC-01.quiz": {
-      "text": "Przed przejazdem kolejowym zwolnij i rozejrzyj się.",
-      "hash": "6f0103a032f72f6a6293bb1393013fc55aa035ea4db37ae1b7272b94303aca72"
+      "text": "Przed przejazdem zwolnij i sprawdź, czy nie jedzie pociąg.",
+      "hash": "a5ba57b8d5a42fb2e2fbf41d4f9c6903aadd1dca5897c12db735bb2e70cc60f2"
     },
     "przepisy.MSC-02.feedback": {
       "text": "Przed przystankiem bez wysepki stań i poczekaj, aż pasażerowie zejdą z jezdni.",
@@ -2229,6 +2305,30 @@
     "pytania.Q062.wyjasnienie": {
       "text": "Biały symbol roweru wskazuje miejsce przeznaczone dla rowerzystów.",
       "hash": "27ede10bf13b7272fd13a45c7fe64d25ae360641e0a98d022bbe235036028b41"
+    },
+    "pytania.Q063.pytanie": {
+      "text": "Którędy idziesz na zwykłej drodze bez chodnika, jeśli po obu stronach jest pobocze?",
+      "hash": "c7e2910b3950560ca927bd8066b08ebc4623a1d88e734c5b5f00459e29fc4e2b"
+    },
+    "pytania.Q063.wyjasnienie": {
+      "text": "Idź lewym poboczem, żeby widzieć nadjeżdżające pojazdy.",
+      "hash": "ba810eed4aba82b350c4b1c2daf5c83a97b49742ce4db3fef64a60e351269a0b"
+    },
+    "pytania.Q064.pytanie": {
+      "text": "Jaki odstęp od roweru musi zachować kierowca przy wyprzedzaniu?",
+      "hash": "d365ad44a8ad6085cdf08c422662a29097417bddf44541f79f19e908cd748d4d"
+    },
+    "pytania.Q064.wyjasnienie": {
+      "text": "Kierowca zostawia co najmniej metr, a gdy brakuje miejsca, czeka.",
+      "hash": "f63ff6c204c5acfc01e966c8addb679b2591b20d163718e9f21a0fb8a1050cae"
+    },
+    "pytania.Q065.pytanie": {
+      "text": "Co musi mieć pieszy po zmroku poza obszarem zabudowanym, gdy idzie poboczem?",
+      "hash": "73c2a071a17fe325916408c8e173dd383dd9c846f4086f9f17ada15fda6a4860"
+    },
+    "pytania.Q065.wyjasnienie": {
+      "text": "Idąc poboczem, używaj odblasku widocznego dla nadjeżdżających kierowców.",
+      "hash": "0c1f9682d5f126c7839991efcc4c90bec29715bdb131724b6ebeac79c12e1033"
     }
   },
   "recorded": {}
