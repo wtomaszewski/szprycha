@@ -336,7 +336,14 @@ test('HUD, SzprychaApp, pauza, dialog fabularny i stop-klatka', async ({
     button(phone, pl.phone.close),
   );
   await page.keyboard.press('Escape');
-  await expect(button(page, pl.phone.open)).toBeFocused();
+  const phoneTrigger = button(page, pl.phone.open);
+  await expect(phoneTrigger).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Tab');
+  await expect(phoneTrigger).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(phone).toBeVisible();
+  await page.keyboard.press('Escape');
 
   await page.keyboard.press('Escape');
   const pause = dialog(page, pl.driving.paused);

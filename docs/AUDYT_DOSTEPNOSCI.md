@@ -20,7 +20,7 @@ Testy audytu są w [tests/e2e/accessibility.spec.ts](../tests/e2e/accessibility.
 - Tab wrócił do nawigacji po interfejsie jazdy. M otwiera telefon i po zamknięciu fokus wraca do przycisku, który go otworzył. Obrys w kolorze z palety obejmuje przyciski, odnośniki, pola i sekcje rozwijane. Pad ma widoczny fokus także po wcześniejszym użyciu myszy.
 - D-pad i A obsługują menu i dialogi. D-pad zmienia także listy, suwaki i karty. Strefa Rodzica ma opcję złożenia kodu klasy padem.
 - HUD dopowiada kierunek świata i odległość, a kask i światła mają widoczne oznaczenia stanu. W stop-klatce opis przyczyny korzysta z nazwy reguły. Napisy porady radiowej pozostają w regionie statusu.
-- Tekst uwzględnia ustawienia przeglądarki dzięki jednostkom względnym. Wyniki misji przewijają cały dialog, łącznie z przyciskami. Obramowania głównych kontrolek są jaśniejsze.
+- Tekst uwzględnia ustawienia przeglądarki dzięki jednostkom względnym. Wyniki misji przewijają treść dialogu i utrzymują przyciski przy dolnej krawędzi. Obramowania głównych kontrolek są jaśniejsze.
 - Sygnał S-1 zmienia położenie aktywnej lampy. Sygnał zamkniętego przejazdu i przejścia ma dodatkową kreskę. „Mniej efektów” i preferencja systemowa zatrzymują pulsowanie sygnalizacji kolejowej, świateł pojazdów uprzywilejowanych i kierunkowskazów w grze. Stop-klatka zachowuje bazowy zoom.
 
 ## Odłożone i ograniczenia weryfikacji

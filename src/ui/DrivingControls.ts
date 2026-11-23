@@ -59,6 +59,7 @@ export class DrivingControls {
   private x = 0;
   private y = 0;
   private readonly touchKeys = new Set<string>();
+  private pointerButton?: HTMLButtonElement;
   private padButtons: boolean[] = [];
   private abort = new AbortController();
   readonly speed = document.createElement('output');
@@ -320,8 +321,19 @@ export class DrivingControls {
       'pointerdown',
       (event) => {
         if (event.pointerType === 'touch') this.device = 'touch';
+        this.pointerButton =
+          event.target instanceof Element
+            ? (event.target.closest('button') ?? undefined)
+            : undefined;
       },
       { signal, capture: true },
+    );
+    this.root.addEventListener(
+      'focusin',
+      (event) => {
+        if (event.target !== this.pointerButton) this.pointerButton = undefined;
+      },
+      { signal },
     );
     window.addEventListener(
       'keydown',
@@ -355,7 +367,8 @@ export class DrivingControls {
         if (
           e.target instanceof Element &&
           e.target.matches('button, summary, a[href]') &&
-          (e.code === 'Enter' || e.code === 'Space')
+          (e.code === 'Enter' ||
+            (e.code === 'Space' && e.target !== this.pointerButton))
         )
           return;
         if (
@@ -370,6 +383,7 @@ export class DrivingControls {
           this.root.contains(e.target)
         )
           e.target.blur();
+        if (e.code === 'Tab') this.pointerButton = undefined;
         this.keys.add(e.code);
         if (e.repeat) return;
         if (!plac && e.code === 'KeyL') lights.click();

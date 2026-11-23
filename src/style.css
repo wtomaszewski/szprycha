@@ -671,6 +671,9 @@ html[data-gamepad-navigation]
   padding-block: 0.45em;
 }
 .mission-results footer {
+  position: sticky;
+  bottom: 0;
+  background: var(--ui-bg);
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
