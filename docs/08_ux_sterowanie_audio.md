@@ -102,6 +102,8 @@ Tab i Shift+Tab przechodzą między elementami interfejsu. Enter i Spacja urucha
 Docelowo 60 FPS na: Chromebook szkolny, Android średniej klasy sprzed 3–4 lat, iPad 9. generacji. Menu i dialogi działają w obu orientacjach. Podczas jazdy w pionie gra podpowiada obrót urządzenia, pozostawiając sterowanie dostępne.
 Przy 740×390 px i DPR 1 canvas 640×360 px zostawia czarne pasy po bokach, aby zachować całkowitą skalę pixel-artu.
 
+W trybie Canvas obszar gry o co najmniej 276 480 pikselach logicznych (np. tablet 4:3 z canvasem 640×480) pokazuje mapę w skali 1:1. Węższy kadr obejmuje mniej obiektów, a renderer rysuje kafle w ich rozmiarze źródłowym.
+
 PWA instaluje menu, samouczek i Miasteczko. Mapa Warszawy, Wrocławia lub Krakowa pobiera się przy pierwszym wejściu na daną mapę i jest wtedy zapisywana do gry offline. Jeśli mapa jest niedostępna, gra wraca do menu z komunikatem i można kontynuować w Miasteczku.
 
 W pauzie pole **Jakość grafiki** pozwala wybrać ustawienie automatyczne, pełne lub niskie. Na urządzeniu dotykowym automatyka wybiera niski profil przy maksymalnie czterech procesorach logicznych lub gdy co najmniej 30 z pierwszych 60 ocenianych klatek trwa co najmniej 28 ms. Pomija pierwsze dziesięć klatek jazdy i pauzę. Niski profil upraszcza projekcję zabudowy i ogranicza animacje dekoracyjne. Oświetlenie pojazdów, sygnalizacja i reguły jazdy działają w każdym profilu. Wybór ręczny jest zapisywany w lokalnym profilu. [Wyniki audytu wydajności](AUDYT_WYDAJNOSCI.md)

@@ -26,7 +26,7 @@ import {
 import { rankingSeed, RideEvidence } from '../rankings/evidence';
 import { showBreakReminder } from '../ui/BreakReminder';
 import { verdictHaptics } from '../platform/haptics';
-import { Scene, GameObjects } from 'phaser';
+import { CANVAS, Scene, GameObjects } from 'phaser';
 import { drawMapDecorations } from '../render/MapDecorations';
 import type { TownHallGoats } from '../render/TownHallGoats';
 import { DistrictGates } from '../render/DistrictGates';
@@ -140,7 +140,8 @@ import type {
 } from '../content/missions';
 import type { Box } from '../rules/world/WorldModel';
 
-const drivingZoom = 0.75;
+const standardDrivingZoom = 0.75;
+const nativeCanvasZoomArea = 640 * 432;
 const reviewIntroMs = 300;
 
 const defaultMap = 'miasteczko';
@@ -643,7 +644,7 @@ export class City extends Scene {
       this.progress.store.profile.licencePassed,
     );
     this.cameras.main
-      .setZoom(drivingZoom)
+      .setZoom(this.drivingZoom)
       .setBounds(0, 0, this.worldWidth, this.worldHeight)
       // Phaser floors scroll in world space and expands Canvas image quads
       // with roundPixels. City instead aligns the view in canvas space.
@@ -1253,7 +1254,9 @@ export class City extends Scene {
     const reduced = Boolean(this.reducedEffects);
     const frame = this.replay.frame(this.replay.size - 1)!;
     const focus = verdict ? this.highlight.focus(verdict) : frame.rider;
-    this.cameras.main.setZoom(drivingZoom * (verdict && !reduced ? 1.25 : 1));
+    this.cameras.main.setZoom(
+      this.drivingZoom * (verdict && !reduced ? 1.25 : 1),
+    );
     this.centerRideCamera(focus.x, focus.y);
     this.renderFrame(frame, 0, true);
     if (verdict) this.highlight.draw(verdict, frame, 0, true);
@@ -2182,7 +2185,7 @@ export class City extends Scene {
     audio.stopReading('lesson');
     this.replayDialog.close();
     this.highlight.clear();
-    this.cameras.main.setZoom(drivingZoom);
+    this.cameras.main.setZoom(this.drivingZoom);
     this.controls.clear();
     if (retry && !this.mission?.result && !this.mission?.waitingForQuestion)
       this.returnToCheckpoint(this.mission?.rewindCheckpoint());
@@ -2222,7 +2225,7 @@ export class City extends Scene {
       : Math.max(0, duration - ((1 - intro) * reviewIntroMs) / 4);
     const frame = this.replay.frameAt(elapsed)!;
     const focus = playing ? frame.rider : this.highlight.focus(review.verdict);
-    camera.setZoom(drivingZoom * (playing || reduced ? 1 : 1 + intro / 2));
+    camera.setZoom(this.drivingZoom * (playing || reduced ? 1 : 1 + intro / 2));
     this.centerRideCamera(focus.x, focus.y);
     this.renderFrame(frame, 0, true);
     this.highlight.draw(
@@ -2470,6 +2473,16 @@ export class City extends Scene {
     );
   }
 
+  private get drivingZoom() {
+    const { width, height } = this.scale;
+    // A larger logical Canvas viewport would draw substantially more world
+    // images at 0.75×. At 1× it also avoids resampling the static map tiles.
+    return this.game.renderer.type === CANVAS &&
+      width * height >= nativeCanvasZoomArea
+      ? 1
+      : standardDrivingZoom;
+  }
+
   private centerRideCamera(x: number, y: number) {
     this.cameraFocus.x = x;
     this.cameraFocus.y = y;
@@ -2498,6 +2511,10 @@ export class City extends Scene {
     const reduced = this.reducedEffects;
     const camera = this.cameras.main,
       look = r.speed * 0.5;
+    if (!reviewing) {
+      const zoom = this.drivingZoom;
+      if (camera.zoom !== zoom) camera.setZoom(zoom);
+    }
     const targetX = r.x + Math.cos(r.heading) * look,
       targetY = r.y + Math.sin(r.heading) * look;
     const blend = 1 - Math.exp(-delta / 160);

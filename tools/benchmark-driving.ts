@@ -11,6 +11,14 @@ const viewport = /^(\d+)x(\d+)$/.exec(process.env.BENCH_VIEWPORT ?? '1280x720');
 if (!viewport || !Number(viewport[1]) || !Number(viewport[2]))
   throw new Error('BENCH_VIEWPORT must use WIDTHxHEIGHT in pixels');
 const [, width, height] = viewport;
+const dpr = Number(process.env.BENCH_DPR ?? 1);
+if (!Number.isFinite(dpr) || dpr <= 0)
+  throw new Error('BENCH_DPR must be positive');
+const sampleSeconds = Number(process.env.BENCH_SECONDS ?? 11);
+const sampleMs = sampleSeconds * 1000;
+if (!Number.isFinite(sampleMs) || sampleMs <= 0)
+  throw new Error('BENCH_SECONDS must be positive');
+const profilePrefix = process.env.BENCH_PROFILE;
 const light = process.env.BENCH_LIGHT ?? 'day';
 if (light !== 'day' && light !== 'night')
   throw new Error('BENCH_LIGHT must be day or night');
@@ -51,6 +59,8 @@ const warsawSpawns: Record<string, { x: number; y: number; heading: number }> =
   {
     most: { x: 2255, y: 352, heading: 0 },
     starowka: { x: 3110, y: 688, heading: 0 },
+    stadion: { x: 1880, y: 3475, heading: -Math.PI / 2 },
+    palac: { x: 3540, y: 1808, heading: 0 },
     srodmiescie: { x: 3570, y: 1808, heading: 0 },
     powisle: { x: 2930, y: 1690, heading: Math.PI / 2 },
     mokotow: { x: 3536, y: 3550, heading: -Math.PI / 2 },
@@ -130,7 +140,7 @@ const direction = horizontal
   ? Math.sign(Math.cos(heading))
   : Math.sign(Math.sin(heading));
 const axis = horizontal ? 'data-x' : 'data-y';
-async function runTrial() {
+async function runTrial(trial: number) {
   const browser = await chromium.launch({
     executablePath: process.env.BENCH_CHROMIUM_PATH,
     args: process.env.BENCH_RENDERER === 'canvas' ? ['--disable-webgl'] : [],
@@ -138,6 +148,7 @@ async function runTrial() {
   try {
     const page = await browser.newPage({
       viewport: { width: Number(width), height: Number(height) },
+      deviceScaleFactor: dpr,
       hasTouch: true,
       serviceWorkers: 'block',
     });
@@ -272,6 +283,10 @@ async function runTrial() {
         { timeout: 60_000 },
       );
     const start = Number(await position.getAttribute(axis));
+    if (profilePrefix) {
+      await cdp.send('Profiler.enable');
+      await cdp.send('Profiler.start');
+    }
     // Raw browser source avoids TS runner helper injection into serialized callbacks.
     const frames = await page.evaluate<number[]>(`new Promise(resolve => {
     const times = []; let last = 0; let start = 0;
@@ -279,23 +294,31 @@ async function runTrial() {
       if (!start) start = t;
       if (last && t - start > 1000) times.push(t - last);
       last = t;
-      if (t - start < 12000) requestAnimationFrame(frame); else resolve(times);
+      if (t - start < ${sampleMs + 1000}) requestAnimationFrame(frame); else resolve(times);
     }
     requestAnimationFrame(frame);
   })`);
+    if (profilePrefix) {
+      const { profile } = await cdp.send('Profiler.stop');
+      await writeFile(
+        `${profilePrefix}-${trial + 1}.cpuprofile`,
+        JSON.stringify(profile),
+      );
+    }
     if (!signals) await page.mouse.up();
     const end = Number(await position.getAttribute(axis));
     const travelledPx = (end - start) * direction;
     if (
       !frames.length ||
-      (!signals && travelledPx < 120) ||
+      (!signals && travelledPx < Math.min(120, sampleSeconds * 12)) ||
+      (fragment === 'palac' && end < 3584) ||
       (await page.locator('dialog[open]').count())
     )
       throw new Error(`${map} benchmark interrupted at ${axis}=${end}`);
     frames.sort((a, b) => a - b);
     return {
       date: new Date().toISOString(),
-      environment: `Chromium ${browser.version()} headless, ${width}x${height}, CPU 4x`,
+      environment: `Chromium ${browser.version()} headless, ${width}x${height}, DPR ${dpr}, CPU 4x`,
       renderer,
       map,
       fragment: signals || map !== 'miasteczko' ? fragment : undefined,
@@ -304,6 +327,7 @@ async function runTrial() {
       light,
       quality: lite ? 'lite' : 'full',
       rain,
+      sampleSeconds,
       travelledPx,
       samples: frames.length,
       meanFps: 1000 / (frames.reduce((a, b) => a + b, 0) / frames.length),
@@ -330,17 +354,22 @@ function summarize(values: number[]) {
 
 const trials = [];
 for (let trial = 0; trial < runs; trial++) {
-  const result = await runTrial();
+  const result = await runTrial(trial);
   trials.push(result);
   console.log(result);
 }
 const summary = {
   trials,
+  averageFps: trials.reduce((sum, { meanFps }) => sum + meanFps, 0) / runs,
   meanFps: summarize(trials.map(({ meanFps }) => meanFps)),
   p95FrameMs: summarize(trials.map(({ p95FrameMs }) => p95FrameMs)),
 };
 if (runs > 1)
-  console.log({ meanFps: summary.meanFps, p95FrameMs: summary.p95FrameMs });
+  console.log({
+    averageFps: summary.averageFps,
+    meanFps: summary.meanFps,
+    p95FrameMs: summary.p95FrameMs,
+  });
 await mkdir('test-results', { recursive: true });
 const route = warsaw
   ? `-${fragment}${mode === 'free' && fragment !== 'praga' ? '-free' : ''}`
