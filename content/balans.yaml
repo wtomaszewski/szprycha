@@ -55,6 +55,9 @@ licencja:
     wroclaw:
       start: hala-rondo-zachod
       punkty: [hala-rondo-poludnie, hala-rondo-wschod, hala-dojazd, wejscie-hala]
+    krakow:
+      start: krk-kazimierz-start
+      punkty: [krk-kontrapas, krk-przed-przejazdem, krk-aleja]
 silnik:
   ttc_minor_s: 2.0
   ttc_major_s: 1.0

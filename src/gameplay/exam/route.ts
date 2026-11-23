@@ -1,15 +1,22 @@
-import type { MissionCity, MissionDefinition } from '../../content/missions.ts';
+import type {
+  PlayableCity,
+  MissionDefinition,
+} from '../../content/missions.ts';
 import type { GameContent } from '../../content/schemas.ts';
 
 type ExamBalance = GameContent['balans']['licencja'];
 
 export function examRoute(
-  city: MissionCity,
+  city: PlayableCity,
   balance: ExamBalance,
 ): MissionDefinition {
   const { start, punkty } = balance.przejazdy[city];
   return {
-    id: city === 'warszawa' ? 'WAW-EGZAMIN' : 'WRO-EGZAMIN',
+    id: {
+      warszawa: 'WAW-EGZAMIN',
+      wroclaw: 'WRO-EGZAMIN',
+      krakow: 'KRA-EGZAMIN',
+    }[city],
     miasto: city,
     akt: 0,
     tytul: 'exam.ride',

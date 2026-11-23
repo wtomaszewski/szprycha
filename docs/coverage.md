@@ -12,7 +12,7 @@ Aby odtworzyć raport, uruchom `npm run coverage:maps`. Opcja `--strict` (po sep
 
 Mapa [krakow.tmj](../maps/krakow.tmj)
 
-**Misje na mapie** `KRA-B-01`, `KRA-B-02`, `KRA-B-03`
+**Misje na mapie** `KRA-A1-01`, `KRA-A1-02`, `KRA-A1-03`, `KRA-A1-04`, `KRA-A1-05`, `KRA-A2-01`, `KRA-A2-02`, `KRA-A2-03`, `KRA-A2-04`, `KRA-A2-05`, `KRA-A3-01`, `KRA-A3-02`, `KRA-A3-03`, `KRA-A3-04`, `KRA-A3-05`, `KRA-B-01`, `KRA-B-02`, `KRA-B-03`
 
 | Sytuacja drogowa | Pokrycie | Wykryte obiekty lub misje | Brakujące elementy |
 | --- | :---: | --- | --- |
@@ -28,17 +28,17 @@ Mapa [krakow.tmj](../maps/krakow.tmj)
 | Przejazd kolejowy | ✓ | `debnik-kolej` | — |
 | Pobocze, zakaz wjazdu rowerów | ✓ | `kopiec-zakaz`, `kopiec-zakaz-B-9-W`, `pobocze-e`, `pobocze-w`, `rynek-deptak-B-9-S` | — |
 | Kontraruch | ✓ | `uliczka-kazimierz-B-2-S` | — |
-| Nocna jazda | ✓ | `KRA-B-01`, `dusk_at_s` | — |
+| Nocna jazda | ✓ | `KRA-A2-04`, `KRA-B-01`, `dusk_at_s` | — |
 
 | Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
 | --- | :---: | --- | --- |
 | M01 | ✓ | `WYP-04`, `WYP-05`, `WYP-06` | `KASK-01`, `WYP-04`, `WYP-05`, `WYP-06` |
-| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-01`, `GDZIE-02`, `GDZIE-07`, `GDZIE-11` |
-| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `SYG-02`, `ZNAK-B2T22`, `ZNAK-B9` |
-| M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | `PIER-02` |
-| M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-08` | `MAN-08` |
-| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | `MSC-04` |
-| M07 | ✓ | — | `PP-01` |
+| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-11` |
+| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-STOP` |
+| M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | `PIER-02`, `PIER-08` |
+| M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-08` | `MAN-01`, `MAN-08` |
+| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | `MSC-01`, `MSC-02`, `MSC-04`, `MSC-05` |
+| M07 | ✓ | — | `PP-01`, `PP-02`, `PP-03` |
 
 **Pokrycie** 13/13 sytuacji, 7/7 modułów.
 

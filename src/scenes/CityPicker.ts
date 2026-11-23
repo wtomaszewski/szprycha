@@ -126,10 +126,9 @@ export class CityPicker extends Scene {
       if (leaving) return;
       leaving = true;
       await progress.selectCity(city, freeRide);
-      const mission =
-        !freeRide && city !== 'krakow'
-          ? progress.nextMission(city, content)
-          : undefined;
+      const mission = !freeRide
+        ? progress.nextMission(city, content)
+        : undefined;
       this.scene.start('City', {
         city,
         map: city,
@@ -158,7 +157,7 @@ export class CityPicker extends Scene {
       caption.textContent = labels[id];
       pin.append(caption);
       const city = playableCity.safeParse(id);
-      if (city.success && (freeRide || city.data !== 'krakow')) {
+      if (city.success) {
         pin.addEventListener('click', () => void enter(city.data));
         if (id === selectedCity) {
           pin.classList.add('city-picker-selected');

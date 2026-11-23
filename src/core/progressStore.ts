@@ -8,7 +8,7 @@ import {
   maxNicknameLength,
   migrateNickname,
 } from '../content/nicknames';
-import { missionCity } from '../content/missions';
+import { missionCity, playableCity } from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { placRecordsSchema } from '../gameplay/plac/placRecords';
 import { storyTemplates } from '../gameplay/procedural/storyTemplates';
@@ -166,9 +166,8 @@ const identityProfileSchema = m9ProfileSchema.extend({
   tutorial: z.enum(tutorialStates).optional().catch(undefined),
 });
 
-const profileVersion = 10;
-const profileSchema = identityProfileSchema.extend({
-  version: z.literal(profileVersion),
+const storyProfileSchema = identityProfileSchema.extend({
+  version: z.literal(10),
   freeRideCity: z.literal('krakow').optional(),
   stories: z.partialRecord(
     missionCity,
@@ -183,6 +182,13 @@ const profileSchema = identityProfileSchema.extend({
           step < (storyTemplates[finished]?.kinds.length ?? 1),
       ),
   ),
+});
+
+const profileVersion = 11;
+const profileSchema = storyProfileSchema.extend({
+  version: z.literal(profileVersion),
+  selectedCity: playableCity.optional(),
+  obwarzanki: z.array(id).optional(),
 });
 
 function addStories(
@@ -362,6 +368,12 @@ function decodeProfile(
 } {
   const current = profileSchema.safeParse(raw);
   if (current.success) return { profile: current.data, reset: false };
+  const stories = storyProfileSchema.safeParse(raw);
+  if (stories.success)
+    return {
+      profile: { ...stories.data, version: profileVersion },
+      reset: false,
+    };
   const identity = identityProfileSchema.safeParse(raw);
   if (identity.success)
     return { profile: addStories(identity.data), reset: false };

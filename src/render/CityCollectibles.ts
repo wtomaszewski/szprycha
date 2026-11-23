@@ -1,14 +1,34 @@
-import type { Cameras, GameObjects, Scene, Types } from 'phaser';
+import type { Cameras, GameObjects, Scene } from 'phaser';
 import { ui } from '../core/presentation';
 import type { ProgressStore } from '../core/progressStore';
+import type { CityCollectible, WorldModel } from '../rules/world/WorldModel';
 
 const hatColors = ['#b13e53', '#3b5dc9', '#3e8948', '#5d275d', '#e43b44'];
 const coatColors = ['#257179', '#b86f50', '#41a6f6', '#ef7d57'];
 const tile = 16;
 const variants = hatColors.length * coatColors.length;
-const textureKey = 'gnomes';
+const collections = {
+  gnome: {
+    field: 'gnomes',
+    label: ui.driving.gnomes,
+    hint: ui.driving.gnomesHint,
+    question: ui.driving.gnomeQuestion,
+    variants,
+    paint: paintGnome,
+  },
+  obwarzanek: {
+    field: 'obwarzanki',
+    label: ui.driving.obwarzanki,
+    hint: ui.driving.obwarzankiHint,
+    question: ui.driving.obwarzanekQuestion,
+    variants: 1,
+    paint: paintObwarzanek,
+  },
+} as const;
+type CollectionKind = keyof typeof collections;
 
-function loadGnomes(scene: Scene) {
+function loadCollection(scene: Scene, textureKey: CollectionKind) {
+  const { variants, paint } = collections[textureKey];
   if (scene.textures.exists(textureKey)) return;
   const texture = scene.textures.createCanvas(
     textureKey,
@@ -20,7 +40,7 @@ function loadGnomes(scene: Scene) {
     texture.add(variant, 0, tile * variant, 0, tile, tile);
     ctx.save();
     ctx.translate(tile * variant, 0);
-    paintGnome(ctx, variant);
+    paint(ctx, variant);
     ctx.restore();
   }
   texture.refresh();
@@ -63,41 +83,97 @@ function paintGnome(ctx: CanvasRenderingContext2D, variant: number) {
   }
 }
 
-export class Gnomes {
+function paintObwarzanek(ctx: CanvasRenderingContext2D) {
+  const rows = [
+    '.....######.....',
+    '...##aaaaaa##...',
+    '..#aahoaaohha#..',
+    '.#aahh####ohaa#.',
+    '.#aho#....#aha#.',
+    '#aho#......#oaa#',
+    '#ah#........#oh#',
+    '#oo#........#ha#',
+    '#ha#........#oa#',
+    '#oh#........#ao#',
+    '#aoa#......#haa#',
+    '.#ahh#....#oaa#.',
+    '.#aaoh####oaa#..',
+    '..#aaaaooaaa#...',
+    '...###aaaa##....',
+    '......####......',
+  ];
+  const colors = {
+    '#': '#5b3150',
+    a: '#c76b3b',
+    o: '#ef9c53',
+    h: '#ffe19a',
+  } as const;
+  rows.forEach((row, y) => {
+    [...row].forEach((pixel, x) => {
+      const color = colors[pixel as keyof typeof colors];
+      if (!color) return;
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, 1, 1);
+    });
+  });
+}
+
+export class CityCollectibles {
   private readonly remaining: {
     id: string;
     questionIndex: number;
+    question?: string;
     image: GameObjects.Image;
   }[] = [];
   private readonly counter = document.createElement('output');
-  private total = 0;
+  private readonly total: number;
+  private readonly collection;
 
   constructor(
     scene: Scene,
-    objects: readonly Types.Tilemaps.TiledObject[],
+    world: Pick<WorldModel, 'collectibles' | 'metersPerPixel'>,
     private readonly store: ProgressStore,
     parent: HTMLElement,
+    kind: CollectionKind,
   ) {
-    loadGnomes(scene);
-    const found = new Set(store.profile.gnomes);
-    for (const { name, x = 0, y = 0, properties } of objects) {
-      const kind = properties?.find((p: { name: string }) => p.name === 'kind');
-      if (kind?.value !== 'gnome') continue;
-      const questionIndex = this.total++;
-      if (found.has(name)) continue;
-      const variant = properties?.find(
-        (p: { name: string }) => p.name === 'variant',
-      );
+    this.collection = collections[kind];
+    loadCollection(scene, kind);
+    const found = new Set(store.profile[this.collection.field]);
+    const objects = [...world.collectibles.values()].filter(
+      (item) => item.kind === kind,
+    );
+    this.total = objects.length;
+    const scale = world.metersPerPixel;
+    objects.forEach((item: CityCollectible, questionIndex) => {
+      if (found.has(item.id)) return;
       const image = scene.add
-        .image(x, y, textureKey, Number(variant?.value ?? 0))
+        .image(
+          item.x / scale,
+          item.y / scale,
+          kind,
+          item.kind === 'gnome' ? item.variant : 0,
+        )
         .setDepth(8)
         .setVisible(false);
-      this.remaining.push({ id: name, questionIndex, image });
-    }
-    this.counter.title = ui.driving.gnomesHint;
-    this.counter.setAttribute('aria-label', ui.driving.gnomes);
+      this.remaining.push({
+        id: item.id,
+        questionIndex,
+        question: item.kind === 'obwarzanek' ? item.question : undefined,
+        image,
+      });
+    });
+    this.counter.title = this.collection.hint;
+    this.counter.setAttribute('aria-label', this.collection.label);
     this.updateCounter();
     parent.append(this.counter);
+  }
+
+  get questionLabel() {
+    return this.collection.question;
+  }
+
+  has(id: string) {
+    return this.store.profile[this.collection.field]?.includes(id) ?? false;
   }
 
   update(camera: Cameras.Scene2D.Camera) {
@@ -121,18 +197,18 @@ export class Gnomes {
   }
 
   collect(id: string) {
-    const index = this.remaining.findIndex((gnome) => gnome.id === id);
+    const index = this.remaining.findIndex((item) => item.id === id);
     if (index < 0) return;
-    const [gnome] = this.remaining.splice(index, 1);
-    gnome!.image.destroy();
+    const [item] = this.remaining.splice(index, 1);
+    item!.image.destroy();
     this.store.change((profile) => {
-      const found = (profile.gnomes ??= []);
+      const found = (profile[this.collection.field] ??= []);
       if (!found.includes(id)) found.push(id);
     });
     this.updateCounter();
   }
 
   private updateCounter() {
-    this.counter.value = `${ui.driving.gnomes} ${this.total - this.remaining.length}/${this.total}`;
+    this.counter.value = `${this.collection.label} ${this.total - this.remaining.length}/${this.total}`;
   }
 }

@@ -223,9 +223,11 @@ export class MissionSystem {
     return this.forcedWaypoint;
   }
 
-  get gnomeTarget() {
+  get collectibleTarget() {
     const goal = this.goalTarget?.goal;
-    return goal?.typ === 'zbierz_krasnala' ? goal.poi : undefined;
+    return goal?.typ === 'zbierz_krasnala' || goal?.typ === 'zbierz_obwarzanka'
+      ? goal.poi
+      : undefined;
   }
 
   get preparingBike() {
@@ -354,7 +356,7 @@ export class MissionSystem {
     equipment?: Equipment,
     speed = 0,
     questionPending = false,
-    gnomeCollected = false,
+    collectibleFound = false,
   ): TickEffects | undefined {
     const target = this.goalTarget;
     if (!target) return;
@@ -428,7 +430,7 @@ export class MissionSystem {
         : target.goal.typ === 'wybor'
           ? Boolean(this.choice?.correct)
           : reached(target.area, position) &&
-            (target.goal.typ !== 'zbierz_krasnala' || gnomeCollected);
+            (!this.collectibleTarget || collectibleFound);
     if (
       target.goal.typ === 'wybor' &&
       speed === 0 &&

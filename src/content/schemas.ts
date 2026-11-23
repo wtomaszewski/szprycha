@@ -2,7 +2,7 @@ import { clientContentSchema } from './clients.ts';
 import { z } from 'zod';
 import { weatherKinds } from '../rules/types.ts';
 import { placBalanceSchema, placSchema } from './plac.ts';
-import { missionCity, missionsSchema } from './missions.ts';
+import { playableCity, missionsSchema } from './missions.ts';
 import { dialogueFileSchema } from './dialogues.ts';
 import { illustratedSigns } from './signIllustrations.ts';
 
@@ -252,7 +252,7 @@ export const balanceSchema = z.strictObject({
     przejazd_max_minor: count,
     przejazd_max_major: count,
     przejazdy: z.record(
-      missionCity,
+      playableCity,
       z.strictObject({ start: id, punkty: z.array(id).min(2) }),
     ),
   }),

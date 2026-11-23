@@ -347,7 +347,7 @@ export class MissionProgress {
     });
   }
 
-  get selectedCity(): MissionCity {
+  get selectedCity(): PlayableCity {
     return this.store.profile.selectedCity ?? 'warszawa';
   }
 
@@ -357,7 +357,7 @@ export class MissionProgress {
 
   async selectCity(city: PlayableCity, freeRide = false) {
     this.store.change((profile) => {
-      if (city === 'krakow') profile.freeRideCity = city;
+      if (freeRide && city === 'krakow') profile.freeRideCity = city;
       else {
         if (freeRide) delete profile.freeRideCity;
         profile.selectedCity = city;
@@ -366,7 +366,7 @@ export class MissionProgress {
     await this.store.flush();
   }
 
-  nextMission(city: MissionCity, content: GameContent) {
+  nextMission(city: PlayableCity, content: GameContent) {
     return content.misje.find(
       (mission) =>
         mission.miasto === city &&

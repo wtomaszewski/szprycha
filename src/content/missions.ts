@@ -19,6 +19,11 @@ const missionGoal = z.discriminatedUnion('typ', [
   z.strictObject({ ...goalFields, typ: z.literal('przygotuj_rower') }),
   z.strictObject({ ...goalFields, typ: z.literal('dojedz'), poi: id }),
   z.strictObject({ ...goalFields, typ: z.literal('zbierz_krasnala'), poi: id }),
+  z.strictObject({
+    ...goalFields,
+    typ: z.literal('zbierz_obwarzanka'),
+    poi: id,
+  }),
   z
     .strictObject({
       ...goalFields,
@@ -125,7 +130,12 @@ export const missionSchema = z
     const prefix = { warszawa: 'WAW', wroclaw: 'WRO', krakow: 'KRA' }[
       mission.miasto
     ];
-    if (!mission.id.startsWith(`${prefix}-${act}-`))
+    // Kraków's original free-ride exercises retain their saved IDs.
+    const legacyKrakowTraining =
+      mission.miasto === 'krakow' &&
+      act === 'T' &&
+      /^KRA-B-0[1-3]$/.test(mission.id);
+    if (!legacyKrakowTraining && !mission.id.startsWith(`${prefix}-${act}-`))
       ctx.addIssue({
         code: 'custom',
         path: ['id'],

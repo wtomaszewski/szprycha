@@ -11,7 +11,7 @@ import {
 import { missionContent, runMissionRoute } from '../missions/run-mission-route';
 
 const shortcuts = missionContent.misje.filter(
-  ({ skrot, akt }) => skrot && akt === 1,
+  ({ skrot, akt, miasto }) => skrot && akt === 1 && miasto === 'warszawa',
 );
 const balance = missionContent.balans;
 const { kara_minor, kara_major } = balance.misja;
