@@ -80,6 +80,25 @@ test('opens Wrocław from the map of Poland and saves collected gnomes', async (
   await expect(collection).toHaveText(`${pl.driving.gnomes} 1/100`);
 });
 
+function silentRecording() {
+  const sampleRate = 8000;
+  const pcmBytes = 2 * (sampleRate / 10);
+  const wav = Buffer.alloc(44 + pcmBytes);
+  wav.write('RIFF', 0);
+  wav.writeUInt32LE(wav.length - 8, 4);
+  wav.write('WAVEfmt ', 8);
+  wav.writeUInt32LE(16, 16); // PCM format chunk size
+  wav.writeUInt16LE(1, 20); // PCM encoding
+  wav.writeUInt16LE(1, 22); // mono
+  wav.writeUInt32LE(sampleRate, 24);
+  wav.writeUInt32LE(sampleRate * 2, 28);
+  wav.writeUInt16LE(2, 32); // bytes per sample
+  wav.writeUInt16LE(16, 34); // bits per sample
+  wav.write('data', 36);
+  wav.writeUInt32LE(pcmBytes, 40);
+  return wav;
+}
+
 for (const view of ['desktop', 'mobile'] as const) {
   test.describe(view, () => {
     if (view === 'mobile')
@@ -89,33 +108,54 @@ for (const view of ['desktop', 'mobile'] as const) {
       page,
     }, info) => {
       const question = questions.pytania.find(({ id }) => id === 'Q028')!;
-      await page.addInitScript((prompt) => {
-        const speech = new EventTarget();
-        Object.assign(speech, {
-          getVoices: () => [{ localService: true, lang: 'pl-PL' }],
-          cancel: () => {},
-          speak: ({ text }: SpeechSynthesisUtterance) => {
-            if (text !== prompt) return;
-            const image = document.querySelector<HTMLImageElement>(
-              '.control-question[open] .question-signs img',
-            );
-            const content = image?.closest('.question-prompt');
-            document.documentElement.dataset.questionNarration =
-              image?.naturalWidth === 64 &&
-              content &&
-              getComputedStyle(content).opacity === '1'
-                ? 'with-image'
-                : 'without-image';
-          },
+      const recordingPath = '/e2e-voice/pytania.Q028.pytanie.wav';
+      // Supply a single clip independently of the developer's installed recordings.
+      await page.route('**/src/audio/recordings.ts', (route) =>
+        route.fulfill({
+          contentType: 'application/javascript',
+          body: `export function recordingUrls({ id, text }) {
+            return id === 'pytania.Q028.pytanie' && text === ${JSON.stringify(question.pytanie)}
+              ? [${JSON.stringify(recordingPath)}]
+              : [];
+          }`,
+        }),
+      );
+      let recordingRequested = false;
+      await page.route(`**${recordingPath}`, (route) => {
+        recordingRequested = true;
+        return route.fulfill({
+          contentType: 'audio/wav',
+          body: silentRecording(),
         });
-        Object.defineProperty(window, 'speechSynthesis', { value: speech });
-        class Utterance {
-          constructor(readonly text: string) {}
-        }
-        Object.defineProperty(window, 'SpeechSynthesisUtterance', {
-          value: Utterance,
-        });
-      }, question.pytanie);
+      });
+      await page.addInitScript(() => {
+        const recordings = new WeakSet<AudioBuffer>();
+        const decode = AudioContext.prototype.decodeAudioData;
+        AudioContext.prototype.decodeAudioData = async function (data) {
+          const buffer = await decode.call(this, data);
+          recordings.add(buffer);
+          return buffer;
+        };
+        const start = AudioBufferSourceNode.prototype.start;
+        AudioBufferSourceNode.prototype.start = function (
+          when,
+          offset,
+          duration,
+        ) {
+          start.call(this, when, offset, duration);
+          if (!this.buffer || !recordings.has(this.buffer)) return;
+          const image = document.querySelector<HTMLImageElement>(
+            '.control-question[open] .question-signs img[src$="/A-17.png"]',
+          );
+          const content = image?.closest('.question-prompt');
+          document.documentElement.dataset.questionNarration =
+            image?.naturalWidth === 64 &&
+            content &&
+            getComputedStyle(content).opacity === '1'
+              ? 'with-image'
+              : 'without-image';
+        };
+      });
       // Start inside the interaction radius of the 28th gnome, which uses Q028.
       await startAt(page, { x: 3572, y: 2340, heading: 0 });
       let releaseImage!: () => void;
@@ -139,6 +179,7 @@ for (const view of ['desktop', 'mobile'] as const) {
           '0',
         );
         await expect(narration).toHaveCount(0);
+        expect(recordingRequested).toBe(false);
       } finally {
         releaseImage();
       }

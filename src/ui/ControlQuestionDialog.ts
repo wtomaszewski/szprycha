@@ -1,4 +1,5 @@
 import { audio } from '../audio/GameAudio';
+import { localizedVoiceLine, questionVoiceLine } from '../audio/voiceLines';
 import olaPortrait from '../../assets/generated/portraits/sierzant_ola.png?url';
 import { ui } from '../core/presentation';
 import type { ControlQuestion } from '../progression/RoadAttention';
@@ -70,10 +71,17 @@ export class ControlQuestionDialog {
     question: Pick<
       ControlQuestion,
       'pytanie' | 'odpowiedzi' | 'wyjasnienie' | 'obrazek'
-    >,
+    > &
+      (
+        { id: string } | { voiceKeys: { pytanie: string; wyjasnienie: string } }
+      ),
     choice?: (index: number) => { correct: boolean } | undefined,
     label = choice ? ui.missionUi.choice : ui.progression.questionTitle,
   ) {
+    const voiceLine = (field: 'pytanie' | 'wyjasnienie') =>
+      'voiceKeys' in question
+        ? localizedVoiceLine(question.voiceKeys[field])
+        : questionVoiceLine(question, field);
     this.panel.setAttribute('aria-label', label);
     this.intro.hidden = Boolean(choice);
     this.prompt.textContent = question.pytanie;
@@ -99,7 +107,12 @@ export class ControlQuestionDialog {
           result.correct && 'points' in result
             ? `${ui.progression.wiseHead} +${result.points}`
             : question.wyjasnienie;
-        audio.read('lesson', this.feedback.textContent);
+        audio.read(
+          'lesson',
+          result.correct && 'points' in result
+            ? localizedVoiceLine('progression.wiseHead')
+            : voiceLine('wyjasnienie'),
+        );
         this.resume.hidden = false;
         this.resume.focus();
       });
@@ -109,7 +122,7 @@ export class ControlQuestionDialog {
     this.panel.showModal();
     this.panel.scrollTop = 0;
     if (!illustrationReady) {
-      audio.read('lesson', question.pytanie);
+      audio.read('lesson', voiceLine('pytanie'));
     } else {
       void illustrationReady.then((ready) => {
         if (!ready) return;
@@ -117,7 +130,7 @@ export class ControlQuestionDialog {
         requestAnimationFrame(() =>
           requestAnimationFrame(() => {
             if (this.open && element.isConnected && !this.answers.hidden)
-              audio.read('lesson', question.pytanie);
+              audio.read('lesson', voiceLine('pytanie'));
           }),
         );
       });

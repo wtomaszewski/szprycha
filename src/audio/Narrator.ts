@@ -1,7 +1,5 @@
-export interface NativeSpeech {
-  speak(options: { text: string; volume: number }): Promise<void>;
-  stop(): Promise<void>;
-}
+import { recordingUrls } from './recordings';
+import type { VoiceLine } from './voiceLines';
 
 export type Reading = 'radio' | 'feedback' | 'lesson' | 'dialogue' | 'results';
 const priority: Record<Reading, number> = {
@@ -12,106 +10,87 @@ const priority: Record<Reading, number> = {
   results: 2,
 };
 
-export function polishVoice(voices: readonly SpeechSynthesisVoice[]) {
-  return (
-    voices.find(
-      ({ localService, lang }) => localService && /^pl-pl$/i.test(lang),
-    ) ??
-    voices.find(
-      ({ localService, lang }) => localService && /^pl(?:-|$)/i.test(lang),
-    )
-  );
-}
+type Playback = {
+  owner: Reading;
+  abort: AbortController;
+  source?: AudioBufferSourceNode;
+};
 
 export class Narrator {
-  private request?: { owner: Reading; text: string };
-  private utterance?: SpeechSynthesisUtterance;
-  private nativeAttempt = false;
-  private volume = 1;
+  private request?: Playback;
+  private readonly gain: GainNode;
 
   constructor(
-    private readonly synthesis: SpeechSynthesis | undefined,
-    signal: AbortSignal,
-    private readonly native?: NativeSpeech,
+    private readonly context: AudioContext,
+    private readonly onPlaying: (playing: boolean) => void,
+    private readonly findRecording = recordingUrls,
   ) {
-    synthesis?.addEventListener('voiceschanged', () => this.startWeb(), {
-      signal,
-    });
+    this.gain = context.createGain();
+    this.gain.connect(context.destination);
   }
 
   setVolume(volume: number) {
-    if (volume === this.volume) return;
-    this.volume = volume;
-    // Web Speech takes the volume at the start of an utterance.
-    if (!volume || this.utterance || this.nativeAttempt) this.stop();
-    else this.startWeb();
+    this.gain.gain.value = volume;
+    if (!volume) this.stop();
   }
 
-  read(owner: Reading, text: string) {
-    if (!this.volume || !text.trim()) return;
+  read(owner: Reading, line: VoiceLine) {
+    if (!this.gain.gain.value) return;
     if (this.request && priority[owner] < priority[this.request.owner]) return;
     this.stop();
-    this.request = { owner, text };
-    if (this.native) void this.startNative(this.native, this.request);
-    else this.startWeb();
+    const urls = this.findRecording(line);
+    if (!urls.length) return;
+    const request = { owner, abort: new AbortController() };
+    this.request = request;
+    void this.start(request, urls);
   }
 
   stop(owner?: Reading) {
-    if (!this.request || (owner && this.request.owner !== owner)) return;
+    const request = this.request;
+    if (!request || (owner && request.owner !== owner)) return;
     this.request = undefined;
-    if (this.nativeAttempt) {
-      this.nativeAttempt = false;
-      void this.native?.stop().catch(() => {});
-    }
-    if (this.utterance) {
-      this.utterance = undefined;
-      this.synthesis?.cancel();
+    request.abort.abort();
+    if (request.source) {
+      request.source.onended = null;
+      request.source.stop();
+      request.source.disconnect();
+      this.onPlaying(false);
     }
   }
 
-  private async startNative(
-    native: NativeSpeech,
-    request: NonNullable<Narrator['request']>,
-  ) {
-    this.nativeAttempt = true;
-    try {
-      await native.speak({ text: request.text, volume: this.volume });
-      if (this.request === request) this.request = undefined;
-    } catch {
-      if (this.request === request) {
-        this.nativeAttempt = false;
-        this.startWeb();
+  private async start(request: Playback, urls: readonly string[]) {
+    for (const url of urls) {
+      if (this.request !== request) return;
+      try {
+        const response = await fetch(url, { signal: request.abort.signal });
+        if (this.request !== request) return;
+        if (!response.ok) continue;
+        const buffer = await this.context.decodeAudioData(
+          await response.arrayBuffer(),
+        );
+        if (this.request !== request) return;
+        const source = this.context.createBufferSource();
+        source.buffer = buffer;
+        source.connect(this.gain);
+        source.onended = () => {
+          if (this.request !== request) return;
+          this.request = undefined;
+          source.disconnect();
+          this.onPlaying(false);
+        };
+        try {
+          source.start();
+        } catch {
+          source.disconnect();
+          continue;
+        }
+        request.source = source;
+        this.onPlaying(true);
+        return;
+      } catch {
+        // Safari can fall back to AAC if Opus could not be decoded.
       }
-    } finally {
-      if (!this.request || this.request === request) this.nativeAttempt = false;
     }
-  }
-
-  private startWeb() {
-    if (!this.request || this.utterance || this.nativeAttempt || !this.volume)
-      return;
-    if (!this.synthesis) {
-      this.request = undefined;
-      return;
-    }
-    const voice = polishVoice(this.synthesis.getVoices());
-    if (!voice) {
-      // The initial list may be empty while the browser loads system voices.
-      // The short-lived cues should only start while the text is current.
-      if (priority[this.request.owner] < priority.lesson)
-        this.request = undefined;
-      return;
-    }
-    const line = new SpeechSynthesisUtterance(this.request.text);
-    line.lang = 'pl-PL';
-    line.voice = voice;
-    line.volume = this.volume;
-    this.utterance = line;
-    line.onend = line.onerror = () => {
-      if (this.utterance !== line) return;
-      this.utterance = undefined;
-      this.request = undefined;
-    };
-    this.synthesis.speak(line);
+    if (this.request === request) this.request = undefined;
   }
 }

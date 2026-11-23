@@ -8,6 +8,10 @@
 
 Gra używa lokalnej kopii fontu. W `licenses/` są teksty dołączane do not o kodzie zewnętrznym. Plik `Apache-2.0.txt` pochodzi z Apache Software Foundation, a `phaser-3.90.0.txt` zawiera noty komponentów osadzonych w Phaserze i odnośniki do pochodzenia wymagającego weryfikacji. [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
+### Nagrania lektora (`voice/pl/`)
+
+Wpis do uzupełnienia po wyborze głosu i pierwszym renderowaniu. Dostawca, plan z licencją komercyjną, nazwa i identyfikator głosu z biblioteki, data pozyskania oraz wersja i adres zaakceptowanego regulaminu oczekują na decyzję Wojtka. Publikacja obejmuje wyłącznie głos biblioteczny z potwierdzonymi prawami, bez klonowania głosu realnej osoby. Źródła warunków dla obsługiwanych usług [ElevenLabs](https://elevenlabs.io/terms-of-use) i [Azure Speech](https://www.microsoft.com/licensing/terms/productoffering/MicrosoftAzure/all).
+
 ## Zasoby własne projektu
 
 | Pliki i elementy                                                                        | Kod źródłowy                                                                                                                                                                             |
@@ -25,7 +29,7 @@ Gra używa lokalnej kopii fontu. W `licenses/` są teksty dołączane do not o k
 | Reguły, pytania, dialogi i teksty interfejsu                                            | `content/`, `i18n/`. Przepisy opisane własnymi słowami. Źródła aktów prawnych w `docs/zrodla_i_stan_prawny.md`.                                                                          |
 | Efekty dźwiękowe, także dzwonki i neutralna syrena                                      | `src/audio/effects.ts`. Własny generator przebiegów, obwiedni i szumu z ustalonym ziarnem. Próbki powstają w pamięci podczas gry.                                                        |
 | Radio Szprycha FM i podkład Dzwonek Talk                                                | `src/audio/score.ts`, `src/audio/Radio.ts`. Autorskie melodie i dżingle, odtwarzane przez sekwencer i oscylatory Web Audio API.                                                          |
-| Lektor i porady Dzwonek Talk                                                            | `src/audio/Narrator.ts`, `i18n/pl.json`. Web Speech API korzysta wyłącznie z lokalnych polskich głosów systemowych. Głosy pozostają na urządzeniu i nie wchodzą w skład gry.             |
+| Teksty lektora i porady Dzwonek Talk                                                    | `voice/manifest.json`, `content/`, `i18n/pl.json`. Własne teksty gry.                                                                                                                    |
 
 Listy słów w `content/nicki.json` są autorskie. Strefa Rodzica korzysta z istniejących kolorów kasku i lokalnego fontu. Zrzuty `docs/screenshots/80-*.png` wygenerował Playwright z działającej gry.
 

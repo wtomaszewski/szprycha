@@ -5,7 +5,6 @@ import {
   synthesize,
   type Effect,
 } from '../../src/audio/effects';
-import { polishVoice } from '../../src/audio/Narrator';
 import { scores, sequence } from '../../src/audio/score';
 import {
   channelLevel,
@@ -97,26 +96,6 @@ it('converts MIDI notes, rests and repeated tracks to audio-clock seconds', () =
       loop.notes.every((note) => note.start + note.duration <= loop.duration),
     ).toBe(true);
   }
-});
-
-it('selects only a Polish system voice and prefers pl-PL', () => {
-  const voice = (
-    lang: string,
-    localService: boolean,
-  ): SpeechSynthesisVoice => ({
-    lang,
-    localService,
-    name: lang,
-    voiceURI: lang,
-    default: false,
-  });
-  const online = voice('pl-PL', false);
-  const english = voice('en-US', true);
-  const polish = voice('pl-PL', true);
-  const generic = voice('pl', true);
-  expect(polishVoice([online, english])).toBeUndefined();
-  expect(polishVoice([online, generic, polish])).toBe(polish);
-  expect(polishVoice([online, generic])).toBe(generic);
 });
 
 it('localizes each broadcast tip and ties it to an existing rule', async () => {

@@ -14,6 +14,8 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
+    "voice:render": "tsx tools/voice/render.ts",
+    "voice:check": "tsx tools/voice/check.ts",
     "licenses:check": "tsx tools/check-licenses.ts",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",

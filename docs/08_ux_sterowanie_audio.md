@@ -35,7 +35,7 @@ Boot → wybór profilu (do 4 profili lokalnych, avatar + nick z generatora) →
 **Strefa dla rodzica** (zablokowana prostym zadaniem matematycznym): postęp mastery w modułach, przepisy sprawiające trudność, limit czasu gry, włączanie rankingów online, eksport certyfikatu.
 
 ## Dialogi
-Dymki z portretem 64×64, maks. 2 linijki, tap/klawisz = dalej, przytrzymanie = pomiń całość. Lektor (TTS, Web Speech API `pl-PL`, przełącznik w ustawieniach; w aplikacji mobilnej — plugin TTS Capacitor). Teksty z `content/dialogi/*.yaml`.
+Dymki z portretem 64×64, maks. 2 linijki, tap/klawisz = dalej, przytrzymanie = pomiń całość. Lektor odtwarza pakowane nagrania przez Web Audio i ma przełącznik w ustawieniach. Kwestie bez nagrania są wyświetlane jako napisy. Teksty z `content/dialogi/*.yaml`.
 
 ## Audio
 - **Radio Szprycha FM** (włącza się w czasie jazdy, zmiana stacji przyciskiem): „Szprycha Hits” (wesoły chiptune), „Nocne Bulwary” (lo-fi chiptune), „Dzwonek Talk” (DJ Dzwonek — dżingle z poradami, suchary, zapowiedzi). Muzyka własna lub CC0; ścisła lista licencji w `assets/LICENSES.md`.

@@ -1,3 +1,4 @@
+import { ruleFeedbackLine } from '../audio/voiceLines';
 import { audio } from '../audio/GameAudio';
 import type { GameContent } from '../content/schemas';
 import { ui } from '../core/presentation';
@@ -30,19 +31,11 @@ export class RuleFeedback {
   }
 
   explanation(verdict: Verdict) {
-    const text =
-      this.text.get(verdict.feedbackKey) ??
-      this.text.get(`przepisy.${verdict.ruleId}.feedback`);
-    if (!text) return '';
-    const first =
-      new Intl.Segmenter('pl', { granularity: 'sentence' })
-        .segment(text)
-        [Symbol.iterator]()
-        .next()
-        .value?.segment.trim() ?? '';
-    return first.length <= 140
-      ? first
-      : `${first.slice(0, 139).replace(/\s+\S*$/, '')}…`;
+    const fallback = `przepisy.${verdict.ruleId}.feedback`;
+    const id = this.text.has(verdict.feedbackKey)
+      ? verdict.feedbackKey
+      : fallback;
+    return ruleFeedbackLine(id, this.text.get(id) ?? '');
   }
 
   receive(verdict: Verdict, counts: RuleEngine['counts'], review: boolean) {
@@ -73,13 +66,13 @@ export class RuleFeedback {
         (next.kind === 'major' && this.bubble.dataset.kind === 'minor'))
     ) {
       this.pending.shift();
-      const text = this.explanation(next);
-      if (text) {
+      const line = this.explanation(next);
+      if (line.text) {
         this.bubble.hidden = false;
-        this.bubble.textContent = text;
+        this.bubble.textContent = line.text;
         this.bubble.dataset.kind = next.kind;
         this.until = at + 3;
-        audio.read('feedback', text);
+        audio.read('feedback', line);
       }
     }
     if (!this.bubble.hidden && at >= this.until) this.bubble.hidden = true;

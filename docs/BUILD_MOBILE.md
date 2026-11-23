@@ -47,4 +47,4 @@ Identyfikator iOS jest ustawiony w **App → Signing & Capabilities → Bundle I
 1. Otwórz grę w trybie samolotowym. Sprawdź ekran startowy, czytelność HUD-u przy wycięciu ekranu oraz przejazd.
 2. Zdobądź żetony, zamknij aplikację i wróć do profilu. Przy aktualizacji z wersji zapisującej w IndexedDB w tej samej WebView gra odczytuje istniejący profil i kopiuje go do Preferences. Zapis w przeglądarce lub PWA należy do osobnego magazynu urządzenia.
 3. Przećwicz dobry nawyk i popełnij błąd. W ustawieniach wyłącz wibracje i powtórz przejazd.
-4. Włącz lektora. Z zainstalowanym polskim głosem systemowym narracja działa offline. W razie braku głosu lub błędu natywnego lektor korzysta z lokalnego polskiego głosu Web Speech, jeśli urządzenie go udostępnia. Tekst pozostaje widoczny także na urządzeniu bez głosu.
+4. Włącz lektora. W trybie samolotowym odtwórz dołączone nagranie i sprawdź napisy dla kwestii bez nagrania. Na iOS sprawdź odtwarzanie wariantu AAC/M4A.
