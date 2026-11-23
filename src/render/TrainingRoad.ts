@@ -26,6 +26,24 @@ const digits = [
   [7, 5, 7, 5, 7],
   [7, 5, 7, 1, 7],
 ];
+const countdownTexture = 'signal-countdown-digits';
+
+function loadCountdownDigits(scene: Scene) {
+  if (scene.textures.exists(countdownTexture)) return;
+  const texture = scene.textures.createCanvas(countdownTexture, 60, 10)!;
+  const ctx = texture.context;
+  ctx.fillStyle = '#fff1ce';
+  for (const [digit, rows] of digits.entries()) {
+    const left = digit * 6;
+    texture.add(digit, 0, left, 0, 6, 10);
+    for (const [row, pixels] of rows.entries()) {
+      for (let col = 0; col < 3; col++) {
+        if (pixels & (4 >> col)) ctx.fillRect(left + col * 2, row * 2, 2, 2);
+      }
+    }
+  }
+  texture.refresh();
+}
 
 function bicyclePictogram(
   art: GameObjects.Graphics,
@@ -62,6 +80,9 @@ function pedestrianPictogram(
 export class TrainingRoad {
   readonly staticChunks: GameObjects.Image[] = [];
   private readonly lights: GameObjects.Graphics;
+  private readonly countdownDigits: GameObjects.Blitter;
+  private readonly countdownBobs: GameObjects.Bob[] = [];
+  private digitCount = 0;
   private lastLightFrame = -1;
   private lastCountdowns = false;
   private lightAt = 0;
@@ -78,6 +99,10 @@ export class TrainingRoad {
     staticMap?: { key: string; width: number; height: number },
   ) {
     this.lights = scene.add.graphics().setDepth(7);
+    loadCountdownDigits(scene);
+    this.countdownDigits = scene.add
+      .blitter(0, 0, countdownTexture)
+      .setDepth(7);
     const marks = scene.add.graphics().setDepth(3);
     const markCenters: Vec2[] = [];
     const scale = 1 / world.metersPerPixel;
@@ -414,6 +439,8 @@ export class TrainingRoad {
       y + height + 16 >= view.top;
     const scale = 1 / this.world.metersPerPixel;
     this.lights.clear();
+    const previousDigitCount = this.digitCount;
+    this.digitCount = 0;
     for (const crossing of this.world.crossings) {
       if (
         visible(
@@ -508,11 +535,14 @@ export class TrainingRoad {
         else this.drawCountdown(x, y - 19, seconds);
       }
     }
+    for (let i = this.digitCount; i < previousDigitCount; i++)
+      this.countdownBobs[i]!.setVisible(false);
   }
 
   private drawCountdown(x: number, y: number, seconds: number | undefined) {
     if (seconds === undefined) return;
-    const value = String(seconds);
+    const value =
+      seconds >= 1e21 ? BigInt(seconds).toString() : String(seconds);
     const width = Math.max(18, value.length * 8 + 2);
     const left = Math.round(x) - width / 2;
     const top = Math.round(y) - 7;
@@ -520,18 +550,20 @@ export class TrainingRoad {
       .fillStyle(0x566c86)
       .fillRect(left, top, width, 14)
       .fillStyle(0x1a1c2c)
-      .fillRect(left + 1, top + 1, width - 2, 12)
-      .fillStyle(0xfff1ce);
+      .fillRect(left + 1, top + 1, width - 2, 12);
     let digitX = Math.round(x) - value.length * 4 + 1;
     for (const digit of value) {
-      const rows = digits[Number(digit)]!;
-      for (let row = 0; row < rows.length; row++) {
-        const pixels = rows[row]!;
-        for (let col = 0; col < 3; col++) {
-          if (pixels & (4 >> col))
-            this.lights.fillRect(digitX + col * 2, top + 2 + row * 2, 2, 2);
-        }
-      }
+      const frame = Number(digit);
+      const bob = this.countdownBobs[this.digitCount++];
+      if (bob)
+        bob
+          .setPosition(digitX, top + 2)
+          .setFrame(frame)
+          .setVisible(true);
+      else
+        this.countdownBobs.push(
+          this.countdownDigits.create(digitX, top + 2, frame),
+        );
       digitX += 8;
     }
   }
