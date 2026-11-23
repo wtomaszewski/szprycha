@@ -1,3 +1,5 @@
+import { startScene } from './startScene';
+import { cacheAfterInstall } from '../platform/pwa';
 import proceduralRoutes from 'virtual:procedural-routes';
 import {
   DailyOrderGenerator,
@@ -133,6 +135,27 @@ const drivingZoom = 0.75;
 const reviewIntroMs = 300;
 
 const defaultMap = 'miasteczko';
+const mapUrls = {
+  [defaultMap]: trainingUrl,
+  warszawa: warsawUrl,
+  wroclaw: wroclawUrl,
+  krakow: krakowUrl,
+  gdansk: gdanskUrl,
+};
+type MapId = keyof typeof mapUrls;
+type Ride = {
+  missionId?: string;
+  map?: MapId;
+  city?: PlayableCity;
+  examRide?: ExamRide;
+  freeRide?: boolean;
+  dailyOrder?: DailyOrder;
+  tutorial?: TutorialStep;
+};
+
+function isMap(id: string): id is MapId {
+  return Object.hasOwn(mapUrls, id);
+}
 
 export class City extends Scene {
   private readonly environment: EnvState = {
@@ -142,6 +165,11 @@ export class City extends Scene {
   };
   private readonly renderEnvironment = { ...this.environment };
   private readonly graphics = { lite: false, rain: false };
+  private readonly mobile = matchMedia('(any-pointer: coarse)').matches;
+  private autoLite = this.mobile && navigator.hardwareConcurrency <= 4;
+  private measuredFrames = 0;
+  private slowFrames = 0;
+  private ready = false;
   private rider!: Rider;
   private readonly weatherTuning = { brakeForce: BRAKE_DECELERATION };
   private riderArt!: RiderArt;
@@ -184,6 +212,9 @@ export class City extends Scene {
   private attention!: RoadAttention;
   private questionDialog!: ControlQuestionDialog;
   private city!: PlayableCity;
+  private mapId!: MapId;
+  private cachedMap?: MapId;
+  private definition?: MissionDefinition;
   private districtGates?: DistrictGates;
   private examRide?: ExamRide;
   private freeRidePoints = 0;
@@ -264,15 +295,34 @@ export class City extends Scene {
   constructor() {
     super('City');
   }
+  init({ missionId, map, city, examRide, dailyOrder, tutorial }: Ride) {
+    this.ready = false;
+    this.content = this.registry.get('content') as GameContent;
+    this.progress = this.registry.get('missionProgress') as MissionProgress;
+    this.city = examRide?.city ?? city ?? this.progress.selectedCity;
+    if (!tutorial) this.progress.milestones(this.content);
+    this.definition = examRide
+      ? examRoute(examRide.city, this.content.balans.licencja)
+      : (dailyOrder?.definition ??
+        this.availableOrders().find(({ id }) => id === missionId));
+    const mapId =
+      this.definition?.mapa ??
+      this.definition?.miasto ??
+      map ??
+      (this.city === 'krakow' || this.city === 'gdansk'
+        ? this.city
+        : defaultMap);
+    if (!isMap(mapId)) throw new Error(`Unknown ride map: ${mapId}`);
+    this.mapId = mapId;
+  }
+
   preload() {
-    for (const [id, url] of [
-      [defaultMap, trainingUrl],
-      ['warszawa', warsawUrl],
-      ['wroclaw', wroclawUrl],
-      ['krakow', krakowUrl],
-      ['gdansk', gdanskUrl],
-    ] as const) {
-      if (!this.cache.tilemap.exists(id)) this.load.tilemapTiledJSON(id, url);
+    const mapId = this.mapId;
+    if (!this.cache.tilemap.exists(mapId)) {
+      const url = mapUrls[mapId];
+      this.load.tilemapTiledJSON(mapId, url);
+      if (mapId !== defaultMap && !navigator.serviceWorker?.controller)
+        cacheAfterInstall([url]);
     }
     for (const [key, url] of [
       ['training', tilesUrl],
@@ -288,41 +338,48 @@ export class City extends Scene {
       });
     loadTrafficArt(this);
     loadCityEffects(this);
-    this.load.on('loaderror', showError);
-    this.load.once('complete', () => this.load.off('loaderror', showError));
+    const onError = ({ key }: { key: string }) => {
+      if (key !== mapId) showError(key);
+    };
+    this.load.on('loaderror', onError);
+    this.load.once('complete', () => this.load.off('loaderror', onError));
   }
 
-  create({
-    missionId,
-    map,
-    city,
-    examRide,
-    freeRide = false,
-    dailyOrder,
-    tutorial,
-  }: {
-    missionId?: string;
-    map?: string;
-    city?: PlayableCity;
-    examRide?: ExamRide;
-    freeRide?: boolean;
-    dailyOrder?: DailyOrder;
-    tutorial?: TutorialStep;
-  } = {}) {
+  create({ examRide, freeRide = false, dailyOrder, tutorial }: Ride) {
+    const mapId = this.mapId;
+    const definition = this.definition;
+    const cached = this.cache.tilemap.get(mapId) as
+      { data: unknown } | undefined;
+    if (!cached) {
+      this.scene.start('MainMenu', { mapUnavailable: mapId });
+      return;
+    }
+    const previous = this.cachedMap;
+    if (previous && previous !== mapId) {
+      this.cache.tilemap.remove(previous);
+      for (const key of this.textures.getTextureKeys())
+        if (
+          [
+            `ground-${previous}-`,
+            `block-${previous}-`,
+            `${previous}-marks-`,
+            `${previous}-signs-`,
+            `${previous}-scenery-`,
+          ].some((prefix) => key.startsWith(prefix))
+        )
+          this.textures.remove(key);
+    }
+    this.cachedMap = mapId;
     this.freeRide = freeRide;
     this.dailyOrder = dailyOrder;
     this.dailyOffers = [];
     this.phoneStory = undefined;
     this.examRide = examRide;
-    if (examRide || tutorial) this.sys.settings.data = {};
+    this.sys.settings.data = {};
     this.obstacles = [];
     this.accumulator = 0;
     this.hudAt = 0;
     this.messageUntil = 0;
-    this.content = this.registry.get('content') as GameContent;
-    this.progress = this.registry.get('missionProgress') as MissionProgress;
-    this.city = examRide?.city ?? city ?? this.progress.selectedCity;
-    if (!tutorial) this.progress.milestones(this.content);
     this.breakMinutes = this.progress.breakMinutes(
       this.content.balans.zdrowe_granie,
     );
@@ -330,10 +387,6 @@ export class City extends Scene {
     this.askedCollectible = undefined;
     if (!tutorial)
       this.progress.store.prepareRide(this.content.przepisy.przepisy);
-    const definition = examRide
-      ? examRoute(examRide.city, this.content.balans.licencja)
-      : (dailyOrder?.definition ??
-        this.availableOrders().find(({ id }) => id === missionId));
     if (!this.series || (!examRide && (definition || this.mission))) {
       this.series = new SafetySeries(
         this.content.balans.combo,
@@ -352,18 +405,10 @@ export class City extends Scene {
       this.gloryClip =
       this.resultsElapsed =
         undefined;
-    const mapId =
-      definition?.mapa ??
-      definition?.miasto ??
-      map ??
-      (this.city === 'krakow' || this.city === 'gdansk'
-        ? this.city
-        : defaultMap);
     this.rankingCity =
       mapId === 'warszawa' || mapId === 'wroclaw' ? mapId : undefined;
     this.startRankingRide(Boolean(definition));
     const rankingSeed = this.rankingRide?.seed;
-    const cached = this.cache.tilemap.get(mapId) as { data: unknown };
     this.world = new WorldModel(
       cached.data,
       this.content.balans.silnik.kafel_m,
@@ -595,6 +640,7 @@ export class City extends Scene {
             : mapId === 'gdansk'
               ? ui.driving.gdanskTitle
               : ui.driving.title;
+    this.graphics.lite = this.lowQuality();
     this.controls = new DrivingControls(
       tutorial ? ui.tutorial.title : examRide ? ui.exam.ride : areaTitle,
       this.graphics,
@@ -630,6 +676,8 @@ export class City extends Scene {
       this.progress.store,
       examRide ? 'exam' : 'ride',
     );
+    this.controls.onQualityChanged = () =>
+      this.controls.setLowQuality(this.lowQuality());
     const radio = radioControls(this.progress.store);
     this.controls.quickActions.append(radio.widget);
     this.controls.onResume = () => {
@@ -644,7 +692,7 @@ export class City extends Scene {
       plac.title = ui.plac.title;
       plac.setAttribute('aria-label', ui.plac.title);
       plac.addEventListener('click', () =>
-        this.scene.start('Plac', { origin: 'City' }),
+        startScene(this, 'Plac', { origin: 'City' }),
       );
       this.controls.root.append(plac);
     }
@@ -794,7 +842,7 @@ export class City extends Scene {
           () => this.reset(),
           () => this.togglePhone(),
           () =>
-            this.scene.start('CityPicker', {
+            startScene(this, 'CityPicker', {
               mode:
                 this.freeRide &&
                 (this.city === 'krakow' || this.city === 'gdansk')
@@ -825,7 +873,7 @@ export class City extends Scene {
         this.content.balans.silnik,
         (origin) => this.resetTutorialRider(origin),
         (campaign) => {
-          if (campaign) this.scene.start('CityPicker', { mode: 'campaign' });
+          if (campaign) startScene(this, 'CityPicker', { mode: 'campaign' });
           else this.scene.start('MainMenu');
         },
       );
@@ -882,6 +930,7 @@ export class City extends Scene {
       this.controls.destroy();
       this.examRide = undefined;
       this.collectibles = undefined;
+      this.mapChunks = [];
       const c = this.game.canvas;
       delete c.dataset.map;
       delete c.dataset.mission;
@@ -906,13 +955,35 @@ export class City extends Scene {
     this.renderFrame(frame, 0);
     this.updateHudConditions(frame);
     this.openMissionDialogue();
+    this.ready = true;
+  }
+
+  private lowQuality() {
+    const quality = this.progress.store.profile.graphicsQuality ?? 'auto';
+    return quality === 'lite' || (quality === 'auto' && this.autoLite);
+  }
+
+  private measureGraphicsQuality() {
+    if (
+      !this.mobile ||
+      this.autoLite ||
+      this.measuredFrames >= 70 ||
+      (this.progress.store.profile.graphicsQuality ?? 'auto') !== 'auto'
+    )
+      return;
+    if (++this.measuredFrames > 10 && this.game.loop.rawDelta >= 28)
+      this.slowFrames++;
+    if (this.measuredFrames === 70 && this.slowFrames >= 30) {
+      this.autoLite = true;
+      this.controls.setLowQuality(true);
+    }
   }
 
   private availableOrders() {
     return this.content.misje.filter(
       (mission) =>
         mission.miasto === this.city &&
-        this.cache.tilemap.exists(mission.mapa ?? mission.miasto) &&
+        isMap(mission.mapa ?? mission.miasto) &&
         this.progress.isAvailable(mission, this.content),
     );
   }
@@ -2136,7 +2207,7 @@ export class City extends Scene {
   }
 
   update(time: number, delta: number) {
-    if (!this.controls) return;
+    if (!this.ready) return;
     const input = this.controls.read();
     this.tutorial?.refresh();
     const quiet =
@@ -2175,6 +2246,7 @@ export class City extends Scene {
       if (this.controls.paused) audio.stopReading('feedback');
       return;
     }
+    this.measureGraphicsQuality();
     this.citySound.input(this.rider, input, this.controls.actions.bell);
     const seconds = Math.min(delta / 1000, 0.1);
     if (this.progress.playFor(seconds, this.breakMinutes))

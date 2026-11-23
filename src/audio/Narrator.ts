@@ -1,3 +1,4 @@
+import { cacheAfterInstall } from '../platform/pwa';
 import { recordingUrls } from './recordings';
 import type { VoiceLine } from './voiceLines';
 
@@ -62,6 +63,7 @@ export class Narrator {
     for (const url of urls) {
       if (this.request !== request) return;
       try {
+        const uncontrolled = !navigator.serviceWorker?.controller;
         const response = await fetch(url, { signal: request.abort.signal });
         if (this.request !== request) return;
         if (!response.ok) continue;
@@ -84,6 +86,7 @@ export class Narrator {
           source.disconnect();
           continue;
         }
+        if (uncontrolled) cacheAfterInstall([url]);
         request.source = source;
         this.onPlaying(true);
         return;

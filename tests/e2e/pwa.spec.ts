@@ -4,6 +4,7 @@ import { type AddressInfo } from 'node:net';
 import { extname, resolve, sep } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
+import { radioCatalog, radioPath } from '../../src/audio/radio/catalog';
 import { chooseCity, cityPin } from './city-picker';
 import { readProfile } from './progress-profile';
 
@@ -42,6 +43,14 @@ test('Chromium can install the build and play offline after the first visit', as
       requests.push({ origin, method: request.method() });
   });
   const canvas = page.locator('canvas');
+  const cachedPaths = () =>
+    page.evaluate(async () => {
+      const keys = await caches.keys();
+      const entries = await Promise.all(
+        keys.map(async (key) => (await caches.open(key)).keys()),
+      );
+      return entries.flat().map((request) => new URL(request.url).pathname);
+    });
   await page.goto('/');
   await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
   await expect(page.locator('#pwa-splash')).toHaveCount(0);
@@ -61,10 +70,61 @@ test('Chromium can install the build and play offline after the first visit', as
   ).toEqual([]);
   await cdp.detach();
 
+  expect(
+    (await cachedPaths()).filter((path) =>
+      /\/radio\/|\.(ogg|m4a)$|\/(warszawa|wroclaw|krakow|gdansk)-[^/]+\.tmj$/.test(
+        path,
+      ),
+    ),
+  ).toEqual([]);
+
+  await context.setOffline(true);
+  await page.reload();
+  await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
+  await page.getByRole('button', { name: pl.cityPicker.freeRide }).click();
+  await cityPin(page, 'warszawa').click();
+  await expect(
+    page.getByRole('status').filter({ hasText: pl.cityPicker.mapUnavailable }),
+  ).toBeVisible();
+  await page
+    .getByRole('button', { name: pl.driving.title, exact: true })
+    .click();
+  await ride(page);
+  await page.keyboard.press('Escape');
+  await page
+    .getByRole('button', { name: pl.driving.menu, exact: true })
+    .click();
+
+  await context.setOffline(false);
+  await chooseCity(page, 'warszawa');
+  await expect(canvas).toHaveAttribute('data-map', 'warszawa');
+  await ride(page);
+  const playlist = (['jingle', ...radioCatalog.hits.seeds] as const).map(
+    (seed) => '/' + radioPath('hits', seed),
+  );
+  await expect
+    .poll(cachedPaths, { timeout: 15_000 })
+    .toEqual(expect.arrayContaining(playlist));
+  const paths = await cachedPaths();
+  expect(paths.some((path) => /\/warszawa-[^/]+\.tmj$/.test(path))).toBe(true);
+  expect(
+    paths.some((path) => /\/(wroclaw|krakow)-[^/]+\.tmj$/.test(path)),
+  ).toBe(false);
+  expect(paths.filter((path) => path.includes('/radio/')).sort()).toEqual(
+    playlist.sort(),
+  );
+
+  const offlineRadio = page.waitForResponse(
+    (response) =>
+      response.url().endsWith(radioPath('hits', 'jingle')) &&
+      response.ok() &&
+      response.fromServiceWorker(),
+  );
   await context.setOffline(true);
   await page.reload();
   await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
   await chooseCity(page, 'warszawa');
+  await offlineRadio;
   await expect(canvas).toHaveAttribute('data-map', 'warszawa');
   await ride(page);
   expect(requests.length).toBeGreaterThan(0);
@@ -141,7 +201,7 @@ test('a waiting release leaves the current mission intact and retains the local 
   page,
   context,
 }, info) => {
-  test.setTimeout(45_000);
+  test.setTimeout(60_000);
   const build = await deployableBuild();
   try {
     await page.goto(build.url);
@@ -149,6 +209,11 @@ test('a waiting release leaves the current mission intact and retains the local 
     await page.waitForFunction(
       () => navigator.serviceWorker.controller !== null,
     );
+    await chooseCity(page, 'wroclaw');
+    await page.keyboard.press('Escape');
+    await page
+      .getByRole('button', { name: pl.driving.menu, exact: true })
+      .click();
     await chooseCity(page, 'wroclaw', 'campaign');
     const canvas = page.locator('canvas');
     await expect(canvas).toHaveAttribute('data-mission', 'WRO-T-01');
@@ -160,6 +225,24 @@ test('a waiting release leaves the current mission intact and retains the local 
     const saved = await readProfile(page);
     expect(saved.selectedCity).toBe('wroclaw');
 
+    // Simulate a city downloaded by the release that used a single precache.
+    await page.evaluate(async () => {
+      const prefix = `szprycha-quiz:${new URL('./', location.href).href}:`;
+      const lazyName = prefix + 'lazy';
+      const precache = (await caches.keys()).find(
+        (key) => key.startsWith(prefix) && key !== lazyName,
+      )!;
+      const lazy = await caches.open(lazyName);
+      const map = (await lazy.keys()).find(({ url }) =>
+        /\/wroclaw-[^/]+\.tmj\?v=/.test(url),
+      )!;
+      const url = new URL(map.url);
+      url.search = '';
+      await (
+        await caches.open(precache)
+      ).put(url.href, (await lazy.match(map))!);
+      await lazy.delete(map);
+    });
     const updateNotice = page.getByText(pl.pwaUpdate, { exact: true });
     await expect(updateNotice).toBeHidden();
     build.deploy();
@@ -206,13 +289,20 @@ test('a waiting release leaves the current mission intact and retains the local 
             state: registration?.active?.state,
             script: registration?.active?.scriptURL,
             caches: await caches.keys(),
+            cachedCity: (
+              await (await caches.open(`szprycha-quiz:${scope}:lazy`)).keys()
+            ).some(({ url }) => /\/wroclaw-[^/]+\.tmj\?v=/.test(url)),
           };
         }, build.url),
       )
       .toEqual({
         state: 'activated',
         script: script.href,
-        caches: [`szprycha-quiz:${build.url}:${build.nextVersion}`],
+        cachedCity: true,
+        caches: [
+          `szprycha-quiz:${build.url}:lazy`,
+          `szprycha-quiz:${build.url}:${build.nextVersion}`,
+        ],
       });
     await context.setOffline(true);
     await restarted.goto(build.url);
@@ -231,7 +321,15 @@ test('a waiting release leaves the current mission intact and retains the local 
     await restarted
       .getByRole('button', { name: pl.cityPicker.freeRide })
       .click();
-    await expect(cityPin(restarted, 'wroclaw')).toBeFocused();
+    const wroclaw = cityPin(restarted, 'wroclaw');
+    await expect(wroclaw).toBeFocused();
+    await wroclaw.click();
+    await expect(restarted.locator('canvas')).toHaveAttribute(
+      'data-map',
+      'wroclaw',
+      { timeout: 15_000 },
+    );
+    await ride(restarted);
   } finally {
     await build.close();
   }

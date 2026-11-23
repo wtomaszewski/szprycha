@@ -15,6 +15,8 @@ import { PlacRun, placIds } from '../../src/gameplay/plac/PlacRun';
 import { readContent } from '../../tools/content';
 import { cleanPlacInput } from '../plac/clean-course';
 import { answer, parentZone } from './helpers/parent-gate';
+import { fixedSceneTicks } from './helpers/fixed-scene-ticks';
+import { chooseCity } from './city-picker';
 
 test.use({ baseURL: 'http://127.0.0.1:4175', reducedMotion: 'reduce' });
 const api = 'http://127.0.0.1:8787';
@@ -54,41 +56,13 @@ async function settings(page: Page) {
 }
 
 type Scene = {
-  events: { once(name: 'create', run: () => void): void };
-  sys: { sceneUpdate(time: number, delta: number): void };
+  sys: {
+    settings: { key: string };
+    sceneUpdate(time: number, delta: number): void;
+  };
   controls: { actions: RiderState; read(): DriveInput };
   tickForTest(time: number, delta: number): void;
-  scene: { start(key: string, data: object): void };
 };
-type Game = { scene: { getScene(name: string): Scene } };
-type SceneManager = { game: Game; update(time: number, delta: number): void };
-
-async function fixedTicks(page: Page, sceneName: 'Plac' | 'City') {
-  return page.evaluateHandle(async (sceneName) => {
-    const link = document.querySelector<HTMLLinkElement>(
-      'link[href*="/phaser-"]',
-    )!;
-    const module: Record<
-      string,
-      () => { Scenes: { SceneManager: { prototype: SceneManager } } }
-    > = await import(link.href);
-    const prototype = Object.values(module)[0]!().Scenes.SceneManager.prototype;
-    const original = prototype.update;
-    return await new Promise<Game>((resolve) => {
-      prototype.update = function (time, delta) {
-        prototype.update = original;
-        const scene = this.game.scene.getScene(sceneName);
-        scene.events.once('create', () => {
-          scene.tickForTest = scene.sys.sceneUpdate.bind(scene);
-          scene.sys.sceneUpdate = () => {};
-        });
-        original.call(this, time, delta);
-        resolve(this.game);
-      };
-    });
-  }, sceneName);
-}
-
 const close = (page: Page) =>
   page.getByRole('dialog').getByRole('button', { name: pl.m5c.close }).click();
 
@@ -119,7 +93,7 @@ test('queues a clean Arcade run offline, syncs after reload and deletes only the
   await close(page);
 
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
-  const game = await fixedTicks(page, 'Plac');
+  const game = await fixedSceneTicks<Scene>(page, ['Plac']);
   await page.getByRole('button', { name: plac.title, exact: true }).click();
   await page.getByRole('button', { name: plac.arcade }).click();
   await context.setOffline(true);
@@ -246,11 +220,9 @@ test('publishes a completed tutorial mission and the XP earned that week', async
   const parents = await settings(page);
   await parents.getByRole('checkbox', { name: parent.rankings }).check();
   await close(page);
-  const game = await fixedTicks(page, 'City');
+  const game = await fixedSceneTicks<Scene>(page, ['City']);
   const missionId = 'WAW-T-01';
-  await game.evaluate((game, missionId) => {
-    game.scene.getScene('MainMenu').scene.start('City', { missionId });
-  }, missionId);
+  await chooseCity(page, 'warszawa', 'campaign');
   await expect(page.locator('canvas')).toHaveAttribute(
     'data-mission',
     missionId,

@@ -1,3 +1,4 @@
+import { startScene } from './startScene';
 import { Geom, Scene } from 'phaser';
 import {
   campaignCity,
@@ -141,7 +142,7 @@ export class CityPicker extends Scene {
       const mission = !freeRide
         ? progress.nextMission(city, content)
         : undefined;
-      this.scene.start('City', {
+      startScene(this, 'City', {
         city,
         map: city,
         missionId: mission?.id,

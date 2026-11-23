@@ -3,9 +3,6 @@ import Phaser from 'phaser';
 import { Boot } from './scenes/Boot';
 import { Preload } from './scenes/Preload';
 import { MainMenu } from './scenes/MainMenu';
-import { CityPicker } from './scenes/CityPicker';
-import { City } from './scenes/City';
-import { Plac } from './scenes/Plac';
 import { audio } from './audio/GameAudio';
 import { ui } from './core/presentation';
 import { showUpdateNotice } from './platform/pwa';
@@ -84,7 +81,7 @@ function syncViewport() {
     pixelArt: true,
     roundPixels: true,
     scale: { mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.NO_CENTER },
-    scene: [Boot, Preload, MainMenu, CityPicker, City, Plac],
+    scene: [Boot, Preload, MainMenu],
     callbacks: {
       postBoot(game) {
         booted = true;

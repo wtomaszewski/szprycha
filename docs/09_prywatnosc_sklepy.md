@@ -9,6 +9,12 @@
 6. **Linki zewnętrzne** (polityka prywatności, strona projektu) wyłącznie w Strefie Rodzica, za bramką.
 7. **Dane na serwerze** w UE, możliwość usunięcia profilu z serwera jednym przyciskiem.
 
+### PWA i jakość grafiki
+
+PWA pobiera mapy miast, playlisty stacji i nagrania lektora z tego samego źródła co grę. Pliki trafiają do lokalnego Cache Storage dopiero po użyciu danej funkcji. Menu, Miasteczko i treść lekcji są dostępne od pierwszej ukończonej instalacji. Aktualizacja zachowuje pobrane pliki o tej samej sumie kontrolnej.
+
+Automatyczny profil grafiki uwzględnia dotyk, liczbę procesorów logicznych udostępnianą przez przeglądarkę oraz czas klatek na początku jazdy. Gra oblicza wybór w pamięci i nie zapisuje ani nie wysyła pomiarów ani informacji o urządzeniu. W zapisie gry znajduje się wyłącznie ustawienie wybrane przez gracza.
+
 ## Dokumenty do przygotowania (przez człowieka, Codex tworzy szablony w `legal/`)
 - Polityka prywatności (wersja dla rodzica + wersja obrazkowa dla dziecka).
 - Regulamin.

@@ -174,6 +174,7 @@ export function drawMapGround(
           collisions,
           curbAt ?? undefined,
           snow,
+          { x: col * TILE, y: row * TILE, width, height },
         );
         ctx.restore();
         chunk?.refresh();

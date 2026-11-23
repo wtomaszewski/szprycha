@@ -56,3 +56,19 @@ export async function showUpdateNotice(serviceWorker: ServiceWorkerContainer) {
     console.warn('Offline cache unavailable', error);
   }
 }
+
+// A first use can occur before the installing worker claims the page.
+export function cacheAfterInstall(urls: readonly string[]) {
+  if (
+    !import.meta.env.PROD ||
+    !('serviceWorker' in navigator) ||
+    !navigator.onLine
+  )
+    return;
+  void navigator.serviceWorker.ready.then(({ active }) =>
+    active?.postMessage({
+      type: 'cache-assets',
+      urls: urls.map((url) => new URL(url, document.baseURI).href),
+    }),
+  );
+}
