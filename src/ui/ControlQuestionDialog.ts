@@ -3,6 +3,7 @@ import { localizedVoiceLine, questionVoiceLine } from '../audio/voiceLines';
 import olaPortrait from '../../assets/generated/portraits/sierzant_ola.png?url';
 import { ui } from '../core/presentation';
 import type { ControlQuestion } from '../progression/RoadAttention';
+import { gamepadMenu, type ButtonEdge } from './KeyboardGamepad';
 import { questionPrompt } from './SignIllustration';
 
 export class ControlQuestionDialog {
@@ -135,6 +136,10 @@ export class ControlQuestionDialog {
         );
       });
     }
+  }
+
+  gamepad(justPressed: ButtonEdge) {
+    gamepadMenu(this.panel, justPressed, { focusOnConfirm: false });
   }
 
   private focusAnswer(direction: number) {

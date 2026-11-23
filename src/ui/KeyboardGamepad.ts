@@ -103,7 +103,11 @@ function adjustValue(element: Element | null, direction: number) {
   return true;
 }
 
-export function gamepadMenu(scope: HTMLElement, justPressed: ButtonEdge) {
+export function gamepadMenu(
+  scope: HTMLElement,
+  justPressed: ButtonEdge,
+  { focusOnConfirm = true }: { focusOnConfirm?: boolean } = {},
+) {
   if (![0, 12, 13, 14, 15].some(justPressed)) return;
   showGamepadFocus();
   const active = scope.contains(document.activeElement)
@@ -136,7 +140,7 @@ export function gamepadMenu(scope: HTMLElement, justPressed: ButtonEdge) {
     if (active instanceof HTMLSelectElement) adjustValue(active, 1);
     else if (active instanceof HTMLElement && focusable(scope).includes(active))
       active.click();
-    else gamepadFocus(scope, 1);
+    else if (focusOnConfirm) gamepadFocus(scope, 1);
   }
 }
 

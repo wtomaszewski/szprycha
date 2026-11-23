@@ -3,6 +3,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
 import { chooseCity } from './city-picker';
+import { mockGamepad } from './helpers/gamepad';
 import { answer, parentZone } from './helpers/parent-gate';
 import { profile } from './helpers/profile';
 
@@ -110,40 +111,6 @@ async function expectFocusLoop(page: Page, first: Locator, last: Locator) {
   await expect(last).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(first).toBeFocused();
-}
-
-async function mockPad(page: Page) {
-  await page.addInitScript(() => {
-    let button = -1;
-    window.addEventListener('audit:pad', (event) => {
-      button = (event as CustomEvent<number>).detail;
-    });
-    Object.defineProperty(navigator, 'getGamepads', {
-      value: () => [
-        {
-          connected: true,
-          axes: [0, 0],
-          buttons: Array.from({ length: 17 }, (_, i) => ({
-            pressed: i === button,
-          })),
-        },
-      ],
-    });
-  });
-
-  return (index: number) =>
-    page.evaluate(async (detail) => {
-      const press = (value: number) =>
-        window.dispatchEvent(new CustomEvent('audit:pad', { detail: value }));
-      const frame = () =>
-        new Promise((resolve) => requestAnimationFrame(resolve));
-      press(detail);
-      await frame();
-      await frame();
-      press(-1);
-      await frame();
-      await frame();
-    }, index);
 }
 
 test('menu, wybór miasta, Pomoc, Plac i kolejność fokusu', async ({ page }) => {
@@ -483,41 +450,41 @@ test.describe('200% tekstu i nawigacja padem', () => {
   test('pad wybiera miasto, otwiera telefon, przechodzi przez pauzę i zmienia ustawienie', async ({
     page,
   }) => {
-    const press = await mockPad(page);
+    const { tap } = await mockGamepad(page);
     await page.goto('/');
     await expect(page.getByRole('main', { name: pl.title })).toBeVisible();
     await page.mouse.click(15, 15);
-    await press(13);
+    await tap(13);
     await expect(button(page, pl.cityPicker.campaign)).toBeFocused();
     await expect(button(page, pl.cityPicker.campaign)).toHaveCSS(
       'outline-width',
       '3px',
     );
-    await press(13);
+    await tap(13);
     await expect(button(page, pl.cityPicker.freeRide)).toBeFocused();
-    await press(0);
+    await tap(0);
     await expect(button(page, pl.cityPicker.warszawa)).toBeFocused();
-    await press(13);
+    await tap(13);
     await expect(button(page, pl.cityPicker.wroclaw)).toBeFocused();
-    await press(0);
+    await tap(0);
     await expect(page.locator('canvas[data-scene="City"]')).toHaveAttribute(
       'data-map',
       'wroclaw',
     );
-    await press(8);
+    await tap(8);
     const phone = dialog(page, pl.phone.title);
     await expect(phone).toBeVisible();
-    await press(1);
+    await tap(1);
     await expect(phone).toBeHidden();
-    await press(9);
+    await tap(9);
     const pause = dialog(page, pl.driving.paused);
     await expect(button(pause, pl.driving.resume)).toBeFocused();
-    await press(13);
+    await tap(13);
     const scheme = button(pause, pl.driving.classic);
     await expect(scheme).toBeFocused();
-    await press(0);
+    await tap(0);
     await expect(button(pause, pl.driving.simple)).toBeFocused();
-    await press(1);
+    await tap(1);
     await expect(pause).toBeHidden();
   });
 });

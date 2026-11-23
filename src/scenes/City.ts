@@ -1040,7 +1040,7 @@ export class City extends Scene {
       return true;
     }
     if (this.questionDialog.open) {
-      navigate();
+      this.questionDialog.gamepad(justPressed);
       return true;
     }
     if (
