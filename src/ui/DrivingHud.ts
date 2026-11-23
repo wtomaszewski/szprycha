@@ -18,6 +18,8 @@ export class DrivingHud {
 
   private readonly equipment = document.createElement('span');
   private readonly lights = document.createElement('span');
+  private readonly helmetState = document.createElement('span');
+  private readonly lightsState = document.createElement('span');
   private readonly time = document.createElement('span');
   private readonly weather = document.createElement('span');
   constructor(
@@ -54,7 +56,19 @@ export class DrivingHud {
       element.className = 'ride-status-icon';
       element.dataset.icon = icon;
       element.setAttribute('role', 'img');
-      conditions.append(element);
+      const state =
+        icon === 'helmet'
+          ? this.helmetState
+          : icon === 'lights'
+            ? this.lightsState
+            : undefined;
+      if (state) {
+        const group = document.createElement('span');
+        group.className = 'ride-equipment-state';
+        state.setAttribute('aria-hidden', 'true');
+        group.append(element, state);
+        conditions.append(group);
+      } else conditions.append(element);
     }
     left.append(score, conditions, details);
 
@@ -65,7 +79,8 @@ export class DrivingHud {
     const attentionLabel = document.createElement('span');
     attentionLabel.textContent = ui.progression.attention;
     this.attention.setAttribute('aria-label', ui.progression.attention);
-    this.attention.setAttribute('aria-live', 'off');
+    this.attention.setAttribute('aria-live', 'polite');
+    this.attention.setAttribute('aria-atomic', 'true');
     for (const whistle of this.whistles) {
       whistle.className = 'ride-whistle';
       whistle.setAttribute('aria-hidden', 'true');
@@ -74,8 +89,9 @@ export class DrivingHud {
     this.attention.append(this.attentionValue);
     alert.append(attentionLabel, this.attention);
     right.append(alert, this.timerSlot);
-    for (const output of [this.points, this.combo])
-      output.setAttribute('aria-live', 'off');
+    this.points.setAttribute('aria-live', 'off');
+    this.combo.setAttribute('aria-live', 'polite');
+    this.combo.setAttribute('aria-atomic', 'true');
     this.radio.className = 'progression-radio';
     this.radio.setAttribute('role', 'status');
     this.radio.hidden = true;
@@ -140,6 +156,13 @@ export class DrivingHud {
       ui.rideHud[lights ? 'lightsOn' : 'lightsOff'],
       lights,
     );
+    for (const [state, active] of [
+      [this.helmetState, helmet],
+      [this.lightsState, lights],
+    ] as const) {
+      const mark = active ? '✓' : '×';
+      if (state.textContent !== mark) state.textContent = mark;
+    }
     this.setIcon(this.time, ui.rideHud[night ? 'night' : 'day'], true);
     const icon = night ? 'night' : 'day';
     if (this.time.dataset.icon !== icon) this.time.dataset.icon = icon;

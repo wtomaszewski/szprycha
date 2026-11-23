@@ -28,7 +28,7 @@ export class MissionPhone {
     this.button.type = 'button';
     this.button.className = 'phone-trigger';
     this.button.setAttribute('aria-label', ui.phone.open);
-    this.button.setAttribute('aria-keyshortcuts', 'Tab M');
+    this.button.setAttribute('aria-keyshortcuts', 'M');
     this.button.setAttribute('aria-haspopup', 'dialog');
     this.button.setAttribute('aria-controls', 'mission-phone');
     this.button.setAttribute('aria-expanded', 'false');
@@ -122,6 +122,8 @@ export class MissionPhone {
             : ui.phone.active;
       this.list.prepend(message);
     }
+    // A keyboard or gamepad shortcut has no focused trigger of its own.
+    if (!document.querySelector('dialog:modal')) this.button.focus();
     this.panel.showModal();
     this.button.setAttribute('aria-expanded', 'true');
     (this.starts[0] ?? this.closeButton).focus();
@@ -190,12 +192,6 @@ export class MissionPhone {
         ? 0
         : (focused + direction + this.starts.length) % this.starts.length;
     this.starts[next]?.focus();
-  }
-
-  activate() {
-    const focused = document.activeElement;
-    if (focused === this.closeButton) this.close();
-    else this.starts.find((button) => button === focused)?.click();
   }
 
   close() {

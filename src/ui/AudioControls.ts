@@ -91,7 +91,6 @@ export function radioControls(store: ProgressStore) {
   stationName.setAttribute('aria-atomic', 'true');
   const caption = document.createElement('p');
   caption.className = 'radio-caption';
-  caption.hidden = true;
   caption.setAttribute('role', 'status');
   const refresh = () => {
     const name = ui.audio.stations[store.profile.audio.station];
@@ -106,7 +105,6 @@ export function radioControls(store: ProgressStore) {
   });
   audio.setCaption((text) => {
     caption.textContent = text;
-    caption.hidden = !text;
   });
   refresh();
   const widget = document.createElement('div');

@@ -4,6 +4,8 @@ import type { GameContent } from '../content/schemas';
 import { ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 
+import { menuGamepad } from '../ui/KeyboardGamepad';
+
 type Mode = 'campaign' | 'freeRide';
 const pins = [
   { id: 'warszawa', x: 426, y: 169 },
@@ -65,6 +67,12 @@ const outline = [
 ] as const;
 
 export class CityPicker extends Scene {
+  private readGamepad?: () => void;
+
+  update() {
+    this.readGamepad?.();
+  }
+
   constructor() {
     super('CityPicker');
   }
@@ -104,7 +112,7 @@ export class CityPicker extends Scene {
         ).fillRect(x, y, 4, 4);
       }
     }
-    const controls = document.createElement('section');
+    const controls = document.createElement('main');
     controls.className = 'city-picker';
     controls.setAttribute('aria-labelledby', 'city-picker-title');
     const header = document.createElement('header');
@@ -161,6 +169,7 @@ export class CityPicker extends Scene {
         pin.addEventListener('click', () => void enter(city.data));
         if (id === selectedCity) {
           pin.classList.add('city-picker-selected');
+          pin.setAttribute('aria-current', 'true');
           selected = pin;
         }
       } else {
@@ -173,6 +182,7 @@ export class CityPicker extends Scene {
     }
 
     document.body.append(controls);
+    this.readGamepad = menuGamepad(controls, leave);
     const center = () => {
       this.cameras.main.setScroll(
         -Math.floor((this.scale.width - 640) / 2),
@@ -184,6 +194,7 @@ export class CityPicker extends Scene {
     this.scale.on('resize', center);
     this.input.keyboard?.on('keydown-ESC', leave);
     this.events.once('shutdown', () => {
+      this.readGamepad = undefined;
       this.scale.off('resize', center);
       this.input.keyboard?.off('keydown-ESC', leave);
       controls.remove();
