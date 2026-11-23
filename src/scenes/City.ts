@@ -1,3 +1,5 @@
+import { CityTutorial } from './CityTutorial';
+import type { TutorialStep } from '../gameplay/Tutorial';
 import {
   examRideIntro,
   localizedVoiceLine,
@@ -156,6 +158,8 @@ export class City extends Scene {
   private progress!: MissionProgress;
   private mapChunks: GameObjects.Image[] = [];
   private mission?: MissionSystem;
+  private tutorial?: CityTutorial;
+  private tutorialMarker?: GameObjects.Graphics;
   private series!: SafetySeries;
   private attention!: RoadAttention;
   private questionDialog!: ControlQuestionDialog;
@@ -259,14 +263,16 @@ export class City extends Scene {
     map,
     city,
     examRide,
+    tutorial,
   }: {
     missionId?: string;
     map?: string;
     city?: MissionCity;
     examRide?: ExamRide;
+    tutorial?: TutorialStep;
   } = {}) {
     this.examRide = examRide;
-    if (examRide) this.sys.settings.data = {};
+    if (examRide || tutorial) this.sys.settings.data = {};
     this.obstacles = [];
     this.accumulator = 0;
     this.hudAt = 0;
@@ -274,13 +280,14 @@ export class City extends Scene {
     this.content = this.registry.get('content') as GameContent;
     this.progress = this.registry.get('missionProgress') as MissionProgress;
     this.campaignCity = examRide?.city ?? city ?? this.progress.selectedCity;
-    this.progress.milestones(this.content);
+    if (!tutorial) this.progress.milestones(this.content);
     this.breakMinutes = this.progress.breakMinutes(
       this.content.balans.zdrowe_granie,
     );
     this.photoPending = false;
     this.askedGnome = undefined;
-    this.progress.store.prepareRide(this.content.przepisy.przepisy);
+    if (!tutorial)
+      this.progress.store.prepareRide(this.content.przepisy.przepisy);
     this.series ??= new SafetySeries(
       this.content.balans.combo,
       0,
@@ -316,7 +323,7 @@ export class City extends Scene {
     this.weatherTuning.brakeForce =
       BRAKE_DECELERATION *
       this.content.balans.silnik.przyczepnosc[this.environment.weather];
-    const ambientTraffic = definition?.ruch_ai !== false;
+    const ambientTraffic = !tutorial && definition?.ruch_ai !== false;
     this.review = undefined;
     this.phoneAnsweredSafely = false;
     this.missionInterrupted = false;
@@ -524,10 +531,10 @@ export class City extends Scene {
           ? ui.driving.wroclawTitle
           : ui.driving.title;
     this.controls = new DrivingControls(
-      examRide ? ui.exam.ride : areaTitle,
+      tutorial ? ui.tutorial.title : examRide ? ui.exam.ride : areaTitle,
       this.graphics,
       () => this.toggleMode(),
-      examRide ? undefined : () => this.reset(),
+      examRide || tutorial ? undefined : () => this.reset(),
       () => this.scene.start('MainMenu'),
       this.flushProgress,
       (height) => {
@@ -559,8 +566,11 @@ export class City extends Scene {
     );
     const radio = radioControls(this.progress.store);
     this.controls.quickActions.append(radio.widget);
-    this.controls.onResume = radio.refresh;
-    if (mapId === defaultMap && !this.mission) {
+    this.controls.onResume = () => {
+      radio.refresh();
+      this.tutorial?.focusNext();
+    };
+    if (mapId === defaultMap && !this.mission && !tutorial) {
       const plac = document.createElement('button');
       plac.type = 'button';
       plac.className = 'ride-plac';
@@ -581,7 +591,7 @@ export class City extends Scene {
           this.controls.details,
         )
       : undefined;
-    if (!this.mission) {
+    if (!this.mission && !tutorial) {
       const camera = document.createElement('button');
       camera.type = 'button';
       camera.className = 'ride-camera';
@@ -652,7 +662,16 @@ export class City extends Scene {
         if (!this.mission?.result) this.missionHud?.focusEquipment();
       },
     );
-    this.updateProgressionHud();
+    if (tutorial)
+      this.hud.updateProgression(
+        0,
+        1,
+        this.progress.longestSeries,
+        false,
+        0,
+        0,
+      );
+    else this.updateProgressionHud();
     if (this.mission) {
       this.missionMarker = this.add.graphics().setDepth(8);
       this.missionHud = new MissionHud(
@@ -687,6 +706,24 @@ export class City extends Scene {
       this.updateMissionHud();
     }
     this.resetRules();
+    if (tutorial) {
+      this.tutorial = new CityTutorial(
+        tutorial,
+        this.world,
+        this.controls,
+        this.progress.store,
+        this.content.balans.silnik,
+        (origin) => this.resetTutorialRider(origin),
+        (campaign) => {
+          if (campaign) this.scene.start('CityPicker', { mode: 'campaign' });
+          else this.scene.start('MainMenu');
+        },
+      );
+      this.tutorialMarker = this.add.graphics().setDepth(8);
+      this.controls.onPauseOpened = () => {
+        if (this.tutorial?.step === 'pause') this.tutorial.advance();
+      };
+    }
     this.recordFrame(-FIXED_STEP);
     this.debug = new RuleDebugOverlay(this, this.world, this.controls.root);
     this.controls.setWalking(false);
@@ -711,6 +748,9 @@ export class City extends Scene {
       this.scale.off('resize', refreshGlory);
       this.flushProgress();
       this.missionHud?.destroy();
+      this.tutorial?.destroy();
+      this.tutorial = undefined;
+      this.tutorialMarker = undefined;
       this.results?.close();
       this.stopListeningForVerdicts?.();
       this.stopListeningForVerdicts = undefined;
@@ -767,6 +807,18 @@ export class City extends Scene {
       this.phone.close();
       return;
     }
+    if (this.tutorial) {
+      if (this.tutorial.step !== 'phone') return;
+      this.controls.clear();
+      this.phone.show(
+        this.content.misje.filter(
+          ({ id }) => id === 'WAW-T-01' || id === 'WRO-T-01',
+        ),
+        'tutorial',
+      );
+      this.tutorial.advance();
+      return;
+    }
     if (this.dialogue.open || this.review || this.questionDialog.open) return;
     if (!canOpenPhone(this.rider.speed)) {
       this.message(this.phoneFeedback);
@@ -780,7 +832,7 @@ export class City extends Scene {
     }
     this.phone.show(
       this.availableOrders(),
-      Boolean(this.mission && !this.mission.result),
+      this.mission && !this.mission.result ? 'active' : 'available',
     );
   }
 
@@ -793,6 +845,17 @@ export class City extends Scene {
       (this.results?.open && event.code !== 'KeyM')
     )
       return true;
+    if (
+      this.tutorial &&
+      event.code === 'Enter' &&
+      !event.repeat &&
+      !(event.target instanceof HTMLButtonElement)
+    ) {
+      if (this.tutorial.continue()) {
+        event.preventDefault();
+        return true;
+      }
+    }
     if (event.code === 'KeyG' && !event.repeat && this.respondToEvent()) {
       event.preventDefault();
       return true;
@@ -850,6 +913,8 @@ export class City extends Scene {
       this.results.gamepad(justPressed);
       return true;
     }
+    if (!this.phone.open && this.tutorial)
+      return justPressed(0) && this.tutorial.continue();
     if (!this.phone.open)
       return this.mission
         ? justPressed(0) && this.takePhoto()
@@ -1182,6 +1247,7 @@ export class City extends Scene {
   }
   private toggleMode() {
     if (
+      (this.tutorial && this.tutorial.step !== 'walk') ||
       this.controls.paused ||
       this.review ||
       this.questionDialog.open ||
@@ -1200,7 +1266,8 @@ export class City extends Scene {
     this.rider.walking = !this.rider.walking;
     this.rider.speed = 0;
     this.controls.setWalking(this.rider.walking);
-    if (this.rider.walking) this.message('driving.walkingHint');
+    if (this.rider.walking && !this.tutorial)
+      this.message('driving.walkingHint');
   }
   private startRankingRide(mission: boolean) {
     const consent = this.progress.rankings?.consent;
@@ -1281,6 +1348,22 @@ export class City extends Scene {
     this.updateHudConditions(frame);
     this.openMissionDialogue();
   }
+  private resetTutorialRider(origin: Pick<Rider, 'x' | 'y' | 'heading'>) {
+    Object.assign(this.rider, origin, { speed: 0, walking: false });
+    this.controls.clear();
+    this.controls.setWalking(false);
+    Object.assign(this.controls.actions, {
+      signal: null,
+      looking: false,
+      bell: false,
+    });
+    this.accumulator = 0;
+    this.cameras.main.centerOn(this.rider.x, this.rider.y);
+    this.resetRules();
+    this.replay.clear();
+    this.recordFrame(-FIXED_STEP);
+  }
+
   private resetRules() {
     this.environment.time = missionTime(
       this.world,
@@ -1363,6 +1446,7 @@ export class City extends Scene {
 
   private takePhoto(showHint = false) {
     if (
+      this.tutorial ||
       this.photoPending ||
       this.dialogue.open ||
       this.review ||
@@ -1561,6 +1645,10 @@ export class City extends Scene {
       this.environment,
       this.trafficEvents.hazards,
     );
+    if (this.tutorial) {
+      this.recordFrame();
+      return;
+    }
     this.trafficEvents.resolvePhoneResponse(
       this.phoneAnsweredSafely,
       rider.speed > 0.1 && rider.mode === 'riding',
@@ -1762,6 +1850,7 @@ export class City extends Scene {
   update(time: number, delta: number) {
     if (!this.controls) return;
     const input = this.controls.read();
+    this.tutorial?.refresh();
     const quiet =
       this.controls.paused ||
       this.phone.open ||
@@ -1813,6 +1902,7 @@ export class City extends Scene {
         this.rulesRider.phoneInHand,
       );
       const collided =
+        (!this.tutorial || this.tutorial.canRide) &&
         !this.mission?.preparingBike &&
         stepRider(
           this.rider,
@@ -1823,7 +1913,7 @@ export class City extends Scene {
           FIXED_STEP,
           this.rider.walking ? undefined : this.weatherTuning,
         );
-      if (collided) this.message('driving.collision');
+      if (collided && !this.tutorial) this.message('driving.collision');
       const meters =
         this.rankingRide && !walking
           ? Math.hypot(this.rider.x - x, this.rider.y - y) *
@@ -1831,6 +1921,17 @@ export class City extends Scene {
           : 0;
       this.stepWorld(collided, meters);
       this.accumulator -= FIXED_STEP;
+      if (this.tutorial) {
+        this.tutorial.ride(
+          this.rider,
+          input,
+          FIXED_STEP,
+          collided,
+          this.rulesRider.pos,
+          this.rules.stopReady,
+        );
+        continue;
+      }
       if (
         this.review ||
         (!this.examRide && this.attention.pending) ||
@@ -1861,7 +1962,15 @@ export class City extends Scene {
       this.replay.frame(this.replay.size - 1)!,
       delta,
     );
-    this.updateProgressionHud();
+    if (this.tutorial) {
+      const target = this.tutorial.target;
+      this.tutorialMarker?.clear();
+      if (this.tutorial.showTarget)
+        this.tutorialMarker
+          ?.lineStyle(2, 0xffcd75)
+          .strokeCircle(target.x, target.y, 13);
+      this.tutorial.drawArrow(this.rider, this.world.metersPerPixel);
+    } else this.updateProgressionHud();
     this.feedback.update(this.rules.at);
     this.eventNotice.update(
       this.trafficEvents.notice,

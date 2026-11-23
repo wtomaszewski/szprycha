@@ -1,3 +1,4 @@
+import { waitForMainMenu } from './skip-tutorial';
 import { chromium, devices } from '@playwright/test';
 import pl from '../i18n/pl.json' with { type: 'json' };
 
@@ -40,7 +41,7 @@ try {
   const page = await context.newPage();
   const cdp = await context.newCDPSession(page);
   await page.goto('/');
-  await page.locator('canvas[data-scene="MainMenu"]').waitFor();
+  await waitForMainMenu(page);
   const game = await page.evaluateHandle(async () => {
     const link = document.querySelector<HTMLLinkElement>(
       'link[href*="/phaser-"]',

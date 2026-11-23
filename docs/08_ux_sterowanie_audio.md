@@ -34,6 +34,16 @@ Boot → wybór profilu (do 4 profili lokalnych, avatar + nick z generatora) →
 **Ekran wyników misji:** gwiazdki (animacja), punkty z rozbiciem (dobre nawyki, błędy, czas), 1 przepis „do zapamiętania”, przycisk „Jeszcze raz po 3 gwiazdki”.
 **Strefa dla rodzica** (zablokowana prostym zadaniem matematycznym): postęp mastery w modułach, przepisy sprawiające trudność, limit czasu gry, włączanie rankingów online, eksport certyfikatu.
 
+### Pierwsza jazda z Sierżant Olą (#96)
+
+Nowy profil zaczyna w Miasteczku Ruchu. Samouczek zapisuje bieżący krok lokalnie i wznawia go po ponownym uruchomieniu. Gracz może użyć przycisku „Pomiń samouczek” lub otworzyć w menu głównym „Pomoc”, aby wznowić albo zacząć od początku. Wcześniej utworzone profile otwierają od razu menu.
+
+Sierżant Ola prowadzi kolejno przez ruszanie, hamowanie, sprawdzenie za lewym ramieniem, sygnalizowane skręty, dzwonek, światła, prowadzenie roweru i zatrzymanie przed linią STOP. Następnie gracz poznaje wskaźniki HUD, otwiera SzprychaApp i pauzę. Podpowiedzi śledzą ostatnio używane wejście, także po przełączeniu między klawiaturą, dotykiem i gamepadem w trakcie lekcji.
+
+Ruch AI i losowe zdarzenia są wyłączone na czas ćwiczeń. Nieudana próba daje wskazówkę do powtórzenia. Ćwiczenia nie zmieniają wyniku, Serii, Uwagi Drogówki, mastery ani rankingów. W SzprychaApp Ola pokazuje dwie misje szkoleniowe. Po ukończeniu przycisk „Wybierz miasto” prowadzi do kampanii, gdzie zaczynają się WAW-T-01 i WRO-T-01.
+
+[Miasteczko przed zmianą](screenshots/96-miasteczko-przed.png) · [Samouczek na klawiaturze](screenshots/96-miasteczko-po.png) · [Samouczek na dotyku](screenshots/96-dotyk-po.png) · [Menu przed zmianą](screenshots/96-menu-przed.png) · [Pomoc w menu](screenshots/96-pomoc-po.png)
+
 ## Dialogi
 Dymki z portretem 64×64, maks. 2 linijki, tap/klawisz = dalej, przytrzymanie = pomiń całość. Lektor odtwarza pakowane nagrania przez Web Audio i ma przełącznik w ustawieniach. Kwestie bez nagrania są wyświetlane jako napisy. Teksty z `content/dialogi/*.yaml`.
 

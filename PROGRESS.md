@@ -16,6 +16,11 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Samouczek pierwszej jazdy (#96)
+
+- Nowe profile rozpoczynają ćwiczenia z Sierżant Olą w Miasteczku Ruchu. Postęp jest zapisywany lokalnie, a samouczek można pominąć, wznowić lub powtórzyć z menu Pomoc.
+- Samouczek uczy obsługi roweru i interfejsu na klawiaturze, dotyku i gamepadzie. Kampania Warszawy i Wrocławia zachowuje osobne misje szkoleniowe.
+
 ## Audyt grafiki (#100)
 
 - Zrzuty Playwright obejmują trzy mapy w dzień, w nocy i podczas opadów, landmarki, ekrany gry oraz wariant dotykowy. Porównania i wyniki są w [raporcie audytu](docs/AUDYT_GRAFIKI.md).

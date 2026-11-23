@@ -62,10 +62,17 @@ async function earnProgress(page: Page) {
 test('runs the teacher classroom and gated student flow on the local API and keeps labels in one browser', async ({
   browser,
   page,
+  storageState,
 }) => {
   test.setTimeout(60_000);
-  const game = await browser.newPage({ baseURL: 'http://127.0.0.1:4175' });
-  const second = await browser.newPage({ baseURL: 'http://127.0.0.1:4175' });
+  const game = await browser.newPage({
+    baseURL: 'http://127.0.0.1:4175',
+    storageState,
+  });
+  const second = await browser.newPage({
+    baseURL: 'http://127.0.0.1:4175',
+    storageState,
+  });
   const email = `teacher-${crypto.randomUUID()}@example.test`;
   const password = 'demo-teacher-test-password';
   const label = 'Ala Próbna';

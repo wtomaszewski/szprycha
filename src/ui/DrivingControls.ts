@@ -10,6 +10,8 @@ import {
 } from './TouchLayout';
 import type { TouchAction } from '../core/touchLayout';
 import { audioSettings } from './AudioControls';
+export type InputDevice = 'keyboard' | 'touch' | 'gamepad';
+
 interface OverlayControls {
   keyboard(event: KeyboardEvent): boolean;
   gamepad(
@@ -32,6 +34,10 @@ export class DrivingControls {
   };
   previewNight = false;
   onResume?: () => void;
+  onPauseOpened?: () => void;
+  device: InputDevice = matchMedia('(pointer: coarse)').matches
+    ? 'touch'
+    : 'keyboard';
   private readonly preferences = document.createElement('details');
   private readonly soundOptions = document.createElement('details');
   private readonly layoutEditor: HTMLDialogElement;
@@ -296,10 +302,18 @@ export class DrivingControls {
       editor.dialog,
     );
     document.body.append(this.root);
+    this.root.addEventListener(
+      'pointerdown',
+      (event) => {
+        if (event.pointerType === 'touch') this.device = 'touch';
+      },
+      { signal, capture: true },
+    );
     window.addEventListener(
       'keydown',
       (e) => {
         if (e.defaultPrevented || this.layoutEditor.open) return;
+        if (!e.ctrlKey && !e.metaKey && !e.altKey) this.device = 'keyboard';
         if (this.paused) {
           if (e.code === 'Escape' && !e.repeat) {
             e.preventDefault();
@@ -352,7 +366,7 @@ export class DrivingControls {
       () => {
         this.clear();
         if (!this.paused && !document.querySelector('dialog[open]'))
-          this.togglePause();
+          this.togglePause(false);
       },
       { signal },
     );
@@ -362,7 +376,7 @@ export class DrivingControls {
         if (document.hidden) {
           this.clear();
           if (!this.paused && !document.querySelector('dialog[open]'))
-            this.togglePause();
+            this.togglePause(false);
         }
       },
       { signal },
@@ -384,12 +398,12 @@ export class DrivingControls {
     this.pauseButton.focus();
   }
 
-  private togglePause() {
+  private togglePause(explicit = true) {
     this.clear();
     if (this.paused) {
       this.pauseMenu.close();
-      this.onResume?.();
       this.pauseButton.focus();
+      this.onResume?.();
     } else {
       const preferenceTitle = document.createElement('summary');
       preferenceTitle.textContent = ui.settings.accessibility;
@@ -408,6 +422,7 @@ export class DrivingControls {
       this.soundOptions.replaceChildren(summary, audioSettings(this.progress));
       this.pauseMenu.showModal();
       this.onPause();
+      if (explicit) this.onPauseOpened?.();
     }
   }
 
@@ -429,6 +444,13 @@ export class DrivingControls {
     this.padButtons = pad?.buttons.map((button) => button.pressed) ?? [];
     const justPressed = (button: number) =>
       pressed(button) && !previous[button];
+    if (
+      pad &&
+      (Math.abs(pad.axes[0] ?? 0) > 0.15 ||
+        Math.abs(pad.axes[1] ?? 0) > 0.15 ||
+        pad.buttons.some((_, index) => justPressed(index)))
+    )
+      this.device = 'gamepad';
     if (this.paused) {
       if (!this.layoutEditor.open && justPressed(9)) this.togglePause();
       return { x: 0, y: 0, brake: false, scheme: this.scheme };

@@ -11,6 +11,7 @@ test('reports a damaged legacy save and starts a fresh profile', async ({
     legacyProgressKey,
   );
   await page.goto('/');
+  await page.getByRole('button', { name: pl.tutorial.skip }).click();
   await expect(page.getByRole('status')).toContainText(pl.skillMap.reset);
   await page.getByRole('button', { name: pl.skillMap.title }).click();
   await expect(page.getByRole('dialog')).toContainText(`${pl.skillMap.xp} 0`);
