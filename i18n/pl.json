@@ -1441,6 +1441,7 @@
     "accessibility": "Dostępność",
     "reducedEffects": "Mniej efektów",
     "haptics": "Wibracje po błędzie i dobrym nawyku",
+    "signalCountdowns": "Pokaż liczniki przy światłach",
     "equipment": "Wyposażenie",
     "reflectiveVest": "Załóż kamizelkę odblaskową"
   },
@@ -1461,6 +1462,7 @@
     "close": "Zamknij",
     "albumProgress": "Zdjęcia w albumie",
     "albumHint": "Zsiądź z roweru, zatrzymaj się w bezpiecznym miejscu obok znaku i zrób zdjęcie.",
+    "signalCountdownHint": "Liczniki są tylko na niektórych skrzyżowaniach. Zawsze kieruj się kolorem światła.",
     "lockedSign": "Do odkrycia",
     "photoSaved": "Zdjęcie trafiło do Albumu Znaków.",
     "camera": "Zrób zdjęcie [P / → na padzie]",

@@ -159,12 +159,21 @@ const profileSchema = m9ProfileSchema.extend({
   ageBand: z.enum(ageBands).optional(),
   breakMinutes: count.positive().nullable().optional(),
   gentleFailure: z.boolean().optional().catch(undefined),
+  signalCountdowns: z.boolean().optional().catch(undefined),
+  examSignalCountdowns: z.boolean().optional().catch(undefined),
   onlineRankings: z.boolean(),
   rankings: rankingState.optional().catch(undefined),
   tutorial: z.enum(tutorialStates).optional().catch(undefined),
 });
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
+
+export function showSignalCountdowns(profile: ProgressProfile, exam: boolean) {
+  return exam
+    ? (profile.examSignalCountdowns ?? false)
+    : (profile.signalCountdowns ?? true);
+}
+
 export type RideVerdict = Pick<Verdict, 'kind' | 'ruleId'>;
 type LegacyStorage = Pick<Storage, 'getItem' | 'removeItem'>;
 type MasteryBalance = GameContent['balans']['mastery'];

@@ -29,6 +29,14 @@ Na tabletach przyciski większe (min. 56 dp), układ konfigurowalny (przeciągni
 
 W czasie jazdy na ekranie są dwie ikony menu. Telefon otwiera SzprychaApp po zatrzymaniu. Pauza zawiera zmianę schematu sterowania, powrót na start, wyjście, jakość grafiki i deszcz. Na desktopie pasek skrótów jest dostępny w pauzie, a joystick i przyciski jazdy pojawiają się tylko na urządzeniach z dotykiem. Wskaźniki mają opisy dostępne dla czytników ekranu. Deszcz w pauzie jest ustawieniem oprawy.
 
+### Liczniki przy światłach (#98)
+
+Pikselowe wyświetlacze przy S-1, S-2, S-6 i światłach dla pieszych pokazują czas do najbliższej zmiany lampy, zaokrąglony w górę do pełnych sekund. Włączona strzałka S-2 ma osobne odliczanie do zgaśnięcia, a główne czerwone światło dalej odlicza czas do zielonego. Cyfry mają stały wygląd podczas całej fazy. Album Znaków przypomina, że liczniki występują tylko na części skrzyżowań i zawsze obowiązuje sygnał świetlny.
+
+„Pokaż liczniki przy światłach” jest domyślnie włączone w ustawieniach zwykłej jazdy. Jazda w egzaminie próbnym ma osobną preferencję w menu pauzy, domyślnie wyłączoną. Ustawienie zapisuje się w profilu.
+
+[Dzień przed zmianą](screenshots/98-przed-dzien.png) · [Dzień z licznikami](screenshots/98-po-dzien.png) · [Noc przed zmianą](screenshots/98-przed-noc.png) · [Noc z licznikami](screenshots/98-po-noc.png)
+
 ## Ekrany i przepływ
 Boot → wybór profilu (do 4 profili lokalnych, avatar + nick z generatora) → Menu główne (Kampania / Wolna jazda / Plac / Mądra Głowa / Licencja / Warsztat / Album / Osiągnięcia / Ustawienia / Dla rodzica) → CityPicker (mapa Polski) → Miasto.
 **Ekran wyników misji:** gwiazdki (animacja), punkty z rozbiciem (dobre nawyki, błędy, czas), 1 przepis „do zapamiętania”, przycisk „Jeszcze raz po 3 gwiazdki”.

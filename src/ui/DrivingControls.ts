@@ -2,7 +2,11 @@ import type { DriveInput, Scheme, RiderState } from '../gameplay/bicycle';
 import { ui } from '../core/presentation';
 import { CAMERA_HEIGHT_PX } from '../render/projection';
 import type { ProgressStore } from '../core/progressStore';
-import { accessibilityPreferences, ridePreference } from './RidePreferences';
+import {
+  accessibilityPreferences,
+  ridePreference,
+  signalCountdownPreference,
+} from './RidePreferences';
 import {
   positionTouchActions,
   touchLayoutEditor,
@@ -55,6 +59,7 @@ export class DrivingControls {
   readonly notice = document.createElement('p');
   private readonly pauseButton: HTMLButtonElement;
   private readonly lightButton: HTMLButtonElement;
+  private readonly plac: boolean;
   private toggleLabel!: HTMLButtonElement;
   constructor(
     areaTitle: string,
@@ -67,8 +72,9 @@ export class DrivingControls {
     setDebugVisible: (visible: boolean) => void,
     private readonly overlays: OverlayControls,
     private readonly progress: ProgressStore,
-    private readonly plac = false,
+    private readonly area: 'ride' | 'exam' | 'plac' = 'ride',
   ) {
+    const plac = (this.plac = area === 'plac');
     const signal = this.abort.signal;
     const pad = navigator.getGamepads?.().find((gamepad) => gamepad?.connected);
     this.padButtons = pad?.buttons.map((button) => button.pressed) ?? [];
@@ -415,6 +421,7 @@ export class DrivingControls {
       if (!this.plac)
         this.preferences.append(
           ridePreference(this.progress, 'reflectiveVest'),
+          signalCountdownPreference(this.progress, this.area === 'exam'),
         );
       const summary = document.createElement('summary');
       summary.textContent = ui.audio.settings;

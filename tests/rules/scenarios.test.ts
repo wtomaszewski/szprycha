@@ -288,6 +288,34 @@ for (const file of files)
     }
   });
 
+it.each([
+  { offset: 6.75, phase: 'yellow', kind: 'minor', seconds: 2 },
+  { offset: 19.15, phase: 'red', kind: 'major', seconds: 1 },
+] as const)(
+  'keeps a $phase entry with $seconds on the display a violation',
+  ({ offset, phase, kind, seconds }) => {
+    const properties = { 'lights-S-S-1': { offset_s: offset } };
+    const world = makeWorld(properties);
+    const verdicts = run({
+      name: phase,
+      properties,
+      player: { x: 2192, y: 754, heading: -90, speed: 3 },
+      inputs: [{ t: 0.25 }, { t: 0.75, y: 695 }],
+      expect: { 'SYG-01': [kind] },
+    }).filter(({ ruleId }) => ruleId === 'SYG-01');
+    expect(verdicts).toEqual([
+      expect.objectContaining({
+        kind,
+        evidence: expect.objectContaining({ phase }),
+      }),
+    ]);
+    const lane = world.getLane('lights-S')!;
+    expect(
+      world.signalCountdown(lane, 'S-1', verdicts[0]!.at, envDefaults),
+    ).toBe(seconds);
+  },
+);
+
 it('takes the weight of ZNAK-B1 from the rules content', () => {
   const scenario = scenarios.find(({ name }) =>
     name.startsWith('ZNAK-B1 zakaz dotyczy roweru'),

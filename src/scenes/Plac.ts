@@ -143,7 +143,7 @@ export class Plac extends Scene {
       () => {},
       { keyboard: () => this.dialog.open, gamepad: () => this.dialog.open },
       this.progress.store,
-      true,
+      'plac',
     );
     this.dialog = document.createElement('dialog');
     this.dialog.className = 'game-dialog plac-dialog';

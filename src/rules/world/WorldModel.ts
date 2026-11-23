@@ -187,6 +187,25 @@ type Signal = Vec2 & { id: string } & z.infer<typeof signalProperties>;
 export type MainSignal = Extract<Signal, { code: 'S-1' }>;
 export type ArrowSignal = Extract<Signal, { code: 'S-2' }>;
 
+function cyclePosition(signal: MainSignal | CrossingSignal, at: number) {
+  return (at + signal.offset_s) % signal.cycle_s;
+}
+
+function roadSignalPhase(
+  signal: MainSignal,
+  arrow: ArrowSignal | undefined,
+  cycle: number,
+): SignalPhase {
+  if (cycle < signal.green_s) return 'green';
+  if (cycle < signal.green_s + signal.yellow_s) return 'yellow';
+  if (arrow && cycle >= arrow.from_s && cycle < arrow.until_s) return 'arrow';
+  return 'red';
+}
+
+function crossingSignalPhase(signal: CrossingSignal, cycle: number) {
+  return cycle < signal.green_s ? 'green' : 'red';
+}
+
 const pedestrianSpawn = z.object({
   heading: z.number(),
   speed: z.number().positive(),
@@ -727,12 +746,37 @@ export class WorldModel {
     if (forced !== undefined) return forced;
     const signal = lane.mainSignal;
     if (!signal) return 'off';
-    const cycle = (at + signal.offset_s) % signal.cycle_s;
-    if (cycle < signal.green_s) return 'green';
-    if (cycle < signal.green_s + signal.yellow_s) return 'yellow';
-    if (lane.arrow && cycle >= lane.arrow.from_s && cycle < lane.arrow.until_s)
-      return 'arrow';
-    return 'red';
+    return roadSignalPhase(signal, lane.arrow, cyclePosition(signal, at));
+  }
+
+  signalCountdown(
+    lane: Lane,
+    code: Signal['code'],
+    at: number,
+    env: EnvState,
+  ): number | undefined {
+    const signal = lane.mainSignal;
+    if (
+      !signal ||
+      lane.type === 'tram' ||
+      env.signalOverrides?.[lane.id] !== undefined
+    )
+      return;
+    const cycle = cyclePosition(signal, at);
+    const phase = roadSignalPhase(signal, lane.arrow, cycle);
+    if (code === 'S-2') {
+      const arrow = lane.arrow;
+      if (arrow && phase === 'arrow') return Math.ceil(arrow.until_s - cycle);
+      return;
+    }
+    // The main lamp stays red while the conditional arrow turns on and off.
+    const change =
+      phase === 'green'
+        ? signal.green_s
+        : phase === 'yellow'
+          ? signal.green_s + signal.yellow_s
+          : signal.cycle_s;
+    return Math.ceil(change - cycle);
   }
 
   crossingAllowsEntry(crossing: Crossing, at: number, env: EnvState) {
@@ -745,9 +789,21 @@ export class WorldModel {
     if (forced !== undefined) return forced;
     const signal = crossing.signal;
     if (!signal) return 'off';
-    return (at + signal.offset_s) % signal.cycle_s < signal.green_s
-      ? 'green'
-      : 'red';
+    return crossingSignalPhase(signal, cyclePosition(signal, at));
+  }
+
+  crossingCountdown(
+    crossing: Crossing,
+    at: number,
+    env: EnvState,
+  ): number | undefined {
+    const signal = crossing.signal;
+    if (!signal || env.signalOverrides?.[crossing.id] !== undefined) return;
+    const cycle = cyclePosition(signal, at);
+    const phase = crossingSignalPhase(signal, cycle);
+    return Math.ceil(
+      (phase === 'green' ? signal.green_s : signal.cycle_s) - cycle,
+    );
   }
 
   trafficPhase(lane: Lane, at: number, env: EnvState): SignalPhase {

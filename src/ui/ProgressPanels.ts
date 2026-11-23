@@ -1,7 +1,11 @@
 import type { GameContent } from '../content/schemas';
 import { translate, ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
-import { accessibilityPreferences, ridePreference } from './RidePreferences';
+import {
+  accessibilityPreferences,
+  ridePreference,
+  signalCountdownPreference,
+} from './RidePreferences';
 import { audioSettings } from './AudioControls';
 import { touchLayoutEditor } from './TouchLayout';
 import { signIllustration } from './SignIllustration';
@@ -43,6 +47,7 @@ export function progressPanels(
   const settings = () => [
     heading(ui.settings.accessibility),
     ...accessibilityPreferences(progress.store),
+    signalCountdownPreference(progress.store),
     editor.open,
     audioSettings(progress.store),
     heading(ui.settings.equipment),
@@ -109,6 +114,7 @@ function album(progress: MissionProgress, content: GameContent) {
       `${ui.m5c.albumProgress} ${found.length} / ${content.znaki.znaki.length}`,
     ),
     paragraph(ui.m5c.albumHint),
+    paragraph(ui.m5c.signalCountdownHint),
   ];
   if (found.length) parts.push(cards);
   if (missing.length) {
