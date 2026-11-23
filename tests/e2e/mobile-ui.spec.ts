@@ -75,6 +75,13 @@ async function layout(page: Page, controls: Locator, target: number) {
   ).toEqual([viewport.width, viewport.height, 0, 0]);
 }
 
+async function scrollableLayout(page: Page, controls: Locator, target: number) {
+  for (const control of await controls.filter({ visible: true }).all()) {
+    await control.scrollIntoViewIfNeeded();
+    await layout(page, control, target);
+  }
+}
+
 async function unlockQuiz(page: Page) {
   await page.evaluate(
     ({ database, store, key }) =>
@@ -188,8 +195,8 @@ for (const { profile, device, viewport, target, logicalHeight } of [
         quiz.getByRole('img', { name: pl.quiz.signAlt['T-22'], exact: true }),
       ).toBeInViewport();
       await expect(quiz).toHaveCSS('background-color', 'rgb(0, 0, 0)');
-      await layout(page, quiz.locator(buttons), target);
       await shot(page, profile, 'quiz');
+      await scrollableLayout(page, quiz.locator(buttons), target);
       await quiz.getByRole('button', { name: pl.quiz.close }).tap();
 
       await page
@@ -258,7 +265,7 @@ for (const { profile, device, viewport, target, logicalHeight } of [
       await expect(results).toBeVisible();
       await expect(page.locator('.mission-confetti')).toBeHidden();
       await shot(page, profile, 'wynik');
-      await layout(page, results.locator(buttons), target);
+      await scrollableLayout(page, results.locator(buttons), target);
     });
   });
 }

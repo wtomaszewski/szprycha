@@ -1,4 +1,4 @@
-# Audyt dostępności gry — wydanie 2/2, część 1/2
+# Audyt dostępności gry — wydanie 2/2
 
 23.11.2026 · [Zgłoszenie #122](https://github.com/wtomaszewski/szprycha/issues/122)
 
@@ -20,12 +20,11 @@ Testy audytu są w [tests/e2e/accessibility.spec.ts](../tests/e2e/accessibility.
 - Tab wrócił do nawigacji po interfejsie jazdy. M otwiera telefon i po zamknięciu fokus wraca do przycisku, który go otworzył. Obrys w kolorze z palety obejmuje przyciski, odnośniki, pola i sekcje rozwijane. Pad ma widoczny fokus także po wcześniejszym użyciu myszy.
 - D-pad i A obsługują menu i dialogi. D-pad zmienia także listy, suwaki i karty. Strefa Rodzica ma opcję złożenia kodu klasy padem.
 - HUD dopowiada kierunek świata i odległość, a kask i światła mają widoczne oznaczenia stanu. W stop-klatce opis przyczyny korzysta z nazwy reguły. Napisy porady radiowej pozostają w regionie statusu.
-- Tekst uwzględnia ustawienia przeglądarki dzięki jednostkom względnym. Wyniki misji przewijają treść dialogu i utrzymują przyciski przy dolnej krawędzi. Obramowania głównych kontrolek są jaśniejsze.
+- Tekst uwzględnia ustawienia przeglądarki dzięki jednostkom względnym. Wyniki misji przewijają treść i przyciski w jednym obszarze. Obramowania głównych kontrolek są jaśniejsze.
 - Sygnał S-1 zmienia położenie aktywnej lampy. Sygnał zamkniętego przejazdu i przejścia ma dodatkową kreskę. „Mniej efektów” i preferencja systemowa zatrzymują pulsowanie sygnalizacji kolejowej, świateł pojazdów uprzywilejowanych i kierunkowskazów w grze. Stop-klatka zachowuje bazowy zoom.
 
 ## Odłożone i ograniczenia weryfikacji
 
-- Osobny przegląd układu na najmniejszych telefonach, w tym safe area, mapy wyboru miasta i zagęszczenia HUD, pozostaje w otwartym zgłoszeniu [#111](https://github.com/wtomaszewski/szprycha/issues/111).
 - Odczyt głosem na fizycznym urządzeniu wymaga próby z NVDA, VoiceOver lub TalkBack. Chromium potwierdza strukturę, nazwy, opisy i parametry regionów live. Gamepad API jest symulowane w testach. Weryfikacja fizycznego pada i mobilnych WebView wymaga sprzętu.
 - Skan obejmuje interfejs DOM. Dla graficznych sygnałów na płótnie sprawdzono położenie i kształt na zrzutach. Pełna jazda oparta wyłącznie na czytniku ekranu wymaga osobnego projektu nawigacji po świecie gry.
 
@@ -36,3 +35,11 @@ Testy audytu są w [tests/e2e/accessibility.spec.ts](../tests/e2e/accessibility.
 | Fokus i obramowania menu     | [Przed](screenshots/122-menu-przed.png)    | [Po](screenshots/122-menu-po.png)    |
 | Tekst 200% w O grze          | [Przed](screenshots/122-tekst-przed.png)   | [Po](screenshots/122-tekst-po.png)   |
 | Położenie aktywnej lampy S-1 | [Przed](screenshots/122-swiatla-przed.png) | [Po](screenshots/122-swiatla-po.png) |
+
+## Małe telefony
+
+Emulacja dotyku w Chromium obejmuje 640 × 360 i 360 × 640 px, z asymetrycznymi marginesami na wycięcie ekranu i pasek gestów. Każdy rozmiar sprawdzono ze standardowym tekstem i zwykłym kontrastem oraz z bardzo dużym tekstem i wysokim kontrastem. Test otwiera quiz z B-2 i T-22, błędną odpowiedź, bramkę i ustawienia Strefy Rodzica, ustawienia gry, wybór miasta, nocny HUD i długie wyniki misji.
+
+Test mierzy rzeczywisty obszar dotykowy przycisków, list wyboru, suwaków i etykiet pól wyboru po przewinięciu. Każdy mieści się w obszarze bezpiecznym, ma co najmniej 44 × 44 px i odbiera dotyk w środku. Pomiary kontrastu porównują tekst, ikony i obrysy fokusu z pikselami ich tła na zrzucie. Najniższy odczyt wyniósł 6,66:1 w zwykłym kontraście i 15,77:1 w wysokim kontraście. Raport Playwright zapisuje odczyty dla każdego wariantu. [Zgłoszenie #111](https://github.com/wtomaszewski/szprycha/issues/111) · [Test Playwright](../tests/e2e/small-phone.spec.ts)
+
+Zrzuty obejmują początek i koniec przewijanych wyników. Polecenie `UPDATE_SMALL_PHONE_SCREENSHOTS=1 npm run test:e2e -- tests/e2e/small-phone.spec.ts` odtwarza zrzuty. [Zrzuty małych telefonów](screenshots/male-telefony-111/)

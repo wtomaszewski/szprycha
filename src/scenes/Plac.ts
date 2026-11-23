@@ -442,18 +442,10 @@ export class Plac extends Scene {
   }
 
   private breakMinutes: number | null = null;
-  private readonly portraitTouch = matchMedia(
-    '(pointer: coarse) and (orientation: portrait) and (max-width: 600px)',
-  );
 
   update(_time: number, delta: number) {
     const { run, controls } = this;
-    if (
-      !run ||
-      this.dialog.open ||
-      this.portraitTouch.matches ||
-      document.hidden
-    ) {
+    if (!run || this.dialog.open || document.hidden) {
       this.accumulator = 0;
       return;
     }

@@ -57,9 +57,11 @@ export function progressPanels(
 
   function showPanel(label: string, ...elements: HTMLElement[]) {
     title.textContent = label;
+    dialog.classList.toggle('settings-panel', label === ui.settings.title);
     body.replaceChildren(...elements);
     if (!dialog.open) dialog.showModal();
     dialog.scrollTop = 0;
+    body.scrollTop = 0;
   }
 
   const navigation = document.createElement('nav');

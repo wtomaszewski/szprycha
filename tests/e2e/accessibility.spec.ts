@@ -229,6 +229,8 @@ test('quiz i egzamin: pytania, dostępne nazwy oraz informacja zwrotna', async (
   const first = quiz.locator('.quiz-answers button').first();
   await expect(first).toBeFocused();
   await page.keyboard.press('Enter');
+  await expect(quiz.locator('.quiz-feedback')).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(button(quiz, pl.quiz.next)).toBeFocused();
   await audit(page, quiz, pl.quiz.title);
   await page.keyboard.press('Escape');
@@ -417,21 +419,22 @@ test.describe('200% tekstu i nawigacja padem', () => {
   }) => {
     await page.goto('/');
     await expect(page.getByRole('main', { name: pl.title })).toBeVisible();
-    const originalSize = await button(page, pl.settings.title).evaluate(
-      (node) => parseFloat(getComputedStyle(node).fontSize),
+    const settings = dialog(page, pl.settings.title);
+    await useKeyboard(page, button(page, pl.settings.title));
+    const close = button(settings, pl.m5c.close);
+    const originalSize = await close.evaluate((node) =>
+      parseFloat(getComputedStyle(node).fontSize),
     );
+    await useKeyboard(page, close);
     await page.evaluate(() => {
       document.documentElement.style.fontSize = '200%';
     });
-    const settings = dialog(page, pl.settings.title);
     await useKeyboard(page, button(page, pl.settings.title));
-    await expect(button(settings, pl.m5c.close)).toHaveCSS(
-      'font-size',
-      `${2 * originalSize}px`,
-    );
-    for (const panel of [settings, dialog(page, pl.aboutGame.title)]) {
-      await expect(panel).toBeVisible();
-      const layout = await panel.evaluate((node) => ({
+    await expect(close).toHaveCSS('font-size', `${2 * originalSize}px`);
+    const about = dialog(page, pl.aboutGame.title);
+    for (const scroller of [settings.locator('header + div'), about]) {
+      await expect(scroller).toBeVisible();
+      const layout = await scroller.evaluate((node) => ({
         width: node.clientWidth,
         contentWidth: node.scrollWidth,
         height: node.clientHeight,
@@ -439,7 +442,7 @@ test.describe('200% tekstu i nawigacja padem', () => {
       }));
       expect(layout.contentWidth).toBeLessThanOrEqual(layout.width + 1);
       expect(layout.contentHeight).toBeGreaterThan(layout.height);
-      if (panel === settings)
+      if (scroller !== about)
         await useKeyboard(page, button(settings, pl.aboutGame.title));
     }
     await page.keyboard.press('Escape');

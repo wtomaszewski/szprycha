@@ -151,6 +151,7 @@ export function quizPanel(progress: MissionProgress, content: GameContent) {
         );
         const feedback = document.createElement('div');
         feedback.className = 'quiz-feedback';
+        feedback.toggleAttribute('data-incorrect', !correct);
         feedback.append(
           paragraph(
             correct ? labels.correct : labels.incorrect,
@@ -189,7 +190,6 @@ export function quizPanel(progress: MissionProgress, content: GameContent) {
 
   const open = button(labels.title, () => {
     dialog.showModal();
-    dialog.scrollTop = 0;
     showModes();
   });
   open.setAttribute('aria-haspopup', 'dialog');
@@ -255,8 +255,10 @@ export function quizQuestions({
           next.className = 'quiz-primary';
           next.setAttribute('aria-describedby', 'quiz-answer-feedback');
           feedback.id = 'quiz-answer-feedback';
+          feedback.tabIndex = -1;
           answers.replaceChildren(feedback, next);
-          next.focus();
+          feedback.focus({ preventScroll: true });
+          feedback.scrollIntoView({ block: 'start' });
         }),
       );
     }
@@ -265,6 +267,7 @@ export function quizQuestions({
     const { element } = questionPrompt(questionText, question.obrazek);
     body.replaceChildren(element, answers);
     dialog.scrollTop = 0;
+    body.scrollTop = 0;
     prompt.focus();
     if (answer) audio.read('lesson', questionVoiceLine(question, 'pytanie'));
   }

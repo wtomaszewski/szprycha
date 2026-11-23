@@ -352,7 +352,7 @@ test.describe('landscape phone', () => {
     hasTouch: true,
     isMobile: true,
   });
-  test('menu, ride and pause, then the portrait prompt', async ({ page }) => {
+  test('menu, ride and pause, then pause in portrait', async ({ page }) => {
     await page.goto('/');
     await waitForMainMenu(page);
     await screenshot(page, 'telefon-menu');
@@ -376,8 +376,8 @@ test.describe('landscape phone', () => {
     await screenshot(page, 'telefon-pauza');
     await page.setViewportSize({ width: 360, height: 640 });
     await expect(
-      page.getByText(pl.driving.rotate, { exact: true }),
+      page.getByRole('dialog', { name: pl.driving.paused }),
     ).toBeVisible();
-    await screenshot(page, 'telefon-obroc');
+    await screenshot(page, 'telefon-pauza-pion');
   });
 });

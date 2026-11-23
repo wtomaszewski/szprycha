@@ -274,9 +274,6 @@ export class City extends Scene {
     playback?: number;
     shown: boolean;
   };
-  private readonly portraitTouch = matchMedia(
-    '(pointer: coarse) and (orientation: portrait) and (max-width: 600px)',
-  );
   private readonly reducedMotion = matchMedia(
     '(prefers-reduced-motion: reduce)',
   );
@@ -2226,11 +2223,7 @@ export class City extends Scene {
     if (!this.ready) return;
     const input = this.controls.read();
     this.tutorial?.refresh();
-    const quiet =
-      this.controls.paused ||
-      this.phone.open ||
-      this.portraitTouch.matches ||
-      document.hidden;
+    const quiet = this.controls.paused || this.phone.open || document.hidden;
     audio.setActivity(
       !quiet &&
         (!this.mission?.result || this.dialogue.open || Boolean(this.review)),
@@ -2254,7 +2247,6 @@ export class City extends Scene {
       this.questionDialog.open ||
       this.missionInterrupted ||
       this.mission?.result ||
-      this.portraitTouch.matches ||
       document.hidden
     ) {
       this.accumulator = 0;
