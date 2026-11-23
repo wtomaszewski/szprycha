@@ -110,6 +110,30 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
         if (b.width <= 8) ctx.fillRect(2, 2, b.width - 4, b.height - 4);
         return;
       }
+      if (
+        b.landmarkId === 'gdansk-kamienica' ||
+        b.landmarkId === 'zuraw-wieza'
+      ) {
+        ctx.fillStyle = '#5a3a2e';
+        ctx.fillRect(b.width / 2 - 2, 2, 4, b.height - 4);
+        ctx.fillStyle = b.roof === 'copper' ? '#9cceb0' : '#d98a5a';
+        ctx.fillRect(b.width / 2 - 1, 2, 1, b.height - 4);
+        for (let x = 4; x < b.width / 2 - 2; x += 6) {
+          ctx.fillRect(x, b.height - 5, 4, 3);
+          ctx.fillRect(b.width - x - 4, b.height - 5, 4, 3);
+        }
+        return;
+      }
+      if (b.landmarkId === 'zuraw-korpus') {
+        ctx.fillStyle = '#382b29';
+        ctx.fillRect(2, 2, b.width - 4, b.height - 5);
+        ctx.fillStyle = '#725143';
+        for (let x = 5; x < b.width - 3; x += 6)
+          ctx.fillRect(x, 3, 1, b.height - 7);
+        ctx.fillRect(2, 6, b.width - 4, 3);
+        ctx.fillRect(2, b.height - 10, b.width - 4, 3);
+        return;
+      }
       if (b.landmarkId === 'kopernik') {
         ctx.fillStyle = '#257179';
         ctx.fillRect(20, 20, b.width - 40, b.height - 40);
@@ -390,6 +414,17 @@ export function wallTexture(
           w,
           FLOOR_PX,
         );
+      }
+    }
+    if (b.landmarkId === 'zuraw-korpus') {
+      ctx.fillStyle = '#3e2c28';
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = '#694633';
+      for (let x = 2; x < width; x += 6) ctx.fillRect(x, 0, 1, height);
+      for (let y = 4; y < height; y += FLOOR_PX) ctx.fillRect(0, y, width, 3);
+      if (groundFloor) {
+        ctx.fillStyle = '#1a1c2c';
+        ctx.fillRect(width / 2 - 9, height - 14, 18, 14);
       }
     }
     if (b.wall === 'glass') {

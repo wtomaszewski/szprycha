@@ -248,6 +248,13 @@ function drawTerrain(sheet: PNG, seed: number) {
     noise(f, gid, cream, 39, 2);
   });
 
+  tiles.sand.forEach((gid, i) => {
+    const f = tile(gid);
+    f.box(0, 0, 32, 32, cream);
+    noise(f, gid, sand, 19 + i * 3);
+    noise(f, gid, white, 34, 2);
+  });
+
   tiles.water.forEach((gid, i) => {
     const f = tile(gid);
     f.box(0, 0, 32, 32, blue);

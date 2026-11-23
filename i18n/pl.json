@@ -236,6 +236,7 @@
     "warsawTitle": "Warszawa",
     "wroclawTitle": "Wrocław",
     "krakowTitle": "Kraków",
+    "gdanskTitle": "Gdańsk",
     "districtLocked": "Przejście zamknięte. Zatrzymaj się i otwórz ćwiczenia w SzprychaApp.",
     "districtsOpened": "Nowe przejście otwarte! Wróć do Wolnej jazdy, żeby je odkryć.",
     "obwarzanki": "Obwarzanki",
@@ -505,6 +506,45 @@
     "gloryVoice": "Misja ukończona. Zobacz swój dobry nawyk w momencie chwały!"
   },
   "misje": {
+    "GDA-B-01": {
+      "tytul": "Kładka przy Żurawiu",
+      "opis": "Przygotuj rower po zmroku i przeprowadź go przez oznaczoną kładkę nad Motławą.",
+      "start": "Zapnij kask i włącz obie lampki.",
+      "kladka": "Przed znakiem B-9 zejdź z roweru i wejdź na kładkę.",
+      "meta": "Poprowadź rower na drugi brzeg."
+    },
+    "GDA-B-02": {
+      "tytul": "Promenada w Brzeźnie",
+      "opis": "Ustąp pieszym na wspólnej drodze i przećwicz bezpieczną reakcję na upadek.",
+      "postoj": "Zatrzymaj się przy znaku wspólnej drogi dla pieszych i rowerów.",
+      "pytanie": "Co zrobisz, gdy piesi idą wspólną drogą C-13/C-16?",
+      "odp1": "Zadzwonię i przejadę, bo rower ma pierwszeństwo.",
+      "odp2": "Zwolnię, ustąpię pieszym i zostawię im miejsce.",
+      "wyjasnienie": "Na wspólnej drodze piesi mają pierwszeństwo.",
+      "pomoc": "Jedź spokojnie do następnego znacznika i zatrzymaj się.",
+      "pytanie_pomoc": "Ktoś przewrócił się na wspólnej drodze. Co zrobisz najpierw?",
+      "pomoc_odp1": "Zatrzymam się bezpiecznie z boku i ostrzegę innych.",
+      "pomoc_odp2": "Zostawię rower na środku i od razu podbiegnę.",
+      "pomoc_wyjasnienie": "Zadbaj o bezpieczeństwo swoje i innych, zanim podejdziesz do osoby, która upadła.",
+      "meta": "Jedź dalej. Zwolnij i zostaw miejsce pieszym."
+    },
+    "GDA-B-03": {
+      "tytul": "Wiatr i piasek",
+      "opis": "Omiń zamknięty skrót przez wydmy i przejedź ostrożnie po zapiaszczonej drodze.",
+      "objazd": "Cofnij się wzdłuż promenady i dojedź do drogi zachodnim zjazdem.",
+      "piasek": "Zwolnij na piasku, żeby zdążyć się bezpiecznie zatrzymać.",
+      "meta": "Jedź powoli prawą stroną aż do końca drogi."
+    },
+    "GDA-B-04": {
+      "tytul": "Zielone w stronę stoczni",
+      "opis": "Sprawdź, kiedy możesz wjechać na przejazd dla rowerów przy alei.",
+      "postoj": "Zatrzymaj się przed przejazdem rowerowym.",
+      "pytanie": "Zapaliło się zielone światło dla rowerów, ale auto jeszcze jedzie przez przejazd. Co robisz?",
+      "odp1": "Czekam, aż auto zjedzie i przejazd będzie wolny.",
+      "odp2": "Natychmiast wjeżdżam, bo mam zielone.",
+      "wyjasnienie": "Rusz na zielonym, gdy przejazd jest wolny. Nigdy nie wjeżdżaj tuż przed jadące auto.",
+      "meta": "Poczekaj na zielone dla rowerów i przejedź po P-11."
+    },
     "KRA-B-01": {
       "tytul": "Wieczorny spacer po Rynku",
       "opis": "Przygotuj rower po zmroku i podejdź pod Sukiennice. To ćwiczenie otwiera Wawel i Kazimierz.",
@@ -1466,6 +1506,22 @@
     "readMore": "Przewiń tekst"
   },
   "dialogi": {
+    "GDA-B-01": {
+      "start": "Po zmroku zapnij kask i włącz światła. Zobacz, jaki znak stoi przy wejściu na kładkę.",
+      "koniec": "Rower przeprowadzony! Otwieramy Ołowiankę i promenadę w Brzeźnie."
+    },
+    "GDA-B-02": {
+      "start": "Na nadmorskiej drodze spacerują piesi. Zostaw im miejsce i zwolnij, kiedy się zbliżasz.",
+      "koniec": "Dobrze, każdy miał miejsce. Teraz sprawdzimy, jak jedzie się po piasku."
+    },
+    "GDA-B-03": {
+      "start": "Silny wiatr nawiał piasek na asfalt. Hamuj wcześniej i jedź spokojnie.",
+      "koniec": "Przejazd zaliczony. Teraz możesz zajrzeć na plażę."
+    },
+    "GDA-B-04": {
+      "start": "Spójrz na sygnalizator dla rowerów. Zielone dla innych uczestników może zapalić się w innej chwili.",
+      "koniec": "Przejazd zaliczony. Możesz zajrzeć do stoczni."
+    },
     "wroclaw_zapowiedzi": {
       "MAN-03": "Przed zmianą pasa rozejrzyj się, zasygnalizuj i ustąp tym, którzy już jadą tym pasem.",
       "ZNAK-D1": "Żółty romb D-1 oznacza drogę z pierwszeństwem.",

@@ -45,7 +45,54 @@ export function drawMapDecorations(
       continue;
     }
     centers.push({ x, y });
-    if (kind === 'truss-bridge') {
+    if (kind === 'kladka-drewniana') {
+      scenery.fillStyle(0x9b7352).fillRect(x, y, width, height);
+      for (let dy = 2; dy < height - 2; dy += 8) {
+        scenery
+          .fillStyle(dy % 16 === 2 ? 0xd9b48a : 0xb48661)
+          .fillRect(x + 5, y + dy, width - 10, 6);
+        centers.push({ x: x + width / 2, y: y + dy });
+      }
+      for (const side of [x, x + width - 5])
+        scenery.fillStyle(0x4d3c37).fillRect(side, y, 5, height);
+    } else if (kind === 'stocznia-dzwig') {
+      const top = y - height;
+      const jib = top + 36;
+      const steel = 0x558468;
+      scenery
+        .fillStyle(0x333c57)
+        .fillRect(x - 13, y - 8, 26, 16)
+        .lineStyle(5, steel)
+        .lineBetween(x - 10, y, x - 10, top)
+        .lineBetween(x + 10, y, x + 10, top)
+        .lineBetween(x - 40, jib - 16, x + width, jib)
+        .lineBetween(x, jib - 9, x + width, jib + 12)
+        .lineStyle(2, 0x9da890)
+        .lineBetween(x, top, x + width - 24, jib)
+        .lineBetween(x + width - 12, jib + 8, x + width - 12, jib + 59)
+        .fillStyle(0xcdad68)
+        .fillRect(x + width - 16, jib + 59, 8, 5)
+        .fillRect(x - 13, top - 3, 26, 9);
+      for (let dy = 4; dy < height - 20; dy += 20)
+        scenery
+          .lineStyle(2, steel)
+          .lineBetween(x - 10, y - dy, x + 10, y - dy - 10)
+          .lineBetween(x + 10, y - dy - 10, x - 10, y - dy - 20);
+      for (let dx = -28; dx < width; dx += 48)
+        centers.push({ x: x + dx, y: jib });
+      for (let dy = 0; dy < height; dy += 56) centers.push({ x, y: y - dy });
+    } else if (kind === 'morska-piana') {
+      scenery.fillStyle(0x65bfb6).fillRect(x, y, width, 4);
+      for (let dx = 0; dx < width - 16; dx += 36) {
+        scenery.fillStyle(0xc1e4cb).fillRect(x + dx, y + 2 + (dx % 5), 13, 2);
+        centers.push({ x: x + dx, y });
+      }
+    } else if (kind === 'piasek-na-asfalcie') {
+      for (let i = 0; i < 15; i++)
+        scenery
+          .fillStyle(i % 3 ? 0xb39c75 : 0xd9b48a)
+          .fillRect(x + ((i * 13) % 55), y + ((i * 5) % 12), 4 + (i % 4), 1);
+    } else if (kind === 'truss-bridge') {
       const steel = color ?? 0x3e8948;
       for (const edge of [x, x + width]) {
         scenery
@@ -72,7 +119,7 @@ export function drawMapDecorations(
         .fillEllipse(x, y + 3, 9, 12)
         .fillStyle(0xfeae34)
         .fillRect(x - 2, y - 5, 4, 3);
-    } else if (kind === 'fountain') {
+    } else if (kind === 'fountain' || kind === 'gdansk-fontanna') {
       const water = color ?? 0x73eff7;
       neons.push({ x, y, color: water });
       scenery
@@ -88,6 +135,16 @@ export function drawMapDecorations(
         .lineBetween(x, y + 4, x + 12, y - 6)
         .fillStyle(0xf4f4f4)
         .fillRect(x - 2, y - 16, 4, 3);
+      if (kind === 'gdansk-fontanna')
+        scenery
+          .fillStyle(0xd9b48a)
+          .fillCircle(x, y + 3, 8)
+          .fillStyle(0x487b62)
+          .fillRect(x - 3, y - 18, 6, 21)
+          .fillCircle(x, y - 20, 4)
+          .lineStyle(2, 0x487b62)
+          .lineBetween(x + 8, y + 7, x + 12, y - 25)
+          .lineBetween(x + 8, y - 23, x + 15, y - 23);
     } else if (kind === 'tram-platform') {
       scenery
         .fillStyle(0x333c57)

@@ -1,6 +1,6 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { playableCity } from '../src/content/missions.ts';
+import { campaignCity } from '../src/content/missions.ts';
 import { examRoute } from '../src/gameplay/exam/route.ts';
 import type { GameContent } from '../src/content/schemas.ts';
 import { MissionSystem } from '../src/gameplay/MissionSystem.ts';
@@ -53,7 +53,7 @@ export async function validateMaps(root: string, content: GameContent) {
           `Map ${map}: unknown question ${item.question} for ${item.id}`,
         );
   const signCodes = new Set(content.znaki.znaki.map(({ kod }) => kod));
-  const examRoutes = playableCity.options.map((city) =>
+  const examRoutes = campaignCity.options.map((city) =>
     examRoute(city, content.balans.licencja),
   );
   for (const mission of [...content.misje, ...examRoutes]) {

@@ -16,6 +16,11 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Gdańsk 1/2 — mapa (#125)
+
+- W Wolnej jeździe można wybrać Gdańsk i przejechać kolaż obejmujący Długi Targ, Żuraw, stocznię, kładki i plażę. Cztery ćwiczenia `GDA-B-*` prowadzą przez kolejne odblokowania.
+- Raport strict wykazuje 13/13 sytuacji i 7/7 modułów M01–M07. Testy obejmują dziesięć minut ruchu AI dla trzech ziaren oraz zapis odblokowań po przeładowaniu gry. Kampania stanowi część 2/2. [Mapa, weryfikacja i zrzuty](docs/05_mapy.md#gdańsk)
+
 ## Kraków 2/2 — kampania (#106)
 
 - „Błyskawica nad Wisłą” ma trzy szkolenia i 15 misji głównych. Kampania działa na mapie z #105 i korzysta z dotychczasowych zapisów szkolenia oraz dzielnic. Profil w wersji 11 przechowuje także wybór krakowskiej kampanii i kolekcję.

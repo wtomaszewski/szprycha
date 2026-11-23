@@ -18,6 +18,38 @@
       "text": "Przy znaku STOP zatrzymaj się zawsze, nawet gdy nic nie jedzie, i przepuść pojazdy z pierwszeństwem.",
       "hash": "cb4289aae6d8d5b91ae07c34f66ca6ebd10be0433c6328f2aa8870f284af067a"
     },
+    "dialogi.GDA-B-01.koniec": {
+      "text": "Rower przeprowadzony! Otwieramy Ołowiankę i promenadę w Brzeźnie.",
+      "hash": "1bc7b36d0a991624b469ba2a781464a8bccb6d526aa833b801bf0695f3b2c01c"
+    },
+    "dialogi.GDA-B-01.start": {
+      "text": "Po zmroku zapnij kask i włącz światła. Zobacz, jaki znak stoi przy wejściu na kładkę.",
+      "hash": "1363098b4e52762da0cafbea776e51093242ba0602b9bf764ac529ac033678e6"
+    },
+    "dialogi.GDA-B-02.koniec": {
+      "text": "Dobrze, każdy miał miejsce. Teraz sprawdzimy, jak jedzie się po piasku.",
+      "hash": "e6f4b6721341082a17927a4afd214004fde0d7421aa3645759809d2dffe91532"
+    },
+    "dialogi.GDA-B-02.start": {
+      "text": "Na nadmorskiej drodze spacerują piesi. Zostaw im miejsce i zwolnij, kiedy się zbliżasz.",
+      "hash": "51c507ab9b72e19a1664a9c25fdc83d6732c5452aed6580b183d0057b4c4cebb"
+    },
+    "dialogi.GDA-B-03.koniec": {
+      "text": "Przejazd zaliczony. Teraz możesz zajrzeć na plażę.",
+      "hash": "b5698d363ee75dab1343b010446a71b94e172e17ca26457be5185c34be6e5f09"
+    },
+    "dialogi.GDA-B-03.start": {
+      "text": "Silny wiatr nawiał piasek na asfalt. Hamuj wcześniej i jedź spokojnie.",
+      "hash": "a489cb814d154f3201a7da3236d78cea6494004429a36c6df97adc8cb3b471d4"
+    },
+    "dialogi.GDA-B-04.koniec": {
+      "text": "Przejazd zaliczony. Możesz zajrzeć do stoczni.",
+      "hash": "6765da46e5a47908713b986109edbd07a16ed1b0dc7ba1c8639605cc60c598b3"
+    },
+    "dialogi.GDA-B-04.start": {
+      "text": "Spójrz na sygnalizator dla rowerów. Zielone dla innych uczestników może zapalić się w innej chwili.",
+      "hash": "b46a8cca2b30dcb88fe9582bb7fe051d6c5f486159532cd8aa2d3d9e4910951a"
+    },
     "dialogi.KRA-A1-01.koniec": {
       "text": "Skrót? Przy znaku musiałem zawrócić. Moje zaproszenia nadal stygną w torbie!",
       "hash": "e7dc8faf2eef98f13cc531bee356de3baaaa51192546b7dfa586e6bdc3bcc254"
@@ -793,6 +825,30 @@
     "m5c.photoSaved": {
       "text": "Zdjęcie trafiło do Albumu Znaków.",
       "hash": "35ebb45b92119c5407f57c31e142e1511b5bdc30c69bb00355d29ba92fd69989"
+    },
+    "misje.GDA-B-02.pomoc_wyjasnienie": {
+      "text": "Zadbaj o bezpieczeństwo swoje i innych, zanim podejdziesz do osoby, która upadła.",
+      "hash": "f68a191f9fe2ad4a540e14d61839b4069c96a50feb606f71e49256842e14027d"
+    },
+    "misje.GDA-B-02.pytanie": {
+      "text": "Co zrobisz, gdy piesi idą wspólną drogą C-13/C-16?",
+      "hash": "e51618087dedea993de3b15ef1a185ee387fcd2fa5980e3d9bf7f4481c1734a6"
+    },
+    "misje.GDA-B-02.pytanie_pomoc": {
+      "text": "Ktoś przewrócił się na wspólnej drodze. Co zrobisz najpierw?",
+      "hash": "e7b1a3d86793be9fd4b75d6718e3d43edbabcee3b1160be4ce0dd714a20d3343"
+    },
+    "misje.GDA-B-02.wyjasnienie": {
+      "text": "Na wspólnej drodze piesi mają pierwszeństwo.",
+      "hash": "9414c044e03420b33e440399d5b8772b50020b787f69ee836f08bdd505d2c28a"
+    },
+    "misje.GDA-B-04.pytanie": {
+      "text": "Zapaliło się zielone światło dla rowerów, ale auto jeszcze jedzie przez przejazd. Co robisz?",
+      "hash": "9b37bc72fe32a121783ffb997876ccd6e15789f1d0956a95fe90315fd636ea99"
+    },
+    "misje.GDA-B-04.wyjasnienie": {
+      "text": "Rusz na zielonym, gdy przejazd jest wolny. Nigdy nie wjeżdżaj tuż przed jadące auto.",
+      "hash": "9deeefb1c55140f0a33a28c7a47a15c3a143e64c5f99cb151b581dd66d0f5607"
     },
     "misje.KRA-A2-05.cel1_pytanie": {
       "text": "Przed rondem stoi A-7 razem z C-12. Komu ustępujesz przy wjeździe?",

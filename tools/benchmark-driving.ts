@@ -21,7 +21,8 @@ if (
   requestedMap !== 'miasteczko' &&
   requestedMap !== 'warszawa' &&
   requestedMap !== 'wroclaw' &&
-  requestedMap !== 'krakow'
+  requestedMap !== 'krakow' &&
+  requestedMap !== 'gdansk'
 )
   throw new Error(`Unknown benchmark map: ${requestedMap}`);
 const map = requestedMap;
@@ -29,7 +30,11 @@ const warsaw = map === 'warszawa';
 const wroclaw = map === 'wroclaw';
 const fragment =
   process.env.BENCH_FRAGMENT ??
-  (warsaw || map === 'miasteczko' ? 'praga' : 'rynek');
+  (warsaw || map === 'miasteczko'
+    ? 'praga'
+    : map === 'gdansk'
+      ? 'targ'
+      : 'rynek');
 const missions = { most: 'WAW-A1-04', starowka: 'WAW-A1-05' } as const;
 const warsawSpawns: Record<string, { x: number; y: number; heading: number }> =
   {
@@ -51,8 +56,18 @@ const krakowSpawns: typeof warsawSpawns = {
   rynek: { x: 1290, y: 776, heading: 0 },
   bulwary: { x: 2674, y: 2144, heading: 0 },
 };
+const gdanskSpawns: typeof warsawSpawns = {
+  targ: { x: 1390, y: 836, heading: 0 },
+  plaza: { x: 2940, y: 3190, heading: 0 },
+};
 const freeSpawns =
-  map === 'krakow' ? krakowSpawns : wroclaw ? wroclawSpawns : warsawSpawns;
+  map === 'gdansk'
+    ? gdanskSpawns
+    : map === 'krakow'
+      ? krakowSpawns
+      : wroclaw
+        ? wroclawSpawns
+        : warsawSpawns;
 if (
   (map === 'miasteczko' && process.env.BENCH_FRAGMENT) ||
   (map !== 'miasteczko' &&
@@ -137,11 +152,13 @@ async function runTrial() {
     const completed =
       map === 'krakow'
         ? ['KRA-B-01', 'KRA-B-02', 'KRA-B-03']
-        : mission === 'WAW-A1-04'
-          ? orders.slice(0, -1)
-          : mission
-            ? orders
-            : [];
+        : map === 'gdansk'
+          ? ['GDA-B-01', 'GDA-B-02', 'GDA-B-03', 'GDA-B-04']
+          : mission === 'WAW-A1-04'
+            ? orders.slice(0, -1)
+            : mission
+              ? orders
+              : [];
     // Both revisions begin the benchmark on the same returning profile.
     await page.addInitScript(
       ({ key, completed }) =>

@@ -96,7 +96,11 @@ export class TrafficArt {
       case 'tram':
         this.row = Math.max(
           0,
-          tramCities.findIndex((city) => mapId.startsWith(city)),
+          tramCities.findIndex(
+            (city) =>
+              mapId.startsWith(city) ||
+              (city === 'krakow' && mapId === 'gdansk'),
+          ),
         );
         this.rear = scene.add
           .image(0, 0, key, this.row * 2 + 1)

@@ -1,58 +1,15 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import questions from '../../content/pytania.json' with { type: 'json' };
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { legacyProgressKey } from '../../src/core/progressStore';
-import { chooseCity, cityPin } from './city-picker';
+import { chooseCity, cityPin, driveTo, startAt } from './city-picker';
 import { readProfile } from './progress-profile';
-
-async function startAt(page: Page, x: number, y: number, heading: number) {
-  await page.route(/\/krakow(?:-[^/]+)?\.tmj(?:\?|$)/, async (route) => {
-    if (route.request().resourceType() === 'script') return route.continue();
-    const response = await route.fetch();
-    const tiled = await response.json();
-    const player = tiled.layers.find(
-      ({ name }: { name: string }) => name === 'spawns',
-    ).objects[0];
-    Object.assign(player, { x, y });
-    player.properties.find(
-      ({ name }: { name: string }) => name === 'heading',
-    ).value = heading;
-    await route.fulfill({ response, json: tiled });
-  });
-}
-
-async function driveTo(
-  page: Page,
-  key: string,
-  axis: 'x' | 'y',
-  target: number,
-  increase: boolean,
-) {
-  await page.keyboard.down(key);
-  try {
-    await page.waitForFunction(
-      ({ axis, target, increase }) => {
-        const pos = Number(document.querySelector('canvas')?.dataset[axis]);
-        return increase ? pos >= target : pos <= target;
-      },
-      { axis, target, increase },
-    );
-  } finally {
-    await page.keyboard.up(key);
-  }
-  await page.keyboard.down('Space');
-  try {
-    await expect(page.locator('canvas')).toHaveAttribute('data-speed', '0');
-  } finally {
-    await page.keyboard.up('Space');
-  }
-}
 
 test('opens Kraków in free ride and saves district progression', async ({
   page,
 }, info) => {
   test.setTimeout(100_000);
-  await startAt(page, 1730, 1270, Math.PI / 2);
+  await startAt(page, 'krakow', 1730, 1270, Math.PI / 2);
   await page.goto('/');
   await page
     .getByRole('button', { name: pl.cityPicker.campaign, exact: true })
@@ -241,7 +198,7 @@ for (const [name, x, y, heading = 0] of views)
       { key: legacyProgressKey },
     );
     if (name === 'tramwaj') await page.clock.install();
-    await startAt(page, x, y, heading);
+    await startAt(page, 'krakow', x, y, heading);
     await page.goto('/');
     await chooseCity(page, 'krakow');
     const canvas = page.locator('canvas[data-map="krakow"]');

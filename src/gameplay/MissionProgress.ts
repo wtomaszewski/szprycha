@@ -11,6 +11,7 @@ import type {
   MissionCity,
   MissionDefinition,
   PlayableCity,
+  CampaignCity,
 } from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { BreakReminder } from '../progression/breakReminder';
@@ -347,7 +348,7 @@ export class MissionProgress {
     });
   }
 
-  get selectedCity(): PlayableCity {
+  get selectedCity(): CampaignCity {
     return this.store.profile.selectedCity ?? 'warszawa';
   }
 
@@ -357,7 +358,8 @@ export class MissionProgress {
 
   async selectCity(city: PlayableCity, freeRide = false) {
     this.store.change((profile) => {
-      if (freeRide && city === 'krakow') profile.freeRideCity = city;
+      if (city === 'gdansk' || (freeRide && city === 'krakow'))
+        profile.freeRideCity = city;
       else {
         if (freeRide) delete profile.freeRideCity;
         profile.selectedCity = city;
