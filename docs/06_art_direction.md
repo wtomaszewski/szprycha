@@ -144,6 +144,10 @@ Tramwaje Krakowa i Gdańska mają srebrne pasy wzdłuż grafitowej bryły, ciemn
 | Dawny browar | Warzelnia, niższy magazyn i wysoki, wąski komin z ciemnoczerwonej cegły. Ściany bez napisów, reklam i oznaczeń handlowych. |
 | Bulwar Warty | Jasne nabrzeże ze schodkami, ławkami, drzewami i odcinkiem czerwonej drogi dla rowerów na przeciwległym brzegu. |
 
+**Drewniane rogale.** Autorski sprite 16 × 16 z łukiem o dwóch zwężonych końcach, pikselami w kolorze drewna i ciemnym obrysem. Powstaje w `src/render/CityCollectibles.ts`.
+
+**Pomoc za mostem.** Nieruchomy rower leży obok siedzącego Turbo. Scenkę przy dojściu do katedry rysuje renderer dekoracji na podstawie obiektu z generatora mapy.
+
 ## 7. Kafelki (tileset minimum)
 Asfalt (zwykły, łatany, mokry), linie (ciągła, przerywana, P-10 zebra, P-11 przejazd rowerowy — czerwony/kratka, P-12, P-13 trójkąty, P-23 symbol roweru, strzałki), chodnik (płyty), kostka, kocie łby, krawężniki (z przejściami obniżonymi), DDR (czerwona nawierzchnia), trawa, żwir, pobocze, tory tramwajowe (w jezdni i na zieleni), tory kolejowe, zapory (animowane), woda (animowana 4 klatki), nabrzeże, schodki, piasek plaży miejskiej, liście jesienią, śnieg (wariant zimowy).
 

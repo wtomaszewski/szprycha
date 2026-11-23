@@ -228,7 +228,8 @@ export class MissionSystem {
     return goal?.typ === 'zbierz_krasnala' ||
       goal?.typ === 'zbierz_obwarzanka' ||
       goal?.typ === 'zbierz_bursztyn' ||
-      goal?.typ === 'zbierz_szyszke'
+      goal?.typ === 'zbierz_szyszke' ||
+      goal?.typ === 'zbierz_rogala'
       ? goal.poi
       : undefined;
   }

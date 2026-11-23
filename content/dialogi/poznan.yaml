@@ -1,3 +1,64 @@
 zapowiedzi:
   - { regula: GDZIE-13, emocja: neutral, tekst: dialogi.poznan_zapowiedzi.GDZIE-13 }
   - { regula: PIER-10, emocja: neutral, tekst: dialogi.poznan_zapowiedzi.PIER-10 }
+dialogi:
+  - id: dialogi.POZ-A1-01.start
+    linie:
+      - postac: pan_kazik
+        emocja: neutral
+        tekst: dialogi.POZ-A1-01.start
+  - id: dialogi.POZ-A1-01.koniec
+    linie:
+      - postac: pan_kazik
+        emocja: proud
+        tekst: dialogi.POZ-A1-01.koniec
+  - id: dialogi.POZ-A1-02.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.POZ-A1-02.start
+  - id: dialogi.POZ-A1-02.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: proud
+        tekst: dialogi.POZ-A1-02.koniec
+  - id: dialogi.POZ-A2-01.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.POZ-A2-01.start
+  - id: dialogi.POZ-A2-01.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.POZ-A2-01.koniec
+  - id: dialogi.POZ-A2-02.start
+    linie:
+      - postac: inzynier_zawila
+        emocja: neutral
+        tekst: dialogi.POZ-A2-02.start
+  - id: dialogi.POZ-A2-02.koniec
+    linie:
+      - postac: inzynier_zawila
+        emocja: proud
+        tekst: dialogi.POZ-A2-02.koniec
+  - id: dialogi.POZ-A3-01.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.POZ-A3-01.start
+  - id: dialogi.POZ-A3-01.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.POZ-A3-01.koniec
+  - id: dialogi.POZ-A3-02.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.POZ-A3-02.start
+  - id: dialogi.POZ-A3-02.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: proud
+        tekst: dialogi.POZ-A3-02.koniec

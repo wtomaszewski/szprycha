@@ -287,18 +287,22 @@ Zegar Ratusza zaczyna od 11:00 i po 12 sekundach symulacji wskazuje południe. P
 | `POZ-B-03` | Zatrzymaj się przed zebrą i przejedź, gdy piesza idąca na peron zwolni twój pas. |
 | `POZ-B-04` | Włącz lampki, zasygnalizuj zamiar skrętu i jedź wspólną drogą przez most. Przy katedrze wybierz bezpieczną kolejność udzielania pomocy. |
 
-`npm run coverage:maps -- --strict` sprawdza 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/poznan.test.ts` sprawdza legalne trasy czterech ćwiczeń, zakazany skrót, czerwone światło w śluzie i dziesięć minut ruchu na każdym z trzech ziaren. `npm run test:e2e -- tests/e2e/poznan.spec.ts` sprawdza wybór miasta w Wolnej jeździe, zapis wyboru, uruchomienie szkolenia i renderowanie miejsc. [Raport pokrycia](coverage.md#poznań)
+**Kampania → Poznań** wznawia najbliższą nieukończoną misję. Po czterech szkoleniach odblokowuje się sześć misji głównych w trzech aktach. Trzy drewniane rogale z zagadkami leżą na rynku, a czwarty na bulwarze. Podejdź do znajdziek, prowadząc rower. Po finale można wybrać Poznań na przejazd kontrolny przez śluzę po spełnieniu wymagań Licencji Szprychy. [Fabuła](02_fabula.md#poznań--trzy-znaki-na-drewnie) · [Misje](03_misje.md#kampania--poznań)
 
-Pomiary wykonano kolejno na tej samej maszynie na buildzie produkcyjnym. Chromium 156.0.8078.79 działał w trybie headless z WebGL, pełną grafiką, widokiem 640 × 360 i ograniczeniem CPU 4×. Tabela podaje mediany dwóch prób w Wolnej jeździe.
+`npm run coverage:maps -- --strict` sprawdza w CI 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/poznan.test.ts tests/missions/poznan-campaign.test.ts` sprawdza cztery szkolenia, sześć misji głównych, przejazd kontrolny, dwa niedozwolone skróty, czerwone światło w śluzie i dziesięć minut ruchu na każdym z trzech ziaren. `npm run test:e2e -- tests/e2e/poznan.spec.ts` sprawdza wybór miasta, wznawianie kampanii, zapisywanie rogala po zagadce, scenkę pierwszej pomocy i renderowanie miejsc. [Raport pokrycia](coverage.md#poznań)
+
+Pomiary dla #138 wykonano kolejno na tej samej maszynie na buildzie produkcyjnym. Chromium 156.0.8078.79 działał w trybie headless z WebGL, pełną grafiką, widokiem 640 × 360 i ograniczeniem CPU 4×. Tabela podaje mediany dwóch prób w Wolnej jeździe.
 
 | Odcinek | Średnie FPS | p95 klatki |
 | --- | ---: | ---: |
-| Poznań, Stary Rynek | 46,19 | 33,4 ms |
-| Warszawa, Starówka | 43,62 | 33,4 ms |
+| Poznań, Stary Rynek | 45,68 | 33,4 ms |
+| Warszawa, Starówka | 43,09 | 33,4 ms |
 
 Po `npm run build && npm run preview` uruchom `BENCH_URL=http://127.0.0.1:4173/ BENCH_VIEWPORT=640x360 BENCH_MAP=poznan BENCH_RUNS=2 npm run benchmark:driving`. Dla Warszawy ustaw `BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free`.
 
 Zrzuty z gry pokazują [wybór miasta](screenshots/137-mapa-polski.webp), [Stary Rynek przed południem](screenshots/137-przed-poludniem.webp), [pokaz koziołków](screenshots/137-rynek.webp), [Ostrów Tumski](screenshots/137-ostrow.webp), [dawny browar](screenshots/137-browar.webp), [bulwar Warty](screenshots/137-bulwar.webp), [tramwaj na przystanku](screenshots/137-tramwaj.webp) i [śluzę rowerową](screenshots/137-sluza.webp).
+
+Zrzuty kampanii pokazują [wybór Poznania](screenshots/138-kampania.webp), [drewniane rogale na rynku](screenshots/138-rogale.webp), [pierwszą zagadkę](screenshots/138-zagadka.webp) i [scenkę pierwszej pomocy](screenshots/138-pierwsza-pomoc.webp).
 
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
 Wzorowane na prawdziwych szkolnych miasteczkach ruchu: małe skrzyżowania każdego typu, mini-rondo, sygnalizacja, przejazd kolejowy z zaporami, znaki z Albumu na tablicach, **plac manewrowy** (ósemka, slalom, tor wąski, pole zatrzymania). Tu: samouczek, plac, quiz w budynku szkoły, egzamin Licencji.

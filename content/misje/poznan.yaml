@@ -1,7 +1,6 @@
 - id: POZ-B-01
   miasto: poznan
   akt: 0
-  poboczna: true
   tytul: misje.POZ-B-01.tytul
   opis: misje.POZ-B-01.opis
   zleceniodawca: sierzant_ola
@@ -31,7 +30,6 @@
 - id: POZ-B-02
   miasto: poznan
   akt: 0
-  poboczna: true
   tytul: misje.POZ-B-02.tytul
   opis: misje.POZ-B-02.opis
   zleceniodawca: sierzant_ola
@@ -58,7 +56,6 @@
 - id: POZ-B-03
   miasto: poznan
   akt: 0
-  poboczna: true
   tytul: misje.POZ-B-03.tytul
   opis: misje.POZ-B-03.opis
   zleceniodawca: sierzant_ola
@@ -85,7 +82,6 @@
 - id: POZ-B-04
   miasto: poznan
   akt: 0
-  poboczna: true
   tytul: misje.POZ-B-04.tytul
   opis: misje.POZ-B-04.opis
   zleceniodawca: sierzant_ola
@@ -118,3 +114,167 @@
   par_s: 115
   min_dobre_nawyki: 0
   nagrody: { zetony: 0, xp: 0 }
+
+- id: POZ-A1-01
+  miasto: poznan
+  akt: 1
+  tytul: misje.POZ-A1-01.tytul
+  opis: misje.POZ-A1-01.opis
+  zleceniodawca: pan_kazik
+  typ: dostawa
+  wymagania: { misje_ukonczone: [POZ-B-01, POZ-B-02, POZ-B-03, POZ-B-04] }
+  start: { poi: poz-rynek-start, kask_zapiety: false }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.POZ-B-01.start }
+    - { typ: odbierz, poi: poz-rynek-start, przedmiot: pudelko_rogali, opis: misje.POZ-A1-01.odbior }
+    - { typ: dojedz, poi: poz-rynek-obejscie, opis: misje.POZ-B-01.obejscie }
+    - { typ: oddaj, poi: poz-rynek-meta, przedmiot: pudelko_rogali, opis: misje.POZ-A1-01.meta }
+  zdarzenia_wymuszone: [{ typ: czytaj_oznakowanie, przy: poz-rynek-start, regula: ZNAK-B1 }]
+  skrot: { odcinek: skrot-przez-pasaz }
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [KASK-01, GDZIE-07, ZNAK-B1]
+  par_s: 85
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 12, xp: 100 }
+  dialog_start: dialogi.POZ-A1-01.start
+  dialog_koniec: dialogi.POZ-A1-01.koniec
+
+- id: POZ-A1-02
+  miasto: poznan
+  akt: 1
+  tytul: misje.POZ-A1-02.tytul
+  opis: misje.POZ-A1-02.opis
+  zleceniodawca: lena_mapa
+  typ: detektyw
+  wymagania: { misje_ukonczone: [POZ-A1-01] }
+  start: { poi: poz-rogale-start }
+  ruch_ai: false
+  cele:
+    - { typ: zbierz_rogala, poi: poz-rogal-ratusz, opis: misje.POZ-A1-02.ratusz }
+    - { typ: zbierz_rogala, poi: poz-rogal-domki, opis: misje.POZ-A1-02.domki }
+    - { typ: zbierz_rogala, poi: poz-rogal-latarnia, opis: misje.POZ-A1-02.latarnia }
+  zdarzenia_wymuszone: [{ typ: czytaj_oznakowanie, przy: poz-rogale-start, regula: ZNAK-B1 }]
+  reguly_cwiczone: [GDZIE-07, PIER-10, MAN-01]
+  par_s: 110
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 14, xp: 120 }
+  dialog_start: dialogi.POZ-A1-02.start
+  dialog_koniec: dialogi.POZ-A1-02.koniec
+
+- id: POZ-A2-01
+  miasto: poznan
+  akt: 2
+  tytul: misje.POZ-A2-01.tytul
+  opis: misje.POZ-A2-01.opis
+  zleceniodawca: sierzant_ola
+  typ: dostawa
+  wymagania: { misje_ukonczone: [POZ-A1-02] }
+  start: { poi: poz-peron-start }
+  cele:
+    - { typ: odbierz, poi: poz-peron-start, przedmiot: kartka_z_tropem, opis: misje.POZ-A2-01.odbior }
+    - { typ: dojedz, poi: poz-peron-postoj, opis: misje.POZ-B-03.postoj }
+    - { typ: oddaj, poi: poz-peron-meta, przedmiot: kartka_z_tropem, opis: misje.POZ-A2-01.meta, wymagany_nawyk: PIER-10 }
+  zdarzenia_wymuszone: [{ typ: pieszy_na_pasach, przy: poz-peron-postoj, regula: PIER-10 }]
+  checkpointy: [poz-peron-postoj]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [PIER-10]
+  par_s: 90
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 16, xp: 140 }
+  dialog_start: dialogi.POZ-A2-01.start
+  dialog_koniec: dialogi.POZ-A2-01.koniec
+
+- id: POZ-A2-02
+  miasto: poznan
+  akt: 2
+  tytul: misje.POZ-A2-02.tytul
+  opis: misje.POZ-A2-02.opis
+  zleceniodawca: inzynier_zawila
+  typ: dostawa
+  wymagania: { misje_ukonczone: [POZ-A2-01] }
+  start: { poi: poz-sluza-start }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: poz-sluza-start, przedmiot: poprawiony_plan, opis: misje.POZ-A2-02.odbior }
+    - { typ: dojedz, poi: poz-sluza-postoj, opis: misje.POZ-B-02.postoj }
+    - { typ: oddaj, poi: poz-sluza-meta, przedmiot: poprawiony_plan, opis: misje.POZ-A2-02.meta }
+  zdarzenia_wymuszone: [{ typ: cwiczenie_trasy, przy: poz-sluza-start, regula: GDZIE-02 }]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [GDZIE-02, GDZIE-13, SYG-01]
+  par_s: 100
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 16, xp: 150 }
+  dialog_start: dialogi.POZ-A2-02.start
+  dialog_koniec: dialogi.POZ-A2-02.koniec
+
+- id: POZ-A3-01
+  miasto: poznan
+  akt: 3
+  tytul: misje.POZ-A3-01.tytul
+  opis: misje.POZ-A3-01.opis
+  zleceniodawca: sierzant_ola
+  typ: pomoc
+  wymagania: { misje_ukonczone: [POZ-A2-02] }
+  start: { poi: poz-bulwar-start, zmrok: true, kask_zapiety: false }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.POZ-A3-01.start }
+    - { typ: dojedz, poi: poz-bulwar-zakret, opis: misje.POZ-B-04.zakret }
+    - { typ: dojedz, poi: poz-bulwar-most, opis: misje.POZ-A3-01.most }
+    - typ: wybor
+      poi: poz-ostrow-pomoc
+      opis: misje.POZ-B-04.pomoc
+      regula: PP-01
+      pytanie: misje.POZ-B-04.pytanie
+      odpowiedzi: [misje.POZ-B-04.odp1, misje.POZ-B-04.odp2]
+      poprawna: 1
+      wyjasnienie: misje.POZ-B-04.wyjasnienie
+    - typ: wybor
+      poi: poz-ostrow-pomoc
+      opis: misje.POZ-A3-01.dorosly
+      regula: PP-03
+      pytanie: misje.POZ-A3-01.pytanie
+      odpowiedzi: [misje.POZ-A3-01.odp1, misje.POZ-A3-01.odp2]
+      poprawna: 0
+      wyjasnienie: misje.POZ-A3-01.wyjasnienie
+  zdarzenia_wymuszone: [{ typ: po_zdarzeniu, przy: poz-ostrow-pomoc, regula: PP-01 }]
+  checkpointy: [poz-bulwar-most]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [MSC-04, PP-01, PP-03]
+  par_s: 115
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 18, xp: 170 }
+  dialog_start: dialogi.POZ-A3-01.start
+  dialog_koniec: dialogi.POZ-A3-01.koniec
+
+- id: POZ-A3-02
+  miasto: poznan
+  akt: 3
+  tytul: misje.POZ-A3-02.tytul
+  opis: misje.POZ-A3-02.opis
+  zleceniodawca: lena_mapa
+  typ: dostawa
+  wymagania: { misje_ukonczone: [POZ-A3-01] }
+  start: { poi: poz-ostrow-plansza-start }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: poz-ostrow-plansza-start, przedmiot: plansza, opis: misje.POZ-A3-02.odbior }
+    - typ: wybor
+      poi: poz-ostrow-plansza-znak
+      opis: misje.POZ-A3-02.znak
+      regula: ZNAK-B9
+      pytanie: misje.POZ-A3-02.pytanie
+      odpowiedzi: [misje.POZ-A3-02.odp1, misje.POZ-A3-02.odp2]
+      poprawna: 1
+      wyjasnienie: misje.POZ-A3-02.wyjasnienie
+    - { typ: dojedz, poi: poz-ostrow-plansza-chodnik, opis: misje.POZ-A3-02.alejka }
+    - { typ: oddaj, poi: poz-ostrow-plansza-meta, przedmiot: plansza, opis: misje.POZ-A3-02.meta }
+  zdarzenia_wymuszone: [{ typ: czytaj_oznakowanie, przy: poz-ostrow-plansza-znak, regula: ZNAK-B9 }]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [GDZIE-09, ZNAK-B9]
+  par_s: 90
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 20, xp: 200 }
+  dialog_start: dialogi.POZ-A3-02.start
+  dialog_koniec: dialogi.POZ-A3-02.koniec

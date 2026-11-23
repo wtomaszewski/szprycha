@@ -92,6 +92,16 @@ Sierżant Ola prowadzi cztery szkolenia. Potem zespół SzprychaApp sprawdza, sk
 2. **Tory i zmrok.** Gracz dostarcza szkic Zawiły przez przejazd bez zapór. Zawiła porównuje szkic z oznakowaniem i rozpoznaje skrót ze swojej dawnej próby jako Zakłócacz. Po zmroku Ola pokazuje, jak lampki i kamizelka poprawiają widoczność.
 3. **Mapa bez skrótów.** Przy polu gracz pomaga rowerzyście po upadku. Potem dostarcza sprawdzoną mapę drogą gminną i SzprychaApp poprawia trasę.
 
+---
+
+## POZNAŃ — „Trzy znaki na drewnie”
+
+**Akt 1 — Ślad na Rynku.** Pan Kazik wysyła drewniane pamiątki na wystawę przy Ratuszu. Kurier objeżdża zamknięty pasaż. Z Leną „Mapą” rozwiązuje zagadki z trzech drewnianych rogali, na których ktoś zostawił wskazówkę prowadzącą na wysepkę tramwajową i podpis Zakłócacza.
+
+**Akt 2 — Trop przez zebrę.** Kurier dowozi wskazówkę Sierżant Oli, przepuszczając pieszą idącą na peron. Zawiła rozpoznaje własny szkic próbny w aplikacji. Kurier sprawdza poprawiony dojazd przez śluzę rowerową i przekazuje trasę zespołowi SzprychaApp.
+
+**Akt 3 — Światła na moście.** Po zmroku kurier przejeżdża przez Wartę. Za mostem zatrzymuje się w bezpiecznym miejscu i woła dorosłego do pomocy Turbo. Potem dostarcza Lenie planszę z poprawioną trasą, prowadząc rower chodnikiem wzdłuż alejki z B-9. Wystawa rusza.
+
 ## Finał wspólny — „Licencja Szprychy”
 Egzamin odblokowuje się po ukończeniu kampanii co najmniej jednego miasta, osiągnięciu rangi Mistrz Szlaku oraz mastery ≥70% w każdym module (M01–M08). Sierżant Ola prowadzi teorię (quiz), próbę na placu i przejazd kontrolny w mieście ukończonej kampanii. Po zaliczeniu Kazik wręcza Licencję, Turbo bije brawo, DJ Dzwonek komentuje na żywo, a gracz zdobywa rangę **Legenda Szprychy** i złoty dzwonek.
 
