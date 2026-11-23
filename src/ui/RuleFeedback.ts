@@ -9,6 +9,7 @@ export class RuleFeedback {
   private readonly counts = document.createElement('output');
   private readonly bubble = document.createElement('p');
   private readonly text: Map<string, string>;
+  private readonly titles: Map<string, string>;
   private readonly pending: Verdict[] = [];
   private until = 0;
 
@@ -16,6 +17,7 @@ export class RuleFeedback {
     this.text = new Map(
       rules.map(({ id, feedback }) => [`przepisy.${id}.feedback`, feedback]),
     );
+    this.titles = new Map(rules.map(({ id, tytul }) => [id, tytul]));
     this.counts.className = 'rule-counts';
     this.counts.hidden = true;
     this.counts.setAttribute('aria-label', ui.rules.counts);
@@ -28,6 +30,10 @@ export class RuleFeedback {
 
   setDebugVisible(visible: boolean) {
     this.counts.hidden = !visible;
+  }
+
+  ruleTitle(verdict: Verdict) {
+    return this.titles.get(verdict.ruleId);
   }
 
   explanation(verdict: Verdict) {

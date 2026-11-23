@@ -16,7 +16,7 @@ html {
   --ui-bg: #1a1c2c;
   --ui-overlay: #1a1c2cf5;
   --ui-panel: #333c57;
-  --ui-border: #566c86;
+  --ui-border: #94b0c2;
   --ui-muted: #c0cbdc;
   --ui-text: #f4f4f4;
   --ui-accent: #ffcd75;
@@ -55,9 +55,10 @@ body {
 }
 body,
 button,
+input,
 select {
   font-family: 'Pixelify Sans', monospace;
-  font-size: calc(16px * var(--text-scale));
+  font-size: calc(1rem * var(--text-scale));
 }
 #game {
   position: fixed;
@@ -102,7 +103,7 @@ canvas {
   background: var(--ui-bg);
   color: var(--ui-accent);
   text-align: center;
-  font-size: calc(14px * var(--text-scale));
+  font-size: calc(0.875rem * var(--text-scale));
   pointer-events: none;
 }
 .pwa-update:empty {
@@ -128,22 +129,38 @@ button {
   background: var(--ui-bg);
   color: var(--ui-text);
   padding: 6px 10px;
-  font-size: calc(16px * var(--text-scale));
+  font-size: calc(1rem * var(--text-scale));
   min-height: var(--tap-size);
   touch-action: manipulation;
 }
 button:hover,
-button:focus-visible,
 button[aria-pressed='true'] {
   border-color: var(--ui-accent);
   outline: 1px solid var(--ui-accent);
   color: var(--ui-accent);
 }
+:is(button, a[href], input, select, textarea, summary):focus-visible,
+html[data-gamepad-navigation]
+  :is(button, a[href], input, select, textarea, summary):focus {
+  outline: 3px solid var(--ui-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--ui-bg);
+}
+
+.game-dialog :is(button, input, select, textarea, summary) {
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+
+.game-dialog select {
+  min-inline-size: 0;
+}
+
 .driving-ui {
   position: fixed;
   inset: var(--safe-insets);
   pointer-events: none;
-  font-size: calc(16px * var(--text-scale));
+  font-size: calc(1rem * var(--text-scale));
 }
 .ride-hud-left,
 .ride-hud-right {
@@ -184,20 +201,20 @@ button[aria-pressed='true'] {
   font-variant-numeric: tabular-nums;
 }
 .ride-score output {
-  font-size: calc(20px * var(--text-scale));
+  font-size: calc(1.25rem * var(--text-scale));
 }
 .ride-score output + output {
   border-left: 2px solid var(--ui-border);
   padding-left: 8px;
 }
 .ride-details {
-  font-size: calc(12px * var(--text-scale));
+  font-size: calc(0.75rem * var(--text-scale));
 }
 .ride-attention {
   display: grid;
   gap: 4px;
   justify-items: end;
-  font-size: calc(14px * var(--text-scale));
+  font-size: calc(0.875rem * var(--text-scale));
 }
 .ride-attention output {
   display: flex;
@@ -228,6 +245,12 @@ button[aria-pressed='true'] {
 .ride-whistle.active,
 .ride-status-icon.active {
   color: var(--ui-accent);
+}
+.ride-equipment-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  color: var(--ui-text);
 }
 .ride-status-icon[data-icon='helmet'].active {
   color: #a7f070;
@@ -288,7 +311,7 @@ button[aria-pressed='true'] {
 }
 .ride-pause .drive-help {
   margin: 10px 0 0;
-  font-size: calc(14px * var(--text-scale));
+  font-size: calc(0.875rem * var(--text-scale));
 }
 .ride-pause-options {
   display: flex;
@@ -303,7 +326,7 @@ button[aria-pressed='true'] {
   max-width: calc(100% - 16px);
 }
 .drive-help {
-  font-size: calc(14px * var(--text-scale));
+  font-size: calc(0.875rem * var(--text-scale));
 }
 .drive-notice {
   position: absolute;
@@ -311,7 +334,7 @@ button[aria-pressed='true'] {
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
-  font-size: calc(12px * var(--text-scale));
+  font-size: calc(0.75rem * var(--text-scale));
   background: var(--ui-bg);
   margin: 0;
   padding: 4px 8px;
@@ -331,7 +354,7 @@ button[aria-pressed='true'] {
     z-index: 100;
     background: var(--ui-bg);
     color: var(--ui-accent);
-    font-size: calc(32px * var(--text-scale));
+    font-size: calc(2rem * var(--text-scale));
     text-align: center;
   }
 }
@@ -374,7 +397,7 @@ button[aria-pressed='true'] {
   right: 8px;
   padding: 4px 8px;
   border: 1px solid var(--ui-border);
-  font-size: calc(14px * var(--text-scale));
+  font-size: calc(0.875rem * var(--text-scale));
 }
 .rule-feedback {
   bottom: 142px;
@@ -391,7 +414,7 @@ button[aria-pressed='true'] {
 @media (max-height: 500px) {
   .rule-counts {
     top: 104px;
-    font-size: calc(12px * var(--text-scale));
+    font-size: calc(0.75rem * var(--text-scale));
   }
   .rule-feedback {
     bottom: 112px;
@@ -434,7 +457,7 @@ button[aria-pressed='true'] {
   background: var(--ui-bg);
   color: var(--ui-cyan);
   text-align: center;
-  font-size: calc(14px * var(--text-scale));
+  font-size: calc(0.875rem * var(--text-scale));
 }
 @media (max-height: 500px) {
   .progression-radio {
@@ -479,7 +502,7 @@ button[aria-pressed='true'] {
   display: block;
   width: max-content;
   margin-left: auto;
-  font-size: calc(22px * var(--text-scale));
+  font-size: calc(1.375rem * var(--text-scale));
   font-variant-numeric: tabular-nums;
 }
 .mission-timer[hidden] {
@@ -543,7 +566,7 @@ button[aria-pressed='true'] {
   padding: clamp(12px, 2vw, 22px);
   border-color: var(--result-accent);
   background: var(--ui-bg);
-  font-size: calc(18px * var(--text-scale));
+  font-size: calc(1.125rem * var(--text-scale));
   line-height: 1.25;
   scrollbar-color: var(--result-accent) var(--ui-bg);
 }
@@ -555,20 +578,13 @@ button[aria-pressed='true'] {
 .game-dialog.mission-results[open] {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
 }
 .mission-results > section {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-}
-.mission-results > section > :not(.result-body) {
-  flex-shrink: 0;
-}
-.result-body {
-  min-height: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
+  flex: none;
+  min-width: 0;
 }
 .mission-results::backdrop {
   background: #101322;
@@ -713,10 +729,10 @@ button[aria-pressed='true'] {
 @media (max-height: 500px) {
   .mission-panel {
     padding: 4px 8px;
-    font-size: calc(14px * var(--text-scale));
+    font-size: calc(0.875rem * var(--text-scale));
   }
   .mission-timer {
-    font-size: calc(18px * var(--text-scale));
+    font-size: calc(1.125rem * var(--text-scale));
   }
 }
 @media (max-width: 540px) {
@@ -788,12 +804,12 @@ button[aria-pressed='true'] {
     inset 0 0 0 3px currentColor;
   color: var(--ui-accent);
   font-family: 'Pixelify Sans', monospace;
-  font-size: clamp(25px, calc(6vw * var(--text-scale)), 58px);
+  font-size: calc(clamp(1.5625rem, 6vw, 3.625rem) * var(--text-scale));
   line-height: 1.02;
   transform: rotate(-3deg);
 }
 .mission-failure[data-gentle] .mission-failure-stamp {
-  font-size: clamp(22px, calc(4.5vw * var(--text-scale)), 42px);
+  font-size: calc(clamp(1.375rem, 4.5vw, 2.625rem) * var(--text-scale));
 }
 @media (prefers-reduced-motion: no-preference) {
   .mission-failure[open]:not([data-reduced-effects]) .mission-failure-stamp {
@@ -904,11 +920,11 @@ button[aria-pressed='true'] {
 }
 .dialogue-speech strong {
   color: var(--ui-accent);
-  font-size: calc(18px * var(--text-scale));
+  font-size: calc(1.125rem * var(--text-scale));
 }
 .dialogue-text {
   margin: 4px 0 0;
-  font-size: calc(19px * var(--text-scale));
+  font-size: calc(1.1875rem * var(--text-scale));
   line-height: 1.25;
   overflow-wrap: anywhere;
 }
@@ -927,7 +943,7 @@ button[aria-pressed='true'] {
   margin: 4px 0 8px;
 }
 .control-question-prompt {
-  font-size: calc(19px * var(--text-scale));
+  font-size: calc(1.1875rem * var(--text-scale));
 }
 .control-question-prompt:focus {
   outline: none;
@@ -1150,7 +1166,7 @@ button[aria-pressed='true'] {
 .third-party-notices {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  font: calc(14px * var(--text-scale)) / 1.5 monospace;
+  font: calc(0.875rem * var(--text-scale)) / 1.5 monospace;
 }
 
 .album-cards,
@@ -1301,7 +1317,7 @@ button[aria-pressed='true'] {
 
 .city-picker button {
   pointer-events: auto;
-  font-size: calc(14px * var(--text-scale));
+  font-size: calc(0.875rem * var(--text-scale));
 }
 
 .city-picker-back {
@@ -1363,6 +1379,10 @@ button[aria-pressed='true'] {
   white-space: nowrap;
 }
 
+.city-picker-selected span {
+  box-shadow: 0 2px var(--ui-accent);
+}
+
 .city-picker-pin:disabled {
   color: #e0e5eb;
   opacity: 1;
@@ -1409,12 +1429,12 @@ button[aria-pressed='true'] {
 }
 
 .quiz-panel h2 {
-  font-size: calc(clamp(20px, 4vw, 28px) * var(--text-scale));
+  font-size: calc(clamp(1.25rem, 4vw, 1.75rem) * var(--text-scale));
 }
 
 .quiz-panel h3 {
   margin-block: 14px 6px;
-  font-size: calc(clamp(19px, 3vw, 24px) * var(--text-scale));
+  font-size: calc(clamp(1.1875rem, 3vw, 1.5rem) * var(--text-scale));
 }
 
 .quiz-primary {
@@ -1560,7 +1580,7 @@ button[aria-pressed='true'] {
 }
 .plac-hud h1 {
   color: var(--ui-accent);
-  font-size: calc(clamp(17px, 4dvh, 32px) * var(--text-scale));
+  font-size: calc(clamp(1.0625rem, 4dvh, 2rem) * var(--text-scale));
   margin: 0;
 }
 .plac-hud p {
@@ -1569,7 +1589,7 @@ button[aria-pressed='true'] {
 }
 .plac-hud .ride-details {
   justify-content: center;
-  font-size: calc(14px * var(--text-scale));
+  font-size: calc(0.875rem * var(--text-scale));
   margin-top: 2px;
 }
 .plac-hud .plac-sequence:not([hidden]) {
@@ -1715,7 +1735,7 @@ button[aria-pressed='true'] {
 
 .certificate-paper h2 {
   color: #205961;
-  font-size: calc(clamp(28px, 6vw, 49px) * var(--text-scale));
+  font-size: calc(clamp(1.75rem, 6vw, 3.0625rem) * var(--text-scale));
   line-height: 1.05;
 }
 
@@ -1726,7 +1746,7 @@ button[aria-pressed='true'] {
 }
 
 .certificate-recipient {
-  font-size: calc(clamp(20px, 4vw, 30px) * var(--text-scale));
+  font-size: calc(clamp(1.25rem, 4vw, 1.875rem) * var(--text-scale));
   font-weight: 700;
   overflow-wrap: anywhere;
 }
@@ -1860,12 +1880,16 @@ button[aria-pressed='true'] {
 
 .radio-station {
   bottom: 100%;
-  font-size: calc(14px * var(--text-scale));
+  font-size: calc(0.875rem * var(--text-scale));
 }
 
 .radio-caption {
   bottom: calc(100% + 25px);
   margin: 0;
+}
+
+.radio-caption:empty {
+  padding: 0;
 }
 
 .ride-preference {
@@ -1881,6 +1905,8 @@ button[aria-pressed='true'] {
   margin: auto;
   width: min(800px, calc(100% - var(--safe-left) - var(--safe-right) - 24px));
   height: fit-content;
+  max-height: var(--dialog-height);
+  overflow: auto;
   padding: clamp(8px, 2.5dvh, 24px);
   border: 2px solid var(--ui-border);
   border-left: 6px solid var(--ui-cyan);
@@ -1890,7 +1916,7 @@ button[aria-pressed='true'] {
 }
 .main-menu h1 {
   color: var(--ui-accent);
-  font-size: calc(clamp(32px, 10dvh, 68px) * var(--text-scale));
+  font-size: calc(clamp(2rem, 10dvh, 4.25rem) * var(--text-scale));
   line-height: 1;
   margin: 0;
 }
@@ -1911,7 +1937,7 @@ button[aria-pressed='true'] {
   overflow-wrap: anywhere;
   min-width: 0;
   padding: 2px 4px;
-  font-size: calc(clamp(13px, 2.45vw, 16px) * var(--text-scale));
+  font-size: calc(clamp(0.8125rem, 2.45vw, 1rem) * var(--text-scale));
 }
 .menu-ride button {
   background: var(--ui-accent);
@@ -1949,7 +1975,7 @@ button[aria-pressed='true'] {
   margin: 0;
 }
 .city-picker h1 {
-  font-size: calc(22px * var(--text-scale));
+  font-size: calc(1.375rem * var(--text-scale));
 }
 .city-picker p {
   color: var(--ui-accent);
@@ -2125,7 +2151,7 @@ html[data-reduced-effects]
     padding-bottom: 4px;
   }
   .quiz-panel .quiz-prompt {
-    font-size: calc(17px * var(--text-scale));
+    font-size: calc(1.0625rem * var(--text-scale));
     line-height: 1.1;
     margin-block: 3px;
   }
@@ -2139,7 +2165,7 @@ html[data-reduced-effects]
   }
   .quiz-answers button {
     padding: 3px 6px;
-    font-size: calc(14px * var(--text-scale));
+    font-size: calc(0.875rem * var(--text-scale));
     line-height: 1.15;
   }
   .quiz-feedback,
@@ -2178,7 +2204,7 @@ html[data-reduced-effects]
 @media (max-height: 480px) {
   .game-dialog.mission-results {
     padding: 8px 10px;
-    font-size: calc(16px * var(--text-scale));
+    font-size: calc(1rem * var(--text-scale));
   }
   .mission-results h2 {
     font-size: 1.35em;
@@ -2257,7 +2283,7 @@ html[data-reduced-effects]
 .parent-zone h2 {
   margin: 0;
   color: var(--ui-accent);
-  font-size: calc(24px * var(--text-scale));
+  font-size: calc(1.5rem * var(--text-scale));
 }
 .parent-zone > div,
 .parent-gate,
@@ -2271,7 +2297,7 @@ html[data-reduced-effects]
 .parent-gate-question,
 .parent-gate output,
 .parent-zone-profile output {
-  font-size: calc(22px * var(--text-scale));
+  font-size: calc(1.375rem * var(--text-scale));
 }
 .parent-gate-task {
   display: flex;
@@ -2340,6 +2366,13 @@ html[data-reduced-effects]
 .parent-zone-preferences h3 {
   margin: 0;
 }
+.class-code-controls > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
 .class-membership-form label {
   display: flex;
   flex-wrap: wrap;
@@ -2408,7 +2441,7 @@ html[data-reduced-effects]
 .rankings h2 {
   margin: 0;
   color: var(--ui-accent);
-  font-size: calc(26px * var(--text-scale));
+  font-size: calc(1.625rem * var(--text-scale));
 }
 .rankings-tabs {
   display: flex;

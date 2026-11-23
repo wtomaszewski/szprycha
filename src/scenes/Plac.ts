@@ -141,7 +141,7 @@ export class Plac extends Scene {
       },
       () => {},
       () => {},
-      { keyboard: () => this.dialog.open, gamepad: () => this.dialog.open },
+      { keyboard: () => this.dialog.open, gamepad: () => false },
       this.progress.store,
       'plac',
     );

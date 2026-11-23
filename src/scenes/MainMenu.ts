@@ -13,8 +13,15 @@ import { ui } from '../core/presentation';
 import { rankingsPanel } from '../ui/Rankings';
 import { parentZone } from '../ui/ParentZone';
 import { aboutGame } from '../ui/AboutGame';
+import { menuGamepad } from '../ui/KeyboardGamepad';
 import { helmetColors } from '../render/spriteFrames';
 export class MainMenu extends Scene {
+  private readGamepad?: () => void;
+
+  update() {
+    this.readGamepad?.();
+  }
+
   constructor() {
     super('MainMenu');
   }
@@ -101,12 +108,13 @@ export class MainMenu extends Scene {
         });
     });
     helmetLabel.append(helmet);
-    const menu = document.createElement('section');
+    const menu = document.createElement('main');
     menu.className = 'main-menu';
     menu.setAttribute('aria-labelledby', 'main-menu-title');
     const intro = document.createElement('header');
     const title = document.createElement('h1');
     title.id = 'main-menu-title';
+    title.tabIndex = -1;
     title.textContent = ui.title;
     const subtitle = document.createElement('p');
     subtitle.textContent = ui.subtitle;
@@ -141,15 +149,21 @@ export class MainMenu extends Scene {
       about.dialog,
       help.dialog,
     );
+    title.focus();
+    this.readGamepad = menuGamepad(menu);
     const startDrive = (event: KeyboardEvent) => {
       if (
         !menuDialogOpen() &&
-        !(event.target instanceof Node && menu.contains(event.target))
+        !(
+          event.target instanceof Element &&
+          event.target.closest('button, select, input, summary, a[href]')
+        )
       )
         this.scene.start('City');
     };
     this.input.keyboard?.on('keydown-ENTER', startDrive);
     this.events.once('shutdown', () => {
+      this.readGamepad = undefined;
       audio.stopReading('lesson');
       this.input.keyboard?.off('keydown-ENTER', startDrive);
       menu.remove();

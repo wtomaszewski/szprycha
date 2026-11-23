@@ -13,6 +13,7 @@ export class GoalArrow {
   private readonly bearing = document.createElement('span');
   private readonly distance = document.createElement('span');
   private displayedDistance?: number;
+  private displayedDirection?: string;
 
   constructor(parent: HTMLElement) {
     this.root.className = 'mission-navigation';
@@ -39,15 +40,25 @@ export class GoalArrow {
     const x = magnitude === 0 ? width : (width + dx / magnitude) / 2;
     const y = magnitude === 0 ? height / 2 : (height + dy / magnitude) / 2;
     this.arrow.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-    this.bearing.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+    const angle = Math.atan2(dy, dx);
+    this.bearing.style.transform = `rotate(${angle}rad)`;
     const meters = Math.round(Math.hypot(dx, dy));
-    if (this.displayedDistance !== meters) {
+    const distanceChanged = this.displayedDistance !== meters;
+    if (distanceChanged) {
       this.displayedDistance = meters;
       const distance = `${meters} ${ui.missionUi.distanceUnit}`;
       this.distance.textContent = distance;
+    }
+    const directions = ui.missionUi.compass;
+    const sector =
+      (Math.round(angle / (Math.PI / 4)) + directions.length) %
+      directions.length;
+    const direction = meters === 0 ? ui.missionUi.atGoal : directions[sector]!;
+    if (distanceChanged || this.displayedDirection !== direction) {
+      this.displayedDirection = direction;
       this.arrow.setAttribute(
         'aria-label',
-        `${ui.missionUi.direction} · ${distance}`,
+        `${ui.missionUi.direction} · ${direction} · ${this.distance.textContent}`,
       );
     }
   }

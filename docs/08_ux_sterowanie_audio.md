@@ -14,7 +14,7 @@ Dwa schematy (wybór w ustawieniach; domyślnie „Proste” na dotyku, „Klasy
 | Dzwonek | F | X | przycisk |
 | Światła | L | D-pad góra | przycisk (auto-podpowiedź o zmroku) |
 | Zsiądź / wsiądź (prowadzenie roweru) | X | A | przycisk „zejdź” (kontekstowo pulsuje przed przejściem) |
-| SzprychaApp / mapa | Tab / M | Select | ikona telefonu |
+| SzprychaApp / mapa | M | Select | ikona telefonu |
 | Pauza | Esc | Start | ikona |
 
 Na tabletach przyciski większe (min. 56 dp), układ konfigurowalny (przeciągnij przyciski). Haptyka (Capacitor) przy błędzie i dobrym nawyku.
@@ -89,6 +89,9 @@ Web, mobile i tryb deweloperski korzystają z gotowych MP3 w `assets/generated/r
 [Ustawienia dźwięku przed zmianą](screenshots/99-radio-przed.png) · [Dźwięki Miasta w ustawieniach](screenshots/99-radio-po.png)
 
 ## Dostępność
+
+Tab i Shift+Tab przechodzą między elementami interfejsu. Enter i Spacja uruchamiają element z fokusem. Na padzie D-pad przechodzi między elementami, A zatwierdza, a B wraca lub uruchamia akcję powrotu ekranu. Lewo i prawo na D-padzie zmieniają wartość suwaka, listy wyboru lub karty rankingów. Start otwiera i zamyka pauzę. [Wyniki audytu dostępności](AUDYT_DOSTEPNOSCI.md)
+
 - Tryb dla daltonistów: znaki i sygnały rozróżniane także kształtem/ikoną, światła sygnalizatora z symbolem.
 - Rozmiar tekstu (3 poziomy), lektor, wysoki kontrast HUD.
 - Spowolnienie gry (75% / 50%) dla młodszych lub mniej sprawnych graczy — bez kary w punktach lokalnych; rankingi online liczą się tylko przy 100%.

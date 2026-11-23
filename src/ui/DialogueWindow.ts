@@ -1,3 +1,4 @@
+import { gamepadMenu, type ButtonEdge } from './KeyboardGamepad';
 import { localizedVoiceLine } from '../audio/voiceLines';
 import { audio } from '../audio/GameAudio';
 import type { ProgressStore } from '../core/progressStore';
@@ -58,6 +59,8 @@ export class DialogueWindow {
     this.panel.className = 'game-dialog dialogue-window';
     this.panel.setAttribute('aria-label', ui.dialogueUi.title);
     const line = document.createElement('div');
+    line.id = 'dialogue-caption';
+    this.panel.setAttribute('aria-describedby', line.id);
     line.className = 'dialogue-line';
     line.setAttribute('aria-live', 'polite');
     line.setAttribute('aria-atomic', 'true');
@@ -165,25 +168,22 @@ export class DialogueWindow {
     this.client = client;
     this.index = 0;
     this.done = done;
-    this.panel.showModal();
     audio.stopReading('feedback');
-    this.nextButton.focus();
     this.render();
+    this.panel.showModal();
+    this.nextButton.focus();
+    this.updateScrollButton();
   }
 
-  gamepad(pressed: boolean, justPressed: boolean) {
-    if (justPressed) {
-      this.padHeld = true;
-      this.startHold();
-    } else if (this.padHeld && !pressed) {
+  gamepad(pressed: boolean, justPressed: ButtonEdge) {
+    if (this.padHeld && !pressed) {
       this.padHeld = false;
       this.clearHold();
       this.advance();
-    }
-  }
-
-  scroll(direction: number) {
-    this.text.scrollTop += direction * this.text.clientHeight;
+    } else if (justPressed(0) && document.activeElement === this.nextButton) {
+      this.padHeld = true;
+      this.startHold();
+    } else if (!this.padHeld) gamepadMenu(this.panel, justPressed);
   }
 
   skip() {

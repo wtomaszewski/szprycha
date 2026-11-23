@@ -16,6 +16,11 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Wydanie 2/2 — audyt dostępności (#122)
+
+- Audyt ekranów DOM w Playwright i axe sprawdza nazwy, role, kontrast i fokus. Klawiatura i pad obsługują menu i dialogi, HUD ogłasza istotne zmiany, a tekst dialogów skaluje się do 200%.
+- Ograniczono efekty ruchu i dodano oznaczenia stanów niezależne od koloru. [Raport, zakres i zrzuty](docs/AUDYT_DOSTEPNOSCI.md)
+
 ## Kraków 1/2 — mapa (#105)
 
 - Kraków jest dostępny w Wolnej jeździe. Kolaż obejmuje Rynek, Wawel, Kazimierz, bulwary Wisły i Kopiec. Trzy ćwiczenia otwierają kolejne dzielnice, a raport strict sprawdza 13/13 sytuacji i 7/7 modułów M01–M07.
