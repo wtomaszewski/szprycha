@@ -2,6 +2,7 @@ import { bicycleBells, sampleRate, synthesize, type Effect } from './effects';
 import { Narrator, type Reading } from './Narrator';
 import { localizedVoiceLine, type VoiceLine } from './voiceLines';
 import { Radio } from './Radio';
+import { radioSampleRate } from './radio/catalog';
 import {
   channelLevel,
   defaultAudio,
@@ -162,7 +163,20 @@ class GameAudio {
       this.activated = true;
       if (typeof AudioContext === 'undefined') return;
       try {
-        const context = (this.context = new AudioContext());
+        // Decode radio at the master rate and process fewer samples in the mix.
+        // A browser may only support the default hardware rate.
+        let context: AudioContext;
+        try {
+          context = new AudioContext({ sampleRate: radioSampleRate });
+        } catch (error) {
+          if (
+            !(error instanceof DOMException) ||
+            error.name !== 'NotSupportedError'
+          )
+            throw error;
+          context = new AudioContext();
+        }
+        this.context = context;
         this.music = context.createGain();
         this.effects = context.createGain();
         this.music.connect(context.destination);

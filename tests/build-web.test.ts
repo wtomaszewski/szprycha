@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { promisify } from 'node:util';
 import { PNG } from 'pngjs';
 import { expect, it } from 'vitest';
+import { radioCatalog, radioPath, stations } from '../src/audio/radio/catalog';
 
 async function checkPrecache(dist: string) {
   const worker = await readFile(join(dist, 'quiz-worker.js'), 'utf8');
@@ -34,6 +35,14 @@ async function checkPrecache(dist: string) {
   expect(precache.files).toEqual(
     published.filter((file) => !teacherFiles.includes(file)),
   );
+  const broadcasts = stations.flatMap((station) =>
+    (['jingle', ...radioCatalog[station].seeds] as const).map((seed) =>
+      radioPath(station, seed),
+    ),
+  );
+  expect(
+    precache.files.filter((file) => file.startsWith('assets/radio/')),
+  ).toEqual(broadcasts.sort());
   const teacherHtml = await readFile(join(dist, 'nauczyciel.html'), 'utf8');
   expect(teacherHtml).not.toContain('app.webmanifest');
   expect(teacherHtml).not.toContain('pwa-splash');
@@ -108,7 +117,7 @@ it('writes the noindex header, third-party notices and complete PWA cache to the
 
   try {
     await promisify(execFile)('npm', ['run', 'build', '--', '--outDir', dist], {
-      timeout: 55000,
+      timeout: 115000,
     });
 
     const headers = await readFile(join(dist, '_headers'), 'utf8');
@@ -138,4 +147,4 @@ it('writes the noindex header, third-party notices and complete PWA cache to the
   } finally {
     await rm(root, { recursive: true, force: true });
   }
-}, 60000);
+}, 120000);

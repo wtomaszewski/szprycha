@@ -21,6 +21,11 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 - Po pierwszym legalnym Zleceniu dnia SzprychaApp odblokowuje cztery wątki fabularne w każdym mieście. Każdy ma 3–5 etapów, jednego powracającego klienta i ćwiczenia z co najmniej trzech modułów.
 - Postęp w mieście zapisuje się w profilu, a finał przyznaje żetony i naklejkę. Schemat profilu migruje do wersji 10. [Opis i zrzuty](docs/03_misje.md#wątki-fabularne)
 
+## Radio Szprycha FM 2.0 (#99)
+
+- Sześć stacji ma łącznie 36 deterministycznych utworów i sześć autorskich dżingli. Gra odtwarza wygenerowane podczas budowania pliki także offline. Podkład ścisza się pod lektorem.
+- CI generuje sześć próbek OGG do odsłuchu. [Stacje, miks i polecenia](docs/08_ux_sterowanie_audio.md#radio-szprycha-fm-20-99)
+
 ## Zlecenia proceduralne 2/3 (#103)
 
 - Zlecenia dnia mają fikcyjnych klientów przypisanych do POI w obu miastach. Wracają oni w kolejnych ofertach związanych z tym samym miejscem.

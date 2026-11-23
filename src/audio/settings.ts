@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-export const stations = ['hits', 'boulevards', 'talk'] as const;
+import { stations } from './radio/catalog';
+export { stations, type Station } from './radio/catalog';
 export const channels = ['music', 'effects', 'voice'] as const;
 const volume = z.number().min(0).max(1);
 
@@ -15,7 +16,6 @@ export const audioSettingsSchema = z.strictObject({
 });
 
 export type AudioSettings = z.infer<typeof audioSettingsSchema>;
-export type Station = AudioSettings['station'];
 export type Channel = (typeof channels)[number];
 
 export const defaultAudio: Readonly<AudioSettings> = {
