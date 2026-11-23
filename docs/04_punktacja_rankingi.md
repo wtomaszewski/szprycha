@@ -22,8 +22,8 @@ Wszystkie wartości liczbowe trzymaj w `content/balans.yaml` (łatwe strojenie).
 | Bonus czasu (tylko jeśli 0 błędów `major`) | do +500, liniowo: pełny przy czasie ≤ `par_s`, 0 przy `limit_s` |
 | Bonus płynności (przesyłka delikatna, pasek wstrząsów < 30%) | +200 |
 | Błąd drobny (`minor`: brak sygnalizacji, jazda chodnikiem bez uprawnienia, brak świateł o zmroku…) | −150, reset combo, Uwaga Drogówki +1 |
-| Błąd poważny (`major`: wjazd na czerwonym, nieustąpienie pieszemu na przejściu, wymuszenie pierwszeństwa z kolizją/near-miss, wjazd na przejazd przy opuszczanych zaporach) | −300, stop-klatka + lekcja, powrót do checkpointu, reset combo |
-| 3 błędy poważne w misji | porażka misji (można od razu powtórzyć) |
+| Błąd poważny (`major`: wjazd na czerwonym, nieustąpienie pieszemu na przejściu, wymuszenie pierwszeństwa z kolizją/near-miss, wjazd na przejazd przy opuszczanych zaporach) | Stop-klatka i lekcja. Domyślnie pierwszy taki werdykt kończy misję (próg `misja.major_do_porazki`). |
+| Nieudana próba | 0 punktów, 0 gwiazdek. Dobre werdykty z próby nie podnoszą wyniku, rekordu serii ani postępu wyzwań. |
 
 **Gwarancja „skrót się nie opłaca”:** test jednostkowy w `progression/` musi wykazać, że dla każdej misji z oznaczonym skrótem `max(bonus_czasu_ze_skrótem) − kara(błędy na skrócie) < 0` w porównaniu z trasą zgodną z przepisami. Bonus czasu znika przy jakimkolwiek `major` oraz przy naruszeniu zakazu na oznaczonym skrócie. Ta sama zasada obowiązuje Turbo.
 
@@ -32,13 +32,13 @@ Odpowiednik szału punktowego z GTA2, ale za dobre zachowania.
 - Start ×1. Co 3 kolejne werdykty `good` bez `minor/major` → mnożnik +1, max **×5**.
 - Przy ×3 i więcej wokół roweru pojawia się świecący ślad, DJ Dzwonek rzuca komentarz.
 - `minor` lub `major` → reset do ×1.
-- Seria trwa między misjami w wolnej jeździe (rekord „Najdłuższa Seria” do rankingu).
+- Każda próba misji zaczyna się z mnożnikiem ×1. Rekord „Najdłuższa Seria” jest zapisywany po ukończeniu misji, przy dobrowolnym wyjściu z aktywnej misji i w wolnej jeździe.
 
-## 4. Uwaga Drogówki (odwrócone „gwiazdki poszukiwania” z GTA)
-- Licznik 0–3 (ikonki gwizdka w HUD-zie). Każdy `minor` +1; `major` od razu 3.
-- Przy 3: Sierżant Ola podjeżdża i zatrzymuje gracza (krótka scenka, nie kara). **Pytanie kontrolne** z banku, dobrane do reguły, którą właśnie złamano:
+## 4. Uwaga Drogówki
+- Licznik 0–3 (ikonki gwizdka w HUD-zie). Każdy `minor` +1. W wolnej jeździe `major` od razu wypełnia licznik.
+- Przy pełnym liczniku gra wstrzymuje jazdę. Sierżant Ola zadaje **pytanie kontrolne** dobrane do reguły z ostatniego werdyktu.
   - dobra odpowiedź → licznik 0, +100 pkt „Mądra Głowa”, +15 mastery reguły,
-  - zła odpowiedź → wyjaśnienie (1–2 zdania) + licznik 1.
+  - zła odpowiedź → wyjaśnienie i koniec próby w kampanii. W wolnej jeździe licznik wraca do 1.
 - Licznik spada o 1 co 60 s czystej jazdy.
 
 ## 5. Mastery (opanowanie przepisów)

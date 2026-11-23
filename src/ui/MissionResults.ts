@@ -102,7 +102,7 @@ export class MissionResults {
   }
 
   show(
-    result: MissionResult,
+    result: Extract<MissionResult, { status: 'completed' }>,
     title: string,
     tokens: number,
     wallet: number,
@@ -117,12 +117,11 @@ export class MissionResults {
       ...accessibilityPreferences(this.store, this.skipAnimation),
     );
     const mission = ui.missionUi;
-    const completed = result.status === 'completed';
     const hasReplay = Boolean(habit);
     this.dialog.toggleAttribute('data-glory', hasReplay);
-    this.skip.hidden = reduced || !completed;
-    this.confetti.hidden = reduced || !completed;
-    this.heading.textContent = completed ? mission.completed : mission.failed;
+    this.skip.hidden = reduced;
+    this.confetti.hidden = reduced;
+    this.heading.textContent = mission.completed;
 
     const missionName = textElement('p', title);
     missionName.className = 'result-mission-name';
@@ -187,20 +186,11 @@ export class MissionResults {
     const breakdown = document.createElement('section');
     breakdown.append(textElement('h3', labels.score), scores);
     this.body.replaceChildren(overview, breakdown);
-    const outcomeText =
-      result.status === 'failed'
-        ? result.reason === 'czas_minal'
-          ? mission.timeExpired
-          : result.reason === 'dowolny_blad'
-            ? mission.failedClean
-            : result.reason === 'wynik_wyscigu'
-              ? mission.raceScoreRequired
-              : mission.threeMajor
-        : result.illegalShortcut
-          ? mission.noShortcutBonus
-          : !result.timeBonusEligible
-            ? mission.noTimeBonus
-            : '';
+    const outcomeText = result.illegalShortcut
+      ? mission.noShortcutBonus
+      : !result.timeBonusEligible
+        ? mission.noTimeBonus
+        : '';
     if (outcomeText) overview.append(textElement('p', outcomeText));
     if (result.illegalShortcut)
       overview.append(textElement('p', mission.illegalShortcut));

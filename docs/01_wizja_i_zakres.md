@@ -11,7 +11,7 @@ Otwarte, pixel-artowe miasto z widokiem z góry, zlecenia od barwnych postaci, r
 
 ## Filary projektu
 1. **Akcja najpierw.** Każda misja to mała historia z celem, presją czasu lub wyzwaniem. Przepis jest przeszkodą/narzędziem w misji, nie tematem lekcji.
-2. **Konsekwencja zamiast kary.** Błąd = stop-klatka „UPS!”, pokazanie, co mogło się stać, 1 zdanie od Sierżant Oli, powtórka od checkpointu. Nigdy upokorzenie.
+2. **Konsekwencja zamiast kary.** Stop-klatka pokazuje, co się stało, a Sierżant Ola podpowiada, jak poprawić przejazd. Po poważnym błędzie w kampanii można zacząć misję od początku.
 3. **Mądra jazda się opłaca.** System punktów tak zbalansowany, że łamanie przepisów *zawsze* kosztuje więcej, niż daje skrót czy zyskany czas.
 4. **Polska, ale z przymrużeniem oka.** Rozpoznawalne miejsca (PKiN, Stadion Narodowy, Rynek we Wrocławiu, Hala Stulecia), polskie realia (tramwaje, pasy, bloki, zapiekanki, gołębie), humor.
 5. **Rozwój widoczny gołym okiem.** Rangi, mapa umiejętności, album znaków, rower i kask do personalizacji.

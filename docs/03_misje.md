@@ -54,7 +54,7 @@ Losowanie używa ziarna i stałego kroku symulacji. Rozpatruje tylko zdarzenia p
     - { typ: odbierz, przedmiot: pierogi }
     - { typ: dojedz, poi: blok_haliny, limit_s: 180 }
   przesylka: { delikatna: false }
-  warunki_porazki: [ czas_minal, major_x3 ]
+  warunki_porazki: [ czas_minal ]
   checkpointy: [ cp_bazar ]
   reguly_cwiczone: [ PIER-01, PIER-04, PIER-06, MSC-03, MAN-01 ]
   zdarzenia_wymuszone:
@@ -75,12 +75,12 @@ Losowanie używa ziarna i stałego kroku symulacji. Rozpatruje tylko zdarzenia p
 - `przygotuj_rower` może być pierwszym celem misji. Do jego ukończenia trzeba zapiąć kask i włączyć obie lampy. `start.zmrok: true` ustawia warunki ćwiczenia.
 - `skrot.odcinek` wskazuje strefę Tiled objętą znakiem B-1 lub B-2 bez wyjątku dla rowerów. Za jazdę rowerem przez tę strefę silnik wystawia zwykły werdykt zgodnie z wagą reguły. Podsumowanie misji informuje o nielegalnym przejeździe i odjęciu premii za czas. Prowadzenie roweru pozostaje dozwolone.
 - `wyscig.trasa_rywala` wskazuje polilinię Tiled w warstwie `race_routes`. Wynik rywala uwzględnia werdykty z jego przejazdu. Do zaliczenia wyścigu trzeba zdobyć od niego więcej punktów.
-- `przesylka.delikatna` włącza pasek wstrząsów. Szybka jazda po nierównościach, ostre hamowanie i uderzenie w krawężnik podnoszą jego poziom. Wynik zawiera premię za płynność zgodnie z balansem.
+- `przesylka.delikatna` włącza pasek wstrząsów. Szybka jazda po nierównościach, ostre hamowanie i uderzenie w krawężnik podnoszą jego poziom między odbiorem a oddaniem. Balans wyznacza progi premii za płynność i zakończenia próby.
 - Cel `sfotografuj` wymaga zatrzymania w obszarze `poi` i naciśnięcia przycisku zdjęcia. Pole `znak` wskazuje obiekt Tiled w tym obszarze. Zdjęcie zalicza cel w bieżącej próbie misji.
 - `checkpointy` to kolejność POI zapisujących pozycję oraz liczbę ukończonych celów. POI prostokątny używa środka do odrodzenia, a punktowy jest osiągnięty w promieniu 1,5 m. Opcjonalne `heading` w Tiled określa kierunek po odrodzeniu w radianach zgodnie z ruchem wskazówek zegara od osi +X.
 - Cel `wybor` otwiera scenę po zatrzymaniu w danym POI. Zawiera klucze pytania, odpowiedzi i wyjaśnienia oraz identyfikator reguły. Zła odpowiedź zamyka drogę do kolejnego kroku i nalicza jedną karę za pytanie. Gracz może poprawić wybór, a czas przejazdu stoi podczas rozmowy.
 - `start.ulewa` włącza ulewę na czas misji, a `start.awaria_swiatel` wygasza sygnalizację. `towarzysze` określa liczbę rowerzystów jadących śladem gracza w eskorcie lub konwoju.
-- `limit_s` można podać dla całej misji lub dla etapu. Liczniki korzystają z czasu symulacji. Próba powtórzona od checkpointu zachowuje zużyty czas obu limitów i wszystkie wcześniejsze werdykty.
+- `limit_s` można podać dla całej misji lub dla etapu. Liczniki korzystają z czasu symulacji. Powrót do checkpointu po pominięciu wymaganego nawyku zachowuje zużyty czas obu limitów i wcześniejsze werdykty. Po porażce ponowienie tworzy nową próbę od `start.poi`, z początkowym wyposażeniem, zegarem, celami, zdarzeniami i wynikiem.
 - `zdarzenia_wymuszone[].przy` wskazuje obiekt w `pois`, `triggers` lub `zones`. Build sprawdza typ zdarzenia, powiązanie z regułą i dostępność potrzebnej geometrii. Każdy wpis wyzwala się raz na próbę misji. Zajęte miejsce startu odkłada zdarzenie do kolejki. Nawigacja prowadzi do pominiętych wyzwalaczy przed ukończeniem ostatniego celu. Wyzwalacze działają również przy `ruch_ai: false`, które wyłącza ruch tła i losowanie w samouczku.
 
 ---

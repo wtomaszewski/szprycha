@@ -5,9 +5,10 @@ misja:
   bonus_czasu_max: 500
   bonus_plynnosci: 200
   prog_wstrzasow_plynnosc: 0.30
+  prog_wstrzasow_porazka: 1.0
   kara_minor: 150
   kara_major: 300
-  major_do_porazki: 3
+  major_do_porazki: 1
 combo:
   mnoznik_startowy: 1
   efekt_od_mnoznika: 3

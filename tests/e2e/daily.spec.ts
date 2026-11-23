@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { chooseCity } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
@@ -9,9 +9,7 @@ import {
   type ProgressProfile,
 } from '../../src/core/progressStore';
 
-test('completes a generated daily challenge by turning on lights before a dusk ride', async ({
-  page,
-}) => {
+async function startDuskPractice(page: Page) {
   await page.goto('/');
   const menu = page.locator('canvas[data-scene="MainMenu"]');
   await expect(menu).toBeVisible();
@@ -81,6 +79,13 @@ test('completes a generated daily challenge by turning on lights before a dusk r
   await page.getByRole('button', { name: pl.missionUi.equip }).click();
   await page.getByRole('button', { name: pl.missionUi.turnOnLights }).click();
   await expect(page.getByText(pl.misje['WAW-T-02'].cel2)).toBeVisible();
+  return { daily, goal, menu, panel };
+}
+
+test('completes a generated daily challenge by turning on lights before a dusk ride', async ({
+  page,
+}) => {
+  const { daily, goal, menu, panel } = await startDuskPractice(page);
   await page.keyboard.press('Escape');
   await page
     .getByRole('dialog', { name: pl.driving.paused })
@@ -96,4 +101,34 @@ test('completes a generated daily challenge by turning on lights before a dusk r
     panel.getByText(pl.m5c.stickerNames.odblask, { exact: true }),
   ).toBeVisible();
   await page.screenshot({ path: 'test-results/m5c-wyzwania.png' });
+});
+
+test('a failed mission does not credit a daily challenge earned during the attempt', async ({
+  page,
+}) => {
+  await page.route('**/data/content.json', async (route) => {
+    const response = await route.fetch();
+    const content: GameContent = await response.json();
+    const mission = content.misje.find(({ id }) => id === 'WAW-T-02')!;
+    mission.limit_s = 8;
+    mission.warunki_porazki.push('czas_minal');
+    await route.fulfill({ response, json: content });
+  });
+  const { daily, goal, menu, panel } = await startDuskPractice(page);
+  await expect(
+    page.getByLabel(pl.progression.points, { exact: true }),
+  ).toHaveText('50');
+  const failure = page.getByRole('dialog', { name: pl.missionFailure.title });
+  await expect(failure).toContainText(pl.missionFailure.reasons.czas_minal, {
+    timeout: 15_000,
+  });
+  await failure.getByRole('button', { name: pl.missionFailure.exit }).click();
+  await expect(menu).toBeVisible();
+
+  await page.reload();
+  await daily.click();
+  await expect(goal.getByRole('progressbar')).toHaveAttribute('value', '0');
+  await expect(
+    panel.getByText(pl.m5c.stickerNames.odblask, { exact: true }),
+  ).toBeHidden();
 });

@@ -321,6 +321,27 @@
     "retry": "Jeszcze raz",
     "resume": "Rozumiem"
   },
+  "missionFailure": {
+    "title": "OBLAŁEŚ!",
+    "retry": "Jeszcze raz od początku",
+    "exit": "Wyjście do menu",
+    "reasons": {
+      "major": "Poważny błąd w przejeździe",
+      "dowolny_blad": "Próba bez błędów przerwana",
+      "uwaga_drogowki": "Pytanie kontrolne bez poprawnej odpowiedzi",
+      "czas_minal": "Koniec czasu",
+      "wstrzasy_paczki": "Za duże wstrząsy przesyłki",
+      "wynik_wyscigu": "Za mało punktów, by wygrać wyścig"
+    },
+    "tips": {
+      "major": "Zwolnij i sprawdź znaki przed kolejnym manewrem.",
+      "dowolny_blad": "Jedź spokojnie i zostaw sobie czas na reakcję.",
+      "uwaga_drogowki": "Zwolnij i stosuj wskazówkę z pytania kontrolnego.",
+      "czas_minal": "Kieruj się do kolejnych celów i jedź w bezpiecznym tempie.",
+      "wstrzasy_paczki": "Zwolnij przed nierównościami i hamuj płynnie.",
+      "wynik_wyscigu": "Zbieraj punkty za bezpieczne nawyki, np. sygnalizuj skręt z wyprzedzeniem."
+    }
+  },
   "trafficEvents": {
     "czytaj_oznakowanie": "Rozejrzyj się i sprawdź oznakowanie.",
     "cwiczenie_trasy": "Zwolnij i uważnie obserwuj drogę.",
@@ -419,9 +440,6 @@
     "completed": "Misja ukończona",
     "failed": "Spróbuj jeszcze raz",
     "retry": "Powtórz misję",
-    "timeExpired": "Czas minął.",
-    "threeMajor": "Trzy poważne błędy zakończyły przejazd.",
-    "failedClean": "Do zaliczenia przejedź całą trasę bez błędu.",
     "goodHabits": "Dobre nawyki",
     "penalties": "Kary",
     "noTimeBonus": "Przejazd z poważnym błędem nie kwalifikuje się do premii za czas.",
@@ -438,7 +456,6 @@
     "illegalShortcut": "Jazda rowerem tym skrótem była niezgodna z przepisami.",
     "shocks": "Wstrząsy",
     "photograph": "Zrób zdjęcie znaku [P / A]",
-    "raceScoreRequired": "Zdobądź więcej punktów od Turbo, żeby zaliczyć wyścig.",
     "yourPoints": "Twoje punkty",
     "turboPoints": "Punkty Turbo",
     "smoothBonus": "Premia za płynną jazdę",
@@ -1479,6 +1496,7 @@
     },
     "breakReminder": "Przypomnienie o przerwie",
     "breakOff": "Wyłączone",
+    "gentleFailure": "Łagodniejszy napis po nieudanej próbie",
     "rankings": "Rankingi online",
     "rankingsHelp": "Po włączeniu gra wysyła kwalifikujące się wyniki, losowy identyfikator, wygenerowany nick i awatar. Wyłączenie zatrzymuje wysyłkę i czyści kolejkę. Dane z serwera usuwa się osobno.",
     "rankingStorage": "Rankingi wymagają lokalnego zapisu profilu, żeby rodzic mógł później usunąć dane z serwera.",

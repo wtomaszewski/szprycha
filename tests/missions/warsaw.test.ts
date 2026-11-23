@@ -76,7 +76,7 @@ it.each(Object.keys(warsawRoutes) as WarsawMissionId[])(
   },
 );
 
-it('shakes the parcel when riding fast on the cobbles', () => {
+it('fails the delivery when riding too fast on the cobbles', () => {
   const [market, beforePromenade, ...rest] = warsawRoutes['WAW-A1-05'].legal;
   const run = runMissionRoute('WAW-A1-05', [
     { ...market!, maxInput: 1 },
@@ -84,14 +84,16 @@ it('shakes the parcel when riding fast on the cobbles', () => {
     ...rest,
   ]);
   expect(run.mission.result).toMatchObject({
-    status: 'completed',
+    status: 'failed',
+    reason: 'wstrzasy_paczki',
+    points: 0,
     smoothBonus: 0,
     verdicts: expect.arrayContaining([
       expect.objectContaining({ ruleId: 'MAN-08', kind: 'minor' }),
     ]),
   });
   expect(run.mission.result!.shocks!).toBeGreaterThanOrEqual(
-    missionContent.balans.misja.prog_wstrzasow_plynnosc,
+    missionContent.balans.misja.prog_wstrzasow_porazka,
   );
 });
 
@@ -99,8 +101,9 @@ it('records the instruction from Ola when the rider crosses on green too early',
   const [stop, ...legal] = warsawRoutes['WAW-A1-06'].legal;
   const run = runMissionRoute('WAW-A1-06', [legal[0]!], [stop!, ...legal]);
   expect(run.mission.result).toMatchObject({
-    status: 'completed',
-    photos: 1,
+    status: 'failed',
+    reason: 'major',
+    points: 0,
     timeBonusEligible: false,
     verdicts: expect.arrayContaining([
       expect.objectContaining({ ruleId: 'SYG-03', kind: 'major' }),

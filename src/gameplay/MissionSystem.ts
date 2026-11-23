@@ -20,9 +20,16 @@ export interface MissionSpawn extends Vec2 {
   heading: number;
 }
 
-type Failure = MissionDefinition['warunki_porazki'][number] | 'wynik_wyscigu';
+type Failure =
+  | MissionDefinition['warunki_porazki'][number]
+  | 'major'
+  | 'uwaga_drogowki'
+  | 'wstrzasy_paczki'
+  | 'wynik_wyscigu';
 type Equipment = { helmet: boolean; lights: boolean };
-type Outcome = { status: 'completed' } | { status: 'failed'; reason: Failure };
+type Outcome =
+  | { status: 'completed' }
+  | { status: 'failed'; reason: Failure; verdict?: Verdict };
 
 export type MissionResult = Outcome & {
   missionId: string;
@@ -92,6 +99,7 @@ export class MissionSystem {
   private readonly verdicts: Verdict[] = [];
   private readonly shortcutSign?: { id: string; ruleId: string };
   private readonly roughSurfaces: readonly Zone[];
+  private readonly fragileCargo?: { pickup: number; delivery: number };
   private readonly photos = new Set<string>();
   private choice?: { position: Vec2; correct: boolean };
   private readonly evaluatedChoices = new Set<number>();
@@ -104,7 +112,7 @@ export class MissionSystem {
   private goalIndex = 0;
   private requiredHabitSeen = false;
   private readonly score: MissionScore;
-  private delayedOutcome?: Outcome;
+  private completionPending = false;
   private outcome?: MissionResult;
 
   constructor(
@@ -175,6 +183,19 @@ export class MissionSystem {
     this.roughSurfaces = definition.przesylka?.delikatna
       ? world.zones.filter(({ surface }) => surface === 'rough')
       : [];
+    if (definition.przesylka?.delikatna) {
+      const pickup = definition.cele.findIndex(({ typ }) => typ === 'odbierz');
+      const cargo = definition.cele[pickup];
+      if (cargo?.typ === 'odbierz') {
+        const delivery = definition.cele.findIndex(
+          (goal, index) =>
+            index > pickup &&
+            goal.typ === 'oddaj' &&
+            goal.przedmiot === cargo.przedmiot,
+        );
+        this.fragileCargo = { pickup, delivery };
+      }
+    }
     if (definition.wyscig) {
       const route = world.raceRoutes?.get(definition.wyscig.trasa_rywala);
       if (!route || !reached(this.goals.at(-1)!.area, route.path.end))
@@ -185,7 +206,7 @@ export class MissionSystem {
   }
 
   private get goalTarget() {
-    return this.outcome || this.delayedOutcome
+    return this.outcome || this.completionPending
       ? undefined
       : this.goals[this.goalIndex];
   }
@@ -306,17 +327,26 @@ export class MissionSystem {
   }
 
   get waitingForQuestion() {
-    return this.delayedOutcome !== undefined;
+    return this.completionPending;
   }
 
   answerQuestion(points: number) {
     if (this.outcome) return;
     this.score.answerQuestion(points);
-    if (this.delayedOutcome) {
-      const outcome = this.delayedOutcome;
-      this.delayedOutcome = undefined;
-      this.finish(outcome);
+    if (this.completionPending) this.finish({ status: 'completed' });
+  }
+
+  failControlQuestion(ruleId: string) {
+    if (this.outcome) return;
+    let verdict: Verdict | undefined;
+    for (let index = this.verdicts.length - 1; index >= 0; index--) {
+      const entry = this.verdicts[index]!;
+      if (entry.ruleId === ruleId && entry.kind !== 'good') {
+        verdict = entry;
+        break;
+      }
     }
+    this.finish({ status: 'failed', reason: 'uwaga_drogowki', verdict });
   }
 
   step(
@@ -334,7 +364,11 @@ export class MissionSystem {
 
     this.ticks++;
     this.race?.step();
-    if (this.shakeLevel !== undefined) {
+    if (
+      this.fragileCargo &&
+      this.goalIndex > this.fragileCargo.pickup &&
+      this.goalIndex <= this.fragileCargo.delivery
+    ) {
       const deceleration = this.previousSpeed - speed;
       const cobbles = this.roughSurfaces.some((zone) =>
         contains(zone, position),
@@ -349,7 +383,7 @@ export class MissionSystem {
       this.previousSpeed = speed;
     }
     this.goalTicks[this.goalIndex] = this.goalTicks[this.goalIndex]! + 1;
-    let major = false;
+    let major: Verdict | undefined;
     for (const verdict of verdicts) {
       this.verdicts.push(verdict);
       this.score.receive(verdict.kind);
@@ -358,28 +392,36 @@ export class MissionSystem {
         verdict.ruleId === target.goal.wymagany_nawyk
       )
         this.requiredHabitSeen = true;
-      major ||= verdict.kind === 'major';
+      if (verdict.kind === 'major') major ??= verdict;
     }
 
-    if (
-      this.failureConditions.has('dowolny_blad') &&
-      verdicts.some(({ kind }) => kind !== 'good')
-    ) {
-      this.finish(
-        { status: 'failed', reason: 'dowolny_blad' },
-        questionPending,
-      );
+    if (major && this.score.tooManyMajor) {
+      this.finish({ status: 'failed', reason: 'major', verdict: major });
       return;
     }
-    if (this.score.tooManyMajor) {
-      this.finish({ status: 'failed', reason: 'major_x3' }, questionPending);
+    const violation =
+      this.failureConditions.has('dowolny_blad') &&
+      verdicts.find(({ kind }) => kind !== 'good');
+    if (violation) {
+      this.finish({
+        status: 'failed',
+        reason: 'dowolny_blad',
+        verdict: violation,
+      });
       return;
     }
     if (
       this.failureConditions.has('czas_minal') &&
       this.remainingSeconds === 0
     ) {
-      this.finish({ status: 'failed', reason: 'czas_minal' }, questionPending);
+      this.finish({ status: 'failed', reason: 'czas_minal' });
+      return;
+    }
+    if (
+      this.shakeLevel !== undefined &&
+      this.shakeLevel >= this.balance.misja.prog_wstrzasow_porazka
+    ) {
+      this.finish({ status: 'failed', reason: 'wstrzasy_paczki' });
       return;
     }
     const atTarget = this.preparingBike
@@ -430,8 +472,10 @@ export class MissionSystem {
       this.goalIndex++;
       this.choice = undefined;
       this.requiredHabitSeen = false;
-      if (this.goalIndex === this.goals.length)
-        this.finish({ status: 'completed' }, questionPending);
+      if (this.goalIndex === this.goals.length) {
+        if (questionPending) this.completionPending = true;
+        else this.finish({ status: 'completed' });
+      }
     }
 
     this.saveCheckpoint(position);
@@ -457,11 +501,8 @@ export class MissionSystem {
     }
   }
 
-  private finish(outcome: Outcome, questionPending = false) {
-    if (questionPending) {
-      this.delayedOutcome = outcome;
-      return;
-    }
+  private finish(outcome: Outcome) {
+    this.completionPending = false;
     const illegalShortcut = this.verdicts.some(
       ({ kind, ruleId, highlight }) =>
         kind !== 'good' &&
@@ -493,6 +534,13 @@ export class MissionSystem {
       goodHabits: this.score.goodHabits,
       verdicts: this.verdicts,
       ...score,
+      ...(outcome.status === 'failed' && {
+        points: 0,
+        completionPoints: 0,
+        habitPoints: 0,
+        questionPoints: 0,
+        timeBonus: 0,
+      }),
       stars: missionStars(
         this.balance.gwiazdki,
         this.definition,
@@ -504,7 +552,7 @@ export class MissionSystem {
       ...(opponent !== undefined && { opponentScore: opponent }),
       ...(this.shakeLevel !== undefined && {
         shocks: this.shakeLevel,
-        smoothBonus,
+        smoothBonus: outcome.status === 'completed' ? smoothBonus : 0,
       }),
       ...(this.photos.size > 0 && { photos: this.photos.size }),
       illegalShortcut,

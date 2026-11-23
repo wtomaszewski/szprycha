@@ -80,3 +80,52 @@ test('unlocks daily offers only after completing that city’s campaign', async 
       .getByRole('button'),
   ).toHaveCount(3);
 });
+
+test('retries a timed-out daily delivery from its start', async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.clock.setFixedTime(new Date('2026-11-23T12:00:00+01:00'));
+  await page.goto('/');
+  const canvas = page.locator('canvas');
+  await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
+  // This seed offers a night delivery with an unfastened helmet at the start.
+  await profile(page, { nicknameSeed: 6 });
+  await page.reload();
+  await chooseCity(page, 'warszawa');
+  await page.keyboard.press('KeyM');
+  const phone = page.getByRole('dialog', { name: pl.phone.title });
+  const title = pl.procedural.templates.delivery.title.replace(
+    '{sender}',
+    pl.procedural.senders.workshop,
+  );
+  await phone
+    .getByRole('list', { name: pl.procedural.heading })
+    .getByRole('button', { name: `${pl.phone.start} · ${title}` })
+    .click();
+
+  const equip = page.getByRole('button', { name: pl.missionUi.equip });
+  await expect(equip).toBeVisible();
+  await expect(canvas).toHaveAttribute(
+    'data-mission',
+    /^warszawa-daily-delivery-/,
+  );
+  const mission = (await canvas.getAttribute('data-mission'))!;
+  const x = (await canvas.getAttribute('data-x'))!;
+  const y = (await canvas.getAttribute('data-y'))!;
+  const timer = page.getByLabel(pl.missionUi.timer);
+  const initialTime = (await timer.textContent())!;
+  const dialogue = page.getByRole('dialog', { name: pl.dialogueUi.title });
+  await dialogue.getByRole('button', { name: pl.dialogueUi.skip }).click();
+
+  const failure = page.getByRole('dialog', { name: pl.missionFailure.title });
+  await expect(failure).toContainText(pl.missionFailure.reasons.czas_minal, {
+    timeout: 100_000,
+  });
+  await expect.poll(async () => (await profile(page)).missionPoints).toBe(0);
+  await failure.getByRole('button', { name: pl.missionFailure.retry }).click();
+  await expect(failure).toBeHidden();
+  await expect(timer).toHaveText(initialTime);
+  await expect(equip).toBeVisible();
+  await expect(canvas).toHaveAttribute('data-mission', mission);
+  await expect(canvas).toHaveAttribute('data-x', x);
+  await expect(canvas).toHaveAttribute('data-y', y);
+});

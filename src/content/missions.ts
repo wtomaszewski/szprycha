@@ -94,7 +94,7 @@ export const missionSchema = z
     przesylka: z.strictObject({ delikatna: z.boolean() }).optional(),
     wyscig: z.strictObject({ trasa_rywala: id }).optional(),
     warunki_porazki: z
-      .array(z.enum(['czas_minal', 'major_x3', 'dowolny_blad']))
+      .array(z.enum(['czas_minal', 'dowolny_blad']))
       .default([]),
     checkpointy: z.array(id).default([]),
     reguly_cwiczone: z.array(id).min(1),

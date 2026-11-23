@@ -12,7 +12,7 @@
     - { typ: dojedz, poi: tutorial_jazda, opis: misje.WRO-T-01.cel1 }
     - { typ: dojedz, poi: tutorial_przed_stop, opis: misje.WRO-T-01.cel2 }
     - { typ: dojedz, poi: tutorial_meta, opis: misje.WRO-T-01.cel3, wymagany_nawyk: ZNAK-STOP }
-  warunki_porazki: [czas_minal, major_x3]
+  warunki_porazki: [czas_minal]
   limit_s: 90
   checkpointy: [tutorial_przed_stop]
   reguly_cwiczone: [KASK-01, ZNAK-STOP, GDZIE-06]
@@ -39,7 +39,6 @@
     - { typ: przygotuj_rower, opis: misje.WRO-T-02.cel1 }
     - { typ: dojedz, poi: garaz_objazd, opis: misje.WRO-T-02.cel2 }
     - { typ: dojedz, poi: garaz_meta, opis: misje.WRO-T-02.cel3 }
-  warunki_porazki: [major_x3]
   reguly_cwiczone: [KASK-01, WYP-04, WYP-05]
   zdarzenia_wymuszone:
     - { typ: kontrola_swiatel, przy: garaz_start, regula: WYP-04 }
@@ -63,7 +62,6 @@
     - { typ: zbierz_krasnala, poi: dzwoneczek, opis: misje.WRO-A1-01.cel1 }
     - { typ: zbierz_krasnala, poi: krasnal-2, opis: misje.WRO-A1-01.cel2 }
     - { typ: zbierz_krasnala, poi: krasnal-3, opis: misje.WRO-A1-01.cel3 }
-  warunki_porazki: [major_x3]
   reguly_cwiczone: [GDZIE-05, GDZIE-07, MAN-08]
   zdarzenia_wymuszone:
     - { typ: kolega_podwozka, przy: rynek-start, regula: MAN-10 }
@@ -88,7 +86,6 @@
     - { typ: odbierz, opis: misje.WRO-A1-02.cel1, przedmiot: kwiaty }
     - { typ: dojedz, poi: rynek-parkowanie, opis: misje.WRO-A1-02.cel2 }
     - { typ: oddaj, poi: dzwoneczek, opis: misje.WRO-A1-02.cel3, przedmiot: kwiaty }
-  warunki_porazki: [major_x3]
   checkpointy: [rynek-parkowanie]
   reguly_cwiczone: [MAN-08, GDZIE-05]
   zdarzenia_wymuszone:
@@ -116,7 +113,7 @@
     - { typ: dojedz, poi: most-tumski-poludnie, opis: misje.WRO-A1-03.cel4 }
     - { typ: dojedz, poi: ostrow-przed, opis: misje.WRO-A1-03.cel5 }
     - { typ: oddaj, poi: latarnik, opis: misje.WRO-A1-03.cel6, przedmiot: koperta }
-  warunki_porazki: [czas_minal, major_x3]
+  warunki_porazki: [czas_minal]
   limit_s: 230
   checkpointy: [zebra-poludnie, most-tumski-poludnie]
   reguly_cwiczone: [PIER-04, GDZIE-06]
@@ -143,7 +140,7 @@
     - { typ: dojedz, poi: most-tumski-polnoc, opis: misje.WRO-A1-04.cel2 }
     - { typ: dojedz, poi: ostrow-przed, opis: misje.WRO-A1-04.cel3 }
     - { typ: oddaj, poi: latarnik, opis: misje.WRO-A1-04.cel4, przedmiot: zapalki }
-  warunki_porazki: [czas_minal, major_x3]
+  warunki_porazki: [czas_minal]
   limit_s: 190
   checkpointy: [most-tumski-polnoc]
   reguly_cwiczone: [PIER-02, MAN-03, GDZIE-07]
@@ -169,7 +166,6 @@
     - { typ: przygotuj_rower, opis: misje.WRO-A1-05.cel1 }
     - { typ: dojedz, poi: most-tumski-srodek, opis: misje.WRO-A1-05.cel2 }
     - { typ: dojedz, poi: most-tumski-poludnie, opis: misje.WRO-A1-05.cel3 }
-  warunki_porazki: [major_x3]
   checkpointy: [most-tumski-srodek]
   reguly_cwiczone: [MSC-04, WYP-04, WYP-05]
   zdarzenia_wymuszone:
@@ -194,7 +190,6 @@
     - { typ: sfotografuj, poi: rynek-foto-d1, opis: misje.WRO-A1-06.cel1, znak: rynek-N-D-1 }
     - { typ: sfotografuj, poi: rynek-foto-a7, opis: misje.WRO-A1-06.cel2, znak: rynek-E-A-7 }
     - { typ: dojedz, poi: pod-ratuszem, opis: misje.WRO-A1-06.cel3 }
-  warunki_porazki: [major_x3]
   checkpointy: [rynek-foto-d1]
   reguly_cwiczone: [ZNAK-A7, ZNAK-D1]
   zdarzenia_wymuszone:
@@ -221,7 +216,6 @@
     - { typ: dojedz, poi: hala-rondo-wschod, opis: misje.WRO-A2-01.cel3 }
     - { typ: dojedz, poi: hala-dojazd, opis: misje.WRO-A2-01.cel4 }
     - { typ: oddaj, poi: wejscie-hala, opis: misje.WRO-A2-01.cel5, przedmiot: plan }
-  warunki_porazki: [major_x3]
   checkpointy: [hala-rondo-wschod, hala-dojazd]
   reguly_cwiczone: [PIER-08, GDZIE-01]
   zdarzenia_wymuszone:
@@ -249,7 +243,6 @@
     - { typ: dojedz, poi: zoo-ciag, opis: misje.WRO-A2-02.cel3 }
     - { typ: dojedz, poi: zoo-polowa, opis: misje.WRO-A2-02.cel4 }
     - { typ: oddaj, poi: afrykarium-wejscie, opis: misje.WRO-A2-02.cel5, przedmiot: karma }
-  warunki_porazki: [major_x3]
   checkpointy: [zoo-polowa]
   reguly_cwiczone: [GDZIE-11, GDZIE-08, MAN-08]
   zdarzenia_wymuszone:
@@ -276,7 +269,7 @@
     - { typ: dojedz, poi: dworzec-przejazd-za, opis: misje.WRO-A2-03.cel3 }
     - { typ: dojedz, poi: dworzec-przystanek, opis: misje.WRO-A2-03.cel4 }
     - { typ: oddaj, poi: dworzec-glowny, opis: misje.WRO-A2-03.cel5, przedmiot: bilet }
-  warunki_porazki: [czas_minal, major_x3]
+  warunki_porazki: [czas_minal]
   limit_s: 240
   checkpointy: [dworzec-przejazd-przed, dworzec-przejazd-za]
   reguly_cwiczone: [PIER-09, MSC-02, SYG-01]
@@ -302,7 +295,6 @@
     - { typ: dojedz, poi: sky-wlot, opis: misje.WRO-A2-04.cel1 }
     - { typ: dojedz, poi: sky-za, opis: misje.WRO-A2-04.cel2 }
     - { typ: dojedz, poi: sky-pas-koniec, opis: misje.WRO-A2-04.cel3 }
-  warunki_porazki: [major_x3]
   checkpointy: [sky-wlot, sky-za]
   reguly_cwiczone: [MAN-03, GDZIE-02, PIER-03]
   zdarzenia_wymuszone:
@@ -326,7 +318,6 @@
   cele:
     - { typ: sfotografuj, poi: sky-p23, opis: misje.WRO-A2-05.cel1, znak: pas-rowerowy-poludnie-P-23 }
     - { typ: dojedz, poi: sky-pas-koniec, opis: misje.WRO-A2-05.cel2 }
-  warunki_porazki: [major_x3]
   checkpointy: [sky-p23]
   reguly_cwiczone: [GDZIE-02, ZNAK-P23]
   zdarzenia_wymuszone:
@@ -351,7 +342,6 @@
     - { typ: dojedz, poi: zachod-od-centrum, opis: misje.WRO-A2-06.cel1 }
     - { typ: dojedz, poi: zachod-luk, opis: misje.WRO-A2-06.cel2 }
     - { typ: dojedz, poi: zachod-kolej-start, opis: misje.WRO-A2-06.cel3 }
-  warunki_porazki: [major_x3]
   checkpointy: [zachod-od-centrum]
   reguly_cwiczone: [MAN-04, MAN-05]
   zdarzenia_wymuszone:
@@ -377,7 +367,6 @@
     - { typ: dojedz, poi: zachod-kolej-miedzy, opis: misje.WRO-A3-01.cel2 }
     - { typ: dojedz, poi: zachod-kolej-meta, opis: misje.WRO-A3-01.cel3 }
     - { typ: oddaj, poi: zachod-pobocze, opis: misje.WRO-A3-01.cel4, przedmiot: wiadomosc }
-  warunki_porazki: [major_x3]
   checkpointy: [zachod-kolej-miedzy, zachod-kolej-meta]
   reguly_cwiczone: [MSC-01, GDZIE-03b]
   zdarzenia_wymuszone:
@@ -409,7 +398,6 @@
       poprawna: 0
       wyjasnienie: misje.WRO-A3-02.cel2_wyjasnienie
     - { typ: dojedz, poi: zachod-objazd, opis: misje.WRO-A3-02.cel3 }
-  warunki_porazki: [major_x3]
   reguly_cwiczone: [GDZIE-09, ZNAK-B9]
   zdarzenia_wymuszone:
     - { typ: czytaj_oznakowanie, przy: zachod-tablica, regula: ZNAK-B9 }
@@ -433,7 +421,6 @@
     - { typ: dojedz, poi: bulwar-wschod, opis: misje.WRO-A3-03.cel1 }
     - { typ: dojedz, poi: bulwar-most, opis: misje.WRO-A3-03.cel2 }
     - { typ: dojedz, poi: bulwar-dalej, opis: misje.WRO-A3-03.cel3 }
-  warunki_porazki: [major_x3]
   checkpointy: [bulwar-most]
   reguly_cwiczone: [GDZIE-04, GDZIE-01]
   zdarzenia_wymuszone:
@@ -460,7 +447,6 @@
     - { typ: dojedz, poi: bulwar-most, opis: misje.WRO-A3-04.cel2 }
     - { typ: dojedz, poi: bulwar-dalej, opis: misje.WRO-A3-04.cel3 }
     - { typ: dojedz, poi: bulwar-meta, opis: misje.WRO-A3-04.cel4 }
-  warunki_porazki: [major_x3]
   checkpointy: [bulwar-most, bulwar-dalej]
   reguly_cwiczone: [MAN-04, GDZIE-08, PIER-05]
   zdarzenia_wymuszone:
@@ -515,7 +501,6 @@
       odpowiedzi: [misje.WRO-A3-05.cel5_odp1, misje.WRO-A3-05.cel5_odp2, misje.WRO-A3-05.cel5_odp3]
       poprawna: 1
       wyjasnienie: misje.WRO-A3-05.cel5_wyjasnienie
-  warunki_porazki: [major_x3]
   checkpointy: [bulwar-pomoc]
   reguly_cwiczone: [PP-01, PP-02, PP-03]
   zdarzenia_wymuszone:
@@ -551,7 +536,6 @@
     - { typ: dojedz, poi: poludnie-ola-za, opis: misje.WRO-A3-06.cel3a }
     - { typ: dojedz, poi: rynek-zachodni, opis: misje.WRO-A3-06.cel4 }
     - { typ: dojedz, poi: pod-ratuszem, opis: misje.WRO-A3-06.cel5 }
-  warunki_porazki: [major_x3]
   checkpointy: [bulwar-most, rynek-zachodni]
   reguly_cwiczone: [MSC-05, SYG-03, GDZIE-01]
   zdarzenia_wymuszone:
@@ -578,7 +562,6 @@
     - { typ: przygotuj_rower, opis: misje.WRO-B-01.cel1 }
     - { typ: dojedz, poi: wejscie-hala, opis: misje.WRO-B-01.cel2 }
     - { typ: dojedz, poi: fontanna-meta, opis: misje.WRO-B-01.cel3 }
-  warunki_porazki: [major_x3]
   reguly_cwiczone: [MSC-04, WYP-04, WYP-05]
   zdarzenia_wymuszone:
     - { typ: kontrola_swiatel, przy: fontanna-zbiorka, regula: WYP-04 }
@@ -617,7 +600,6 @@
     - { typ: dojedz, poi: zachod-most-poludnie, opis: misje.WRO-B-02.cel11 }
     - { typ: dojedz, poi: zachod-most-polnoc, opis: misje.WRO-B-02.cel12 }
     - { typ: dojedz, poi: zachod-most-poludnie, opis: misje.WRO-B-02.cel13 }
-  warunki_porazki: [major_x3]
   checkpointy: [slodowa-polnoc, hala-most-polnoc, zachod-most-polnoc]
   reguly_cwiczone: [GDZIE-01, MAN-04]
   zdarzenia_wymuszone:
@@ -644,7 +626,6 @@
     - { typ: odbierz, poi: dworzec-przystanek, opis: misje.WRO-B-03.cel2, przedmiot: list }
     - { typ: oddaj, poi: dworzec-wejscie, opis: misje.WRO-B-03.cel3, przedmiot: paczka }
     - { typ: oddaj, poi: dworzec-glowny, opis: misje.WRO-B-03.cel4, przedmiot: list }
-  warunki_porazki: [major_x3]
   checkpointy: [dworzec-przystanek]
   reguly_cwiczone: [MSC-02, SYG-01]
   zdarzenia_wymuszone:
@@ -677,7 +658,6 @@
       wyjasnienie: misje.WRO-B-04.cel1_wyjasnienie
     - { typ: dojedz, poi: nadodrze-pas, opis: misje.WRO-B-04.cel2 }
     - { typ: dojedz, poi: nadodrze-meta, opis: misje.WRO-B-04.cel3 }
-  warunki_porazki: [major_x3]
   reguly_cwiczone: [ZNAK-B2T22, GDZIE-02]
   zdarzenia_wymuszone:
     - { typ: czytaj_oznakowanie, przy: nadodrze-start, regula: ZNAK-B2T22 }
@@ -703,7 +683,7 @@
     - { typ: dojedz, poi: slodowa-poludnie, opis: misje.WRO-B-05.cel2 }
     - { typ: dojedz, poi: slodowa-polnoc, opis: misje.WRO-B-05.cel3 }
     - { typ: oddaj, poi: slodowa-lody, opis: misje.WRO-B-05.cel4, przedmiot: lody }
-  warunki_porazki: [czas_minal, major_x3]
+  warunki_porazki: [czas_minal]
   limit_s: 150
   reguly_cwiczone: [GDZIE-11, MAN-08]
   zdarzenia_wymuszone:
@@ -730,7 +710,6 @@
     - { typ: odbierz, opis: misje.WRO-B-06.cel1, przedmiot: sadzonki }
     - { typ: dojedz, poi: japonski-most-poludnie, opis: misje.WRO-B-06.cel2 }
     - { typ: oddaj, poi: japonski-most-polnoc, opis: misje.WRO-B-06.cel3, przedmiot: sadzonki }
-  warunki_porazki: [major_x3]
   checkpointy: [japonski-most-poludnie]
   reguly_cwiczone: [GDZIE-11, GDZIE-08]
   zdarzenia_wymuszone:

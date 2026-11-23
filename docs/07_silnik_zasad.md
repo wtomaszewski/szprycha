@@ -126,13 +126,13 @@ Przepuszczenie tramwaju, przepuszczenie pasażera oraz ułatwienie przejazdu poj
 
 ## 7. Stop-klatka i feedback
 
-Przy werdykcie `major` lub pierwszym pokazanym `minor` danej reguły w sesji gra wstrzymuje jazdę, ruch AI, zdarzenia i zegar misji. Przez 0,3 s pokazuje spowolnioną końcówkę zdarzenia, po czym zatrzymuje obraz i zwiększa zoom do ×1,5 względem jazdy. Podświetlenie wskazuje znak, strefę lub uczestnika z `highlight` werdyktu. Obrys pulsuje płynnie z częstotliwością 2 Hz. Przy ustawieniu systemowym ograniczającym ruch gra pomija spowolnienie i zoom, a obrys jest stały.
+Gdy błąd kończy próbę w kampanii, gra wstrzymuje jazdę, AI, zdarzenia i zegar, po czym pokazuje ostatnią klatkę, przyczynę i podświetlenie z werdyktu. Gdy jazdę można kontynuować, stop-klatka „UPS!” pokazuje spowolnioną końcówkę zdarzenia, a następnie zwiększa zoom do ×1,5. Obrys znaku, strefy lub uczestnika ruchu pulsuje z częstotliwością 2 Hz. Przy ograniczonym ruchu gra pomija spowolnienie i zoom oraz wyświetla stały obrys.
 
-Sierżant Ola wyświetla jedno zdanie `feedback` z `content/przepisy.yaml` wskazane kluczem `feedbackKey`. Dymek mieści najwyżej 140 znaków. „Powtórka” odtwarza historię w zwykłym tempie i ponownie zatrzymuje się na zdarzeniu. „Jeszcze raz” przenosi do checkpointu misji lub startu w wolnej jeździe. Po powrocie misja zachowuje zegar, werdykty i wyzwolone zdarzenia. „Rozumiem” jest dostępne przy drobnym błędzie i wznawia jazdę. Wynik misji ma pierwszeństwo po osiągnięciu limitu błędów. Brak nawyku wymaganego do zaliczenia celu zachowuje wskazówkę powrotu do checkpointu.
+Sierżant Ola podaje jedno zdanie `feedback` z `content/przepisy.yaml` wskazane przez `feedbackKey`. Dymek mieści najwyżej 140 znaków. „Powtórka” odtwarza historię w zwykłym tempie i ponownie zatrzymuje się na zdarzeniu. W dialogu „UPS!” przycisk „Jeszcze raz” przenosi do checkpointu misji lub startu w wolnej jeździe, a „Rozumiem” wznawia jazdę po drobnym błędzie. Po porażce „Jeszcze raz od początku” uruchamia nową próbę misji.
 
 `ReplayBuffer` jest niezależny od Phasera. Wstępnie przydziela 301 próbek na 300 odstępów po 1/60 s. Zapisuje pozycję, kierunek i prędkość gracza i agentów oraz stan potrzebny do prezentacji, w tym aktywność agentów, światła, akcje gracza i obiekty zdarzeń. Renderer czyta próbki w kolejności czasu i podczas powtórki pomija krok symulacji. Historia krótsza niż 5 s odtwarza dostępny odcinek. Przeniesienie roweru zaczyna nową historię w miejscu odrodzenia.
 
-Powtórkę można uruchomić z klawiatury lub dotykiem. Na padzie A uruchamia lub zatrzymuje powtórkę, B kontynuuje po drobnym błędzie lub wraca do checkpointu po poważnym, a X wraca do checkpointu. Lektor i Notatnik Kuriera pozostają rozszerzeniami stop-klatki.
+Powtórkę można uruchomić z klawiatury lub dotykiem. Na padzie A uruchamia lub zatrzymuje powtórkę, B zamyka lekcję, a X wybiera „Jeszcze raz”. Na ekranie nieudanej próby A ponawia misję, a B wraca do menu.
 
 ## 8. Testy scenariuszowe (`tests/rules/*.yaml`)
 

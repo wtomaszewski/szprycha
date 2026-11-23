@@ -322,7 +322,6 @@ export class DailyOrderGenerator {
           skrot: { odcinek: route.race.shortcut },
         }),
         warunki_porazki: [
-          'major_x3',
           ...(timed ? ['czas_minal' as const] : []),
           ...(kind === 'race' ? ['dowolny_blad' as const] : []),
         ],
