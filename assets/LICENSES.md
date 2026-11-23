@@ -31,6 +31,8 @@ Wpis do uzupełnienia po wyborze głosu i pierwszym renderowaniu. Dostawca, plan
 | Radio Szprycha FM 2.0 i próbki odsłuchowe                                               | `src/audio/radio/`, `tools/radio/` i `src/audio/Radio.ts`. Własna synteza muzyki i dżingli (`generated/radio/*.mp3`) oraz próbek OGG. Bez zewnętrznych sampli i plików MIDI.             |
 | Teksty lektora i porady Dzwonek Talk                                                    | `voice/manifest.json`, `content/`, `i18n/pl.json`. Własne teksty gry.                                                                                                                    |
 
+Krakowskie obwarzanki rysuje `src/render/CityCollectibles.ts`. Zrzuty kampanii z #106 pochodzą z lokalnej gry uruchomionej przez Playwright.
+
 Listy w `content/zleceniodawcy.yaml` są autorskie. Gra komponuje portrety i sprite’y fikcyjnych klientów przy użyciu `src/render/portraitArt.ts` i `src/render/dailyClientArt.ts`. Galerię tworzy `tools/client-gallery.ts`. Pozostałe zrzuty `docs/screenshots/103-*` pochodzą z lokalnej gry.
 
 Listy słów w `content/nicki.json` są autorskie. Strefa Rodzica korzysta z istniejących kolorów kasku i lokalnego fontu. Zrzuty `docs/screenshots/80-*.png` wygenerował Playwright z działającej gry.

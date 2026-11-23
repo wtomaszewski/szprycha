@@ -71,7 +71,7 @@ Losowanie używa ziarna i stałego kroku symulacji. Rozpatruje tylko zdarzenia p
 ### Uruchamianie misji
 
 - `mapa` wskazuje plik Tiled bez rozszerzenia (domyślnie wartość z `miasto`). Samouczki używają `akt: 0`. `start.kask_zapiety` określa stan kasku przed ruszeniem, a `ruch_ai: false` pozwala przećwiczyć manewr bez ruchu AI.
-- Cele są wykonywane kolejno, po osiągnięciu obszaru POI. `odbierz` i `oddaj` bez własnego `poi` korzystają z ostatniego wskazanego POI. `wymagany_nawyk` wymaga werdyktu `good` dla wskazanej reguły w trakcie danego celu.
+- Cele są wykonywane kolejno, po osiągnięciu obszaru POI. `zbierz_obwarzanka` wymaga dojścia z rowerem do oznaczonej znajdźki i odpowiedzi na pytanie przypisane w warstwie `collectibles`. Zdobycz z profilu liczy się przy ponownym przejeździe. `odbierz` i `oddaj` bez własnego `poi` korzystają z ostatniego wskazanego POI. `wymagany_nawyk` wymaga werdyktu `good` dla wskazanej reguły w trakcie danego celu.
 - `przygotuj_rower` może być pierwszym celem misji. Do jego ukończenia trzeba zapiąć kask i włączyć obie lampy. `start.zmrok: true` ustawia warunki ćwiczenia.
 - `skrot.odcinek` wskazuje strefę Tiled objętą znakiem B-1 lub B-2 bez wyjątku dla rowerów. Za jazdę rowerem przez tę strefę silnik wystawia zwykły werdykt zgodnie z wagą reguły. Podsumowanie misji informuje o nielegalnym przejeździe i odjęciu premii za czas. Prowadzenie roweru pozostaje dozwolone.
 - `wyscig.trasa_rywala` wskazuje polilinię Tiled w warstwie `race_routes`. Wynik rywala uwzględnia werdykty z jego przejazdu. Do zaliczenia wyścigu trzeba zdobyć od niego więcej punktów.
@@ -170,6 +170,15 @@ Finał przyznaje 8–12 żetonów i naklejkę do kolekcji, raz na wątek w każd
 | WRO-A3-06 | Parada Krasnali | konwój/finał | → Rynek | MSC-05, SYG-03, wszystkie |
 
 **Poboczne Wrocław (8):** 100 krasnali (kolekcja w wolnej jeździe, każdy krasnal = mini-zagadka drogowa) · Fontanna o zmroku (nocny) · Mostowy maraton (12 mostów, wąskie przejazdy) · Dworcowy kurier (wielopunktowa) · Kontraruch na Nadodrzu (B-2 + T-22) · Lody na Wyspie Słodowej (na czas) · Japoński Ogród (delikatna, piesi) · Wyzwanie: Rondo ×5 bez błędu.
+
+## Kampania — KRAKÓW
+
+| Etap | Misje | Ćwiczenia |
+|---|---|---|
+| Szkolenie | `KRA-B-01` Wieczorny spacer po Rynku · `KRA-B-02` Kontrapas na Kazimierzu · `KRA-B-03` Pomoc na bulwarach | Przygotowanie roweru, B-9, kontrapas, osobna sygnalizacja rowerowa oraz bezpieczeństwo przy udzielaniu pomocy |
+| Akt 1 | `KRA-A1-01` Zaproszenia pod Plantami · `KRA-A1-02` Obwarzanki z zagadką · `KRA-A1-03` Latarenka dla Smoka · `KRA-A1-04` Zdjęcia dla Oli · `KRA-A1-05` Koperta przez zebrę | Strefa zamieszkania, objazd B-1, zagadki, ostrożna jazda po kostce, zdjęcia znaków na postoju oraz prowadzenie roweru przez zebrę |
+| Akt 2 | `KRA-A2-01` Plan Kazimierza · `KRA-A2-02` Boczne przejście · `KRA-A2-03` Dzwonek bez wysepki · `KRA-A2-04` Sygnał nad Wisłą · `KRA-A2-05` Znak przed rondem | Kontrapas, sygnalizacja, wysiadający pasażerowie, lampki po zmroku i pierwszeństwo na rondzie z A-7 |
+| Akt 3 | `KRA-A3-01` Część zza torów · `KRA-A3-02` Pomoc dla Turbo · `KRA-A3-03` Objazd pod Kopcem · `KRA-A3-04` Klucz za STOP-em · `KRA-A3-05` Festyn bez zakłóceń | Pobocze i zapory, pierwsze kroki pomocy i symulacja rozmowy z 112, pełne zatrzymanie na STOP-ie, objazd B-1 i jazda w kolumnie |
 
 ## Wspólne — Miasteczko Ruchu Drogowego
 - **Plac manewrowy:** PLAC-01 ósemka, PLAC-02 slalom, PLAC-03 wąski tor, PLAC-04 zatrzymanie w polu, PLAC-05 ruszanie i sygnalizacja, PLAC-06 jazda z jedną ręką (sygnalizowanie skrętu). Każdy element: brąz/srebro/złoto czasowe, ale tylko przejazd bez dotknięcia linii/pachołka i bez podparcia nogą się liczy.

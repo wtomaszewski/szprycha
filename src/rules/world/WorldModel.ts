@@ -265,6 +265,18 @@ export function lateralOffset(lane: Lane, pos: Vec2) {
   );
 }
 
+const collectibleProperties = z.discriminatedUnion('kind', [
+  z.object({
+    kind: z.literal('gnome'),
+    variant: z.number().int().nonnegative().default(0),
+  }),
+  z.object({
+    kind: z.literal('obwarzanek'),
+    question: z.string().regex(/^Q[0-9]+$/),
+  }),
+]);
+export type CityCollectible = Box & z.infer<typeof collectibleProperties>;
+
 export class WorldModel {
   readonly metersPerPixel: number;
   readonly width: number;
@@ -274,6 +286,7 @@ export class WorldModel {
   readonly zones: readonly Zone[];
   readonly pois: ReadonlyMap<string, PointOfInterest>;
   readonly triggers: ReadonlyMap<string, Box>;
+  readonly collectibles: ReadonlyMap<string, CityCollectible>;
   readonly crossings: readonly Crossing[];
   readonly driveways: readonly Driveway[];
   readonly parkedCars: readonly Box[];
@@ -356,6 +369,10 @@ export class WorldModel {
         .parse(properties(object).heading),
     }));
     this.triggers = namedAreas('triggers', box);
+    this.collectibles = namedAreas('collectibles', (object) => ({
+      ...box(object),
+      ...collectibleProperties.parse(properties(object)),
+    }));
     this.zones = layer('zones')
       .flatMap((object) => {
         const props = properties(object);

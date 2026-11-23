@@ -237,7 +237,53 @@ export function krakowScenery({
       gateY: 2752,
     }),
   ];
+  const point = (id: string, x: number, y: number, heading = 0) =>
+    rect(id, x - 18, y - 18, 36, 36, { heading });
+  const goodies = [
+    ['krk-obwarzanek-sukiennice', 1490, 635, 'Q026'],
+    ['krk-obwarzanek-mariacki', 1760, 635, 'Q021'],
+    ['krk-obwarzanek-fontanna', 1990, 635, 'Q039'],
+    ['krk-obwarzanek-smok', 1720, 1670, 'Q005'],
+    ['krk-obwarzanek-kazimierz', 3570, 1480, 'Q027'],
+    ['krk-obwarzanek-wisla', 3520, 2223, 'Q017'],
+    ['krk-obwarzanek-kopiec', 3210, 2855, 'Q052'],
+  ] as const;
+  const collectibles = goodies.map(([id, x, y, question]) =>
+    rect(id, x, y, 0, 0, { kind: 'obwarzanek', question }),
+  );
   const pois = [
+    ...goodies.map(([id, x, y]) => point(id, x, y)),
+    point('krk-targ-zachod', 1440, 816),
+    point('krk-targ-wschod', 2050, 816),
+    point('krk-wawel-paczka', 1376, 1668),
+    point('krk-wawel-meta', 2064, 1668),
+    rect('krk-foto-b9', 1518, 700, 70, 60),
+    rect('krk-foto-d40', 1656, 920, 68, 40),
+    point('krk-przed-zebra', 1432, 990, -Math.PI / 2),
+    point('krk-za-zebra', 1432, 1185, Math.PI / 2),
+    point('krk-wawel-brama', 1728, 1252, Math.PI / 2),
+    point('krk-kazimierz-boczna', 3187, 1504),
+    point('krk-kazimierz-targ', 3620, 1504),
+    point('krk-aleja-poludnie', 2528, 1380, -Math.PI / 2),
+    point('krk-aleja-przed-s1', 2528, 1180, -Math.PI / 2),
+    point('krk-przed-przystankiem', 2528, 968, -Math.PI / 2),
+    point('krk-aleja-polnoc', 2528, 530, -Math.PI / 2),
+    point('krk-ddr-start', 2640, 2144),
+    point('krk-ddr-latarnia', 3150, 2144),
+    point('krk-ddr-meta', 3805, 2144),
+    point('krk-rondo-start', 3615, 1136),
+    rect('krk-rondo-a7', 3740, 1120, 58, 61),
+    point('krk-rondo-postoj', 3708, 1136),
+    point('krk-kolej-start', 1104, 3376, -Math.PI / 2),
+    point('krk-kolej-przed', 1104, 3190, -Math.PI / 2),
+    point('krk-kolej-za', 1104, 3054, -Math.PI / 2),
+    point('krk-kolej-meta', 1104, 2800, -Math.PI / 2),
+    point('krk-kopiec-start', 2650, 2896),
+    point('krk-kopiec-alejka', 2920, 2850),
+    point('krk-kopiec-meta', 3338, 2896),
+    point('krk-stop-start', 1056, 1364, -Math.PI / 2),
+    point('krk-przed-stop', 1056, 1188, -Math.PI / 2),
+    point('krk-za-stop', 1056, 888, -Math.PI / 2),
     rect('krk-rynek-start', 1416, 744, 48, 48, { heading: -Math.PI / 2 }),
     rect('krk-sukiennice', 1600, 610, 72, 52),
     rect('krk-meta-rynek', 1760, 744, 72, 48),
@@ -264,5 +310,13 @@ export function krakowScenery({
       decor('river-steps', x, 2090),
     ),
   ];
-  return { blocks, props, districts, pois, collisions, map_decorations };
+  return {
+    blocks,
+    props,
+    districts,
+    pois,
+    collisions,
+    map_decorations,
+    collectibles,
+  };
 }

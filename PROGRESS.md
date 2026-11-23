@@ -21,6 +21,12 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 - Audyt ekranów DOM w Playwright i axe sprawdza nazwy, role, kontrast i fokus. Klawiatura i pad obsługują menu i dialogi, HUD ogłasza istotne zmiany, a tekst dialogów skaluje się do 200%.
 - Ograniczono efekty ruchu i dodano oznaczenia stanów niezależne od koloru. [Raport, zakres i zrzuty](docs/AUDYT_DOSTEPNOSCI.md)
 
+## Kraków 2/2 — kampania (#106)
+
+- „Błyskawica nad Wisłą” ma trzy szkolenia i 15 misji głównych. Kampania działa na mapie z #105 i korzysta z dotychczasowych zapisów szkolenia oraz dzielnic. Profil w wersji 11 przechowuje także wybór krakowskiej kampanii i kolekcję.
+- Siedem autorskich obwarzanków z zagadkami zapisuje się w profilu. Cztery oznaczone skróty dają gorszy wynik niż legalna jazda, także po doliczeniu premii za pytanie kontrolne.
+- Raport strict w CI obejmuje 13/13 sytuacji i M01–M07. Testy sprawdzają wszystkie trasy kampanii oraz dziesięć minut ruchu AI dla trzech ziaren. [Kampania, mapa i weryfikacja](docs/05_mapy.md#kraków)
+
 ## Kraków 1/2 — mapa (#105)
 
 - Kraków jest dostępny w Wolnej jeździe. Kolaż obejmuje Rynek, Wawel, Kazimierz, bulwary Wisły i Kopiec. Trzy ćwiczenia otwierają kolejne dzielnice, a raport strict sprawdza 13/13 sytuacji i 7/7 modułów M01–M07.

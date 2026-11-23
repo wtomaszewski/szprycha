@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import questions from '../../content/pytania.json' with { type: 'json' };
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { legacyProgressKey } from '../../src/core/progressStore';
 import { chooseCity, cityPin } from './city-picker';
@@ -47,7 +48,7 @@ async function driveTo(
   }
 }
 
-test('opens Kraków only in free ride and saves district progression', async ({
+test('opens Kraków in free ride and saves district progression', async ({
   page,
 }, info) => {
   test.setTimeout(100_000);
@@ -56,11 +57,7 @@ test('opens Kraków only in free ride and saves district progression', async ({
   await page
     .getByRole('button', { name: pl.cityPicker.campaign, exact: true })
     .click();
-  await expect(
-    page.getByRole('button', {
-      name: `${pl.cityPicker.krakow} ${pl.cityPicker.soon}`,
-    }),
-  ).toBeDisabled();
+  await expect(cityPin(page, 'krakow')).toBeEnabled();
   await page.keyboard.press('Escape');
   await page
     .getByRole('button', { name: pl.cityPicker.freeRide, exact: true })
@@ -111,11 +108,15 @@ test('opens Kraków only in free ride and saves district progression', async ({
   await page.keyboard.down('ArrowRight');
   try {
     await expect(
-      page.getByText(pl.driving.districtsOpened, { exact: true }),
+      page.getByRole('button', { name: pl.dialogueUi.skip }),
     ).toBeVisible({ timeout: 15_000 });
   } finally {
     await page.keyboard.up('ArrowRight');
   }
+  await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
+  await expect(
+    page.getByText(pl.driving.districtsOpened, { exact: true }),
+  ).toBeVisible();
   await expect
     .poll(async () => (await readProfile(page)).completed)
     .toContain('KRA-B-01');
@@ -130,6 +131,92 @@ test('opens Kraków only in free ride and saves district progression', async ({
   await driveTo(page, 'ArrowUp', 'y', 1326, true);
   await page.keyboard.press('KeyM');
   await expect(option('KRA-B-02')).toBeVisible();
+});
+
+test('starts the campaign with training for a new rider', async ({ page }) => {
+  await page.goto('/');
+  await chooseCity(page, 'krakow', 'campaign');
+  await expect(page.locator('canvas[data-map="krakow"]')).toHaveAttribute(
+    'data-mission',
+    'KRA-B-01',
+  );
+  await expect
+    .poll(async () => (await readProfile(page)).selectedCity)
+    .toBe('krakow');
+});
+
+test('resumes the campaign and saves an obwarzanek after its quiz', async ({
+  page,
+}, info) => {
+  test.setTimeout(60_000);
+  await page.addInitScript(
+    ({ key, completed }) => {
+      if (!sessionStorage.getItem(key)) {
+        localStorage.setItem(key, JSON.stringify({ completed }));
+        sessionStorage.setItem(key, '1');
+      }
+    },
+    {
+      key: legacyProgressKey,
+      completed: ['KRA-B-01', 'KRA-B-02', 'KRA-B-03', 'KRA-A1-01'],
+    },
+  );
+  await page.goto('/');
+  await page
+    .getByRole('button', { name: pl.cityPicker.campaign, exact: true })
+    .click();
+  const pin = cityPin(page, 'krakow');
+  await expect(pin).toBeEnabled();
+  await page.screenshot({ path: info.outputPath('106-kampania.png') });
+  await pin.click();
+  const canvas = page.locator('canvas[data-map="krakow"]');
+  await expect(canvas).toHaveAttribute('data-mission', 'KRA-A1-02');
+  await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
+  await page.keyboard.press('Escape');
+  await page
+    .getByRole('button', { name: pl.driving.classic, exact: true })
+    .click();
+  await page.keyboard.press('Escape');
+  const collection = page.getByRole('status', { name: pl.driving.obwarzanki });
+  await expect(collection).toHaveText('Obwarzanki 0/7');
+  await expect(
+    page.getByRole('status', { name: pl.driving.gnomes }),
+  ).toHaveCount(0);
+  await page.keyboard.press('KeyX');
+  await expect(canvas).toHaveAttribute('data-walking', 'true');
+  await driveTo(page, 'ArrowUp', 'y', 637, false);
+  await page.screenshot({ path: info.outputPath('106-obwarzanki.png') });
+  const puzzle = page.getByRole('dialog', {
+    name: pl.driving.obwarzanekQuestion,
+  });
+  await page.keyboard.down('ArrowRight');
+  try {
+    await expect(puzzle).toBeVisible();
+  } finally {
+    await page.keyboard.up('ArrowRight');
+  }
+  const question = questions.pytania.find(({ id }) => id === 'Q026')!;
+  await expect(puzzle).toContainText(question.pytanie);
+  await page.screenshot({ path: info.outputPath('106-zagadka.png') });
+  await puzzle
+    .getByRole('button', {
+      name: question.odpowiedzi[question.poprawna],
+      exact: true,
+    })
+    .click();
+  await puzzle.getByRole('button', { name: pl.progression.continue }).click();
+  await expect(collection).toHaveText('Obwarzanki 1/7');
+  await expect
+    .poll(async () => (await readProfile(page)).obwarzanki)
+    .toEqual(['krk-obwarzanek-sukiennice']);
+  await page.reload();
+  await page
+    .getByRole('button', { name: pl.cityPicker.campaign, exact: true })
+    .click();
+  await expect(pin).toBeFocused();
+  await pin.click();
+  await expect(canvas).toHaveAttribute('data-mission', 'KRA-A1-02');
+  await expect(collection).toHaveText('Obwarzanki 1/7');
 });
 
 const views = [

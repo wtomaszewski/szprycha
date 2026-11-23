@@ -1,6 +1,6 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { missionCity } from '../src/content/missions.ts';
+import { playableCity } from '../src/content/missions.ts';
 import { examRoute } from '../src/gameplay/exam/route.ts';
 import type { GameContent } from '../src/content/schemas.ts';
 import { MissionSystem } from '../src/gameplay/MissionSystem.ts';
@@ -45,8 +45,15 @@ export async function validateMaps(root: string, content: GameContent) {
           `Map ${map}: unknown unlock mission for district ${id}`,
         );
     }
+  const questionIds = new Set(content.pytania.pytania.map(({ id }) => id));
+  for (const [map, world] of worlds)
+    for (const item of world.collectibles.values())
+      if (item.kind === 'obwarzanek' && !questionIds.has(item.question))
+        throw new Error(
+          `Map ${map}: unknown question ${item.question} for ${item.id}`,
+        );
   const signCodes = new Set(content.znaki.znaki.map(({ kod }) => kod));
-  const examRoutes = missionCity.options.map((city) =>
+  const examRoutes = playableCity.options.map((city) =>
     examRoute(city, content.balans.licencja),
   );
   for (const mission of [...content.misje, ...examRoutes]) {
@@ -55,6 +62,17 @@ export async function validateMaps(root: string, content: GameContent) {
     if (!world) throw new Error(`Mission ${mission.id}: unknown map ${map}`);
     new MissionSystem(mission, world, content.balans);
     for (const goal of mission.cele) {
+      if (goal.typ === 'zbierz_obwarzanka') {
+        const item = world.collectibles.get(goal.poi);
+        const poi = world.pois.get(goal.poi)!;
+        if (
+          item?.kind !== 'obwarzanek' ||
+          Math.hypot(item.x - poi.x, item.y - poi.y) > 1.5
+        )
+          throw new Error(
+            `Mission ${mission.id}: missing obwarzanek at ${goal.poi}`,
+          );
+      }
       if (goal.typ !== 'sfotografuj') continue;
       const sign = world.signs.find(({ id }) => id === goal.znak);
       if (!sign || !signCodes.has(sign.code))

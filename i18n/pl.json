@@ -238,6 +238,9 @@
     "krakowTitle": "Kraków",
     "districtLocked": "Przejście zamknięte. Zatrzymaj się i otwórz ćwiczenia w SzprychaApp.",
     "districtsOpened": "Nowe przejście otwarte! Wróć do Wolnej jazdy, żeby je odkryć.",
+    "obwarzanki": "Obwarzanki",
+    "obwarzankiHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać obwarzanek.",
+    "obwarzanekQuestion": "Zagadka obwarzanka",
     "gnomes": "Krasnale",
     "gnomesHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać krasnala.",
     "gnomeQuestion": "Zagadka krasnala",
@@ -464,6 +467,7 @@
       "dojedz": "Jedź do zaznaczonego miejsca.",
       "odbierz": "Odbierz przesyłkę w zaznaczonym miejscu.",
       "oddaj": "Oddaj przesyłkę w zaznaczonym miejscu.",
+      "zbierz_obwarzanka": "Zsiądź z roweru i podejdź do obwarzanka.",
       "zbierz_krasnala": "Zsiądź z roweru i podejdź do krasnala.",
       "przygotuj_rower": "Załóż kask i włącz światła.",
       "sfotografuj": "Zrób zdjęcie znaku",
@@ -524,10 +528,10 @@
       "opis": "Sprawdź znaki w uliczce jednokierunkowej i sygnalizację rowerową przy alei. To ćwiczenie otwiera bulwary.",
       "kontrapas": "Jedź pod prąd tylko kontrapasem, po swojej prawej.",
       "postoj": "Zatrzymaj się na drodze rowerowej przed przejazdem.",
-      "pytanie": "Przed skrzyżowaniem widzisz znak A-7. Komu ustępujesz?",
-      "odp1": "Tylko pojazdom z prawej strony.",
-      "odp2": "Uczestnikom ruchu na drodze z pierwszeństwem.",
-      "wyjasnienie": "Znak A-7 oznacza, że musisz ustąpić jadącym drogą z pierwszeństwem.",
+      "pytanie": "Co pozwoliło Ci jechać kontrapasem w przeciwnym kierunku uliczką na Kazimierzu?",
+      "odp1": "Na każdej ulicy z B-2 rower może jechać pod prąd.",
+      "odp2": "Tabliczka pod B-2 wyłącza rowery z zakazu.",
+      "wyjasnienie": "Sprawdź tabliczkę pod B-2. Gdy dopuszcza rowery, na tej ulicy prowadzi Cię oznaczony kontrapas.",
       "przejazd": "Przejedź po P-11, gdy sygnalizator rowerowy pokaże zielone."
     },
     "KRA-B-03": {
@@ -1114,6 +1118,125 @@
       "trening2": "Przejedź pętlą do wschodniej chorągiewki.",
       "trening3": "Dojedź do linii kończącej okrążenie.",
       "trening4": "Wjedź na drugie okrążenie."
+    },
+    "KRA-A1-01": {
+      "tytul": "Zaproszenia pod Plantami",
+      "opis": "Dowieź zaproszenia na festyn z zachodniej na wschodnią stronę Rynku.",
+      "cel1": "Odbierz zaproszenia od Leny.",
+      "cel2": "Dowieź zaproszenia placem. Uważaj na zakaz B-1 przy bocznym przejściu."
+    },
+    "KRA-A1-02": {
+      "tytul": "Obwarzanki z zagadką",
+      "opis": "Odszukaj trzy pamiątkowe obwarzanki przy Sukiennicach, wieżach i fontannie.",
+      "cel1": "Zsiądź przed B-9. Podejdź do obwarzanka przy Sukiennicach.",
+      "cel2": "Poprowadź rower do drugiego obwarzanka, pod wieżami.",
+      "cel3": "Podejdź po trzeci obwarzanek w stronę fontanny."
+    },
+    "KRA-A1-03": {
+      "tytul": "Latarenka dla Smoka",
+      "opis": "Zawieź kruchą latarenkę bez wstrząsów pod mur Wawelu.",
+      "cel1": "Odbierz kruchą latarenkę.",
+      "cel2": "Jedź powoli alejką poniżej muru, w stronę rzeźby Smoka.",
+      "cel3": "Dostarcz latarenkę na wschodni koniec alejki."
+    },
+    "KRA-A1-04": {
+      "tytul": "Zdjęcia dla Oli",
+      "opis": "Zapisz dwa prawdziwe znaki z Rynku, zanim ekipa sprawdzi podejrzane kartki.",
+      "cel1": "Stań przed deptakiem, przy B-9, i zrób zdjęcie.",
+      "cel2": "Przeprowadź rower przez przejście z B-1. Przy D-40 zatrzymaj się i zrób zdjęcie."
+    },
+    "KRA-A1-05": {
+      "tytul": "Koperta przez zebrę",
+      "opis": "Przenieś kopertę z fotografiami pod bramę Wawelu.",
+      "cel1": "Odbierz kopertę ze zdjęciami.",
+      "cel2": "Stań przed zebrą i zsiądź z roweru. Poczekaj, aż będzie bezpiecznie.",
+      "cel3": "Przeprowadź rower po zebrze na drugą stronę alei.",
+      "cel4": "Poprowadź rower na wschód chodnikiem, potem do wejścia na Wawel."
+    },
+    "KRA-A2-01": {
+      "tytul": "Plan Kazimierza",
+      "opis": "Zawieź Lenie plan trasy i odczytaj sygnał rowerowy przy alei.",
+      "cel1": "Odbierz plan przy początku kontrapasa.",
+      "cel2": "Jedź na północ wyznaczonym kontrapasem, po swojej prawej.",
+      "cel3": "Skręć w lewo w drogę rowerową i podjedź pod przejazd.",
+      "cel4": "Przejedź przez P-11 dopiero na zielonym dla rowerów."
+    },
+    "KRA-A2-02": {
+      "tytul": "Boczne przejście",
+      "opis": "Zawieź notatnik na targ na Kazimierzu i sprawdź, gdzie skierowała Turbo błyskawica.",
+      "cel1": "Zabierz notes Turbo.",
+      "cel2": "Zawieź notes na wschód. Omiń przejście z B-1 przez otwartą część placu."
+    },
+    "KRA-A2-03": {
+      "tytul": "Dzwonek bez wysepki",
+      "opis": "Zawieź odbiornik wzdłuż alei. Na przystanku przepuść wysiadających.",
+      "cel1": "Zabierz odbiornik radiowy.",
+      "cel2": "Podjedź prawą stroną jezdni do świateł. Poczekaj na zielone.",
+      "cel3": "Za skrzyżowaniem zbliżasz się do przystanku bez wysepki.",
+      "cel4": "Przepuść wysiadających. Rusz, gdy piesi opuszczą jezdnię."
+    },
+    "KRA-A2-04": {
+      "tytul": "Sygnał nad Wisłą",
+      "opis": "Po zmroku odczytaj dwa punkty sygnału na drodze dla rowerów.",
+      "cel1": "Zapnij kask i włącz białą lub żółtą lampkę z przodu oraz czerwoną z tyłu.",
+      "cel2": "Jedź wschodnim kierunkiem po czerwonej drodze dla rowerów. Odczytaj sygnał przy latarni.",
+      "cel3": "Zbierz ostatni odczyt na końcu drogi dla rowerów."
+    },
+    "KRA-A2-05": {
+      "tytul": "Znak przed rondem",
+      "opis": "Sprawdź oznakowanie przy wlocie na Rondo Kasztany i prześlij zdjęcie Zawile.",
+      "cel1": "Zatrzymaj się przed wlotem na rondo i sprawdź znaki.",
+      "cel1_pytanie": "Przed rondem stoi A-7 razem z C-12. Komu ustępujesz przy wjeździe?",
+      "cel1_wyjasnienie": "Znak A-7 nakazuje ustąpić pojazdom na rondzie.",
+      "cel1_odp1": "Pojazdom, które już jadą po rondzie.",
+      "cel1_odp2": "Nikt nie ma pierwszeństwa na rondzie.",
+      "cel2": "Podjedź do znaku A-7 przed wlotem i zrób zdjęcie na postoju."
+    },
+    "KRA-A3-01": {
+      "tytul": "Część zza torów",
+      "opis": "Odbierz zapasowy wyłącznik po drugiej stronie przejazdu kolejowego.",
+      "cel1": "Dojedź przed przejazd. Zatrzymaj się, gdy migają czerwone światła lub zapory się poruszają.",
+      "cel2": "Przejedź dopiero, gdy światła zgasną, zapory się otworzą i droga będzie wolna.",
+      "cel3": "Jedź dalej przejezdnym poboczem i odbierz wyłącznik przy znaczniku."
+    },
+    "KRA-A3-02": {
+      "tytul": "Pomoc dla Turbo",
+      "opis": "Zatrzymaj się przy Turbo i przećwicz pierwsze kroki pomocy.",
+      "cel1": "Ustąp pieszym i zatrzymaj się przy znaczniku.",
+      "cel1_pytanie": "Turbo upadł na skraju alejki. Co robisz najpierw?",
+      "cel1_wyjasnienie": "Najpierw zadbaj o swoje bezpieczeństwo i ostrzeż innych.",
+      "cel1_odp1": "Zatrzymuję się bezpiecznie i ostrzegam osoby w pobliżu.",
+      "cel1_odp2": "Wjeżdżam prosto w miejsce upadku.",
+      "cel2": "Poproś o wsparcie i sprawdź, czy Turbo Cię słyszy.",
+      "cel2_pytanie": "Co zrobisz, gdy miejsce jest bezpieczne?",
+      "cel2_wyjasnienie": "Zawołaj dorosłego, sprawdź reakcję i nie przesuwaj poszkodowanego bez potrzeby.",
+      "cel2_odp1": "Od razu posadzę Turbo na ławce.",
+      "cel2_odp2": "Zawołam dorosłego i zapytam Turbo, czy mnie słyszy.",
+      "cel3": "Wybierz, co powiesz dyspozytorowi w symulacji rozmowy.",
+      "cel3_pytanie": "Dorosły prosi o wezwanie pomocy. Co mówisz po połączeniu z 112?",
+      "cel3_wyjasnienie": "Podaj miejsce, zdarzenie i liczbę poszkodowanych. Odpowiadaj na pytania i nie rozłączaj się pierwszy.",
+      "cel3_odp1": "Na bulwarze Wisły przy kamiennych schodach. Turbo upadł. Jedna osoba potrzebuje pomocy.",
+      "cel3_odp2": "Podaję tylko imię Turbo i kończę rozmowę.",
+      "cel4": "Dorosły został przy Turbo. Jedź powoli dalej do znacznika przy zejściu."
+    },
+    "KRA-A3-03": {
+      "tytul": "Objazd pod Kopcem",
+      "opis": "Sprawdź dojście do nadajnika, omijając zamkniętą ścieżkę serwisową.",
+      "cel1": "Odbierz schemat dojścia.",
+      "cel2": "Dostarcz schemat. Dozwolona alejka wiedzie powyżej ścieżki z B-1."
+    },
+    "KRA-A3-04": {
+      "tytul": "Klucz za STOP-em",
+      "opis": "Odbierz klucz od Oli i pokaż pełne zatrzymanie przed linią.",
+      "cel1": "Odbierz klucz do nadajnika.",
+      "cel2": "Podjedź prawą stroną do linii STOP.",
+      "cel3": "Zatrzymaj się całkowicie przed linią, ustąp i dopiero wtedy przejedź."
+    },
+    "KRA-A3-05": {
+      "tytul": "Festyn bez zakłóceń",
+      "opis": "Poprowadź ekipę alejką pod Kopcem i dostarcz wyłącznik Zawile.",
+      "cel1": "Weź wyłącznik z kluczem.",
+      "cel2": "Poprowadź ekipę otwartą alejką nad zamkniętą ścieżką i oddaj wyłącznik."
     }
   },
   "procedural": {
@@ -1497,6 +1620,7 @@
       "po_mecie": "Tak trzymać, Szprycho!"
     },
     "reguly": {
+      "ZNAK-B1": "Biały znak z czerwoną obwódką zakazuje ruchu także rowerom, chyba że tabliczka wskazuje wyjątek.",
       "KASK-01": "Zanim ruszysz, zapnij kask, żeby chronił głowę.",
       "ZNAK-STOP": "Przed linią STOP zatrzymaj się całkowicie i ustąp pierwszeństwa.",
       "WYP-04": "Po zmroku włącz przednie światło.",
@@ -1618,6 +1742,78 @@
       "koniec_tekst": "Oddaję sterownik Szprysze i pomogę Kazikowi zbudować plac manewrowy.",
       "swieto": "Tyle rowerów i każdy zostawia innym miejsce, przywracam światła na całej trasie!",
       "epilog": "Witaj w ekipie, Klemensie, czeka na nas nowy plac manewrowy."
+    },
+    "KRA-B-01": {
+      "start": "Witaj w Krakowie! Przygotuj rower na wieczorny kurs. Jutro przy Sukiennicach pojawi się nasz festyn.",
+      "koniec": "Rynek za Tobą. Lena czeka na Kazimierzu, a od strony Plant jest już otwarte wejście na Wawel."
+    },
+    "KRA-B-02": {
+      "start": "Zanim ruszymy po paczki, sprawdź kontrapas i osobne światło dla rowerów przy alei.",
+      "koniec": "Dobrze, teraz mamy też bezpieczny dojazd na bulwary."
+    },
+    "KRA-B-03": {
+      "start": "Na bulwarach spacerują piesi. Zatrzymaj się przy znaczniku i przećwicz, co zrobić, gdy ktoś upadnie.",
+      "koniec": "Tak zaczyna się bezpieczna pomoc. Możesz już zajrzeć na alejkę pod Kopcem."
+    },
+    "KRA-A1-01": {
+      "start": "Pierwsza dostawa na festyn. Turbo już liczy, ile sekund oszczędzi w zamkniętym przejściu.",
+      "koniec": "Skrót? Przy znaku musiałem zawrócić. Moje zaproszenia nadal stygną w torbie!"
+    },
+    "KRA-A1-02": {
+      "start": "Robimy próbę gry terenowej! Każdy obwarzanek z drewna kryje jedną zagadkę. Tylko nie próbuj go gryźć.",
+      "koniec": "Na odwrocie ostatniego ktoś wypalił pikselową błyskawicę. Prześlij Lenie zdjęcie."
+    },
+    "KRA-A1-03": {
+      "start": "Latarenka jest ze szkła. Pod murem jedź płynnie, żeby nie trzęsło paczką.",
+      "koniec": "W latarence była kartka z tą samą błyskawicą i godziną kolejnej próby!"
+    },
+    "KRA-A1-04": {
+      "start": "Zrób zdjęcia oznakowania na postoju. Błyskawica na kartce ktoś może namalować, ale nie jest znakiem drogowym.",
+      "koniec": "Mamy punkt odniesienia. Zdjęcia pokazują, które znaki naprawdę obowiązują przy Rynku."
+    },
+    "KRA-A1-05": {
+      "start": "Ola naniosła znaki na mapę. Przenieś kopertę pod Wawel, tam czeka Kazik.",
+      "koniec": "Kartka prowadzi na Kazimierz. Łącze radiowe z festynem dostało sygnał podpisany błyskawicą."
+    },
+    "KRA-A2-01": {
+      "start": "Potrzebuję planu do porównania z kartką spod Wawelu. Przecinaj aleję według świateł dla rowerów.",
+      "koniec": "Na planie zgadza się godzina, ale strzałka z kartki prowadzi w stronę zamkniętego przejścia."
+    },
+    "KRA-A2-02": {
+      "start": "Posłuchałem strzałki z kartki i znów stanąłem pod zakazem. W notesie mam godzinę dzwonka tramwaju.",
+      "koniec": "Twoją trasę da się przejechać bez łamania zakazu. Sprawdzimy teraz przystanek o zapisanej godzinie."
+    },
+    "KRA-A2-03": {
+      "start": "Przy przystanku bez wysepki zatrzymaj się, kiedy tramwaj stoi, a pasażerowie przechodzą przez jezdnię.",
+      "koniec": "Sygnał odezwał się tuż po dzwonku. Jego ślad prowadzi na bulwary."
+    },
+    "KRA-A2-04": {
+      "start": "Podłącz odbiornik, zapnij kask i zapal lampki. Na bulwarach będziesz widzieć drogę, a inni zobaczą Ciebie.",
+      "koniec": "Mamy numer urządzenia. Zawiła rozpoznał swój stary nadajnik testowy."
+    },
+    "KRA-A2-05": {
+      "start": "Zawiła chce porównać stare próby z aktualnym oznakowaniem. Zatrzymaj się przed rondem.",
+      "koniec": "Błyskawica była moim podpisem. Nadajnik nadaje stary scenariusz. Wyłączymy pokaz dopiero na Kopcu."
+    },
+    "KRA-A3-01": {
+      "start": "Wyłącznik jest za torami. Podjedź poboczem, a na przejazd wjedź dopiero, gdy można go opuścić.",
+      "koniec": "Wyłącznik jest bezpieczny. Radio woła, że Turbo wywrócił się przy bulwarach."
+    },
+    "KRA-A3-02": {
+      "start": "Turbo potrzebuje pomocy. Zatrzymaj się bezpiecznie, ostrzeż innych i wezwij dorosłego.",
+      "koniec": "Dzięki, że się zatrzymałeś. Jak odpocznę, pomogę Kazikowi. Na trasę skrótami już się nie pcham."
+    },
+    "KRA-A3-03": {
+      "start": "Ktoś zaznaczył wąskie przejście serwisowe. Obejrzyj dozwoloną alejkę przed finałem.",
+      "koniec": "Nadajnik ma bezpieczne dojście od alejki. Teraz Kazik odbierze brakujący klucz."
+    },
+    "KRA-A3-04": {
+      "start": "Przy STOP-ie zatrzymaj się przed linią nawet wtedy, gdy droga z pierwszeństwem wygląda na pustą.",
+      "koniec": "Wyłącznik i klucz są gotowe. Spotkajmy się na alejce pod Kopcem."
+    },
+    "KRA-A3-05": {
+      "start": "Jedziemy w małej kolumnie. Prowadź ekipę otwartą alejką i sygnalizuj zmianę kierunku.",
+      "koniec": "Wyłączone! Moja błyskawica od dziś znaczy tylko próbę w miasteczku. DJ-u, możesz zaczynać festyn."
     }
   },
   "settings": {

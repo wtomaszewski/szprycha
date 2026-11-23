@@ -7,7 +7,7 @@ Do Szprychy przyjmowany jest każdy, ale **Licencję Szprychy** (w grze: odpowie
 
 Ton: przygodowy, zabawny, z lekkim dreszczykiem tajemnicy (jak kreskówka przygodowa). Nikt nie jest naprawdę zły — „czarne charaktery” się zmieniają, bo gracz pokazuje im, że zasady mają sens.
 
-## Postacie stałe (w obu miastach)
+## Postacie stałe
 
 | Postać | Rola | Charakter | Funkcja w grze |
 |---|---|---|---|
@@ -61,6 +61,16 @@ Krasnale przy Hali Stulecia i fontannie (rondo, drogi dla rowerów, przejazdy dl
 
 **Akt 3 — „Pilot Miejski” (Zachód/Stadion Wrocław + bulwary Odry)**
 Kryjówka gangu na przedmieściach za przejazdem kolejowym (przejazd, pobocze, zakaz wjazdu rowerów na obwodnicę). Turbo wyzywa gracza na **Wielki Wyścig Odrzański** bulwarami — w trakcie jeden z członków gangu upada (M07). Finał: krasnale wracają na Rynek w paradzie (jazda w kolumnie), festiwal pod Ratuszem. Dzwoneczek dostaje swoje miejsce przy warsztacie Kazika.
+
+---
+
+## KRAKÓW — „Błyskawica nad Wisłą”
+
+**Akt 1 — Ślad na Rynku.** Zespół SzprychaApp szykuje festyn przy Sukiennicach. Po szkoleniu gracz rozwozi zaproszenia, odnajduje drewniane obwarzanki z zagadkami i dostarcza kruchą latarenkę pod Wawel. Pikselowa błyskawica na obwarzanku i kartka w latarence naprowadzają Lenę na Kazimierz. Ola prosi o dokumentację oznakowania.
+
+**Akt 2 — Sygnał z Kazimierza.** Ślad prowadzi przez kontrapas, przystanek tramwajowy i nocne bulwary. Zawiła rozpoznaje podpis Zakłócacza na starym scenariuszu i swój testowy nadajnik. Urządzenie odtwarza próbę w sieci festynu. Ekipa ustala, że można je wyłączyć przy Kopcu.
+
+**Akt 3 — Festyn bez zakłóceń.** Kazik wysyła po wyłącznik, a Ola czeka z kluczem za skrzyżowaniem ze STOP-em. Po upadku Turbo gracz bezpiecznie się zatrzymuje, woła dorosłego i ćwiczy rozmowę z dyspozytorem. Turbo rezygnuje ze skrótów. Kurierzy w kolumnie docierają do Zawiły otwartą alejką. Po wyłączeniu nadajnika DJ Dzwonek daje sygnał do rozpoczęcia festynu.
 
 ---
 

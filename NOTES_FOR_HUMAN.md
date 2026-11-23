@@ -1,5 +1,9 @@
 # Notatki dla człowieka
 
+## Kraków 2/2 — kampania (#106)
+
+- W kampanii wykorzystano istniejące reguły z flagą konsultacji `GDZIE-03b`, `GDZIE-11`, `SYG-02` i `MSC-05`. Do potwierdzenia w szczególności zakres jazdy poboczem i zachowanie w ciągu wspólnym. Reguły i ich flagi pochodzą z `content/przepisy.yaml`.
+
 ## Wydanie sklepowe 1/2
 
 - Właściciel potwierdza dostęp do kont Google Play Console i Apple Developer / App Store Connect, dane wydawcy i identyfikatory aplikacji.

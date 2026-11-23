@@ -48,7 +48,7 @@ const wroclawSpawns: typeof warsawSpawns = {
   bulwary: { x: 1440, y: 1536, heading: 0 },
 };
 const krakowSpawns: typeof warsawSpawns = {
-  rynek: { x: 1290, y: 808, heading: 0 },
+  rynek: { x: 1290, y: 776, heading: 0 },
   bulwary: { x: 2674, y: 2144, heading: 0 },
 };
 const freeSpawns =

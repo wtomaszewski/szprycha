@@ -98,7 +98,7 @@ import {
   type RoutedAgent,
 } from '../sim/TrafficParticipants';
 import type { RoadTrafficAgent } from '../sim/TrafficSimulation';
-import { Gnomes } from '../render/Gnomes';
+import { CityCollectibles } from '../render/CityCollectibles';
 import { drawCyclist, loadTrafficArt, TrafficArt } from '../render/TrafficArt';
 import { RiderArt } from '../render/RiderArt';
 import { audio } from '../audio/GameAudio';
@@ -168,8 +168,8 @@ export class City extends Scene {
   private agents!: readonly (RoadTrafficAgent | RoutedAgent)[];
   private actorObstacles!: Obstacle[][];
   private actors!: TrafficArt[];
-  private gnomes?: Gnomes;
-  private askedGnome?: string;
+  private collectibles?: CityCollectibles;
+  private askedCollectible?: string;
   private road!: TrainingRoad;
   private debug!: RuleDebugOverlay;
   private feedback!: RuleFeedback;
@@ -325,7 +325,7 @@ export class City extends Scene {
       this.content.balans.zdrowe_granie,
     );
     this.photoPending = false;
-    this.askedGnome = undefined;
+    this.askedCollectible = undefined;
     if (!tutorial)
       this.progress.store.prepareRide(this.content.przepisy.przepisy);
     const definition = examRide
@@ -641,13 +641,13 @@ export class City extends Scene {
       );
       this.controls.root.append(plac);
     }
-    const collectibles = tilemap.getObjectLayer('collectibles')?.objects;
-    this.gnomes = collectibles?.length
-      ? new Gnomes(
+    this.collectibles = this.world.collectibles.size
+      ? new CityCollectibles(
           this,
-          collectibles,
+          this.world,
           this.progress.store,
           this.controls.details,
+          mapId === 'krakow' ? 'obwarzanek' : 'gnome',
         )
       : undefined;
     if (!this.mission && !tutorial) {
@@ -788,7 +788,10 @@ export class City extends Scene {
           () => this.togglePhone(),
           () =>
             this.scene.start('CityPicker', {
-              mode: this.city === 'krakow' ? 'freeRide' : 'campaign',
+              mode:
+                this.city === 'krakow' && this.freeRide
+                  ? 'freeRide'
+                  : 'campaign',
             }),
         );
       }
@@ -870,7 +873,7 @@ export class City extends Scene {
       this.phone.close();
       this.controls.destroy();
       this.examRide = undefined;
-      this.gnomes = undefined;
+      this.collectibles = undefined;
       const c = this.game.canvas;
       delete c.dataset.map;
       delete c.dataset.mission;
@@ -1433,24 +1436,27 @@ export class City extends Scene {
     return true;
   }
 
-  private showGnomeQuestion() {
+  private showCollectibleQuestion() {
     if (this.examRide) return false;
     const { x, y, walking } = this.rider;
-    const gnomes = this.gnomes;
-    const nearby = walking ? gnomes?.nearby(x, y) : undefined;
-    if (!nearby) {
-      this.askedGnome = undefined;
+    const collectibles = this.collectibles;
+    const nearby = walking ? collectibles?.nearby(x, y) : undefined;
+    if (!collectibles || !nearby) {
+      this.askedCollectible = undefined;
       return false;
     }
     if (
-      nearby.id === this.askedGnome ||
-      (this.mission && nearby.id !== this.mission.gnomeTarget)
+      nearby.id === this.askedCollectible ||
+      (this.mission && nearby.id !== this.mission.collectibleTarget)
     )
       return false;
 
     const questions = this.content.pytania.pytania;
-    const question = questions[nearby.questionIndex % questions.length]!;
-    this.askedGnome = nearby.id;
+    const question = nearby.question
+      ? questions.find(({ id }) => id === nearby.question)
+      : questions[nearby.questionIndex % questions.length];
+    if (!question) return false;
+    this.askedCollectible = nearby.id;
     this.rider.speed = 0;
     this.controls.clear();
     this.publishRiderPosition(this.rider);
@@ -1465,10 +1471,10 @@ export class City extends Scene {
             correct,
             this.content.balans.mastery,
           );
-        if (correct) gnomes?.collect(nearby.id);
+        if (correct) collectibles.collect(nearby.id);
         return { correct };
       },
-      ui.driving.gnomeQuestion,
+      collectibles.questionLabel,
     );
     return true;
   }
@@ -1933,7 +1939,7 @@ export class City extends Scene {
       }
       this.attention.step(this.tickVerdicts, rider.speed > 0);
     }
-    const gnome = this.mission?.gnomeTarget;
+    const collectible = this.mission?.collectibleTarget;
     const effects = this.mission?.step(
       rider.pos,
       this.tickVerdicts,
@@ -1948,8 +1954,8 @@ export class City extends Scene {
       rider.speed,
       !this.examRide && Boolean(this.attention.pending),
       source.walking &&
-        gnome !== undefined &&
-        this.progress.store.profile.gnomes?.includes(gnome),
+        collectible !== undefined &&
+        this.collectibles?.has(collectible),
     );
     this.rankingRide?.road(
       this.tickVerdicts,
@@ -2224,7 +2230,7 @@ export class City extends Scene {
           this.presentMissionResult();
         break;
       }
-      if (this.showGnomeQuestion()) {
+      if (this.showCollectibleQuestion()) {
         this.accumulator = 0;
         break;
       }
@@ -2367,7 +2373,7 @@ export class City extends Scene {
       Math.round(camera.scrollY + (targetY - camera.scrollY) * blend),
     );
     cullMapChunks(this.mapChunks, camera);
-    this.gnomes?.update(camera);
+    this.collectibles?.update(camera);
     this.blocks.update(
       camera,
       this.controls.lite,
