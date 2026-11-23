@@ -64,10 +64,29 @@ Ruch AI i losowe zdarzenia są wyłączone na czas ćwiczeń. Nieudana próba da
 Dymki z portretem 64×64, maks. 2 linijki, tap/klawisz = dalej, przytrzymanie = pomiń całość. Lektor odtwarza pakowane nagrania przez Web Audio i ma przełącznik w ustawieniach. Kwestie bez nagrania są wyświetlane jako napisy. Teksty z `content/dialogi/*.yaml`.
 
 ## Audio
-- **Radio Szprycha FM** (włącza się w czasie jazdy, zmiana stacji przyciskiem): „Szprycha Hits” (wesoły chiptune), „Nocne Bulwary” (lo-fi chiptune), „Dzwonek Talk” (DJ Dzwonek — dżingle z poradami, suchary, zapowiedzi). Muzyka własna lub CC0; ścisła lista licencji w `assets/LICENSES.md`.
+- **Radio Szprycha FM 2.0** działa podczas jazdy. Przycisk FM przełącza na następną stację, a ustawienia pozwalają wybrać dowolną i zapisują wybór w profilu.
 - **SFX:** dzwonek (kilka wariantów kosmetycznych), hamowanie, kocie łby, tramwaj (dzwonek tramwajowy!), zapory kolejowe (dzwonek przejazdu), syrena pojazdu uprzywilejowanego, sygnał dźwiękowy sygnalizatora dla niewidomych na przejściach, gołębie, pawie, „UPS!”, fanfara gwiazdek, odblokowanie.
 - Placeholdery SFX generowane proceduralnie (jsfxr-podobny generator w `tools/`).
 - Głośności oddzielnie: muzyka / efekty / lektor. Domyślnie muzyka 60%.
+
+### Radio Szprycha FM 2.0 (#99)
+
+| Stacja | Gatunek |
+| --- | --- |
+| Szprycha Hits | Pogodny chiptune |
+| Nocne Bulwary | Lo-fi ze swingiem, miękkimi klawiszami i wolnym bitem |
+| Dzwonek Talk | Lekki podkład i dżingle z poradami |
+| Retro Arcade | Szybkie 8-bitowe arpeggia |
+| Spokojna Jazda | Ambient z długim wybrzmiewaniem akordów |
+| Dźwięki Miasta | Funk i disco 8-bit z synkopowanym basem |
+
+Każda stacja ma dżingiel i sześć utworów po 24 takty. Ziarna w `src/audio/radio/catalog.ts` ustalają tempo, tonację i warianty motywów. Utwory mają intro, zwrotki, powracający refren, bridge i outro. Kompozytor układa progresje akordów, melodie, arpeggia, bas i perkusję z akcentami oraz swingiem. Syntezator stosuje tablice przebiegów, obwiednie ADSR i vibrato. Dzwonek Talk emituje istniejące porady przy włączeniu stacji i w przerwach między utworami. Lektor korzysta z istniejącego mechanizmu ściszania muzyki w trakcie wypowiedzi.
+
+Generator zapisuje monofoniczne MP3 o częstotliwości próbkowania 24 kHz zgodne z WebView i przeglądarkami. Mikser Web Audio korzysta z tej samej częstotliwości, gdy przeglądarka ją obsługuje. FFmpeg kompresuje sygnał, normalizuje głośność zintegrowaną do **−21 LUFS** (pomiar sygnału mono odtwarzanego w stereo) i ogranicza szczyty przed kodowaniem do **−3 dBFS**. Web Audio dodaje echo i pogłos syntetyczny dobrane do stacji, ogranicza szczyty po zmiksowaniu i stosuje głośność oraz ściszanie pod lektora. Gra trzyma w pamięci bieżący i następny utwór. Paczka mobilna zawiera cały katalog. PWA pobiera około 11,85 MiB radia przy pierwszej instalacji, dzięki czemu wszystkie stacje działają offline od razu, także bez wcześniejszego odsłuchu. Pochodzenie muzyki opisuje [rejestr licencji](../assets/LICENSES.md).
+
+Web, mobile i tryb deweloperski korzystają z gotowych MP3 w `assets/generated/radio/`. Po zmianie źródeł uruchom `npm run radio:generate` z FFmpeg i enkoderem `libmp3lame` na `PATH` oraz zapisz w repozytorium pliki MP3 i manifest. `npm run radio:check` sprawdza w CI sumy SHA-256 źródeł i nagrań bez FFmpeg. `npm run radio:previews` korzysta z gotowych MP3, Chromium dla Playwright oraz FFmpeg z enkoderem `libopus`. Polecenie zapisuje sześć 15-sekundowych próbek OGG w `test-results/radio-previews`, po jednej na stację. Każda próbka łączy dżingiel i fragment refrenu z tym samym echem i pogłosem co w grze. GitHub Actions udostępnia je w artefakcie `radio-previews`.
+
+[Ustawienia dźwięku przed zmianą](screenshots/99-radio-przed.png) · [Dźwięki Miasta w ustawieniach](screenshots/99-radio-po.png)
 
 ## Dostępność
 - Tryb dla daltonistów: znaki i sygnały rozróżniane także kształtem/ikoną, światła sygnalizatora z symbolem.

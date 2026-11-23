@@ -44,6 +44,7 @@ export default defineConfig({
     {
       command: 'npm run build && npm run preview -- --port 4174 --strictPort',
       url: 'http://127.0.0.1:4174',
+      timeout: 120_000,
       reuseExistingServer: false,
       env: offlineConfig,
     },
@@ -51,6 +52,7 @@ export default defineConfig({
       command:
         'npm run build -- --outDir node_modules/.cache/rankings-e2e && npm run preview -- --outDir node_modules/.cache/rankings-e2e --port 4175 --strictPort',
       url: 'http://127.0.0.1:4175',
+      timeout: 120_000,
       reuseExistingServer: false,
       env: {
         VITE_RANKING_URL: 'http://127.0.0.1:8787/',

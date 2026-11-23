@@ -5,7 +5,12 @@ import {
   synthesize,
   type Effect,
 } from '../../src/audio/effects';
-import { scores, sequence } from '../../src/audio/score';
+import { radioCatalog } from '../../src/audio/radio/catalog';
+import { compose, stationJingle } from '../../src/audio/radio/compose';
+import {
+  sampleRate as radioRate,
+  synthesizeScore,
+} from '../../tools/radio/synthesize';
 import {
   channelLevel,
   channels,
@@ -65,38 +70,77 @@ it('generates distinct, bounded effects and reproduces seeded samples exactly', 
   expect(synthesize('siren', 123)).toHaveLength(1.5 * sampleRate);
 });
 
-it('converts MIDI notes, rests and repeated tracks to audio-clock seconds', () => {
-  const { duration, notes } = sequence({
-    bpm: 120,
-    beats: 4,
-    tracks: [
-      {
-        wave: 'triangle',
-        stepBeats: 1,
-        level: 0.2,
-        gate: 0.5,
-        steps: [69, null, 81, 57],
-      },
-      { wave: 'sine', stepBeats: 2, level: 0.1, gate: 0.9, steps: [45] },
-    ],
-  });
-  expect(duration).toBe(2);
-  expect(notes.map(({ hz, start, duration }) => [hz, start, duration])).toEqual(
-    [
-      [440, 0, 0.25],
-      [110, 0, 0.9],
-      [880, 1, 0.25],
-      [110, 1, 0.9],
-      [220, 1.5, 0.25],
-    ],
-  );
+it('composes six distinct deterministic arrangements per station with bounded song lengths', () => {
+  const allSeeds = new Set<number>();
+  const melodies = new Set<string>();
   for (const station of stations) {
-    const loop = sequence(scores[station]);
-    expect(loop.notes.length).toBeGreaterThan(20);
-    expect(
-      loop.notes.every((note) => note.start + note.duration <= loop.duration),
-    ).toBe(true);
+    const { seeds } = radioCatalog[station];
+    expect(seeds).toHaveLength(6);
+    for (const seed of seeds) {
+      allSeeds.add(seed);
+      const score = compose(station, seed);
+      expect(compose(station, seed)).toEqual(score);
+      expect(score.duration).toBeCloseTo((24 * 4 * 60) / score.bpm);
+      expect(score.duration).toBeGreaterThan(36);
+      expect(score.duration).toBeLessThanOrEqual(96);
+      expect(
+        score.sections.map(({ name, bar, bars }) => [name, bar, bars]),
+      ).toEqual([
+        ['intro', 0, 2],
+        ['verse', 2, 4],
+        ['chorus', 6, 4],
+        ['verse', 10, 4],
+        ['bridge', 14, 2],
+        ['chorus', 16, 4],
+        ['outro', 20, 4],
+      ]);
+      for (const [i, note] of score.notes.entries()) {
+        expect(note.start).toBeGreaterThanOrEqual(
+          score.notes[i - 1]?.start ?? 0,
+        );
+        expect(note.duration).toBeGreaterThan(0);
+        expect(note.start + note.duration).toBeLessThanOrEqual(
+          score.duration + 1e-8,
+        );
+      }
+      const chorus = score.notes.filter(
+        ({ start, pitch }) =>
+          pitch > 0 &&
+          start >= (24 * 60) / score.bpm &&
+          start < (40 * 60) / score.bpm,
+      );
+      melodies.add(
+        chorus
+          .map(
+            ({ start, pitch }) =>
+              `${((start * score.bpm) / 60).toFixed(3)}:${pitch}`,
+          )
+          .join(','),
+      );
+      expect(new Set(chorus.map(({ pitch }) => pitch)).size).toBeGreaterThan(3);
+      expect(score.notes.some(({ patch }) => patch === 'kick')).toBe(true);
+    }
   }
+  expect(allSeeds.size).toBe(36);
+  expect(melodies.size).toBe(36);
+});
+
+it('synthesizes six distinct station idents with reproducible PCM and finite audio', () => {
+  const jingles = new Set<string>();
+  for (const station of stations) {
+    const score = stationJingle(station);
+    const pcm = synthesizeScore(score, 0);
+    expect(pcm).toHaveLength(Math.ceil(score.duration * radioRate));
+    expect(score.duration).toBeCloseTo(2.083, 3);
+    expect(pcm.every(Number.isFinite)).toBe(true);
+    expect(pcm.some((value) => Math.abs(value) > 0.1)).toBe(true);
+    const bytes = Buffer.from(pcm.buffer);
+    expect(bytes.equals(Buffer.from(synthesizeScore(score, 0).buffer))).toBe(
+      true,
+    );
+    jingles.add(bytes.toString('base64'));
+  }
+  expect(jingles.size).toBe(6);
 });
 
 it('localizes each broadcast tip and ties it to an existing rule', async () => {

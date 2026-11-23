@@ -12,3 +12,5 @@ test-results/
 
 /assets/voice/.render*
 /assets/voice/manifest.json.*.tmp
+
+/assets/generated/.radio-*

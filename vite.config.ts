@@ -8,6 +8,7 @@ import { buildThirdPartyNotices } from './tools/check-licenses.ts';
 import { buildOrderRoutes } from './tools/procedural-orders.ts';
 import { buildContent } from './tools/content.ts';
 import { offlineApp } from './tools/offline.ts';
+import { radioAssets } from './tools/radio/assets.ts';
 
 const rankingModule = 'virtual:ranking-versions';
 const noticesModule = 'virtual:third-party-notices';
@@ -96,6 +97,7 @@ export default defineConfig(({ mode }) => {
           });
         },
       },
+      radioAssets(),
       offlineApp(mode === 'mobile', url ? new URL(url).origin : undefined),
     ],
     build: {

@@ -1,84 +1,145 @@
-import { scores, sequence, type TimedNote } from './score';
-import type { Station } from './settings';
+import { radioCatalog, radioPath, type Station } from './radio/catalog';
+import { createRadioMix } from './radio/mix';
+
+type Broadcast = {
+  abort: AbortController;
+  gain: GainNode;
+  source?: AudioBufferSourceNode;
+  tip?: number;
+  preload?: number;
+};
 
 export class Radio {
-  private readonly output: GainNode;
-  private readonly playing = new Set<OscillatorNode>();
-  private timer?: number;
+  private readonly mix;
+  private readonly nextTrack = new Map<Station, number>();
+  private broadcast?: Broadcast;
 
   constructor(
     private readonly context: AudioContext,
     music: GainNode,
   ) {
-    this.output = context.createGain();
-    this.output.connect(music);
+    this.mix = createRadioMix(context, music);
   }
 
   tune(station: Station, onTip: () => void) {
     this.stop();
-    const { notes, duration } = sequence(scores[station]);
-    const tipAt = (2 * 60) / scores[station].bpm;
-    let start = this.context.currentTime + 0.045;
-    let loop = 0;
-    let next = 0;
-    let tipPlayed = false;
-    const tick = () => {
-      const now = this.context.currentTime;
-      if (now >= start + duration) {
-        const elapsedLoops = Math.floor((now - start) / duration);
-        start += elapsedLoops * duration;
-        loop += elapsedLoops;
-        next = 0;
-        tipPlayed = false;
-      }
-      for (; next < notes.length; next++) {
-        const note = notes[next]!;
-        const at = start + note.start;
-        if (at > now + 0.15) break;
-        // A delayed JS timer must not replay a backlog of notes at once.
-        if (at >= now - 0.04) this.play(note, Math.max(now, at));
-      }
-      if (
-        station === 'talk' &&
-        loop % 3 === 0 &&
-        !tipPlayed &&
-        now >= start + tipAt
-      ) {
-        tipPlayed = true;
-        if (now < start + tipAt + 0.4) onTip();
-      }
-    };
-    tick();
-    this.timer = window.setInterval(tick, 45);
+    this.mix.setStation(station);
+    const gain = this.context.createGain();
+    gain.connect(this.mix.input);
+    const broadcast: Broadcast = { abort: new AbortController(), gain };
+    this.broadcast = broadcast;
+    void this.playStation(broadcast, station, onTip);
   }
 
   stop() {
-    window.clearInterval(this.timer);
-    this.timer = undefined;
-    const now = this.context.currentTime;
-    for (const tone of this.playing) {
-      tone.stop(now);
-      tone.disconnect();
+    const broadcast = this.broadcast;
+    if (!broadcast) return;
+    this.broadcast = undefined;
+    broadcast.abort.abort();
+    window.clearTimeout(broadcast.tip);
+    window.clearTimeout(broadcast.preload);
+    if (!broadcast.source) {
+      broadcast.gain.disconnect();
+      return;
     }
-    this.playing.clear();
+
+    const now = this.context.currentTime;
+    const fade = this.context.state === 'running' ? 0.025 : 0;
+    broadcast.gain.gain.setValueAtTime(1, now);
+    broadcast.gain.gain.linearRampToValueAtTime(0, now + fade);
+    broadcast.source.stop(now + fade);
   }
 
-  private play(note: TimedNote, at: number) {
-    const tone = this.context.createOscillator();
-    const envelope = this.context.createGain();
-    tone.type = note.wave;
-    tone.frequency.value = note.hz;
-    envelope.gain.setValueAtTime(0, at);
-    envelope.gain.linearRampToValueAtTime(note.level, at + 0.009);
-    envelope.gain.exponentialRampToValueAtTime(0.0002, at + note.duration);
-    tone.connect(envelope).connect(this.output);
-    this.playing.add(tone);
-    tone.onended = () => {
-      this.playing.delete(tone);
-      tone.disconnect();
-      envelope.disconnect();
-    };
-    tone.start(at);
-    tone.stop(at + note.duration);
+  private async playStation(
+    broadcast: Broadcast,
+    station: Station,
+    onTip: () => void,
+  ) {
+    const { signal } = broadcast.abort;
+    const seeds = radioCatalog[station].seeds;
+    let index = this.nextTrack.get(station) ?? 0;
+    let next = this.load(station, seeds[index]!, signal);
+    let jingle = await this.load(station, 'jingle', signal);
+    if (jingle && !signal.aborted)
+      await this.playJingle(broadcast, station, jingle, onTip);
+    let failures = 0;
+
+    while (!signal.aborted && failures < seeds.length) {
+      const track = await next;
+      if (signal.aborted) return;
+      index = (index + 1) % seeds.length;
+      this.nextTrack.set(station, index);
+      const nextSeed = seeds[index]!;
+      if (!track) {
+        failures++;
+        if (failures < seeds.length)
+          next = this.load(station, nextSeed, signal);
+        continue;
+      }
+
+      failures = 0;
+      // Defer the next decode so tuning starts with only the ident and current track.
+      let preload: Promise<AudioBuffer | undefined> | undefined;
+      broadcast.preload = window.setTimeout(
+        () => {
+          preload = this.load(station, nextSeed, signal);
+        },
+        Math.max(0, track.duration - 4) * 1000,
+      );
+      await this.play(broadcast, track);
+      window.clearTimeout(broadcast.preload);
+      if (signal.aborted) return;
+      next = preload ?? this.load(station, nextSeed, signal);
+
+      if (station === 'talk') {
+        jingle ??= await this.load(station, 'jingle', signal);
+        if (jingle && !signal.aborted)
+          await this.playJingle(broadcast, station, jingle, onTip);
+      }
+    }
+    if (!signal.aborted) this.stop();
+  }
+
+  private async load(
+    station: Station,
+    seed: number | 'jingle',
+    signal: AbortSignal,
+  ) {
+    try {
+      const response = await fetch(radioPath(station, seed), { signal });
+      if (!response.ok) return undefined;
+      const data = await response.arrayBuffer();
+      if (!signal.aborted) return await this.context.decodeAudioData(data);
+    } catch {
+      // A retune aborts both fetches. A missing track is skipped.
+    }
+  }
+
+  private async playJingle(
+    broadcast: Broadcast,
+    station: Station,
+    jingle: AudioBuffer,
+    onTip: () => void,
+  ) {
+    const done = this.play(broadcast, jingle);
+    if (station === 'talk') broadcast.tip = window.setTimeout(onTip, 1150);
+    await done;
+    window.clearTimeout(broadcast.tip);
+  }
+
+  private play(broadcast: Broadcast, buffer: AudioBuffer) {
+    const source = this.context.createBufferSource();
+    source.buffer = buffer;
+    source.connect(broadcast.gain);
+    broadcast.source = source;
+    return new Promise<void>((resolve) => {
+      source.onended = () => {
+        broadcast.source = undefined;
+        source.disconnect();
+        if (broadcast.abort.signal.aborted) broadcast.gain.disconnect();
+        resolve();
+      };
+      source.start();
+    });
   }
 }

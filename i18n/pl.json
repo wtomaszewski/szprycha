@@ -138,7 +138,10 @@
     "stations": {
       "hits": "Szprycha Hits",
       "boulevards": "Nocne Bulwary",
-      "talk": "Dzwonek Talk"
+      "talk": "Dzwonek Talk",
+      "arcade": "Retro Arcade",
+      "ambient": "Spokojna Jazda",
+      "city": "Dźwięki Miasta"
     },
     "bells": ["Klasyczny", "Jasny", "Niski"],
     "tips": [

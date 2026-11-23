@@ -1,11 +1,17 @@
 import { expect, test, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { chooseCity } from './city-picker';
+import {
+  radioCatalog,
+  radioPath,
+  stations,
+} from '../../src/audio/radio/catalog';
 
 type AudioLog = {
   contexts: number;
   effects: number;
   notes: number;
+  radioStarts: number;
   levels: number[];
   recordingDecodes: number;
 };
@@ -26,19 +32,22 @@ async function observeAudio(page: Page) {
       contexts: 0,
       effects: 0,
       notes: 0,
+      radioStarts: 0,
       levels: [],
       recordingDecodes: 0,
     };
     window.audioLog = log;
     window.AudioContext = class extends AudioContext {
-      constructor() {
-        super();
+      constructor(options?: AudioContextOptions) {
+        super(options);
         log.contexts++;
       }
     };
+    const radioBuffers = new WeakSet<AudioBuffer>();
     const effectStart = AudioBufferSourceNode.prototype.start;
     AudioBufferSourceNode.prototype.start = function (when, offset, duration) {
-      log.effects++;
+      if (this.buffer && radioBuffers.has(this.buffer)) log.radioStarts++;
+      else log.effects++;
       effectStart.call(this, when, offset, duration);
     };
     const noteStart = OscillatorNode.prototype.start;
@@ -53,8 +62,16 @@ async function observeAudio(page: Page) {
     };
     const decode = AudioContext.prototype.decodeAudioData;
     AudioContext.prototype.decodeAudioData = function (data, success, error) {
-      log.recordingDecodes++;
-      return decode.call(this, data, success, error);
+      const bytes = new Uint8Array(data).subarray(0, 3);
+      // The rendered MP3s carry an ID3 header. Voice recordings are Opus or AAC.
+      if (bytes[0] !== 73 || bytes[1] !== 68 || bytes[2] !== 51) {
+        log.recordingDecodes++;
+        return decode.call(this, data, success, error);
+      }
+      return decode.call(this, data, success, error).then((buffer) => {
+        radioBuffers.add(buffer);
+        return buffer;
+      });
     };
   });
 }
@@ -191,7 +208,9 @@ test('unlocks audio with a gesture, saves channel levels and station, and rides 
   await settings(page).getByLabel(pl.audio.bell).selectOption('1');
   await page.getByRole('button', { name: pl.m5c.close, exact: true }).click();
   await chooseCity(page, 'warszawa');
-  await expect.poll(async () => (await log(page)).notes).toBeGreaterThan(0);
+  await expect
+    .poll(async () => (await log(page)).radioStarts)
+    .toBeGreaterThan(0);
   const previousEffects = (await log(page)).effects;
   await page.keyboard.down('f');
   await expect
@@ -235,6 +254,7 @@ test('unlocks audio with a gesture, saves channel levels and station, and rides 
   await page.keyboard.up('ArrowUp');
   expect(await log(page)).toMatchObject({
     notes: mutedAudio.notes,
+    radioStarts: mutedAudio.radioStarts,
     effects: mutedAudio.effects,
     recordingDecodes: 0,
   });
@@ -273,4 +293,51 @@ test('ducks radio during a dialogue and preserves captions without recordings', 
     pl.audio.tipText.stop,
   );
   expect((await log(page)).recordingDecodes).toBe(0);
+});
+
+test('cycles all six broadcasts and plays the ident and first song completely offline', async ({
+  page,
+  context,
+}) => {
+  await observeAudio(page);
+  await page.goto('http://127.0.0.1:4174/');
+  await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
+  await context.setOffline(true);
+  await page.reload();
+  await chooseCity(page, 'warszawa');
+  const stationButton = page.getByRole('button', {
+    name: new RegExp(pl.audio.changeStation),
+  });
+  await expect(stationButton).toHaveAccessibleName(
+    new RegExp(pl.audio.stations.hits),
+  );
+  await expect
+    .poll(async () => (await log(page)).radioStarts)
+    .toBeGreaterThanOrEqual(2);
+
+  for (const station of [...stations.slice(1), stations[0]]) {
+    const before = (await log(page)).radioStarts;
+    const jingle = page.waitForResponse(
+      (response) =>
+        response.url().endsWith('/' + radioPath(station, 'jingle')) &&
+        response.ok(),
+    );
+    const track = page.waitForResponse(
+      (response) =>
+        radioCatalog[station].seeds.some((seed: number) =>
+          response.url().endsWith('/' + radioPath(station, seed)),
+        ) && response.ok(),
+    );
+    await stationButton.click();
+    expect((await jingle).fromServiceWorker()).toBe(true);
+    expect((await track).fromServiceWorker()).toBe(true);
+    await expect(stationButton).toHaveAccessibleName(
+      new RegExp(pl.audio.stations[station]),
+    );
+    await expect
+      .poll(async () => (await log(page)).radioStarts)
+      .toBeGreaterThanOrEqual(before + 2);
+  }
+
+  expect((await log(page)).notes).toBe(0);
 });

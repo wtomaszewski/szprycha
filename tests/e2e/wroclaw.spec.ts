@@ -128,12 +128,27 @@ for (const view of ['desktop', 'mobile'] as const) {
           body: silentRecording(),
         });
       });
-      await page.addInitScript(() => {
+      await page.addInitScript((recordingPath) => {
+        const recordingBytes = new WeakSet<ArrayBuffer>();
+        const fetchResource = window.fetch;
+        window.fetch = async (input, init) => {
+          const response = await fetchResource(input, init);
+          if (new URL(response.url).pathname === recordingPath) {
+            const readBytes = response.arrayBuffer.bind(response);
+            response.arrayBuffer = async () => {
+              const data = await readBytes();
+              recordingBytes.add(data);
+              return data;
+            };
+          }
+          return response;
+        };
         const recordings = new WeakSet<AudioBuffer>();
         const decode = AudioContext.prototype.decodeAudioData;
         AudioContext.prototype.decodeAudioData = async function (data) {
+          const isRecording = recordingBytes.has(data);
           const buffer = await decode.call(this, data);
-          recordings.add(buffer);
+          if (isRecording) recordings.add(buffer);
           return buffer;
         };
         const start = AudioBufferSourceNode.prototype.start;
@@ -155,7 +170,7 @@ for (const view of ['desktop', 'mobile'] as const) {
               ? 'with-image'
               : 'without-image';
         };
-      });
+      }, recordingPath);
       // Start inside the interaction radius of the 28th gnome, which uses Q028.
       await startAt(page, { x: 3572, y: 2340, heading: 0 });
       let releaseImage!: () => void;
