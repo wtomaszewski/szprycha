@@ -6,13 +6,15 @@ import {
   cyclistVariants,
   emergencyTypes,
   largeVehicleTypes,
+  pedalFrames,
   pedestrianDirections,
+  pedestrianSeasonRows,
   pedestrianTypes,
   riderDirections,
   smallVehicleTypes,
   spriteDirection,
   spriteSheets,
-  strideFrames,
+  walkFrames,
   tramCities,
   vehicleFrame,
   vehiclePaints,
@@ -56,7 +58,8 @@ export function drawCyclist(
 ) {
   useFrame(
     image,
-    (variant * strideFrames + stride) * riderDirections +
+    (variant * pedalFrames + Math.floor(stride * pedalFrames)) *
+      riderDirections +
       spriteDirection(heading, riderDirections),
   );
 }
@@ -113,7 +116,14 @@ export class TrafficArt {
     if (this.rear) this.image.setOrigin(0.5, 1);
   }
 
-  draw(x: number, y: number, visible: boolean, pose: ReplayActor, at: number) {
+  draw(
+    x: number,
+    y: number,
+    visible: boolean,
+    pose: ReplayActor,
+    at: number,
+    winter: boolean,
+  ) {
     const { image, rear } = this;
     if (image.visible !== visible) {
       image.setVisible(visible);
@@ -127,13 +137,14 @@ export class TrafficArt {
         rear!.setPosition(x, y).setRotation(pose.tramRear + Math.PI / 2);
         break;
       case 'cyclist':
-        drawCyclist(image, pose.heading, Math.floor(pose.stride), this.row);
+        drawCyclist(image, pose.heading, pose.stride, this.row);
         break;
       case 'pedestrian':
         useFrame(
           image,
-          (((this.row + pose.trips) % pedestrianTypes.length) * strideFrames +
-            Math.floor(pose.stride)) *
+          ((winter ? pedestrianSeasonRows : 0) +
+            ((this.row + pose.trips) % pedestrianTypes.length) * walkFrames +
+            Math.floor(pose.stride * walkFrames)) *
             pedestrianDirections +
             spriteDirection(pose.heading, pedestrianDirections),
         );

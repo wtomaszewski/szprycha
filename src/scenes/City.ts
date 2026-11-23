@@ -1530,14 +1530,20 @@ export class City extends Scene {
   }
 
   private updateRival() {
-    const rival = this.mission?.race?.rider;
-    if (!rival) return;
+    const race = this.mission?.race;
+    if (!race) return;
+    const rival = race.rider;
     const scale = 1 / this.world.metersPerPixel;
     const x = rival.pos.x * scale;
     const y = rival.pos.y * scale;
     if (this.rivalSprite) {
       this.rivalSprite.setPosition(x, y);
-      drawCyclist(this.rivalSprite, rival.heading, 1, 2);
+      drawCyclist(
+        this.rivalSprite,
+        rival.heading,
+        (race.distanceTravelled / 1.6) % 1,
+        2,
+      );
     }
     this.rivalLabel?.setPosition(x, y - 12);
   }
@@ -2120,7 +2126,7 @@ export class City extends Scene {
         pose.active &&
         Math.abs(x - centerX) <= halfWidth + art.reach &&
         Math.abs(y - centerY) <= halfHeight + art.reach;
-      art.draw(x, y, visible, pose, at);
+      art.draw(x, y, visible, pose, at, weather === 'snow');
       if (
         lowLight &&
         visible &&
@@ -2192,7 +2198,7 @@ export class City extends Scene {
       sprite.setVisible(Boolean(tail) && !reviewing);
       if (tail) {
         sprite.setPosition(tail.rider.x, tail.rider.y);
-        drawCyclist(sprite, tail.rider.heading, 1, 2);
+        drawCyclist(sprite, tail.rider.heading, tail.riderStride, 2);
       }
     }
     this.riderArt.draw(frame, illuminatesReflector);

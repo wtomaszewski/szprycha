@@ -134,3 +134,29 @@ it('records traffic lamps and both tram section headings for playback', () => {
     tramRear: 0.1,
   });
 });
+
+it('keeps visual transitions in the recorded frame alongside the immediate actions', () => {
+  const buffer = new ReplayBuffer(0);
+  const rider = { x: 0, y: 0, speed: 0, heading: 0, walking: false };
+  const idle = { signal: null, looking: false, bell: false, lights: false };
+  const signaling = { ...idle, signal: 'left' as const, looking: true };
+  buffer.record(0, day, rider, idle, []);
+  buffer.record(0.075, day, rider, signaling, []);
+  buffer.record(0.15, day, rider, signaling, []);
+  buffer.record(0.225, day, rider, idle, []);
+  buffer.record(0.31, day, rider, idle, []);
+
+  expect(buffer.frame(1)).toMatchObject({
+    actions: { signal: 'left', looking: true },
+    signalReach: -0.5,
+    glance: 0.5,
+  });
+  expect(buffer.frame(2)).toMatchObject({ signalReach: -1, glance: 1 });
+  expect(buffer.frame(3)?.actions).toMatchObject({
+    signal: null,
+    looking: false,
+  });
+  expect(buffer.frame(3)?.signalReach).toBeCloseTo(-0.5);
+  expect(buffer.frame(3)?.glance).toBeCloseTo(0.5);
+  expect(buffer.frame(4)).toMatchObject({ signalReach: 0, glance: 0 });
+});

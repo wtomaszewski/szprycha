@@ -80,46 +80,46 @@
     {
       "id": "rider",
       "file": "generated/rider.png",
-      "width": 768,
-      "height": 1080,
-      "frameWidth": 24,
-      "frameHeight": 24,
-      "frames": 1440,
+      "width": 2048,
+      "height": 2368,
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "frames": 4736,
       "directions": 16,
-      "description": "Trzy kolory kasku w kolejności żółty, błękitny, różowy. Dla każdego: jazda bez gestu, lewy gest i prawy gest (po 4 klatki), powtórzone z obejrzeniem się; 4 klatki prowadzenia i 2 zsiadania. Po 16 kierunków od północy zgodnie z ruchem wskazówek. Dwie pozy w rzędzie PNG."
+      "description": "Kaski żółty, błękitny, różowy. Dla każdego: trzy kąty obejrzenia się, w każdym pięć zasięgów gestu (lewy pełny, lewy pośredni, brak, prawy pośredni, prawy pełny) po sześć klatek pedałowania. Potem sześć klatek prowadzenia i dwie fazy zsiadania. Każda poza w 16 kierunkach od północy, zgodnie z ruchem wskazówek. Cztery pozy w rzędzie PNG, ostatnie dwie pozycje arkusza puste."
     },
     {
       "id": "rider-lights",
       "file": "generated/rider-lights.png",
-      "width": 384,
-      "height": 768,
-      "frameWidth": 24,
-      "frameHeight": 24,
+      "width": 512,
+      "height": 1024,
+      "frameWidth": 32,
+      "frameHeight": 32,
       "frames": 512,
       "directions": 16,
-      "description": "Nakładki 24×24 dla jazdy, prowadzenia i dwóch faz zsiadania. Po cztery stany: zgaszone, lampki, odblask, lampki z odblaskiem. Dolna połowa arkusza dodaje kamizelkę."
+      "description": "Nakładki 32×32 dla jazdy, prowadzenia i dwóch faz zsiadania. Po cztery stany: zgaszone, lampki, odblask, lampki z odblaskiem. Dolna połowa arkusza dodaje kamizelkę."
     },
     {
       "id": "traffic-cyclist",
       "file": "generated/traffic-cyclist.png",
-      "width": 384,
-      "height": 288,
-      "frameWidth": 24,
-      "frameHeight": 24,
-      "frames": 192,
+      "width": 512,
+      "height": 576,
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "frames": 288,
       "directions": 16,
-      "description": "Trzy zestawy stroju i kasku, po cztery klatki pedałowania i 16 kierunków."
+      "description": "Trzy zestawy stroju, sylwetki i kasku, po sześć klatek pedałowania i 16 kierunków od północy."
     },
     {
       "id": "traffic-pedestrian",
       "file": "generated/traffic-pedestrian.png",
-      "width": 128,
-      "height": 512,
-      "frameWidth": 16,
-      "frameHeight": 16,
-      "frames": 256,
+      "width": 384,
+      "height": 1728,
+      "frameWidth": 24,
+      "frameHeight": 24,
+      "frames": 1152,
       "directions": 8,
-      "description": "Dziecko, dorosły, senior z laską, osoba z wózkiem, turysta z mapą, biegacz, spacer z psem, uczeń. Każdy ma cztery klatki chodu i osiem kierunków."
+      "description": "Dziecko, dorosły, senior, opiekun z wózkiem, turysta z mapą, biegacz, osoba z psem, uczeń, osoba na wózku, osoba z torbą na ramię, osoba z zakupami i nastolatek. Po sześć klatek ruchu i osiem kierunków. Druga połowa arkusza zawiera te same warianty w zimowych kurtkach."
     },
     {
       "id": "traffic-car",
@@ -174,7 +174,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-pan_kazik",
@@ -185,7 +185,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-sierzant_ola",
@@ -196,7 +196,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-turbo",
@@ -207,7 +207,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-dj_dzwonek",
@@ -218,7 +218,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-lena_mapa",
@@ -229,7 +229,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-maly_franek",
@@ -240,7 +240,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-pani_halina",
@@ -251,7 +251,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-profesor_kwant",
@@ -262,7 +262,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-inzynier_zawila",
@@ -273,7 +273,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-krasnal_dzwoneczek",
@@ -284,7 +284,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-pan_latarnik",
@@ -295,7 +295,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-pani_doktor",
@@ -306,7 +306,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "portrait-gang_bez_hamulcow",
@@ -317,7 +317,7 @@
       "frameHeight": 64,
       "frames": 5,
       "directions": 1,
-      "description": "Dialogue portrait frames in order: neutral, happy, surprised, worried, proud."
+      "description": "Portret 64×64 z cieniowaniem i pięcioma klatkami w kolejności: neutral, happy, surprised, worried, proud."
     },
     {
       "id": "znak-A-7",

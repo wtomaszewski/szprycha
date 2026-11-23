@@ -25,7 +25,14 @@ import {
 } from '../gameplay/plac/placRecords';
 import { PlacArt } from '../render/PlacArt';
 import { RiderArt } from '../render/RiderArt';
-import { riderDirections, spriteDirection } from '../render/spriteFrames';
+import {
+  animateGlance,
+  animateSignal,
+  idleRiderPose,
+  riderDirections,
+  riderFrame,
+  spriteDirection,
+} from '../render/spriteFrames';
 import { loadRiderArt } from '../render/TrafficArt';
 import { DrivingControls } from '../ui/DrivingControls';
 import { progressNotice } from '../ui/SkillMap';
@@ -68,6 +75,8 @@ export class Plac extends Scene {
   private finishedTicks = 0;
   private shownClockTick = -1;
   private stride = 0;
+  private signalReach = 0;
+  private glance = 0;
 
   constructor() {
     super('Plac');
@@ -296,6 +305,7 @@ export class Plac extends Scene {
 
   private prepare(run: PlacRun) {
     this.accumulator = this.completedAt = this.stride = 0;
+    this.signalReach = this.glance = 0;
     this.controls.clear();
     this.controls.actions.signal = null;
     this.controls.actions.looking = false;
@@ -465,7 +475,18 @@ export class Plac extends Scene {
       }
       this.rankingRide?.step(input, controls.actions, run.ride.rider.walking);
       const result = run.step(input);
-      this.stride = (this.stride + (run.ride.rider.speed * FIXED_STEP) / 8) % 4;
+      this.stride =
+        (this.stride + (run.ride.rider.speed * FIXED_STEP) / 32) % 1;
+      this.signalReach = animateSignal(
+        this.signalReach,
+        controls.actions.signal,
+        FIXED_STEP,
+      );
+      this.glance = animateGlance(
+        this.glance,
+        controls.actions.looking,
+        FIXED_STEP,
+      );
       if (result) {
         const fault = [...result.faults].find(
           ([, grade]) => grade === result.grade,
@@ -511,6 +532,8 @@ export class Plac extends Scene {
         actions: this.controls.actions,
         at: time,
         riderStride: this.stride,
+        signalReach: this.signalReach,
+        glance: this.glance,
         dismountAt: -Infinity,
         reflectiveVest: this.progress.store.profile.reflectiveVest,
       },
@@ -542,7 +565,13 @@ export class Plac extends Scene {
       const [x, y, heading] = this.ghostPose;
       this.ghostArt
         .setPosition(x, y)
-        .setFrame(spriteDirection(heading, riderDirections));
+        .setFrame(
+          riderFrame(
+            0,
+            idleRiderPose,
+            spriteDirection(heading, riderDirections),
+          ),
+        );
     }
   }
 }

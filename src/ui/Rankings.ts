@@ -11,8 +11,9 @@ import { placTime } from '../gameplay/plac/placRecords';
 import type { RankingClient } from '../rankings/RankingClient';
 import {
   helmetColors,
-  riderDirections,
-  riderPoses,
+  idleRiderPose,
+  riderFrame,
+  spriteSheets,
   type HelmetColor,
 } from '../render/spriteFrames';
 
@@ -46,12 +47,14 @@ function labelled(text: string, select: HTMLSelectElement) {
 }
 
 function avatar(color: HelmetColor) {
-  const frame = helmetColors.indexOf(color) * riderPoses * riderDirections;
-  const columns = 2 * riderDirections;
+  const frame = riderFrame(helmetColors.indexOf(color), idleRiderPose, 0);
+  const [width, height, columns] = spriteSheets.rider;
   const image = node('span');
   image.className = 'ranking-avatar';
   image.setAttribute('aria-hidden', 'true');
-  image.style.backgroundPosition = `${-(frame % columns) * 24}px ${-Math.floor(frame / columns) * 24}px`;
+  image.style.width = `${width}px`;
+  image.style.height = `${height}px`;
+  image.style.backgroundPosition = `${-(frame % columns) * width}px ${-Math.floor(frame / columns) * height}px`;
   return image;
 }
 

@@ -21,6 +21,11 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 - Nowe profile rozpoczynają ćwiczenia z Sierżant Olą w Miasteczku Ruchu. Postęp jest zapisywany lokalnie, a samouczek można pominąć, wznowić lub powtórzyć z menu Pomoc.
 - Samouczek uczy obsługi roweru i interfejsu na klawiaturze, dotyku i gamepadzie. Kampania Warszawy i Wrocławia zachowuje osobne misje szkoleniowe.
 
+## Postacie i portrety (#101)
+
+- Atlas 32×32 przedstawia gracza i rowerzystów AI w sześciu klatkach pedałowania. Gest skrętu i obejrzenie się mają pozy pośrednie.
+- Atlas 24×24 zawiera dwanaście wariantów pieszych, zimowe kurtki oraz sześć klatek ruchu w ośmiu kierunkach. Każda postać fabularna ma pięć portretów 64×64. [Zrzuty i opis oprawy](docs/06_art_direction.md#stan-spriteów-uczestników-ruchu)
+
 ## Audyt grafiki (#100)
 
 - Zrzuty Playwright obejmują trzy mapy w dzień, w nocy i podczas opadów, landmarki, ekrany gry oraz wariant dotykowy. Porównania i wyniki są w [raporcie audytu](docs/AUDYT_GRAFIKI.md).
