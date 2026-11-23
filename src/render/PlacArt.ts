@@ -1,6 +1,7 @@
+import { readingFont } from '../core/fonts';
 import type { GameObjects, Scene } from 'phaser';
 import type { PlacCourse, PlacId } from '../content/plac';
-import { FONT, ui } from '../core/presentation';
+import { ui } from '../core/presentation';
 import type { PlacDetector, Point } from '../gameplay/plac/detectors/types';
 
 const edge = 0xa7bfc9;
@@ -87,8 +88,8 @@ export class PlacArt {
     this.labels.push(
       this.scene.add
         .text(x, y, text, {
-          fontFamily: FONT,
-          fontSize: '12px',
+          fontFamily: readingFont,
+          fontSize: '16px',
           color,
         })
         .setOrigin(0.5)

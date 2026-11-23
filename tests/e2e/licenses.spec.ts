@@ -48,7 +48,8 @@ test('opens the educational notice and third-party licenses offline from the men
   await expect(notices).toBeVisible();
   await expect(notices).toContainText('Apache License');
   await expect(notices).toContainText('The MIT License');
-  await expect(notices).toContainText('Pixelify Sans (OFL-1.1)');
+  await expect(notices).toContainText('Press Start 2P (OFL-1.1)');
+  await expect(notices).toContainText('VT323 (OFL-1.1)');
   await page.keyboard.press('Escape');
   await expect(about).toBeFocused();
   await expect(page.locator('canvas')).toHaveAttribute(

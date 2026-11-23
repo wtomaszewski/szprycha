@@ -10,7 +10,10 @@ import { profile } from '../e2e/helpers/profile';
 const phase = process.env.AUDIT_PHASE ?? 'po';
 if (phase !== 'przed' && phase !== 'po')
   throw new Error('AUDIT_PHASE must be przed or po');
-const folder = resolve('docs/screenshots/audyt', phase);
+const folder = resolve(
+  process.env.AUDIT_OUTPUT ?? 'docs/screenshots/audyt',
+  phase,
+);
 const maps = {
   miasteczko: [624, 852],
   warszawa: [1000, 452],
@@ -179,6 +182,14 @@ test('menu, picker, quiz, exam, album and parent zone', async ({ page }) => {
   await profile(page, {
     nickname: 'Szybki Jeż 1',
     missionPoints: 40_000,
+    quiz: {
+      streak: 0,
+      cards: Object.fromEntries(
+        content.pytania.pytania
+          .filter(({ id, modul }) => modul === 'M03' && id !== 'Q024')
+          .map(({ id }) => [id, { box: 1, due: '2099-01-01' }]),
+      ),
+    },
     licencePassed: true,
     licence: {
       date: '2026-11-23',
@@ -198,8 +209,8 @@ test('menu, picker, quiz, exam, album and parent zone', async ({ page }) => {
   await page.reload();
 
   await button(page, pl.quiz.title).click();
-  await button(page, pl.quiz.quick + ' · 10').click();
-  await expect(page.getByRole('progressbar')).toBeVisible();
+  await button(page, `${pl.skillMap.modules.M03} · 1`).click();
+  await expect(page.locator('.question-signs img').first()).toBeVisible();
   await screenshot(page, 'quiz');
   await button(page, pl.quiz.close).click();
   await button(page, pl.exam.menu).click();
@@ -316,13 +327,32 @@ test('mission dialogue and results', async ({ page }) => {
   await screenshot(page, 'wyniki-misji');
 });
 
+test('typography in Ola’s tutorial and the riding HUD', async ({ page }) => {
+  await moveStart(page, 'miasteczko', 2170, 637);
+  await page.goto('/');
+  const tutorial = page.getByRole('region', { name: pl.tutorial.title });
+  await expect(tutorial).toBeVisible();
+  await screenshot(page, 'dymek-oli');
+  await waitForMainMenu(page);
+  await button(page, pl.driving.title).click();
+  await expect(page.locator('canvas')).toHaveAttribute('data-x', '2170');
+  await screenshot(page, 'hud');
+});
+
+test('typography in a 360×640 window', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 640 });
+  await page.goto('/');
+  await waitForMainMenu(page);
+  await screenshot(page, 'menu-360x640');
+});
+
 test.describe('landscape phone', () => {
   test.use({
-    viewport: { width: 740, height: 390 },
+    viewport: { width: 640, height: 360 },
     hasTouch: true,
     isMobile: true,
   });
-  test('menu, ride and pause on a non-integer scale', async ({ page }) => {
+  test('menu, ride and pause, then the portrait prompt', async ({ page }) => {
     await page.goto('/');
     await waitForMainMenu(page);
     await screenshot(page, 'telefon-menu');
@@ -344,5 +374,10 @@ test.describe('landscape phone', () => {
       page.getByRole('dialog', { name: pl.driving.paused }),
     ).toBeVisible();
     await screenshot(page, 'telefon-pauza');
+    await page.setViewportSize({ width: 360, height: 640 });
+    await expect(
+      page.getByText(pl.driving.rotate, { exact: true }),
+    ).toBeVisible();
+    await screenshot(page, 'telefon-obroc');
   });
 });
