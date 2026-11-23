@@ -13,8 +13,11 @@ import {
   wallTexture,
 } from './BlockArt';
 import { sceneDepth } from './effectFrames';
+import type { WorldModel } from '../rules/world/WorldModel';
 import {
   CAMERA_HEIGHT_PX,
+  blockOpacity,
+  blockRoadBounds,
   roofOffset,
   supportingTier,
   type Block,
@@ -141,10 +144,32 @@ class Wall extends WallFace {
 export class Blocks {
   cameraHeight = CAMERA_HEIGHT_PX;
   private readonly items;
+  private readonly roads;
+  private readonly mapWidth;
+  private readonly mapHeight;
+  private readonly silhouette = { left: 0, right: 0, top: 0, bottom: 0 };
   readonly chimneys: { roof: GameObjects.Image; x: number; y: number }[] = [];
   private night = false;
 
-  constructor(scene: Scene, blocks: Block[], mapId: string) {
+  constructor(scene: Scene, blocks: Block[], mapId: string, world: WorldModel) {
+    const scale = 1 / world.metersPerPixel;
+    this.roads = world.zones
+      .filter(
+        ({ kind }) =>
+          kind === 'roadway' ||
+          kind === 'bike_path' ||
+          kind === 'bike_lane' ||
+          kind === 'shared_path' ||
+          kind === 'shoulder',
+      )
+      .map(({ x, y, width, height }) => ({
+        left: x * scale,
+        top: y * scale,
+        right: (x + width) * scale,
+        bottom: (y + height) * scale,
+      }));
+    this.mapWidth = world.width * scale;
+    this.mapHeight = world.height * scale;
     const landmarkTiers = new Map<string, Block[]>();
     this.items = [...blocks]
       .sort((a, b) => a.floors - b.floors)
@@ -156,6 +181,19 @@ export class Blocks {
           tiers.push(block);
           landmarkTiers.set(block.landmarkId, tiers);
         }
+        const bounds = blockRoadBounds(
+          block,
+          support,
+          this.mapWidth,
+          this.mapHeight,
+        );
+        const nearbyRoads = this.roads.filter(
+          (road) =>
+            road.left < bounds.right &&
+            road.right > bounds.left &&
+            road.top < bounds.bottom &&
+            road.bottom > bounds.top,
+        );
         let id = 0;
         for (const ch of block.id ?? String(i))
           id = Math.imul(id, 31) + ch.charCodeAt(0);
@@ -180,6 +218,7 @@ export class Blocks {
         });
         return {
           block,
+          nearbyRoads,
           support,
           horizontal: new Wall(
             scene,
@@ -221,8 +260,12 @@ export class Blocks {
   ) {
     const updateEmission = night || this.night;
     this.night = night;
+    const zoom = camera.zoom;
     const cx = camera.scrollX + camera.width / 2;
     const cy = camera.scrollY + camera.height / 2;
+    // An oversized viewport can put the camera center beyond the map.
+    const withinMap =
+      cx >= 0 && cx <= this.mapWidth && cy >= 0 && cy <= this.mapHeight;
     const halfWidth = camera.width / (2 * camera.zoom);
     const halfHeight = camera.height / (2 * camera.zoom);
     const viewX = camera.clampX(camera.scrollX) + camera.width / 2;
@@ -234,9 +277,9 @@ export class Blocks {
     const bottom = viewY + halfHeight + 1;
     for (const item of this.items) {
       const { block: b, offset, base, horizontal, vertical, roof } = item;
-      roofOffset(b, cx, cy, lite, this.cameraHeight, offset);
+      roofOffset(b, cx, cy, lite, this.cameraHeight, offset, zoom);
       if (item.support)
-        roofOffset(item.support, cx, cy, lite, this.cameraHeight, base);
+        roofOffset(item.support, cx, cy, lite, this.cameraHeight, base, zoom);
       const dx = offset.x - base.x;
       const dy = offset.y - base.y;
       const margin = Math.max(
@@ -283,13 +326,17 @@ export class Blocks {
         }
         continue;
       }
-      const alpha =
-        playerX > b.x + offset.x - 16 &&
-        playerX < b.x + b.width + offset.x + 16 &&
-        playerY > b.y + offset.y - 16 &&
-        playerY < b.y + b.height + offset.y + 16
-          ? 0.35
-          : 1;
+      const silhouette = this.silhouette;
+      silhouette.left = x - Math.max(0, dx);
+      silhouette.right = x + b.width - Math.min(0, dx);
+      silhouette.top = y - Math.max(0, dy);
+      silhouette.bottom = y + b.height - Math.min(0, dy);
+      const alpha = blockOpacity(
+        playerX,
+        playerY,
+        silhouette,
+        withinMap ? item.nearbyRoads : this.roads,
+      );
       if (item.alpha !== alpha) {
         item.alpha = alpha;
         roof.setAlpha(alpha);

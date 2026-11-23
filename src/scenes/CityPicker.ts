@@ -193,11 +193,15 @@ export class CityPicker extends Scene {
     document.body.append(controls);
     this.readGamepad = menuGamepad(controls, leave);
     const center = () => {
-      this.cameras.main.setScroll(
-        -Math.floor((this.scale.width - 640) / 2),
-        -Math.floor((this.scale.height - 360) / 2),
-      );
-      controls.style.setProperty('--picker-zoom', String(this.scale.zoom));
+      const { width, height, zoom } = this.scale;
+      const mapZoom = Math.min(1, width / 640, height / 360);
+      this.cameras.main
+        .setZoom(mapZoom)
+        .setScroll(
+          -Math.floor((width - 640) / 2),
+          -Math.floor((height - 360) / 2),
+        );
+      controls.style.setProperty('--picker-zoom', String(zoom * mapZoom));
     };
     center();
     this.scale.on('resize', center);

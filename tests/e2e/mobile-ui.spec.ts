@@ -124,19 +124,62 @@ async function unlockQuiz(page: Page) {
   await page.reload();
 }
 
-for (const { profile, device, viewport, target, logicalHeight } of [
+test.describe('canvas on a 740 × 390 touch viewport', () => {
+  test.use({
+    viewport: { width: 740, height: 390 },
+    deviceScaleFactor: 1,
+    isMobile: true,
+    hasTouch: true,
+  });
+
+  test('uses whole display pixels before and after resizing', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const canvas = page.locator('#game canvas');
+    await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
+    const geometry = () =>
+      canvas.evaluate((element: HTMLCanvasElement) => {
+        const { x, y, width, height } = element.getBoundingClientRect();
+        return [element.width, element.height, x, y, width, height];
+      });
+    await expect.poll(geometry).toEqual([640, 360, 50, 15, 640, 360]);
+    await page.setViewportSize({ width: 1280, height: 960 });
+    await expect.poll(geometry).toEqual([640, 480, 0, 0, 1280, 960]);
+    await page.setViewportSize({ width: 740, height: 390 });
+    await expect.poll(geometry).toEqual([640, 360, 50, 15, 640, 360]);
+    await page
+      .getByRole('button', { name: pl.driving.title, exact: true })
+      .tap();
+    await expect(canvas).toHaveAttribute('data-scene', 'City');
+    await expect(
+      page.locator('.touch-controls').getByLabel(pl.driving.joystick),
+    ).toBeVisible();
+  });
+});
+
+for (const {
+  profile,
+  device,
+  viewport,
+  target,
+  logicalWidth,
+  logicalHeight,
+} of [
   {
     profile: 'telefon',
     device: 'Pixel 7 landscape',
     viewport: { width: 640, height: 360 },
     target: 44,
-    logicalHeight: 360,
+    logicalWidth: 560,
+    logicalHeight: 315,
   },
   {
     profile: 'tablet',
     device: 'iPad (gen 7) landscape',
     viewport: { width: 1024, height: 768 },
     target: 56,
+    logicalWidth: 640,
     logicalHeight: 480,
   },
 ] as const) {
@@ -155,7 +198,7 @@ for (const { profile, device, viewport, target, logicalHeight } of [
       await page.goto('/');
       const canvas = page.locator('canvas');
       await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
-      await expect(canvas).toHaveJSProperty('width', 640);
+      await expect(canvas).toHaveJSProperty('width', logicalWidth);
       await expect(canvas).toHaveJSProperty('height', logicalHeight);
       await cdp.send('Emulation.setSafeAreaInsetsOverride', { insets });
       await expect(page.locator('#game')).toHaveCSS('left', '36px');

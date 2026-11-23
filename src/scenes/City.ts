@@ -110,6 +110,7 @@ import type { RoadTrafficAgent } from '../sim/TrafficSimulation';
 import { CityCollectibles } from '../render/CityCollectibles';
 import { drawCyclist, loadTrafficArt, TrafficArt } from '../render/TrafficArt';
 import { RiderArt } from '../render/RiderArt';
+import { pixelScroll } from '../render/pixelCamera';
 import { audio } from '../audio/GameAudio';
 import { CitySound } from '../audio/CitySound';
 import { activeDialog, gamepadMenu } from '../ui/KeyboardGamepad';
@@ -178,6 +179,7 @@ export class City extends Scene {
   private slowFrames = 0;
   private ready = false;
   private rider!: Rider;
+  private readonly cameraFocus = { x: 0, y: 0 };
   private readonly weatherTuning = { brakeForce: BRAKE_DECELERATION };
   private riderArt!: RiderArt;
   private controls!: DrivingControls;
@@ -561,7 +563,7 @@ export class City extends Scene {
       ...scenery.chunks,
     ];
     this.props = new CityProps(this, props);
-    this.blocks = new Blocks(this, buildings, mapId);
+    this.blocks = new Blocks(this, buildings, mapId, this.world);
     this.lighting = new NightLighting(this, this.props, scenery.neons);
     this.atmosphere = new CityAtmosphere(this, this.blocks, props, (at) =>
       this.citySound.pigeon(at),
@@ -636,7 +638,10 @@ export class City extends Scene {
     this.cameras.main
       .setZoom(drivingZoom)
       .setBounds(0, 0, this.worldWidth, this.worldHeight)
-      .centerOn(this.rider.x, this.rider.y);
+      // Phaser floors scroll in world space and expands Canvas image quads
+      // with roundPixels. City instead aligns the view in canvas space.
+      .setRoundPixels(false);
+    this.centerRideCamera(this.rider.x, this.rider.y);
     cullMapChunks(this.mapChunks, this.cameras.main);
     const areaTitle =
       mapId === 'warszawa'
@@ -1238,7 +1243,7 @@ export class City extends Scene {
     const frame = this.replay.frame(this.replay.size - 1)!;
     const focus = verdict ? this.highlight.focus(verdict) : frame.rider;
     this.cameras.main.setZoom(drivingZoom * (verdict && !reduced ? 1.25 : 1));
-    this.cameras.main.centerOn(focus.x, focus.y);
+    this.centerRideCamera(focus.x, focus.y);
     this.renderFrame(frame, 0, true);
     if (verdict) this.highlight.draw(verdict, frame, 0, true);
     this.feedback.reset(this.rules.counts);
@@ -1486,7 +1491,7 @@ export class City extends Scene {
     const focus = still ? this.highlight.focus(clip.verdict) : frame.rider;
     const compact = this.compactResults.matches;
     camera.setZoom(1);
-    camera.centerOn(
+    this.centerRideCamera(
       focus.x - (compact ? 0 : camera.width * 0.21),
       focus.y + (compact ? camera.height * 0.23 : 0),
     );
@@ -1690,7 +1695,7 @@ export class City extends Scene {
     });
     this.controls.setLights(false);
     this.controls.setWalking(false);
-    this.cameras.main.centerOn(this.rider.x, this.rider.y);
+    this.centerRideCamera(this.rider.x, this.rider.y);
     this.replay.clear();
     this.atmosphere.reset();
     this.recordFrame(-FIXED_STEP);
@@ -1709,7 +1714,7 @@ export class City extends Scene {
       bell: false,
     });
     this.accumulator = 0;
-    this.cameras.main.centerOn(this.rider.x, this.rider.y);
+    this.centerRideCamera(this.rider.x, this.rider.y);
     this.resetRules();
     this.replay.clear();
     this.recordFrame(-FIXED_STEP);
@@ -2150,7 +2155,7 @@ export class City extends Scene {
     this.stopListeningForVerdicts?.();
     this.rules = this.rules.afterCheckpoint();
     this.listenForVerdicts();
-    this.cameras.main.centerOn(this.rider.x, this.rider.y);
+    this.centerRideCamera(this.rider.x, this.rider.y);
     this.replay.clear();
     this.recordFrame();
   }
@@ -2173,7 +2178,7 @@ export class City extends Scene {
     this.controls.clear();
     if (retry && !this.mission?.result && !this.mission?.waitingForQuestion)
       this.returnToCheckpoint(this.mission?.rewindCheckpoint());
-    else this.cameras.main.centerOn(this.rider.x, this.rider.y);
+    else this.centerRideCamera(this.rider.x, this.rider.y);
     this.feedback.reset(this.rules.counts);
     this.renderFrame(this.replay.frame(this.replay.size - 1)!, 0);
     this.updateDrivingHud(this.rider, this.controls.actions);
@@ -2210,7 +2215,7 @@ export class City extends Scene {
     const frame = this.replay.frameAt(elapsed)!;
     const focus = playing ? frame.rider : this.highlight.focus(review.verdict);
     camera.setZoom(drivingZoom * (playing || reduced ? 1 : 1 + intro / 2));
-    camera.centerOn(focus.x, focus.y);
+    this.centerRideCamera(focus.x, focus.y);
     this.renderFrame(frame, 0, true);
     this.highlight.draw(
       review.verdict,
@@ -2457,6 +2462,26 @@ export class City extends Scene {
     );
   }
 
+  private centerRideCamera(x: number, y: number) {
+    this.cameraFocus.x = x;
+    this.cameraFocus.y = y;
+    this.positionRideCamera();
+  }
+
+  private positionRideCamera() {
+    const camera = this.cameras.main;
+    const { width, height, zoom } = camera;
+    const x = camera.clampX(this.cameraFocus.x - width / 2);
+    const y = camera.clampY(this.cameraFocus.y - height / 2);
+    // Keep the unrounded focus for the next interpolation, even on a slow ride.
+    this.cameraFocus.x = x + width / 2;
+    this.cameraFocus.y = y + height / 2;
+    camera.setScroll(
+      pixelScroll(x, width, zoom, this.worldWidth),
+      pixelScroll(y, height, zoom, this.worldHeight),
+    );
+  }
+
   private renderFrame(frame: ReplayFrame, delta: number, reviewing = false) {
     const { rider: r, at } = frame;
     const night = this.night(frame);
@@ -2465,13 +2490,12 @@ export class City extends Scene {
     const reduced = this.reducedEffects;
     const camera = this.cameras.main,
       look = r.speed * 0.5;
-    const targetX = r.x + Math.cos(r.heading) * look - camera.width / 2,
-      targetY = r.y + Math.sin(r.heading) * look - camera.height / 2;
+    const targetX = r.x + Math.cos(r.heading) * look,
+      targetY = r.y + Math.sin(r.heading) * look;
     const blend = 1 - Math.exp(-delta / 160);
-    camera.setScroll(
-      Math.round(camera.scrollX + (targetX - camera.scrollX) * blend),
-      Math.round(camera.scrollY + (targetY - camera.scrollY) * blend),
-    );
+    this.cameraFocus.x += (targetX - this.cameraFocus.x) * blend;
+    this.cameraFocus.y += (targetY - this.cameraFocus.y) * blend;
+    this.positionRideCamera();
     cullMapChunks(this.mapChunks, camera);
     this.collectibles?.update(camera);
     this.blocks.update(
