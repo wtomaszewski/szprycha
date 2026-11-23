@@ -1073,6 +1073,145 @@
   },
   "procedural": {
     "heading": "Zlecenia dnia",
+    "stories": {
+      "heading": "Wątki fabularne",
+      "locked": "Ukończ Zlecenie dnia zgodnie z przepisami, żeby odblokować pierwszy wątek.",
+      "unlocked": "Pierwszy wątek czeka w SzprychaApp.",
+      "allFinished": "Wszystkie wątki w tym mieście ukończone.",
+      "progress": "{title} · Etap {current} z {total}",
+      "reward": "Wątek ukończony! Zdobyta naklejka to „{sticker}”.",
+      "templates": {
+        "lostParcel": {
+          "title": "Zgubiona paczka",
+          "steps": [
+            {
+              "title": "Notes z adresem",
+              "item": "notes z adresem",
+              "description": "Odbierz notes z adresem. Cel: {place}.",
+              "intro": "Zgubiła się paczka, ale w notesie powinien być adres odbiorcy.",
+              "finish": "Mamy notes, a w nim listę miejsc, w których mógł zostać ślad."
+            },
+            {
+              "title": "Ślady po drodze",
+              "item": "wskazówkę",
+              "description": "Zbierz wskazówki z kolejnych punktów. Cel: {place}.",
+              "intro": "Sprawdźmy po kolei miejsca zapisane w notesie.",
+              "finish": "Udało się znaleźć paczkę i sprawdzić adres."
+            },
+            {
+              "title": "Paczka u odbiorcy",
+              "item": "paczkę",
+              "description": "Zawieź znalezioną paczkę do odbiorcy. Cel: {place}.",
+              "intro": "Możemy już dostarczyć paczkę pod właściwy adres.",
+              "finish": "Paczka dotarła na miejsce. Dobra robota, kurierze!"
+            }
+          ]
+        },
+        "neighbours": {
+          "title": "Sąsiedzka pomoc",
+          "steps": [
+            {
+              "title": "Lista od sąsiadów",
+              "item": "listę potrzebnych rzeczy",
+              "description": "Odbierz listę potrzebnych rzeczy. Cel: {place}.",
+              "intro": "Sąsiedzi urządzają wspólny ogródek i poprosili mnie o pomoc.",
+              "finish": "Mamy listę, a jedna z sąsiadek zna miejsca, które trzeba odwiedzić."
+            },
+            {
+              "title": "Razem do ogródka",
+              "description": "Poprowadź sąsiadkę do ogródka. Cel: {place}.",
+              "intro": "Poprowadź sąsiadkę do ogródka, żeby mogła pokazać nam miejsce.",
+              "finish": "Sąsiadka już na miejscu i można zbierać materiały."
+            },
+            {
+              "title": "Materiały do grządek",
+              "item": "materiały do grządek",
+              "description": "Zbierz materiały z wyznaczonych punktów. Cel: {place}.",
+              "intro": "Nasiona i znaczniki czekają w kolejnych punktach.",
+              "finish": "Materiały są zebrane, brakuje tylko planu grządek."
+            },
+            {
+              "title": "Plan wspólnego ogródka",
+              "item": "papierowy plan",
+              "description": "Dostarcz papierowy plan bez wstrząsów. Cel: {place}.",
+              "intro": "Plan rozłożenia grządek jest z papieru, więc wieź go ostrożnie.",
+              "finish": "Wszystko jest gotowe do sadzenia. Sąsiedzi dziękują!"
+            }
+          ]
+        },
+        "festival": {
+          "title": "Przygotowania do festynu",
+          "steps": [
+            {
+              "title": "Lista na festyn",
+              "item": "listę potrzebnych rzeczy",
+              "description": "Odbierz listę potrzebnych rzeczy. Cel: {place}.",
+              "intro": "Do festynu zostało kilka przygotowań, a ich listę ma organizator.",
+              "finish": "Mamy listę. Najpierw trzeba przekazać zaproszenia."
+            },
+            {
+              "title": "Zaproszenia dla wystawców",
+              "item": "zaproszenia",
+              "description": "Dostarcz zaproszenia w wyznaczonym czasie. Cel: {place}.",
+              "intro": "Zawieź zaproszenia przed spotkaniem wystawców.",
+              "finish": "Wystawcy znają już porę spotkania. Czas na dekoracje."
+            },
+            {
+              "title": "Dekoracje na stoiska",
+              "item": "dekoracje",
+              "description": "Zbierz dekoracje w kolejnych punktach. Cel: {place}.",
+              "intro": "Dekoracje czekają w kilku punktach na trasie.",
+              "finish": "Dekoracje zebrane. Zostało pokazać wystawcom drogę."
+            },
+            {
+              "title": "Droga na festyn",
+              "description": "Poprowadź rowerzystę do miejsca festynu. Cel: {place}.",
+              "intro": "Poprowadź jednego z wystawców na miejsce festynu.",
+              "finish": "Wystawca już rozstawia stoisko. Został papierowy model na wystawę."
+            },
+            {
+              "title": "Model na wystawę",
+              "item": "papierowy model",
+              "description": "Przewieź papierowy model bez wstrząsów. Cel: {place}.",
+              "intro": "Przewieź model tak ostrożnie, żeby dotarł w całości.",
+              "finish": "Model stoi na wystawie. Możemy otwierać festyn!"
+            }
+          ]
+        },
+        "mysterySign": {
+          "title": "Tajemniczy znak",
+          "steps": [
+            {
+              "title": "Szkic z notatnika",
+              "item": "szkic",
+              "description": "Odbierz szkic. Cel: {place}.",
+              "intro": "Ktoś zostawił szkic znaku, a ja chcę ustalić, skąd go znam.",
+              "finish": "Szkic prowadzi nas do znaku, który można sfotografować."
+            },
+            {
+              "title": "Zdjęcie znaku",
+              "description": "Zatrzymaj się przy znaku {sign} i zrób zdjęcie. Cel: {place}.",
+              "intro": "Zatrzymaj się przy znaku {sign} i zrób zdjęcie do porównania.",
+              "finish": "Na zdjęciu widać szczegóły, których brakowało na szkicu."
+            },
+            {
+              "title": "Brakujące wskazówki",
+              "item": "notatkę",
+              "description": "Zbierz notatki z kolejnych punktów. Cel: {place}.",
+              "intro": "Zbierz notatki, żeby połączyć szkic ze zdjęciem.",
+              "finish": "Już wiadomo, że szkic był częścią dawnej mapy rowerowej."
+            },
+            {
+              "title": "Mapa w świetlicy",
+              "item": "mapę",
+              "description": "Dostarcz mapę do świetlicy. Cel: {place}.",
+              "intro": "Zawieź uzupełnioną mapę do świetlicy, żeby każdy mógł ją obejrzeć.",
+              "finish": "Mapa jest już w świetlicy. Zagadka rozwiązana!"
+            }
+          ]
+        }
+      }
+    },
     "places": {
       "warszawa": {
         "praga": "Praga",
@@ -1477,7 +1616,15 @@
     "stickerNames": {
       "odblask": "Odblask",
       "kolo": "Koło",
-      "szprycha": "Szprycha"
+      "szprycha": "Szprycha",
+      "story-lostParcel-warszawa": "Zgubiona paczka · Warszawa",
+      "story-lostParcel-wroclaw": "Zgubiona paczka · Wrocław",
+      "story-neighbours-warszawa": "Sąsiedzka pomoc · Warszawa",
+      "story-neighbours-wroclaw": "Sąsiedzka pomoc · Wrocław",
+      "story-festival-warszawa": "Przygotowania do festynu · Warszawa",
+      "story-festival-wroclaw": "Przygotowania do festynu · Wrocław",
+      "story-mysterySign-warszawa": "Tajemniczy znak · Warszawa",
+      "story-mysterySign-wroclaw": "Tajemniczy znak · Wrocław"
     },
     "minutes": "min",
     "kazik": "Pan Kazik",

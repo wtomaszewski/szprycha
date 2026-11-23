@@ -122,10 +122,7 @@ test('retries a timed-out daily delivery from its start', async ({ page }) => {
   await chooseCity(page, 'warszawa');
   await page.keyboard.press('KeyM');
   const phone = page.getByRole('dialog', { name: pl.phone.title });
-  const title = pl.procedural.templates.delivery.title.replace(
-    '{sender}',
-    pl.procedural.senders.workshop,
-  );
+  const title = pl.procedural.templates.delivery.title;
   await phone
     .getByRole('list', { name: pl.procedural.heading })
     .getByRole('button', { name: `${pl.phone.start} · ${title}` })

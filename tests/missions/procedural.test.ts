@@ -12,6 +12,11 @@ import {
   orderKinds,
   type DailyOrder,
 } from '../../src/gameplay/procedural/orders';
+import {
+  storyTemplates,
+  storySticker,
+} from '../../src/gameplay/procedural/storyTemplates';
+import { signRules } from '../../src/gameplay/procedural/focus';
 import { RouteCatalog } from '../../src/gameplay/procedural/RouteCatalog';
 import {
   poiCentre,
@@ -89,6 +94,91 @@ describe.each(missionCity.options)('procedural orders in %s', (city) => {
       new Set(['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07']),
     );
   }, 35_000);
+
+  it('builds legal and increasingly difficult story chains for different seeds', () => {
+    const modules = new Map(
+      content.przepisy.przepisy.map(({ id, modul }) => [id, modul]),
+    );
+    const replayed = new Set<string>();
+    for (const [index, template] of storyTemplates.entries()) {
+      const layouts = new Set<string>();
+      for (let seed = 0; seed < 64; seed++) {
+        const orders = generator.generateStory(seed, index);
+        expect(orders.map(({ kind }) => kind)).toEqual(template.kinds);
+        expect(orders.length).toBeGreaterThanOrEqual(3);
+        expect(orders.length).toBeLessThanOrEqual(5);
+        const client = orders[0]!.client;
+        const coveredModules = new Set<string>();
+        for (const [step, order] of orders.entries()) {
+          const { definition, route, text, story, question } = order;
+          expect(story).toEqual({
+            seed,
+            index,
+            step,
+            total: orders.length,
+            template: template.id,
+          });
+          expect(order.client).toEqual(client);
+          expect(definition.zleceniodawca).toBe(client.id);
+          expect(definition.start.poi).toBe(route.steps[0]!.poi.id);
+          expect(definition.warunki_porazki).toContain('dowolny_blad');
+          expect(definition.limit_s ?? Infinity).toBeGreaterThan(
+            route.proof.seconds,
+          );
+          const rule = definition.reguly_cwiczone[0]!;
+          if (order.kind === 'photo') expect(signRules[text.sign]).toBe(rule);
+          else
+            expect([...route.rules, ...(question?.przepisy ?? [])]).toContain(
+              rule,
+            );
+          expect(modules.has(rule)).toBe(true);
+          coveredModules.add(modules.get(rule)!);
+          for (const key of [
+            definition.tytul,
+            definition.opis,
+            `procedural.stories.templates.${template.id}.steps.${step}.intro`,
+            `procedural.stories.templates.${template.id}.steps.${step}.finish`,
+          ])
+            expect(translate(key, text)).not.toMatch(/\{|procedural\./);
+          for (const { opis } of definition.cele)
+            if (opis)
+              expect(translate(opis, text)).not.toMatch(/\{|procedural\./);
+          const previous = orders[step - 1];
+          if (previous) {
+            expect(order.kind).not.toBe(previous.kind);
+            expect(route.proof.seconds).toBeGreaterThanOrEqual(
+              previous.route.proof.seconds + 3,
+            );
+          }
+          if (!replayed.has(route.id)) {
+            expect(validateRoute(world, content, route.steps)).toEqual(
+              route.proof,
+            );
+            replayed.add(route.id);
+          }
+        }
+        expect(coveredModules.size).toBeGreaterThanOrEqual(3);
+        layouts.add(orders.map(({ route }) => route.id).join('|'));
+        if (seed % 16 === 0)
+          expect(generator.generateStory(seed, index)).toEqual(orders);
+      }
+      expect(layouts.size).toBeGreaterThan(1);
+      expect(
+        translate(`m5c.stickerNames.${storySticker(city, template.id)}`),
+      ).not.toContain('m5c.');
+    }
+    expect(generator.generateStory(0, storyTemplates.length)).toEqual([]);
+  }, 30_000);
+
+  it('does not offer an incomplete story when a catalog lacks enough exercises', () => {
+    const route = catalog.routes.find(({ race }) => !race)!;
+    const limited = new DailyOrderGenerator(
+      city,
+      { ...catalog, routes: [route], nightRoutes: [] },
+      content,
+    );
+    expect(limited.generateStory(0, 0)).toEqual([]);
+  });
 
   it('finds a safe client position for every certified start', () => {
     for (const { steps } of [...catalog.routes, ...catalog.nightRoutes]) {

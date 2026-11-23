@@ -881,6 +881,9 @@ button[aria-pressed='true'] {
 .mission-phone p {
   margin: 4px 0 10px;
 }
+.mission-phone .story-order-progress {
+  color: var(--ui-cyan);
+}
 .mission-phone button:disabled {
   color: var(--ui-muted);
   cursor: default;

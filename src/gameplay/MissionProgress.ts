@@ -1,3 +1,9 @@
+import {
+  storySeed,
+  storySticker,
+  storyTemplates,
+  type StoryOrder,
+} from './procedural/storyTemplates';
 import type { RankingClient } from '../rankings/RankingClient';
 import { nativeProgress } from '../platform/preferencesProgress';
 import type { DialogueLine, Dialogues } from '../content/dialogues';
@@ -178,11 +184,48 @@ export class MissionProgress {
     });
   }
 
-  completeDailyOrder(points: number) {
-    this.store.change((profile) => {
-      profile.missionPoints += Math.max(0, points);
-    });
-    return 0;
+  completeDailyOrder(
+    city: MissionCity,
+    points: number,
+    clean: boolean,
+    story?: StoryOrder,
+  ) {
+    return this.store.change(
+      (profile): { tokens: number; unlocked?: boolean; sticker?: string } => {
+        const progress = profile.stories[city];
+        if (!story) {
+          profile.missionPoints += Math.max(0, points);
+          if (progress || !clean) return { tokens: 0 };
+          profile.stories[city] = {
+            seed: storySeed(city, profile.nicknameSeed),
+            finished: 0,
+            step: 0,
+          };
+          return { tokens: 0, unlocked: true };
+        }
+        const template = storyTemplates[story.index];
+        if (
+          !clean ||
+          !template ||
+          !progress ||
+          progress.seed !== story.seed ||
+          progress.finished !== story.index ||
+          progress.step !== story.step
+        )
+          return { tokens: 0 };
+
+        profile.missionPoints += Math.max(0, points);
+        progress.step++;
+        if (progress.step < template.kinds.length) return { tokens: 0 };
+
+        progress.finished++;
+        progress.step = 0;
+        const sticker = storySticker(city, template.id);
+        profile.progression.tokens += template.tokens;
+        if (!profile.stickers.includes(sticker)) profile.stickers.push(sticker);
+        return { tokens: template.tokens, sticker };
+      },
+    );
   }
 
   bestScore(missionId: string) {

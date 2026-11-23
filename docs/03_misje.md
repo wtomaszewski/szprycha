@@ -105,6 +105,16 @@ SzprychaApp pokazuje imię, przydomek, wiek, zawód i cechę klienta. Dialog prz
 
 [SzprychaApp przed i po](screenshots/103-telefon-przed-po.webp) · [NPC przy POI przed i po](screenshots/103-poi-przed-po.webp) · [Dialog ze zleceniodawcą](screenshots/103-dialog.webp)
 
+### Wątki fabularne
+
+Ukończenie zwykłego Zlecenia dnia bez naruszeń otwiera pierwszy wątek w danym mieście. SzprychaApp udostępnia po kolei „Zgubioną paczkę”, „Sąsiedzką pomoc”, „Przygotowania do festynu” i „Tajemniczy znak”. Każdy wątek składa się z 3–5 etapów. Wybór tras jest deterministyczny i zależy od ziarna zapisanego przy odblokowaniu. Zmiana dnia lub mastery nie zmienia trwającego wątku.
+
+We wszystkich etapach wraca klient z punktu startowego pierwszego zlecenia. Opisy i dialogi pochodzą z szablonów i18n. Kolejne etapy mają różne cele, a sprawdzony legalny przejazd trwa w każdym z nich co najmniej 3 sekundy dłużej niż w poprzednim. Generator dobiera ćwiczenia z co najmniej trzech modułów. Naruszenie przepisów przerywa próbę. Pytania zadawane podczas postoju można poprawić przed dalszą jazdą.
+
+Finał przyznaje 8–12 żetonów i naklejkę do kolekcji, raz na wątek w każdym mieście. Profil w wersji 10 zapisuje ziarno, liczbę ukończonych wątków i bieżący etap osobno dla Warszawy i Wrocławia. Migracja z wersji 9 dodaje pusty stan wątków i zachowuje dotychczasowe dane profilu.
+
+[SzprychaApp przed zmianą](screenshots/104-szprychaapp-przed.png) · [SzprychaApp z odblokowanym wątkiem](screenshots/104-szprychaapp-po.png)
+
 ---
 
 ## Lista misji MVP — WARSZAWA

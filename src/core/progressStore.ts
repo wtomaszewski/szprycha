@@ -11,6 +11,7 @@ import {
 import { missionCity } from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { placRecordsSchema } from '../gameplay/plac/placRecords';
+import { storyTemplates } from '../gameplay/procedural/storyTemplates';
 import { leitnerBoxes } from '../gameplay/quiz/leitner';
 import { applyMastery, localDay } from '../progression/mastery';
 import type { Milestones } from '../progression/milestones';
@@ -150,9 +151,8 @@ const m9ProfileSchema = m8cProfileSchema.extend({
   haptics: z.boolean().optional().catch(undefined),
 });
 
-const profileVersion = 9;
-const profileSchema = m9ProfileSchema.extend({
-  version: z.literal(profileVersion),
+const identityProfileSchema = m9ProfileSchema.extend({
+  version: z.literal(9),
   profileId: z.uuidv4(),
   nickname: z.string().max(maxNicknameLength).refine(isGeneratedNickname),
   avatarId: z.enum(helmetColors),
@@ -163,6 +163,30 @@ const profileSchema = m9ProfileSchema.extend({
   rankings: rankingState.optional().catch(undefined),
   tutorial: z.enum(tutorialStates).optional().catch(undefined),
 });
+
+const profileVersion = 10;
+const profileSchema = identityProfileSchema.extend({
+  version: z.literal(profileVersion),
+  stories: z.partialRecord(
+    missionCity,
+    z
+      .strictObject({
+        seed: count.max(0xffffffff),
+        finished: count.max(storyTemplates.length),
+        step: count,
+      })
+      .refine(
+        ({ finished, step }) =>
+          step < (storyTemplates[finished]?.kinds.length ?? 1),
+      ),
+  ),
+});
+
+function addStories(
+  profile: z.infer<typeof identityProfileSchema>,
+): ProgressProfile {
+  return { ...profile, version: profileVersion, stories: {} };
+}
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
 export type RideVerdict = Pick<Verdict, 'kind' | 'ruleId'>;
@@ -279,14 +303,14 @@ function addLocalIdentity(
   avatarId: HelmetColor = helmetColors[0],
   nickname = migrateNickname(profile.nicknameSeed),
 ): ProgressProfile {
-  return {
+  return addStories({
     ...profile,
-    version: profileVersion,
+    version: 9,
     profileId: newProfileId(),
     nickname,
     avatarId,
     onlineRankings: false,
-  };
+  });
 }
 
 function createProfile(
@@ -328,6 +352,9 @@ function decodeProfile(
 } {
   const current = profileSchema.safeParse(raw);
   if (current.success) return { profile: current.data, reset: false };
+  const identity = identityProfileSchema.safeParse(raw);
+  if (identity.success)
+    return { profile: addStories(identity.data), reset: false };
   const migrated = (profile: z.infer<typeof m9ProfileSchema>) => ({
     profile: addLocalIdentity(profile, avatarId),
     reset: false,

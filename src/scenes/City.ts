@@ -5,6 +5,10 @@ import {
   orderSeed,
   type DailyOrder,
 } from '../gameplay/procedural/orders';
+import {
+  storyStepKey,
+  storyTemplates,
+} from '../gameplay/procedural/storyTemplates';
 import { localDay } from '../progression/mastery';
 import { campaignCompleted } from '../gameplay/exam/exam';
 import { CityTutorial } from './CityTutorial';
@@ -105,7 +109,7 @@ import { SafetySeries } from '../progression/SafetySeries';
 import { MissionHud } from '../ui/MissionHud';
 import { MissionFailureDialog } from '../ui/MissionFailureDialog';
 import { MissionResults } from '../ui/MissionResults';
-import { MissionPhone } from '../ui/MissionPhone';
+import { MissionPhone, type PhoneStory } from '../ui/MissionPhone';
 import { DialogueWindow } from '../ui/DialogueWindow';
 import { ReplayBuffer, type ReplayFrame } from '../gameplay/ReplayBuffer';
 import { GloryReplay, type GloryClip } from '../gameplay/GloryReplay';
@@ -196,6 +200,7 @@ export class City extends Scene {
   private dailyOrder?: DailyOrder;
   private dailyClientSprites?: DailyClientSprites;
   private dailyOffers: readonly DailyOrder[] = [];
+  private phoneStory?: PhoneStory;
   private readonly dailyGenerators = new Map<
     MissionCity,
     DailyOrderGenerator
@@ -299,6 +304,7 @@ export class City extends Scene {
     this.freeRide = freeRide;
     this.dailyOrder = dailyOrder;
     this.dailyOffers = [];
+    this.phoneStory = undefined;
     this.examRide = examRide;
     if (examRide || tutorial) this.sys.settings.data = {};
     this.obstacles = [];
@@ -654,9 +660,11 @@ export class City extends Scene {
           (this.mission && !this.mission.result)
         )
           return;
-        const order = this.dailyOffers.find(
-          ({ definition }) => definition.id === id,
-        );
+        const story = this.phoneStory?.order;
+        const order =
+          story?.definition.id === id
+            ? story
+            : this.dailyOffers.find(({ definition }) => definition.id === id);
         if (
           order ||
           this.availableOrders().some((mission) => mission.id === id)
@@ -774,8 +782,7 @@ export class City extends Scene {
       );
       if (dailyOrder) this.dailyClientSprites.show([dailyOrder]);
       else if (!definition) {
-        this.dailyOffers = this.dailyOrders();
-        this.dailyClientSprites.show(this.dailyOffers);
+        this.refreshDailyOffers();
       }
     }
     if (tutorial) {
@@ -879,11 +886,11 @@ export class City extends Scene {
     );
   }
 
-  private dailyOrders() {
+  private refreshDailyOffers() {
     const city = this.campaignCity;
     const profile = this.progress.store.profile;
     if (!this.freeRide && !campaignCompleted(city, profile, this.content))
-      return [];
+      return;
     let generator = this.dailyGenerators.get(city);
     if (!generator) {
       generator = new DailyOrderGenerator(
@@ -893,10 +900,18 @@ export class City extends Scene {
       );
       this.dailyGenerators.set(city, generator);
     }
-    return generator.generate(
+    this.dailyOffers = generator.generate(
       orderSeed(`${city}/${localDay(new Date())}/${profile.nicknameSeed}`),
       profile.mastery,
     );
+    const state = profile.stories[city];
+    const story =
+      state && generator.generateStory(state.seed, state.finished)[state.step];
+    this.phoneStory = {
+      order: story,
+      finished: state?.finished === storyTemplates.length,
+    };
+    if (!this.mission) this.dailyClientSprites?.show(this.dailyOffers);
   }
 
   private togglePhone() {
@@ -934,12 +949,12 @@ export class City extends Scene {
       this.finishResultsAnimation();
       audio.stopReading('results');
     }
-    this.dailyOffers = this.dailyOrders();
-    if (!this.mission) this.dailyClientSprites?.show(this.dailyOffers);
+    this.refreshDailyOffers();
     this.phone.show(
       this.availableOrders(),
       this.mission && !this.mission.result ? 'active' : 'available',
       this.dailyOffers,
+      this.phoneStory,
     );
   }
 
@@ -1070,7 +1085,9 @@ export class City extends Scene {
                   : order.kind === 'photo'
                     ? 'surprised'
                     : 'neutral',
-              tekst: `procedural.dialogue.start.${order.kind}`,
+              tekst: order.story
+                ? `${storyStepKey(order.story)}.intro`
+                : `procedural.dialogue.start.${order.kind}`,
               values: order.text,
             },
           ]
@@ -1178,30 +1195,56 @@ export class City extends Scene {
           !progress.store.profile.completed.includes(order.id) &&
           !progress.isAvailable(order, content),
       );
-      const tokens = this.dailyOrder
-        ? progress.completeDailyOrder(result.points)
-        : progress.complete(definition, {
-            points: result.points,
-            stars: result.stars,
-            balance: this.content.balans.gwiazdki,
-            clean: !result.verdicts.some(({ kind }) => kind !== 'good'),
-          });
+      const order = this.dailyOrder;
+      const clean = !result.verdicts.some(({ kind }) => kind !== 'good');
+      // Quiz answers can affect the score, but do not count as traffic violations.
+      const legal = !result.verdicts.some(
+        ({ kind, evidence }) =>
+          kind !== 'good' && !Object.hasOwn(evidence, 'answer'),
+      );
+      const daily =
+        order &&
+        progress.completeDailyOrder(
+          definition.miasto,
+          result.points,
+          legal,
+          order.story,
+        );
+      const tokens =
+        daily?.tokens ??
+        progress.complete(definition, {
+          points: result.points,
+          stars: result.stars,
+          balance: this.content.balans.gwiazdki,
+          clean,
+        });
       this.updateMissionHud();
       const unlocked =
+        daily?.unlocked ||
+        Boolean(daily?.sticker) ||
         nextOrders.some((order) => progress.isAvailable(order, content)) ||
         [...progress.unlocks(content)].some((item) => !unlocks.has(item));
-      const order = this.dailyOrder;
+      const storyMessage = daily?.sticker
+        ? translate('procedural.stories.reward', {
+            sticker: `m5c.stickerNames.${daily.sticker}`,
+          })
+        : daily?.unlocked
+          ? ui.procedural.stories.unlocked
+          : undefined;
       this.dialogue.show(
         order
           ? [
               {
                 postac: order.client.id,
                 emocja: order.kind === 'race' ? 'proud' : 'happy',
-                tekst: 'procedural.dialogue.finish',
+                tekst: order.story
+                  ? `${storyStepKey(order.story)}.finish`
+                  : 'procedural.dialogue.finish',
               },
             ]
           : missionLines(this.content.dialogi, definition.dialog_koniec),
-        () => this.showResults(result, definition, tokens, unlocked),
+        () =>
+          this.showResults(result, definition, tokens, unlocked, storyMessage),
         order?.client,
       );
     }
@@ -1219,6 +1262,7 @@ export class City extends Scene {
     definition: MissionDefinition,
     tokens: number,
     unlocked: boolean,
+    storyMessage?: string,
   ) {
     const results = this.results!;
     const good = new Set<string>();
@@ -1268,6 +1312,7 @@ export class City extends Scene {
       habit,
       tip,
       this.reducedEffects,
+      { storyMessage, storyStep: Boolean(this.dailyOrder?.story) },
     );
     if (result.stars > 0) audio.play('stars');
     if (unlocked) audio.play('unlock', 1, result.stars > 0 ? 0.75 : 0);

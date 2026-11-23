@@ -16,6 +16,11 @@ import { ClientGenerator, type DailyClient } from './clients';
 import { orderSeed } from './seed';
 import { signRules } from './focus';
 import type { CertifiedRoute, RouteCatalogData } from './RouteCatalog';
+import {
+  storyStepKey,
+  storyTemplates,
+  type StoryOrder,
+} from './storyTemplates';
 
 export { orderSeed } from './seed';
 
@@ -42,6 +47,7 @@ export type DailyOrder = {
   route: CertifiedRoute;
   text: OrderText;
   question?: QuizQuestion;
+  story?: StoryOrder;
 };
 type Content = Pick<
   GameContent,
@@ -217,19 +223,92 @@ export class DailyOrderGenerator {
     return result;
   }
 
+  generateStory(seed: number, index: number): DailyOrder[] {
+    const template = storyTemplates[index];
+    if (!template) return [];
+    const kinds: readonly OrderKind[] = template.kinds;
+    const total = kinds.length;
+    const stages = kinds.map((kind, step) =>
+      this.candidates
+        .filter((candidate) => candidate.kind === kind && !candidate.night)
+        .map((candidate) => ({
+          candidate,
+          draw: orderSeed(
+            `${seed}/${template.id}/${step}/${candidate.route.id}/${candidate.ruleId}`,
+          ),
+        }))
+        .sort(
+          (a, b) =>
+            Math.floor(a.candidate.route.proof.seconds / 5) -
+              Math.floor(b.candidate.route.proof.seconds / 5) ||
+            a.draw - b.draw,
+        )
+        .map(({ candidate }) => candidate),
+    );
+
+    // Leave room for a harder route at each step. Track the focused modules
+    // until three are covered, so even the shortest story teaches three.
+    const missing = new Set<string>();
+    const find = (
+      step: number,
+      minimumSeconds: number,
+      modules: ReadonlySet<ModuleId>,
+    ): Candidate[] | undefined => {
+      if (step === total) return modules.size >= 3 ? [] : undefined;
+      if (modules.size + total - step < 3) return;
+      const key = `${step}/${minimumSeconds}/${[...modules].sort().join(',')}`;
+      if (missing.has(key)) return;
+      for (const candidate of stages[step]!) {
+        const seconds = candidate.route.proof.seconds;
+        if (seconds < minimumSeconds) continue;
+        const nextModules =
+          modules.size >= 3 ? modules : new Set([...modules, candidate.module]);
+        const next = find(step + 1, seconds + 3, nextModules);
+        if (next) return [candidate, ...next];
+      }
+      missing.add(key);
+    };
+
+    const chain = find(0, 0, new Set());
+    if (!chain) return [];
+    const client = this.clients.atPoi(
+      this.city,
+      chain[0]!.route.steps[0]!.poi.id,
+    );
+    return chain.map((candidate, step) =>
+      this.create(candidate, seed, client, {
+        seed,
+        index,
+        step,
+        total,
+        template: template.id,
+      }),
+    );
+  }
+
   private create(
     { kind, route, ruleId, night, sign, clientPosition }: Candidate,
     seed: number,
+    storyClient?: DailyClient,
+    story?: StoryOrder,
   ): DailyOrder {
     const hash = orderSeed(
       `${this.city}/${seed}/${kind}/${route.id}/${ruleId}`,
     );
-    const id = `${this.city}-daily-${kind}-${hash.toString(36)}`;
-    const item = kind === 'fragile' ? 'model' : items[hash % items.length]!;
+    const type = story
+      ? `story-${story.template}-${story.step + 1}`
+      : `daily-${kind}`;
+    const id = `${this.city}-${type}-${hash.toString(36)}`;
+    const storyItem = story && kind !== 'photo' && kind !== 'escort';
+    const item = storyItem
+      ? `${story.template}-${story.step}`
+      : kind === 'fragile'
+        ? 'model'
+        : items[hash % items.length]!;
     const start = route.steps[0]!.poi.id;
     const finish = route.steps.at(-1)!.poi.id;
-    const client = this.clients.atPoi(this.city, start);
-    const labels = `procedural.templates.${kind}`;
+    const client = storyClient ?? this.clients.atPoi(this.city, start);
+    const labels = story ? storyStepKey(story) : `procedural.templates.${kind}`;
     const goals: MissionGoal[] = [];
     if (night) goals.push({ typ: 'przygotuj_rower' });
     if (kind === 'delivery' || kind === 'fragile')
@@ -304,13 +383,14 @@ export class DailyOrderGenerator {
       kind,
       route,
       question,
+      ...(story && { story }),
       client,
       clientPosition,
       text: {
         place: route.district
           ? `procedural.places.${this.city}.${route.district}`
           : `cityPicker.${this.city}`,
-        item: `procedural.items.${item}`,
+        item: storyItem ? `${labels}.item` : `procedural.items.${item}`,
         sign: sign?.code ?? '',
       },
       definition: {
@@ -335,7 +415,7 @@ export class DailyOrderGenerator {
         }),
         warunki_porazki: [
           ...(timed ? ['czas_minal' as const] : []),
-          ...(kind === 'race' ? ['dowolny_blad' as const] : []),
+          ...(kind === 'race' || story ? ['dowolny_blad' as const] : []),
         ],
         checkpointy: route.steps
           .slice(1, -1)
