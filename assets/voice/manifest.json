@@ -646,6 +646,22 @@
       "text": "Zdjęcie trafiło do Albumu Znaków.",
       "hash": "35ebb45b92119c5407f57c31e142e1511b5bdc30c69bb00355d29ba92fd69989"
     },
+    "misje.KRA-B-02.pytanie": {
+      "text": "Przed skrzyżowaniem widzisz znak A-7. Komu ustępujesz?",
+      "hash": "f45259a6c4361dd8baec0ace3b2ee41d7e8dcdb90e3be15696d6435295748b31"
+    },
+    "misje.KRA-B-02.wyjasnienie": {
+      "text": "Znak A-7 oznacza, że musisz ustąpić jadącym drogą z pierwszeństwem.",
+      "hash": "89a311d28650c550f177090cfd304b9236cabe3ea4f9c92d65dbd8ec2a0896b2"
+    },
+    "misje.KRA-B-03.pytanie": {
+      "text": "Widzisz upadek rowerzysty obok drogi. Co robisz najpierw?",
+      "hash": "e1d469e4e7afee1e84fd1d6f10c0b6e30b223bf298840d55cbc587666ade2f58"
+    },
+    "misje.KRA-B-03.wyjasnienie": {
+      "text": "Zadbaj o swoje bezpieczeństwo i ostrzeż innych, zanim podejdziesz z pomocą.",
+      "hash": "b17c076808d9856694f47faca564a40dd0adeee353b3b5d11f9f1c75ec27a6f5"
+    },
     "misje.WAW-A1-03.powrot": {
       "text": "Wróć przed linię i zatrzymaj się całkowicie przed znakiem STOP.",
       "hash": "2be4d70a6b7be735fd1a9e93b6156cc9fe002bd19b0c190db6e6f5fb167ee3d4"

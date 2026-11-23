@@ -134,6 +134,9 @@ export interface Box extends Vec2 {
   width: number;
   height: number;
 }
+export interface District extends Box {
+  unlock?: { missionId: string; x: number; y: number; vertical: boolean };
+}
 export interface PointOfInterest extends Box {
   heading: number;
 }
@@ -150,6 +153,7 @@ export interface Crossing extends Box {
 }
 interface CrossingSignal extends Vec2 {
   twoWay?: boolean;
+  stopRoadTraffic?: boolean;
   offset_s: number;
   cycle_s: number;
   green_s: number;
@@ -266,7 +270,7 @@ export class WorldModel {
   readonly width: number;
   readonly height: number;
   readonly walls: readonly Box[];
-  readonly districts: readonly Box[];
+  readonly districts: readonly District[];
   readonly zones: readonly Zone[];
   readonly pois: ReadonlyMap<string, PointOfInterest>;
   readonly triggers: ReadonlyMap<string, Box>;
@@ -330,7 +334,20 @@ export class WorldModel {
       ),
       ...layer('parked_cars'),
     ].map(box);
-    this.districts = layer('districts').map(box);
+    this.districts = layer('districts').map((object) => {
+      const area = box(object);
+      const { unlock, gateX, gateY, gateVertical } = properties(object);
+      if (unlock === undefined) return area;
+      return {
+        ...area,
+        unlock: {
+          missionId: z.string().min(1).parse(unlock),
+          x: z.number().parse(gateX) * scale,
+          y: z.number().parse(gateY) * scale,
+          vertical: z.boolean().default(false).parse(gateVertical),
+        },
+      };
+    });
     this.pois = namedAreas('pois', (object) => ({
       ...box(object),
       heading: z
@@ -377,6 +394,7 @@ export class WorldModel {
           .object({
             crossing: z.string(),
             twoWay: z.boolean().optional(),
+            stopRoadTraffic: z.boolean().optional(),
             offset_s: z.number().nonnegative(),
             cycle_s: z.number().positive(),
             green_s: z.number().positive(),

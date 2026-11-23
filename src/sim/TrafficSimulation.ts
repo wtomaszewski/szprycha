@@ -128,7 +128,7 @@ export class TrafficSimulation {
   private tick = 0;
   private randomState = 0;
 
-  private readonly closedRail: Box[] = [];
+  private readonly closedCrossings: Box[] = [];
 
   constructor(
     private readonly world: WorldModel,
@@ -268,12 +268,18 @@ export class TrafficSimulation {
             contains(crossing, pos),
       );
     }
-    this.closedRail.length = 0;
+    this.closedCrossings.length = 0;
     for (const crossing of this.world.crossings) {
-      if (crossing.kind !== 'rail') continue;
-      const rail = this.world.railState(crossing, at, env);
-      if (rail && (rail.flashing || rail.barrier !== 'open'))
-        this.closedRail.push(crossing);
+      if (crossing.kind === 'rail') {
+        const rail = this.world.railState(crossing, at, env);
+        if (rail && (rail.flashing || rail.barrier !== 'open'))
+          this.closedCrossings.push(crossing);
+      } else if (
+        crossing.signal?.stopRoadTraffic &&
+        this.world.crossingPhase(crossing, at, env) === 'green'
+      ) {
+        this.closedCrossings.push(crossing.trafficArea ?? crossing);
+      }
     }
     for (const car of this.cars)
       this.plan(car, player, pedestrians, conditions);
@@ -623,7 +629,7 @@ export class TrafficSimulation {
         : Infinity;
     const following = car.gap - FOLLOWING_GAP;
     let room = Math.min(toStop, following);
-    for (const crossing of this.closedRail)
+    for (const crossing of this.closedCrossings)
       if (!footprintReachesBox(car.agent, crossing))
         room = Math.min(room, this.crossingGap(car, crossing));
     if (!car.crossing) {

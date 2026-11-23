@@ -1,11 +1,11 @@
-# 05 — Mapy: Warszawa i Wrocław (skala mikro)
+# 05 — Mapy miast (skala mikro)
 
 ## Zasady ogólne
-- **Nie odwzorowujemy układu ulic.** Każde miasto to **kolaż 5 dzielnic** zbudowany wokół charakterystycznych miejsc, połączonych drogami, mostami i torami tramwajowymi. Gracz ma poczuć „to Warszawa!”, a nie nawigować wg Google Maps.
+- **Nie odwzorowujemy układu ulic.** Każde miasto to **kolaż 5 dzielnic** zbudowany wokół charakterystycznych miejsc, połączonych drogami, mostami i torami tramwajowymi. Rozpoznawalne sylwetki pomagają poczuć charakter miasta.
 - **Skala:** kafel 32×32 px ≈ 1,5 m. Jezdnia 2 pasy = 4–5 kafli, chodnik 2 kafle, DDR 1–2 kafle. Landmarki są **przeskalowane w dół** (PKiN ~10×10 kafli podstawy, nie 100×100) — skala symboliczna, jak w makiecie.
 - **Rozmiar mapy miasta:** ok. 200×150 kafli (6400×4800 px), jedna mapa Tiled na miasto, podział na dzielnice warstwą obiektów `districts`. Dzielnice odblokowywane fabularnie (zablokowane = szlaban/„roboty drogowe” z humorem).
 - **Każde miasto musi zawierać komplet sytuacji drogowych** potrzebnych do modułów M01–M07 (tabela pokrycia na końcu). Raport `tools/coverage-report.ts` sprawdza to automatycznie z warstw obiektów.
-- **Wybór mapy:** scena `CityPicker` — pixel-artowa mapa Polski z pinezkami. Warszawa i Wrocław dostępne od startu; reszta jako „wkrótce” (sylwetki).
+- **Wybór mapy:** scena `CityPicker` — pixel-artowa mapa Polski z pinezkami. Warszawa i Wrocław są dostępne od startu w Kampanii i Wolnej jeździe. Kraków jest dostępny w Wolnej jeździe.
 
 ## Warstwy Tiled (wymagane, nazwy dokładnie takie)
 | Warstwa | Typ | Zawartość |
@@ -165,25 +165,54 @@ Pomiary wykonano w Chromium 156 headless, w rozdzielczości 1280 × 720, z ogran
 
 ---
 
+## KRAKÓW
+
+Wybierz **Wolna jazda → Kraków** na mapie Polski. Kolaż ma 152 × 112 kafli. Trzy przeprawy łączą brzegi Wisły, a główne połączenia drogowe pozostają dostępne od początku. Generator `npm run map:generate:krakow` odtwarza [krakow.tmj](../maps/krakow.tmj).
+
+| Dzielnica | Miejsce i praktyka | Dostęp |
+| --- | --- | --- |
+| Rynek i Planty | Sukiennice, asymetryczne wieże kościoła Mariackiego, strefa piesza z B-9. Po zmroku zapnij kask i włącz lampki, a przed deptakiem zejdź z roweru. | Od startu |
+| Wawel | Zamek z dziedzińcem i basztą, złota kopuła oraz autorska rzeźba Smoka pod murem oporowym. | Po „Wieczornym spacerze po Rynku” |
+| Kazimierz | Kamienice, mały targ, dom modlitwy, uliczka jednokierunkowa z B-2 i wyjątkiem dla rowerów oraz oznaczonym kontrapasem. | Po „Wieczornym spacerze po Rynku” |
+| Bulwary Wisły | Czerwona DDR z przejazdami przez drogi przy mostach, oddzielny ciąg wspólny C-13/C-16, schody i ławki. Na ciągu wspólnym piesi mają pierwszeństwo. | Po ćwiczeniu „Kontrapas na Kazimierzu” |
+| Kopiec i park | Zielona sylwetka Kopca z krętą ścieżką i strefą B-9. | Po ćwiczeniu „Pomoc na bulwarach” |
+
+Ćwiczenia uruchamia się na postoju w SzprychaApp. Ukończenie zapisuje się w profilu i otwiera przejścia. Jazda przez Rynek wbrew B-9 przerywa próbę i daje zero punktów. Ćwiczenie z kontrapasem korzysta ze stałych faz S-6 i odbywa się bez ruchu tła. Na bulwarze scenka pierwszej pomocy ćwiczy bezpieczne zatrzymanie i ostrzeżenie innych. Kampania jest opisana w [#106](https://github.com/wtomaszewski/szprycha/issues/106).
+
+W Wolnej jeździe auta korzystają z połączonego grafu dróg i zatrzymują się przy zielonej fazie dla pieszych i rowerzystów. Piesi chodzą po placach, ciągu wspólnym i przejściu z sygnalizacją. Rowerzysta przejeżdża wzdłuż Wisły. Srebrno-grafitowy tramwaj zatrzymuje się przy przystanku bez wysepki i przepuszcza wysiadającego pasażera. Na zachodzie działają zapory przejazdu kolejowego. Zmrok zapada po 90 sekundach.
+
+`npm run coverage:maps -- --strict` wykrywa 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/krakow.test.ts` sprawdza komplet sytuacji, ćwiczenia i dziesięć minut symulacji dla trzech ziaren. [Raport pokrycia](coverage.md#kraków)
+
+Pomiar w Wolnej jeździe wykonano kolejno na tej samej instancji Chromium 156 headless, w WebGL, z pełną grafiką, rozdzielczością 640 × 360 i ograniczeniem CPU 4×. Wyniki z tej instancji służą do porównania map.
+
+| Odcinek | Średnie FPS | p95 klatki |
+| --- | ---: | ---: |
+| Kraków, Rynek | 42,21 | 33,4 ms |
+| Warszawa, Starówka | 43,03 | 33,4 ms |
+
+Przy uruchomionym Vite użyj `BENCH_VIEWPORT=640x360 BENCH_MAP=krakow npm run benchmark:driving`. Pomiar Warszawy odtwarza `BENCH_VIEWPORT=640x360 BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free npm run benchmark:driving`.
+
+Zrzuty pokazują [wybór miasta](screenshots/105-mapa-polski.webp), [Rynek](screenshots/105-rynek.webp), [Wawel i Smoka](screenshots/105-wawel.webp), [Kazimierz](screenshots/105-kazimierz.webp), [bulwary](screenshots/105-bulwary.webp), [Kopiec](screenshots/105-kopiec.webp) i [tramwaj](screenshots/105-tramwaj.webp).
+
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
 Wzorowane na prawdziwych szkolnych miasteczkach ruchu: małe skrzyżowania każdego typu, mini-rondo, sygnalizacja, przejazd kolejowy z zaporami, znaki z Albumu na tablicach, **plac manewrowy** (ósemka, slalom, tor wąski, pole zatrzymania). Tu: samouczek, plac, quiz w budynku szkoły, egzamin Licencji.
 
 ## Tabela pokrycia (każde miasto musi mieć ✓ w każdym wierszu)
-| Sytuacja | Warszawa | Wrocław |
-|---|---|---|
-| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód |
-| Droga z pierwszeństwem + STOP | Praga | Zachód |
-| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe |
-| Rondo | Praga (małe) / Miasteczko | Hala Stulecia |
-| Tramwaj + przystanek bez wysepki | Śródmieście | Południe |
-| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia |
-| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia |
-| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów |
-| Wyjazd z drogi wewnętrznej | Praga | Zachód |
-| Przejazd kolejowy | Mokotów | Zachód |
-| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód |
-| Kontraruch | Śródmieście | Rynek (Nadodrze) |
-| Nocna jazda | Bulwary | Ostrów Tumski |
+| Sytuacja | Warszawa | Wrocław | Kraków |
+|---|---|---|---|
+| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody |
+| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu |
+| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa |
+| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku |
+| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz |
+| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary |
+| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz |
+| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu |
+| Przejazd kolejowy | Mokotów | Zachód | Dębniki |
+| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec |
+| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz |
+| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary |
 
 ## Kolejne mapy (po MVP, kolejność wg popularności)
-Kraków (Wawel, Smok, Sukiennice, Kopiec, bulwary Wisły) · Gdańsk (Żuraw, Długi Targ, stocznia, plaża) · Poznań (Ratusz z koziołkami, Stary Browar) · Łódź (Piotrkowska, Manufaktura) · **Wieś i las** (droga gminna, PKS, przejazd niestrzeżony, pole, las, ciągnik — szczególnie ważne dla dzieci spoza dużych miast) · Zakopane (Krupówki, Giewont w tle).
+Gdańsk (Żuraw, Długi Targ, stocznia, plaża) · Poznań (Ratusz z koziołkami, Stary Browar) · Łódź (Piotrkowska, Manufaktura) · **Wieś i las** (droga gminna, PKS, przejazd niestrzeżony, pole, las, ciągnik — szczególnie ważne dla dzieci spoza dużych miast) · Zakopane (Krupówki, Giewont w tle).

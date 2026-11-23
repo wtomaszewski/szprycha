@@ -4,6 +4,8 @@ import { dialogueId } from './dialogues.ts';
 const id = z.string().regex(/^[A-Za-z0-9_-]+$/);
 export const missionCity = z.enum(['warszawa', 'wroclaw']);
 export type MissionCity = z.infer<typeof missionCity>;
+export const playableCity = z.enum([...missionCity.options, 'krakow']);
+export type PlayableCity = z.infer<typeof playableCity>;
 const key = z.string().regex(/^(misje|dialogi)(\.[A-Za-z0-9_-]+)+$/);
 const seconds = z.number().positive();
 const count = z.number().int().nonnegative();
@@ -55,8 +57,8 @@ const missionGoal = z.discriminatedUnion('typ', [
 
 export const missionSchema = z
   .strictObject({
-    id: z.string().regex(/^(WAW|WRO)-(T|A[1-3]|B)-\d{2}$/),
-    miasto: missionCity,
+    id: z.string().regex(/^(WAW|WRO|KRA)-(T|A[1-3]|B)-\d{2}$/),
+    miasto: playableCity,
     mapa: id.optional(),
     akt: count.max(3),
     poboczna: z.literal(true).optional(),
@@ -120,7 +122,9 @@ export const missionSchema = z
       : mission.akt === 0
         ? 'T'
         : `A${mission.akt}`;
-    const prefix = mission.miasto === 'warszawa' ? 'WAW' : 'WRO';
+    const prefix = { warszawa: 'WAW', wroclaw: 'WRO', krakow: 'KRA' }[
+      mission.miasto
+    ];
     if (!mission.id.startsWith(`${prefix}-${act}-`))
       ctx.addIssue({
         code: 'custom',

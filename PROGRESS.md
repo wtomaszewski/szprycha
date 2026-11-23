@@ -16,6 +16,11 @@ Stan na 22.11.2026. Gałąź `feat/75-m9b-mobile-ui`.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Kraków 1/2 — mapa (#105)
+
+- Kraków jest dostępny w Wolnej jeździe. Kolaż obejmuje Rynek, Wawel, Kazimierz, bulwary Wisły i Kopiec. Trzy ćwiczenia otwierają kolejne dzielnice, a raport strict sprawdza 13/13 sytuacji i 7/7 modułów M01–M07.
+- Ruch AI obsługuje auta, tramwaj, pieszych i rowerzystę. Kampania Krakowa jest częścią [#106](https://github.com/wtomaszewski/szprycha/issues/106). [Mapa, weryfikacja i zrzuty](docs/05_mapy.md#kraków)
+
 ## Zlecenia proceduralne 3/3 (#104)
 
 - Po pierwszym legalnym Zleceniu dnia SzprychaApp odblokowuje cztery wątki fabularne w każdym mieście. Każdy ma 3–5 etapów, jednego powracającego klienta i ćwiczenia z co najmniej trzech modułów.

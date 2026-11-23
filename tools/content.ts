@@ -6,7 +6,7 @@ import {
   dialogueFileSchema,
   portraitEmotions,
 } from '../src/content/dialogues.ts';
-import { missionsSchema } from '../src/content/missions.ts';
+import { missionsSchema, playableCity } from '../src/content/missions.ts';
 import { eventIds, eventRules } from '../src/gameplay/TrafficEvents.ts';
 import { textAt } from '../src/content/translation.ts';
 import {
@@ -51,7 +51,13 @@ export async function readMissions(root: string) {
       }
     }),
   );
-  return groups.flat();
+  return groups
+    .flat()
+    .sort(
+      (a, b) =>
+        playableCity.options.indexOf(a.miasto) -
+        playableCity.options.indexOf(b.miasto),
+    );
 }
 
 export async function readContent(root = process.cwd()) {

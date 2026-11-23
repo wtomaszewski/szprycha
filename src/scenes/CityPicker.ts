@@ -1,16 +1,16 @@
 import { Geom, Scene } from 'phaser';
-import type { MissionCity } from '../content/missions';
+import { playableCity, type PlayableCity } from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 
 type Mode = 'campaign' | 'freeRide';
 const pins = [
-  { id: 'warszawa', x: 426, y: 169, playable: true },
-  { id: 'wroclaw', x: 221, y: 228, playable: true },
-  { id: 'gdansk', x: 319, y: 79, playable: false },
-  { id: 'poznan', x: 208, y: 144, playable: false },
-  { id: 'krakow', x: 365, y: 258, playable: false },
+  { id: 'warszawa', x: 426, y: 169 },
+  { id: 'wroclaw', x: 221, y: 228 },
+  { id: 'gdansk', x: 319, y: 79 },
+  { id: 'poznan', x: 208, y: 144 },
+  { id: 'krakow', x: 365, y: 258 },
 ] as const;
 
 // A simplified outline of Poland in four-pixel steps, from the Baltic coast
@@ -121,17 +121,20 @@ export class CityPicker extends Scene {
       leaving = true;
       this.scene.start('MainMenu');
     };
-    const enter = async (city: MissionCity) => {
+    const freeRide = mode === 'freeRide';
+    const enter = async (city: PlayableCity) => {
       if (leaving) return;
       leaving = true;
-      await progress.selectCity(city);
+      await progress.selectCity(city, freeRide);
       const mission =
-        mode === 'campaign' ? progress.nextMission(city, content) : undefined;
+        !freeRide && city !== 'krakow'
+          ? progress.nextMission(city, content)
+          : undefined;
       this.scene.start('City', {
         city,
         map: city,
         missionId: mission?.id,
-        freeRide: mode === 'freeRide',
+        freeRide,
       });
     };
 
@@ -142,7 +145,10 @@ export class CityPicker extends Scene {
     back.addEventListener('click', leave);
     controls.append(back);
     let selected = back;
-    for (const { id, x, y, playable } of pins) {
+    const selectedCity = freeRide
+      ? progress.freeRideCity
+      : progress.selectedCity;
+    for (const { id, x, y } of pins) {
       const pin = document.createElement('button');
       pin.type = 'button';
       pin.className = 'city-picker-pin';
@@ -151,9 +157,10 @@ export class CityPicker extends Scene {
       const caption = document.createElement('span');
       caption.textContent = labels[id];
       pin.append(caption);
-      if (playable) {
-        pin.addEventListener('click', () => void enter(id));
-        if (id === progress.selectedCity) {
+      const city = playableCity.safeParse(id);
+      if (city.success && (freeRide || city.data !== 'krakow')) {
+        pin.addEventListener('click', () => void enter(city.data));
+        if (id === selectedCity) {
           pin.classList.add('city-picker-selected');
           selected = pin;
         }

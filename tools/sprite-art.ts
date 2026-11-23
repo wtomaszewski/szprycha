@@ -496,8 +496,12 @@ function drawVehicle(
 }
 
 function drawTram(tile: Tile, city: number, section: number) {
-  const [body, stripe, shade] =
-    city === 0 ? [burgundy, gold, red] : [royal, cream, blue];
+  const colors = [
+    [burgundy, gold, red],
+    [royal, cream, blue],
+    [gray, steel, ink],
+  ] as const;
+  const [body, stripe, shade] = colors[city]!;
   const front = section === 0;
   const top = front ? 1 : 0;
   const end = front ? 79 : 78;

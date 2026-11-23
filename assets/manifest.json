@@ -158,12 +158,12 @@
       "id": "traffic-tram",
       "file": "generated/traffic-tram.png",
       "width": 64,
-      "height": 160,
+      "height": 240,
       "frameWidth": 32,
       "frameHeight": 80,
-      "frames": 4,
+      "frames": 6,
       "directions": 1,
-      "description": "Rzędy: Warszawa czerwono-żółta, Wrocław niebiesko-kremowy; kolumny: przód i tył, przegub przy stykających się krawędziach. Kierunek źródłowy: północ."
+      "description": "Rzędy: Warszawa czerwono-żółta, Wrocław niebiesko-kremowy, Kraków grafitowo-srebrny. Kolumny: przód i tył, przegub przy stykających się krawędziach. Kierunek źródłowy: północ."
     },
     {
       "id": "portrait-gracz",

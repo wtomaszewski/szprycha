@@ -94,7 +94,10 @@ export class TrafficArt {
         this.row = variant % emergencyTypes.length;
         break;
       case 'tram':
-        this.row = mapId.startsWith(tramCities[1]) ? 1 : 0;
+        this.row = Math.max(
+          0,
+          tramCities.findIndex((city) => mapId.startsWith(city)),
+        );
         this.rear = scene.add
           .image(0, 0, key, this.row * 2 + 1)
           .setOrigin(0.5, 0)

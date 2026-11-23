@@ -46,7 +46,7 @@ async function checkPrecache(dist: string) {
       expect.stringMatching(/^assets\/index-.*\.css$/),
       expect.stringMatching(/^assets\/rider-.*\.png$/),
       expect.stringMatching(/^assets\/PixelifySans-.*\.ttf$/),
-      ...['miasteczko', 'warszawa', 'wroclaw'].map((city) =>
+      ...['miasteczko', 'warszawa', 'wroclaw', 'krakow'].map((city) =>
         expect.stringMatching(new RegExp(`^assets/${city}-.*\\.tmj$`)),
       ),
     ]),

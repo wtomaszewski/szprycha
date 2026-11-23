@@ -169,6 +169,7 @@ const identityProfileSchema = m9ProfileSchema.extend({
 const profileVersion = 10;
 const profileSchema = identityProfileSchema.extend({
   version: z.literal(profileVersion),
+  freeRideCity: z.literal('krakow').optional(),
   stories: z.partialRecord(
     missionCity,
     z
