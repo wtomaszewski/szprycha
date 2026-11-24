@@ -35,6 +35,9 @@ export class DialogueWindow {
   private readonly speaker = document.createElement('strong');
   private readonly text = document.createElement('p');
   private readonly nextButton = document.createElement('button');
+  private readonly skipButton = document.createElement('button');
+  private readonly acceptButton = document.createElement('button');
+  private readonly declineButton = document.createElement('button');
   private readonly voiceButton = document.createElement('button');
   private readonly scrollButton = document.createElement('button');
   private readonly names: Map<string, string>;
@@ -43,6 +46,7 @@ export class DialogueWindow {
   private client?: DailyClient;
   private index = 0;
   private done?: () => void;
+  private decline?: () => void;
   private hold?: number;
   private pointerHeld = false;
   private keyHeld = false;
@@ -75,15 +79,18 @@ export class DialogueWindow {
 
     const actions = document.createElement('div');
     actions.className = 'dialogue-actions';
-    const skip = document.createElement('button');
     this.nextButton.type =
-      skip.type =
+      this.skipButton.type =
+      this.acceptButton.type =
+      this.declineButton.type =
       this.voiceButton.type =
       this.scrollButton.type =
         'button';
     this.nextButton.textContent = ui.dialogueUi.next;
     this.nextButton.title = ui.dialogueUi.controls;
-    skip.textContent = ui.dialogueUi.skip;
+    this.skipButton.textContent = ui.dialogueUi.skip;
+    this.acceptButton.textContent = ui.campaignRide.accept;
+    this.declineButton.textContent = ui.campaignRide.decline;
     this.voiceButton.textContent = ui.dialogueUi.voice;
     this.scrollButton.textContent = ui.dialogueUi.readMore;
     this.scrollButton.addEventListener('click', () => {
@@ -92,7 +99,9 @@ export class DialogueWindow {
         scrollTop >= scrollHeight - clientHeight ? 0 : scrollTop + clientHeight;
     });
     this.nextButton.addEventListener('click', () => this.advance());
-    skip.addEventListener('click', () => this.finish());
+    this.skipButton.addEventListener('click', () => this.finish());
+    this.acceptButton.addEventListener('click', () => this.finish());
+    this.declineButton.addEventListener('click', () => this.skip());
     this.voiceButton.addEventListener('click', () => {
       setAudio(
         this.progress,
@@ -101,11 +110,18 @@ export class DialogueWindow {
       );
       this.speak();
     });
-    actions.append(this.voiceButton, this.scrollButton, skip, this.nextButton);
+    actions.append(
+      this.voiceButton,
+      this.scrollButton,
+      this.skipButton,
+      this.declineButton,
+      this.nextButton,
+      this.acceptButton,
+    );
     this.panel.append(line, actions);
     this.panel.addEventListener('cancel', (event) => {
       event.preventDefault();
-      this.finish();
+      this.skip();
     });
 
     this.nextButton.addEventListener('pointerdown', (event) => {
@@ -159,6 +175,7 @@ export class DialogueWindow {
     lines: readonly DisplayedLine[],
     done: () => void,
     client?: DailyClient,
+    decline?: () => void,
   ) {
     if (!lines.length) {
       done();
@@ -168,10 +185,18 @@ export class DialogueWindow {
     this.client = client;
     this.index = 0;
     this.done = done;
+    this.decline = decline;
+    this.panel.setAttribute(
+      'aria-label',
+      decline ? ui.campaignRide.offer : ui.dialogueUi.title,
+    );
+    this.skipButton.hidden = Boolean(decline);
+    this.acceptButton.hidden = this.declineButton.hidden = !decline;
+    this.nextButton.title = decline ? '' : ui.dialogueUi.controls;
     audio.stopReading('feedback');
     this.render();
     this.panel.showModal();
-    this.nextButton.focus();
+    (this.nextButton.hidden ? this.acceptButton : this.nextButton).focus();
     this.updateScrollButton();
   }
 
@@ -187,7 +212,7 @@ export class DialogueWindow {
   }
 
   skip() {
-    this.finish();
+    this.finish(this.decline ?? this.done);
   }
 
   destroy() {
@@ -198,6 +223,7 @@ export class DialogueWindow {
   }
 
   private startHold() {
+    if (this.decline) return;
     this.clearHold();
     this.hold = window.setTimeout(() => this.finish(), holdMs);
   }
@@ -209,19 +235,20 @@ export class DialogueWindow {
 
   private advance() {
     if (!this.open) return;
+    if (this.decline && this.index === this.lines.length - 1) return;
     this.index++;
     if (this.index === this.lines.length) this.finish();
     else this.render();
   }
 
-  private finish() {
+  private finish(done = this.done) {
     if (!this.open) return;
     this.clearHold();
     this.pointerHeld = this.keyHeld = this.padHeld = false;
     audio.stopReading('dialogue');
     this.panel.close();
-    const done = this.done;
     this.done = undefined;
+    this.decline = undefined;
     done?.();
   }
 
@@ -244,6 +271,10 @@ export class DialogueWindow {
       this.speaker.textContent = this.names.get(postac) ?? '';
     }
     this.text.textContent = translate(tekst, values);
+    this.nextButton.hidden = Boolean(
+      this.decline && this.index === this.lines.length - 1,
+    );
+    if (this.nextButton.hidden && this.panel.open) this.acceptButton.focus();
     this.text.scrollTop = 0;
     this.updateScrollButton();
     this.speak();

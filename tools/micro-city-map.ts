@@ -1,3 +1,8 @@
+import {
+  roadSignalTiming,
+  mainArrowTiming,
+  microCityPhaseOffset,
+} from './signal-timing.ts';
 import { tiles } from '../src/render/artFrames.ts';
 import { otherSide, sides } from '../src/rules/world/LaneGraph.ts';
 import { sideVector, type Side } from '../src/rules/world/WorldModel.ts';
@@ -265,10 +270,7 @@ export function microCityMap(names: JunctionNames) {
         code: 'S-1',
         affects: id,
         group: `${names.avenue}-${group}`,
-        offset_s: group === 'ew' ? 0 : 32,
-        cycle_s: 58,
-        green_s: 14,
-        yellow_s: 2,
+        ...roadSignalTiming(group === 'ns', microCityPhaseOffset),
       }),
     );
   }
@@ -324,8 +326,7 @@ export function microCityMap(names: JunctionNames) {
         code: 'S-2',
         affects: `${names.avenue}-N`,
         group: `${names.avenue}-ns`,
-        from_s: 53,
-        until_s: 56,
+        ...mainArrowTiming,
         direction: 'right',
       }),
     );

@@ -36258,24 +36258,29 @@
               "value": "palac-ns"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 28
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 48
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 14
+              "value": 4
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 24
             }
           ]
         },
@@ -36306,24 +36311,29 @@
               "value": "palac-ns"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 28
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 48
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 14
+              "value": 4
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 24
             }
           ]
         },
@@ -36354,24 +36364,29 @@
               "value": "palac-ew"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 0
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 48
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 14
+              "value": 15
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 17
             }
           ]
         },
@@ -36402,24 +36417,29 @@
               "value": "palac-ew"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 0
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 48
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 14
+              "value": 15
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 17
             }
           ]
         },
@@ -36452,12 +36472,12 @@
             {
               "name": "from_s",
               "type": "float",
-              "value": 29
+              "value": 8
             },
             {
               "name": "until_s",
               "type": "float",
-              "value": 38
+              "value": 15
             },
             {
               "name": "direction",
@@ -36493,24 +36513,29 @@
               "value": "palac-ew"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 0
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 48
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 14
+              "value": 15
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 17
             }
           ]
         },
@@ -36541,24 +36566,29 @@
               "value": "ns"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 27
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 54
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 24
+              "value": 4
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 7
             }
           ]
         },
@@ -36589,24 +36619,29 @@
               "value": "ew"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 0
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 54
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 24
+              "value": 15
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 0
             }
           ]
         },
@@ -36637,24 +36672,29 @@
               "value": "ns"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 27
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 54
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 24
+              "value": 4
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 7
             }
           ]
         },
@@ -36685,24 +36725,29 @@
               "value": "ew"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 0
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 54
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 24
+              "value": 15
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 0
             }
           ]
         }
@@ -41607,17 +41652,22 @@
             {
               "name": "cycle_s",
               "type": "float",
-              "value": 48
-            },
-            {
-              "name": "offset_s",
-              "type": "float",
-              "value": 10
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 6
+              "value": 15
+            },
+            {
+              "name": "flashing_s",
+              "type": "float",
+              "value": 2
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 17
             }
           ]
         },
@@ -41640,17 +41690,22 @@
             {
               "name": "cycle_s",
               "type": "float",
-              "value": 48
-            },
-            {
-              "name": "offset_s",
-              "type": "float",
-              "value": 12
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 9
+              "value": 2
+            },
+            {
+              "name": "flashing_s",
+              "type": "float",
+              "value": 4.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 24.75
             }
           ]
         }

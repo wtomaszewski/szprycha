@@ -1,3 +1,10 @@
+import {
+  roadSignalTiming,
+  sideArrowTiming,
+  parallelCrossingTiming,
+  transversePedestrianTiming,
+  startOnRed,
+} from './signal-timing.ts';
 import { tiles } from '../src/render/artFrames.ts';
 import type { Side } from '../src/rules/world/WorldModel.ts';
 import type { tiledMap } from './tiled-map.ts';
@@ -132,25 +139,18 @@ export function newWarsawDistricts(
     rect('palac-s6-wschod', 3528, 1808, 0, 0, {
       crossing: 'pod-palacem-przejazd',
       twoWay: true,
-      cycle_s: 48,
-      offset_s: 10,
-      green_s: 6,
+      ...parallelCrossingTiming(startOnRed),
     }),
     rect('palac-zebra-polnoc', 4352, 1784, 0, 0, {
       crossing: 'pod-palacem-zebra',
-      cycle_s: 48,
-      offset_s: 12,
-      green_s: 9,
+      ...transversePedestrianTiming(startOnRed),
     }),
   ];
   const signalPhase = (side: Side) => {
     const ew = side === 'E' || side === 'W';
     return {
       group: ew ? 'palac-ew' : 'palac-ns',
-      offset_s: ew ? 0 : 28,
-      cycle_s: 48,
-      green_s: 14,
-      yellow_s: 2,
+      ...roadSignalTiming(ew, startOnRed),
     };
   };
   const signals = [
@@ -178,8 +178,7 @@ export function newWarsawDistricts(
       code: 'S-2',
       affects: 'pod-palacem-N',
       group: 'palac-ns',
-      from_s: 29,
-      until_s: 38,
+      ...sideArrowTiming,
       direction: 'right',
     }),
     rect('palac-tram-s1', 3544, 1920, 0, 0, {

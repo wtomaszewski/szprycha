@@ -17,6 +17,25 @@ async function openNearSignals(page: Page) {
       .objects.find(({ name }: { name: string }) => name === 'player');
     player.x = 2170;
     player.y = 637;
+    const signals = map.layers.find(
+      ({ name }: { name: string }) => name === 'signals',
+    );
+    const main = signals.objects.find(
+      ({ name }: { name: string }) => name === 'lights-W-S-1',
+    );
+    const property = (name: string) =>
+      main.properties.find((entry: { name: string }) => entry.name === name)
+        .value;
+    const timeToRed =
+      property('green_s') + property('yellow_s') - property('offset_s');
+    for (const layer of map.layers)
+      if (layer.name === 'signals' || layer.name === 'crossing_signals')
+        for (const signal of layer.objects) {
+          const offset = signal.properties.find(
+            ({ name }: { name: string }) => name === 'offset_s',
+          );
+          if (offset) offset.value += timeToRed;
+        }
     await route.fulfill({ response, json: map });
   });
   await page.goto('/');
@@ -38,7 +57,7 @@ async function litDigitPixels(canvas: Locator) {
 
 test('draws countdowns by default, and saves the switch across rides and reloads', async ({
   page,
-}) => {
+}, testInfo) => {
   const canvas = await openNearSignals(page);
   const settings = page.getByRole('dialog', { name: pl.settings.title });
   const toggle = page.getByRole('checkbox', {
@@ -57,6 +76,7 @@ test('draws countdowns by default, and saves the switch across rides and reloads
     .click();
   await expect(canvas).toHaveAttribute('data-x', '2170');
   await expect.poll(() => litDigitPixels(canvas)).toBeGreaterThan(0);
+  await canvas.screenshot({ path: testInfo.outputPath('red-countdown.png') });
 
   await page.keyboard.press('Escape');
   await page.getByText(pl.settings.accessibility, { exact: true }).click();

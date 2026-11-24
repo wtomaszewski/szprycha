@@ -69,7 +69,7 @@ function spawnAt(poi: PointOfInterest): MissionSpawn {
   return { ...boxCenter(poi), heading: poi.heading };
 }
 
-function reached(area: Box, position: Vec2): boolean {
+export function reachedMissionPoint(area: Box, position: Vec2): boolean {
   if (area.width === 0 && area.height === 0)
     return Math.hypot(position.x - area.x, position.y - area.y) <= 1.5;
   return contains(area, position);
@@ -138,7 +138,7 @@ export class MissionSystem {
       if ('poi' in goal && goal.poi) area = poi(goal.poi);
       if (goal.typ === 'sfotografuj') {
         const sign = world.signs?.find(({ id }) => id === goal.znak);
-        if (!sign || !reached(area, sign))
+        if (!sign || !reachedMissionPoint(area, sign))
           throw new Error(
             `Mission ${definition.id}: sign ${goal.znak} is outside its photo POI`,
           );
@@ -195,7 +195,10 @@ export class MissionSystem {
     }
     if (definition.wyscig) {
       const route = world.raceRoutes?.get(definition.wyscig.trasa_rywala);
-      if (!route || !reached(this.goals.at(-1)!.area, route.path.end))
+      if (
+        !route ||
+        !reachedMissionPoint(this.goals.at(-1)!.area, route.path.end)
+      )
         throw new Error(
           `Mission ${definition.id}: rival route must end at the finish`,
         );
@@ -290,7 +293,7 @@ export class MissionSystem {
       target?.goal.typ === 'sfotografuj' &&
       speed === 0 &&
       !target.eventWaypoint &&
-      reached(target.area, position) &&
+      reachedMissionPoint(target.area, position) &&
       !this.photos.has(target.goal.znak)
     );
   }
@@ -442,19 +445,19 @@ export class MissionSystem {
         ? this.photos.has(target.goal.znak)
         : target.goal.typ === 'wybor'
           ? Boolean(this.choice?.correct)
-          : reached(target.area, position) &&
+          : reachedMissionPoint(target.area, position) &&
             (!this.collectibleTarget || collectibleFound);
     if (
       target.goal.typ === 'wybor' &&
       speed === 0 &&
-      reached(target.area, position)
+      reachedMissionPoint(target.area, position)
     )
       this.choice ??= { position: { ...position }, correct: false };
     const missingHabit =
       atTarget && target.goal.wymagany_nawyk && !this.requiredHabitSeen;
     let effects: TickEffects | undefined;
     for (const forced of this.forced) {
-      if (forced.fired || !reached(forced.area, position)) continue;
+      if (forced.fired || !reachedMissionPoint(forced.area, position)) continue;
       forced.fired = true;
       effects ??= {};
       (effects.events ??= []).push(forced.event);
@@ -496,7 +499,7 @@ export class MissionSystem {
 
   private saveCheckpoint(position: Vec2) {
     const checkpoint = this.checkpoints[this.nextCheckpoint];
-    if (checkpoint && reached(checkpoint, position)) {
+    if (checkpoint && reachedMissionPoint(checkpoint, position)) {
       this.checkpoint = {
         spawn: spawnAt(checkpoint),
         goalIndex: this.goalIndex,
@@ -507,7 +510,7 @@ export class MissionSystem {
       if (
         previous &&
         this.goalIndex > this.checkpoint.goalIndex &&
-        reached(previous, position)
+        reachedMissionPoint(previous, position)
       )
         this.checkpoint.goalIndex = this.goalIndex;
     }

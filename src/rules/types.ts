@@ -6,7 +6,14 @@ export interface Vec2 {
 export const ageBands = ['under10', '10to15', '16plus'] as const;
 export type AgeBand = (typeof ageBands)[number];
 export type Maneuver = 'straight' | 'left' | 'right';
-export type SignalPhase = 'off' | 'red' | 'yellow' | 'green' | 'arrow';
+export type SignalPhase =
+  | 'off'
+  | 'red'
+  | 'red-yellow'
+  | 'yellow'
+  | 'green'
+  | 'flashing-green'
+  | 'arrow';
 
 export interface RiderState {
   id: string;
