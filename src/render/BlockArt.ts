@@ -1,5 +1,6 @@
 import type { Scene, Textures } from 'phaser';
 import { artHash, roofDetails, roofKinds, wallKinds } from './artFrames';
+import { paintAfrykariumGlass, paintAfrykariumRoof } from './LandmarkArt';
 import { FLOOR_PX, type Block } from './projection';
 import { shadowColor, shadowRise } from './shadows';
 
@@ -55,7 +56,7 @@ export function visitRoofDetails(
     b.landmarkId === 'palac-na-wodzie' ||
     b.landmarkId === 'hala-stulecia' ||
     b.landmarkId === 'stadion-wroclaw' ||
-    b.landmarkId === 'stadion-narodowy' ||
+    b.landmarkId === 'afrykarium' ||
     b.landmarkId === 'zamek-krolewski' ||
     b.landmarkId === 'ratusz-wroclawski' ||
     b.landmarkId === 'sukiennice' ||
@@ -85,6 +86,10 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
     Math.ceil(b.width),
     Math.ceil(b.height),
     (ctx) => {
+      if (b.landmarkId === 'afrykarium') {
+        paintAfrykariumRoof(ctx, b.width, b.height);
+        return;
+      }
       const sheet = sheetImage(scene, 'block-roofs');
       for (let y = 0; y < b.height; y += 32)
         for (let x = 0; x < b.width; x += 32) {
@@ -244,24 +249,7 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
         ctx.fillRect(cx - 2, cy - 2, 5, 5);
         return;
       }
-      if (b.landmarkId === 'stadion-narodowy') {
-        ctx.fillStyle = '#c0cbdc';
-        ctx.fillRect(0, 0, b.width, b.height);
-        const vertical = b.height > b.width;
-        const along = vertical ? b.height : b.width;
-        const across = vertical ? b.width : b.height;
-        for (let i = 0; i < along; i += 5) {
-          ctx.fillStyle = i % 20 < 10 ? '#f4f4f4' : '#e43b44';
-          if (vertical) ctx.fillRect(2, i, across - 4, 5);
-          else ctx.fillRect(i, 2, 5, across - 4);
-        }
-        ctx.fillStyle = '#f4f4f4';
-        if (vertical) ctx.fillRect(8, 0, across - 16, along);
-        else ctx.fillRect(0, 8, along, across - 16);
-        ctx.fillStyle = '#94b0c2';
-        if (vertical) ctx.fillRect(14, 0, across - 28, along);
-        else ctx.fillRect(0, 14, along, across - 28);
-      } else if (b.landmarkId === 'hala-stulecia') {
+      if (b.landmarkId === 'hala-stulecia') {
         const radius = b.width / 2;
         ctx.clearRect(0, 0, b.width, b.height);
         // Integer scanlines draw the complete silhouette of each concrete ring.
@@ -325,13 +313,6 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
           ctx.fillStyle = '#3e8948';
           ctx.fillRect(b.width / 2, y, b.width / 2 - inset, 1);
         }
-      } else if (b.landmarkId === 'afrykarium') {
-        ctx.fillStyle = '#94b0c2';
-        for (let x = 8; x < b.width - 10; x += 4) {
-          const wave = Math.round(8 * Math.sin(x / 18));
-          ctx.fillRect(x, 16 + wave, 4, b.height - 32);
-          ctx.clearRect(x, 0, 4, 7 + Math.floor((wave + 8) / 2));
-        }
       } else if (b.landmarkId === 'stadion-wroclaw') {
         ctx.fillStyle = '#333c57';
         ctx.fillRect(15, 15, b.width - 30, b.height - 30);
@@ -376,7 +357,7 @@ export function wallEmissionTexture(
     floors * FLOOR_PX,
     (ctx) => {
       if (
-        b.landmarkId === 'stadion-narodowy' ||
+        b.landmarkId === 'afrykarium' ||
         b.landmarkId === 'lodz-fabryka-komin' ||
         b.landmarkId?.startsWith('lodz-mural-')
       )
@@ -523,7 +504,9 @@ export function wallTexture(
         ctx.fillRect(width / 2 - 9, height - 14, 18, 14);
       }
     }
-    if (b.wall === 'glass') {
+    if (b.landmarkId === 'afrykarium') {
+      paintAfrykariumGlass(ctx, 0, 0, width, height);
+    } else if (b.wall === 'glass') {
       ctx.fillStyle = '#333c57';
       ctx.fillRect(0, 0, width, height);
       for (let y = 1; y < height; y += FLOOR_PX)
@@ -531,15 +514,6 @@ export function wallTexture(
           ctx.fillStyle = (x + y) % 36 === 3 ? '#73eff7' : '#0099db';
           ctx.fillRect(x, y, Math.min(10, width - x), 9);
         }
-    }
-    if (b.landmarkId === 'stadion-narodowy') {
-      ctx.fillStyle = '#f4f4f4';
-      ctx.fillRect(0, 0, width, height);
-      ctx.fillStyle = '#e43b44';
-      for (let y = 2; y < height - 2; y += 2)
-        for (let x = -height; x < width; x += 16) ctx.fillRect(x + y, y, 8, 2);
-      ctx.fillStyle = '#94b0c2';
-      ctx.fillRect(0, height - 3, width, 3);
     }
     if (b.landmarkId === 'palac-na-wodzie') {
       ctx.fillStyle = '#c0cbdc';
