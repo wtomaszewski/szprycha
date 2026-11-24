@@ -1,3 +1,9 @@
+import {
+  roadSignalTiming,
+  mainArrowTiming,
+  parallelCrossingTiming,
+  startOnRed,
+} from './signal-timing.ts';
 import { artHash, tiles } from '../src/render/artFrames.ts';
 import { otherSide, sides } from '../src/rules/world/LaneGraph.ts';
 import { sideVector, type Side } from '../src/rules/world/WorldModel.ts';
@@ -266,10 +272,7 @@ function signal(id: string, x: number, y: number, group: 'ew' | 'ns') {
       code: 'S-1',
       affects: id,
       group: `skansen-${group}`,
-      cycle_s: 56,
-      offset_s: group === 'ew' ? 0 : 28,
-      green_s: group === 'ns' ? 18 : 14,
-      yellow_s: 2,
+      ...roadSignalTiming(group === 'ns', startOnRed),
     }),
   );
 }
@@ -326,8 +329,7 @@ signals.push(
     code: 'S-2',
     affects: 'skansen-N',
     group: 'skansen-ns',
-    from_s: 51,
-    until_s: 55,
+    ...mainArrowTiming,
     direction: 'right',
   }),
 );
@@ -387,11 +389,9 @@ objectLayer('crossings', [
 objectLayer('crossing_signals', [
   rect('skansen-s6', 2612, village - 72, 0, 0, {
     crossing: 'przejazd-skansen',
+    ...parallelCrossingTiming(startOnRed),
     stopRoadTraffic: true,
     twoWay: true,
-    cycle_s: 56,
-    offset_s: 15,
-    green_s: 8,
   }),
 ]);
 objectLayer('traffic_islands', [

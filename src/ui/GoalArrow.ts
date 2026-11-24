@@ -1,4 +1,4 @@
-import { ui } from '../core/presentation';
+import { translate, ui } from '../core/presentation';
 
 export class GoalArrow {
   readonly root = document.createElement('div');
@@ -14,8 +14,13 @@ export class GoalArrow {
   private readonly distance = document.createElement('span');
   private displayedDistance?: number;
   private displayedDirection?: string;
+  private readonly announcement?: HTMLElement;
+  private announcedAt = -Infinity;
 
-  constructor(parent: HTMLElement) {
+  constructor(
+    parent: HTMLElement,
+    private readonly campaign = false,
+  ) {
     this.root.className = 'mission-navigation';
     this.arrow.className = 'mission-arrow';
     this.arrow.setAttribute('role', 'img');
@@ -23,6 +28,12 @@ export class GoalArrow {
     this.distance.className = 'mission-distance';
     this.arrow.append(this.bearing, this.distance);
     this.root.append(this.arrow);
+    if (campaign) {
+      this.announcement = document.createElement('p');
+      this.announcement.className = 'campaign-navigation-status';
+      this.announcement.setAttribute('role', 'status');
+      this.root.append(this.announcement);
+    }
     this.resize.observe(this.root);
 
     parent.append(this.root);
@@ -56,10 +67,23 @@ export class GoalArrow {
     const direction = meters === 0 ? ui.missionUi.atGoal : directions[sector]!;
     if (distanceChanged || this.displayedDirection !== direction) {
       this.displayedDirection = direction;
-      this.arrow.setAttribute(
-        'aria-label',
-        `${ui.missionUi.direction} · ${direction} · ${this.distance.textContent}`,
-      );
+      const label = this.campaign
+        ? translate('campaignRide.direction', {
+            direction,
+            meters: String(meters),
+          })
+        : `${ui.missionUi.direction} · ${direction} · ${this.distance.textContent}`;
+      this.arrow.setAttribute('aria-label', label);
+    }
+    if (this.announcement) {
+      const now = performance.now();
+      if (now - this.announcedAt >= 4000) {
+        const label = this.arrow.getAttribute('aria-label');
+        if (label !== this.announcement.textContent) {
+          this.announcedAt = now;
+          this.announcement.textContent = label;
+        }
+      }
     }
   }
 }

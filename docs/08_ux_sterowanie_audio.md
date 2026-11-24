@@ -31,7 +31,7 @@ W czasie jazdy na ekranie są dwie ikony menu. Telefon otwiera SzprychaApp po za
 
 ### Liczniki przy światłach (#98)
 
-Pikselowe wyświetlacze przy S-1, S-2, S-6 i światłach dla pieszych pokazują czas do najbliższej zmiany lampy, zaokrąglony w górę do pełnych sekund. Włączona strzałka S-2 ma osobne odliczanie do zgaśnięcia, a główne czerwone światło dalej odlicza czas do zielonego. Cyfry mają stały wygląd podczas całej fazy. Album Znaków przypomina, że liczniki występują tylko na części skrzyżowań i zawsze obowiązuje sygnał świetlny.
+Pikselowe wyświetlacze przy S-1, S-2, S-6 i światłach dla pieszych pokazują czas do najbliższej zmiany lampy, zaokrąglony w górę do pełnych sekund. Włączona strzałka S-2 ma osobne odliczanie do zgaśnięcia, a główne czerwone światło dalej odlicza czas do zielonego. Na głównej osi i na przejazdach z S-6 odliczanie czerwonego zaczyna się od 8. Na jezdni główny licznik pokazuje czas do zielonego także wtedy, gdy świecą jednocześnie czerwone i żółte. Cyfry mają stały wygląd podczas całej fazy. Album Znaków przypomina, że liczniki występują tylko na części skrzyżowań i zawsze obowiązuje sygnał świetlny.
 
 „Pokaż liczniki przy światłach” jest domyślnie włączone w ustawieniach zwykłej jazdy. Jazda w egzaminie próbnym ma osobną preferencję w menu pauzy, domyślnie wyłączoną. Ustawienie zapisuje się w profilu.
 
@@ -41,6 +41,14 @@ Pikselowe wyświetlacze przy S-1, S-2, S-6 i światłach dla pieszych pokazują 
 Boot → wybór profilu (do 4 profili lokalnych, avatar + nick z generatora) → Menu główne (Kampania / Wolna jazda / Plac / Mądra Głowa / Licencja / Warsztat / Album / Osiągnięcia / Ustawienia / Dla rodzica) → CityPicker (mapa Polski) → Miasto.
 **Ekran wyników misji:** gwiazdki (animacja), punkty z rozbiciem (dobre nawyki, błędy, czas), 1 przepis „do zapamiętania”, przycisk „Jeszcze raz po 3 gwiazdki”.
 **Strefa dla rodzica** (zablokowana prostym zadaniem matematycznym): postęp mastery w modułach, przepisy sprawiające trudność, limit czasu gry, włączanie rankingów online, eksport certyfikatu.
+
+### Dojazd do następnej misji (#152)
+
+„Dalej” na ekranie wyników wraca do jazdy. HUD pokazuje nazwę kolejnej misji lub treningu. Strzałka na krawędzi ekranu podaje kierunek oraz odległość w metrach, a punkt startu wyróżnia żółty znacznik na mapie. Oba wskaźniki są statyczne przy ograniczonych efektach. Czytnik ekranu odczytuje kierunek i odległość, a podczas jazdy komunikat aktualizuje się co najwyżej raz na cztery sekundy.
+
+Po zatrzymaniu na znaczniku pojawia się zapowiedź i przycisk „Przyjmij misję”. „Jeszcze nie” pozwala odjechać i wrócić później. Gdy kolejna misja jest na innej mapie, HUD pokazuje przycisk przejścia. Po zmianie aktu HUD wyświetla krótki komunikat. SzprychaApp pozwala wybrać inne zlecenie i powtarzać ukończone misje.
+
+[Warszawa na desktopie](screenshots/152-warszawa-desktop.png) · [Poznań na telefonie 640×360](screenshots/152-poznan-telefon.png)
 
 ### Nieudana próba misji (#97)
 

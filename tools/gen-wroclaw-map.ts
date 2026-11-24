@@ -1,3 +1,10 @@
+import {
+  roadSignalTiming,
+  sideArrowTiming,
+  parallelCrossingTiming,
+  standaloneCrossingTiming,
+  startOnRed,
+} from './signal-timing.ts';
 import { tiles } from '../src/render/artFrames.ts';
 import { otherSide, sides } from '../src/rules/world/LaneGraph.ts';
 import { sideVector, type Side } from '../src/rules/world/WorldModel.ts';
@@ -350,19 +357,14 @@ function mainSignal(
   x: number,
   y: number,
   group: string,
-  offset: number,
-  cycle: number,
-  green: number,
+  timing: ReturnType<typeof roadSignalTiming>,
 ) {
   signals.push(
     rect(`${id}-s1`, x, y, 0, 0, {
       code: 'S-1',
       affects: id,
       group,
-      offset_s: offset,
-      cycle_s: cycle,
-      green_s: green,
-      yellow_s: 2,
+      ...timing,
     }),
   );
 }
@@ -393,8 +395,20 @@ for (const { id, merges } of roundabouts)
     if (id === 'rondo-zoo') {
       const [rx, ry] = linePoint(j, radial, true);
       const [ix, iy] = end;
-      mainSignal(`${j.id}-${radial}`, rx, ry, 'zoo-wlot', 13 + i * 4, 28, 9);
-      mainSignal(`${j.id}-${ringIn}`, ix, iy, 'zoo-pierscien', i * 4, 28, 12);
+      mainSignal(
+        `${j.id}-${radial}`,
+        rx,
+        ry,
+        'zoo-wlot',
+        roadSignalTiming(false, i * 4),
+      );
+      mainSignal(
+        `${j.id}-${ringIn}`,
+        ix,
+        iy,
+        'zoo-pierscien',
+        roadSignalTiming(true, i * 4),
+      );
     }
   }
 
@@ -407,9 +421,7 @@ for (const side of sides) {
     x + 12 * dx + 46 * dy,
     y + 12 * dy - 46 * dx,
     horizontal(side) ? 'poludnie-ew' : 'poludnie-ns',
-    horizontal(side) ? 0 : 28,
-    54,
-    14,
+    roadSignalTiming(horizontal(side), startOnRed),
   );
 }
 signals.push(
@@ -417,8 +429,7 @@ signals.push(
     code: 'S-2',
     affects: 'poludnie-N',
     group: 'poludnie-ns',
-    from_s: 29,
-    until_s: 38,
+    ...sideArrowTiming,
     direction: 'right',
   }),
 );
@@ -427,18 +438,14 @@ const signalCrossing = (
   id: string,
   x: number,
   y: number,
-  cycle: number,
-  offset: number,
-  green: number,
-  twoWay: boolean,
+  timing:
+    typeof standaloneCrossingTiming | ReturnType<typeof parallelCrossingTiming>,
 ) =>
   crossingSignals.push(
     rect(`${id}-sygnal`, x, y, 0, 0, {
       crossing: id,
-      cycle_s: cycle,
-      offset_s: offset,
-      green_s: green,
-      twoWay,
+      ...timing,
+      twoWay: true,
     }),
   );
 crossings.push(
@@ -479,9 +486,14 @@ crossings.push(
 zone('ddr-rynek-polnoc', 3488, 1568, 32, 128, 'bike_path', 'bike');
 zone('ddr-rynek-poludnie', 3488, 1824, 32, 64, 'bike_path', 'bike');
 zone('ddr-poludnie-wschod', 2784, 2752, 320, 48, 'bike_path', 'bike');
-signalCrossing('rynek-zebra', 3408, 1684, 32, 0, 9, true);
-signalCrossing('rynek-przejazd', 3532, 1684, 32, 0, 9, true);
-signalCrossing('poludnie-przejazd', 2792, 2784, 54, 9, 7, true);
+signalCrossing('rynek-zebra', 3408, 1684, standaloneCrossingTiming);
+signalCrossing('rynek-przejazd', 3532, 1684, standaloneCrossingTiming);
+signalCrossing(
+  'poludnie-przejazd',
+  2792,
+  2784,
+  parallelCrossingTiming(startOnRed),
+);
 sign('D-6a', 'rondo-hala-S-S', 'N', 4528, 2096);
 
 for (const [y, barriers, offset] of [
@@ -552,7 +564,13 @@ lanes.push(
     priorityClass: 'main',
   }),
 );
-mainSignal('poludnie-tram-E', 2800, south - 12, 'poludnie-ew', 0, 54, 14);
+mainSignal(
+  'poludnie-tram-E',
+  2800,
+  south - 12,
+  'poludnie-ew',
+  roadSignalTiming(true, startOnRed),
+);
 trafficRoutes.push(
   polyline(tram, tramPoints, {
     kind: 'tram',
@@ -619,8 +637,9 @@ trafficRoutes.push(
   polyline(
     'rowerzysta-bulwary',
     [
-      [0, 1536],
-      [mapWidth, 1536],
+      // Keep the cyclist clear of the swept corners of cars on the ring.
+      [0, 1520],
+      [mapWidth, 1520],
     ],
     { kind: 'cyclist', speed: 3.1 },
   ),

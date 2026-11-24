@@ -1,4 +1,5 @@
 export const TILE = 32;
+export const bikeCrossingEdge = 8;
 export const TILE_COLUMNS = 16;
 export const TILE_COUNT = 96;
 

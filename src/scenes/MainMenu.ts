@@ -28,7 +28,13 @@ export class MainMenu extends Scene {
     super('MainMenu');
   }
   create(
-    data?: GameContent | { examResult?: ExamResult; mapUnavailable?: string },
+    data?:
+      | GameContent
+      | {
+          examResult?: ExamResult;
+          mapUnavailable?: string;
+          openExam?: boolean;
+        },
   ) {
     // Data has passed the same schema at build time and at the loading boundary.
     if (data && 'przepisy' in data) this.registry.set('content', data);
@@ -197,6 +203,9 @@ export class MainMenu extends Scene {
       // Phaser otherwise reuses the previous payload on a normal menu visit.
       this.sys.settings.data = {};
       exam.showResult(data.examResult);
+    } else if (data && 'openExam' in data && data.openExam) {
+      this.sys.settings.data = {};
+      exam.button.click();
     }
   }
 }

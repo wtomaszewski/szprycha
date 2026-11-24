@@ -12,7 +12,6 @@ import {
   storyTemplates,
 } from '../gameplay/procedural/storyTemplates';
 import { localDay } from '../progression/mastery';
-import { campaignCompleted } from '../gameplay/exam/exam';
 import { CityTutorial } from './CityTutorial';
 import type { TutorialStep } from '../gameplay/Tutorial';
 import {
@@ -64,10 +63,14 @@ import { cullMapChunks, drawMapGround } from '../render/MapGround';
 import { DrivingControls } from '../ui/DrivingControls';
 import { readingFont } from '../core/fonts';
 import { showError, translate, ui } from '../core/presentation';
-import { showSignalCountdowns } from '../core/progressStore';
+import { showSignalCountdowns, type CampaignRide } from '../core/progressStore';
 
 import { nearbyPhotoSubject } from '../gameplay/signPhoto';
-import type { ExamResult, ExamRide } from '../gameplay/exam/exam';
+import {
+  campaignCompleted,
+  type ExamResult,
+  type ExamRide,
+} from '../gameplay/exam/exam';
 import { examRoute } from '../gameplay/exam/route';
 import { MissionRace } from '../gameplay/MissionRace';
 import {
@@ -76,6 +79,7 @@ import {
 } from '../gameplay/missionEnvironment';
 import {
   MissionSystem,
+  reachedMissionPoint,
   type MissionResult,
   type MissionSpawn,
 } from '../gameplay/MissionSystem';
@@ -103,7 +107,11 @@ import type {
   Verdict,
 } from '../rules/types';
 import { TICKS_PER_SECOND } from '../rules/types';
-import { WorldModel } from '../rules/world/WorldModel';
+import {
+  boxCenter,
+  WorldModel,
+  type PointOfInterest,
+} from '../rules/world/WorldModel';
 import {
   TrafficParticipants,
   type RoutedAgent,
@@ -119,6 +127,7 @@ import { activeDialog, gamepadMenu } from '../ui/KeyboardGamepad';
 import { radioControls } from '../ui/AudioControls';
 import { RuleFeedback } from '../ui/RuleFeedback';
 import { DrivingHud } from '../ui/DrivingHud';
+import { GoalArrow } from '../ui/GoalArrow';
 import { ControlQuestionDialog } from '../ui/ControlQuestionDialog';
 import { RoadAttention } from '../progression/RoadAttention';
 import { SafetySeries } from '../progression/SafetySeries';
@@ -155,14 +164,19 @@ const mapUrls = {
   wies: wiesUrl,
 };
 type MapId = keyof typeof mapUrls;
+type RidePose = Omit<CampaignRide, 'after' | 'map'>;
 type Ride = {
   missionId?: string;
-  map?: MapId;
+  map?: string;
   city?: PlayableCity;
   examRide?: ExamRide;
   freeRide?: boolean;
   dailyOrder?: DailyOrder;
   tutorial?: TutorialStep;
+  guidedAfter?: string;
+  pose?: RidePose;
+  scheme?: DrivingControls['scheme'];
+  briefed?: boolean;
 };
 
 function isMap(id: string): id is MapId {
@@ -220,6 +234,14 @@ export class City extends Scene {
   private progress!: MissionProgress;
   private mapChunks: GameObjects.Image[] = [];
   private mission?: MissionSystem;
+  private campaignArrow?: GoalArrow;
+  private campaignPanel?: HTMLElement;
+  private campaignTarget?: {
+    mission: MissionDefinition;
+    point: PointOfInterest;
+    center: Vec2;
+    offered: boolean;
+  };
   private tutorial?: CityTutorial;
   private tutorialMarker?: GameObjects.Graphics;
   private series!: SafetySeries;
@@ -354,7 +376,16 @@ export class City extends Scene {
     this.load.once('complete', () => this.load.off('loaderror', onError));
   }
 
-  create({ examRide, freeRide = false, dailyOrder, tutorial }: Ride) {
+  create({
+    examRide,
+    freeRide = false,
+    dailyOrder,
+    tutorial,
+    guidedAfter,
+    pose,
+    briefed,
+    scheme,
+  }: Ride) {
     const mapId = this.mapId;
     const definition = this.definition;
     const cached = this.cache.tilemap.get(mapId) as
@@ -380,6 +411,9 @@ export class City extends Scene {
     }
     this.cachedMap = mapId;
     this.freeRide = freeRide;
+    this.campaignArrow = undefined;
+    this.campaignPanel = undefined;
+    this.campaignTarget = undefined;
     this.dailyOrder = dailyOrder;
     this.dailyOffers = [];
     this.phoneStory = undefined;
@@ -396,7 +430,10 @@ export class City extends Scene {
     this.askedCollectible = undefined;
     if (!tutorial)
       this.progress.store.prepareRide(this.content.przepisy.przepisy);
-    if (!this.series || (!examRide && (definition || this.mission))) {
+    if (
+      !this.series ||
+      (!examRide && (definition || this.mission || guidedAfter))
+    ) {
       this.series = new SafetySeries(
         this.content.balans.combo,
         0,
@@ -416,7 +453,8 @@ export class City extends Scene {
         undefined;
     this.rankingCity =
       mapId === 'warszawa' || mapId === 'wroclaw' ? mapId : undefined;
-    this.startRankingRide(Boolean(definition));
+    if (guidedAfter) this.rankingRide = undefined;
+    else this.startRankingRide(Boolean(definition));
     const rankingSeed = this.rankingRide?.seed;
     this.world = new WorldModel(
       cached.data,
@@ -446,7 +484,8 @@ export class City extends Scene {
     this.missionHudAt = -Infinity;
     this.missionMarker = undefined;
     this.displayedTarget = undefined;
-    this.rulesRider.helmet.fastened = definition?.start.kask_zapiety ?? true;
+    this.rulesRider.helmet.fastened =
+      definition?.start.kask_zapiety ?? pose?.helmet ?? true;
     this.intersectionManager = new IntersectionManager(this.world);
     this.traffic = new TrafficParticipants(
       this.world,
@@ -637,7 +676,10 @@ export class City extends Scene {
       speed: 0,
       walking: false,
     };
-    if (this.mission) this.placeRider(this.mission.start);
+    if (pose) {
+      const { x, y, heading, walking } = pose;
+      Object.assign(this.rider, { x, y, heading, walking });
+    } else if (this.mission) this.placeRider(this.mission.start);
     this.riderArt = new RiderArt(
       this,
       this.progress.store.profile.avatarId,
@@ -700,6 +742,7 @@ export class City extends Scene {
       },
       this.progress.store,
       examRide ? 'exam' : 'ride',
+      pose?.scheme ?? scheme,
     );
     this.controls.onQualityChanged = () =>
       this.controls.setLowQuality(this.lowQuality());
@@ -883,6 +926,9 @@ export class City extends Scene {
                   ? 'freeRide'
                   : 'campaign',
             }),
+          !freeRide && !dailyOrder && !definition?.poboczna
+            ? () => this.continueCampaign()
+            : undefined,
         );
       }
       this.updateMissionHud();
@@ -918,7 +964,16 @@ export class City extends Scene {
     }
     this.recordFrame(-FIXED_STEP);
     this.debug = new RuleDebugOverlay(this, this.world, this.controls.root);
-    this.controls.setWalking(false);
+    this.controls.setWalking(this.rider.walking);
+    if (pose) this.controls.setLights(pose.lights);
+    if (guidedAfter) {
+      if (!pose)
+        this.progress.saveCampaignRide(
+          this.city,
+          this.campaignPosition(guidedAfter),
+        );
+      this.guideCampaign(guidedAfter);
+    }
     const lifecycle = new AbortController();
     const { signal } = lifecycle;
     const refreshGlory = () => {
@@ -943,6 +998,7 @@ export class City extends Scene {
       this.scale.off('resize', refreshGlory);
       this.flushProgress();
       this.missionHud?.destroy();
+      this.campaignArrow?.destroy();
       this.tutorial?.destroy();
       this.tutorial = undefined;
       this.tutorialMarker = undefined;
@@ -989,7 +1045,7 @@ export class City extends Scene {
     const frame = this.replay.frame(0)!;
     this.renderFrame(frame, 0);
     this.updateHudConditions(frame);
-    this.openMissionDialogue();
+    this.openMissionDialogue(briefed);
     this.ready = true;
   }
 
@@ -1020,6 +1076,191 @@ export class City extends Scene {
         mission.miasto === this.city &&
         isMap(mission.mapa ?? mission.miasto) &&
         this.progress.isAvailable(mission, this.content),
+    );
+  }
+
+  private campaignPosition(after: string): CampaignRide {
+    const { x, y, heading, walking } = this.rider;
+    return {
+      after,
+      map: this.mapId,
+      x,
+      y,
+      heading,
+      walking,
+      lights: this.controls.actions.lights,
+      helmet: this.rulesRider.helmet.fastened,
+      scheme: this.controls.scheme,
+    };
+  }
+
+  private continueCampaign() {
+    const after = this.mission?.definition.id;
+    if (!after || !this.results?.open) return;
+    audio.stopReading('results');
+    this.results.close();
+    this.scene.restart({
+      city: this.city,
+      map: this.mapId,
+      guidedAfter: after,
+      pose: this.campaignPosition(after),
+    } satisfies Ride);
+  }
+
+  private guideCampaign(after: string) {
+    const panel = document.createElement('section');
+    panel.className = 'mission-panel campaign-navigation-panel';
+    panel.setAttribute('aria-label', ui.campaignRide.navigation);
+    this.campaignPanel = panel;
+    this.controls.root.append(panel);
+
+    const next = this.progress.nextCampaignDestination(
+      this.city,
+      after,
+      this.content,
+    );
+    const message = document.createElement('p');
+    message.setAttribute('role', 'status');
+    const addAction = (label: string, action: () => void) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = label;
+      button.addEventListener('click', () => {
+        if (this.rider.speed === 0) action();
+      });
+      panel.append(button);
+    };
+
+    if (!next) {
+      const complete = campaignCompleted(
+        this.city,
+        this.progress.store.profile,
+        this.content,
+      );
+      message.textContent = complete
+        ? ui.campaignRide.complete
+        : ui.campaignRide.locked;
+      panel.append(message);
+      if (complete)
+        addAction(ui.exam.menu, () =>
+          this.scene.start('MainMenu', { openExam: true }),
+        );
+      addAction(ui.campaignRide.cities, () =>
+        startScene(this, 'CityPicker', { mode: 'campaign' }),
+      );
+      return;
+    }
+
+    const title = document.createElement('strong');
+    title.textContent = translate(
+      next.akt === 0 ? 'campaignRide.training' : 'campaignRide.next',
+      { title: next.tytul },
+    );
+    panel.append(title);
+    const last = this.content.misje.find(({ id }) => id === after);
+    if (last && last.miasto === this.city && last.akt < next.akt) {
+      message.textContent = translate(
+        last.akt === 0
+          ? 'campaignRide.trainingComplete'
+          : 'campaignRide.actComplete',
+        { act: String(last.akt) },
+      );
+      panel.append(message);
+      this.time.delayedCall(5500, () => message.remove());
+    }
+
+    const map = next.mapa ?? next.miasto;
+    if (map !== this.mapId || next.miasto !== this.city) {
+      addAction(
+        translate('campaignRide.travel', {
+          map:
+            map === defaultMap ? ui.driving.title : ui.cityPicker[next.miasto],
+        }),
+        () => this.travelForCampaign(next, after),
+      );
+      return;
+    }
+
+    const point = this.world.pois.get(next.start.poi)!;
+    const center = boxCenter(point);
+    this.campaignTarget = { mission: next, point, center, offered: false };
+    this.campaignArrow = new GoalArrow(this.controls.root, true);
+    const x = center.x / this.world.metersPerPixel;
+    const y = center.y / this.world.metersPerPixel;
+    this.add
+      .graphics()
+      .setDepth(8)
+      .fillStyle(0x1a1c2c, 0.65)
+      .fillCircle(x, y, 13)
+      .lineStyle(5, 0x1a1c2c)
+      .strokeCircle(x, y, 15)
+      .lineStyle(2, 0xffcd75)
+      .strokeCircle(x, y, 15)
+      .fillStyle(0xffcd75)
+      .fillTriangle(x - 6, y - 3, x + 6, y - 3, x, y + 6);
+  }
+
+  private travelForCampaign(next: MissionDefinition, after: string) {
+    const departure = this.campaignPanel;
+    const ride = {
+      city: next.miasto,
+      map: next.mapa ?? next.miasto,
+      guidedAfter: after,
+      scheme: this.controls.scheme,
+    } satisfies Ride;
+    if (next.miasto !== this.city)
+      void this.progress.selectCity(next.miasto).then(() => {
+        if (this.campaignPanel === departure && departure?.isConnected)
+          this.scene.restart(ride);
+      });
+    else this.scene.restart(ride);
+  }
+
+  private updateCampaignGuide() {
+    const target = this.campaignTarget;
+    if (!target) return;
+    const { metersPerPixel } = this.world;
+    const position = {
+      x: this.rider.x * metersPerPixel,
+      y: this.rider.y * metersPerPixel,
+    };
+    this.campaignArrow?.draw(
+      target.center.x - position.x,
+      target.center.y - position.y,
+    );
+    if (!reachedMissionPoint(target.point, position)) {
+      target.offered = false;
+      return;
+    }
+    if (this.rider.speed !== 0 || activeDialog() || target.offered) return;
+    target.offered = true;
+    this.accumulator = 0;
+    this.controls.clear();
+    const { mission } = target;
+    const lines = missionLines(this.content.dialogi, mission.dialog_start);
+    const briefing = lines.some(
+      ({ postac }) => postac === mission.zleceniodawca,
+    )
+      ? lines
+      : [
+          {
+            postac: mission.zleceniodawca,
+            emocja: 'neutral' as const,
+            tekst: mission.opis ?? mission.tytul,
+          },
+          ...lines,
+        ];
+    this.dialogue.show(
+      briefing,
+      () =>
+        this.scene.restart({
+          city: this.city,
+          missionId: mission.id,
+          pose: this.campaignPosition(mission.id),
+          briefed: true,
+        } satisfies Ride),
+      undefined,
+      () => this.controls.focus(),
     );
   }
 
@@ -1181,6 +1422,17 @@ export class City extends Scene {
     }
     if (!this.phone.open && this.tutorial)
       return justPressed(0) && this.tutorial.continue();
+    if (
+      !this.phone.open &&
+      !this.campaignTarget &&
+      this.campaignPanel &&
+      this.rider.speed === 0 &&
+      ([13, 14, 15].some(justPressed) ||
+        (justPressed(0) && this.campaignPanel.contains(document.activeElement)))
+    ) {
+      gamepadMenu(this.campaignPanel, justPressed);
+      return true;
+    }
     if (!this.phone.open)
       return this.mission
         ? justPressed(0) && this.takePhoto()
@@ -1190,7 +1442,7 @@ export class City extends Scene {
     return true;
   }
 
-  private openMissionDialogue() {
+  private openMissionDialogue(briefed = false) {
     if (this.examRide) {
       this.dialogue.show(
         [
@@ -1208,6 +1460,7 @@ export class City extends Scene {
     const lines = this.progress.opening(
       this.mission.definition,
       this.content.dialogi,
+      briefed,
     );
     const order = this.dailyOrder;
     this.dialogue.show(
@@ -1290,6 +1543,7 @@ export class City extends Scene {
     this.resultPresented = true;
     this.rider.speed = 0;
     this.controls.clear();
+    this.publishRiderPosition(this.rider);
     if (this.examRide) {
       const ride = {
         completed: result.status === 'completed',
@@ -1361,6 +1615,10 @@ export class City extends Scene {
           stars: result.stars,
           balance: this.content.balans.gwiazdki,
           clean,
+          campaignRide:
+            !this.freeRide && !order && !definition.poboczna
+              ? this.campaignPosition(definition.id)
+              : undefined,
         });
       const districtsOpened = this.districtGates?.update(
         progress.store.profile.completed,
@@ -2356,6 +2614,7 @@ export class City extends Scene {
       return;
     }
     if (this.results?.open || this.failureDialog?.open) return;
+    if (!this.controls.paused) this.updateCampaignGuide();
     const sirenVolume = this.renderFrame(
       this.replay.frame(this.replay.size - 1)!,
       delta,
