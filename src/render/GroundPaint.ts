@@ -1,6 +1,12 @@
 import type { Types } from 'phaser';
 import type { Box, WorldModel } from '../rules/world/WorldModel';
-import { artHash, TILE, TILE_COLUMNS, tiles } from './artFrames';
+import {
+  artHash,
+  bikeCrossingEdge,
+  TILE,
+  TILE_COLUMNS,
+  tiles,
+} from './artFrames';
 
 const quarterTurn = Math.PI / 2;
 const arrowByTurns: Readonly<Record<string, number>> = {
@@ -194,7 +200,9 @@ export function paintRoad(
       if (zone.kind === 'bike_lane') {
         const u = ((tiles.bicycle - 1) % TILE_COLUMNS) * TILE;
         const v = Math.floor((tiles.bicycle - 1) / TILE_COLUMNS) * TILE;
-        ctx.drawImage(source, u, v, TILE, TILE, -10, -11, 20, 20);
+        const size = Math.min(24, vertical ? w : h);
+        const half = Math.floor(size / 2);
+        ctx.drawImage(source, u, v, TILE, TILE, -half, -half - 1, size, size);
       } else stamp(ctx, source, tiles.bicycle, -16, -17);
       ctx.restore();
     }
@@ -266,13 +274,34 @@ export function paintRoad(
     const gid = crossing.kind === 'bike' ? tiles.bikeCrossing : tiles.zebra;
     const u = ((gid - 1) % TILE_COLUMNS) * TILE;
     const v = Math.floor((gid - 1) / TILE_COLUMNS) * TILE;
+    const edge = Math.min(bikeCrossingEdge, Math.floor(w / 2));
     for (let i = 0; i < h; i += TILE) {
       const length = Math.min(TILE, h - i);
       if (crossing.kind === 'pedestrian')
         ctx.drawImage(source, u, v, TILE, length, 0, i, w, length);
-      else {
-        ctx.drawImage(source, u, v, 5, length, 0, i, 5, length);
-        ctx.drawImage(source, u + 27, v, 5, length, w - 5, i, 5, length);
+      else if (edge > 0) {
+        ctx.drawImage(
+          source,
+          u,
+          v,
+          bikeCrossingEdge,
+          length,
+          0,
+          i,
+          edge,
+          length,
+        );
+        ctx.drawImage(
+          source,
+          u + TILE - bikeCrossingEdge,
+          v,
+          bikeCrossingEdge,
+          length,
+          w - edge,
+          i,
+          edge,
+          length,
+        );
       }
     }
     // Crossing endpoints at the road boundary replace only the raised curb lip.
