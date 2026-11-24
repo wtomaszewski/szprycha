@@ -194,6 +194,18 @@ const krakowProfileSchema = storyProfileSchema.extend({
   graphicsQuality: z.enum(graphicsQualities).optional().catch(undefined),
 });
 
+const campaignRideSchema = z.strictObject({
+  after: id,
+  map: id,
+  x: z.number().nonnegative(),
+  y: z.number().nonnegative(),
+  heading: z.number(),
+  walking: z.boolean(),
+  lights: z.boolean(),
+  helmet: z.boolean(),
+  scheme: z.enum(['simple', 'classic']).optional(),
+});
+
 const profileVersion = 12;
 const profileSchema = krakowProfileSchema.extend({
   version: z.literal(profileVersion),
@@ -202,6 +214,10 @@ const profileSchema = krakowProfileSchema.extend({
   bursztyny: z.array(id).optional(),
   szyszki: z.array(id).optional(),
   rogale: z.array(id).optional(),
+  campaignRides: z
+    .partialRecord(campaignCity, campaignRideSchema)
+    .optional()
+    .catch(undefined),
 });
 
 function addStories(
@@ -211,6 +227,7 @@ function addStories(
 }
 
 export type ProgressProfile = z.infer<typeof profileSchema>;
+export type CampaignRide = z.infer<typeof campaignRideSchema>;
 
 export function showSignalCountdowns(profile: ProgressProfile, exam: boolean) {
   return exam

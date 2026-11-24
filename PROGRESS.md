@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan na 23.11.2026.
+Stan na 24.11.2026.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -15,6 +15,11 @@ Stan na 23.11.2026.
 | M8     | Audio i szlif                               | Ukończony. M8a (#71), M8b (#72) i M8c (#73) w `main`.                                        |
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
+
+## Ciągłość kampanii (#152)
+
+- Po wynikach gra prowadzi do startu następnej misji lub treningu we wszystkich sześciu kampaniach. Przy zmianie mapy pokazuje przycisk przejścia. Zapis odtwarza prowadzenie po ponownym wyborze miasta.
+- [Przebieg kampanii](docs/03_misje.md#przejście-do-następnej-misji-kampanii-152) i [obsługa nawigacji](docs/08_ux_sterowanie_audio.md#dojazd-do-następnej-misji-152).
 
 ## Poznań 2/2 — kampania (#138)
 

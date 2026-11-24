@@ -601,6 +601,14 @@ html[data-gamepad-navigation]
   margin: 8px 8px 0 0;
   pointer-events: auto;
 }
+.campaign-navigation-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .mission-timer {
   display: block;
   width: max-content;

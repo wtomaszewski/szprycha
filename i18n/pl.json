@@ -516,6 +516,21 @@
     "krakow": "Kraków",
     "wies": "Wieś i las"
   },
+  "campaignRide": {
+    "navigation": "Prowadzenie w kampanii",
+    "next": "Następna misja · {title}",
+    "training": "Następny trening · {title}",
+    "direction": "Start misji · {direction} · odległość w metrach: {meters}",
+    "offer": "Zapowiedź misji",
+    "accept": "Przyjmij misję",
+    "decline": "Jeszcze nie",
+    "trainingComplete": "Trening ukończony! Czas na pierwszą misję.",
+    "actComplete": "Akt {act} ukończony! Ruszaj do następnej misji.",
+    "complete": "Brawo! Kampania tego miasta ukończona. Sprawdź egzamin próbny lub wybierz kolejne miasto.",
+    "locked": "Dalsze misje są jeszcze zablokowane. Sprawdź swój postęp i wróć po spełnieniu wymagań.",
+    "cities": "Wybierz miasto kampanii",
+    "travel": "Przejdź na mapę · {map}"
+  },
   "missionResults": {
     "glory": "Moment chwały",
     "noGlory": "W tej misji nie ma bezpiecznego fragmentu do powtórki.",

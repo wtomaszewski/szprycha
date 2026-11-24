@@ -140,13 +140,15 @@ export class CityPicker extends Scene {
       if (leaving) return;
       leaving = true;
       await progress.selectCity(city, freeRide);
-      const mission = !freeRide
-        ? progress.nextMission(city, content)
-        : undefined;
+      const resume = freeRide ? undefined : progress.campaignRide(city);
+      const mission =
+        !freeRide && !resume ? progress.nextMission(city, content) : undefined;
       startScene(this, 'City', {
         city,
-        map: city,
+        map: resume?.map ?? city,
         missionId: mission?.id,
+        guidedAfter: resume?.after,
+        pose: resume,
         freeRide,
       });
     };

@@ -7,17 +7,19 @@ import {
 import type { RankingClient } from '../rankings/RankingClient';
 import { nativeProgress } from '../platform/preferencesProgress';
 import type { DialogueLine, Dialogues } from '../content/dialogues';
-import type {
-  MissionCity,
-  MissionDefinition,
-  PlayableCity,
-  CampaignCity,
+import {
+  campaignCity,
+  type MissionCity,
+  type MissionDefinition,
+  type PlayableCity,
+  type CampaignCity,
 } from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { BreakReminder } from '../progression/breakReminder';
 import { Milestones } from '../progression/milestones';
 import {
   ProgressStore,
+  type CampaignRide,
   type ProgressProfile,
   type RideVerdict,
 } from '../core/progressStore';
@@ -49,6 +51,7 @@ type MissionReward = {
   stars: Stars;
   clean?: boolean;
   balance: GameContent['balans']['gwiazdki'];
+  campaignRide?: CampaignRide;
 };
 
 export const canOpenPhone = (speed: number) => speed === 0;
@@ -169,6 +172,8 @@ export class MissionProgress {
       if (!profile.completed.includes(mission.id))
         profile.completed.push(mission.id);
       if (!reward) return 0;
+      if (reward.campaignRide)
+        (profile.campaignRides ??= {})[mission.miasto] = reward.campaignRide;
       profile.missionPoints += Math.max(0, reward.points);
       const best = profile.bestScores[mission.id];
       if (best === undefined || reward.points > best)
@@ -369,13 +374,45 @@ export class MissionProgress {
   }
 
   nextMission(city: PlayableCity, content: GameContent) {
-    return content.misje.find(
-      (mission) =>
+    let next: MissionDefinition | undefined;
+    for (const mission of content.misje) {
+      if (
         mission.miasto === city &&
         !mission.poboczna &&
+        (!next || mission.akt < next.akt) &&
         !this.store.profile.completed.includes(mission.id) &&
-        this.isAvailable(mission, content),
-    );
+        this.isAvailable(mission, content)
+      )
+        next = mission;
+    }
+    return next;
+  }
+
+  nextCampaignDestination(
+    city: CampaignCity,
+    after: string,
+    content: GameContent,
+  ) {
+    const next = this.nextMission(city, content);
+    if (next) return next;
+    for (const other of campaignCity.options) {
+      if (other === city) continue;
+      const candidate = this.nextMission(other, content);
+      if (candidate?.wymagania?.misje_ukonczone?.includes(after))
+        return candidate;
+    }
+  }
+
+  campaignRide(city: CampaignCity) {
+    const profile = this.store.profile;
+    const ride = profile.campaignRides?.[city];
+    return ride && profile.completed.includes(ride.after) ? ride : undefined;
+  }
+
+  saveCampaignRide(city: CampaignCity, ride: CampaignRide) {
+    this.store.change((profile) => {
+      (profile.campaignRides ??= {})[city] = ride;
+    });
   }
 
   isAvailable(mission: MissionDefinition, content: GameContent) {
@@ -392,7 +429,11 @@ export class MissionProgress {
       : this.xp >= rank.xp;
   }
 
-  opening(mission: MissionDefinition, content: Dialogues): DialogueLine[] {
+  opening(
+    mission: MissionDefinition,
+    content: Dialogues,
+    briefed = false,
+  ): DialogueLine[] {
     const lines: DialogueLine[] = [];
     const newRules: string[] = [];
     for (const ruleId of mission.reguly_cwiczone) {
@@ -412,7 +453,9 @@ export class MissionProgress {
         for (const id of newRules)
           if (!profile.introduced.includes(id)) profile.introduced.push(id);
       });
-    return [...lines, ...missionLines(content, mission.dialog_start)];
+    return briefed
+      ? lines
+      : [...lines, ...missionLines(content, mission.dialog_start)];
   }
 }
 
