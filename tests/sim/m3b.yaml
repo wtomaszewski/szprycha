@@ -22,7 +22,7 @@ scenarios:
         signalOverrides: { tram-lights-W: red }
         expect: { xAbove: 1830, xBelow: 1835, stopped: true, intent: signal }
       - seconds: 14
-        signalOverrides: { tram-lights-W: green }
+        signalOverrides: { tram-lights-W: green, zebra-lights: red }
         expect: { trips: 1 }
   - name: gracz ustępuje pojazdowi uprzywilejowanemu zjeżdżając na prawo (PIER-07)
     actor: emergency-1

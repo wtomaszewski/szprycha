@@ -43,13 +43,11 @@ export function drawLaneSignal(
     else if (phase !== 'off') art.lineBetween(x - 5, y, x + 5, y);
   } else if (kind === 'S-1') {
     const active = phase === 'arrow' ? 'red' : phase;
-    for (const [index, lamp] of lamps.entries())
-      signalLamp(
-        art,
-        x,
-        y + (index - 1) * 7,
-        active === lamp ? lamp : undefined,
-      );
+    for (const [index, lamp] of lamps.entries()) {
+      const lit =
+        active === lamp || (phase === 'red-yellow' && lamp !== 'green');
+      signalLamp(art, x, y + (index - 1) * 7, lit ? lamp : undefined);
+    }
   } else if (phase === 'arrow') {
     const d = kind === 'right' ? 1 : -1;
     art
@@ -66,11 +64,17 @@ export function drawCrossingSignal(
   y: number,
   phase: SignalPhase,
   pedestrian: boolean,
+  lightAt: number,
+  reducedEffects: boolean,
 ) {
   signalHousing(art, x, y, 20, 20);
   if (phase === 'off') return;
-  const open = phase === 'green';
-  const color = colors[open ? 'green' : 'red'];
+  const flashing = phase === 'flashing-green';
+  const open = phase === 'green' || flashing;
+  const color =
+    flashing && !reducedEffects && Math.floor(lightAt * 4) % 2
+      ? 0x566c86
+      : colors[open ? 'green' : 'red'];
   if (!open) art.lineStyle(2, color).lineBetween(x - 5, y - 6, x + 5, y - 6);
   if (pedestrian) {
     art

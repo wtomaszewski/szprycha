@@ -528,7 +528,15 @@ export class TrainingRoad {
         ? this.world.crossingCountdown(crossing, this.lightAt, environment)
         : undefined;
       if (firstVisible) {
-        drawCrossingSignal(this.lights, x, y, phase, pedestrian);
+        drawCrossingSignal(
+          this.lights,
+          x,
+          y,
+          phase,
+          pedestrian,
+          this.lightAt,
+          reducedEffects,
+        );
         this.drawCountdown(x, y + 17, seconds);
       }
       if (secondVisible) {
@@ -538,6 +546,8 @@ export class TrainingRoad {
           oppositeY,
           phase,
           pedestrian,
+          this.lightAt,
+          reducedEffects,
         );
         this.drawCountdown(oppositeX, oppositeY + 17, seconds);
       }

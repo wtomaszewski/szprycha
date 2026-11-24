@@ -97,6 +97,10 @@ Ważność (`kind`) domyślnie z `przepisy.yaml` (`waga_bledu`), detektor może 
 
 **Sygnalizacja świetlna (SYG-01):** przekroczenie linii zatrzymania (P-12 / linia z danych) przy czerwonym → `major`; przy żółtym, gdy gracz miał dość miejsca na bezpieczne zatrzymanie (droga hamowania < odległość do linii) → `minor`. Zatrzymanie przed linią na czerwonym → `good`.
 
+Na głównej osi zielone trwa 15 s, żółte 2 s, a licznik czerwonego odlicza od 8 do zielonego. W te 8 s wchodzi końcowe czerwono-żółte, które także zabrania wjazdu. Boczne wloty mają 4 s zielonego. Przy zmianie kierunku jest odstęp, w którym oba wloty mają czerwone. S-2 zapala się w ramach zielonego kierunku poprzecznego. Skręt na strzałce wymaga pełnego zatrzymania i ustąpienia. [Wspólne ustawienia generatorów siedmiu map](../tools/signal-timing.ts)
+
+Przejazdy rowerowe i przejścia w osi głównej mają 15 s zielonego i 8 s czerwonego. Tam, gdzie współdzielą cykl ze światłami drogowymi, zielone migające trwa 2 s przed czerwonym. Poprzeczna zebra ma krótsze okno wejścia i migające zielone na dokończenie przejścia. AI czeka przed wejściem na zajęty przejazd lub przejście i dokańcza rozpoczęte przejście po zmianie fazy. Samochody i tramwaje czekają na zwolnienie toru jazdy. [Znaczenie sygnałów S-5 i S-6, § 98](https://eli.gov.pl/api/acts/DU/2019/2310/text.html)
+
 **STOP (ZNAK-STOP):** wymagane `speed < 0,1 m/s` przez ≥ 0,3 s w strefie 0–3 m przed linią zatrzymania. Brak → `minor` (nawet bez konfliktu); z konfliktem → `major`.
 
 **Przejazd kolejowy (MSC-01).** Wjazd przy migających czerwonych światłach, ruchu zapór albo opuszczonych zaporach daje `major`, tak samo jak postój na torach przez co najmniej 0,5 s. Zmiana kolejności względem jadącego w tym samym kierunku pojazdu w ostatnich 100 m przed przejazdem daje `minor`. Mapa określa długości faz w polach `open_s`, `lowering_s`, `closed_s`, `raising_s` i opcjonalnym `offset_s`. Samochody AI odczytują tę samą fazę co detektor i światła na mapie.

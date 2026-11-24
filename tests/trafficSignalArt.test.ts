@@ -55,11 +55,51 @@ describe('traffic signal artwork', () => {
     );
   });
 
+  it('lights red and yellow together on S-1', () => {
+    const { art, lenses } = recording();
+    drawLaneSignal(art, 0, 0, 'red-yellow', 'S-1');
+    expect(lenses).toEqual([
+      [0, -7, 3.5, 0xf04a4b],
+      [0, 0, 3.5, 0xfeae34],
+      [0, 7, 2.5, 0x333c57],
+    ]);
+  });
+
+  it.each([
+    [0, false, 0xa7f070],
+    [0.25, false, 0x566c86],
+    [0.5, false, 0xa7f070],
+    [0.25, true, 0xa7f070],
+  ] as const)(
+    'draws flashing green at %ss with reduced effects %s',
+    (lightAt, reducedEffects, color) => {
+      const { art, lenses, lines } = recording();
+      drawCrossingSignal(
+        art,
+        0,
+        0,
+        'flashing-green',
+        true,
+        lightAt,
+        reducedEffects,
+      );
+      expect(lenses).toEqual([[0, -3, 2, color]]);
+      expect(lines).toHaveLength(5);
+      expect(lines.map((line) => line[4])).toEqual(Array(5).fill(color));
+    },
+  );
+
   it.each(['left', 'right'] as const)(
     'lights the %s S-2 arrow only in its phase',
     (kind) => {
       const { art, lines, lenses } = recording();
-      for (const phase of ['red', 'yellow', 'green', 'off'] as const)
+      for (const phase of [
+        'red',
+        'red-yellow',
+        'yellow',
+        'green',
+        'off',
+      ] as const)
         drawLaneSignal(art, 0, 0, phase, kind);
       expect(lines).toEqual([]);
       expect(lenses).toEqual([]);
@@ -78,17 +118,17 @@ describe('traffic signal artwork', () => {
     'distinguishes closed, open and dark heads at crossings (pedestrian: %s)',
     (pedestrian) => {
       const closed = recording();
-      drawCrossingSignal(closed.art, 0, 0, 'red', pedestrian);
+      drawCrossingSignal(closed.art, 0, 0, 'red', pedestrian, 0, false);
       expect(closed.lines[0]).toEqual([-5, -6, 5, -6, 0xf04a4b]);
       expect(closed.lenses.every((lens) => lens[3] === 0xf04a4b)).toBe(true);
 
       const open = recording();
-      drawCrossingSignal(open.art, 0, 0, 'green', pedestrian);
+      drawCrossingSignal(open.art, 0, 0, 'green', pedestrian, 0, false);
       expect(open.lines).toHaveLength(closed.lines.length - 1);
       expect(open.lenses.every((lens) => lens[3] === 0xa7f070)).toBe(true);
 
       const dark = recording();
-      drawCrossingSignal(dark.art, 0, 0, 'off', pedestrian);
+      drawCrossingSignal(dark.art, 0, 0, 'off', pedestrian, 0, false);
       expect(dark.lines).toEqual([]);
       expect(dark.lenses).toEqual([]);
     },

@@ -67,13 +67,15 @@ it('covers all 13 situations and contains the complete gnome collection', () => 
 
 it('sets a safe crossing phase and distinguishes both rail crossings', () => {
   const bicycle = world.crossings.find(({ id }) => id === 'poludnie-przejazd')!;
-  expect(world.phase(world.getLane('poludnie-N')!, 3, day)).toBe('arrow');
-  expect(world.crossingPhase(bicycle, 3, day)).toBe('red');
+  expect(world.phase(world.getLane('poludnie-N')!, 9, day)).toBe('arrow');
+  expect(world.crossingPhase(bicycle, 0, day)).toBe('red');
   expect(world.crossingPhase(bicycle, 47, day)).toBe('green');
-  for (const side of ['N', 'S', 'E', 'W'])
+  for (const side of ['N', 'S', 'E', 'W']) {
+    const open = side === 'E' || side === 'W';
     expect(world.phase(world.getLane(`poludnie-${side}`)!, 47, day)).toBe(
-      'red',
+      open ? 'green' : 'red',
     );
+  }
 
   expect(
     world.crossings
@@ -104,7 +106,9 @@ it.each([1403, 17, 51])(
       seed,
     );
     const vehicles = traffic.road.agents;
-    const trams = traffic.routed.filter(({ kind }) => kind === 'tram');
+    const roadUsers = traffic.routed.filter(
+      ({ kind }) => kind === 'tram' || kind === 'cyclist',
+    );
     const passed = vehicles.map(() => ({ tick: 0, junctions: 0 }));
     const traversed = new Set<string>();
     expect(vehicles.filter(({ kind }) => kind === 'car')).toHaveLength(
@@ -124,10 +128,10 @@ it.each([1403, 17, 51])(
           throw new Error(
             `${car.id} stopped clearing junctions at ${tick / TICKS_PER_SECOND}s (${car.laneId})`,
           );
-        for (const tram of trams)
-          if (tram.active && footprintsOverlap(car, tram))
+        for (const other of roadUsers)
+          if (other.active && footprintsOverlap(car, other))
             throw new Error(
-              `${car.id} overlapped ${tram.id} at ${tick / TICKS_PER_SECOND}s (${car.laneId}, ${JSON.stringify(car.pos)} vs ${JSON.stringify(tram.pos)})`,
+              `${car.id} overlapped ${other.id} at ${tick / TICKS_PER_SECOND}s (${car.laneId}, ${JSON.stringify(car.pos)} vs ${JSON.stringify(other.pos)})`,
             );
         for (let j = i + 1; j < vehicles.length; j++)
           if (footprintsOverlap(car, vehicles[j]!))

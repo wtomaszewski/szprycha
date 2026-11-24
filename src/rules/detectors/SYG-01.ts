@@ -10,7 +10,7 @@ export function trafficLight(
   couldStopOnYellow: boolean,
 ) {
   const kind =
-    phase === 'red' || phase === 'arrow'
+    phase === 'red' || phase === 'red-yellow' || phase === 'arrow'
       ? 'major'
       : phase === 'yellow' && couldStopOnYellow
         ? 'minor'
