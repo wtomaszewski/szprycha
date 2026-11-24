@@ -161,6 +161,10 @@ export function poznanScenery({
     decor('poznan-peron', 2448, 608, 27, 224),
     decor('river-steps', 1544, 1676),
     decor('river-steps', 1930, 1676),
+    rect('ostrow-rower-turbo', 1737, 2081, 0, 0, {
+      kind: 'fallen-bike',
+      mission: 'POZ-A3-01',
+    }),
   ];
   const props = [
     prop('shelter', 2460, 713, 1),
@@ -192,7 +196,22 @@ export function poznanScenery({
     rect('bulwar-warty', 1248, 1536, 1056, 192),
     rect('ostrow-tumski', 1376, 1888, 640, 352),
   ];
+  const finds = [
+    ['rogal-ratusz', 1596, 652, 'Q014'],
+    ['rogal-domki', 1744, 652, 'Q067'],
+    ['rogal-latarnia', 1888, 652, 'Q039'],
+    ['rogal-bulwar', 1830, 1622, 'Q017'],
+  ] as const;
+  const collectibles = finds.map(([id, x, y, question]) =>
+    rect(`poz-${id}`, x, y, 0, 0, { kind: 'rogal', question }),
+  );
   const pois = [
+    ...finds.map(([id, x, y]) => point(id, x, y)),
+    point('rogale-start', 1550, 652),
+    point('ostrow-plansza-start', 1552, 2166, Math.PI / 2),
+    point('ostrow-plansza-znak', 1552, 2212, Math.PI / 2, 24),
+    point('ostrow-plansza-chodnik', 1552, 2400, Math.PI / 2),
+    point('ostrow-plansza-meta', 1552, 2430, Math.PI / 2),
     point('rynek-start', 1376, 782),
     point('rynek-zasady', 1510, 877),
     point('rynek-obejscie', 1810, 877),
@@ -209,5 +228,13 @@ export function poznanScenery({
     point('ostrow-pomoc', 1712, 2080, Math.PI / 2),
     point('ostrow-meta', 1720, 2150, Math.PI / 2),
   ];
-  return { blocks, props, collisions, districts, pois, map_decorations };
+  return {
+    blocks,
+    props,
+    collisions,
+    districts,
+    pois,
+    map_decorations,
+    collectibles,
+  };
 }

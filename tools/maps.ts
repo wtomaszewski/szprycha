@@ -60,6 +60,7 @@ export async function validateMaps(root: string, content: GameContent) {
     zbierz_obwarzanka: 'obwarzanek',
     zbierz_bursztyn: 'bursztyn',
     zbierz_szyszke: 'szyszka',
+    zbierz_rogala: 'rogal',
   } as const;
   for (const mission of [...content.misje, ...examRoutes]) {
     const map = mission.mapa ?? mission.miasto;
@@ -70,7 +71,8 @@ export async function validateMaps(root: string, content: GameContent) {
       if (
         goal.typ === 'zbierz_obwarzanka' ||
         goal.typ === 'zbierz_bursztyn' ||
-        goal.typ === 'zbierz_szyszke'
+        goal.typ === 'zbierz_szyszke' ||
+        goal.typ === 'zbierz_rogala'
       ) {
         const kind = collectibleKinds[goal.typ];
         const item = world.collectibles.get(goal.poi);

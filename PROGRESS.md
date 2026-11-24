@@ -16,6 +16,11 @@ Stan na 23.11.2026.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Poznań 2/2 — kampania (#138)
+
+- Kampania „Trzy znaki na drewnie” zachowuje cztery szkolenia i dodaje sześć misji w trzech aktach, cztery drewniane rogale z zagadkami i przejazd kontrolny przez śluzę rowerową.
+- Główne misje ćwiczą wszystkie moduły M01–M07. Testy sprawdzają legalne trasy, brak premii za niedozwolone skróty, zapis znajdziek, pierwszą pomoc i dziesięć minut ruchu dla trzech ziaren. [Mapa, pomiary i zrzuty](docs/05_mapy.md#poznań)
+
 ## Poznań 1/2 — mapa (#137)
 
 - W Wolnej jeździe można wybrać Poznań ze Starym Rynkiem, południowym pokazem koziołków, Ostrowem Tumskim, bulwarem i dawnym browarem.

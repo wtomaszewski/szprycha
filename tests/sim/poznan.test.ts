@@ -19,7 +19,7 @@ const dusk: EnvState = { ...day, time: 'dusk' };
 
 it('covers all traffic situations and M01–M07 on the Poznań map', () => {
   const training = missionContent.misje.filter(
-    ({ miasto }) => miasto === 'poznan',
+    ({ miasto, akt }) => miasto === 'poznan' && akt === 0,
   );
   const { situations, modules } = analyseMapCoverage(
     world,

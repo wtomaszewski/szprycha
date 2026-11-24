@@ -32,6 +32,14 @@ const collections = {
     variants: 1,
     paint: paintBursztyn,
   },
+  rogal: {
+    field: 'rogale',
+    label: ui.driving.rogale,
+    hint: ui.driving.rogaleHint,
+    question: ui.driving.rogalQuestion,
+    variants: 1,
+    paint: paintRogal,
+  },
   szyszka: {
     field: 'szyszki',
     label: ui.driving.szyszki,
@@ -174,6 +182,31 @@ function paintSzyszka(ctx: CanvasRenderingContext2D) {
       '................',
     ],
     { '#': '#472c30', h: '#ffcd75', a: '#bb7848', b: '#7b472e' },
+  );
+}
+
+function paintRogal(ctx: CanvasRenderingContext2D) {
+  paintPixels(
+    ctx,
+    [
+      '................',
+      '......####......',
+      '....##hhha##....',
+      '...#hhaaabaa#...',
+      '..#haaaahaaba#..',
+      '.#haabaaabaaba#.',
+      '.#aabahaaabaab#.',
+      '#aabah####aabab#',
+      '#abab#....#aabb#',
+      '#abb#......#abb#',
+      '#bb#........#bb#',
+      '.###........###.',
+      '................',
+      '................',
+      '................',
+      '................',
+    ],
+    { '#': '#542d29', h: '#ffd496', a: '#cf884e', b: '#9a5434' },
   );
 }
 
