@@ -59,6 +59,8 @@ export function visitRoofDetails(
     b.landmarkId === 'zamek-krolewski' ||
     b.landmarkId === 'ratusz-wroclawski' ||
     b.landmarkId === 'sukiennice' ||
+    b.landmarkId === 'lodz-fabryka-komin' ||
+    b.landmarkId?.startsWith('lodz-mural-') ||
     b.landmarkId === 'wawel-kopula' ||
     b.landmarkId === 'wawel-baszta' ||
     b.landmarkId?.startsWith('katedra-wieza-')
@@ -98,6 +100,18 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
       ctx.fillStyle = light;
       ctx.fillRect(0, 0, b.width, 2);
       ctx.fillRect(0, 0, 2, b.height);
+      if (b.landmarkId === 'lodz-fabryka-komin') {
+        ctx.fillStyle = '#8c4b3e';
+        ctx.fillRect(0, 0, b.width, b.height);
+        ctx.fillStyle = '#c17a5b';
+        ctx.fillRect(1, 1, b.width - 2, 3);
+        ctx.fillRect(1, 4, 3, b.height - 5);
+        ctx.fillStyle = '#3b272a';
+        ctx.fillRect(5, 5, b.width - 10, b.height - 10);
+        ctx.fillStyle = '#1a1c2c';
+        ctx.fillRect(7, 7, b.width - 14, b.height - 14);
+        return;
+      }
       if (palace) {
         for (let x = 4; x < b.width - 3; x += 8) {
           ctx.fillRect(x, 2, 4, 2);
@@ -361,7 +375,12 @@ export function wallEmissionTexture(
     Math.ceil(width),
     floors * FLOOR_PX,
     (ctx) => {
-      if (b.landmarkId === 'stadion-narodowy') return;
+      if (
+        b.landmarkId === 'stadion-narodowy' ||
+        b.landmarkId === 'lodz-fabryka-komin' ||
+        b.landmarkId?.startsWith('lodz-mural-')
+      )
+        return;
       for (let floor = 0; floor < floors; floor++) {
         const row = groundFloor && floor === floors - 1 ? 2 : floor % 2;
         for (let x = 0; x < width; x += 32) {
@@ -438,6 +457,60 @@ export function wallTexture(
       }
       ctx.fillStyle = '#f2e2c4';
       for (let y = 0; y < height; y += FLOOR_PX) ctx.fillRect(0, y, width, 2);
+    }
+    if (b.landmarkId === 'lodz-kamienica') {
+      ctx.fillStyle = '#e9d7ba';
+      for (let y = 0; y < height; y += FLOOR_PX) ctx.fillRect(0, y, width, 2);
+      for (let x = 1; x < width; x += 32) ctx.fillRect(x, 0, 2, height);
+      if (groundFloor) {
+        ctx.fillStyle = '#613f43';
+        ctx.fillRect(width / 2 - 7, height - 13, 14, 13);
+        ctx.fillRect(width / 2 - 5, height - 15, 10, 2);
+      }
+    }
+    if (b.landmarkId === 'lodz-fabryka-komin') {
+      ctx.fillStyle = '#8c4b3e';
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = '#533230';
+      for (let y = 3; y < height; y += 4) {
+        ctx.fillRect(0, y, width, 1);
+        for (let x = y % 8 === 3 ? 5 : 11; x < width; x += 12)
+          ctx.fillRect(x, y - 3, 1, 3);
+      }
+      ctx.fillStyle = '#af6950';
+      ctx.fillRect(0, 0, width, 4);
+    }
+    if (b.landmarkId === 'lodz-fabryka-hala') {
+      for (let y = 0; y < height; y += FLOOR_PX) {
+        for (let x = 3; x < width - 10; x += 20) {
+          ctx.fillStyle = '#482b28';
+          ctx.fillRect(x, y + 6, 10, FLOOR_PX - 6);
+          ctx.fillRect(x + 2, y + 4, 6, 2);
+          ctx.fillStyle = '#829092';
+          ctx.fillRect(x + 2, y + 7, 6, 2);
+        }
+      }
+    }
+    const mural = b.landmarkId;
+    if (
+      (mural === 'lodz-mural-fale' || mural === 'lodz-mural-romb') &&
+      width >= 60
+    ) {
+      const left = Math.floor(width * 0.15);
+      const right = Math.ceil(width * 0.85);
+      ctx.fillStyle = '#252941';
+      ctx.fillRect(left, 6, right - left, height - 12);
+      for (let x = left; x < right - 2; x += 3) {
+        const phase = (x - left) / (right - left);
+        const offset =
+          mural === 'lodz-mural-fale'
+            ? Math.round((Math.sin(phase * Math.PI * 4) * (height - 32)) / 3)
+            : Math.round((0.5 - Math.abs(phase - 0.5)) * (height - 18));
+        ctx.fillStyle = mural === 'lodz-mural-fale' ? '#38b8a6' : '#ad80c4';
+        ctx.fillRect(x, height / 2 - 5 + offset, 3, 5);
+        ctx.fillStyle = '#f3ba70';
+        ctx.fillRect(x, height / 2 - 2 - offset, 3, 5);
+      }
     }
     if (b.landmarkId === 'zuraw-korpus') {
       ctx.fillStyle = '#3e2c28';

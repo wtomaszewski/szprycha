@@ -17,11 +17,23 @@ export const trafficFootprints = {
   emergency: { halfLength: 2.75, halfWidth: 1.05 },
 } satisfies Record<AgentState['kind'], Footprint>;
 
+const cycleFootprints = {
+  rickshaw: { halfLength: 1.3, halfWidth: 0.63 },
+  cargo: { halfLength: 1.25, halfWidth: 0.45 },
+};
+
+export function agentFootprint({
+  kind,
+  cycleBody,
+}: Pick<AgentState, 'kind' | 'cycleBody'>) {
+  return cycleBody ? cycleFootprints[cycleBody] : trafficFootprints[kind];
+}
+
 export function footprintInPixels(
-  kind: AgentState['kind'],
+  agent: Pick<AgentState, 'kind' | 'cycleBody'>,
   metersPerPixel: number,
 ) {
-  const { halfLength, halfWidth } = trafficFootprints[kind];
+  const { halfLength, halfWidth } = agentFootprint(agent);
   return {
     halfLength: halfLength / metersPerPixel,
     halfWidth: halfWidth / metersPerPixel,
@@ -29,7 +41,7 @@ export function footprintInPixels(
 }
 
 export function footprintReachesBox(agent: AgentState, box: Box, margin = 0) {
-  const { halfLength, halfWidth } = trafficFootprints[agent.kind];
+  const { halfLength, halfWidth } = agentFootprint(agent);
   const dx = box.x + box.width / 2 - agent.pos.x;
   const dy = box.y + box.height / 2 - agent.pos.y;
   return rectanglesOverlap(
@@ -47,8 +59,8 @@ export function footprintReachesBox(agent: AgentState, box: Box, margin = 0) {
 export function footprintsOverlap(a: AgentState, b: AgentState, margin = 0) {
   const dx = b.pos.x - a.pos.x;
   const dy = b.pos.y - a.pos.y;
-  const { halfLength, halfWidth } = trafficFootprints[a.kind];
-  const other = trafficFootprints[b.kind];
+  const { halfLength, halfWidth } = agentFootprint(a);
+  const other = agentFootprint(b);
   const reach =
     halfLength + halfWidth + other.halfLength + other.halfWidth + 2 * margin;
   if (Math.abs(dx) >= reach || Math.abs(dy) >= reach) return false;

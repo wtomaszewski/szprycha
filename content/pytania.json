@@ -1193,6 +1193,17 @@
   "poprawna": 0,
   "wyjasnienie": "Ustąp pieszemu wchodzącemu na przejście i pieszemu, który już po nim idzie.",
   "zrodlo": "PoRD, art. 13 ust. 7 i art. 26 ust. 1"
+ },
+ {
+  "id": "Q068",
+  "modul": "M05",
+  "przepisy": ["MAN-14"],
+  "poziom": 1,
+  "pytanie": "Z naprzeciwka jedzie szeroka riksza, a obok jest mało miejsca. Co robisz?",
+  "odpowiedzi": ["Przyspieszam, żeby szybko przejechać", "Zjeżdżam na prawo, zwalniam albo czekam", "Jadę środkiem, bo mam mniejszy rower"],
+  "poprawna": 1,
+  "wyjasnienie": "Przy wymijaniu zachowaj bezpieczny odstęp. Gdy jest ciasno, zjedź w prawo, zwolnij lub poczekaj.",
+  "zrodlo": "Prawo o ruchu drogowym — zasady bezpiecznego wymijania"
  }
  ]
 }

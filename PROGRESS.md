@@ -21,6 +21,11 @@ Stan na 24.11.2026.
 - Po wynikach gra prowadzi do startu następnej misji lub treningu we wszystkich sześciu kampaniach. Przy zmianie mapy pokazuje przycisk przejścia. Zapis odtwarza prowadzenie po ponownym wyborze miasta.
 - [Przebieg kampanii](docs/03_misje.md#przejście-do-następnej-misji-kampanii-152) i [obsługa nawigacji](docs/08_ux_sterowanie_audio.md#dojazd-do-następnej-misji-152).
 
+## Łódź 1/2 — mapa (#139)
+
+- Wolna jazda obejmuje Piotrkowską z rikszą i rowerem cargo, pofabryczne podwórka z muralami oraz aleję z neutralnym tramwajem i kontrapasem w bocznej uliczce.
+- Cztery szkolenia `LOD-B-01`–`LOD-B-04` ćwiczą m.in. pierwszeństwo pieszych, bezpieczne wymijanie i ustępowanie przy bramie. Raport ścisły obejmuje 13/13 sytuacji i M01–M07. [Mapa, pomiary i zrzuty](docs/05_mapy.md#łódź)
+
 ## Poznań 2/2 — kampania (#138)
 
 - Kampania „Trzy znaki na drewnie” zachowuje cztery szkolenia i dodaje sześć misji w trzech aktach, cztery drewniane rogale z zagadkami i przejazd kontrolny przez śluzę rowerową.

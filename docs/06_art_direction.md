@@ -148,6 +148,17 @@ Tramwaje Krakowa i Gdańska mają srebrne pasy wzdłuż grafitowej bryły, ciemn
 
 **Pomoc za mostem.** Nieruchomy rower leży obok siedzącego Turbo. Scenkę przy dojściu do katedry rysuje renderer dekoracji na podstawie obiektu z generatora mapy.
 
+### Łódź
+
+| Landmark | Sylwetka i paleta |
+| --- | --- |
+| Piotrkowska | Szereg wąskich kamienic z jasnymi gzymsami, wysoką kamienicą z miedzianym dachem pośrodku i ogródkami pod pikselowymi parasolami. |
+| Fabryka | Długa hala z rytmem łukowych okien, przysadzista kotłownia i wysoki, ciemnoczerwony komin. Ceglane bryły otaczają prześwit bramy. |
+| Podwórka | Na ścianach oficyn są dwa autorskie murale. Turkusowe fale i fioletowe romby układają się na granatowym tle z ochrowym akcentem. |
+| Tramwaj, riksza i cargo | Tramwaj ma szarą karoserię ze stalowym pasem. Rikszę rozpoznaje się po dwóch tylnych kołach i zielonej ławce, a cargo po ochrowej skrzyni przed kierownicą. |
+
+Bryły i rekwizyty rozmieszcza generator mapy. Murale powstają w rendererze ścian, a pojazdy w generatorze sprite’ów. Sylwetki są autorskie i pozbawione szyldów oraz logotypów. Tramwaj korzysta z neutralnej palety gry.
+
 ## 7. Kafelki (tileset minimum)
 Asfalt (zwykły, łatany, mokry), linie (ciągła, przerywana, P-10 zebra, P-11 przejazd rowerowy — czerwony/kratka, P-12, P-13 trójkąty, P-23 symbol roweru, strzałki), chodnik (płyty), kostka, kocie łby, krawężniki (z przejściami obniżonymi), DDR (czerwona nawierzchnia), trawa, żwir, pobocze, tory tramwajowe (w jezdni i na zieleni), tory kolejowe, zapory (animowane), woda (animowana 4 klatki), nabrzeże, schodki, piasek plaży miejskiej, liście jesienią, śnieg (wariant zimowy).
 

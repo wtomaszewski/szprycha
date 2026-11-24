@@ -103,12 +103,12 @@
       "id": "traffic-cyclist",
       "file": "generated/traffic-cyclist.png",
       "width": 512,
-      "height": 576,
+      "height": 960,
       "frameWidth": 32,
       "frameHeight": 32,
-      "frames": 288,
+      "frames": 480,
       "directions": 16,
-      "description": "Trzy zestawy stroju, sylwetki i kasku, po sześć klatek pedałowania i 16 kierunków od północy."
+      "description": "Trzech zwykłych rowerzystów, riksza i rower cargo, po sześć klatek pedałowania i 16 kierunków od północy."
     },
     {
       "id": "traffic-pedestrian",

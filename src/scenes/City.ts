@@ -34,6 +34,7 @@ import warsawUrl from '../../maps/warszawa.tmj?url';
 import wroclawUrl from '../../maps/wroclaw.tmj?url';
 import krakowUrl from '../../maps/krakow.tmj?url';
 import gdanskUrl from '../../maps/gdansk.tmj?url';
+import lodzUrl from '../../maps/lodz.tmj?url';
 import poznanUrl from '../../maps/poznan.tmj?url';
 import wiesUrl from '../../maps/wies.tmj?url';
 import blockWallsUrl from '../../assets/generated/walls.png?url';
@@ -89,7 +90,9 @@ import {
   type MissionProgress,
 } from '../gameplay/MissionProgress';
 import {
+  isCampaignCity,
   missionCity,
+  type CampaignCity,
   type MissionCity,
   type PlayableCity,
 } from '../content/missions';
@@ -161,6 +164,7 @@ const mapUrls = {
   krakow: krakowUrl,
   gdansk: gdanskUrl,
   poznan: poznanUrl,
+  lodz: lodzUrl,
   wies: wiesUrl,
 };
 type MapId = keyof typeof mapUrls;
@@ -498,6 +502,7 @@ export class City extends Scene {
               mapId === 'krakow' ||
               mapId === 'gdansk' ||
               mapId === 'poznan' ||
+              mapId === 'lodz' ||
               mapId === 'wies') &&
             !definition
           ? 'ambient'
@@ -644,7 +649,8 @@ export class City extends Scene {
       emergency: 0,
     };
     this.actors = this.agents.map(
-      ({ kind }) => new TrafficArt(this, kind, variants[kind]++, mapId),
+      ({ kind, cycleBody }) =>
+        new TrafficArt(this, kind, variants[kind]++, mapId, cycleBody),
     );
     this.rivalSprite = this.mission?.race
       ? this.add
@@ -704,9 +710,11 @@ export class City extends Scene {
               ? ui.driving.gdanskTitle
               : mapId === 'poznan'
                 ? ui.cityPicker.poznan
-                : mapId === 'wies'
-                  ? ui.driving.wiesTitle
-                  : ui.driving.title;
+                : mapId === 'lodz'
+                  ? ui.cityPicker.lodz
+                  : mapId === 'wies'
+                    ? ui.driving.wiesTitle
+                    : ui.driving.title;
     this.graphics.lite = this.lowQuality();
     this.controls = new DrivingControls(
       tutorial ? ui.tutorial.title : examRide ? ui.exam.ride : areaTitle,
@@ -922,11 +930,15 @@ export class City extends Scene {
                 (this.city === 'krakow' ||
                   this.city === 'gdansk' ||
                   this.city === 'poznan' ||
+                  this.city === 'lodz' ||
                   this.city === 'wies')
                   ? 'freeRide'
                   : 'campaign',
             }),
-          !freeRide && !dailyOrder && !definition?.poboczna
+          !freeRide &&
+            isCampaignCity(this.city) &&
+            !dailyOrder &&
+            !definition?.poboczna
             ? () => this.continueCampaign()
             : undefined,
         );
@@ -966,13 +978,13 @@ export class City extends Scene {
     this.debug = new RuleDebugOverlay(this, this.world, this.controls.root);
     this.controls.setWalking(this.rider.walking);
     if (pose) this.controls.setLights(pose.lights);
-    if (guidedAfter) {
+    if (guidedAfter && isCampaignCity(this.city)) {
       if (!pose)
         this.progress.saveCampaignRide(
           this.city,
           this.campaignPosition(guidedAfter),
         );
-      this.guideCampaign(guidedAfter);
+      this.guideCampaign(this.city, guidedAfter);
     }
     const lifecycle = new AbortController();
     const { signal } = lifecycle;
@@ -1107,7 +1119,7 @@ export class City extends Scene {
     } satisfies Ride);
   }
 
-  private guideCampaign(after: string) {
+  private guideCampaign(city: CampaignCity, after: string) {
     const panel = document.createElement('section');
     panel.className = 'mission-panel campaign-navigation-panel';
     panel.setAttribute('aria-label', ui.campaignRide.navigation);
@@ -1115,7 +1127,7 @@ export class City extends Scene {
     this.controls.root.append(panel);
 
     const next = this.progress.nextCampaignDestination(
-      this.city,
+      city,
       after,
       this.content,
     );
@@ -1133,7 +1145,7 @@ export class City extends Scene {
 
     if (!next) {
       const complete = campaignCompleted(
-        this.city,
+        city,
         this.progress.store.profile,
         this.content,
       );

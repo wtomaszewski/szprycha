@@ -9,6 +9,7 @@ import { nativeProgress } from '../platform/preferencesProgress';
 import type { DialogueLine, Dialogues } from '../content/dialogues';
 import {
   campaignCity,
+  isCampaignCity,
   type MissionCity,
   type MissionDefinition,
   type PlayableCity,
@@ -172,7 +173,7 @@ export class MissionProgress {
       if (!profile.completed.includes(mission.id))
         profile.completed.push(mission.id);
       if (!reward) return 0;
-      if (reward.campaignRide)
+      if (reward.campaignRide && isCampaignCity(mission.miasto))
         (profile.campaignRides ??= {})[mission.miasto] = reward.campaignRide;
       profile.missionPoints += Math.max(0, reward.points);
       const best = profile.bestScores[mission.id];
@@ -367,7 +368,7 @@ export class MissionProgress {
         profile.freeRideCity = city;
       else {
         if (freeRide) delete profile.freeRideCity;
-        profile.selectedCity = city;
+        if (isCampaignCity(city)) profile.selectedCity = city;
       }
     });
     await this.store.flush();

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { Vec2 } from '../types';
+import { cycleBodies, type Vec2 } from '../types';
 import { rightEdgeDistance } from '../detectors/GDZIE-03.ts';
 import { RoadPath } from './RoadPath.ts';
 import {
@@ -27,6 +27,7 @@ export const routeProperties = z.object({
   repeat_s: z.number().positive().optional(),
   loop: z.literal(true).optional(),
   rural_edge: z.literal(true).optional(),
+  cycle_body: z.enum(cycleBodies).optional(),
 });
 export const routeControlProperties = z.discriminatedUnion('kind', [
   z.object({
@@ -111,6 +112,8 @@ export function buildTrafficRoutes(
       throw new Error(`Traffic route outside map: ${id}`);
     const foot = kind === 'pedestrian';
     const bike = kind === 'cyclist';
+    if (input.cycle_body && !bike)
+      throw new Error(`Cycle body requires a cycle route: ${id}`);
     const walkZones = zones.filter(
       ({ kind, sharedSide }) =>
         kind === 'sidewalk' ||
@@ -123,7 +126,8 @@ export function buildTrafficRoutes(
       ({ kind, sharedSide }) =>
         kind === 'bike_lane' ||
         kind === 'bike_path' ||
-        (kind === 'shared_path' && sharedSide !== 'pedestrian'),
+        (kind === 'shared_path' && sharedSide !== 'pedestrian') ||
+        (kind === 'living_zone' && input.cycle_body !== undefined),
     );
     const motorRoute = kind === 'car' || kind === 'bus' || kind === 'tractor';
     if (input.rural_edge && !foot && !bike)
@@ -199,6 +203,7 @@ export function buildTrafficRoutes(
       bike &&
       !input.event_only &&
       !input.rural_edge &&
+      !input.cycle_body &&
       (!onBoundary(path.start) || !onBoundary(path.end))
     )
       throw new Error(`Cycle route needs boundary endpoints: ${id}`);

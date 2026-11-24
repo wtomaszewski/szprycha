@@ -37,6 +37,9 @@ export interface RiderState {
   phoneInHand?: boolean;
 }
 
+export const cycleBodies = ['rickshaw', 'cargo'] as const;
+export type CycleBody = (typeof cycleBodies)[number];
+
 export interface AgentState {
   id: string;
   kind:
@@ -52,6 +55,7 @@ export interface AgentState {
   stopId?: string;
   signalActive?: boolean;
   bikeInfrastructure?: boolean;
+  cycleBody?: CycleBody;
   yieldingAtCrossing?: boolean;
   junctionProgress?: number; // signed distance along the movement from the stop line
 }

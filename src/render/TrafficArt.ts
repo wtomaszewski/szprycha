@@ -1,6 +1,6 @@
 import type { GameObjects, Scene } from 'phaser';
 import type { ReplayActor } from '../gameplay/ReplayBuffer';
-import type { AgentState } from '../rules/types';
+import type { AgentState, CycleBody } from '../rules/types';
 import { emergencyLightPhase } from './emergencyLights';
 import {
   cyclistVariants,
@@ -76,6 +76,7 @@ export class TrafficArt {
     private readonly kind: AgentState['kind'],
     variant: number,
     mapId: string,
+    cycleBody?: CycleBody,
   ) {
     let key: SpriteSheet =
       kind === 'bus' || kind === 'tractor'
@@ -111,7 +112,10 @@ export class TrafficArt {
             (city) =>
               mapId.startsWith(city) ||
               (city === 'krakow' &&
-                (mapId === 'gdansk' || mapId === 'wies' || mapId === 'poznan')),
+                (mapId === 'gdansk' ||
+                  mapId === 'wies' ||
+                  mapId === 'poznan' ||
+                  mapId === 'lodz')),
           ),
         );
         this.rear = scene.add
@@ -123,7 +127,9 @@ export class TrafficArt {
         this.row = variant % pedestrianTypes.length;
         break;
       case 'cyclist':
-        this.row = variant % cyclistVariants;
+        this.row = cycleBody
+          ? cyclistVariants + (cycleBody === 'cargo' ? 1 : 0)
+          : variant % cyclistVariants;
         break;
     }
     const [width, height] = spriteSheets[key];

@@ -2,6 +2,7 @@ import { startScene } from './startScene';
 import { Geom, Scene } from 'phaser';
 import {
   campaignCity,
+  isCampaignCity,
   playableCity,
   type PlayableCity,
 } from '../content/missions';
@@ -14,9 +15,10 @@ import { menuGamepad } from '../ui/KeyboardGamepad';
 type Mode = 'campaign' | 'freeRide';
 const pins = [
   { id: 'warszawa', x: 426, y: 169 },
-  { id: 'wroclaw', x: 221, y: 228 },
+  { id: 'wroclaw', x: 210, y: 228 },
   { id: 'gdansk', x: 319, y: 79 },
   { id: 'poznan', x: 208, y: 144 },
+  { id: 'lodz', x: 316, y: 196 },
   { id: 'krakow', x: 365, y: 258 },
   { id: 'wies', x: 450, y: 78 },
 ] as const;
@@ -140,9 +142,10 @@ export class CityPicker extends Scene {
       if (leaving) return;
       leaving = true;
       await progress.selectCity(city, freeRide);
-      const resume = freeRide ? undefined : progress.campaignRide(city);
+      const campaign = !freeRide && isCampaignCity(city);
+      const resume = campaign ? progress.campaignRide(city) : undefined;
       const mission =
-        !freeRide && !resume ? progress.nextMission(city, content) : undefined;
+        campaign && !resume ? progress.nextMission(city, content) : undefined;
       startScene(this, 'City', {
         city,
         map: resume?.map ?? city,
@@ -167,6 +170,7 @@ export class CityPicker extends Scene {
       ? progress.freeRideCity
       : progress.selectedCity;
     for (const { id, x, y } of pins) {
+      if (id === 'lodz' && !freeRide) continue;
       const pin = document.createElement('button');
       pin.type = 'button';
       pin.className = 'city-picker-pin';

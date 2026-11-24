@@ -515,6 +515,7 @@
     "wroclaw": "Wrocław",
     "gdansk": "Gdańsk",
     "poznan": "Poznań",
+    "lodz": "Łódź",
     "krakow": "Kraków",
     "wies": "Wieś i las"
   },
@@ -640,6 +641,58 @@
       "odp2": "Wjeżdżam na skrót, bo znak dotyczy tylko samochodów.",
       "wyjasnienie": "B-1 zakazuje ruchu także rowerom. Zostań na dozwolonej trasie.",
       "meta": "Wyjedź z gospodarstwa, skręć w prawo w drogę gminną i oddaj mapę przy znaczniku."
+    },
+    "LOD-B-01": {
+      "tytul": "Piotrkowska dla pieszych",
+      "opis": "Poćwicz jazdę w strefie zamieszkania i sprawdź, jak bezpiecznie zacząć pomagać.",
+      "start": "Zapnij kask i sprawdź lampki.",
+      "zasady": "Zatrzymaj się przy latarni przed pasażem.",
+      "pytanie": "Jak jedziesz w strefie zamieszkania oznaczonej D-40?",
+      "odp1": "Najwyżej 20 km/h i ustępuję pieszym na całej szerokości drogi.",
+      "odp2": "Piesi mają pierwszeństwo tylko na przejściu.",
+      "wyjasnienie": "W strefie zamieszkania piesi mają pierwszeństwo na całej szerokości drogi, a limit prędkości to 20 km/h.",
+      "pomoc": "Omiń pasaż z zakazem wjazdu i zatrzymaj się przy kolejnym punkcie.",
+      "pytanie_pomoc": "Ktoś przewrócił się przy ogródku. Co robisz najpierw?",
+      "pomoc_odp1": "Zostawiam rower na środku drogi i od razu biegnę pomagać.",
+      "pomoc_odp2": "Zatrzymuję się bezpiecznie przy brzegu i sprawdzam, czy mogę podejść.",
+      "pomoc_wyjasnienie": "Zanim podejdziesz, zadbaj o swoje bezpieczeństwo i ostrzeż osoby w pobliżu.",
+      "meta": "Jedź ostrożnie do końca Piotrkowskiej."
+    },
+    "LOD-B-02": {
+      "tytul": "Zmieść się obok rikszy",
+      "opis": "Wypróbuj bezpieczne wymijanie szerokich rowerów na Piotrkowskiej.",
+      "zasady": "Zatrzymaj się przed odcinkiem z ruchem z naprzeciwka.",
+      "pytanie": "Co zrobić, gdy z naprzeciwka jedzie szeroka riksza?",
+      "odp1": "Trzymam się prawej, zostawiam odstęp i zwalniam lub czekam, jeśli jest ciasno.",
+      "odp2": "Jadę środkiem, bo zwykły rower jest węższy.",
+      "wyjasnienie": "Przy wymijaniu zostaw odstęp. Jeśli robi się ciasno, zjedź na prawo, zwolnij lub poczekaj.",
+      "cargo": "Wymiń rower ze skrzynią z przodu, jadąc prawą stroną ulicy.",
+      "cargo_powrot": "Poczekaj na nadjeżdżający rower cargo, a potem wymiń go z odstępem.",
+      "meta": "Wymiń rikszę z zieloną ławką i dojedź do punktu.",
+      "riksza_powrot": "Wymiń rikszę z odstępem, zanim dojedziesz do mety."
+    },
+    "LOD-B-03": {
+      "tytul": "Kontrapas o zmroku",
+      "opis": "Sprawdź tabliczkę pod znakiem B-2 i skorzystaj z kontrapasa.",
+      "start": "Zapnij kask i włącz obie lampki.",
+      "znak": "Zatrzymaj się przy wlocie na kontrapas.",
+      "pytanie": "Pod B-2 jest tabliczka z wyjątkiem dla rowerów. Którędy pojedziesz?",
+      "odp1": "Po pasie dla samochodów, bo wyjątek dotyczy całej jezdni.",
+      "odp2": "Po wyznaczonym kontrapasie, w dozwolonym kierunku.",
+      "wyjasnienie": "Tabliczka dopuszcza wjazd rowerem. Jedź wyznaczonym pasem zgodnie z jego kierunkiem.",
+      "pas": "Jedź kontrapasem do połowy uliczki.",
+      "meta": "Pozostań na kontrapasie aż do punktu końcowego."
+    },
+    "LOD-B-04": {
+      "tytul": "Wyjazd spod muralu",
+      "opis": "Przepuść pieszych i pojazdy przy wyjeździe z podwórka.",
+      "postoj": "Zatrzymaj się w bramie przed chodnikiem.",
+      "pytanie": "Komu ustępujesz, wyjeżdżając z podwórka na drogę?",
+      "odp1": "Najpierw przepuszczam pieszych na chodniku, a potem wszystkich na jezdni.",
+      "odp2": "Tylko jadącym z prawej strony.",
+      "wyjasnienie": "Włączasz się do ruchu. Ustąp pieszym na chodniku i wszystkim jadącym jezdnią.",
+      "meta": "Poczekaj, aż pieszy przejdzie, sprawdź jezdnię i wyjedź z bramy.",
+      "powrot": "Zatrzymaj się przed chodnikiem i poczekaj, aż pieszy zwolni przejazd."
     },
     "POZ-B-01": {
       "tytul": "Przez Stary Rynek",
@@ -1824,6 +1877,9 @@
     "readMore": "Przewiń tekst"
   },
   "dialogi": {
+    "lodz_zapowiedzi": {
+      "MAN-14": "Zostaw miejsce jadącym z naprzeciwka, a gdy jest ciasno, zwolnij albo się zatrzymaj."
+    },
     "poznan_zapowiedzi": {
       "GDZIE-13": "W śluzie zaczekaj przed autami i rusz dopiero, gdy sygnał na to pozwoli.",
       "PIER-10": "Przy wysepce obserwuj zebrę i ustąp pieszym, którzy wchodzą na nią lub już po niej idą."
