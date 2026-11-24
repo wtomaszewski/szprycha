@@ -58,13 +58,18 @@ const a = campaignRoutes;
 const trafficErrors = [
   [
     'WAW-A2-01',
-    a['WAW-A2-01'].slice(0, 4).map((point) => ({ ...point, until: undefined })),
+    [
+      ...a['WAW-A2-01'].slice(0, 2),
+      { x: 3359, y: 1808, crossingRed: 'pod-palacem-przejazd' },
+      a['WAW-A2-01'][3]!,
+    ],
     'SYG-02',
     'major',
   ],
   [
     'WAW-A2-02',
     [
+      { x: 3424, y: 1680, until: 'arrow' },
       { ...a['WAW-A2-02'][0]!, until: undefined, wait: undefined, coast: true },
       ...a['WAW-A2-02'].slice(1, 4),
     ],

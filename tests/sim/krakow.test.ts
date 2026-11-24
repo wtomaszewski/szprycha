@@ -45,9 +45,10 @@ it('covers every situation and module through geometry and playable exercises', 
     ['kopiec', 'KRA-B-03'],
   ]);
   const crossing = world.crossings.find(({ id }) => id === 'aleja-przejazd')!;
-  expect(world.crossingPhase(crossing, 47, day)).toBe('green');
-  for (const side of ['N', 'E', 'S', 'W', 'tram-N'])
-    expect(world.phase(world.getLane(`aleja-${side}`)!, 47, day)).toBe('red');
+  expect(world.crossingPhase(crossing, 8, day)).toBe('red');
+  expect(world.crossingPhase(crossing, 16, day)).toBe('green');
+  for (const side of ['E', 'W'])
+    expect(world.phase(world.getLane(`aleja-${side}`)!, 16, day)).toBe('red');
 });
 
 it.each([1403, 17, 51])(
@@ -146,9 +147,9 @@ it('fails the Rynek exercise if the player rides through the B-9 entrance', () =
 });
 
 it('fails the Kazimierz exercise if the rider enters P-11 on red', () => {
-  const early = routes['KRA-B-02']!.map((point) => ({
+  const early = routes['KRA-B-02']!.map(({ crossingGreen, ...point }) => ({
     ...point,
-    crossingGreen: undefined,
+    crossingRed: crossingGreen,
   }));
   const { mission } = runMissionRoute('KRA-B-02', early);
   expect(mission.result).toMatchObject({

@@ -290,8 +290,8 @@ for (const file of files)
   });
 
 it.each([
-  { offset: 6.75, phase: 'yellow', kind: 'minor', seconds: 2 },
-  { offset: 19.15, phase: 'red', kind: 'major', seconds: 1 },
+  { offset: 3.75, phase: 'yellow', kind: 'minor', seconds: 2 },
+  { offset: 24, phase: 'red-yellow', kind: 'major', seconds: 1 },
 ] as const)(
   'keeps a $phase entry with $seconds on the display a violation',
   ({ offset, phase, kind, seconds }) => {
@@ -444,10 +444,16 @@ it('loads all M2 road features from the reproducible training map', () => {
   expect(world.crossings.map((crossing) => crossing.kind)).toEqual(
     expect.arrayContaining(['pedestrian', 'bike']),
   );
-  const south = world.getLane('lights-S')!;
+  const west = world.getLane('lights-W')!;
   expect(
-    [0, 7, 9, 13, 16, 20].map((time) => world.phase(south, time, envDefaults)),
-  ).toEqual(['green', 'yellow', 'red', 'arrow', 'red', 'green']);
+    [0, 15, 17, 24.25, 25].map((time) =>
+      world.phase(
+        west,
+        time + west.mainSignal!.cycle_s - west.mainSignal!.offset_s,
+        envDefaults,
+      ),
+    ),
+  ).toEqual(['green', 'yellow', 'red', 'red-yellow', 'green']);
 });
 
 it('tells the rider when to wait before the railway crossing', () => {

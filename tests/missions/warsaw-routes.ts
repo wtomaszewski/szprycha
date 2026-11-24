@@ -26,7 +26,9 @@ export interface Waypoint extends Vec2 {
   lights?: boolean;
   helmet?: boolean;
   crossingGreen?: string;
+  crossingRed?: string;
   mainGreen?: string;
+  mainRed?: string;
   railOpen?: string;
 }
 
