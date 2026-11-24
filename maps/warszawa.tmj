@@ -27,7 +27,7 @@
     }
   ],
   "nextlayerid": 27,
-  "nextobjectid": 517,
+  "nextobjectid": 552,
   "layers": [
     {
       "id": 1,
@@ -45429,105 +45429,6 @@
         },
         {
           "id": 427,
-          "name": "stadion-trybuna-poludniowa",
-          "type": "",
-          "x": 1632,
-          "y": 3232,
-          "width": 352,
-          "height": 64,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "height",
-              "type": "float",
-              "value": 4
-            },
-            {
-              "name": "roof",
-              "type": "string",
-              "value": "sand"
-            },
-            {
-              "name": "wall",
-              "type": "string",
-              "value": "brick"
-            },
-            {
-              "name": "landmarkId",
-              "type": "string",
-              "value": "stadion-narodowy"
-            }
-          ]
-        },
-        {
-          "id": 428,
-          "name": "stadion-trybuna-zachodnia",
-          "type": "",
-          "x": 1504,
-          "y": 2592,
-          "width": 48,
-          "height": 512,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "height",
-              "type": "float",
-              "value": 4
-            },
-            {
-              "name": "roof",
-              "type": "string",
-              "value": "stone"
-            },
-            {
-              "name": "wall",
-              "type": "string",
-              "value": "brick"
-            },
-            {
-              "name": "landmarkId",
-              "type": "string",
-              "value": "stadion-narodowy"
-            }
-          ]
-        },
-        {
-          "id": 429,
-          "name": "stadion-trybuna-wschodnia",
-          "type": "",
-          "x": 2112,
-          "y": 2592,
-          "width": 48,
-          "height": 512,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            {
-              "name": "height",
-              "type": "float",
-              "value": 4
-            },
-            {
-              "name": "roof",
-              "type": "string",
-              "value": "stone"
-            },
-            {
-              "name": "wall",
-              "type": "string",
-              "value": "brick"
-            },
-            {
-              "name": "landmarkId",
-              "type": "string",
-              "value": "stadion-narodowy"
-            }
-          ]
-        },
-        {
-          "id": 430,
           "name": "sasiad",
           "type": "",
           "x": 180,
@@ -45550,7 +45451,7 @@
           ]
         },
         {
-          "id": 431,
+          "id": 428,
           "name": "kamienica-lewa",
           "type": "",
           "x": 627,
@@ -45583,7 +45484,7 @@
           ]
         },
         {
-          "id": 432,
+          "id": 429,
           "name": "kamienica-prawa",
           "type": "",
           "x": 844,
@@ -45616,7 +45517,7 @@
           ]
         },
         {
-          "id": 433,
+          "id": 430,
           "name": "warsztat",
           "type": "",
           "x": 860,
@@ -45639,7 +45540,7 @@
           ]
         },
         {
-          "id": 434,
+          "id": 431,
           "name": "oficyna",
           "type": "",
           "x": 562,
@@ -45662,7 +45563,7 @@
           ]
         },
         {
-          "id": 435,
+          "id": 432,
           "name": "brama-lewa",
           "type": "",
           "x": 667,
@@ -45685,7 +45586,7 @@
           ]
         },
         {
-          "id": 436,
+          "id": 433,
           "name": "brama-prawa",
           "type": "",
           "x": 932,
@@ -45708,7 +45609,7 @@
           ]
         },
         {
-          "id": 437,
+          "id": 434,
           "name": "halina",
           "type": "",
           "x": 1344,
@@ -45731,7 +45632,7 @@
           ]
         },
         {
-          "id": 438,
+          "id": 435,
           "name": "szkola",
           "type": "",
           "x": 617,
@@ -45754,7 +45655,7 @@
           ]
         },
         {
-          "id": 439,
+          "id": 436,
           "name": "fabryka",
           "type": "",
           "x": 1527,
@@ -45792,7 +45693,7 @@
           ]
         },
         {
-          "id": 440,
+          "id": 437,
           "name": "fabryka-wieza",
           "type": "",
           "x": 1678,
@@ -45830,7 +45731,7 @@
           ]
         },
         {
-          "id": 441,
+          "id": 438,
           "name": "bazar-warzywa",
           "type": "",
           "x": 1321,
@@ -45853,7 +45754,7 @@
           ]
         },
         {
-          "id": 442,
+          "id": 439,
           "name": "bazar-kwiaty",
           "type": "",
           "x": 1391,
@@ -45876,7 +45777,7 @@
           ]
         },
         {
-          "id": 443,
+          "id": 440,
           "name": "bazar-pierogi",
           "type": "",
           "x": 1461,
@@ -45899,7 +45800,7 @@
           ]
         },
         {
-          "id": 444,
+          "id": 441,
           "name": "kiosk",
           "type": "",
           "x": 1532,
@@ -45922,7 +45823,7 @@
           ]
         },
         {
-          "id": 445,
+          "id": 442,
           "name": "pylon-mostu",
           "type": "",
           "x": 2528,
@@ -45945,7 +45846,7 @@
           ]
         },
         {
-          "id": 446,
+          "id": 443,
           "name": "kolumna-cokol",
           "type": "",
           "x": 3068,
@@ -45968,7 +45869,7 @@
           ]
         },
         {
-          "id": 447,
+          "id": 444,
           "name": "kolumna-trzon",
           "type": "",
           "x": 3081,
@@ -45991,7 +45892,7 @@
           ]
         },
         {
-          "id": 448,
+          "id": 445,
           "name": "zamek",
           "type": "",
           "x": 3596,
@@ -46029,7 +45930,7 @@
           ]
         },
         {
-          "id": 449,
+          "id": 446,
           "name": "wieza-zamkowa",
           "type": "",
           "x": 3601,
@@ -46067,7 +45968,7 @@
           ]
         },
         {
-          "id": 450,
+          "id": 447,
           "name": "lodziarnia",
           "type": "",
           "x": 2993,
@@ -46090,7 +45991,7 @@
           ]
         },
         {
-          "id": 451,
+          "id": 448,
           "name": "kamienica-rynek-1",
           "type": "",
           "x": 3205,
@@ -46123,7 +46024,7 @@
           ]
         },
         {
-          "id": 452,
+          "id": 449,
           "name": "kamienica-rynek-2",
           "type": "",
           "x": 3275,
@@ -46156,7 +46057,7 @@
           ]
         },
         {
-          "id": 453,
+          "id": 450,
           "name": "kamienica-rynek-3",
           "type": "",
           "x": 3357,
@@ -46189,7 +46090,7 @@
           ]
         },
         {
-          "id": 454,
+          "id": 451,
           "name": "kamienica-rynek-4",
           "type": "",
           "x": 3445,
@@ -46222,7 +46123,7 @@
           ]
         },
         {
-          "id": 455,
+          "id": 452,
           "name": "barbakan-baszta",
           "type": "",
           "x": 3762,
@@ -46245,7 +46146,7 @@
           ]
         },
         {
-          "id": 456,
+          "id": 453,
           "name": "barbakan-mur",
           "type": "",
           "x": 3684,
@@ -46297,7 +46198,511 @@
           ]
         },
         {
+          "id": 454,
+          "name": "stadion-obrys-1",
+          "type": "",
+          "x": 1309,
+          "y": 2640,
+          "width": 102,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 455,
+          "name": "stadion-obrys-2",
+          "type": "",
+          "x": 1274,
+          "y": 2656,
+          "width": 172,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 456,
+          "name": "stadion-obrys-3",
+          "type": "",
+          "x": 1251,
+          "y": 2672,
+          "width": 218,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
           "id": 457,
+          "name": "stadion-obrys-4",
+          "type": "",
+          "x": 1233,
+          "y": 2688,
+          "width": 254,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 458,
+          "name": "stadion-obrys-5",
+          "type": "",
+          "x": 1219,
+          "y": 2704,
+          "width": 282,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 459,
+          "name": "stadion-obrys-6",
+          "type": "",
+          "x": 1207,
+          "y": 2720,
+          "width": 306,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 460,
+          "name": "stadion-obrys-7",
+          "type": "",
+          "x": 1198,
+          "y": 2736,
+          "width": 324,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 461,
+          "name": "stadion-obrys-8",
+          "type": "",
+          "x": 1190,
+          "y": 2752,
+          "width": 340,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 462,
+          "name": "stadion-obrys-9",
+          "type": "",
+          "x": 1183,
+          "y": 2768,
+          "width": 354,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 463,
+          "name": "stadion-obrys-10",
+          "type": "",
+          "x": 1178,
+          "y": 2784,
+          "width": 364,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 464,
+          "name": "stadion-obrys-11",
+          "type": "",
+          "x": 1174,
+          "y": 2800,
+          "width": 372,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 465,
+          "name": "stadion-obrys-12",
+          "type": "",
+          "x": 1171,
+          "y": 2816,
+          "width": 378,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 466,
+          "name": "stadion-obrys-13",
+          "type": "",
+          "x": 1169,
+          "y": 2832,
+          "width": 382,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 467,
+          "name": "stadion-obrys-14",
+          "type": "",
+          "x": 1168,
+          "y": 2848,
+          "width": 384,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 468,
+          "name": "stadion-obrys-15",
+          "type": "",
+          "x": 1168,
+          "y": 2864,
+          "width": 384,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 469,
+          "name": "stadion-obrys-16",
+          "type": "",
+          "x": 1169,
+          "y": 2880,
+          "width": 382,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 470,
+          "name": "stadion-obrys-17",
+          "type": "",
+          "x": 1171,
+          "y": 2896,
+          "width": 378,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 471,
+          "name": "stadion-obrys-18",
+          "type": "",
+          "x": 1174,
+          "y": 2912,
+          "width": 372,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 472,
+          "name": "stadion-obrys-19",
+          "type": "",
+          "x": 1178,
+          "y": 2928,
+          "width": 364,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 473,
+          "name": "stadion-obrys-20",
+          "type": "",
+          "x": 1183,
+          "y": 2944,
+          "width": 354,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 474,
+          "name": "stadion-obrys-21",
+          "type": "",
+          "x": 1190,
+          "y": 2960,
+          "width": 340,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 475,
+          "name": "stadion-obrys-22",
+          "type": "",
+          "x": 1198,
+          "y": 2976,
+          "width": 324,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 476,
+          "name": "stadion-obrys-23",
+          "type": "",
+          "x": 1207,
+          "y": 2992,
+          "width": 306,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 477,
+          "name": "stadion-obrys-24",
+          "type": "",
+          "x": 1219,
+          "y": 3008,
+          "width": 282,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 478,
+          "name": "stadion-obrys-25",
+          "type": "",
+          "x": 1233,
+          "y": 3024,
+          "width": 254,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 479,
+          "name": "stadion-obrys-26",
+          "type": "",
+          "x": 1251,
+          "y": 3040,
+          "width": 218,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 480,
+          "name": "stadion-obrys-27",
+          "type": "",
+          "x": 1274,
+          "y": 3056,
+          "width": 172,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 481,
+          "name": "stadion-obrys-28",
+          "type": "",
+          "x": 1309,
+          "y": 3072,
+          "width": 102,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall"
+            }
+          ]
+        },
+        {
+          "id": 482,
           "name": "wisla-polnoc",
           "type": "",
           "x": 2240,
@@ -46315,7 +46720,7 @@
           ]
         },
         {
-          "id": 458,
+          "id": 483,
           "name": "wisla-poludnie",
           "type": "",
           "x": 2240,
@@ -46333,7 +46738,7 @@
           ]
         },
         {
-          "id": 459,
+          "id": 484,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1820,
@@ -46351,7 +46756,7 @@
           ]
         },
         {
-          "id": 460,
+          "id": 485,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1796,
@@ -46369,7 +46774,7 @@
           ]
         },
         {
-          "id": 461,
+          "id": 486,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1783,
@@ -46387,7 +46792,7 @@
           ]
         },
         {
-          "id": 462,
+          "id": 487,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1775,
@@ -46405,7 +46810,7 @@
           ]
         },
         {
-          "id": 463,
+          "id": 488,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1770,
@@ -46423,7 +46828,7 @@
           ]
         },
         {
-          "id": 464,
+          "id": 489,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1768,
@@ -46441,7 +46846,7 @@
           ]
         },
         {
-          "id": 465,
+          "id": 490,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1770,
@@ -46459,7 +46864,7 @@
           ]
         },
         {
-          "id": 466,
+          "id": 491,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1775,
@@ -46477,7 +46882,7 @@
           ]
         },
         {
-          "id": 467,
+          "id": 492,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1783,
@@ -46495,7 +46900,7 @@
           ]
         },
         {
-          "id": 468,
+          "id": 493,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1796,
@@ -46513,7 +46918,7 @@
           ]
         },
         {
-          "id": 469,
+          "id": 494,
           "name": "obrzez-wyspy",
           "type": "",
           "x": 1820,
@@ -46542,7 +46947,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 470,
+          "id": 495,
           "name": "wyspa-ronda",
           "type": "",
           "x": 1763,
@@ -46576,7 +46981,7 @@
       "y": 0,
       "objects": [
         {
-          "id": 471,
+          "id": 496,
           "name": "praga",
           "type": "",
           "x": 0,
@@ -46588,7 +46993,7 @@
           "properties": []
         },
         {
-          "id": 472,
+          "id": 497,
           "name": "wisla",
           "type": "",
           "x": 2240,
@@ -46600,7 +47005,7 @@
           "properties": []
         },
         {
-          "id": 473,
+          "id": 498,
           "name": "stare-miasto",
           "type": "",
           "x": 2816,
@@ -46926,7 +47331,7 @@
           ]
         },
         {
-          "id": 474,
+          "id": 499,
           "name": "pylon",
           "type": "",
           "x": 2537,
@@ -46944,7 +47349,62 @@
           ]
         },
         {
-          "id": 514,
+          "id": 500,
+          "name": "stadion-narodowy",
+          "type": "",
+          "x": 1168,
+          "y": 2640,
+          "width": 384,
+          "height": 448,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "national-stadium"
+            }
+          ],
+          "ellipse": true
+        },
+        {
+          "id": 501,
+          "name": "rabata-stadion-poludnie",
+          "type": "",
+          "x": 1646,
+          "y": 3250,
+          "width": 62,
+          "height": 36,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "planted-bed"
+            }
+          ]
+        },
+        {
+          "id": 502,
+          "name": "rabata-stadion-wschod",
+          "type": "",
+          "x": 2120,
+          "y": 2776,
+          "width": 64,
+          "height": 34,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "planted-bed"
+            }
+          ]
+        },
+        {
+          "id": 549,
           "name": "neon-brama",
           "type": "",
           "x": 746,
@@ -46962,7 +47422,7 @@
           ]
         },
         {
-          "id": 515,
+          "id": 550,
           "name": "neon-warsztat",
           "type": "",
           "x": 921,
@@ -46980,7 +47440,7 @@
           ]
         },
         {
-          "id": 516,
+          "id": 551,
           "name": "neon-bazar",
           "type": "",
           "x": 1419,
@@ -48130,7 +48590,7 @@
           ]
         },
         {
-          "id": 475,
+          "id": 503,
           "name": "prop-tree-594-322",
           "type": "",
           "x": 594,
@@ -48153,7 +48613,7 @@
           ]
         },
         {
-          "id": 476,
+          "id": 504,
           "name": "prop-tree-824-320",
           "type": "",
           "x": 824,
@@ -48176,7 +48636,7 @@
           ]
         },
         {
-          "id": 477,
+          "id": 505,
           "name": "prop-tree-987-303",
           "type": "",
           "x": 987,
@@ -48199,7 +48659,7 @@
           ]
         },
         {
-          "id": 478,
+          "id": 506,
           "name": "prop-tree-578-533",
           "type": "",
           "x": 578,
@@ -48222,7 +48682,7 @@
           ]
         },
         {
-          "id": 479,
+          "id": 507,
           "name": "prop-tree-903-563",
           "type": "",
           "x": 903,
@@ -48245,7 +48705,7 @@
           ]
         },
         {
-          "id": 480,
+          "id": 508,
           "name": "prop-tree-1201-308",
           "type": "",
           "x": 1201,
@@ -48268,7 +48728,7 @@
           ]
         },
         {
-          "id": 481,
+          "id": 509,
           "name": "prop-tree-1316-370",
           "type": "",
           "x": 1316,
@@ -48291,7 +48751,7 @@
           ]
         },
         {
-          "id": 482,
+          "id": 510,
           "name": "prop-tree-1364-348",
           "type": "",
           "x": 1364,
@@ -48314,7 +48774,7 @@
           ]
         },
         {
-          "id": 483,
+          "id": 511,
           "name": "prop-tree-995-839",
           "type": "",
           "x": 995,
@@ -48337,7 +48797,7 @@
           ]
         },
         {
-          "id": 484,
+          "id": 512,
           "name": "prop-tree-1224-780",
           "type": "",
           "x": 1224,
@@ -48360,7 +48820,7 @@
           ]
         },
         {
-          "id": 485,
+          "id": 513,
           "name": "prop-lamp-554-379",
           "type": "",
           "x": 554,
@@ -48383,7 +48843,7 @@
           ]
         },
         {
-          "id": 486,
+          "id": 514,
           "name": "prop-lamp-805-379",
           "type": "",
           "x": 805,
@@ -48406,7 +48866,7 @@
           ]
         },
         {
-          "id": 487,
+          "id": 515,
           "name": "prop-lamp-994-379",
           "type": "",
           "x": 994,
@@ -48429,7 +48889,7 @@
           ]
         },
         {
-          "id": 488,
+          "id": 516,
           "name": "prop-lamp-1168-518",
           "type": "",
           "x": 1168,
@@ -48452,7 +48912,7 @@
           ]
         },
         {
-          "id": 489,
+          "id": 517,
           "name": "prop-lamp-882-518",
           "type": "",
           "x": 882,
@@ -48475,7 +48935,7 @@
           ]
         },
         {
-          "id": 490,
+          "id": 518,
           "name": "prop-bench-692-536",
           "type": "",
           "x": 692,
@@ -48498,7 +48958,7 @@
           ]
         },
         {
-          "id": 491,
+          "id": 519,
           "name": "prop-bike-rack-1020-549",
           "type": "",
           "x": 1020,
@@ -48521,7 +48981,7 @@
           ]
         },
         {
-          "id": 492,
+          "id": 520,
           "name": "prop-kiosk-965-546",
           "type": "",
           "x": 965,
@@ -48544,7 +49004,7 @@
           ]
         },
         {
-          "id": 493,
+          "id": 521,
           "name": "prop-cafe-3100-749",
           "type": "",
           "x": 3100,
@@ -48567,7 +49027,7 @@
           ]
         },
         {
-          "id": 494,
+          "id": 522,
           "name": "prop-bike-rack-3356-735",
           "type": "",
           "x": 3356,
@@ -48590,7 +49050,7 @@
           ]
         },
         {
-          "id": 495,
+          "id": 523,
           "name": "prop-bench-1246-321",
           "type": "",
           "x": 1246,
@@ -48613,7 +49073,7 @@
           ]
         },
         {
-          "id": 496,
+          "id": 524,
           "name": "prop-bin-720-535",
           "type": "",
           "x": 720,
@@ -48636,7 +49096,7 @@
           ]
         },
         {
-          "id": 497,
+          "id": 525,
           "name": "prop-bollard-782-369",
           "type": "",
           "x": 782,
@@ -48659,7 +49119,7 @@
           ]
         },
         {
-          "id": 498,
+          "id": 526,
           "name": "prop-bollard-843-369",
           "type": "",
           "x": 843,
@@ -48682,7 +49142,7 @@
           ]
         },
         {
-          "id": 499,
+          "id": 527,
           "name": "prop-shelter-1472-530",
           "type": "",
           "x": 1472,
@@ -48705,7 +49165,7 @@
           ]
         },
         {
-          "id": 500,
+          "id": 528,
           "name": "prop-bin-1505-529",
           "type": "",
           "x": 1505,
@@ -48728,7 +49188,7 @@
           ]
         },
         {
-          "id": 501,
+          "id": 529,
           "name": "prop-lamp-1290-1008",
           "type": "",
           "x": 1290,
@@ -48751,7 +49211,7 @@
           ]
         },
         {
-          "id": 502,
+          "id": 530,
           "name": "prop-bench-1204-1006",
           "type": "",
           "x": 1204,
@@ -48774,7 +49234,7 @@
           ]
         },
         {
-          "id": 503,
+          "id": 531,
           "name": "prop-bin-1233-1006",
           "type": "",
           "x": 1233,
@@ -48797,7 +49257,7 @@
           ]
         },
         {
-          "id": 504,
+          "id": 532,
           "name": "prop-tree-759-1221",
           "type": "",
           "x": 759,
@@ -48820,7 +49280,168 @@
           ]
         },
         {
-          "id": 505,
+          "id": 533,
+          "name": "prop-tree-1750-3256",
+          "type": "",
+          "x": 1750,
+          "y": 3256,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "tree"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 534,
+          "name": "prop-tree-1748-3316",
+          "type": "",
+          "x": 1748,
+          "y": 3316,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "tree"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 535,
+          "name": "prop-bench-1729-3274",
+          "type": "",
+          "x": 1729,
+          "y": 3274,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bench"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 536,
+          "name": "prop-bike-rack-1696-3310",
+          "type": "",
+          "x": 1696,
+          "y": 3310,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bike-rack"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 537,
+          "name": "prop-tree-2190-2714",
+          "type": "",
+          "x": 2190,
+          "y": 2714,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "tree"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 538,
+          "name": "prop-tree-2184-2842",
+          "type": "",
+          "x": 2184,
+          "y": 2842,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "tree"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 539,
+          "name": "prop-bench-2152-2738",
+          "type": "",
+          "x": 2152,
+          "y": 2738,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bench"
+            },
+            {
+              "name": "turn",
+              "type": "float",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": 540,
           "name": "prop-lamp-583-1164",
           "type": "",
           "x": 583,
@@ -48843,7 +49464,7 @@
           ]
         },
         {
-          "id": 506,
+          "id": 541,
           "name": "prop-lamp-720-1011",
           "type": "",
           "x": 720,
@@ -48866,7 +49487,7 @@
           ]
         },
         {
-          "id": 507,
+          "id": 542,
           "name": "prop-lamp-2204-314",
           "type": "",
           "x": 2204,
@@ -48889,7 +49510,7 @@
           ]
         },
         {
-          "id": 508,
+          "id": 543,
           "name": "prop-lamp-2379-318",
           "type": "",
           "x": 2379,
@@ -48912,7 +49533,7 @@
           ]
         },
         {
-          "id": 509,
+          "id": 544,
           "name": "prop-lamp-2625-318",
           "type": "",
           "x": 2625,
@@ -48935,7 +49556,7 @@
           ]
         },
         {
-          "id": 510,
+          "id": 545,
           "name": "prop-lamp-2744-516",
           "type": "",
           "x": 2744,
@@ -48958,7 +49579,7 @@
           ]
         },
         {
-          "id": 511,
+          "id": 546,
           "name": "prop-lamp-3050-665",
           "type": "",
           "x": 3050,
@@ -48981,7 +49602,7 @@
           ]
         },
         {
-          "id": 512,
+          "id": 547,
           "name": "prop-lamp-3286-655",
           "type": "",
           "x": 3286,
@@ -49004,7 +49625,7 @@
           ]
         },
         {
-          "id": 513,
+          "id": 548,
           "name": "prop-lamp-3545-702",
           "type": "",
           "x": 3545,

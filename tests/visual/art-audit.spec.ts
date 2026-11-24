@@ -217,16 +217,36 @@ const landmarks = [
   ['wroclaw', 'sky-tower', 2240, 3056],
   ['wroclaw', 'stadion', 610, 727],
 ] as const;
-for (const [map, name, x, y] of landmarks)
-  test(map + ' landmark ' + name, async ({ page }) => {
-    await moveStart(page, map, x, y);
-    await page.goto('/');
-    await waitForMainMenu(page);
-    if (map === 'miasteczko') await page.keyboard.press('Enter');
-    else await chooseCity(page, map);
-    await expect(page.locator('canvas')).toHaveAttribute('data-x', String(x));
-    await screenshot(page, map + '-' + name);
+function auditLandmarks(
+  views: readonly (readonly [MapId, string, number, number])[],
+) {
+  for (const [map, name, x, y] of views)
+    test(map + ' landmark ' + name, async ({ page }) => {
+      await moveStart(page, map, x, y);
+      await page.goto('/');
+      await waitForMainMenu(page);
+      if (map === 'miasteczko') await page.keyboard.press('Enter');
+      else await chooseCity(page, map);
+      await expect(page.locator('canvas')).toHaveAttribute('data-x', String(x));
+      await screenshot(page, map + '-' + name);
+    });
+}
+
+auditLandmarks(landmarks);
+
+test.describe('landmarki #109', () => {
+  auditLandmarks([
+    ['warszawa', 'palac-na-wodzie', 3868, 2834],
+    ['wroclaw', 'afrykarium', 5190, 2482],
+  ]);
+  test.describe('szerszy kadr', () => {
+    test.use({ viewport: { width: 1280, height: 700 } });
+    auditLandmarks([
+      ['warszawa', 'stadion-narodowy', 1620, 2960],
+      ['wroclaw', 'pergola-hali', 5350, 286],
+    ]);
   });
+});
 
 const button = (page: Page, name: string) =>
   page.getByRole('button', { name, exact: true });

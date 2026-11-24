@@ -860,26 +860,10 @@ const buildings = [
   ['barbakan-baszta', 3762, 908, 76, 80, 4, 0xb96557],
   ['barbakan-mur', 3684, 929, 78, 45, 3, 0xdc9a73],
 ] as const;
+// The 12 × 14 tile bowl fits west of the training loop and its B-1 shortcut.
+const stadium = { x: 1168, y: 2640, width: 384, height: 448 };
 objectLayer('blocks', [
   ...extension.blocks,
-  rect('stadion-trybuna-poludniowa', 1632, 3232, 352, 64, {
-    height: 4,
-    roof: 'sand',
-    wall: 'brick',
-    landmarkId: 'stadion-narodowy',
-  }),
-  rect('stadion-trybuna-zachodnia', 1504, 2592, 48, 512, {
-    height: 4,
-    roof: 'stone',
-    wall: 'brick',
-    landmarkId: 'stadion-narodowy',
-  }),
-  rect('stadion-trybuna-wschodnia', 2112, 2592, 48, 512, {
-    height: 4,
-    roof: 'stone',
-    wall: 'brick',
-    landmarkId: 'stadion-narodowy',
-  }),
   ...buildings.map(([id, x, y, w, h, floors, tint]) =>
     rect(id, x, y, w, h, {
       height: floors,
@@ -902,6 +886,21 @@ objectLayer('blocks', [
 ]);
 objectLayer('collisions', [
   ...extension.collisions,
+  // AABB collision strips follow the oval and leave its corners open.
+  ...Array.from({ length: stadium.height / 16 }, (_, i) => {
+    const normalizedY = ((i * 16 + 8) * 2) / stadium.height - 1;
+    const halfWidth = Math.round(
+      (stadium.width / 2) * Math.sqrt(1 - normalizedY ** 2),
+    );
+    return rect(
+      `stadion-obrys-${i + 1}`,
+      stadium.x + stadium.width / 2 - halfWidth,
+      stadium.y + i * 16,
+      halfWidth * 2,
+      16,
+      { kind: 'wall' },
+    );
+  }),
   rect('wisla-polnoc', pragaEdge, 0, riverWest - pragaEdge, 310, {
     kind: 'wall',
   }),
@@ -941,6 +940,21 @@ objectLayer('districts', [
 const decorations = [
   ...extension.decorations,
   rect('pylon', 2537, 529, 0, 0, { kind: 'bridge' }),
+  {
+    ...rect(
+      'stadion-narodowy',
+      stadium.x,
+      stadium.y,
+      stadium.width,
+      stadium.height,
+      {
+        kind: 'national-stadium',
+      },
+    ),
+    ellipse: true,
+  },
+  rect('rabata-stadion-poludnie', 1646, 3250, 62, 36, { kind: 'planted-bed' }),
+  rect('rabata-stadion-wschod', 2120, 2776, 64, 34, { kind: 'planted-bed' }),
 ];
 objectLayer('map_decorations', decorations);
 objectLayer('props', [
@@ -977,6 +991,13 @@ objectLayer('props', [
       ['bench', 1204, 1006],
       ['bin', 1233, 1006],
       ['tree', 759, 1221],
+      ['tree', 1750, 3256],
+      ['tree', 1748, 3316],
+      ['bench', 1729, 3274],
+      ['bike-rack', 1696, 3310],
+      ['tree', 2190, 2714],
+      ['tree', 2184, 2842],
+      ['bench', 2152, 2738],
       ['lamp', 583, 1164, 2],
       ['lamp', 720, 1011],
       ['lamp', 2204, 314],
