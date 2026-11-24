@@ -7,6 +7,7 @@ import {
   type RiderState,
 } from '../rules/types';
 import {
+  agentFootprint,
   footprintReachesBox,
   footprintsOverlap,
   trafficFootprints,
@@ -149,12 +150,13 @@ export class TrafficParticipants {
         route.reverse ??
         new RoadPath(route.id, [...route.path.points].reverse());
       const kind = route.kind === 'passenger' ? 'pedestrian' : route.kind;
-      const footprint = trafficFootprints[kind];
+      const footprint = agentFootprint({ kind, cycleBody: route.cycle_body });
       const outward = journey(route.path, reverse, route, footprint);
       return {
         agent: {
           id: route.id,
           kind,
+          cycleBody: route.cycle_body,
           bikeInfrastructure:
             (kind === 'cyclist' && !route.rural_edge) || undefined,
           pos: { x: 0, y: 0 },
@@ -621,7 +623,7 @@ export class TrafficParticipants {
             : 0.1,
           footprint,
           0,
-          trafficFootprints[walker.kind],
+          agentFootprint(walker),
           walker.heading,
         ),
       );

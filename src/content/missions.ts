@@ -12,8 +12,13 @@ export const campaignCity = z.enum([
   'poznan',
 ]);
 export type CampaignCity = z.infer<typeof campaignCity>;
-export const playableCity = campaignCity;
-export type PlayableCity = CampaignCity;
+export const playableCity = z.enum([...campaignCity.options, 'lodz']);
+export type PlayableCity = z.infer<typeof playableCity>;
+
+export function isCampaignCity(city: PlayableCity): city is CampaignCity {
+  return campaignCity.safeParse(city).success;
+}
+
 const key = z.string().regex(/^(misje|dialogi)(\.[A-Za-z0-9_-]+)+$/);
 const seconds = z.number().positive();
 const count = z.number().int().nonnegative();
@@ -77,7 +82,7 @@ const missionGoal = z.discriminatedUnion('typ', [
 
 export const missionSchema = z
   .strictObject({
-    id: z.string().regex(/^(WAW|WRO|KRA|GDA|WIE|POZ)-(T|A[1-3]|B)-\d{2}$/),
+    id: z.string().regex(/^(WAW|WRO|KRA|GDA|WIE|POZ|LOD)-(T|A[1-3]|B)-\d{2}$/),
     miasto: playableCity,
     mapa: id.optional(),
     akt: count.max(3),
@@ -149,6 +154,7 @@ export const missionSchema = z
       gdansk: 'GDA',
       wies: 'WIE',
       poznan: 'POZ',
+      lodz: 'LOD',
     }[mission.miasto];
     // Original free-ride exercises retain their saved IDs in the campaigns.
     const legacyCityTraining =
@@ -156,7 +162,8 @@ export const missionSchema = z
       ((mission.miasto === 'krakow' && /^KRA-B-0[1-3]$/.test(mission.id)) ||
         (mission.miasto === 'gdansk' && /^GDA-B-0[1-4]$/.test(mission.id)) ||
         (mission.miasto === 'wies' && /^WIE-B-0[1-4]$/.test(mission.id)) ||
-        (mission.miasto === 'poznan' && /^POZ-B-0[1-4]$/.test(mission.id)));
+        (mission.miasto === 'poznan' && /^POZ-B-0[1-4]$/.test(mission.id)) ||
+        (mission.miasto === 'lodz' && /^LOD-B-0[1-4]$/.test(mission.id)));
     if (!legacyCityTraining && !mission.id.startsWith(`${prefix}-${act}-`))
       ctx.addIssue({
         code: 'custom',

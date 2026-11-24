@@ -563,6 +563,17 @@ przepisy:
     waga_bledu: null
     feedback: "Kierowca zostawia co najmniej metr, a gdy brakuje miejsca, czeka."
 
+  - id: MAN-14
+    modul: M05
+    tytul: Bezpieczne wymijanie
+    dla_dziecka: "Kiedy ktoś jedzie z naprzeciwka, zostaw bezpieczny odstęp. Zjedź bardziej na prawo, zwolnij albo poczekaj, gdy jest ciasno."
+    podstawa: "Prawo o ruchu drogowym — bezpieczny odstęp przy wymijaniu i w razie potrzeby zjazd na prawo, zmniejszenie prędkości lub zatrzymanie"
+    weryfikacja: false
+    detektor: sim
+    waga_bledu: minor
+    dobry_nawyk: "Zachowanie bezpiecznego odstępu przy wymijaniu"
+    feedback: "Zostaw odstęp przy wymijaniu, a gdy jest ciasno, zjedź na prawo, zwolnij lub poczekaj."
+
   # ───────────── M06 — Szczególne miejsca i warunki ─────────────
   - id: MSC-01
     modul: M06

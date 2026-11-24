@@ -76,6 +76,40 @@ Mapa [krakow.tmj](../maps/krakow.tmj)
 
 **Pokrycie** 13/13 sytuacji, 7/7 modułów.
 
+## Łódź
+
+Mapa [lodz.tmj](../maps/lodz.tmj)
+
+**Misje na mapie** `LOD-B-01`, `LOD-B-02`, `LOD-B-03`, `LOD-B-04`
+
+| Sytuacja drogowa | Pokrycie | Wykryte obiekty lub misje | Brakujące elementy |
+| --- | :---: | --- | --- |
+| Skrzyżowanie równorzędne | ✓ | `kolejowa`, `magazyny` | — |
+| Droga z pierwszeństwem + STOP | ✓ | `srodmiescie` | — |
+| Sygnalizacja + S-2 + S-6/S-7 | ✓ | `aleja-E-s1`, `aleja-N-s1`, `aleja-S-s1`, `aleja-W-s1`, `aleja-przejazd`, `aleja-strzalka`, `aleja-tram-N-s1` | — |
+| Rondo | ✓ | `rondo-E`, `rondo-N`, `rondo-S`, `rondo-W` | — |
+| Tramwaj + przystanek bez wysepki | ✓ | `przystanek-aleja`, `tramwaj-w-alei` | — |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | ✓ | `aleja-ddr-polnoc`, `aleja-ddr-poludnie`, `kontrapas`, `park-ciag-pieszo-rowerowy` | — |
+| Przejazd dla rowerzystów | ✓ | `aleja-przejazd` | — |
+| Strefa zamieszkania / pieszych | ✓ | `pasaz-drugi-wlot`, `pasaz-wylaczony`, `piotrkowska` | — |
+| Wyjazd z drogi wewnętrznej | ✓ | `brama-podworka` | — |
+| Przejazd kolejowy | ✓ | `kolej-przejazd` | — |
+| Pobocze, zakaz wjazdu rowerów | ✓ | `park-alejka-piesza`, `park-alejka-piesza-B-9-N`, `pobocze-e`, `pobocze-w` | — |
+| Kontraruch | ✓ | `uliczka-jednokierunkowa-B-2-S` | — |
+| Nocna jazda | ✓ | `LOD-B-03`, `dusk_at_s` | — |
+
+| Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
+| --- | :---: | --- | --- |
+| M01 | ✓ | `WYP-04`, `WYP-05`, `WYP-06` | `KASK-01`, `WYP-04`, `WYP-05`, `WYP-06` |
+| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-07`, `GDZIE-09`, `GDZIE-11` | `GDZIE-02`, `GDZIE-07` |
+| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `ZNAK-B1`, `ZNAK-B2T22` |
+| M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | `PIER-06` |
+| M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-14` | `MAN-14` |
+| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | `MSC-03`, `MSC-04` |
+| M07 | ✓ | — | `PP-01` |
+
+**Pokrycie** 13/13 sytuacji, 7/7 modułów.
+
 ## Poznań
 
 Mapa [poznan.tmj](../maps/poznan.tmj)

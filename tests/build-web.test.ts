@@ -59,7 +59,7 @@ async function checkPrecache(dist: string) {
   expect(published.filter((file) => file.endsWith('.ttf'))).toEqual([]);
   expect(lazy).toEqual(
     expect.arrayContaining(
-      ['warszawa', 'wroclaw', 'krakow', 'gdansk', 'wies', 'poznan'].map(
+      ['warszawa', 'wroclaw', 'krakow', 'gdansk', 'wies', 'poznan', 'lodz'].map(
         (city) =>
           expect.stringMatching(new RegExp(`^assets/${city}-.*\\.tmj$`)),
       ),
@@ -101,6 +101,7 @@ async function checkPrecache(dist: string) {
         'gdansk',
         'wies',
         'poznan',
+        'lodz',
       ].map((city) =>
         expect.stringMatching(new RegExp(`^assets/${city}-.*\\.tmj$`)),
       ),

@@ -23,6 +23,7 @@ import {
 import {
   contains,
   distanceToLine,
+  sideVector,
   type Lane,
   type Sign,
   type WorldModel,
@@ -100,13 +101,24 @@ export class RoadVisit {
       signal === 'left' ||
       rider.maneuver === 'left';
 
-    if (
-      moving &&
-      zone?.kind === 'bike_lane' &&
-      !zones.followsBikePath &&
-      this.canReport('GDZIE-02', zone.id, tick)
-    )
-      this.report(bikeLaneDirection(zone, rider, at), emit);
+    const roadDirection = roadway?.direction && sideVector[roadway.direction];
+    const againstRoadDirection =
+      roadDirection &&
+      Math.cos(rider.heading) * roadDirection.x +
+        Math.sin(rider.heading) * roadDirection.y <=
+        -Math.SQRT1_2 &&
+      this.world.signs.some(
+        ({ code, affects, displayOnly }) =>
+          code === 'D-3' && affects === roadway!.id && !displayOnly,
+      );
+    const wrongWay =
+      zone?.kind === 'bike_lane' && !zones.followsBikePath
+        ? zone
+        : againstRoadDirection
+          ? roadway
+          : undefined;
+    if (moving && wrongWay && this.canReport('GDZIE-02', wrongWay.id, tick))
+      this.report(bikeLaneDirection(wrongWay, rider, at), emit);
 
     const rural = roadway && this.world.ruralShoulders.get(roadway);
     const shoulder = rural

@@ -1,0 +1,58 @@
+map: maps/miasteczko.tmj
+scenarios:
+  - name: MAN-14 rowerzysta zostawia miejsce rikszy jadącej z naprzeciwka
+    player: { x: 200, y: 200, heading: 0, speed: 2 }
+    agents:
+      - {
+          id: riksza,
+          kind: cyclist,
+          cycleBody: rickshaw,
+          x: 219,
+          y: 161,
+          heading: 180,
+          speed: 2,
+        }
+    expect: { MAN-14: [good] }
+
+  - name: MAN-14 rowerzysta wymija rower cargo ze zbyt małym odstępem
+    player: { x: 200, y: 200, heading: 0, speed: 2 }
+    agents:
+      - {
+          id: cargo,
+          kind: cyclist,
+          cycleBody: cargo,
+          x: 219,
+          y: 179,
+          heading: 180,
+          speed: 2,
+        }
+    expect: { MAN-14: [minor] }
+
+  - name: MAN-14 rower cargo jedzie w tym samym kierunku
+    player: { x: 200, y: 200, heading: 0, speed: 2 }
+    agents:
+      - {
+          id: cargo,
+          kind: cyclist,
+          cycleBody: cargo,
+          x: 219,
+          y: 161,
+          heading: 0,
+          speed: 2,
+        }
+    expect: { MAN-14: [] }
+
+  - name: MAN-14 riksza hamuje ochronnie, gdy rowerzysta jedzie czołowo
+    player: { x: 200, y: 200, heading: 0, speed: 2 }
+    agents:
+      - {
+          id: riksza,
+          kind: cyclist,
+          cycleBody: rickshaw,
+          x: 250,
+          y: 200,
+          heading: 180,
+          speed: 0,
+          protectiveBrake: true,
+        }
+    expect: { MAN-14: [minor] }

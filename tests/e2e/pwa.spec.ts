@@ -72,7 +72,7 @@ test('Chromium can install the build and play offline after the first visit', as
 
   expect(
     (await cachedPaths()).filter((path) =>
-      /\/radio\/|\.(ogg|m4a)$|\/(warszawa|wroclaw|krakow|gdansk|wies|poznan)-[^/]+\.tmj$/.test(
+      /\/radio\/|\.(ogg|m4a)$|\/(warszawa|wroclaw|krakow|gdansk|wies|poznan|lodz)-[^/]+\.tmj$/.test(
         path,
       ),
     ),
@@ -136,33 +136,36 @@ test('Chromium can install the build and play offline after the first visit', as
   ).toEqual([]);
 });
 
-test('downloads Wieś i las on first use and opens the same map offline', async ({
-  page,
-  context,
-}) => {
-  await page.goto('/');
-  await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
-  const mapPath = /\/wies-[^/]+\.tmj$/;
-  const firstVisit = page.waitForResponse(
-    (response) =>
-      mapPath.test(new URL(response.url()).pathname) && response.ok(),
-  );
-  await chooseCity(page, 'wies');
-  await firstVisit;
+for (const city of ['wies', 'lodz'] as const)
+  test(`downloads ${pl.cityPicker[city]} on first use and opens it offline`, async ({
+    page,
+    context,
+  }) => {
+    await page.goto('/');
+    await page.waitForFunction(
+      () => navigator.serviceWorker.controller !== null,
+    );
+    const mapPath = new RegExp(`/${city}-[^/]+[.]tmj$`);
+    const firstVisit = page.waitForResponse(
+      (response) =>
+        mapPath.test(new URL(response.url()).pathname) && response.ok(),
+    );
+    await chooseCity(page, city);
+    await firstVisit;
 
-  await context.setOffline(true);
-  await page.reload();
-  const offlineMap = page.waitForResponse(
-    (response) =>
-      mapPath.test(new URL(response.url()).pathname) &&
-      response.ok() &&
-      response.fromServiceWorker(),
-  );
-  await chooseCity(page, 'wies');
-  await offlineMap;
-  await expect(page.locator('canvas')).toHaveAttribute('data-map', 'wies');
-  await ride(page);
-});
+    await context.setOffline(true);
+    await page.reload();
+    const offlineMap = page.waitForResponse(
+      (response) =>
+        mapPath.test(new URL(response.url()).pathname) &&
+        response.ok() &&
+        response.fromServiceWorker(),
+    );
+    await chooseCity(page, city);
+    await offlineMap;
+    await expect(page.locator('canvas')).toHaveAttribute('data-map', city);
+    await ride(page);
+  });
 
 const mimeTypes: Record<string, string> = {
   '.html': 'text/html',

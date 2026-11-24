@@ -782,6 +782,10 @@
       "text": "Przed linią stop zatrzymaj się całkowicie i ustąp pierwszeństwa.",
       "hash": "54047d2f5a5067a18ca4dc92009b476bc5f95aec2f73e60ee2859b036f57e75a"
     },
+    "dialogi.lodz_zapowiedzi.MAN-14": {
+      "text": "Zostaw miejsce jadącym z naprzeciwka, a gdy jest ciasno, zwolnij albo się zatrzymaj.",
+      "hash": "f2bcca9b55235e5fb777ea45d284d2459f292046d6a203bee5fc3ea4b5dc1d35"
+    },
     "dialogi.poznan_zapowiedzi.GDZIE-13": {
       "text": "W śluzie zaczekaj przed autami i rusz dopiero, gdy sygnał na to pozwoli.",
       "hash": "bb2bb1edcba9f0213bbe9152b9be8a007749903e335f038b2740cc254dad8987"
@@ -1141,6 +1145,58 @@
     "misje.KRA-B-03.wyjasnienie": {
       "text": "Zadbaj o swoje bezpieczeństwo i ostrzeż innych, zanim podejdziesz z pomocą.",
       "hash": "b17c076808d9856694f47faca564a40dd0adeee353b3b5d11f9f1c75ec27a6f5"
+    },
+    "misje.LOD-B-01.pomoc_wyjasnienie": {
+      "text": "Zanim podejdziesz, zadbaj o swoje bezpieczeństwo i ostrzeż osoby w pobliżu.",
+      "hash": "5dbcd13cf22c84959d10cc77bfebcb080a46a65adac33891db39a65bc999e8b2"
+    },
+    "misje.LOD-B-01.pytanie": {
+      "text": "Jak jedziesz w strefie zamieszkania oznaczonej D-40?",
+      "hash": "f1179f626880df98e1fa4270a8e9222765d694b0e08296dfcc1aa0f8f16c4921"
+    },
+    "misje.LOD-B-01.pytanie_pomoc": {
+      "text": "Ktoś przewrócił się przy ogródku. Co robisz najpierw?",
+      "hash": "00f0219498a1dded608788620fb1382329c967a45a647eabb280a25334c8c4ed"
+    },
+    "misje.LOD-B-01.wyjasnienie": {
+      "text": "W strefie zamieszkania piesi mają pierwszeństwo na całej szerokości drogi, a limit prędkości to 20 km/h.",
+      "hash": "6c5da9e282c871597d8e3b8d184cd2ef8023022d99edff59a15659d5ed1efdc6"
+    },
+    "misje.LOD-B-02.cargo_powrot": {
+      "text": "Poczekaj na nadjeżdżający rower cargo, a potem wymiń go z odstępem.",
+      "hash": "8f21ed670f216f041efde85bcab05855cf9118c30b76b3d66fb26616652f5df6"
+    },
+    "misje.LOD-B-02.pytanie": {
+      "text": "Co zrobić, gdy z naprzeciwka jedzie szeroka riksza?",
+      "hash": "ceb0cbfac1d5bc23b4a57dfb89321ef7264d47b14fcc07ce50d16e2074c0c54b"
+    },
+    "misje.LOD-B-02.riksza_powrot": {
+      "text": "Wymiń rikszę z odstępem, zanim dojedziesz do mety.",
+      "hash": "85d6e86fc975afc40213b738c35ad049361c7202b6d5897a101fb248bc1d79d0"
+    },
+    "misje.LOD-B-02.wyjasnienie": {
+      "text": "Przy wymijaniu zostaw odstęp. Jeśli robi się ciasno, zjedź na prawo, zwolnij lub poczekaj.",
+      "hash": "c31f76bc045bb3237833530fe2d90912afbc7e7639895dbad71f0ae74d3c7a69"
+    },
+    "misje.LOD-B-03.pytanie": {
+      "text": "Pod B-2 jest tabliczka z wyjątkiem dla rowerów. Którędy pojedziesz?",
+      "hash": "19ad2459f3c74bbe286bc8f51025047eab6db00feba8bfdad404d98bb6506db5"
+    },
+    "misje.LOD-B-03.wyjasnienie": {
+      "text": "Tabliczka dopuszcza wjazd rowerem. Jedź wyznaczonym pasem zgodnie z jego kierunkiem.",
+      "hash": "01fdbfa240abcb69732b2f4ad4555b839167a2a96ab8c2d5f4d47d08688a8b09"
+    },
+    "misje.LOD-B-04.powrot": {
+      "text": "Zatrzymaj się przed chodnikiem i poczekaj, aż pieszy zwolni przejazd.",
+      "hash": "be1a5d8c90bfd972e4160413c89ab8ee335c53300bff6a843d10fb97d9963e83"
+    },
+    "misje.LOD-B-04.pytanie": {
+      "text": "Komu ustępujesz, wyjeżdżając z podwórka na drogę?",
+      "hash": "37c7217c37ed07fe03083a462775b667590af426ff25291b875e5c9651bec921"
+    },
+    "misje.LOD-B-04.wyjasnienie": {
+      "text": "Włączasz się do ruchu. Ustąp pieszym na chodniku i wszystkim jadącym jezdnią.",
+      "hash": "5b7b134ba3bd8ac2bdb8403f8fa6ec50ef2e9bdac9e403b64d77e36e7055517b"
     },
     "misje.POZ-A3-01.pytanie": {
       "text": "Miejsce jest bezpieczne. Jak sprawdzisz, czy Turbo jest przytomny?",
@@ -1701,6 +1757,14 @@
     "przepisy.MAN-13.quiz": {
       "text": "Kierowca wyprzedzający rower musi zostawić co najmniej metr odstępu.",
       "hash": "c0fe95a61f386adea0b6f978969bb679db3cc03b5a83a00fdaa8c153a34aa351"
+    },
+    "przepisy.MAN-14.feedback": {
+      "text": "Zostaw odstęp przy wymijaniu, a gdy jest ciasno, zjedź na prawo, zwolnij lub poczekaj.",
+      "hash": "bc227531c71dd9434dd6c2a744d3f073a15fa020c67d56a6b8d4ba2781d21e43"
+    },
+    "przepisy.MAN-14.quiz": {
+      "text": "Kiedy ktoś jedzie z naprzeciwka, zostaw bezpieczny odstęp.",
+      "hash": "b39e5498c42d3fa5556c87ddb42716caf28d07c5450cfea086309b3ad4802517"
     },
     "przepisy.MSC-01.feedback": {
       "text": "Gdy nadjeżdża pociąg, migają czerwone światła, dzwoni sygnał lub ruszają zapory, czekaj, a przez tory przejedź bez zatrzymywania.",
@@ -2545,6 +2609,14 @@
     "pytania.Q067.wyjasnienie": {
       "text": "Ustąp pieszemu wchodzącemu na przejście i pieszemu, który już po nim idzie.",
       "hash": "99b70ea836a007ed232e340ce354e61511ddb55b1f6085ae76bf0b2466baa8a1"
+    },
+    "pytania.Q068.pytanie": {
+      "text": "Z naprzeciwka jedzie szeroka riksza, a obok jest mało miejsca. Co robisz?",
+      "hash": "49f2bb552c9c2d3dd93cca997d93ab231eaccb430d68b71809473db712ef5b95"
+    },
+    "pytania.Q068.wyjasnienie": {
+      "text": "Przy wymijaniu zachowaj bezpieczny odstęp. Gdy jest ciasno, zjedź w prawo, zwolnij lub poczekaj.",
+      "hash": "2a8800bcfad3dda628d7c68543d7701e795f8cf3aa147e645a5585ba88d59190"
     }
   },
   "recorded": {

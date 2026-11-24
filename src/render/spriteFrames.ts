@@ -1,3 +1,5 @@
+import { cycleBodies } from '../rules/types.ts';
+
 export const riderDirections = 16;
 export const pedestrianDirections = 8;
 export const pedalFrames = 6;
@@ -51,7 +53,12 @@ export const spriteSheets = {
     ),
   ],
   'rider-lights': [32, 32, riderDirections, 32],
-  'traffic-cyclist': [32, 32, riderDirections, pedalFrames * cyclistVariants],
+  'traffic-cyclist': [
+    32,
+    32,
+    riderDirections,
+    pedalFrames * (cyclistVariants + cycleBodies.length),
+  ],
   'traffic-pedestrian': [
     24,
     24,

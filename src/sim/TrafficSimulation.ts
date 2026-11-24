@@ -11,6 +11,7 @@ import {
 import {
   footprintReachesBox,
   footprintsOverlap,
+  agentFootprint,
   trafficFootprints,
   type Footprint,
 } from '../rules/world/Footprint';
@@ -559,7 +560,7 @@ export class TrafficSimulation {
     const path = car.crossing ? car.route!.path : car.edge.path;
     const next = car.crossing ? car.route!.to.path : car.route?.path;
     const footprint =
-      trafficFootprints['kind' in other ? other.kind : 'cyclist'];
+      'kind' in other ? agentFootprint(other) : trafficFootprints.cyclist;
     if (
       car.agent.kind === 'car' &&
       (!('kind' in other) || other.kind === 'cyclist')

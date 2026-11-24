@@ -304,25 +304,57 @@ Zrzuty z gry pokazują [wybór miasta](screenshots/137-mapa-polski.webp), [Stary
 
 Zrzuty kampanii pokazują [wybór Poznania](screenshots/138-kampania.webp), [drewniane rogale na rynku](screenshots/138-rogale.webp), [pierwszą zagadkę](screenshots/138-zagadka.webp) i [scenkę pierwszej pomocy](screenshots/138-pierwsza-pomoc.webp).
 
+## Łódź
+
+**Wolna jazda → Łódź** zaczyna się na Piotrkowskiej. Kolaż liczy 152 × 112 kafli. Generator `npm run map:generate:lodz` odtwarza [lodz.tmj](../maps/lodz.tmj). Po pierwszej wizycie PWA przechowuje mapę do jazdy offline.
+
+| Miejsce | Charakter i ruch |
+| --- | --- |
+| Piotrkowska | Deptak w strefie zamieszkania (D-40), kamienice i ogródki. Piesi mogą korzystać z całej szerokości, a wzdłuż pierzei jeżdżą riksza i rower cargo. Pasaż ze znakiem B-1 trzeba objechać. |
+| Fabryka i podwórka | Czerwona cegła, długa hala, kotłownia z kominem i oficyny z geometrycznymi muralami. Brama przecina chodnik przed włączeniem się do ruchu na alei. |
+| Uliczka jednokierunkowa | Kontrapas biegnie przy prawej krawędzi dla roweru jadącego w kierunku przeciwnym do pozostałych pojazdów. Wlot oznacza B-2 z wyjątkiem dla roweru, a pas ma własne oznakowanie poziome. |
+| Aleja tramwajowa | Neutralny tramwaj jedzie po torze w jezdni i obsługuje przystanek bez wysepki. Obok skrzyżowania jest sygnalizowany przejazd rowerowy. |
+| Park i kolej | Droga dla pieszych i rowerów, boczna alejka z B-9 oraz przejazd kolejowy z zaporami i poboczem. Po 90 s wolnej jazdy zapada zmrok. |
+
+| Szkolenie | Zadanie w SzprychaApp |
+| --- | --- |
+| `LOD-B-01` | Przygotuj rower, jedź najwyżej 20 km/h i ustąp pieszym na Piotrkowskiej. Omiń zakazany pasaż i wskaż pierwszy bezpieczny krok przy udzielaniu pomocy. |
+| `LOD-B-02` | Wymiń kolejno rower cargo i rikszę, zachowując bezpieczny odstęp od ich obrysów. |
+| `LOD-B-03` | Włącz obie lampki, odczytaj tabliczkę pod B-2 i przejedź kontrapasem. |
+| `LOD-B-04` | Zatrzymaj się w bramie, przepuść pieszego na chodniku, sprawdź ruch na jezdni i wyjedź z podwórka. |
+
+`npm run coverage:maps -- --strict` weryfikuje 13/13 sytuacji i 7/7 modułów. `npm test -- tests/sim/lodz.test.ts` wykonuje po dziesięć minut ruchu na każdym z trzech ziaren, przejeżdża cztery szkolenia i sprawdza odrzucenie skrótu pod B-1. Testy Playwright sprawdzają wczytanie i zapamiętanie miasta, szkolenia, jazdę offline i renderowanie miejsc. [Raport pokrycia](coverage.md#łódź)
+
+Pomiary jazdy po buildzie produkcyjnym wykonano w Chromium 156.0.8078.79 headless, w rozdzielczości 640 × 360 (DPR 1), z WebGL i ograniczeniem CPU 4×. Tabela podaje medianę z dwóch prób po 11 s.
+
+| Trasa | Średnie FPS | p95 czasu klatki |
+| --- | ---: | ---: |
+| Łódź, Piotrkowska | 52,69 | 33,30 ms |
+| Warszawa, Starówka | 51,81 | 33,35 ms |
+
+Po `npm run build && npm run preview` uruchom `BENCH_URL=http://127.0.0.1:4173/ BENCH_VIEWPORT=640x360 BENCH_MAP=lodz BENCH_RUNS=2 npm run benchmark:driving`. Dla Warszawy ustaw `BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free`.
+
+Zrzuty z gry pokazują [Łódź na mapie Polski](screenshots/139-mapa-polski.webp), [Piotrkowską z rikszą i rowerem cargo](screenshots/139-piotrkowska.webp), [fabrykę](screenshots/139-fabryka.webp), [podwórka z muralami](screenshots/139-murale.webp), [kontrapas](screenshots/139-kontrapas.webp), [wyjazd przez bramę](screenshots/139-brama.webp) i [tramwaj przy przystanku](screenshots/139-tramwaj.webp).
+
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
 Wzorowane na prawdziwych szkolnych miasteczkach ruchu: małe skrzyżowania każdego typu, mini-rondo, sygnalizacja, przejazd kolejowy z zaporami, znaki z Albumu na tablicach, **plac manewrowy** (ósemka, slalom, tor wąski, pole zatrzymania). Tu: samouczek, plac, quiz w budynku szkoły, egzamin Licencji.
 
 ## Tabela pokrycia (każde miasto musi mieć ✓ w każdym wierszu)
-| Sytuacja | Warszawa | Wrocław | Kraków | Gdańsk | Wieś i las | Poznań |
-|---|---|---|---| --- | --- | --- |
-| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody | Ołowianka i Brzeźno | Skrzyżowanie pod lasem | Kolejowa i Ogrody |
-| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu | Skrzyżowanie przy Długim Targu | Droga gminna przy osadzie | Skrzyżowanie przy rynku |
-| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Skansen | Aleja tramwajowa |
-| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku | Rondo przy stoczni | Rondo przy lesie | Rondo przy ogrodach |
-| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Tramwaj przy skansenie | Aleja tramwajowa |
-| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz | DDR nad Motławą, kontrapas w stoczni i promenada | Zagrody i las | Bulwar Warty, śluza i kontrapas przy browarze |
-| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary | Aleja i przeprawy przez Motławę | Skansen | Aleja i bulwary |
-| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz | Dojście do Długiego Targu | Plac osady | Stary Rynek i Ostrów Tumski |
-| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu | Wyjazd z placu magazynowego | Gospodarstwo | Dziedziniec dawnego browaru |
-| Przejazd kolejowy | Mokotów | Zachód | Dębniki | Tory towarowe na południowym zachodzie | Droga gminna | Kolejowa |
-| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec | Pobocze przy torach i kładka przy Żurawiu | Północ drogi gminnej i rezerwat | Kolejowa i alejka przy katedrze |
-| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz | Stocznia | Uliczka osady | Uliczka przy dawnym browarze |
-| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary | Kładka przy Żurawiu | Ćwiczenie WIE-B-03 | Bulwar Warty i most Tumski |
+| Sytuacja | Warszawa | Wrocław | Kraków | Gdańsk | Wieś i las | Poznań | Łódź |
+|---|---|---|---| --- | --- | --- | --- |
+| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody | Ołowianka i Brzeźno | Skrzyżowanie pod lasem | Kolejowa i Ogrody | Kolejowa i Magazyny |
+| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu | Skrzyżowanie przy Długim Targu | Droga gminna przy osadzie | Skrzyżowanie przy rynku | Skrzyżowanie w śródmieściu |
+| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Skansen | Aleja tramwajowa | Aleja tramwajowa |
+| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku | Rondo przy stoczni | Rondo przy lesie | Rondo przy ogrodach | Rondo przy magazynach |
+| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Tramwaj przy skansenie | Aleja tramwajowa | Aleja tramwajowa |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz | DDR nad Motławą, kontrapas w stoczni i promenada | Zagrody i las | Bulwar Warty, śluza i kontrapas przy browarze | DDR przy alei, kontrapas i park |
+| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary | Aleja i przeprawy przez Motławę | Skansen | Aleja i bulwary | Aleja tramwajowa |
+| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz | Dojście do Długiego Targu | Plac osady | Stary Rynek i Ostrów Tumski | Piotrkowska |
+| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu | Wyjazd z placu magazynowego | Gospodarstwo | Dziedziniec dawnego browaru | Brama podwórka |
+| Przejazd kolejowy | Mokotów | Zachód | Dębniki | Tory towarowe na południowym zachodzie | Droga gminna | Kolejowa | Kolejowa |
+| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec | Pobocze przy torach i kładka przy Żurawiu | Północ drogi gminnej i rezerwat | Kolejowa i alejka przy katedrze | Kolejowa i alejka w parku |
+| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz | Stocznia | Uliczka osady | Uliczka przy dawnym browarze | Uliczka jednokierunkowa |
+| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary | Kładka przy Żurawiu | Ćwiczenie WIE-B-03 | Bulwar Warty i most Tumski | Piotrkowska i kontrapas |
 
 ## Kolejne mapy (po MVP, kolejność wg popularności)
-Łódź (Piotrkowska, Manufaktura) · Zakopane (Krupówki, Giewont w tle).
+Zakopane (Krupówki, Giewont w tle).

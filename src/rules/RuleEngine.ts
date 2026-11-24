@@ -9,6 +9,7 @@ import { RightTurnDetector } from './detectors/MAN-02';
 import { passingTechnique } from './detectors/MAN-04';
 import { passingOnRight } from './detectors/MAN-05';
 import { restrictedPassing } from './detectors/MAN-12';
+import { MeetingDetector } from './detectors/MAN-14';
 import { ManeuverDetector } from './detectors/MAN-01';
 import { shoulderCheck } from './detectors/MAN-03';
 import { ParkedClearanceDetector } from './detectors/MAN-06';
@@ -72,6 +73,8 @@ export class RuleEngine {
   private readonly road: RoadVisit;
   private readonly settings: GameContent['balans'];
   private readonly passing: PassingMonitor;
+  private readonly meeting = new MeetingDetector();
+  private readonly emitMeetingVerdict = (result: Verdict) => this.emit(result);
   private readonly rightTurn = new RightTurnDetector();
   private readonly onPass = (
     pass: PassingObservation,
@@ -240,6 +243,7 @@ export class RuleEngine {
         ? this.signal
         : 'none';
     this.passing.evaluate(rider, agents, at, env, preparation, this.onPass);
+    this.meeting.evaluate(rider, agents, at, this.emitMeetingVerdict);
     this.road.evaluate(
       rider,
       agents,

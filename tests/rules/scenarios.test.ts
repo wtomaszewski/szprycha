@@ -86,6 +86,7 @@ const simGood = new Set([
   'MAN-06',
   'MAN-07',
   'MAN-11',
+  'MAN-14',
   'PIER-01',
   'PIER-02',
   'PIER-03',
