@@ -15,6 +15,7 @@ type AudioLog = {
   radioStarts: number;
   levels: number[];
   recordingDecodes: number;
+  recordingStarts: number;
 };
 
 declare global {
@@ -24,10 +25,6 @@ declare global {
 }
 
 async function observeAudio(page: Page) {
-  // Keep the missing-recording scenarios independent of local voice assets.
-  await page.route(/\/assets\/voice\/pl\/[^/]+\.(ogg|m4a)$/, (route) =>
-    route.fulfill({ status: 404 }),
-  );
   await page.addInitScript(() => {
     const log: AudioLog = {
       contexts: 0,
@@ -36,6 +33,7 @@ async function observeAudio(page: Page) {
       radioStarts: 0,
       levels: [],
       recordingDecodes: 0,
+      recordingStarts: 0,
     };
     window.audioLog = log;
     window.AudioContext = class extends AudioContext {
@@ -45,11 +43,14 @@ async function observeAudio(page: Page) {
       }
     };
     const radioBuffers = new WeakSet<AudioBuffer>();
-    const effectStart = AudioBufferSourceNode.prototype.start;
+    const recordingBuffers = new WeakSet<AudioBuffer>();
+    const start = AudioBufferSourceNode.prototype.start;
     AudioBufferSourceNode.prototype.start = function (when, offset, duration) {
+      start.call(this, when, offset, duration);
       if (this.buffer && radioBuffers.has(this.buffer)) log.radioStarts++;
+      else if (this.buffer && recordingBuffers.has(this.buffer))
+        log.recordingStarts++;
       else log.effects++;
-      effectStart.call(this, when, offset, duration);
     };
     const noteStart = OscillatorNode.prototype.start;
     OscillatorNode.prototype.start = function (when) {
@@ -65,12 +66,13 @@ async function observeAudio(page: Page) {
     AudioContext.prototype.decodeAudioData = function (data, success, error) {
       const bytes = new Uint8Array(data).subarray(0, 3);
       // The rendered MP3s carry an ID3 header. Voice recordings are Opus or AAC.
-      if (bytes[0] !== 73 || bytes[1] !== 68 || bytes[2] !== 51) {
-        log.recordingDecodes++;
-        return decode.call(this, data, success, error);
-      }
+      const radio = bytes[0] === 73 && bytes[1] === 68 && bytes[2] === 51;
       return decode.call(this, data, success, error).then((buffer) => {
-        radioBuffers.add(buffer);
+        if (radio) radioBuffers.add(buffer);
+        else {
+          recordingBuffers.add(buffer);
+          log.recordingDecodes++;
+        }
         return buffer;
       });
     };
@@ -96,6 +98,9 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     const skipDialogue = dialogue.getByRole('button', {
       name: pl.dialogueUi.skip,
     });
+    await expect
+      .poll(async () => (await log(page)).recordingStarts)
+      .toBeGreaterThan(0);
     await skipDialogue.click();
     await page.getByRole('button', { name: pl.missionUi.equip }).click();
     await page.keyboard.down('ArrowUp');
@@ -122,7 +127,6 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     await expect(result).toContainText(`${pl.progression.tokens} +35`);
     await expect(result).toContainText(`${pl.missionResults.mastery}`);
     await expect(result).toContainText('10% (+10)');
-    expect((await log(page)).recordingDecodes).toBe(0);
     expect((await log(page)).effects).toBeGreaterThan(before.effects);
 
     const skip = result.getByRole('button', { name: pl.missionResults.skip });
@@ -184,7 +188,13 @@ test('unlocks audio with a gesture, saves channel levels and station, and rides 
     'data-scene',
     'MainMenu',
   );
-  expect(await log(page)).toMatchObject({ contexts: 0, effects: 0, notes: 0 });
+  expect(await log(page)).toMatchObject({
+    contexts: 0,
+    effects: 0,
+    notes: 0,
+    recordingDecodes: 0,
+    recordingStarts: 0,
+  });
   await openSettings(page);
   const music = settings(page).getByRole('slider', {
     name: pl.audio.music,
@@ -235,6 +245,9 @@ test('unlocks audio with a gesture, saves channel levels and station, and rides 
   await expect(page.locator('.radio-caption')).toHaveText(
     pl.audio.tipText.stop,
   );
+  await expect
+    .poll(async () => (await log(page)).recordingStarts)
+    .toBeGreaterThan(0);
 
   await page.keyboard.press('Escape');
   await page.getByText(pl.audio.settings, { exact: true }).first().click();
@@ -257,7 +270,8 @@ test('unlocks audio with a gesture, saves channel levels and station, and rides 
     notes: mutedAudio.notes,
     radioStarts: mutedAudio.radioStarts,
     effects: mutedAudio.effects,
-    recordingDecodes: 0,
+    recordingDecodes: mutedAudio.recordingDecodes,
+    recordingStarts: mutedAudio.recordingStarts,
   });
 
   await page.reload();
@@ -271,17 +285,23 @@ test('unlocks audio with a gesture, saves channel levels and station, and rides 
   expect(errors).toEqual([]);
 });
 
-test('ducks radio during a dialogue and preserves captions without recordings', async ({
+test('plays dialogue recordings with captions and ducks the radio', async ({
   page,
 }) => {
   await observeAudio(page);
   await page.goto('/');
   await chooseCity(page, 'warszawa', 'campaign');
   const dialogue = page.getByRole('dialog', { name: pl.dialogueUi.title });
-  await expect(dialogue).toBeVisible();
+  await expect
+    .poll(async () => (await log(page)).recordingStarts)
+    .toBeGreaterThan(0);
+  const dialogueAudio = await log(page);
+  expect(dialogueAudio.recordingDecodes).toBeGreaterThanOrEqual(1);
+  expect(dialogueAudio.levels.at(-1)).toBe(0.6 * 0.26);
+  await expect
+    .poll(async () => (await log(page)).radioStarts)
+    .toBeGreaterThan(0);
   await expect(dialogue.getByText(pl.dialogi.reguly['KASK-01'])).toBeVisible();
-  expect((await log(page)).recordingDecodes).toBe(0);
-  await expect.poll(async () => (await log(page)).levels).toContain(0.6 * 0.26);
   await dialogue.getByRole('button', { name: pl.dialogueUi.skip }).click();
   await expect.poll(async () => (await log(page)).levels.at(-1)).toBe(0.6);
 
@@ -293,7 +313,45 @@ test('ducks radio during a dialogue and preserves captions without recordings', 
   await expect(page.locator('.radio-caption')).toHaveText(
     pl.audio.tipText.stop,
   );
-  expect((await log(page)).recordingDecodes).toBe(0);
+  await expect
+    .poll(async () => (await log(page)).recordingStarts)
+    .toBeGreaterThan(dialogueAudio.recordingStarts);
+});
+
+test('shows dialogue captions and continues when voice files are missing', async ({
+  page,
+}) => {
+  await observeAudio(page);
+  const voiceFiles = ['ogg', 'm4a'].map(
+    (extension) => `/assets/voice/pl/dialogi.reguly.KASK-01.${extension}`,
+  );
+  const missingFiles: string[] = [];
+  await page.route(
+    // Vite also serves JS modules at these paths with an import query.
+    (url) =>
+      voiceFiles.includes(url.pathname) && !url.searchParams.has('import'),
+    async (route) => {
+      await route.fulfill({ status: 404 });
+      missingFiles.push(new URL(route.request().url()).pathname);
+    },
+  );
+  const errors: Error[] = [];
+  page.on('pageerror', (error) => errors.push(error));
+  await page.goto('/');
+  await chooseCity(page, 'warszawa', 'campaign');
+  const dialogue = page.getByRole('dialog', { name: pl.dialogueUi.title });
+  await expect.poll(() => missingFiles).toEqual(voiceFiles);
+  await expect(dialogue.getByText(pl.dialogi.reguly['KASK-01'])).toBeVisible();
+  expect(await log(page)).toMatchObject({
+    recordingDecodes: 0,
+    recordingStarts: 0,
+  });
+  await expect.poll(async () => (await log(page)).levels).toContain(0.6 * 0.26);
+  await dialogue.getByRole('button', { name: pl.dialogueUi.skip }).click();
+  await expect(dialogue).toBeHidden();
+  await expect.poll(async () => (await log(page)).levels.at(-1)).toBe(0.6);
+  await page.getByRole('button', { name: pl.missionUi.equip }).click();
+  expect(errors).toEqual([]);
 });
 
 test('plays the ident and first song of each station offline after tuning in online', async ({
