@@ -320,8 +320,10 @@
       "phases": {
         "off": "wyłączone",
         "red": "czerwone",
+        "red-yellow": "czerwone z żółtym",
         "yellow": "żółte",
         "green": "zielone",
+        "flashing-green": "zielone migające",
         "arrow": "strzałka"
       },
       "participants": "Uczestnicy ruchu",

@@ -2,13 +2,12 @@ import { arcadeFont, readingFont } from '../core/fonts';
 import type { Cameras, GameObjects, Scene } from 'phaser';
 import { cacheMapGraphics } from './MapGround';
 import { ui } from '../core/presentation';
-import type { EnvState, SignalPhase, Vec2 } from '../rules/types';
+import type { EnvState, Vec2 } from '../rules/types';
 import type { Box, WorldModel } from '../rules/world/WorldModel';
 import { vehicleFrame } from './spriteFrames';
 
-const lightColor: Record<SignalPhase, number> = {
+const lightColor = {
   red: 0xe43b44,
-  arrow: 0xe43b44,
   green: 0xa7f070,
   yellow: 0xfeae34,
   off: 0x566c86,
@@ -505,12 +504,17 @@ export class TrainingRoad {
       const secondVisible =
         (pedestrian || signal.twoWay) && visible(oppositeX, oppositeY);
       if (!firstVisible && !secondVisible) continue;
-      const open = this.world.crossingAllowsEntry(
+      const phase = this.world.crossingPhase(
         crossing,
         this.lightAt,
         environment,
       );
-      const color = lightColor[open ? 'green' : 'red'];
+      const flashing = phase === 'flashing-green';
+      const open = phase === 'green' || phase === 'off' || flashing;
+      const color =
+        flashing && !reducedEffects && Math.floor(this.lightAt * 4) % 2
+          ? lightColor.off
+          : lightColor[open ? 'green' : 'red'];
       const seconds = countdowns
         ? this.world.crossingCountdown(crossing, this.lightAt, environment)
         : undefined;
@@ -538,7 +542,10 @@ export class TrainingRoad {
         for (const [index, lamp] of (
           ['red', 'yellow', 'green'] as const
         ).entries()) {
-          const active = (phase === 'arrow' ? 'red' : phase) === lamp;
+          const active =
+            lamp === phase ||
+            (phase === 'arrow' && lamp === 'red') ||
+            (phase === 'red-yellow' && lamp !== 'green');
           const lampY = y + (index - 1) * 7;
           if (active)
             this.lights.fillStyle(lightColor[lamp]).fillCircle(x, lampY, 3);

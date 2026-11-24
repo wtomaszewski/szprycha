@@ -31,7 +31,7 @@ W czasie jazdy na ekranie są dwie ikony menu. Telefon otwiera SzprychaApp po za
 
 ### Liczniki przy światłach (#98)
 
-Pikselowe wyświetlacze przy S-1, S-2, S-6 i światłach dla pieszych pokazują czas do najbliższej zmiany lampy, zaokrąglony w górę do pełnych sekund. Włączona strzałka S-2 ma osobne odliczanie do zgaśnięcia, a główne czerwone światło dalej odlicza czas do zielonego. Cyfry mają stały wygląd podczas całej fazy. Album Znaków przypomina, że liczniki występują tylko na części skrzyżowań i zawsze obowiązuje sygnał świetlny.
+Pikselowe wyświetlacze przy S-1, S-2, S-6 i światłach dla pieszych pokazują czas do najbliższej zmiany lampy, zaokrąglony w górę do pełnych sekund. Włączona strzałka S-2 ma osobne odliczanie do zgaśnięcia, a główne czerwone światło dalej odlicza czas do zielonego. Na głównej osi i na przejazdach z S-6 odliczanie czerwonego zaczyna się od 8. Na jezdni główny licznik pokazuje czas do zielonego także wtedy, gdy świecą jednocześnie czerwone i żółte. Cyfry mają stały wygląd podczas całej fazy. Album Znaków przypomina, że liczniki występują tylko na części skrzyżowań i zawsze obowiązuje sygnał świetlny.
 
 „Pokaż liczniki przy światłach” jest domyślnie włączone w ustawieniach zwykłej jazdy. Jazda w egzaminie próbnym ma osobną preferencję w menu pauzy, domyślnie wyłączoną. Ustawienie zapisuje się w profilu.
 

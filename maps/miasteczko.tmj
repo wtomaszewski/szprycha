@@ -11512,19 +11512,24 @@
               "value": "zebra-lights"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 18
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 20
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 3.5
+              "value": 2
+            },
+            {
+              "name": "flashing_s",
+              "type": "float",
+              "value": 4.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 18.75
             }
           ]
         },
@@ -11545,19 +11550,24 @@
               "value": "cycle-lane-lights"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 10
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 20
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 5
+              "value": 15
+            },
+            {
+              "name": "flashing_s",
+              "type": "float",
+              "value": 2
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 11
             }
           ]
         }
@@ -14521,24 +14531,29 @@
               "value": "NS"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 0
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 20
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 7
+              "value": 4
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 18
             }
           ]
         },
@@ -14569,24 +14584,29 @@
               "value": "EW"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 10
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 20
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 7
+              "value": 15
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 11
             }
           ]
         },
@@ -14617,24 +14637,29 @@
               "value": "NS"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 0
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 20
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 7
+              "value": 4
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 18
             }
           ]
         },
@@ -14667,12 +14692,12 @@
             {
               "name": "from_s",
               "type": "float",
-              "value": 13
+              "value": 8
             },
             {
               "name": "until_s",
               "type": "float",
-              "value": 16
+              "value": 15
             },
             {
               "name": "direction",
@@ -14708,24 +14733,29 @@
               "value": "EW"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 10
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 20
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 7
+              "value": 15
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 11
             }
           ]
         },
@@ -14756,24 +14786,29 @@
               "value": "EW"
             },
             {
-              "name": "offset_s",
-              "type": "float",
-              "value": 10
-            },
-            {
               "name": "cycle_s",
               "type": "float",
-              "value": 20
+              "value": 25
             },
             {
               "name": "green_s",
               "type": "float",
-              "value": 7
+              "value": 15
             },
             {
               "name": "yellow_s",
               "type": "float",
               "value": 2
+            },
+            {
+              "name": "red_yellow_s",
+              "type": "float",
+              "value": 0.75
+            },
+            {
+              "name": "offset_s",
+              "type": "float",
+              "value": 11
             }
           ]
         }

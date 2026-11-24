@@ -122,6 +122,7 @@ const signalProperties = z.discriminatedUnion('code', [
     cycle_s: z.number().positive(),
     green_s: z.number().positive(),
     yellow_s: z.number().positive(),
+    red_yellow_s: z.number().nonnegative().default(0),
   }),
   z.object({
     code: z.literal('S-2'),
@@ -172,6 +173,7 @@ interface CrossingSignal extends Vec2 {
   offset_s: number;
   cycle_s: number;
   green_s: number;
+  flashing_s: number;
 }
 export interface Driveway extends Box {
   direction: Side;
@@ -219,11 +221,12 @@ function roadSignalPhase(
   if (cycle < signal.green_s) return 'green';
   if (cycle < signal.green_s + signal.yellow_s) return 'yellow';
   if (arrow && cycle >= arrow.from_s && cycle < arrow.until_s) return 'arrow';
-  return 'red';
+  return cycle < signal.cycle_s - signal.red_yellow_s ? 'red' : 'red-yellow';
 }
 
 function crossingSignalPhase(signal: CrossingSignal, cycle: number) {
-  return cycle < signal.green_s ? 'green' : 'red';
+  if (cycle < signal.green_s) return 'green';
+  return cycle < signal.green_s + signal.flashing_s ? 'flashing-green' : 'red';
 }
 
 const pedestrianSpawn = z.object({
@@ -445,9 +448,10 @@ export class WorldModel {
             offset_s: z.number().nonnegative(),
             cycle_s: z.number().positive(),
             green_s: z.number().positive(),
+            flashing_s: z.number().nonnegative().default(0),
           })
           .parse(properties(object));
-        if (props.green_s >= props.cycle_s)
+        if (props.green_s + props.flashing_s >= props.cycle_s)
           throw new Error(`Invalid crossing signal: ${object.name}`);
         return [props.crossing, { ...box(object), ...props }];
       }),
@@ -680,7 +684,8 @@ export class WorldModel {
       if (signal.code === 'S-1') {
         if (
           lane.mainSignal ||
-          signal.green_s + signal.yellow_s >= signal.cycle_s
+          signal.green_s + signal.yellow_s + signal.red_yellow_s >=
+            signal.cycle_s
         )
           throw new Error(`Invalid S-1: ${signal.id}`);
         lane.mainSignal = signal;
@@ -699,7 +704,7 @@ export class WorldModel {
           arrow.group !== mainSignal.group ||
           arrow.from_s < mainSignal.green_s + mainSignal.yellow_s ||
           arrow.until_s <= arrow.from_s ||
-          arrow.until_s > mainSignal.cycle_s)
+          arrow.until_s > mainSignal.cycle_s - mainSignal.red_yellow_s)
       )
         throw new Error(`Invalid S-2: ${arrow.id}`);
     }
@@ -872,7 +877,7 @@ export class WorldModel {
       if (arrow && phase === 'arrow') return Math.ceil(arrow.until_s - cycle);
       return;
     }
-    // The main lamp stays red while the conditional arrow turns on and off.
+    // The red display counts down to green, including the red-yellow phase.
     const change =
       phase === 'green'
         ? signal.green_s
@@ -904,9 +909,13 @@ export class WorldModel {
     if (!signal || env.signalOverrides?.[crossing.id] !== undefined) return;
     const cycle = cyclePosition(signal, at);
     const phase = crossingSignalPhase(signal, cycle);
-    return Math.ceil(
-      (phase === 'green' ? signal.green_s : signal.cycle_s) - cycle,
-    );
+    const change =
+      phase === 'green'
+        ? signal.green_s
+        : phase === 'flashing-green'
+          ? signal.green_s + signal.flashing_s
+          : signal.cycle_s;
+    return Math.ceil(change - cycle);
   }
 
   trafficPhase(lane: Lane, at: number, env: EnvState): SignalPhase {

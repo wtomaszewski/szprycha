@@ -18,6 +18,7 @@ import { IntersectionManager } from '../../src/rules/priority/IntersectionManage
 import {
   TICKS_PER_SECOND,
   type RiderState,
+  type EnvState,
   type Verdict,
 } from '../../src/rules/types';
 import { WorldModel } from '../../src/rules/world/WorldModel';
@@ -41,6 +42,32 @@ interface TiledMap {
       properties?: { name: string; value: unknown }[];
     })[];
   }[];
+}
+
+function crossingRedWithTime(
+  world: WorldModel,
+  id: string,
+  at: number,
+  env: EnvState,
+) {
+  const crossing = world.crossings.find((entry) => entry.id === id)!;
+  return (
+    world.crossingPhase(crossing, at, env) === 'red' &&
+    (world.crossingCountdown(crossing, at, env) ?? 0) >= 4
+  );
+}
+
+function mainRedWithTime(
+  world: WorldModel,
+  id: string,
+  at: number,
+  env: EnvState,
+) {
+  const lane = world.getLane(id)!;
+  return (
+    world.phase(lane, at, env) === 'red' &&
+    (world.signalCountdown(lane, 'S-1', at, env) ?? 0) >= 4
+  );
 }
 
 export function runMissionRoute(
@@ -278,6 +305,10 @@ export function runMissionRoute(
           engine.at,
           env,
         )) &&
+      (!point.crossingRed ||
+        crossingRedWithTime(world, point.crossingRed, engine.at, env)) &&
+      (!point.mainRed ||
+        mainRedWithTime(world, point.mainRed, engine.at, env)) &&
       (!point.mainGreen ||
         world.phase(world.getLane(point.mainGreen)!, engine.at, env) ===
           'green') &&
