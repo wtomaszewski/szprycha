@@ -24,6 +24,7 @@
 | `spawns` | object | miejsca startu AI |
 | `triggers` | object | wyzwalacze zdarzeń wymuszonych misji |
 | `districts` | object | granice dzielnic + `unlock` |
+| `road_grades` | object (opcjonalna) | prostokąt odcinka, kierunek spadku `downhill` (N/E/S/W), nachylenie `grade` (np. 0,12) i zasięg widoczności `sight_m` oraz `fog_sight_m` w metrach |
 | `collectibles` | object | krasnale, syrenki, ukryte naklejki |
 
 ### Graf pasów dla aut (M3a)
@@ -304,25 +305,53 @@ Zrzuty z gry pokazują [wybór miasta](screenshots/137-mapa-polski.webp), [Stary
 
 Zrzuty kampanii pokazują [wybór Poznania](screenshots/138-kampania.webp), [drewniane rogale na rynku](screenshots/138-rogale.webp), [pierwszą zagadkę](screenshots/138-zagadka.webp) i [scenkę pierwszej pomocy](screenshots/138-pierwsza-pomoc.webp).
 
+## ZAKOPANE
+
+**Wolna jazda → Zakopane** zaczyna się na drodze pieszo-rowerowej obok Krupówek. Kolaż zajmuje 152 × 112 kafli. PWA pobiera mapę przy pierwszej wizycie i udostępnia ją później offline. `npm run map:generate:zakopane` odtwarza [zakopane.tmj](../maps/zakopane.tmj).
+
+| Miejsce | Układ i praktyka |
+| --- | --- |
+| Krupówki | Brukowany deptak z B-1, drewniane wille, ławki i stojak na rowery. Po południowej stronie biegnie droga pieszo-rowerowa. Nad zabudową widać grań Giewontu. |
+| Potok | Dwa drewniane mostki łączą drogi pieszo-rowerowe na przeciwnych brzegach. Do północnego brzegu prowadzą DDR i oznakowany przejazd. |
+| Zjazd spod regli | Dwukierunkowa jezdnia z odcinkiem o nachyleniu 12%. Jadąc w dół, rower może przyspieszać po puszczeniu pedałów i potrzebuje więcej miejsca do zatrzymania. Podjazd jest wolniejszy. |
+| Droga pod reglami | Przejezdne pobocza po obu stronach drogi poza obszarem zabudowanym, przejazd kolejowy z zaporami oraz skrzyżowanie równorzędne. |
+| Okolice dworca | Skrzyżowanie z sygnalizacją, DDR z sygnałem S-6, plac z kontrapasem i fikcyjny tramwaj szkoleniowy z przystankiem bez wysepki. |
+
+Mapa zawiera także rondo, skrzyżowanie z drogą z pierwszeństwem i STOP-em oraz wyjazd z drogi wewnętrznej. W Wolnej jeździe po 90 sekundach zapada zmrok.
+
+| Ćwiczenie w SzprychaApp | Zadanie |
+| --- | --- |
+| `ZAK-B-01` | Kontroluj prędkość na zjeździe, zatrzymaj się przy znaczniku i dokończ odcinek. |
+| `ZAK-B-02` | Wybierz prawe przejezdne pobocze i zatrzymaj się na nim. |
+| `ZAK-B-03` | Zapnij kask, włącz obie lampki i dostosuj prędkość do krótszego zasięgu widoczności. Zatrzymaj się przy znaczniku. |
+| `ZAK-B-04` | Rozpoznaj B-1 na deptaku i przejedź sąsiednią drogą pieszo-rowerową. |
+| `ZAK-B-05` | Oceń sytuację przed przejazdem, przejedź przez mostek i wybierz bezpieczny pierwszy krok przy udzielaniu pomocy. |
+
+Wynik ćwiczeń zależy od ukończenia zadań i bezpiecznej jazdy. Wjazd na deptak podczas `ZAK-B-04` kończy próbę. Reguły `MAN-08`, `GDZIE-03b` i `MSC-04` odwołują się do danych przepisów. Szacowana droga zatrzymania uwzględnia czas reakcji, kierunek względem spadku i przyczepność. Na zjeździe i we mgle silnik porównuje ją z zasięgiem widoczności zapisanym dla odcinka. [Przepisy gry](../content/przepisy.yaml)
+
+`npm run coverage:maps -- --strict` obejmuje 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/zakopane.test.ts` sprawdza przejazdy, niedozwolony skrót, deterministyczność nachylenia, hamowanie i trzy próby po dziesięć minut ruchu AI. [Raport pokrycia](coverage.md#zakopane)
+
+Zrzuty z Chromium pokazują [mapę Polski](screenshots/141-mapa-polski.webp), [Krupówki i Giewont](screenshots/141-krupowki.webp), [mostki](screenshots/141-mostki.webp), [pobocze](screenshots/141-pobocze.webp) i [zjazd we mgle](screenshots/141-mgla.webp).
+
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
 Wzorowane na prawdziwych szkolnych miasteczkach ruchu: małe skrzyżowania każdego typu, mini-rondo, sygnalizacja, przejazd kolejowy z zaporami, znaki z Albumu na tablicach, **plac manewrowy** (ósemka, slalom, tor wąski, pole zatrzymania). Tu: samouczek, plac, quiz w budynku szkoły, egzamin Licencji.
 
 ## Tabela pokrycia (każde miasto musi mieć ✓ w każdym wierszu)
-| Sytuacja | Warszawa | Wrocław | Kraków | Gdańsk | Wieś i las | Poznań |
-|---|---|---|---| --- | --- | --- |
-| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody | Ołowianka i Brzeźno | Skrzyżowanie pod lasem | Kolejowa i Ogrody |
-| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu | Skrzyżowanie przy Długim Targu | Droga gminna przy osadzie | Skrzyżowanie przy rynku |
-| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Skansen | Aleja tramwajowa |
-| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku | Rondo przy stoczni | Rondo przy lesie | Rondo przy ogrodach |
-| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Tramwaj przy skansenie | Aleja tramwajowa |
-| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz | DDR nad Motławą, kontrapas w stoczni i promenada | Zagrody i las | Bulwar Warty, śluza i kontrapas przy browarze |
-| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary | Aleja i przeprawy przez Motławę | Skansen | Aleja i bulwary |
-| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz | Dojście do Długiego Targu | Plac osady | Stary Rynek i Ostrów Tumski |
-| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu | Wyjazd z placu magazynowego | Gospodarstwo | Dziedziniec dawnego browaru |
-| Przejazd kolejowy | Mokotów | Zachód | Dębniki | Tory towarowe na południowym zachodzie | Droga gminna | Kolejowa |
-| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec | Pobocze przy torach i kładka przy Żurawiu | Północ drogi gminnej i rezerwat | Kolejowa i alejka przy katedrze |
-| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz | Stocznia | Uliczka osady | Uliczka przy dawnym browarze |
-| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary | Kładka przy Żurawiu | Ćwiczenie WIE-B-03 | Bulwar Warty i most Tumski |
+| Sytuacja | Warszawa | Wrocław | Kraków | Gdańsk | Wieś i las | Poznań | Zakopane |
+|---|---|---|---| --- | --- | --- | --- |
+| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody | Ołowianka i Brzeźno | Skrzyżowanie pod lasem | Kolejowa i Ogrody | Pod Reglami i U Podnóża |
+| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu | Skrzyżowanie przy Długim Targu | Droga gminna przy osadzie | Skrzyżowanie przy rynku | Skrzyżowanie pod Krupówkami |
+| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Skansen | Aleja tramwajowa | Przy dworcu |
+| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku | Rondo przy stoczni | Rondo przy lesie | Rondo przy ogrodach | Rondo przy zjeździe |
+| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Tramwaj przy skansenie | Aleja tramwajowa | Przystanek przy dworcu |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz | DDR nad Motławą, kontrapas w stoczni i promenada | Zagrody i las | Bulwar Warty, śluza i kontrapas przy browarze | DDR przy dworcu i nad potokiem, kontrapas, mostki |
+| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary | Aleja i przeprawy przez Motławę | Skansen | Aleja i bulwary | Przy dworcu i nad potokiem |
+| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz | Dojście do Długiego Targu | Plac osady | Stary Rynek i Ostrów Tumski | Krupówki |
+| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu | Wyjazd z placu magazynowego | Gospodarstwo | Dziedziniec dawnego browaru | Wyjazd z parkingu |
+| Przejazd kolejowy | Mokotów | Zachód | Dębniki | Tory towarowe na południowym zachodzie | Droga gminna | Kolejowa | Pod Reglami |
+| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec | Pobocze przy torach i kładka przy Żurawiu | Północ drogi gminnej i rezerwat | Kolejowa i alejka przy katedrze | Droga pod reglami i alejka leśna |
+| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz | Stocznia | Uliczka osady | Uliczka przy dawnym browarze | Uliczka przy parkingu |
+| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary | Kładka przy Żurawiu | Ćwiczenie WIE-B-03 | Bulwar Warty i most Tumski | Zmrok w Wolnej jeździe |
 
 ## Kolejne mapy (po MVP, kolejność wg popularności)
-Łódź (Piotrkowska, Manufaktura) · Zakopane (Krupówki, Giewont w tle).
+Łódź (Piotrkowska, Manufaktura).

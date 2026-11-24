@@ -1,4 +1,4 @@
-import { BRAKE_DECELERATION } from '../../gameplay/bicycle';
+import { BRAKE_DECELERATION } from '../world/RoadGrade.ts';
 import type { GameContent } from '../../content/schemas';
 import { preferVerdict } from '../deduplication';
 import { rightHand } from '../detectors/PIER-01';

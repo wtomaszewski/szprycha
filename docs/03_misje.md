@@ -68,6 +68,8 @@ Losowanie używa ziarna i stałego kroku symulacji. Rozpatruje tylko zdarzenia p
 
 `zdarzenia_wymuszone` gwarantują, że każde dziecko w misji spotka sytuację uczącą daną regułę (nie zostawiamy tego losowi).
 
+`premia_czasowa: false` wyłącza punkty za czas i warunek czasowy trzeciej gwiazdki. Ćwiczenia Zakopanego korzystają z tej opcji, aby wynik zależał od bezpiecznej jazdy. Czasy z pól `limit_s` działają niezależnie.
+
 ### Uruchamianie misji
 
 - `mapa` wskazuje plik Tiled bez rozszerzenia (domyślnie wartość z `miasto`). Samouczki używają `akt: 0`. `start.kask_zapiety` określa stan kasku przed ruszeniem, a `ruch_ai: false` pozwala przećwiczyć manewr bez ruchu AI.

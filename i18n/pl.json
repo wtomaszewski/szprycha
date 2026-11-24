@@ -515,6 +515,7 @@
     "wroclaw": "Wrocław",
     "gdansk": "Gdańsk",
     "poznan": "Poznań",
+    "zakopane": "Zakopane",
     "krakow": "Kraków",
     "wies": "Wieś i las"
   },
@@ -640,6 +641,60 @@
       "odp2": "Wjeżdżam na skrót, bo znak dotyczy tylko samochodów.",
       "wyjasnienie": "B-1 zakazuje ruchu także rowerom. Zostań na dozwolonej trasie.",
       "meta": "Wyjedź z gospodarstwa, skręć w prawo w drogę gminną i oddaj mapę przy znaczniku."
+    },
+    "ZAK-B-01": {
+      "tytul": "Zjazd spod regli",
+      "opis": "Przećwicz kontrolę prędkości i zatrzymanie na stromym zjeździe.",
+      "postoj": "Pedałuj krótko, potem kontroluj prędkość hamulcem. Zatrzymaj się przy znaczniku.",
+      "pytanie": "Jak kontrolować prędkość na zjeździe?",
+      "odp1": "Rozpędzam się i hamuję dopiero przy przeszkodzie.",
+      "odp2": "Zwalniam wcześniej i hamuję stopniowo.",
+      "wyjasnienie": "Na zjeździe potrzebujesz więcej miejsca na zatrzymanie, więc zwolnij wcześniej.",
+      "meta": "Jedź dalej powoli, zanim skończy się zjazd."
+    },
+    "ZAK-B-02": {
+      "tytul": "Pobocze pod reglami",
+      "opis": "Wybierz przejezdne prawe pobocze drogi poza obszarem zabudowanym.",
+      "postoj": "Zostań na prawym poboczu i zatrzymaj się przy znaczniku.",
+      "pytanie": "Gdzie jedziesz, gdy nie ma drogi dla rowerów, a prawe pobocze jest wolne i przejezdne?",
+      "odp1": "Jadę prawym poboczem.",
+      "odp2": "Jadę środkiem jezdni, żeby być lepiej widocznym.",
+      "wyjasnienie": "Korzystaj z przejezdnego pobocza, chyba że utrudniałoby to ruch pieszych.",
+      "meta": "Dojedź poboczem do końca ćwiczenia."
+    },
+    "ZAK-B-03": {
+      "tytul": "Mgła na zboczu",
+      "opis": "Przygotuj rower do ograniczonej widoczności i przejedź fragment zjazdu.",
+      "lampki": "Zapnij kask i włącz przednie oraz tylne światło.",
+      "meta": "Zwolnij we mgle i zatrzymaj się przy znaczniku.",
+      "pytanie": "Jak jechać we mgle, nawet gdy lampki już świecą?",
+      "odp1": "Jadę tak szybko, jak przy dobrej widoczności.",
+      "odp2": "Zwalniam tak, by zatrzymać się na odcinku, który widzę.",
+      "wyjasnienie": "Lampki pomagają Cię zauważyć, lecz nadal musisz zwolnić i wcześniej hamować."
+    },
+    "ZAK-B-04": {
+      "tytul": "Spacerowe Krupówki",
+      "opis": "Rozpoznaj zakaz ruchu na deptaku i wybierz drogę obok.",
+      "postoj": "Zatrzymaj się na drodze wspólnej, przed wejściem na deptak.",
+      "pytanie": "Jak możesz wejść na deptak z rowerem, gdy stoi znak B-1 bez wyjątków?",
+      "odp1": "Wjeżdżam na rowerze, jeśli nikogo nie ma w pobliżu.",
+      "odp2": "Zsiadam i prowadzę rower.",
+      "wyjasnienie": "B-1 zakazuje wjazdu pojazdom, a osoba prowadząca rower jest pieszym.",
+      "meta": "Jedź drogą pieszo-rowerową obok deptaka."
+    },
+    "ZAK-B-05": {
+      "tytul": "Mostek nad potokiem",
+      "opis": "Przejedź przez oznaczony przejazd, a za mostkiem przećwicz pierwszą pomoc.",
+      "przejazd": "Zatrzymaj się przed przejazdem rowerowym i oceń sytuację.",
+      "pytaniePrzejazd": "Kiedy kierowca jadący jezdnią ma ustąpić Ci na przejeździe?",
+      "odpPrzejazd1": "Gdy jestem na przejeździe, ale przed wjazdem upewniam się, że jest bezpiecznie.",
+      "odpPrzejazd2": "Mogę wjechać od razu, bo sam znak gwarantuje, że kierowca zdąży się zatrzymać.",
+      "wyjasnieniePrzejazd": "Upewnij się, że wjazd jest bezpieczny, nawet gdy na przejeździe masz pierwszeństwo.",
+      "meta": "Zatrzymaj się za mostkiem w bezpiecznym miejscu.",
+      "pytanie": "Ktoś potrzebuje pomocy za mostkiem. Od czego zaczynasz?",
+      "odp1": "Podbiegam od razu, nawet jeśli mogę wpaść pod rower.",
+      "odp2": "Zatrzymuję się bezpiecznie i sprawdzam, czy mogę podejść.",
+      "wyjasnienie": "Najpierw zadbaj o bezpieczeństwo swoje i osoby, której pomagasz."
     },
     "POZ-B-01": {
       "tytul": "Przez Stary Rynek",

@@ -114,7 +114,10 @@ export class MissionHud {
     setHidden(this.lights, !preparing || lightsOn);
     setHidden(this.vest, !mission.preparingVest || vestWorn);
     setHidden(this.resume, !!result || !interrupted);
-    setHidden(this.timer, !!result);
+    setHidden(
+      this.timer,
+      !!result || mission.definition.premia_czasowa === false,
+    );
     setHidden(this.arrow.root, !!result || preparing);
     setHidden(this.parcel, !!result || shakeLevel === undefined);
     if (shakeLevel !== undefined && this.shocks.value !== shakeLevel)

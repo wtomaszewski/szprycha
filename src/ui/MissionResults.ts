@@ -162,7 +162,8 @@ export class MissionResults {
     );
     if (result.penaltyPoints)
       scoreRow(scores, mission.penalties, delta(-result.penaltyPoints));
-    scoreRow(scores, labels.timeBonus, bonus(result.timeBonus));
+    if (result.timeBonusEnabled !== false)
+      scoreRow(scores, labels.timeBonus, bonus(result.timeBonus));
     scoreRow(
       scores,
       mission.timer,
@@ -202,7 +203,7 @@ export class MissionResults {
     this.body.replaceChildren(overview, breakdown);
     const outcomeText = result.illegalShortcut
       ? mission.noShortcutBonus
-      : !result.timeBonusEligible
+      : result.timeBonusEnabled !== false && !result.timeBonusEligible
         ? mission.noTimeBonus
         : '';
     if (outcomeText) overview.append(textElement('p', outcomeText));

@@ -1,12 +1,13 @@
-import { BRAKE_DECELERATION } from '../../gameplay/bicycle';
+import { gradeAcceleration, stoppingDistance } from '../world/RoadGrade.ts';
 import { distanceInto, timeToConflict } from '../priority/ConflictGeometry';
-import { verdict, type AgentState, type RiderState, type Vec2 } from '../types';
+import {
+  verdict,
+  type AgentState,
+  type EnvState,
+  type RiderState,
+  type Vec2,
+} from '../types';
 import { contains, type WorldModel, type Zone } from '../world/WorldModel';
-
-function stoppingDistance(world: WorldModel, rider: RiderState, grip: number) {
-  const brake = BRAKE_DECELERATION * world.metersPerPixel * grip;
-  return rider.speed * 0.75 + rider.speed ** 2 / (2 * brake);
-}
 
 export interface RoadHazard {
   id: string;
@@ -24,7 +25,11 @@ export function encounterSpeed(
   grip: number,
 ) {
   if (rider.mode !== 'riding' || rider.speed <= 0.1) return;
-  const timeToStop = stoppingDistance(world, rider, grip) / rider.speed;
+  const road = world.roadGradeAt(rider.pos.x, rider.pos.y);
+  const acceleration = road ? gradeAcceleration(road, rider.heading) : 0;
+  const timeToStop =
+    stoppingDistance(rider.speed, world.metersPerPixel, grip, acceleration) /
+    rider.speed;
   const hazard = hazards.find(
     (candidate) =>
       !candidate.warned && timeToConflict(rider, candidate, 0.8) < timeToStop,
@@ -48,8 +53,26 @@ export function safeSpeed(
   agents: readonly AgentState[],
   at: number,
   grip: number,
+  weather: EnvState['weather'],
 ) {
-  const stopping = stoppingDistance(world, rider, grip);
+  const road = world.roadGradeAt(rider.pos.x, rider.pos.y);
+  const acceleration = road ? gradeAcceleration(road, rider.heading) : 0;
+  const stopping = stoppingDistance(
+    rider.speed,
+    world.metersPerPixel,
+    grip,
+    acceleration,
+  );
+  if (road) {
+    const fog = weather === 'fog' || weather === 'fog_dense';
+    const sight = fog ? road.fog_sight_m : road.sight_m;
+    if ((acceleration > 0 || fog) && stopping > sight)
+      return verdict('MAN-08', 'minor', at, rider, {
+        roadGrade: road.id,
+        stopping,
+        sight,
+      });
+  }
   const hazard = agents.find((agent) => {
     if (
       agent.kind !== 'pedestrian' ||

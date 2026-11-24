@@ -111,7 +111,10 @@ export class TrafficArt {
             (city) =>
               mapId.startsWith(city) ||
               (city === 'krakow' &&
-                (mapId === 'gdansk' || mapId === 'wies' || mapId === 'poznan')),
+                (mapId === 'gdansk' ||
+                  mapId === 'wies' ||
+                  mapId === 'poznan' ||
+                  mapId === 'zakopane')),
           ),
         );
         this.rear = scene.add

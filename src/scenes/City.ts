@@ -35,6 +35,8 @@ import wroclawUrl from '../../maps/wroclaw.tmj?url';
 import krakowUrl from '../../maps/krakow.tmj?url';
 import gdanskUrl from '../../maps/gdansk.tmj?url';
 import poznanUrl from '../../maps/poznan.tmj?url';
+import zakopaneUrl from '../../maps/zakopane.tmj?url';
+import giewontUrl from '../../assets/generated/giewont.png?url';
 import wiesUrl from '../../maps/wies.tmj?url';
 import blockWallsUrl from '../../assets/generated/walls.png?url';
 import blockRoofsUrl from '../../assets/generated/roofs.png?url';
@@ -161,6 +163,7 @@ const mapUrls = {
   krakow: krakowUrl,
   gdansk: gdanskUrl,
   poznan: poznanUrl,
+  zakopane: zakopaneUrl,
   wies: wiesUrl,
 };
 type MapId = keyof typeof mapUrls;
@@ -198,7 +201,10 @@ export class City extends Scene {
   private ready = false;
   private rider!: Rider;
   private readonly cameraFocus = { x: 0, y: 0 };
-  private readonly weatherTuning = { brakeForce: BRAKE_DECELERATION };
+  private readonly ridingTuning = {
+    brakeForce: BRAKE_DECELERATION,
+    world: undefined as WorldModel | undefined,
+  };
   private riderArt!: RiderArt;
   private controls!: DrivingControls;
   private blocks!: Blocks;
@@ -367,6 +373,8 @@ export class City extends Scene {
         frameWidth: 48,
         frameHeight: 48,
       });
+    if (mapId === 'zakopane' && !this.textures.exists('giewont'))
+      this.load.image('giewont', giewontUrl);
     loadTrafficArt(this);
     loadCityEffects(this);
     const onError = ({ key }: { key: string }) => {
@@ -472,7 +480,8 @@ export class City extends Scene {
     this.mission = definition ? this.createMission(definition) : undefined;
     Object.assign(this.environment, missionEnvironment(this.world, definition));
     Object.assign(this.renderEnvironment, this.environment);
-    this.weatherTuning.brakeForce =
+    this.ridingTuning.world = this.world;
+    this.ridingTuning.brakeForce =
       BRAKE_DECELERATION *
       this.content.balans.silnik.przyczepnosc[this.environment.weather];
     const ambientTraffic = !tutorial && definition?.ruch_ai !== false;
@@ -498,6 +507,7 @@ export class City extends Scene {
               mapId === 'krakow' ||
               mapId === 'gdansk' ||
               mapId === 'poznan' ||
+              mapId === 'zakopane' ||
               mapId === 'wies') &&
             !definition
           ? 'ambient'
@@ -704,9 +714,11 @@ export class City extends Scene {
               ? ui.driving.gdanskTitle
               : mapId === 'poznan'
                 ? ui.cityPicker.poznan
-                : mapId === 'wies'
-                  ? ui.driving.wiesTitle
-                  : ui.driving.title;
+                : mapId === 'zakopane'
+                  ? ui.cityPicker.zakopane
+                  : mapId === 'wies'
+                    ? ui.driving.wiesTitle
+                    : ui.driving.title;
     this.graphics.lite = this.lowQuality();
     this.controls = new DrivingControls(
       tutorial ? ui.tutorial.title : examRide ? ui.exam.ride : areaTitle,
@@ -922,6 +934,7 @@ export class City extends Scene {
                 (this.city === 'krakow' ||
                   this.city === 'gdansk' ||
                   this.city === 'poznan' ||
+                  this.city === 'zakopane' ||
                   this.city === 'wies')
                   ? 'freeRide'
                   : 'campaign',
@@ -966,7 +979,7 @@ export class City extends Scene {
     this.debug = new RuleDebugOverlay(this, this.world, this.controls.root);
     this.controls.setWalking(this.rider.walking);
     if (pose) this.controls.setLights(pose.lights);
-    if (guidedAfter) {
+    if (guidedAfter && this.city !== 'zakopane') {
       if (!pose)
         this.progress.saveCampaignRide(
           this.city,
@@ -1108,6 +1121,7 @@ export class City extends Scene {
   }
 
   private guideCampaign(after: string) {
+    if (this.city === 'zakopane') return;
     const panel = document.createElement('section');
     panel.className = 'mission-panel campaign-navigation-panel';
     panel.setAttribute('aria-label', ui.campaignRide.navigation);
@@ -2561,7 +2575,7 @@ export class City extends Scene {
           this.worldWidth,
           this.worldHeight,
           FIXED_STEP,
-          this.rider.walking ? undefined : this.weatherTuning,
+          this.rider.walking ? undefined : this.ridingTuning,
         );
       if (collided && !this.tutorial) {
         const locked = this.districtGates?.near(this.rider.x, this.rider.y);

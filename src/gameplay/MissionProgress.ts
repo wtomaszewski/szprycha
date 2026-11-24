@@ -172,7 +172,7 @@ export class MissionProgress {
       if (!profile.completed.includes(mission.id))
         profile.completed.push(mission.id);
       if (!reward) return 0;
-      if (reward.campaignRide)
+      if (reward.campaignRide && mission.miasto !== 'zakopane')
         (profile.campaignRides ??= {})[mission.miasto] = reward.campaignRide;
       profile.missionPoints += Math.max(0, reward.points);
       const best = profile.bestScores[mission.id];
@@ -365,7 +365,7 @@ export class MissionProgress {
     this.store.change((profile) => {
       if (freeRide && city !== 'warszawa' && city !== 'wroclaw')
         profile.freeRideCity = city;
-      else {
+      else if (city !== 'zakopane') {
         if (freeRide) delete profile.freeRideCity;
         profile.selectedCity = city;
       }
