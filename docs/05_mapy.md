@@ -331,6 +331,15 @@ Wynik ćwiczeń zależy od ukończenia zadań i bezpiecznej jazdy. Wjazd na dept
 
 `npm run coverage:maps -- --strict` obejmuje 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/zakopane.test.ts` sprawdza przejazdy, niedozwolony skrót, deterministyczność nachylenia, hamowanie i trzy próby po dziesięć minut ruchu AI. [Raport pokrycia](coverage.md#zakopane)
 
+Pomiary wykonano na buildzie produkcyjnym w Chromium 156.0.8078.79 headless z WebGL, pełną grafiką, widokiem 640 × 360 i ograniczeniem CPU 4×. Tabela podaje mediany dwóch 11-sekundowych prób w Wolnej jeździe.
+
+| Odcinek | Średnie FPS | p95 klatki |
+| --- | ---: | ---: |
+| Zakopane, Krupówki | 57,96 | 16,8 ms |
+| Warszawa, Starówka | 46,83 | 33,4 ms |
+
+Po `npm run build && npm run preview` uruchom `BENCH_URL=http://127.0.0.1:4173/ BENCH_VIEWPORT=640x360 BENCH_MAP=zakopane BENCH_RUNS=2 npm run benchmark:driving`. Dla Warszawy ustaw `BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free`.
+
 Zrzuty z Chromium pokazują [mapę Polski](screenshots/141-mapa-polski.webp), [Krupówki i Giewont](screenshots/141-krupowki.webp), [mostki](screenshots/141-mostki.webp), [pobocze](screenshots/141-pobocze.webp) i [zjazd we mgle](screenshots/141-mgla.webp).
 
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
