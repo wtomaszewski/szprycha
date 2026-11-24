@@ -40,6 +40,8 @@ Teksty kwestii są autorskie (`content/`, `i18n/pl.json`). Audio wygenerował lo
 
 Krakowskie obwarzanki rysuje `src/render/CityCollectibles.ts`. Zrzuty kampanii z #106 pochodzą z lokalnej gry uruchomionej przez Playwright.
 
+W #109 generator `src/render/LandmarkArt.ts` rysuje Stadion Narodowy, odbicie Pałacu na Wodzie, dach i przeszklenia Afrykarium, pergolę Hali Stulecia oraz rabaty. Dekoracje korzystają też z istniejącego arkusza `generated/props.png` i rozmieszczenia z `tools/gen-warsaw-map.ts` oraz `tools/wroclaw-scenery.ts`. To autorskie rysunki projektu bez logotypów, zdjęć i plików zewnętrznych. Zrzuty `docs/screenshots/109/` pochodzą z lokalnej gry uruchomionej przez Playwright.
+
 Listy w `content/zleceniodawcy.yaml` są autorskie. Gra komponuje portrety i sprite’y fikcyjnych klientów przy użyciu `src/render/portraitArt.ts` i `src/render/dailyClientArt.ts`. Galerię tworzy `tools/client-gallery.ts`. Pozostałe zrzuty `docs/screenshots/103-*` pochodzą z lokalnej gry.
 
 Listy słów w `content/nicki.json` są autorskie. Strefa Rodzica korzysta z istniejących kolorów kasku i lokalnego fontu. Zrzuty `docs/screenshots/80-*.png` wygenerował Playwright z działającej gry.
