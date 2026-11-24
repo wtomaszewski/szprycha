@@ -36,7 +36,7 @@ const dist = sizeOf([...sizes.keys()]);
 const lazy = sizeOf(Object.keys(manifest.lazy ?? {}));
 console.log(JSON.stringify({ dist, precache, firstDownload, lazy }, null, 2));
 for (const [name, bytes, max] of [
-  ['dist', dist, 20_000_000],
+  ['dist', dist, 60_000_000],
   ['firstDownload', firstDownload, 8_000_000],
 ] as const) {
   if (bytes > max) {

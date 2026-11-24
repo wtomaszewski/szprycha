@@ -8,12 +8,12 @@ Rozmiary to bajty plików przed kompresją HTTP. Pierwsze pobranie liczy każdy 
 
 | Obszar | Przed | Po | Limit CI |
 | --- | ---: | ---: | ---: |
-| Cały `dist` | 17 793 215 B | 17 804 382 B | 20 000 000 B |
+| Cały `dist` | 17 793 215 B | 17 804 382 B | 60 000 000 B |
 | Precache | 17 778 611 B | 3 670 193 B | — |
 | Pierwsze pobranie PWA | 17 782 513 B | **3 677 876 B** | **8 000 000 B** |
 | Zasoby pobierane przy użyciu | 0 B | 14 115 804 B | — |
 
-Oszczędność przy pierwszym pobraniu wynosi **79,3%**. Rozmiar plików radia i bitrate pozostały bez zmian. Menu, samouczek, Miasteczko, plac i treści lekcji są dostępne po instalacji. Po wejściu do Warszawy, Wrocławia lub Krakowa PWA zapisuje konkretną mapę. Po uruchomieniu stacji zapisuje jej dżingiel i utwory. Nagrania lektora są obsługiwane pojedynczo. Build audytu zawiera manifest dostępnych tekstów i zero nagrań lektora. Paczki Capacitor zawierają zasoby lokalnie i zachowują dostęp offline od instalacji.
+Oszczędność przy pierwszym pobraniu wynosi **79,3%**. Rozmiar plików radia i bitrate pozostały bez zmian. Menu, samouczek, Miasteczko, plac i treści lekcji są dostępne po instalacji. Po wejściu do Warszawy, Wrocławia lub Krakowa PWA zapisuje konkretną mapę. Po uruchomieniu stacji zapisuje jej dżingiel i utwory. Nagrania lektora są obsługiwane pojedynczo. Build audytu zawiera manifest dostępnych tekstów i zero nagrań lektora. Paczki Capacitor zawierają zasoby lokalnie i zachowują dostęp offline od instalacji. Od #93 `dist` zawiera nagrania lektora Azure (636 kwestii w Opus i AAC, ok. 31 MB, pobierane pojedynczo), dlatego limit całego `dist` wynosi 60 000 000 B. Limit pierwszego pobrania się nie zmienia.
 
 Cache ma zasięg instalacji PWA. Aktualizacja zachowuje pobrane zasoby o zgodnym skrócie zawartości i usuwa stare wersje. Test E2E przeładowuje grę bez sieci, odtwarza lokalne radio, otwiera wcześniej pobraną mapę i sprawdza jej dostępność po aktualizacji.
 
