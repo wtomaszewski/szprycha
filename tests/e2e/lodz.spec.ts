@@ -9,10 +9,17 @@ test('opens Łódź for free ride, remembers it and offers its four exercises', 
 }, info) => {
   await page.goto('/');
   const canvas = page.locator('canvas');
+  const picker = page.getByRole('main', { name: pl.cityPicker.title });
+  const freeRide = page.getByRole('button', {
+    name: pl.cityPicker.freeRide,
+    exact: true,
+  });
   await page.getByRole('button', { name: pl.cityPicker.campaign }).click();
+  await expect(picker).toBeVisible();
   await expect(cityPin(page, 'lodz')).toHaveCount(0);
   await page.keyboard.press('Escape');
-  await page.getByRole('button', { name: pl.cityPicker.freeRide }).click();
+  await expect(picker).toBeHidden();
+  await freeRide.click();
   const pin = cityPin(page, 'lodz');
   await expect(pin).toBeEnabled();
   await pin.hover();
@@ -31,7 +38,7 @@ test('opens Łódź for free ride, remembers it and offers its four exercises', 
   await expect(canvas).toHaveAttribute('data-mission', 'LOD-B-02');
 
   await page.reload();
-  await page.getByRole('button', { name: pl.cityPicker.freeRide }).click();
+  await freeRide.click();
   await expect(pin).toBeFocused();
   await pin.press('Enter');
   await expect(canvas).toHaveAttribute('data-map', 'lodz', { timeout: 15_000 });
