@@ -13,7 +13,11 @@ Gra używa lokalnych kopii fontów WOFF2, dołączonych do pamięci podręcznej 
 
 ### Nagrania lektora (`voice/pl/`)
 
-Wpis do uzupełnienia po wyborze głosu i pierwszym renderowaniu. Dostawca, plan z licencją komercyjną, nazwa i identyfikator głosu z biblioteki, data pozyskania oraz wersja i adres zaakceptowanego regulaminu oczekują na decyzję Wojtka. Publikacja obejmuje wyłącznie głos biblioteczny z potwierdzonymi prawami, bez klonowania głosu realnej osoby. Źródła warunków dla obsługiwanych usług [ElevenLabs](https://elevenlabs.io/terms-of-use) i [Azure Speech](https://www.microsoft.com/licensing/terms/productoffering/MicrosoftAzure/all).
+| Pliki                                            | Dostawca i plan                                                                    | Głos                                                                                         | Data pozyskania | Warunki                                                                                                                             |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `voice/pl/*.ogg`, `voice/pl/*.m4a` (636 kwestii) | Microsoft Azure AI Speech, neuronowa synteza mowy, plan S0 (płatny), konto wydawcy | `pl-PL-ZofiaNeural`, standardowy głos z biblioteki Azure, bez klonowania głosu realnej osoby | 2026-11-24      | [Microsoft Product Terms — Azure](https://www.microsoft.com/licensing/terms/productoffering/MicrosoftAzure/all), stan na 2026-11-24 |
+
+Teksty kwestii są autorskie (`content/`, `i18n/pl.json`). Audio wygenerował lokalnie `tools/voice/render.ts`, a FFmpeg zakodował je do Opus/OGG i AAC/M4A. Klucz API nie trafia do repozytorium. Potwierdzenie wydawcy dotyczące komercyjnej dystrybucji offline (web, Google Play, App Store), treści dla dzieci i praw do nagrań po zakończeniu subskrypcji jest w [#7](https://github.com/wtomaszewski/szprycha/issues/7).
 
 ## Zasoby własne projektu
 
