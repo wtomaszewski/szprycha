@@ -42,6 +42,14 @@ Boot → wybór profilu (do 4 profili lokalnych, avatar + nick z generatora) →
 **Ekran wyników misji:** gwiazdki (animacja), punkty z rozbiciem (dobre nawyki, błędy, czas), 1 przepis „do zapamiętania”, przycisk „Jeszcze raz po 3 gwiazdki”.
 **Strefa dla rodzica** (zablokowana prostym zadaniem matematycznym): postęp mastery w modułach, przepisy sprawiające trudność, limit czasu gry, włączanie rankingów online, eksport certyfikatu.
 
+### Dojazd do następnej misji (#152)
+
+„Dalej” na ekranie wyników wraca do jazdy. HUD pokazuje nazwę kolejnej misji lub treningu. Strzałka na krawędzi ekranu podaje kierunek oraz odległość w metrach, a punkt startu wyróżnia żółty znacznik na mapie. Oba wskaźniki są statyczne przy ograniczonych efektach. Czytnik ekranu odczytuje kierunek i odległość, a podczas jazdy komunikat aktualizuje się co najwyżej raz na cztery sekundy.
+
+Po zatrzymaniu na znaczniku pojawia się zapowiedź i przycisk „Przyjmij misję”. „Jeszcze nie” pozwala odjechać i wrócić później. Gdy kolejna misja jest na innej mapie, HUD pokazuje przycisk przejścia. Po zmianie aktu HUD wyświetla krótki komunikat. SzprychaApp pozwala wybrać inne zlecenie i powtarzać ukończone misje.
+
+[Warszawa na desktopie](screenshots/152-warszawa-desktop.png) · [Poznań na telefonie 640×360](screenshots/152-poznan-telefon.png)
+
 ### Nieudana próba misji (#97)
 
 Poważny błąd, koniec czasu, nadmierne wstrząsy przesyłki, przegrany wyścig lub błędna odpowiedź przy pełnej Uwadze Drogówki zatrzymują próbę. Pieczątce „OBLAŁEŚ!” towarzyszy krótki dżingiel syntezatora regulowany głośnością efektów. Na stop-klatce Sierżant Ola pokazuje przyczynę i podpowiada, co zrobić w następnej próbie. Przyciski pozwalają zacząć misję od początku lub wrócić do menu.

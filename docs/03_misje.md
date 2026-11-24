@@ -83,6 +83,12 @@ Losowanie używa ziarna i stałego kroku symulacji. Rozpatruje tylko zdarzenia p
 - `limit_s` można podać dla całej misji lub dla etapu. Liczniki korzystają z czasu symulacji. Powrót do checkpointu po pominięciu wymaganego nawyku zachowuje zużyty czas obu limitów i wcześniejsze werdykty. Po porażce ponowienie tworzy nową próbę od `start.poi`, z początkowym wyposażeniem, zegarem, celami, zdarzeniami i wynikiem.
 - `zdarzenia_wymuszone[].przy` wskazuje obiekt w `pois`, `triggers` lub `zones`. Build sprawdza typ zdarzenia, powiązanie z regułą i dostępność potrzebnej geometrii. Każdy wpis wyzwala się raz na próbę misji. Zajęte miejsce startu odkłada zdarzenie do kolejki. Nawigacja prowadzi do pominiętych wyzwalaczy przed ukończeniem ostatniego celu. Wyzwalacze działają również przy `ruch_ai: false`, które wyłącza ruch tła i losowanie w samouczku.
 
+### Przejście do następnej misji kampanii (#152)
+
+Po ukończeniu misji „Dalej” przywraca jazdę w miejscu zakończenia. Gra wybiera pierwszą nieukończoną główną misję dostępną po sprawdzeniu wymagań i rangi. Pierwszeństwo ma niższy akt, a w obrębie aktu obowiązuje kolejność w danych. Akt 0 obejmuje treningi, które odblokowują właściwą kampanię. Misje na innej mapie mają przycisk przejścia.
+
+Nawigacja kończy się po zatrzymaniu w `start.poi`. Gracz widzi zleceniodawcę i `dialog_start`, a przyjęcie zachowuje położenie i kierunek roweru oraz stosuje ustawienia `start`. Podczas dojazdu działa silnik zasad i zapis nawyków. Punktacja, zegar i warunki porażki kolejnej misji zaczynają obowiązywać po przyjęciu. Gra odtwarza prowadzenie z postępu i miejsca zakończenia poprzedniej misji. Po ostatniej misji miasta można otworzyć egzamin próbny lub wybrać kolejne miasto.
+
 ---
 
 ## Zlecenia dnia

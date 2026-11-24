@@ -82,7 +82,9 @@ export class DrivingControls {
     private readonly overlays: OverlayControls,
     private readonly progress: ProgressStore,
     private readonly area: 'ride' | 'exam' | 'plac' = 'ride',
+    initialScheme?: Scheme,
   ) {
+    if (initialScheme) this.scheme = initialScheme;
     const plac = (this.plac = area === 'plac');
     const signal = this.abort.signal;
     const pad = connectedGamepad();
@@ -124,7 +126,7 @@ export class DrivingControls {
     const resume = button(ui.driving.resume, () => this.togglePause());
     resume.autofocus = true;
 
-    const scheme = button(ui.driving.classic, () => {
+    const scheme = button(ui.driving[initialScheme ?? 'classic'], () => {
       this.scheme = this.scheme === 'simple' ? 'classic' : 'simple';
       scheme.textContent = ui.driving[this.scheme];
       this.clear();

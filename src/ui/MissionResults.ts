@@ -38,6 +38,10 @@ export class MissionResults {
   private readonly skip = textElement('button', labels.skip);
   private readonly retry = textElement('button', ui.missionUi.retry);
   private readonly map = textElement('button', labels.map);
+  private readonly continueRide = textElement(
+    'button',
+    ui.progression.continue,
+  );
   private readonly preferences = document.createElement('details');
   private readonly confetti = document.createElement('div');
 
@@ -48,6 +52,7 @@ export class MissionResults {
     retry: () => void,
     openPhone: () => void,
     map: () => void,
+    continueRide?: () => void,
   ) {
     this.dialog.className = 'game-dialog mission-results';
     this.dialog.setAttribute('aria-labelledby', 'mission-result-heading');
@@ -61,6 +66,11 @@ export class MissionResults {
     phone.setAttribute('aria-keyshortcuts', 'M');
     phone.setAttribute('aria-haspopup', 'dialog');
     phone.setAttribute('aria-controls', 'mission-phone');
+    if (continueRide) {
+      this.continueRide.type = 'button';
+      this.continueRide.addEventListener('click', continueRide);
+      actions.append(this.continueRide);
+    }
     for (const [button, action] of [
       [this.skip, skipAnimation],
       [this.retry, retry],
@@ -222,7 +232,8 @@ export class MissionResults {
 
   gamepad(pressed: (button: number) => boolean) {
     if (pressed(1) && !this.skip.hidden) this.skip.click();
-    else if (pressed(0)) this.map.click();
+    else if (pressed(0))
+      (this.continueRide.isConnected ? this.continueRide : this.map).click();
     else if (pressed(2) && !this.retry.hidden) this.retry.click();
   }
 
