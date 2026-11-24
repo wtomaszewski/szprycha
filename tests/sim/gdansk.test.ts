@@ -168,9 +168,9 @@ it('requires a lower riding speed on the sandy coastal road', () => {
 });
 
 it('rejects entering the cycle crossing against S-6', () => {
-  const points = routes['GDA-B-04']!.map((point) => ({
+  const points = routes['GDA-B-04']!.map(({ crossingGreen, ...point }) => ({
     ...point,
-    crossingGreen: undefined,
+    crossingRed: crossingGreen,
   }));
   const { mission } = runMissionRoute('GDA-B-04', points);
   expect(mission.result).toMatchObject({

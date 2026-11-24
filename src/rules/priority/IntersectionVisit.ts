@@ -212,7 +212,10 @@ export class IntersectionVisit {
     ) {
       this.stopStart ??= tick;
       if (
-        (phase === 'red' || phase === 'yellow' || phase === 'arrow') &&
+        (phase === 'red' ||
+          phase === 'red-yellow' ||
+          phase === 'yellow' ||
+          phase === 'arrow') &&
         this.stopped
       )
         this.stoppedForLight = true;

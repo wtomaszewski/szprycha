@@ -1,3 +1,4 @@
+import { roadSignalTiming } from './signal-timing.ts';
 import { tiledMap } from './tiled-map.ts';
 import {
   duskAt,
@@ -535,10 +536,7 @@ objectLayer('signals', [
       code: 'S-1',
       affects: `zamek-${side}`,
       group,
-      offset_s: group === 'ew' ? 0 : 27,
-      cycle_s: 54,
-      green_s: 24,
-      yellow_s: 2,
+      ...roadSignalTiming(group === 'ew'),
     });
   }),
 ]);

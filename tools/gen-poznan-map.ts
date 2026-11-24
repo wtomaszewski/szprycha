@@ -1,3 +1,7 @@
+import {
+  parallelCrossingTiming,
+  microCityPhaseOffset,
+} from './signal-timing.ts';
 import { tiles } from '../src/render/artFrames.ts';
 import {
   centre,
@@ -226,16 +230,12 @@ objectLayer('crossing_signals', [
   rect('aleja-s6', 2742, 1008, 0, 0, {
     crossing: 'aleja-przejazd',
     stopRoadTraffic: true,
-    cycle_s: 58,
-    offset_s: 14,
-    green_s: 8,
+    ...parallelCrossingTiming(microCityPhaseOffset),
     twoWay: true,
   }),
   rect('aleja-s5', 2856, 1008, 0, 0, {
     crossing: 'aleja-zebra',
-    cycle_s: 58,
-    offset_s: 14,
-    green_s: 8,
+    ...parallelCrossingTiming(microCityPhaseOffset),
     twoWay: true,
   }),
 ]);

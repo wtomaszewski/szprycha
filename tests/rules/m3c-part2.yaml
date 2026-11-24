@@ -258,6 +258,13 @@ scenarios:
     inputs: [{ t: 1, x: 2180 }]
     expect: { SYG-02: [], SYG-01: [] }
 
+  - name: SYG-02 zielone migające nie jest czerwonym
+    env:
+      { signalOverrides: { lights-E: red, cycle-lane-lights: flashing-green } }
+    player: { x: 2265, y: 531, heading: 180, speed: 4 }
+    inputs: [{ t: 1, x: 2180 }]
+    expect: { SYG-02: [], SYG-01: [] }
+
   - name: SYG-02 czerwone rowerowe nie dotyczy jadącego w sąsiednim pasie jezdni
     env: { signalOverrides: { lights-E: green, cycle-lane-lights: red } }
     player: { x: 2265, y: 575, heading: 180, speed: 4 }

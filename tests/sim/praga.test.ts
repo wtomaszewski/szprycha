@@ -176,13 +176,15 @@ it('covers all 13 Warsaw situations with the required road variants', () => {
     ({ id }) => id === 'pod-palacem-przejazd',
   )!;
   const inlet = world.getLane('pod-palacem-N')!;
-  expect(world.phase(inlet, 2, env)).toBe('arrow');
-  expect(world.crossingPhase(bikeCrossing, 2, env)).toBe('red');
-  expect(world.crossingPhase(bikeCrossing, 39, env)).toBe('green');
-  for (const side of ['N', 'S', 'E', 'W'])
-    expect(world.phase(world.getLane(`pod-palacem-${side}`)!, 39, env)).toBe(
-      'red',
+  expect(world.phase(inlet, 9, env)).toBe('arrow');
+  expect(world.crossingPhase(bikeCrossing, 0, env)).toBe('red');
+  expect(world.crossingPhase(bikeCrossing, 41, env)).toBe('green');
+  for (const side of ['N', 'S', 'E', 'W']) {
+    const open = side === 'E' || side === 'W';
+    expect(world.phase(world.getLane(`pod-palacem-${side}`)!, 41, env)).toBe(
+      open ? 'green' : 'red',
     );
+  }
 
   expect(world.duskAt).toBe(90);
   expect(world.duskInFreeRideOnly).toBe(true);

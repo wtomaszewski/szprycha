@@ -422,6 +422,7 @@ export class TrafficSimulation {
     car.phase = phase;
     if (
       phase === 'red' ||
+      phase === 'red-yellow' ||
       (phase === 'yellow' && car.stopOnYellow) ||
       (phase === 'arrow' && !this.world.arrowMatches(lane, car.route!.maneuver))
     ) {

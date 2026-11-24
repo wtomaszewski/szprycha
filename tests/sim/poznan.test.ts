@@ -153,8 +153,7 @@ it('rejects the signed market shortcut without awarding a time bonus', () => {
 it('lets the rider enter the bicycle box on red but rejects entering the intersection', () => {
   const [stop, finish] = routes['POZ-B-02']!;
   const { mission } = runMissionRoute('POZ-B-02', [
-    { x: 2160, y: 1136, wait: 17 },
-    { ...stop!, mainGreen: undefined },
+    { ...stop!, mainGreen: undefined, mainRed: 'aleja-W' },
     finish!,
   ]);
   expect(mission.result).toMatchObject({

@@ -1,3 +1,10 @@
+import {
+  roadSignalTiming,
+  sideArrowTiming,
+  parallelCrossingTiming,
+  transversePedestrianTiming,
+  trainingPhaseOffset,
+} from './signal-timing.ts';
 import { tiledMap } from './tiled-map.ts';
 import { tileTerrain, type Surface } from './tile-terrain.ts';
 import { tiles } from '../src/render/artFrames.ts';
@@ -313,16 +320,12 @@ for (const [row, rowTile] of rows.entries()) {
       }
       if (kind === 'signals') {
         const group = vertical ? 'NS' : 'EW';
-        const offset_s = vertical ? 0 : 10;
         signals.push(
           rect(`${id}-S-1`, signX, signY, 0, 0, {
             code: 'S-1',
             affects: id,
             group,
-            offset_s,
-            cycle_s: 20,
-            green_s: 7,
-            yellow_s: 2,
+            ...roadSignalTiming(!vertical, trainingPhaseOffset),
           }),
         );
         if (side === 'S')
@@ -331,8 +334,7 @@ for (const [row, rowTile] of rows.entries()) {
               code: 'S-2',
               affects: id,
               group,
-              from_s: 13,
-              until_s: 16,
+              ...sideArrowTiming,
               direction: 'right',
             }),
           );
@@ -407,10 +409,7 @@ for (const [index, vertex] of [1, 4, 6].entries()) {
         code: 'S-1',
         affects: lane,
         group: 'EW',
-        offset_s: 10,
-        cycle_s: 20,
-        green_s: 7,
-        yellow_s: 2,
+        ...roadSignalTiming(true, trainingPhaseOffset),
       }),
     );
   }
@@ -501,15 +500,11 @@ objectLayer('traffic_controls', [
 objectLayer('crossing_signals', [
   rect('pedestrian-signal', 2378, 719, 0, 0, {
     crossing: 'zebra-lights',
-    offset_s: 18,
-    cycle_s: 20,
-    green_s: 3.5,
+    ...transversePedestrianTiming(trainingPhaseOffset),
   }),
   rect('bike-signal', 2244, 514, 0, 0, {
     crossing: 'cycle-lane-lights',
-    offset_s: 10,
-    cycle_s: 20,
-    green_s: 5,
+    ...parallelCrossingTiming(trainingPhaseOffset),
   }),
 ]);
 objectLayer('zones', zones);
