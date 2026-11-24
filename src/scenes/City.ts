@@ -27,6 +27,7 @@ import { showBreakReminder } from '../ui/BreakReminder';
 import { verdictHaptics } from '../platform/haptics';
 import { CANVAS, Scene, GameObjects } from 'phaser';
 import { drawMapDecorations } from '../render/MapDecorations';
+import type { PalaceReflection } from '../render/LandmarkArt';
 import type { TownHallGoats } from '../render/TownHallGoats';
 import { DistrictGates } from '../render/DistrictGates';
 import trainingUrl from '../../maps/miasteczko.tmj?url';
@@ -220,6 +221,7 @@ export class City extends Scene {
   private traffic!: TrafficParticipants;
   private citySound!: CitySound;
   private townHallGoats?: TownHallGoats;
+  private palaceReflection?: PalaceReflection;
   private sirenArt!: GameObjects.Graphics;
   private readonly activeAgents: AgentState[] = [];
   private agents!: readonly (RoadTrafficAgent | RoutedAgent)[];
@@ -521,6 +523,7 @@ export class City extends Scene {
     const scenery = drawMapDecorations(this, tilemap, mapId, definition?.id);
     this.citySound = new CitySound(this.world, scenery.peacocks);
     this.townHallGoats = scenery.townHallGoats;
+    this.palaceReflection = scenery.palaceReflection;
     this.townHallGoats?.draw(0, this.reducedEffects);
     this.worldWidth = tilemap.widthInPixels;
     this.worldHeight = tilemap.heightInPixels;
@@ -2781,6 +2784,7 @@ export class City extends Scene {
     this.cameraFocus.y += (targetY - this.cameraFocus.y) * blend;
     this.positionRideCamera();
     cullMapChunks(this.mapChunks, camera);
+    this.palaceReflection?.update(camera, at, reduced);
     this.collectibles?.update(camera);
     if (this.townHallGoats) {
       const phase = this.townHallGoats.draw(at, reduced);

@@ -2,6 +2,12 @@ import type { Scene, Tilemaps } from 'phaser';
 import { cacheMapGraphics } from './MapGround';
 import type { Neon } from './NightLighting';
 import { TownHallGoats } from './TownHallGoats';
+import {
+  drawCentennialPergola,
+  drawNationalStadium,
+  drawPlantedBed,
+  PalaceReflection,
+} from './LandmarkArt';
 
 export function drawMapDecorations(
   scene: Scene,
@@ -11,6 +17,7 @@ export function drawMapDecorations(
 ) {
   const neons: Neon[] = [];
   let townHallGoats: TownHallGoats | undefined;
+  let palaceReflection: PalaceReflection | undefined;
   const peacocks: { x: number; y: number }[] = [];
   const scenery = scene.add.graphics().setDepth(4);
   const centers: { x: number; y: number }[] = [];
@@ -30,6 +37,10 @@ export function drawMapDecorations(
     const color = typeof tint === 'number' ? tint : undefined;
     if (kind === 'poznan-koziolki') {
       townHallGoats = new TownHallGoats(scene, x, y);
+      continue;
+    }
+    if (kind === 'palace-reflection') {
+      palaceReflection = new PalaceReflection(scene, { x, y, width, height });
       continue;
     }
     if (kind === 'neon') {
@@ -78,7 +89,19 @@ export function drawMapDecorations(
       continue;
     }
     centers.push({ x, y });
-    if (kind === 'field-rows') {
+    if (kind === 'national-stadium' || kind === 'centennial-pergola') {
+      const draw =
+        kind === 'national-stadium'
+          ? drawNationalStadium
+          : drawCentennialPergola;
+      draw(scenery, { x, y, width, height });
+      for (const edgeX of [x, x + width])
+        for (const edgeY of [y, y + height])
+          centers.push({ x: edgeX, y: edgeY });
+    } else if (kind === 'planted-bed') {
+      drawPlantedBed(scenery, { x, y, width, height });
+      centers.push({ x: x + width, y: y + height });
+    } else if (kind === 'field-rows') {
       scenery.fillStyle(0x76513b).fillRect(x, y, width, height);
       for (let dx = 8; dx < width - 8; dx += 12) {
         scenery.fillStyle(0xa9794f).fillRect(x + dx, y + 6, 7, height - 12);
@@ -323,18 +346,13 @@ export function drawMapDecorations(
         .fillRect(x - 4, y - 1, 8, 5)
         .fillRect(x - 7, y - 5, 4, 6)
         .fillRect(x + 3, y - 3, 4, 4);
-    } else if (kind === 'palace-reflection') {
-      for (let i = 0; i < 5; i++)
-        scenery
-          .fillStyle(0xf4f4f4, 0.42 - i * 0.07)
-          .fillRect(x + i * 10, y + i * 5, 192 - i * 20, 3);
-      centers.push({ x: x + 192, y });
     }
   }
   return {
     neons,
     peacocks,
     townHallGoats,
+    palaceReflection,
     chunks: cacheMapGraphics(
       scene,
       scenery,
