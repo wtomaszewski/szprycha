@@ -745,10 +745,68 @@ test('stop-klatka po wjechaniu na tory we Wsi i lesie', async ({ page }) => {
     seconds: 22,
   });
   await page.goto('/');
-  const title = await ruleTitle(page, 'MSC-01');
   await chooseCity(page, 'wies');
   const replay = dialog(page, pl.replay.title);
   await driveUntil(page, replay);
+  await auditReplay(page, replay, 'MSC-01');
+});
+
+test('stop-klatka przy wymijaniu roweru cargo w Łodzi', async ({ page }) => {
+  const pad = await mockGamepad(page);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await startAt(page, 'lodz', 1665, 715, 0);
+  await page.goto('/');
+  await chooseCity(page, 'lodz');
+  const replay = dialog(page, pl.replay.title);
+  // Ride slowly enough to isolate the clearance verdict in the living zone.
+  await pad.setAxes(0, -0.25);
+  try {
+    await expect(replay).toBeVisible({ timeout: 12_000 });
+  } finally {
+    await pad.setAxes(0, 0);
+  }
+  await auditReplay(page, replay, 'MAN-14');
+});
+
+test('stop-klatka na przejściu do wysepki w Poznaniu', async ({ page }) => {
+  const pad = await mockGamepad(page);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  // Begin with the passenger on the zebra and the rider at its edge.
+  await page.route(/\/poznan(?:-[^/]+)?\.tmj(?:\?|$)/, async (route) => {
+    if (route.request().resourceType() === 'script') return route.continue();
+    const response = await route.fetch();
+    const map = await response.json();
+    const objects = (name: string) =>
+      map.layers.find((layer: { name: string }) => layer.name === name).objects;
+    const spawn = objects('spawns')[0];
+    Object.assign(spawn, { x: 2530, y: 604 });
+    spawn.properties.find((p: { name: string }) => p.name === 'heading').value =
+      -Math.PI / 2;
+    const pedestrian = objects('traffic_routes').find(
+      (object: { name: string }) => object.name === 'pasazerka-na-wysepke',
+    );
+    pedestrian.x = 2550;
+    pedestrian.polyline[1].x = -84;
+    pedestrian.properties.find(
+      (p: { name: string }) => p.name === 'start_s',
+    ).value = 0;
+    await route.fulfill({ response, json: map });
+  });
+  await page.goto('/');
+  await chooseCity(page, 'poznan');
+  await expect(page.locator('canvas')).toHaveAttribute('data-y', '604');
+  await pad.setAxes(0, -0.2);
+  const replay = dialog(page, pl.replay.title);
+  try {
+    await expect(replay).toBeVisible({ timeout: 12_000 });
+  } finally {
+    await pad.setAxes(0, 0);
+  }
+  await auditReplay(page, replay, 'PIER-10');
+});
+
+async function auditReplay(page: Page, replay: Locator, rule: string) {
+  const title = await ruleTitle(page, rule);
   await audit(page, replay, pl.replay.title);
   const tip = await replay.locator('#replay-feedback').textContent();
   expect(tip).toBeTruthy();
@@ -756,7 +814,7 @@ test('stop-klatka po wjechaniu na tory we Wsi i lesie', async ({ page }) => {
   const first = replay.getByRole('button').first();
   await expect(first).toBeFocused();
   await expectFocusLoop(page, first, replay.getByRole('button').last());
-});
+}
 
 async function ruleTitle(page: Page, rule: string) {
   const content: GameContent = await (
