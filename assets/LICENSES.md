@@ -40,7 +40,7 @@ Teksty kwestii są autorskie (`content/`, `i18n/pl.json`). Audio wygenerował lo
 
 Sylwetka Giewontu w `generated/giewont.png` pochodzi z `tools/zakopane-art.ts` i `tools/gen-placeholders.ts`. Drewniane wille, mostki i mur oporowy Zakopanego generują `tools/gen-zakopane-map.ts`, `tools/zakopane-scenery.ts`, `src/render/BlockArt.ts` i `src/render/MapDecorations.ts`. Zrzuty `docs/screenshots/141-*` pochodzą z lokalnej gry uruchomionej przez Playwright. Wszystkie te elementy są zasobami własnymi na warunkach licencji projektu.
 
-Krakowskie obwarzanki rysuje `src/render/CityCollectibles.ts`. Zrzuty kampanii z #106 pochodzą z lokalnej gry uruchomionej przez Playwright.
+Obwarzanki, bursztyny, szyszki, rogale, szpulki i drewniane świerki rysuje `src/render/CityCollectibles.ts` z autorskich masek pikselowych. Zrzuty kampanii z #106 i ujęcia `docs/screenshots/audyt/{przed,po}/181-*.png` pochodzą z lokalnej gry uruchomionej przez Playwright (`tests/visual/art-audit.spec.ts`). Grafika i zrzuty są zasobami własnymi na warunkach licencji projektu.
 
 W #109 generator `src/render/LandmarkArt.ts` rysuje Stadion Narodowy, odbicie Pałacu na Wodzie, dach i przeszklenia Afrykarium, pergolę Hali Stulecia oraz rabaty. Dekoracje korzystają też z istniejącego arkusza `generated/props.png` i rozmieszczenia z `tools/gen-warsaw-map.ts` oraz `tools/wroclaw-scenery.ts`. To autorskie rysunki projektu bez logotypów, zdjęć i plików zewnętrznych. Zrzuty `docs/screenshots/109/` pochodzą z lokalnej gry uruchomionej przez Playwright.
 

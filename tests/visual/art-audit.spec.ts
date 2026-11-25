@@ -254,10 +254,10 @@ test.describe('oznakowanie #181', () => {
 });
 
 const landmarkViews = [
-  ['krakow', 'wawel', [1656, 1544]],
+  ['krakow', 'wawel', [1656, 1616]],
   ['gdansk', 'zuraw', [1716, 1776]],
-  ['wies', 'skansen', [2420, 1432]],
-  ['lodz', 'fabryka', [2816, 1430]],
+  ['wies', 'skansen', [2248, 1432]],
+  ['lodz', 'fabryka', [2864, 1500]],
   ['zakopane', 'giewont', [1464, 790]],
 ] as const;
 
