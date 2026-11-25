@@ -130,7 +130,7 @@ test('completes the passive rail exercise after stopping and checking for trains
 const views = [
   ['gminna', 1198, 440, -Math.PI / 2, 8750],
   ['przystanek', 635, 530, -Math.PI / 2, 7500],
-  ['kolej', 1150, 1296, -Math.PI / 2, 22000],
+  ['kolej', 1150, 1296, -Math.PI / 2, 0],
   ['gospodarstwo', 718, 2240, Math.PI, 0],
   ['mostek', 1110, 1634, -Math.PI / 2, 0],
   ['ciagnik', 3898, 622, Math.PI, 6200],
@@ -141,7 +141,12 @@ for (const [name, x, y, heading, time] of views) {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     if (time) await page.clock.install();
-    await startAt(page, 'wies', x, y, heading);
+    // Start the rail view midway through the train's 20–27 s passage.
+    const railOffset =
+      name === 'kolej'
+        ? { crossing: 'przejazd-gminny', seconds: 23.5 }
+        : undefined;
+    await startAt(page, 'wies', x, y, heading, railOffset);
     await page.goto('/');
     await chooseCity(page, 'wies');
     const canvas = page.locator('canvas[data-map="wies"]');
