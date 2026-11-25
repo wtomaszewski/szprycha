@@ -30,6 +30,28 @@ Chromium 156.0.8078.79 headless, 1280 × 720, CPU 4×, Fast 3G przez CDP (1,6 Mb
 
 Kod jazdy, wyboru miasta i placu jest ładowany przy otwarciu scen. Menu jest szybsze, a część pracy przechodzi na pierwsze wejście do jazdy. W drugim etapie weryfikacji liczą się osobne limity **7 s** do menu i **12 s** z menu do jazdy dla każdej mapy. W porównaniu z najwolniejszymi medianami jest to odpowiednio około 2,0 s i 1,7 s zapasu.
 
+### Zimne wejście do jazdy na dziewięciu mapach (#167)
+
+Punktem odniesienia jest produkcyjny build `main` z `52a9501`. Obie wersje zmierzono według tych samych ustawień Chromium i CDP opisanych wyżej. `benchmark:startup` wywodzi listę miast z katalogu Wolnej jazdy i dodaje Miasteczko. CI sprawdza oba limity dla wszystkich dziewięciu map.
+
+Wybór miasta uruchamia pobranie jego pliku Tiled wraz z importem sceny jazdy. Phaser dołącza rozpoczęte żądanie mapy do kolejki atlasów. Dane mapy korzystają z dotychczasowej pamięci podręcznej Phasera i Service Workera. Atlasy mają indeksowaną paletę PNG. Test generatora porównuje każdy zdekodowany piksel RGBA. Przed pierwszą klatką gra rasteruje fragmenty terenu w zasięgu kamery. Przy przewijaniu kolejne fragmenty są przygotowywane przed wyświetleniem.
+
+| Mapa | Otwarcie → menu przed | Otwarcie → menu po | Menu → jazda przed | Menu → jazda po | Skrócenie |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Miasteczko | 5,75 s | 5,70 s | 7,15 s | 5,45 s | 23,7% |
+| Warszawa | 5,74 s | 5,64 s | 10,23 s | 8,01 s | 21,7% |
+| Wrocław | 5,76 s | 5,65 s | 12,35 s | 7,18 s | 41,8% |
+| Kraków | 5,80 s | 5,65 s | 9,99 s | 7,54 s | 24,6% |
+| Gdańsk | 5,67 s | 5,71 s | 10,32 s | 7,66 s | 25,8% |
+| Wieś i las | 5,69 s | 5,80 s | 8,47 s | 6,64 s | 21,6% |
+| Poznań | 5,66 s | 5,77 s | 9,17 s | 6,56 s | 28,5% |
+| Łódź | 5,71 s | 5,76 s | 9,34 s | 6,40 s | 31,4% |
+| Zakopane | 5,69 s | 5,75 s | 9,09 s | 6,79 s | 25,3% |
+
+Wszystkie mediany mieszczą się w limitach. Najdłuższe przejście do jazdy po zmianie to 8,01 s w Warszawie. Pierwsze pobranie PWA zajmuje 4 125 164 B wobec 4 341 736 B przed zmianą. Mapy miast pozostają pobierane na żądanie.
+
+Na trasie dziennej w Miasteczku `benchmark:driving` dał **59,19 → 59,28 FPS** oraz **16,8 → 16,7 ms p95**. To mediany trzech prób Canvas przy CPU 4×, z 11 sekundami pomiaru w każdej próbie.
+
 ## FPS i p95 klatki
 
 Chromium headless w trybie Canvas, 1280 × 720, CPU 4×, profil pełny. `benchmark:driving` próbuje jechać z niewielkim wychyleniem joysticka na tej samej trasie po obu stronach porównania. Radio i Service Worker są wyłączone w próbach FPS i pamięci. Pierwsza sekunda jazdy jest rozgrzewką, kolejne 11 sekund wchodzi do pomiaru. Noc obejmuje włączoną lampkę roweru i wizualny lekki deszcz. W pomiarze osobnym rower stoi przy sygnalizatorach w Miasteczku, z aktywnym ruchem drogowym.
@@ -74,7 +96,7 @@ Gra zachowuje cache plików mapy na dysku. Przy wejściu na inną mapę usuwa po
 ## Odtworzenie pomiarów
 
 - Po `npm ci` uruchom `npm run build` i `npm run budget:bundle`. Podaj drugi katalog jako `npm run budget:bundle -- <dist>`, aby porównać rewizje.
-- Po `npx playwright install chromium` uruchom `npm run benchmark:startup -- --check`. Polecenie samo wystawia bieżący `dist`. Aby użyć innego buildu, ustaw `BENCH_URL` na adres jego podglądu.
+- Po `npx playwright install chromium` uruchom `npm run benchmark:startup -- --check`. Polecenie samo wystawia bieżący `dist`. Aby użyć innego buildu, ustaw `BENCH_URL` na adres jego podglądu. Opcja `--waterfall` wypisuje czasy żądań CDP w milisekundach względem kliknięcia mapy lub przycisku Miasteczka.
 - Przy uruchomionym podglądzie ustaw `BENCH_URL`, `BENCH_RENDERER=canvas` i `BENCH_MAP`, a następnie uruchom `npm run benchmark:driving`. Dla Wrocławia w tym porównaniu użyj `BENCH_FRAGMENT=bulwary`. Noc z deszczem ustawia `BENCH_LIGHT=night BENCH_RAIN=1`. Skrzyżowanie mierzy `BENCH_FRAGMENT=sygnalizacja` z `BENCH_COUNTDOWNS=on` i `off`.
 - Przy uruchomionym podglądzie ustaw `BENCH_URL` i uruchom `npm run benchmark:memory`. Polecenie wypisuje pomiar początkowy, pomiary w menu po każdym mieście i końcowy powrót do Miasteczka.
 - Uruchom `npm run test:e2e -- tests/e2e/pwa.spec.ts tests/e2e/graphics-quality.spec.ts` do odtworzenia prób offline, aktualizacji i ręcznego wyboru jakości. Automatyka używa liczby procesorów logicznych oraz czasu klatek lokalnie w pamięci. W profilu pozostaje wyłącznie wybrana opcja grafiki.
@@ -85,4 +107,3 @@ Gra zachowuje cache plików mapy na dysku. Przy wejściu na inną mapę usuwa po
 
 - Powtórzenie pomiarów na fizycznym Androidzie oraz iPadzie i w Safari. Wynik Canvas i liczba tekstur WebGL w Chromium opisują warunki testu, a pomiar na urządzeniu pokaże FPS i faktyczne zużycie pamięci GPU.
 - Ponowienie odsłuchu lektora offline po dodaniu nagrań do katalogu.
-- Skrócenie zimnego przejścia od menu do mapy przez równoległe pobranie kodu jazdy i wybranej mapy.

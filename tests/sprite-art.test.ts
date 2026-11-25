@@ -6,6 +6,7 @@ import manifest from '../assets/manifest.json';
 import { dialogueFileSchema, portraitEmotions } from '../src/content/dialogues';
 import { portraitArt } from '../tools/portrait-art';
 import { encodeSprite, spriteArt } from '../tools/sprite-art';
+import { encodeSpriteSheet } from '../tools/sprite-png';
 import {
   helmetColors,
   idleRiderPose,
@@ -68,8 +69,9 @@ test('sprite generator reproduces the checked-in bytes and manifest grids', () =
       frames: columns * rows,
       directions,
     });
-    const encoded = encodeSprite(image);
+    const encoded = encodeSpriteSheet(image);
     expect(image.data.equals(second[key].data), id).toBe(true);
+    expect(PNG.sync.read(encoded).data.equals(image.data), id).toBe(true);
     expect(encoded.equals(readFileSync(`assets/${file}`)), id).toBe(true);
     for (let i = 0; i < image.data.length; i += 4)
       if (

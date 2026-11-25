@@ -131,6 +131,7 @@ test('reaches the shoulder stop and finishes without points for speed', async ({
   await expect(page.getByText(training.pytanie, { exact: true })).toBeVisible();
   await page.getByRole('button', { name: training.odp1, exact: true }).click();
   await page.getByRole('button', { name: pl.progression.continue }).click();
+  await expect(page.getByText(training.meta, { exact: true })).toBeVisible();
   await page.keyboard.down('ArrowUp');
   try {
     await expect(

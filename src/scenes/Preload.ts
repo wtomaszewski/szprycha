@@ -1,4 +1,4 @@
-import { startScene } from './startScene';
+import { startCity } from './startScene';
 import { isTutorialStep } from '../gameplay/Tutorial';
 import versions from 'virtual:ranking-versions';
 import { RankingClient } from '../rankings/RankingClient';
@@ -35,7 +35,7 @@ export class Preload extends Scene {
         document.getElementById('pwa-splash')?.remove();
         this.registry.set('content', content);
         const tutorial = progress.store.profile.tutorial;
-        if (isTutorialStep(tutorial)) startScene(this, 'City', { tutorial });
+        if (isTutorialStep(tutorial)) startCity(this, { tutorial });
         else this.scene.start('MainMenu');
       })
       .catch(showError);
