@@ -198,7 +198,7 @@ export class Blocks {
         for (const ch of block.id ?? String(i))
           id = Math.imul(id, 31) + ch.charCodeAt(0);
         const hash = artHash(id, 30);
-        const key = `block-${mapId}-${i}`;
+        const key = `${mapId}-block-${i}`;
         const depth = 100 + i * 3;
         const floors = Math.max(
           1,

@@ -37,7 +37,7 @@ export function drawMapDecorations(
     const color = typeof tint === 'number' ? tint : undefined;
     if (kind === 'giewont') {
       scene.add
-        .image(x, y, 'giewont')
+        .image(x, y, 'zakopane-giewont')
         .setOrigin(0.5, 1)
         .setScrollFactor(0.86, 1)
         .setDepth(2);
