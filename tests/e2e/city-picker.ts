@@ -24,6 +24,7 @@ export async function startAt(
   x: number,
   y: number,
   heading = 0,
+  railOffset?: { crossing: string; seconds: number },
 ) {
   await page.route(
     new RegExp(`/${city}(?:-[^/]+)?\\.tmj(?:\\?|$)`),
@@ -38,6 +39,24 @@ export async function startAt(
       player.properties.find(
         ({ name }: { name: string }) => name === 'heading',
       ).value = heading;
+      if (railOffset) {
+        const crossings = tiled.layers.find(
+          ({ name }: { name: string }) => name === 'crossings',
+        );
+        const crossing = crossings.objects.find(
+          ({ name }: { name: string }) => name === railOffset.crossing,
+        );
+        const offset = crossing.properties.find(
+          ({ name }: { name: string }) => name === 'offset_s',
+        );
+        if (offset) offset.value = railOffset.seconds;
+        else
+          crossing.properties.push({
+            name: 'offset_s',
+            type: 'float',
+            value: railOffset.seconds,
+          });
+      }
       await route.fulfill({ response, json: tiled });
     },
   );
