@@ -76,14 +76,14 @@ Audyt obejmuje 54 pary ujęć i pięć dodatkowych kadrów sylwetek. W każdej k
 | Łódź | Pierzeje Piotrkowskiej, arkady, hala i komin dawnej fabryki. Osobny kadr pokazuje oznaczenia przejazdu rowerowego i zebry w nocy. [Fabryka](screenshots/audyt/po/181-lodz-fabryka.png) | Cyjanowy nawój i ciemna krawędź szpulki rozdzielają drobny wzór nici od podłoża. |
 | Zakopane | Drewniane wille i sylwetka Giewontu nad dachami. Osobny kadr pokazuje przejazd nad potokiem i oznaczenia rowerowe w ulewie. [Giewont](screenshots/audyt/po/181-zakopane-giewont.png) | Powiększone jasne pola na wierzchołku i gałęziach świerka wzmacniają zarys drewnianej figurki. |
 
-- **Skala.** Wspólne atlasy mają klatki 32×48 dla aut osobowych, 32×64 dla pojazdów dłuższych i 32×80 dla każdego segmentu tramwaju. Rower i piesi używają atlasów 32×32 i 24×24 z zapasem na pozy, zgodnie z opisem stanu sprite’ów w §5. Renderer rysuje je w pikselach świata w skali 1:1. Bryły mają podstawy w pikselach mapy, a przesunięcie dachów uwzględnia wysokość pięter. Canvas skaluje się całkowicie, a kamera jazdy zwykle pokazuje świat w skali ×0,75. [Kierunek artystyczny](06_art_direction.md)
+- **Skala.** Wspólne atlasy mają klatki 32×48 dla aut osobowych, 32×64 dla pojazdów dłuższych i 32×80 dla każdego segmentu tramwaju. Rower i piesi używają atlasów 32×32 i 24×24 z zapasem na pozy, zgodnie z opisem stanu sprite’ów w §5. Renderer rysuje je w pikselach świata w skali 1:1. Bryły mają podstawy w pikselach mapy, a przesunięcie dachów uwzględnia wysokość pięter. Canvas skaluje się całkowicie, a kamera jazdy zwykle pokazuje świat w skali ×0,75. Test atlasów sprawdza również proporcje wypełnionej sylwetki z #37. Auto jest co najmniej dwa razy dłuższe od rowerzysty AI, a tramwaj co najmniej trzy razy dłuższy od auta. [Kierunek artystyczny](06_art_direction.md) · [Test proporcji](../tests/trafficArt.test.ts)
 - **Paleta i oznakowanie.** Kontrast kolekcji wzmacniają barwy z palety projektu, w tym wspólny granatowy kontur i kremowe refleksy. W próbach drogowych sprawdzono charakterystyczne kształty tablic, białe linie stopu i zebry oraz symbole roweru. Zimowe podłoże rozjaśnia zieleń i chodniki, a oznakowanie pozostaje na własnej warstwie. Ujęcia obejmują także granice fragmentów terenu. Podłoże zachowało ciągłość na zrzutach statycznych i w krótkiej próbie jazdy od X = 1460 do X = 1610 na Długim Targu.
 - **Czytelność D-46 i D-47.** W Gdańsku biała płyta z tekstury fragmentu mapy zasłaniała napis „Droga wewnętrzna” na obu tablicach. Napis jest teraz nad płytą, na tej samej głębokości co napis STOP. Czerwone przekreślenie D-47 pozostaje nad napisem. [Noc przed poprawką](screenshots/audyt/przed/181-gdansk-oznakowanie.png) · [Noc po poprawce](screenshots/audyt/po/181-gdansk-oznakowanie.png)
 - **Pochodzenie grafiki.** Przejrzano generatory scenerii, atlas uczestników ruchu i reprezentatywne kadry. Sylwetki identyfikują obiekty przez bryłę, materiał i detale architektoniczne. Nie stwierdzono logotypów, nazw firm, oznaczeń przewoźników ani oznaczeń instytucji. Znajdźki powstają lokalnie z masek pikselowych, a fonty w kadrach korzystają z licencji SIL OFL 1.1. [Rejestr zasobów](../assets/LICENSES.md)
 
 ### Pozycje odłożone
 
-- Pełny przegląd migotania i chwilowego zasłaniania obiektów podczas jazdy na fizycznych urządzeniach pozostaje do sprawdzenia. W audycie przejrzano stałe kadry oraz krótką sekwencję przy wolnej jeździe przez granicę fragmentów podłoża na Długim Targu. [#110](https://github.com/wtomaszewski/szprycha/issues/110)
+- Pełny przegląd migotania i chwilowego zasłaniania obiektów podczas jazdy na fizycznych urządzeniach pozostaje do sprawdzenia. W audycie przejrzano stałe kadry oraz krótką sekwencję przy wolnej jeździe przez granicę fragmentów podłoża na Długim Targu. [Zakres wcześniejszych prób (#110)](https://github.com/wtomaszewski/szprycha/issues/110)
 - Specyfikacja w §2 podaje nominalne wymiary roweru 24×24 i pieszego 16×16, a §5 dokumentuje większe klatki atlasów z animacją. Audyt zachowuje istniejące proporcje i zapas klatek na gesty oraz warianty sylwetek. Ujednolicenie zapisów jest odłożone. Zmiana powiększenia kamery ×0,75 na ×1 wymaga osobnej weryfikacji pola widzenia przed skrzyżowaniami i próby wydajności renderera Canvas na telefonie.
 
 ### Odtworzenie i pomiar #181
@@ -92,4 +92,11 @@ Na gałęzi audytu uruchom `AUDIT_CHROMIUM_PATH=/usr/bin/chromium npm run screen
 
 Pomiar jazdy na Długim Targu wykonano poleceniem `BENCH_MAP=gdansk BENCH_RUNS=3 BENCH_RENDERER=canvas BENCH_CHROMIUM_PATH=/usr/bin/chromium npm run benchmark:driving`. `BENCH_URL` wskazywał kolejno serwery Vite obu wersji. Warunki pomiaru to Chromium 156.0.8078.79, 1280×720, dzień, pełna jakość i CPU 4×.
 
-`budget:bundle` potwierdził spadek pierwszego pobrania z 3 871 712 B do 3 871 576 B (−136 B).
+Trzy przejazdy każdej wersji wykonano po zakończeniu testów przeglądarkowych. Tabela podaje medianę średniego FPS i medianę p95 czasu klatki z tych prób.
+
+| Wersja | Mediana średniego FPS | Zakres FPS | Mediana p95 klatki |
+| --- | ---: | ---: | ---: |
+| `main` (`d8e67a2`) | 58,64 | 56,83–59,46 | 16,80 ms |
+| Gałąź audytu | 59,46 | 59,19–59,46 | 16,70 ms |
+
+W tej próbie mediana FPS wzrosła o 0,82, a mediana p95 skróciła się o 0,10 ms. `budget:bundle` potwierdził spadek pierwszego pobrania z 3 871 712 B do 3 871 592 B (−120 B). Bramkę stabilności tekstur WebGL zaliczono w pełnym e2e.

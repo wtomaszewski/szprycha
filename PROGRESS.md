@@ -19,7 +19,7 @@ Stan na 25.11.2026.
 ## Audyt grafiki sześciu późniejszych map (#181)
 
 - Porównano Kraków, Gdańsk, Wieś i las, Poznań, Łódź i Zakopane w czterech warunkach na desktopie i telefonie. Znajdźki mają wyraźniejsze krawędzie i refleksy, a D-46 i D-47 pokazują napis nad tablicą. [Raport i zrzuty](docs/AUDYT_GRAFIKI.md#audyt-sześciu-późniejszych-map--181)
-- Próby migotania w ruchu na fizycznych urządzeniach pozostają do sprawdzenia w [#110](https://github.com/wtomaszewski/szprycha/issues/110).
+- Odłożono kontrolę migotania podczas jazdy na fizycznych urządzeniach. [Zakres wcześniejszych prób (#110)](https://github.com/wtomaszewski/szprycha/issues/110)
 
 ## Audyt dostępności nowych map (#176)
 
