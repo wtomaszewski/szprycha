@@ -3,6 +3,7 @@ import pl from '../../i18n/pl.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
 import { chooseCity } from './city-picker';
 import { profile, seedProgress } from './helpers/profile';
+import { installRideClock, setRideClockRate } from './helpers/ride-clock';
 
 test.use({ timezoneId: 'Europe/Warsaw', reducedMotion: 'reduce' });
 
@@ -115,6 +116,7 @@ test('retries a timed-out daily delivery from its start', async ({
   baseURL,
 }) => {
   await page.clock.setFixedTime(new Date('2026-11-23T12:00:00+01:00'));
+  await installRideClock(page);
   // This seed offers a night delivery with an unfastened helmet at the start.
   await seedProgress(page, baseURL, { nicknameSeed: 6 });
   await page.goto('/');
@@ -157,7 +159,9 @@ test('retries a timed-out daily delivery from its start', async ({
   await dialogue.getByRole('button', { name: pl.dialogueUi.skip }).click();
 
   const failure = page.getByRole('dialog', { name: pl.missionFailure.title });
+  await setRideClockRate(page, 4);
   await expect(failure).toContainText(pl.missionFailure.reasons.czas_minal);
+  await setRideClockRate(page, 1);
   await expect.poll(async () => (await profile(page)).missionPoints).toBe(0);
   await failure.getByRole('button', { name: pl.missionFailure.retry }).click();
   await expect(failure).toBeHidden();

@@ -3,6 +3,7 @@ import {
   progressDatabase,
   progressRecordKey,
   progressStoreName,
+  ProgressStore,
   type ProgressProfile,
 } from '../../../src/core/progressStore';
 
@@ -43,13 +44,11 @@ export async function profile(page: Page, updates?: Partial<ProgressProfile>) {
 export async function seedProgress(
   page: Page,
   baseURL: string | undefined,
-  saved: Pick<
-    Partial<ProgressProfile>,
-    'completed' | 'bestScores' | 'nicknameSeed'
-  >,
+  saved: Partial<ProgressProfile>,
 ) {
   if (!baseURL) throw new Error('A base URL is required to seed progress');
-  // Version 2 is the first IndexedDB format with scores and a nickname seed.
+  const initial = new ProgressStore().profile;
+  delete initial.tutorial;
   const state = {
     cookies: [],
     origins: [
@@ -68,24 +67,7 @@ export async function seedProgress(
                 records: [
                   {
                     key: storage.key,
-                    value: {
-                      version: 2,
-                      completed: [],
-                      introduced: [],
-                      progression: {
-                        bestStars: {},
-                        tokens: 0,
-                        longestSeries: 0,
-                      },
-                      nicknameSeed: 184,
-                      missionPoints: 0,
-                      bestScores: {},
-                      quizXp: 0,
-                      achievementXp: {},
-                      licencePassed: false,
-                      mastery: {},
-                      ...saved,
-                    },
+                    value: { ...initial, nicknameSeed: 184, ...saved },
                   },
                 ],
               },

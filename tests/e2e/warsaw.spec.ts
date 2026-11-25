@@ -2,7 +2,7 @@ import { expect as playwrightExpect, test, type Page } from '@playwright/test';
 import { chooseCity } from './city-picker';
 import { profile, seedProgress } from './helpers/profile';
 import { installRideClock, setRideClockRate } from './helpers/ride-clock';
-import { shiftPois } from './helpers/shift-pois';
+import { shiftPois, type PoiPosition } from './helpers/shift-pois';
 import type { GameContent } from '../../src/content/schemas';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import questions from '../../content/pytania.json' with { type: 'json' };
@@ -178,26 +178,33 @@ const riverDetour = [
   'bulwary_noca',
 ];
 
-// Leave the original delivery, traffic and sign locations in place. Put the
-// return checkpoints on a short route so the mission still advances each goal.
+// Keep the hazards and the passage marked B-1 in place. Shorten the approach
+// to deliveries and place return checkpoints beside the test destination.
 const detourFinish = {
   'WAW-A1-01': [239, 405],
-  'WAW-A1-02': [1452, 1125],
-  'WAW-A1-03': [1300, 248],
-  'WAW-A1-04': [3034, 596],
-  'WAW-A1-05': [3784, 764],
+  'WAW-A1-02': [1004, 1140],
+  'WAW-A1-03': [1298, 245],
+  'WAW-A1-04': [3174, 355],
+  'WAW-A1-05': [3590, 764],
   'WAW-A1-06': [3820, 346],
 } as const;
+const movedDeliveries: Partial<Record<WarsawMissionId, string>> = {
+  'WAW-A1-02': 'odbiorca_bazar',
+  'WAW-A1-05': 'przewodnik',
+};
 const shortRoutes = {
   'WAW-T-02': warsawRoutes['WAW-T-02'].legal,
   'WAW-A1-01': warsawRoutes['WAW-A1-01'].legal.slice(0, 4),
-  'WAW-A1-02': warsawRoutes['WAW-A1-02'].legal.slice(0, 5),
-  'WAW-A1-03': warsawRoutes['WAW-A1-03'].shortcut.slice(2, 4),
-  'WAW-A1-04': [
-    ...warsawRoutes['WAW-A1-04'].legal.slice(0, 5),
-    { x: 3034, y: 596 },
+  'WAW-A1-02': [
+    ...warsawRoutes['WAW-A1-02'].legal.slice(0, 4),
+    { x: 1004, y: 1140, look: true },
   ],
-  'WAW-A1-05': warsawRoutes['WAW-A1-05'].legal.slice(0, 4),
+  'WAW-A1-03': warsawRoutes['WAW-A1-03'].shortcut.slice(2, 4),
+  'WAW-A1-04': warsawRoutes['WAW-A1-04'].legal.slice(0, 4),
+  'WAW-A1-05': [
+    ...warsawRoutes['WAW-A1-05'].legal.slice(0, 3),
+    { x: 3590, y: 764 },
+  ],
   'WAW-A1-06': warsawRoutes['WAW-A1-06'].legal.slice(0, 7),
 };
 
@@ -209,26 +216,35 @@ for (const [index, id] of ids.entries()) {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await installRideClock(page);
     await installGamepad(page);
-    if (id !== 'WAW-T-02') {
-      const points = index <= 3 ? pragaDetour : riverDetour;
-      await shiftPois(
-        page,
-        'warszawa',
-        Object.fromEntries(points.map((name) => [name, detourFinish[id]])),
-      );
-    }
     const completed = ['WAW-T-01', ...ids.slice(0, index)];
     await seedProgress(page, baseURL, {
       completed,
       bestScores: Object.fromEntries(completed.map((mission) => [mission, 0])),
     });
     await page.goto('/');
+    await expect(canvas(page)).toHaveAttribute('data-scene', 'MainMenu');
     if (id === 'WAW-T-02') {
-      await expect(canvas(page)).toHaveAttribute('data-scene', 'MainMenu');
       await page.keyboard.press('Enter');
       await expect(canvas(page)).toHaveAttribute('data-map', 'miasteczko');
     } else {
+      const points = [...(index <= 3 ? pragaDetour : riverDetour)];
+      const delivery = movedDeliveries[id];
+      if (delivery) points.push(delivery);
+      const positions: Record<string, PoiPosition> = Object.fromEntries(
+        points.map((name) => [name, detourFinish[id]]),
+      );
+      // Include the bridge exit and the unmodified end of Turbo's race route.
+      if (id === 'WAW-A1-04') positions.kolumna = [3092, 475, 190, 290];
+      const restoreMap = await shiftPois(
+        page,
+        'warszawa',
+        positions,
+        id === 'WAW-A1-04'
+          ? { name: 'turbo-most', start: 6, length: 2 }
+          : undefined,
+      );
       await chooseCity(page, 'warszawa');
+      await restoreMap();
     }
     await page.keyboard.press('KeyM');
     await expect(order(page, id)).toBeEnabled();
@@ -343,7 +359,7 @@ for (const [index, id] of ids.entries()) {
         .poll(async () => Number(await canvas(page).getAttribute('data-x')))
         .toBeGreaterThan(3568);
       await expect(canvas(page)).toHaveAttribute('data-speed', '0');
-      await setRideClockRate(page, 2);
+      await setRideClockRate(page, 3);
       await routeWithGamepad(page, [sidewalk!, crossing!, sign!]);
       await expect(photo).toBeEnabled({ timeout: 20_000 });
       await page.screenshot({ path: 'test-results/m4d-znak.png' });
@@ -451,8 +467,16 @@ async function checkSavedFinale(page: Page) {
     .toBe(64);
   await page.screenshot({ path: 'test-results/m5c-album.png' });
   await album.getByRole('button', { name: pl.m5c.close }).click();
+}
+
+test('keeps the Warsaw finale replayable after completing act 1', async ({
+  page,
+  baseURL,
+}) => {
+  await seedProgress(page, baseURL, { completed: ['WAW-T-01', ...ids] });
+  await page.goto('/');
   await chooseCity(page, 'warszawa');
   await expect(canvas(page)).toHaveAttribute('data-map', 'warszawa');
   await page.keyboard.press('KeyM');
   await expect(order(page, 'WAW-A1-06')).toBeEnabled();
-}
+});

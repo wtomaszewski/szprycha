@@ -4,6 +4,7 @@ import { chooseCity, driveTo, startAt } from './city-picker';
 import { profile, seedProgress } from './helpers/profile';
 import { shiftPois } from './helpers/shift-pois';
 import { installRideClock, setRideClockRate } from './helpers/ride-clock';
+import type { CampaignRide } from '../../src/core/progressStore';
 
 const city = (page: Page) => page.locator('canvas[data-scene="City"]');
 const directions = (page: Page) =>
@@ -122,33 +123,49 @@ test.describe('mobile 640 × 360', () => {
     isMobile: true,
   });
 
-  test('Poznań restores a guided ride and accepts the next mission after stopping', async ({
+  const beforeFirstAid = [
+    'POZ-B-01',
+    'POZ-B-02',
+    'POZ-B-03',
+    'POZ-B-04',
+    'POZ-A1-01',
+    'POZ-A1-02',
+    'POZ-A2-01',
+    'POZ-A2-02',
+  ];
+  const afterFirstAid: CampaignRide = {
+    after: 'POZ-A3-01',
+    map: 'poznan',
+    x: 1712,
+    y: 2072,
+    heading: Math.PI / 2,
+    walking: true,
+    helmet: true,
+    lights: true,
+    scheme: 'simple',
+  };
+
+  test('Poznań saves the position and directions after first aid', async ({
     page,
     baseURL,
-  }, info) => {
+  }) => {
     await installRideClock(page);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await seedProgress(page, baseURL, { completed: beforeFirstAid });
+    await page.goto('/');
+    await expect(page.locator('canvas')).toHaveAttribute(
+      'data-scene',
+      'MainMenu',
+    );
     // Keep the turn, bridge and help objectives, with a shorter approach on the same lane.
-    await shiftPois(page, 'poznan', {
+    const restoreMap = await shiftPois(page, 'poznan', {
       'poz-bulwar-start': [1712, 1988],
       'poz-bulwar-zakret': [1712, 2008],
       'poz-bulwar-most': [1712, 2035],
     });
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await seedProgress(page, baseURL, {
-      completed: [
-        'POZ-B-01',
-        'POZ-B-02',
-        'POZ-B-03',
-        'POZ-B-04',
-        'POZ-A1-01',
-        'POZ-A1-02',
-        'POZ-A2-01',
-        'POZ-A2-02',
-      ],
-    });
-    await page.goto('/');
     await chooseCity(page, 'poznan', 'campaign');
     await expect(city(page)).toHaveAttribute('data-mission', 'POZ-A3-01');
+    await restoreMap();
     await skip(page);
     await page
       .getByRole('button', { name: pl.missionUi.equip, exact: true })
@@ -157,7 +174,7 @@ test.describe('mobile 640 × 360', () => {
       .getByRole('button', { name: pl.missionUi.turnOnLights, exact: true })
       .click();
     await page.keyboard.press('KeyX');
-    await setRideClockRate(page, 2);
+    await setRideClockRate(page, 3);
     await driveTo(page, 'ArrowDown', 'y', 2072, true);
     for (const answer of [
       pl.misje['POZ-B-04'].odp2,
@@ -174,10 +191,36 @@ test.describe('mobile 640 × 360', () => {
     );
     const finish = await position(city(page));
 
-    await page.reload();
+    await expect
+      .poll(async () => {
+        const saved = (await profile(page)).campaignRides?.poznan;
+        if (!saved) return;
+        return {
+          after: saved.after,
+          x: String(Math.round(saved.x)),
+          y: String(Math.round(saved.y)),
+        };
+      })
+      .toEqual({ after: afterFirstAid.after, ...finish });
+  });
+
+  test('Poznań restores a guided ride and accepts the next mission after stopping', async ({
+    page,
+    baseURL,
+  }, info) => {
+    await installRideClock(page);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await seedProgress(page, baseURL, {
+      completed: [...beforeFirstAid, afterFirstAid.after],
+      campaignRides: { poznan: afterFirstAid },
+    });
+    await page.goto('/');
     await chooseCity(page, 'poznan', 'campaign');
     await expect(navigation(page)).toContainText(pl.misje['POZ-A3-02'].tytul);
-    expect(await position(city(page))).toEqual(finish);
+    expect(await position(city(page))).toEqual({
+      x: String(afterFirstAid.x),
+      y: String(afterFirstAid.y),
+    });
     const screenshot = info.outputPath('152-poznan-telefon.png');
     await expect(directions(page)).toBeVisible();
     await page.screenshot({ path: screenshot });
@@ -185,7 +228,7 @@ test.describe('mobile 640 × 360', () => {
       path: screenshot,
       contentType: 'image/png',
     });
-    await setRideClockRate(page, 2);
+    await setRideClockRate(page, 3);
     await driveTo(page, 'ArrowLeft', 'x', 1555, false);
     await expect(offer(page)).toBeHidden();
     await driveTo(page, 'ArrowDown', 'y', 2160, true);
