@@ -9,7 +9,8 @@ const exceptions = new Map([
   // #97: zatwierdzony napis na ekranie porażki.
   ['i18n/pl.json:missionFailure.title', 'OBLAŁEŚ!'],
 ]);
-const genderedPastTense = /\p{L}+(?:łeś|łaś)\b/iu;
+// JavaScript's \b treats ś as a non-word character, even with the u flag.
+const genderedPastTense = /\p{L}+(?:łeś|łaś)(?![\p{L}\p{M}\p{N}_])/iu;
 
 function findGenderedText(value: unknown, location: string): string[] {
   if (typeof value === 'string') {
