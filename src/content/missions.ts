@@ -10,13 +10,10 @@ export const campaignCity = z.enum([
   'gdansk',
   'wies',
   'poznan',
+  'lodz',
 ]);
 export type CampaignCity = z.infer<typeof campaignCity>;
-export const playableCity = z.enum([
-  ...campaignCity.options,
-  'lodz',
-  'zakopane',
-]);
+export const playableCity = z.enum([...campaignCity.options, 'zakopane']);
 export type PlayableCity = z.infer<typeof playableCity>;
 
 export function isCampaignCity(city: PlayableCity): city is CampaignCity {
@@ -48,6 +45,7 @@ const missionGoal = z.discriminatedUnion('typ', [
   z.strictObject({ ...goalFields, typ: z.literal('zbierz_bursztyn'), poi: id }),
   z.strictObject({ ...goalFields, typ: z.literal('zbierz_szyszke'), poi: id }),
   z.strictObject({ ...goalFields, typ: z.literal('zbierz_rogala'), poi: id }),
+  z.strictObject({ ...goalFields, typ: z.literal('zbierz_szpulke'), poi: id }),
   z
     .strictObject({
       ...goalFields,

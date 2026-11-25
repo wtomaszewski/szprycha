@@ -165,6 +165,14 @@ for (const city of ['wies', 'lodz', 'zakopane'] as const)
     await offlineMap;
     await expect(page.locator('canvas')).toHaveAttribute('data-map', city);
     await ride(page);
+    if (city === 'lodz') {
+      await page.reload();
+      await chooseCity(page, city, 'campaign');
+      await expect(page.locator('canvas')).toHaveAttribute(
+        'data-mission',
+        'LOD-B-01',
+      );
+    }
   });
 
 const mimeTypes: Record<string, string> = {

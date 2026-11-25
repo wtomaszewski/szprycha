@@ -159,6 +159,10 @@ Tramwaje Krakowa i Gdańska mają srebrne pasy wzdłuż grafitowej bryły, ciemn
 
 Bryły i rekwizyty rozmieszcza generator mapy. Murale powstają w rendererze ścian, a pojazdy w generatorze sprite’ów. Sylwetki są autorskie i pozbawione szyldów oraz logotypów. Tramwaj korzysta z neutralnej palety gry.
 
+**Szpulki nici.** Autorski sprite 16 × 16 z jasnymi, szerokimi drewnianymi denkami, turkusowym nawojem i luźnym końcem nici. Teksturę rysuje `src/render/CityCollectibles.ts`, a punkty kolekcji ustawia generator mapy.
+
+**Pomoc pod muralem.** Generator umieszcza siedzącego Turbo i jego przewrócony rower obok oficyny z turkusowymi falami podczas misji `LOD-A3-01`.
+
 ### Zakopane
 
 | Landmark | Sylwetka i materiały |

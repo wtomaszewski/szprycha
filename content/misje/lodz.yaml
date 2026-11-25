@@ -124,3 +124,204 @@
   par_s: 80
   min_dobre_nawyki: 1
   nagrody: { zetony: 0, xp: 0 }
+
+- id: LOD-A1-01
+  miasto: lodz
+  akt: 1
+  tytul: misje.LOD-A1-01.tytul
+  opis: misje.LOD-A1-01.opis
+  zleceniodawca: pan_kazik
+  typ: dostawa
+  wymagania: { misje_ukonczone: [LOD-B-01, LOD-B-02, LOD-B-03, LOD-B-04] }
+  start: { poi: lod-piotrkowska-start, kask_zapiety: false }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.LOD-A1-01.start }
+    - { typ: odbierz, poi: lod-piotrkowska-start, przedmiot: probki_tkanin, opis: misje.LOD-A1-01.odbior }
+    - { typ: dojedz, poi: lod-pasaz-objazd, opis: misje.LOD-A1-01.objazd }
+    - { typ: oddaj, poi: lod-piotrkowska-meta, przedmiot: probki_tkanin, opis: misje.LOD-A1-01.meta }
+  zdarzenia_wymuszone: [{ typ: czytaj_oznakowanie, przy: lod-piotrkowska-zasady, regula: ZNAK-B1 }]
+  skrot: { odcinek: pasaz-wylaczony }
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [KASK-01, GDZIE-07, ZNAK-B1]
+  par_s: 90
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 12, xp: 100 }
+  dialog_start: dialogi.LOD-A1-01.start
+  dialog_koniec: dialogi.LOD-A1-01.koniec
+
+- id: LOD-A1-02
+  miasto: lodz
+  akt: 1
+  tytul: misje.LOD-A1-02.tytul
+  opis: misje.LOD-A1-02.opis
+  zleceniodawca: lena_mapa
+  typ: detektyw
+  wymagania: { misje_ukonczone: [LOD-A1-01] }
+  start: { poi: lod-szpulki-start }
+  ruch_ai: false
+  cele:
+    - { typ: zbierz_szpulke, poi: lod-szpulka-arkady, opis: misje.LOD-A1-02.arkady }
+    - { typ: zbierz_szpulke, poi: lod-szpulka-latarnia, opis: misje.LOD-A1-02.latarnia }
+    - { typ: zbierz_szpulke, poi: lod-szpulka-pasaz, opis: misje.LOD-A1-02.pasaz }
+  zdarzenia_wymuszone: [{ typ: czytaj_oznakowanie, przy: lod-szpulka-pasaz, regula: ZNAK-B1 }]
+  reguly_cwiczone: [GDZIE-07, MAN-14, MAN-01]
+  par_s: 115
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 14, xp: 120 }
+  dialog_start: dialogi.LOD-A1-02.start
+  dialog_koniec: dialogi.LOD-A1-02.koniec
+
+- id: LOD-A1-03
+  miasto: lodz
+  akt: 1
+  tytul: misje.LOD-A1-03.tytul
+  opis: misje.LOD-A1-03.opis
+  zleceniodawca: sierzant_ola
+  typ: dostawa
+  wymagania: { misje_ukonczone: [LOD-A1-02] }
+  start: { poi: lod-mijanie-start }
+  cele:
+    - { typ: odbierz, poi: lod-mijanie-start, przedmiot: szkic_nici, opis: misje.LOD-A1-03.odbior }
+    - { typ: dojedz, poi: lod-mijanie-zasady, opis: misje.LOD-A1-03.rozjazd }
+    - typ: dojedz
+      poi: lod-mijanie-cargo
+      opis: misje.LOD-B-02.cargo
+      wymagany_nawyk: MAN-14
+      wskazowka_powrotu: misje.LOD-B-02.cargo_powrot
+    - typ: oddaj
+      poi: lod-mijanie-meta
+      przedmiot: szkic_nici
+      opis: misje.LOD-A1-03.meta
+      wymagany_nawyk: MAN-14
+      wskazowka_powrotu: misje.LOD-B-02.riksza_powrot
+  zdarzenia_wymuszone: [{ typ: cwiczenie_trasy, przy: lod-mijanie-zasady, regula: MAN-14 }]
+  checkpointy: [lod-mijanie-zasady, lod-mijanie-cargo]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [GDZIE-07, MAN-14]
+  par_s: 100
+  min_dobre_nawyki: 2
+  nagrody: { zetony: 15, xp: 135 }
+  dialog_start: dialogi.LOD-A1-03.start
+  dialog_koniec: dialogi.LOD-A1-03.koniec
+
+- id: LOD-A2-01
+  miasto: lodz
+  akt: 2
+  tytul: misje.LOD-A2-01.tytul
+  opis: misje.LOD-A2-01.opis
+  zleceniodawca: inzynier_zawila
+  typ: nocny
+  wymagania: { misje_ukonczone: [LOD-A1-03] }
+  start: { poi: lod-kontrapas-start, zmrok: true, kask_zapiety: false }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.LOD-B-03.start }
+    - { typ: odbierz, poi: lod-kontrapas-start, przedmiot: plan_warsztatow, opis: misje.LOD-A2-01.odbior }
+    - { typ: dojedz, poi: lod-kontrapas-znak, opis: misje.LOD-A2-01.znak }
+    - { typ: dojedz, poi: lod-kontrapas-pas, opis: misje.LOD-B-03.pas }
+    - { typ: oddaj, poi: lod-kontrapas-meta, przedmiot: plan_warsztatow, opis: misje.LOD-A2-01.meta }
+  zdarzenia_wymuszone: [{ typ: czytaj_oznakowanie, przy: lod-kontrapas-znak, regula: ZNAK-B2T22 }]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [GDZIE-02, ZNAK-B2T22, MSC-04]
+  par_s: 80
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 16, xp: 145 }
+  dialog_start: dialogi.LOD-A2-01.start
+  dialog_koniec: dialogi.LOD-A2-01.koniec
+
+- id: LOD-A2-02
+  miasto: lodz
+  akt: 2
+  tytul: misje.LOD-A2-02.tytul
+  opis: misje.LOD-A2-02.opis
+  zleceniodawca: sierzant_ola
+  typ: dostawa
+  wymagania: { misje_ukonczone: [LOD-A2-01] }
+  start: { poi: lod-brama-start }
+  cele:
+    - { typ: odbierz, poi: lod-brama-start, przedmiot: klucz_warsztatu, opis: misje.LOD-A2-02.odbior }
+    - { typ: dojedz, poi: lod-brama-postoj, opis: misje.LOD-B-04.postoj }
+    - typ: oddaj
+      poi: lod-brama-meta
+      przedmiot: klucz_warsztatu
+      opis: misje.LOD-A2-02.meta
+      wymagany_nawyk: MSC-03
+      wskazowka_powrotu: misje.LOD-B-04.powrot
+  zdarzenia_wymuszone: [{ typ: pieszy_przy_bramie, przy: lod-brama-postoj, regula: MSC-03 }]
+  checkpointy: [lod-brama-postoj]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [PIER-06, MSC-03]
+  par_s: 80
+  min_dobre_nawyki: 1
+  nagrody: { zetony: 17, xp: 155 }
+  dialog_start: dialogi.LOD-A2-02.start
+  dialog_koniec: dialogi.LOD-A2-02.koniec
+
+- id: LOD-A3-01
+  miasto: lodz
+  akt: 3
+  tytul: misje.LOD-A3-01.tytul
+  opis: misje.LOD-A3-01.opis
+  zleceniodawca: sierzant_ola
+  typ: pomoc
+  wymagania: { misje_ukonczone: [LOD-A2-02] }
+  start: { poi: lod-podworko-pomoc-start }
+  ruch_ai: false
+  cele:
+    - typ: wybor
+      poi: lod-podworko-pomoc
+      opis: misje.LOD-A3-01.podejdz
+      regula: PP-01
+      pytanie: misje.LOD-A3-01.pytanie_bezpieczenstwo
+      odpowiedzi: [misje.LOD-A3-01.bezpieczenstwo_odp1, misje.LOD-A3-01.bezpieczenstwo_odp2]
+      poprawna: 1
+      wyjasnienie: misje.LOD-A3-01.bezpieczenstwo_wyjasnienie
+    - typ: wybor
+      poi: lod-podworko-pomoc
+      opis: misje.LOD-A3-01.zawolaj
+      regula: PP-03
+      pytanie: misje.LOD-A3-01.pytanie_dorosly
+      odpowiedzi: [misje.LOD-A3-01.dorosly_odp1, misje.LOD-A3-01.dorosly_odp2]
+      poprawna: 0
+      wyjasnienie: misje.LOD-A3-01.dorosly_wyjasnienie
+    - typ: wybor
+      poi: lod-podworko-pomoc
+      opis: misje.LOD-A3-01.zadzwon
+      regula: PP-02
+      pytanie: misje.LOD-A3-01.pytanie_telefon
+      odpowiedzi: [misje.LOD-A3-01.telefon_odp1, misje.LOD-A3-01.telefon_odp2]
+      poprawna: 1
+      wyjasnienie: misje.LOD-A3-01.telefon_wyjasnienie
+  zdarzenia_wymuszone: [{ typ: po_zdarzeniu, przy: lod-podworko-pomoc, regula: PP-01 }]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [PP-01, PP-03, PP-02]
+  par_s: 115
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 18, xp: 175 }
+  dialog_start: dialogi.LOD-A3-01.start
+  dialog_koniec: dialogi.LOD-A3-01.koniec
+
+- id: LOD-A3-02
+  miasto: lodz
+  akt: 3
+  tytul: misje.LOD-A3-02.tytul
+  opis: misje.LOD-A3-02.opis
+  zleceniodawca: lena_mapa
+  typ: dostawa
+  wymagania: { misje_ukonczone: [LOD-A3-01] }
+  start: { poi: lod-aleja-przejazd-start }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: lod-aleja-przejazd-start, przedmiot: uklad_sterujacy, opis: misje.LOD-A3-02.odbior }
+    - { typ: dojedz, poi: lod-aleja-przejazd-postoj, opis: misje.LOD-A3-02.postoj }
+    - { typ: dojedz, poi: lod-aleja-za-przejazdem, opis: misje.LOD-A3-02.przejazd }
+    - { typ: oddaj, poi: lod-fabryka-wejscie, przedmiot: uklad_sterujacy, opis: misje.LOD-A3-02.meta }
+  zdarzenia_wymuszone: [{ typ: swiatla_palac, przy: lod-aleja-przejazd-postoj, regula: SYG-02 }]
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [GDZIE-01, SYG-02]
+  par_s: 95
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 22, xp: 210 }
+  dialog_start: dialogi.LOD-A3-02.start
+  dialog_koniec: dialogi.LOD-A3-02.koniec
