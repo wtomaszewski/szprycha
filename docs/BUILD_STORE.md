@@ -14,15 +14,15 @@ npm run store:assets
 
 Przygotowanie zależności i Chromium może wymagać sieci. Sam generator buduje lokalnie wariant `mobile` w katalogu tymczasowym. Wyłącza konfigurację rankingów i linków zewnętrznych, a Playwright dopuszcza tylko połączenia z lokalnym serwerem na `127.0.0.1`. Każde urządzenie ma osobną, świeżą sesję. Pełny zestaw jest wersjonowany w katalogu [`store/`](../store/). Po ponownym wygenerowaniu przejrzyj kadry i zatwierdź zmiany obrazów razem ze zmianą, która wymagała ich aktualizacji.
 
-W każdym katalogu urządzenia powstaje pięć poziomych zrzutów PNG. Kolejność w sklepie odpowiada kolejności nazw plików.
+W każdym katalogu urządzenia powstaje osiem poziomych zrzutów PNG. Kolejność w sklepie odpowiada kolejności nazw plików. Google Play przyjmuje do ośmiu zrzutów na typ urządzenia, a App Store do dziesięciu.
 
 | Sklep i format | Katalog w `store/` | Wymiary | Liczba |
 | --- | --- | ---: | ---: |
-| Google Play, telefon | `google-play/telefon/` | 1920 × 1080 | 5 |
-| Google Play, tablet 7″ | `google-play/tablet-7/` | 1920 × 1080 | 5 |
-| Google Play, tablet 10″ | `google-play/tablet-10/` | 2560 × 1440 | 5 |
-| App Store, iPhone 6,9″ | `app-store/iphone-6-9/` | 2868 × 1320 | 5 |
-| App Store, iPad 13″ | `app-store/ipad-13/` | 2752 × 2064 | 5 |
+| Google Play, telefon | `google-play/telefon/` | 1920 × 1080 | 8 |
+| Google Play, tablet 7″ | `google-play/tablet-7/` | 1920 × 1080 | 8 |
+| Google Play, tablet 10″ | `google-play/tablet-10/` | 2560 × 1440 | 8 |
+| App Store, iPhone 6,9″ | `app-store/iphone-6-9/` | 2868 × 1320 | 8 |
+| App Store, iPad 13″ | `app-store/ipad-13/` | 2752 × 2064 | 8 |
 | Google Play, grafika promocyjna | `google-play/grafika-promocyjna.png` | 1024 × 500 | 1 |
 | Google Play, ikona | `google-play/ikona.png` | 512 × 512 | 1 |
 
@@ -31,6 +31,9 @@ W każdym katalogu urządzenia powstaje pięć poziomych zrzutów PNG. Kolejnoś
 - `03-plac-manewrowy.png` pokazuje ćwiczenie ósemki.
 - `04-album-znakow.png` pokazuje znak sfotografowany po zejściu z roweru i zatrzymaniu się poza jezdnią.
 - `05-mapa-umiejetnosci.png` pokazuje moduły w świeżej sesji z pominięciem danych profilu, rangi, punktów, wyników i rekordu.
+- `06-zakopane-bezpieczny-zjazd.png` pokazuje powolny zjazd we mgle, w zapiętym kasku i z włączonymi światłami (MAN-08, MSC-04).
+- `07-wies-postoj-przed-torami.png` pokazuje oczekiwanie przed torami w trakcie przejazdu pociągu (MSC-01).
+- `08-lodz-odstep-od-rikszy.png` pokazuje oczekiwanie po prawej stronie Piotrkowskiej z zachowaniem odstępu od nadjeżdżającej rikszy (MAN-14).
 
 Zrzuty i grafika promocyjna są zapisywane jako PNG RGB. Ikona PNG RGBA korzysta z generatora ikon M9. Ikona App Store pochodzi z zestawu ikon projektu iOS tworzonego przez `npm run assets:mobile`. [Wymagania grafik Google Play](https://support.google.com/googleplay/android-developer/answer/9866151) · [Wymiary zrzutów App Store](https://developer.apple.com/help/app-store-connect/reference/screenshot-specifications/)
 

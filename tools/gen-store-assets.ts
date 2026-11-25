@@ -17,23 +17,57 @@ import {
 } from './store-assets';
 
 type Device = (typeof storeDevices)[number];
-const trainingMap = /\/assets\/miasteczko-[^/]+\.tmj$/;
+type MapObject = {
+  name: string;
+  x: number;
+  y: number;
+  properties?: { name: string; type: string; value: number }[];
+};
 
-async function trainingSpawn(page: Page, x: number, y: number) {
-  await page.unroute(trainingMap);
-  await page.route(trainingMap, async (route) => {
+async function setSpawn(
+  page: Page,
+  city: 'miasteczko' | 'wies' | 'lodz',
+  x: number,
+  y: number,
+  heading?: number,
+  railOffset?: { crossing: string; seconds: number },
+) {
+  const mapPath = new RegExp(`/assets/${city}-[^/]+\\.tmj$`);
+  await page.unroute(mapPath);
+  await page.route(mapPath, async (route) => {
     const response = await route.fetch();
     const map: {
       layers: {
         name: string;
-        objects?: { name: string; x: number; y: number }[];
+        objects?: MapObject[];
       }[];
     } = await response.json();
-    const player = map.layers
-      .find((layer) => layer.name === 'spawns')
-      ?.objects?.find((object) => object.name === 'player');
-    if (!player) throw new Error('Missing player spawn in training map');
+    const objects = (layerName: string) =>
+      map.layers.find((layer) => layer.name === layerName)?.objects ?? [];
+    const player = objects('spawns').find(({ name }) => name === 'player');
+    if (!player) throw new Error(`Missing player spawn in ${city}`);
     Object.assign(player, { x, y });
+    if (heading !== undefined) {
+      const direction = player.properties?.find(
+        ({ name }) => name === 'heading',
+      );
+      if (!direction) throw new Error(`Missing player heading in ${city}`);
+      direction.value = heading;
+    }
+    if (railOffset) {
+      const crossing = objects('crossings').find(
+        ({ name }) => name === railOffset.crossing,
+      );
+      if (!crossing?.properties)
+        throw new Error(
+          `Missing rail crossing ${railOffset.crossing} in ${city}`,
+        );
+      crossing.properties.push({
+        name: 'offset_s',
+        type: 'float',
+        value: railOffset.seconds,
+      });
+    }
     await route.fulfill({ response, json: map });
   });
 }
@@ -76,19 +110,60 @@ async function captureDevice(
   }
 
   async function startTraining(x: number, y: number) {
-    await trainingSpawn(page, x, y);
+    await setSpawn(page, 'miasteczko', x, y);
     await menu();
     await button(pl.driving.title).click();
     await expect(canvas).toHaveAttribute('data-x', String(x));
   }
 
-  async function save(scene: (typeof storeScenes)[number]) {
+  async function freeRide(city: 'zakopane' | 'wies' | 'lodz') {
+    await menu();
+    await button(pl.cityPicker.freeRide).click();
+    const pin = button(pl.cityPicker[city]);
+    await expect(pin).toBeEnabled();
+    await pauseClock();
+    await pin.dispatchEvent('click');
+    // Advance a frame at a time so traffic timing starts with the first City frame.
+    await expect
+      .poll(
+        async () => {
+          await page.clock.runFor(16);
+          return canvas.getAttribute('data-map');
+        },
+        { intervals: [20], timeout: 15_000 },
+      )
+      .toBe(city);
+    await expect(canvas).toHaveAttribute('data-speed', '0');
+  }
+
+  async function pauseClock() {
+    const now = await page.evaluate(() => Date.now());
+    await page.clock.pauseAt(now + 5000);
+  }
+
+  async function save(scene: (typeof storeScenes)[number], style?: string) {
     const asset = storeScreenshot(device, scene);
     const buffer = await page.screenshot({
       animations: 'disabled',
       caret: 'hide',
+      style,
     });
     await writeStorePng(output, asset, buffer);
+  }
+
+  async function saveCity(scene: (typeof storeScenes)[number], style = '') {
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(
+      page.getByRole('status', { name: pl.progression.attention }),
+    ).toHaveText(/^0\//);
+    await save(
+      scene,
+      `
+      .ride-score, .ride-details > output[title] { display: none; }
+      .radio-station, .radio-caption { visibility: hidden; }
+      ${style}
+    `,
+    );
   }
 
   try {
@@ -160,6 +235,63 @@ async function captureDevice(
     const skills = page.getByRole('dialog', { name: pl.skillMap.title });
     await expect(skills.getByRole('meter')).toHaveCount(8);
     await save(storeScenes[4]);
+
+    // MAN-08 / MSC-04: equip the rider before rolling slowly downhill in fog.
+    await page.clock.install({ time: new Date('2026-01-01T12:00:00Z') });
+    await freeRide('zakopane');
+    await page.clock.resume();
+    await page.keyboard.press('KeyM');
+    await button(`${pl.phone.start} · ${pl.misje['ZAK-B-03'].tytul}`).click();
+    await expect(canvas).toHaveAttribute('data-mission', 'ZAK-B-03');
+    await expect(button(pl.dialogueUi.skip)).toBeVisible();
+    await pauseClock();
+    await button(pl.dialogueUi.skip).dispatchEvent('click');
+    await button(pl.missionUi.equip).dispatchEvent('click');
+    await button(pl.missionUi.turnOnLights).dispatchEvent('click');
+    await page.clock.runFor(120);
+    await expect(canvas).toHaveAttribute('data-weather', 'fog');
+    await expect(
+      page.getByRole('img', { name: pl.rideHud.helmetOn }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('img', { name: pl.rideHud.lightsOn }),
+    ).toBeVisible();
+    const startY = Number(await canvas.getAttribute('data-y'));
+    await page.keyboard.down('ArrowDown');
+    await page.clock.runFor(250);
+    await page.keyboard.up('ArrowDown');
+    await page.clock.runFor(300);
+    const downhill = Number(await canvas.getAttribute('data-y'));
+    const speed = Number(await canvas.getAttribute('data-speed'));
+    if (downhill <= startY || !(speed > 0 && speed <= 60))
+      throw new Error(`Unexpected descent: y=${downhill}, speed=${speed}`);
+    // The training tip overlaps the mission objective on short viewports.
+    await expect(page.locator('.traffic-event')).toHaveText(
+      pl.trafficEvents.cwiczenie_trasy,
+    );
+    await saveCity(storeScenes[5], '.traffic-event { display: none; }');
+    await page.clock.resume();
+
+    // MSC-01: wait on the approach, outside the tracks, as a train passes.
+    await setSpawn(page, 'wies', 1170, 1296, -Math.PI / 2, {
+      crossing: 'przejazd-gminny',
+      seconds: 23.5,
+    });
+    await freeRide('wies');
+    await page.clock.runFor(120);
+    await expect(canvas).toHaveAttribute('data-x', '1170');
+    await expect(canvas).toHaveAttribute('data-y', '1296');
+    await saveCity(storeScenes[6]);
+    await page.clock.resume();
+
+    // MAN-14: wait on the right while a rickshaw approaches in the other lane.
+    await setSpawn(page, 'lodz', 1705, 742, 0);
+    await freeRide('lodz');
+    await page.clock.runFor(5200);
+    await expect(canvas).toHaveAttribute('data-x', '1705');
+    await expect(canvas).toHaveAttribute('data-y', '742');
+    await expect(canvas).toHaveAttribute('data-speed', '0');
+    await saveCity(storeScenes[7]);
     if (errors.length) throw new Error(errors.join('\n'));
   } finally {
     await context.close();
