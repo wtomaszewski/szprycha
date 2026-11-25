@@ -177,6 +177,7 @@ async function reachStopQuestion(
     await page.goto('/');
     await chooseCity(page, 'warszawa', 'campaign');
   },
+  holdAtCheckpoint = false,
 ) {
   await openMission();
   await skipDialogue(page);
@@ -209,12 +210,15 @@ async function reachStopQuestion(
   await expect(resume).toBeVisible();
   await page.keyboard.up(accelerate);
   await expect(attention).toContainText('2/3');
-  await resume.click();
-
-  await page.keyboard.down(accelerate);
+  if (holdAtCheckpoint) await page.keyboard.down(accelerate);
   const question = questionDialog(page);
-  await expect(question).toBeVisible();
-  await page.keyboard.up(accelerate);
+  try {
+    await resume.click();
+    if (!holdAtCheckpoint) await page.keyboard.down(accelerate);
+    await expect(question).toBeVisible();
+  } finally {
+    await page.keyboard.up(accelerate);
+  }
   const stop = questionFor('ZNAK-STOP');
   await expect(question).toContainText(stop.pytanie);
   await expect(attention).toContainText('3/3');
@@ -304,6 +308,39 @@ test.describe('Road Attention on the training map', () => {
     await expect(result).toContainText(`${pl.progression.missionSeries} 1`);
     await expect(result).toContainText(`${pl.progression.tokens} +10`);
     await page.screenshot({ path: 'test-results/m5a-wynik.png' });
+  });
+
+  test('keeps a direction held while resuming from a checkpoint and a control question', async ({
+    page,
+  }) => {
+    test.setTimeout(45_000);
+    const { canvas, resume, question, stop } = await reachStopQuestion(
+      page,
+      'ArrowUp',
+      undefined,
+      () => openStopPractice(page),
+      true,
+    );
+    await question
+      .getByRole('button', {
+        name: stop.odpowiedzi[stop.poprawna],
+        exact: true,
+      })
+      .click();
+    await expect(question.getByRole('status')).toHaveText(
+      `${pl.progression.wiseHead} +100`,
+    );
+
+    await page.keyboard.down('ArrowUp');
+    try {
+      await expect(canvas).toHaveAttribute('data-speed', '0');
+      await question
+        .getByRole('button', { name: pl.progression.continue })
+        .click();
+      await expect(resume).toBeVisible();
+    } finally {
+      await page.keyboard.up('ArrowUp');
+    }
   });
 });
 

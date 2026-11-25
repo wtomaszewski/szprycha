@@ -44,10 +44,10 @@ export class ControlQuestionDialog {
     this.prompt.tabIndex = -1;
     this.prompt.setAttribute('autofocus', '');
     this.panel.addEventListener('keydown', (event) => {
+      if (!this.open || this.awaitingResume) return;
       if (event.code !== 'ArrowUp' && event.code !== 'ArrowDown') return;
       event.preventDefault();
-      if (!event.repeat && this.resume.hidden)
-        this.focusAnswer(event.code === 'ArrowUp' ? -1 : 1);
+      if (!event.repeat) this.focusAnswer(event.code === 'ArrowUp' ? -1 : 1);
     });
     speech.append(speaker, this.intro, this.question);
     line.append(portrait, speech);
@@ -66,6 +66,10 @@ export class ControlQuestionDialog {
 
   get open() {
     return this.panel.open;
+  }
+
+  get awaitingResume() {
+    return this.open && !this.resume.hidden;
   }
 
   show(

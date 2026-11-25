@@ -881,10 +881,11 @@ export class City extends Scene {
         return answer;
       },
       () => {
-        this.controls.clear();
+        this.controls.clear({ preserveDirection: true });
         this.presentMissionResult();
         this.updateMissionHud();
-        if (!this.mission?.result) this.missionHud?.focusEquipment();
+        if (!this.mission?.result && !this.missionHud?.focusEquipment())
+          this.controls.focusRide();
       },
     );
     if (tutorial)
@@ -920,8 +921,9 @@ export class City extends Scene {
           audio.stopReading('lesson');
           this.missionInterrupted = false;
           this.checkpointHint = undefined;
-          this.controls.clear();
+          this.controls.clear({ preserveDirection: true });
           this.updateMissionHud();
+          this.controls.focusRide();
         },
         () => this.takePhoto(),
         this.dailyOrder?.text,
@@ -1367,11 +1369,16 @@ export class City extends Scene {
   }
 
   private overlayKeyboard(event: KeyboardEvent) {
+    if (this.questionDialog.open) {
+      // Feedback keeps the ride paused, but a direction held here carries into the ride.
+      if (this.questionDialog.awaitingResume)
+        this.controls.bufferDirection(event);
+      return true;
+    }
     if (
       this.phone.open ||
       this.dialogue.open ||
       this.review ||
-      this.questionDialog.open ||
       this.failureDialog?.open ||
       (this.results?.open && event.code !== 'KeyM')
     )
