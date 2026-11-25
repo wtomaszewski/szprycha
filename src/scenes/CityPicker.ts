@@ -1,4 +1,4 @@
-import { startScene } from './startScene';
+import { startCity } from './startScene';
 import { Geom, Scene } from 'phaser';
 import {
   campaignCity,
@@ -147,14 +147,19 @@ export class CityPicker extends Scene {
       const resume = campaign ? progress.campaignRide(city) : undefined;
       const mission =
         campaign && !resume ? progress.nextMission(city, content) : undefined;
-      startScene(this, 'City', {
-        city,
-        map: resume?.map ?? city,
-        missionId: mission?.id,
-        guidedAfter: resume?.after,
-        pose: resume,
-        freeRide,
-      });
+      const map = resume?.map ?? city;
+      startCity(
+        this,
+        {
+          city,
+          map,
+          missionId: mission?.id,
+          guidedAfter: resume?.after,
+          pose: resume,
+          freeRide,
+        },
+        mission?.mapa ?? mission?.miasto ?? map,
+      );
     };
 
     const back = document.createElement('button');

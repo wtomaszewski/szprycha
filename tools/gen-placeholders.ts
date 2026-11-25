@@ -5,6 +5,7 @@ import { cityArt } from './city-art.ts';
 import { giewontArt } from './zakopane-art.ts';
 import { uiArt } from './ui-art.ts';
 import { encodeSprite, spriteArt } from './sprite-art.ts';
+import { encodeSpriteSheet } from './sprite-png.ts';
 import { signArt } from './sign-art.ts';
 import { portraitArt } from './portrait-art.ts';
 import { signImageFile } from '../src/content/signIllustrations.ts';
@@ -20,7 +21,7 @@ for (const [file, image] of Object.entries(cityArt(30)))
   await writeFile(`assets/generated/${file}`, PNG.sync.write(image));
 
 for (const [id, image] of Object.entries(spriteArt()))
-  await writeFile(`assets/generated/${id}.png`, encodeSprite(image));
+  await writeFile(`assets/generated/${id}.png`, encodeSpriteSheet(image));
 
 await mkdir('assets/generated/signs', { recursive: true });
 for (const [code, image] of signArt())

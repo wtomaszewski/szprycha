@@ -1,4 +1,4 @@
-import { startScene } from './startScene';
+import { startCity, startScene } from './startScene';
 import { isTutorialStep } from '../gameplay/Tutorial';
 import { tutorialHelp } from '../ui/TutorialPanel';
 import { audio } from '../audio/GameAudio';
@@ -41,15 +41,16 @@ export class MainMenu extends Scene {
     const gameContent = this.registry.get('content') as GameContent;
     const progress = this.registry.get('missionProgress') as MissionProgress;
     const about = aboutGame(gameContent);
-    const tutorial = progress.store.profile.tutorial;
+    const savedTutorial = progress.store.profile.tutorial;
+    const tutorial = isTutorialStep(savedTutorial) ? savedTutorial : undefined;
     const help = tutorialHelp(
-      isTutorialStep(tutorial),
-      () => startScene(this, 'City', { tutorial }),
+      tutorial !== undefined,
+      () => startCity(this, { tutorial }),
       () => {
         progress.store.change((profile) => {
           profile.tutorial = 'move';
         });
-        startScene(this, 'City', { tutorial: 'move' });
+        startCity(this, { tutorial: 'move' });
       },
     );
     const rankings = rankingsPanel(
@@ -139,7 +140,7 @@ export class MainMenu extends Scene {
     const practice = document.createElement('button');
     practice.type = 'button';
     practice.textContent = ui.driving.title;
-    practice.addEventListener('click', () => startScene(this, 'City'));
+    practice.addEventListener('click', () => startCity(this));
     ride.append(campaign, freeRide, practice);
     const options = document.createElement('div');
     options.className = 'menu-options';
@@ -173,7 +174,7 @@ export class MainMenu extends Scene {
           event.target.closest('button, select, input, summary, a[href]')
         )
       )
-        startScene(this, 'City');
+        startCity(this);
     };
     this.input.keyboard?.on('keydown-ENTER', startDrive);
     this.events.once('shutdown', () => {

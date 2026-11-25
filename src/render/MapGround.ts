@@ -94,7 +94,7 @@ function drawWater(
   return water;
 }
 
-/** Rasterize static layers once into camera-culled textures. */
+/** Rasterize static layers as their chunks enter the camera view. */
 export function drawMapGround(
   scene: Scene,
   map: Tilemaps.Tilemap,
@@ -122,7 +122,15 @@ export function drawMapGround(
         ((gid - tiles.curbMask) & side) !== 0
       );
     });
-  const chunks: GameObjects.Image[] = [];
+  const chunks: {
+    image: GameObjects.Image;
+    col: number;
+    row: number;
+    width: number;
+    height: number;
+    name: string;
+    prepared: boolean;
+  }[] = [];
 
   for (let row = 0; row < map.height; row += chunkTiles)
     for (let col = 0; col < map.width; col += chunkTiles) {
@@ -135,14 +143,25 @@ export function drawMapGround(
       const columns = Math.min(chunkTiles, map.width - col);
       const width = columns * TILE;
       const height = rows * TILE;
-      const existing = scene.textures.exists(name);
-      const chunk = existing
-        ? undefined
-        : scene.textures.createCanvas(name, width, height);
-      if (!existing && !chunk)
-        throw new Error(`Cannot create ground texture ${name}`);
-      const ctx = chunk?.context;
-      if (ctx) {
+      const prepared = scene.textures.exists(name);
+      const image = scene.add
+        .image(col * TILE, row * TILE, prepared ? name : '__DEFAULT')
+        .setOrigin(0)
+        .setVisible(false);
+      chunks.push({ image, col, row, width, height, name, prepared });
+    }
+
+  const update = (camera: Cameras.Scene2D.Camera) => {
+    const view = mapView(camera);
+    for (const chunk of chunks) {
+      const { image, col, row, width, height, name } = chunk;
+      const visible = inView(view, image.x, image.y, width, height);
+      if (visible && !chunk.prepared) {
+        const texture = scene.textures.createCanvas(name, width, height);
+        if (!texture) throw new Error(`Cannot create ground texture ${name}`);
+        const ctx = texture.context;
+        const rows = height / TILE;
+        const columns = width / TILE;
         for (const [index, layer] of layers.entries()) {
           if (!layer) continue;
           for (let dy = 0; dy < rows; dy++)
@@ -174,11 +193,14 @@ export function drawMapGround(
           { x: col * TILE, y: row * TILE, width, height },
         );
         ctx.restore();
-        chunk?.refresh();
+        texture.refresh();
+        image.setTexture(name);
+        chunk.prepared = true;
       }
-      chunks.push(scene.add.image(col * TILE, row * TILE, name).setOrigin(0));
+      if (image.visible !== visible) image.setVisible(visible);
     }
-  return [...chunks, ...drawWater(scene, source, layers[0] ?? null)];
+  };
+  return { update, water: drawWater(scene, source, layers[0] ?? null) };
 }
 
 /** Keep static vector scenery in camera-culled textures, like the tile layers. */
@@ -222,24 +244,41 @@ export function cacheMapGraphics(
   return chunks;
 }
 
-export function cullMapChunks(
-  chunks: readonly GameObjects.Image[],
-  camera: Cameras.Scene2D.Camera,
-) {
+function mapView(camera: Cameras.Scene2D.Camera) {
   const centerX = camera.clampX(camera.scrollX) + camera.width / 2;
   const centerY = camera.clampY(camera.scrollY) + camera.height / 2;
   const halfWidth = camera.width / (2 * camera.zoom) + TILE;
   const halfHeight = camera.height / (2 * camera.zoom) + TILE;
-  const left = centerX - halfWidth;
-  const right = centerX + halfWidth;
-  const top = centerY - halfHeight;
-  const bottom = centerY + halfHeight;
+  return {
+    left: centerX - halfWidth,
+    right: centerX + halfWidth,
+    top: centerY - halfHeight,
+    bottom: centerY + halfHeight,
+  };
+}
+
+function inView(
+  view: ReturnType<typeof mapView>,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+) {
+  return (
+    x + width >= view.left &&
+    x <= view.right &&
+    y + height >= view.top &&
+    y <= view.bottom
+  );
+}
+
+export function cullMapChunks(
+  chunks: readonly GameObjects.Image[],
+  camera: Cameras.Scene2D.Camera,
+) {
+  const view = mapView(camera);
   for (const chunk of chunks) {
-    const visible =
-      chunk.x + chunk.width >= left &&
-      chunk.x <= right &&
-      chunk.y + chunk.height >= top &&
-      chunk.y <= bottom;
+    const visible = inView(view, chunk.x, chunk.y, chunk.width, chunk.height);
     if (chunk.visible !== visible) chunk.setVisible(visible);
   }
 }

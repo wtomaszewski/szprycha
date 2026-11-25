@@ -25,21 +25,20 @@ import {
 import { rankingSeed, RideEvidence } from '../rankings/evidence';
 import { showBreakReminder } from '../ui/BreakReminder';
 import { verdictHaptics } from '../platform/haptics';
-import { CANVAS, Scene, GameObjects } from 'phaser';
+import { CANVAS, Scene, GameObjects, Loader } from 'phaser';
 import { drawMapDecorations } from '../render/MapDecorations';
 import type { PalaceReflection } from '../render/LandmarkArt';
 import type { TownHallGoats } from '../render/TownHallGoats';
 import { DistrictGates } from '../render/DistrictGates';
-import trainingUrl from '../../maps/miasteczko.tmj?url';
-import warsawUrl from '../../maps/warszawa.tmj?url';
-import wroclawUrl from '../../maps/wroclaw.tmj?url';
-import krakowUrl from '../../maps/krakow.tmj?url';
-import gdanskUrl from '../../maps/gdansk.tmj?url';
-import lodzUrl from '../../maps/lodz.tmj?url';
-import poznanUrl from '../../maps/poznan.tmj?url';
-import zakopaneUrl from '../../maps/zakopane.tmj?url';
 import giewontUrl from '../../assets/generated/giewont.png?url';
-import wiesUrl from '../../maps/wies.tmj?url';
+import {
+  defaultMap,
+  defaultRideMap,
+  isMap,
+  mapUrls,
+  type MapDownload,
+  type MapId,
+} from './cityMaps';
 import blockWallsUrl from '../../assets/generated/walls.png?url';
 import blockRoofsUrl from '../../assets/generated/roofs.png?url';
 import roofDetailsUrl from '../../assets/generated/roof-details.png?url';
@@ -159,21 +158,8 @@ const standardDrivingZoom = 0.75;
 const nativeCanvasZoomArea = 640 * 432;
 const reviewIntroMs = 300;
 
-const defaultMap = 'miasteczko';
-const mapUrls = {
-  [defaultMap]: trainingUrl,
-  warszawa: warsawUrl,
-  wroclaw: wroclawUrl,
-  krakow: krakowUrl,
-  gdansk: gdanskUrl,
-  poznan: poznanUrl,
-  lodz: lodzUrl,
-  zakopane: zakopaneUrl,
-  wies: wiesUrl,
-};
-type MapId = keyof typeof mapUrls;
 type RidePose = Omit<CampaignRide, 'after' | 'map'>;
-type Ride = {
+export type Ride = {
   missionId?: string;
   map?: string;
   city?: PlayableCity;
@@ -187,8 +173,25 @@ type Ride = {
   briefed?: boolean;
 };
 
-function isMap(id: string): id is MapId {
-  return Object.hasOwn(mapUrls, id);
+class DownloadingTilemap extends Loader.FileTypes.TilemapJSONFile {
+  constructor(
+    loader: Loader.LoaderPlugin,
+    private readonly download: MapDownload,
+  ) {
+    super(loader, download.id, mapUrls[download.id]);
+  }
+
+  override load() {
+    // Let Phaser load the atlases while the already-started map request finishes.
+    void this.download.data.then((map) => {
+      if (!this.loader?.inflight?.contains(this)) return;
+      if (map) {
+        this.data = map;
+        this.state = Loader.FILE_POPULATED;
+      }
+      this.loader.nextFile(this, map !== undefined);
+    });
+  }
 }
 
 export class City extends Scene {
@@ -245,6 +248,7 @@ export class City extends Scene {
   private content!: GameContent;
   private progress!: MissionProgress;
   private mapChunks: GameObjects.Image[] = [];
+  private ground?: ReturnType<typeof drawMapGround>;
   private mission?: MissionSystem;
   private campaignArrow?: GoalArrow;
   private campaignPanel?: HTMLElement;
@@ -340,7 +344,12 @@ export class City extends Scene {
   constructor() {
     super('City');
   }
-  init({ missionId, map, city, examRide, dailyOrder, tutorial }: Ride) {
+  private mapDownload?: MapDownload;
+
+  init(data: Ride & { mapDownload?: MapDownload }) {
+    const { missionId, map, city, examRide, dailyOrder, tutorial } = data;
+    this.mapDownload = data.mapDownload;
+    delete data.mapDownload;
     this.ready = false;
     this.content = this.registry.get('content') as GameContent;
     this.progress = this.registry.get('missionProgress') as MissionProgress;
@@ -354,17 +363,24 @@ export class City extends Scene {
       this.definition?.mapa ??
       this.definition?.miasto ??
       map ??
-      (!missionCity.safeParse(this.city).success ? this.city : defaultMap);
+      defaultRideMap(this.city);
     if (!isMap(mapId)) throw new Error(`Unknown ride map: ${mapId}`);
     this.mapId = mapId;
   }
 
   preload() {
     const mapId = this.mapId;
+    const download = this.mapDownload;
+    this.mapDownload = undefined;
     if (!this.cache.tilemap.exists(mapId)) {
       const url = mapUrls[mapId];
-      this.load.tilemapTiledJSON(mapId, url);
-      if (mapId !== defaultMap && !navigator.serviceWorker?.controller)
+      const early = download?.id === mapId ? download : undefined;
+      if (early) this.load.addFile(new DownloadingTilemap(this.load, early));
+      else this.load.tilemapTiledJSON(mapId, url);
+      if (
+        mapId !== defaultMap &&
+        (early?.startedWithoutWorker ?? !navigator.serviceWorker?.controller)
+      )
         cacheAfterInstall([url]);
     }
     for (const [key, url] of [
@@ -614,16 +630,17 @@ export class City extends Scene {
       });
     }
     const props = readProps(tilemap.getObjectLayer('props')?.objects ?? []);
+    this.ground = drawMapGround(
+      this,
+      tilemap,
+      mapId,
+      this.world,
+      buildings,
+      props,
+      this.environment.weather === 'snow',
+    );
     this.mapChunks = [
-      ...drawMapGround(
-        this,
-        tilemap,
-        mapId,
-        this.world,
-        buildings,
-        props,
-        this.environment.weather === 'snow',
-      ),
+      ...this.ground.water,
       ...this.road.staticChunks,
       ...scenery.chunks,
     ];
@@ -711,7 +728,6 @@ export class City extends Scene {
       // with roundPixels. City instead aligns the view in canvas space.
       .setRoundPixels(false);
     this.centerRideCamera(this.rider.x, this.rider.y);
-    cullMapChunks(this.mapChunks, this.cameras.main);
     const areaTitle =
       mapId === 'warszawa'
         ? ui.driving.warsawTitle
@@ -1049,6 +1065,7 @@ export class City extends Scene {
       this.controls.destroy();
       this.examRide = undefined;
       this.collectibles = undefined;
+      this.ground = undefined;
       this.mapChunks = [];
       const c = this.game.canvas;
       delete c.dataset.map;
@@ -2808,6 +2825,7 @@ export class City extends Scene {
     this.cameraFocus.x += (targetX - this.cameraFocus.x) * blend;
     this.cameraFocus.y += (targetY - this.cameraFocus.y) * blend;
     this.positionRideCamera();
+    this.ground?.update(camera);
     cullMapChunks(this.mapChunks, camera);
     this.palaceReflection?.update(camera, at, reduced);
     this.collectibles?.update(camera);
