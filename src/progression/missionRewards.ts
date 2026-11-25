@@ -4,7 +4,7 @@ export type Stars = 0 | 1 | 2 | 3;
 
 export function missionStars(
   balance: GameContent['balans']['gwiazdki'],
-  mission: { par_s: number; min_dobre_nawyki: number },
+  mission: { par_s: number; min_dobre_nawyki: number; premia_czasowa?: false },
   elapsed: number,
   completed: boolean,
   score: { minor: number; major: number; goodHabits: number },
@@ -13,7 +13,7 @@ export function missionStars(
   if (score.major > 0 || score.minor > balance.dwie_gwiazdki_max_minor)
     return 1;
   return score.minor === 0 &&
-    elapsed <= mission.par_s &&
+    (mission.premia_czasowa === false || elapsed <= mission.par_s) &&
     score.goodHabits >= mission.min_dobre_nawyki
     ? 3
     : 2;

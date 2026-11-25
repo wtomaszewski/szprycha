@@ -8,6 +8,7 @@ import type {
 } from '../types';
 import { LaneGraph, type BoundaryExit, type LaneEdge } from './LaneGraph.ts';
 import { RoadPath } from './RoadPath.ts';
+import type { RoadGrade } from './RoadGrade';
 import {
   buildTrafficRoutes,
   routeControlProperties,
@@ -302,6 +303,7 @@ export class WorldModel {
   readonly width: number;
   readonly height: number;
   readonly walls: readonly Box[];
+  readonly roadGrades: readonly RoadGrade[];
   readonly districts: readonly District[];
   readonly zones: readonly Zone[];
   readonly pois: ReadonlyMap<string, PointOfInterest>;
@@ -328,6 +330,17 @@ export class WorldModel {
   readonly roadwayCyclistLanes: readonly Lane[];
   readonly trafficCarCount: number;
   private readonly lanesById: ReadonlyMap<string, Lane>;
+
+  roadGradeAt(x: number, y: number) {
+    for (const road of this.roadGrades)
+      if (
+        x >= road.x &&
+        x < road.x + road.width &&
+        y >= road.y &&
+        y < road.y + road.height
+      )
+        return road;
+  }
 
   constructor(data: unknown, metersPerTile: number) {
     const map = tiled.parse(data);
@@ -391,6 +404,23 @@ export class WorldModel {
         .default(-Math.PI / 2)
         .parse(properties(object).heading),
     }));
+    this.roadGrades = [
+      ...namedAreas('road_grades', (object) => {
+        const area = box(object);
+        if (area.width === 0)
+          throw new Error(`Road grade needs an area: ${area.id}`);
+        const { downhill, ...grade } = z
+          .object({
+            downhill: sideSchema,
+            grade: z.number().positive().max(0.2),
+            sight_m: z.number().positive(),
+            fog_sight_m: z.number().positive(),
+          })
+          .refine(({ sight_m, fog_sight_m }) => fog_sight_m <= sight_m)
+          .parse(properties(object));
+        return { ...area, ...grade, downhill: sideVector[downhill] };
+      }).values(),
+    ];
     this.triggers = namedAreas('triggers', box);
     this.collectibles = namedAreas('collectibles', (object) => ({
       ...box(object),

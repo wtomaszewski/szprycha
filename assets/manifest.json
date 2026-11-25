@@ -1,6 +1,17 @@
 {
   "assets": [
     {
+      "id": "giewont",
+      "file": "generated/giewont.png",
+      "width": 280,
+      "height": 104,
+      "frameWidth": 280,
+      "frameHeight": 104,
+      "frames": 1,
+      "directions": 1,
+      "description": "Autorska sylwetka Giewontu z granią, krzyżem i warstwą świerków."
+    },
+    {
       "id": "city-effects",
       "file": "generated/city-effects.png",
       "width": 896,

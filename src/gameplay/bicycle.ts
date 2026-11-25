@@ -1,3 +1,11 @@
+import {
+  BRAKE_DECELERATION,
+  advanceBicycleSpeed,
+  gradeAcceleration,
+} from '../rules/world/RoadGrade.ts';
+import type { WorldModel } from '../rules/world/WorldModel';
+
+export { BRAKE_DECELERATION };
 export type Scheme = 'simple' | 'classic';
 export interface Obstacle {
   x: number;
@@ -33,16 +41,12 @@ export interface RiderTuning {
   maxSpeed: number;
   brakeForce: number;
   driftAngle: number;
+  world: WorldModel;
 }
 export const METERS_PER_PIXEL = 1.5 / 32;
 export const FIXED_STEP = 1 / 60;
-export const BRAKE_DECELERATION = 250;
 export const RIDER_RADIUS = 9;
 export const MAX_RIDING_SPEED = 150;
-const approach = (value: number, target: number, amount: number) =>
-  value < target
-    ? Math.min(target, value + amount)
-    : Math.max(target, value - amount);
 export function overlaps(x: number, y: number, radius: number, o: Obstacle) {
   if (o.rotation) {
     const halfWidth = o.width / 2;
@@ -95,14 +99,20 @@ export function stepRider(
     r.heading += input.x * 2.4 * dt * Math.max(0.35, Math.min(1, r.speed / 35));
   }
   const brake = input.brake || (input.scheme === 'classic' && input.y > 0.1);
-  r.speed = approach(
+  const direction = r.heading + (tuning?.driftAngle ?? 0);
+  const world = tuning?.world;
+  const scale = world?.metersPerPixel ?? METERS_PER_PIXEL;
+  const road = r.walking
+    ? undefined
+    : world?.roadGradeAt(r.x * scale, r.y * scale);
+  const acceleration = road ? gradeAcceleration(road, direction) / scale : 0;
+  r.speed = advanceBicycleSpeed(
     r.speed,
-    brake ? 0 : target,
-    (brake
-      ? (tuning?.brakeForce ?? BRAKE_DECELERATION)
-      : target > r.speed
-        ? 70
-        : 40) * dt,
+    target,
+    brake,
+    dt,
+    tuning?.brakeForce ?? BRAKE_DECELERATION,
+    acceleration,
   );
   const onCurb =
     !r.walking &&
@@ -113,7 +123,6 @@ export function stepRider(
   const travel = r.speed * dt;
   // Sweep in <=2 px increments to avoid tunnelling through thin walls.
   const steps = Math.max(1, Math.ceil(travel / 2));
-  const direction = r.heading + (tuning?.driftAngle ?? 0);
   const dx = (Math.cos(direction) * travel) / steps,
     dy = (Math.sin(direction) * travel) / steps;
   for (let i = 0; i < steps; i++) {

@@ -54,6 +54,7 @@ const mapNames: Readonly<Partial<Record<string, string>>> = {
   wies: 'Wieś i las',
   poznan: 'Poznań',
   lodz: 'Łódź',
+  zakopane: 'Zakopane',
   miasteczko: 'Miasteczko',
 };
 const hub = 'miasteczko';

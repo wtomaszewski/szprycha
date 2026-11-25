@@ -246,6 +246,40 @@ Mapa [wroclaw.tmj](../maps/wroclaw.tmj)
 
 **Pokrycie** 13/13 sytuacji, 7/7 modułów.
 
+## Zakopane
+
+Mapa [zakopane.tmj](../maps/zakopane.tmj)
+
+**Misje na mapie** `ZAK-B-01`, `ZAK-B-02`, `ZAK-B-03`, `ZAK-B-04`, `ZAK-B-05`
+
+| Sytuacja drogowa | Pokrycie | Wykryte obiekty lub misje | Brakujące elementy |
+| --- | :---: | --- | --- |
+| Skrzyżowanie równorzędne | ✓ | `pod-reglami`, `u-podnoza` | — |
+| Droga z pierwszeństwem + STOP | ✓ | `pod-krupowkami` | — |
+| Sygnalizacja + S-2 + S-6/S-7 | ✓ | `dworzec-przejazd`, `przy-dworcu-E-s1`, `przy-dworcu-N-s1`, `przy-dworcu-S-s1`, `przy-dworcu-W-s1`, `przy-dworcu-strzalka`, `przy-dworcu-tram-N-s1` | — |
+| Rondo | ✓ | `rondo-E`, `rondo-N`, `rondo-S`, `rondo-W` | — |
+| Tramwaj + przystanek bez wysepki | ✓ | `przystanek-bez-wysepki`, `tramwaj-szkoleniowy` | — |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | ✓ | `ddr-nad-potokiem-polnoc`, `ddr-nad-potokiem-poludnie`, `ddr-polnoc`, `ddr-poludnie`, `ddr-srodek`, `dojazd-do-krupowek`, `droga-za-potokiem`, `mostek-wschodni`, `mostek-zachodni`, `parking-kontrapas`, `sciezka-nad-potokiem` | — |
+| Przejazd dla rowerzystów | ✓ | `dworzec-przejazd`, `las-przejazd`, `przejazd-nad-potokiem` | — |
+| Strefa zamieszkania / pieszych | ✓ | `krupowki` | — |
+| Wyjazd z drogi wewnętrznej | ✓ | `parking-wyjazd` | — |
+| Przejazd kolejowy | ✓ | `kolej-przejazd` | — |
+| Pobocze, zakaz wjazdu rowerów | ✓ | `alejka-lesna`, `alejka-lesna-B-9-N`, `pobocze-e`, `pobocze-w` | — |
+| Kontraruch | ✓ | `parking-wyjazd-B-2-N` | — |
+| Nocna jazda | ✓ | `dusk_at_s` | — |
+
+| Moduł | Pokrycie | Reguły z mapy | Reguły z misji |
+| --- | :---: | --- | --- |
+| M01 | ✓ | `WYP-04`, `WYP-05`, `WYP-06` | `KASK-01`, `WYP-04`, `WYP-05` |
+| M02 | ✓ | `GDZIE-01`, `GDZIE-02`, `GDZIE-03b`, `GDZIE-04`, `GDZIE-06`, `GDZIE-09`, `GDZIE-11` | `GDZIE-01`, `GDZIE-03`, `GDZIE-03b`, `GDZIE-11` |
+| M03 | ✓ | `SYG-01`, `SYG-02`, `ZNAK-A7`, `ZNAK-B1`, `ZNAK-B2T22`, `ZNAK-B9`, `ZNAK-C13`, `ZNAK-D1`, `ZNAK-S2`, `ZNAK-STOP` | `ZNAK-B1` |
+| M04 | ✓ | `PIER-01`, `PIER-02`, `PIER-05`, `PIER-06`, `PIER-08`, `PIER-09` | `PIER-05` |
+| M05 | ✓ | `MAN-01`, `MAN-02`, `MAN-03`, `MAN-08` | `MAN-08` |
+| M06 | ✓ | `MSC-01`, `MSC-02`, `MSC-03`, `MSC-04` | `MSC-04` |
+| M07 | ✓ | — | `PP-01` |
+
+**Pokrycie** 13/13 sytuacji, 7/7 modułów.
+
 ## Miasteczko (wspólny hub)
 
 Mapa [miasteczko.tmj](../maps/miasteczko.tmj)

@@ -115,7 +115,8 @@ export class TrafficArt {
                 (mapId === 'gdansk' ||
                   mapId === 'wies' ||
                   mapId === 'poznan' ||
-                  mapId === 'lodz')),
+                  mapId === 'lodz' ||
+                  mapId === 'zakopane')),
           ),
         );
         this.rear = scene.add

@@ -125,7 +125,10 @@ function mapFeatures(world?: WorldModel) {
     tramJunction: routes.some(
       ({ kind, junctions }) => kind === 'tram' && junctions.length > 0,
     ),
-    roughSurface: world?.zones.some(({ surface }) => surface === 'rough'),
+    speedHazard:
+      world &&
+      (world.roadGrades.length > 0 ||
+        world.zones.some(({ surface }) => surface === 'rough')),
     emergencyRoute: routes.some(
       ({ kind, event_only }) => kind === 'emergency' && !event_only,
     ),
@@ -178,7 +181,7 @@ function mapRules(world: WorldModel, f: ReturnType<typeof mapFeatures>) {
     [f.usableShoulder, ['GDZIE-03b']],
     [f.night.length, nightRules],
     [f.parkedCars.length, ['MAN-06']],
-    [f.roughSurface, ['MAN-08']],
+    [f.speedHazard, ['MAN-08']],
     [f.oncomingCycles, ['MAN-14']],
     [
       f.turns.some(({ maneuver }) => maneuver === 'right'),

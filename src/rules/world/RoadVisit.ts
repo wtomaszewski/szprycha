@@ -199,6 +199,7 @@ export class RoadVisit {
           agents,
           at,
           rights.przyczepnosc[env.weather],
+          env.weather,
         ),
         emit,
       );

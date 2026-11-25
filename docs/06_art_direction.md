@@ -159,6 +159,15 @@ Tramwaje Krakowa i Gdańska mają srebrne pasy wzdłuż grafitowej bryły, ciemn
 
 Bryły i rekwizyty rozmieszcza generator mapy. Murale powstają w rendererze ścian, a pojazdy w generatorze sprite’ów. Sylwetki są autorskie i pozbawione szyldów oraz logotypów. Tramwaj korzysta z neutralnej palety gry.
 
+### Zakopane
+
+| Landmark | Sylwetka i materiały |
+| --- | --- |
+| Krupówki | Brukowany deptak z małymi ogródkami, ławkami i latarniami. Przed wille prowadzi sąsiednia droga pieszo-rowerowa. |
+| Drewniane wille | Ciemne gonty, wyraźna kalenica i trójkątne lukarny. Brązowe bale, jasne ramy okien i niski kamienny cokół. Bryły i proporcje są autorskie. |
+| Giewont | Niebieskoszara grań z łagodnym grzbietem po lewej, stromym urwiskiem po prawej i małym krzyżem na szczycie. Bliżej widać ciemne świerki. Sylwetka przesuwa się w poziomie wolniej od kamery i stanowi tło północnego skraju Krupówek. |
+| Mostki i droga | Drewniane pomosty z bocznymi belkami, niebieski potok i szary mur oporowy przy zjeździe. |
+
 ## 7. Kafelki (tileset minimum)
 Asfalt (zwykły, łatany, mokry), linie (ciągła, przerywana, P-10 zebra, P-11 przejazd rowerowy — czerwony/kratka, P-12, P-13 trójkąty, P-23 symbol roweru, strzałki), chodnik (płyty), kostka, kocie łby, krawężniki (z przejściami obniżonymi), DDR (czerwona nawierzchnia), trawa, żwir, pobocze, tory tramwajowe (w jezdni i na zieleni), tory kolejowe, zapory (animowane), woda (animowana 4 klatki), nabrzeże, schodki, piasek plaży miejskiej, liście jesienią, śnieg (wariant zimowy).
 

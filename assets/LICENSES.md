@@ -38,6 +38,8 @@ Teksty kwestii są autorskie (`content/`, `i18n/pl.json`). Audio wygenerował lo
 | Radio Szprycha FM 2.0 i próbki odsłuchowe                                               | `src/audio/radio/`, `tools/radio/` i `src/audio/Radio.ts`. Własna synteza muzyki i dżingli (`generated/radio/*.mp3`) oraz próbek OGG. Bez zewnętrznych sampli i plików MIDI.             |
 | Teksty lektora i porady Dzwonek Talk                                                    | `voice/manifest.json`, `content/`, `i18n/pl.json`. Własne teksty gry.                                                                                                                    |
 
+Sylwetka Giewontu w `generated/giewont.png` pochodzi z `tools/zakopane-art.ts` i `tools/gen-placeholders.ts`. Drewniane wille, mostki i mur oporowy Zakopanego generują `tools/gen-zakopane-map.ts`, `tools/zakopane-scenery.ts`, `src/render/BlockArt.ts` i `src/render/MapDecorations.ts`. Zrzuty `docs/screenshots/141-*` pochodzą z lokalnej gry uruchomionej przez Playwright. Wszystkie te elementy są zasobami własnymi na warunkach licencji projektu.
+
 Krakowskie obwarzanki rysuje `src/render/CityCollectibles.ts`. Zrzuty kampanii z #106 pochodzą z lokalnej gry uruchomionej przez Playwright.
 
 W #109 generator `src/render/LandmarkArt.ts` rysuje Stadion Narodowy, odbicie Pałacu na Wodzie, dach i przeszklenia Afrykarium, pergolę Hali Stulecia oraz rabaty. Dekoracje korzystają też z istniejącego arkusza `generated/props.png` i rozmieszczenia z `tools/gen-warsaw-map.ts` oraz `tools/wroclaw-scenery.ts`. To autorskie rysunki projektu bez logotypów, zdjęć i plików zewnętrznych. Zrzuty `docs/screenshots/109/` pochodzą z lokalnej gry uruchomionej przez Playwright.

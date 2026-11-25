@@ -33,7 +33,8 @@ if (
   requestedMap !== 'gdansk' &&
   requestedMap !== 'wies' &&
   requestedMap !== 'poznan' &&
-  requestedMap !== 'lodz'
+  requestedMap !== 'lodz' &&
+  requestedMap !== 'zakopane'
 )
   throw new Error(`Unknown benchmark map: ${requestedMap}`);
 const map = requestedMap;
@@ -56,7 +57,9 @@ const fragment =
         ? 'gminna'
         : map === 'lodz'
           ? 'piotrkowska'
-          : 'rynek');
+          : map === 'zakopane'
+            ? 'krupowki'
+            : 'rynek');
 const missions = { most: 'WAW-A1-04', starowka: 'WAW-A1-05' } as const;
 const warsawSpawns: Record<string, { x: number; y: number; heading: number }> =
   {
@@ -95,20 +98,26 @@ const poznanSpawns: typeof warsawSpawns = {
 const lodzSpawns: typeof warsawSpawns = {
   piotrkowska: { x: 1438, y: 742, heading: 0 },
 };
+const zakopaneSpawns: typeof warsawSpawns = {
+  krupowki: { x: 1376, y: 886, heading: 0 },
+  zjazd: { x: 3968, y: 1456, heading: Math.PI / 2 },
+};
 const freeSpawns =
-  map === 'lodz'
-    ? lodzSpawns
-    : map === 'poznan'
-      ? poznanSpawns
-      : map === 'wies'
-        ? ruralSpawns
-        : map === 'gdansk'
-          ? gdanskSpawns
-          : map === 'krakow'
-            ? krakowSpawns
-            : wroclaw
-              ? wroclawSpawns
-              : warsawSpawns;
+  map === 'zakopane'
+    ? zakopaneSpawns
+    : map === 'lodz'
+      ? lodzSpawns
+      : map === 'poznan'
+        ? poznanSpawns
+        : map === 'wies'
+          ? ruralSpawns
+          : map === 'gdansk'
+            ? gdanskSpawns
+            : map === 'krakow'
+              ? krakowSpawns
+              : wroclaw
+                ? wroclawSpawns
+                : warsawSpawns;
 if (
   (map === 'miasteczko' && process.env.BENCH_FRAGMENT && !signals) ||
   (map !== 'miasteczko' &&

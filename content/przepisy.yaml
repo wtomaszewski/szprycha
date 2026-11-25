@@ -509,9 +509,9 @@ przepisy:
   - id: MAN-08
     modul: M05
     tytul: Bezpieczna prędkość
-    dla_dziecka: "Jedź z prędkością, przy której zdążysz się zatrzymać: wolniej w tłumie, na kocich łbach, w deszczu i przy wyjazdach."
-    podstawa: "PoRD — prędkość bezpieczna"
-    weryfikacja: false
+    dla_dziecka: "Jedź tak, by zdążyć się zatrzymać. Zwolnij na zjeździe, we mgle, w deszczu, w tłumie, na kocich łbach i przy wyjazdach."
+    podstawa: "PoRD, art. 19 ust. 1 — prędkość zapewniająca panowanie nad pojazdem z uwzględnieniem rzeźby terenu i widoczności"
+    weryfikacja: true
     detektor: sim
     waga_bledu: minor
     feedback: "Zwolnij, żeby mieć dość miejsca i czasu na zatrzymanie."

@@ -24,6 +24,7 @@
 | `spawns` | object | miejsca startu AI |
 | `triggers` | object | wyzwalacze zdarzeń wymuszonych misji |
 | `districts` | object | granice dzielnic + `unlock` |
+| `road_grades` | object (opcjonalna) | prostokąt odcinka, kierunek spadku `downhill` (N/E/S/W), nachylenie `grade` (np. 0,12) i zasięg widoczności `sight_m` oraz `fog_sight_m` w metrach |
 | `collectibles` | object | krasnale, syrenki, ukryte naklejki |
 
 ### Graf pasów dla aut (M3a)
@@ -336,25 +337,59 @@ Po `npm run build && npm run preview` uruchom `BENCH_URL=http://127.0.0.1:4173/ 
 
 Zrzuty z gry pokazują [Łódź na mapie Polski](screenshots/139-mapa-polski.webp), [Piotrkowską z rikszą i rowerem cargo](screenshots/139-piotrkowska.webp), [fabrykę](screenshots/139-fabryka.webp), [podwórka z muralami](screenshots/139-murale.webp), [kontrapas](screenshots/139-kontrapas.webp), [wyjazd przez bramę](screenshots/139-brama.webp) i [tramwaj przy przystanku](screenshots/139-tramwaj.webp).
 
+## ZAKOPANE
+
+**Wolna jazda → Zakopane** zaczyna się na drodze pieszo-rowerowej obok Krupówek. Kolaż zajmuje 152 × 112 kafli. PWA pobiera mapę przy pierwszej wizycie i udostępnia ją później offline. `npm run map:generate:zakopane` odtwarza [zakopane.tmj](../maps/zakopane.tmj).
+
+| Miejsce | Układ i praktyka |
+| --- | --- |
+| Krupówki | Brukowany deptak z B-1, drewniane wille, ławki i stojak na rowery. Po południowej stronie biegnie droga pieszo-rowerowa. Nad zabudową widać grań Giewontu. |
+| Potok | Dwa drewniane mostki łączą drogi pieszo-rowerowe na przeciwnych brzegach. Do północnego brzegu prowadzą DDR i oznakowany przejazd. |
+| Zjazd spod regli | Dwukierunkowa jezdnia z odcinkiem o nachyleniu 12%. Jadąc w dół, rower może przyspieszać po puszczeniu pedałów i potrzebuje więcej miejsca do zatrzymania. Podjazd jest wolniejszy. |
+| Droga pod reglami | Przejezdne pobocza po obu stronach drogi poza obszarem zabudowanym, przejazd kolejowy z zaporami oraz skrzyżowanie równorzędne. |
+| Okolice dworca | Skrzyżowanie z sygnalizacją, DDR z sygnałem S-6, plac z kontrapasem i fikcyjny tramwaj szkoleniowy z przystankiem bez wysepki. |
+
+Mapa zawiera także rondo, skrzyżowanie z drogą z pierwszeństwem i STOP-em oraz wyjazd z drogi wewnętrznej. W Wolnej jeździe po 90 sekundach zapada zmrok.
+
+| Ćwiczenie w SzprychaApp | Zadanie |
+| --- | --- |
+| `ZAK-B-01` | Kontroluj prędkość na zjeździe, zatrzymaj się przy znaczniku i dokończ odcinek. |
+| `ZAK-B-02` | Wybierz prawe przejezdne pobocze i zatrzymaj się na nim. |
+| `ZAK-B-03` | Zapnij kask, włącz obie lampki i dostosuj prędkość do krótszego zasięgu widoczności. Zatrzymaj się przy znaczniku. |
+| `ZAK-B-04` | Rozpoznaj B-1 na deptaku i przejedź sąsiednią drogą pieszo-rowerową. |
+| `ZAK-B-05` | Oceń sytuację przed przejazdem, przejedź przez mostek i wybierz bezpieczny pierwszy krok przy udzielaniu pomocy. |
+
+Wynik ćwiczeń zależy od ukończenia zadań i bezpiecznej jazdy. Wjazd na deptak podczas `ZAK-B-04` kończy próbę. Reguły `MAN-08`, `GDZIE-03b` i `MSC-04` odwołują się do danych przepisów. Szacowana droga zatrzymania uwzględnia czas reakcji, kierunek względem spadku i przyczepność. Na zjeździe i we mgle silnik porównuje ją z zasięgiem widoczności zapisanym dla odcinka. [Przepisy gry](../content/przepisy.yaml)
+
+`npm run coverage:maps -- --strict` obejmuje 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/zakopane.test.ts` sprawdza przejazdy, niedozwolony skrót, deterministyczność nachylenia, hamowanie i trzy próby po dziesięć minut ruchu AI. [Raport pokrycia](coverage.md#zakopane)
+
+Pomiary wykonano na buildzie produkcyjnym w Chromium 156.0.8078.79 headless z WebGL, pełną grafiką, widokiem 640 × 360 i ograniczeniem CPU 4×. Tabela podaje mediany dwóch 11-sekundowych prób w Wolnej jeździe.
+
+| Odcinek | Średnie FPS | p95 klatki |
+| --- | ---: | ---: |
+| Zakopane, Krupówki | 57,96 | 16,8 ms |
+| Warszawa, Starówka | 46,83 | 33,4 ms |
+
+Po `npm run build && npm run preview` uruchom `BENCH_URL=http://127.0.0.1:4173/ BENCH_VIEWPORT=640x360 BENCH_MAP=zakopane BENCH_RUNS=2 npm run benchmark:driving`. Dla Warszawy ustaw `BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free`.
+
+Zrzuty z Chromium pokazują [mapę Polski](screenshots/141-mapa-polski.webp), [Krupówki i Giewont](screenshots/141-krupowki.webp), [mostki](screenshots/141-mostki.webp), [pobocze](screenshots/141-pobocze.webp) i [zjazd we mgle](screenshots/141-mgla.webp).
+
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
 Wzorowane na prawdziwych szkolnych miasteczkach ruchu: małe skrzyżowania każdego typu, mini-rondo, sygnalizacja, przejazd kolejowy z zaporami, znaki z Albumu na tablicach, **plac manewrowy** (ósemka, slalom, tor wąski, pole zatrzymania). Tu: samouczek, plac, quiz w budynku szkoły, egzamin Licencji.
 
 ## Tabela pokrycia (każde miasto musi mieć ✓ w każdym wierszu)
-| Sytuacja | Warszawa | Wrocław | Kraków | Gdańsk | Wieś i las | Poznań | Łódź |
-|---|---|---|---| --- | --- | --- | --- |
-| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody | Ołowianka i Brzeźno | Skrzyżowanie pod lasem | Kolejowa i Ogrody | Kolejowa i Magazyny |
-| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu | Skrzyżowanie przy Długim Targu | Droga gminna przy osadzie | Skrzyżowanie przy rynku | Skrzyżowanie w śródmieściu |
-| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Skansen | Aleja tramwajowa | Aleja tramwajowa |
-| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku | Rondo przy stoczni | Rondo przy lesie | Rondo przy ogrodach | Rondo przy magazynach |
-| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Tramwaj przy skansenie | Aleja tramwajowa | Aleja tramwajowa |
-| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz | DDR nad Motławą, kontrapas w stoczni i promenada | Zagrody i las | Bulwar Warty, śluza i kontrapas przy browarze | DDR przy alei, kontrapas i park |
-| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary | Aleja i przeprawy przez Motławę | Skansen | Aleja i bulwary | Aleja tramwajowa |
-| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz | Dojście do Długiego Targu | Plac osady | Stary Rynek i Ostrów Tumski | Piotrkowska |
-| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu | Wyjazd z placu magazynowego | Gospodarstwo | Dziedziniec dawnego browaru | Brama podwórka |
-| Przejazd kolejowy | Mokotów | Zachód | Dębniki | Tory towarowe na południowym zachodzie | Droga gminna | Kolejowa | Kolejowa |
-| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec | Pobocze przy torach i kładka przy Żurawiu | Północ drogi gminnej i rezerwat | Kolejowa i alejka przy katedrze | Kolejowa i alejka w parku |
-| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz | Stocznia | Uliczka osady | Uliczka przy dawnym browarze | Uliczka jednokierunkowa |
-| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary | Kładka przy Żurawiu | Ćwiczenie WIE-B-03 | Bulwar Warty i most Tumski | Piotrkowska i kontrapas |
-
-## Kolejne mapy (po MVP, kolejność wg popularności)
-Zakopane (Krupówki, Giewont w tle).
+| Sytuacja | Warszawa | Wrocław | Kraków | Gdańsk | Wieś i las | Poznań | Łódź | Zakopane |
+|---|---|---|---| --- | --- | --- | --- | --- |
+| Skrzyżowanie równorzędne | Praga | Ostrów / Zachód | Dębniki i Ogrody | Ołowianka i Brzeźno | Skrzyżowanie pod lasem | Kolejowa i Ogrody | Kolejowa i Magazyny | Pod Reglami i U Podnóża |
+| Droga z pierwszeństwem + STOP | Praga | Zachód | Skrzyżowanie przy targu | Skrzyżowanie przy Długim Targu | Droga gminna przy osadzie | Skrzyżowanie przy rynku | Skrzyżowanie w śródmieściu | Skrzyżowanie pod Krupówkami |
+| Sygnalizacja + S-2 + S-6/S-7 | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Skansen | Aleja tramwajowa | Aleja tramwajowa | Przy dworcu |
+| Rondo | Praga (małe) / Miasteczko | Hala Stulecia | Rondo przy parku | Rondo przy stoczni | Rondo przy lesie | Rondo przy ogrodach | Rondo przy magazynach | Rondo przy zjeździe |
+| Tramwaj + przystanek bez wysepki | Śródmieście | Południe | Aleja tramwajowa | Aleja tramwajowa | Tramwaj przy skansenie | Aleja tramwajowa | Aleja tramwajowa | Przystanek przy dworcu |
+| DDR, pas rowerowy, ciąg pieszo-rowerowy | Powiśle | Południe / Hala Stulecia | Bulwary i Kazimierz | DDR nad Motławą, kontrapas w stoczni i promenada | Zagrody i las | Bulwar Warty, śluza i kontrapas przy browarze | DDR przy alei, kontrapas i park | DDR przy dworcu i nad potokiem, kontrapas, mostki |
+| Przejazd dla rowerzystów | Śródmieście / Powiśle | Hala Stulecia | Aleja i bulwary | Aleja i przeprawy przez Motławę | Skansen | Aleja i bulwary | Aleja tramwajowa | Przy dworcu i nad potokiem |
+| Strefa zamieszkania / pieszych | Stare Miasto | Rynek / Ostrów | Rynek i Kazimierz | Dojście do Długiego Targu | Plac osady | Stary Rynek i Ostrów Tumski | Piotrkowska | Krupówki |
+| Wyjazd z drogi wewnętrznej | Praga | Zachód | Podwórze przy targu | Wyjazd z placu magazynowego | Gospodarstwo | Dziedziniec dawnego browaru | Brama podwórka | Wyjazd z parkingu |
+| Przejazd kolejowy | Mokotów | Zachód | Dębniki | Tory towarowe na południowym zachodzie | Droga gminna | Kolejowa | Kolejowa | Pod Reglami |
+| Pobocze, zakaz wjazdu rowerów | Mokotów / Łazienki | Zachód | Dębniki i Kopiec | Pobocze przy torach i kładka przy Żurawiu | Północ drogi gminnej i rezerwat | Kolejowa i alejka przy katedrze | Kolejowa i alejka w parku | Droga pod reglami i alejka leśna |
+| Kontraruch | Śródmieście | Rynek (Nadodrze) | Kazimierz | Stocznia | Uliczka osady | Uliczka przy dawnym browarze | Uliczka jednokierunkowa | Uliczka przy parkingu |
+| Nocna jazda | Bulwary | Ostrów Tumski | Rynek i bulwary | Kładka przy Żurawiu | Ćwiczenie WIE-B-03 | Bulwar Warty i most Tumski | Piotrkowska i kontrapas | Zmrok w Wolnej jeździe |

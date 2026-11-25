@@ -1438,6 +1438,54 @@
       "text": "Wyjątek dla rowerów pod znakiem pozwala wjechać zgodnie z oznakowaniem.",
       "hash": "d56b80277d2757433880c8887cf99d4233737ec4bfd3f69f4c7a84ff24e5fa2c"
     },
+    "misje.ZAK-B-01.pytanie": {
+      "text": "Jak kontrolować prędkość na zjeździe?",
+      "hash": "ea8ae9b1c189303815d47da1b0a4b974b189ad33b506ac7ff0a9f251a32babdc"
+    },
+    "misje.ZAK-B-01.wyjasnienie": {
+      "text": "Na zjeździe potrzebujesz więcej miejsca na zatrzymanie, więc zwolnij wcześniej.",
+      "hash": "4288b4066a47ce4c9d146173e37a6cd442f0411ded9544a977b020aa3130cc02"
+    },
+    "misje.ZAK-B-02.pytanie": {
+      "text": "Gdzie jedziesz, gdy nie ma drogi dla rowerów, a prawe pobocze jest wolne i przejezdne?",
+      "hash": "290dcdf8ebae9883ac09096e1507de233dcf486ca42ee6d244abc108a0ea50eb"
+    },
+    "misje.ZAK-B-02.wyjasnienie": {
+      "text": "Korzystaj z przejezdnego pobocza, chyba że utrudniałoby to ruch pieszych.",
+      "hash": "6da3b3ebb981ec0f812742f7407d1311f4e008ee0cac70842ef7a875dce029b1"
+    },
+    "misje.ZAK-B-03.pytanie": {
+      "text": "Jak jechać we mgle, nawet gdy lampki już świecą?",
+      "hash": "1e472b24e0c19f50137efa6be479d31a6efd3440e23a1755e0160ee47d0b7209"
+    },
+    "misje.ZAK-B-03.wyjasnienie": {
+      "text": "Lampki pomagają Cię zauważyć, lecz nadal musisz zwolnić i wcześniej hamować.",
+      "hash": "caac14e03ca5ec92d75a144029561e759d796025ab926b2635ad41692b53bb47"
+    },
+    "misje.ZAK-B-04.pytanie": {
+      "text": "Jak możesz wejść na deptak z rowerem, gdy stoi znak B-1 bez wyjątków?",
+      "hash": "079b92f1a8f6537b5f231070fa642b17d788a6df63e1d5671713c04a90085dd1"
+    },
+    "misje.ZAK-B-04.wyjasnienie": {
+      "text": "B-1 zakazuje wjazdu pojazdom, a osoba prowadząca rower jest pieszym.",
+      "hash": "ff10e53dbf624c7fdc5cde1d72284f0aee35f45c603bcd03a5aadd991e383d2d"
+    },
+    "misje.ZAK-B-05.pytanie": {
+      "text": "Ktoś potrzebuje pomocy za mostkiem. Od czego zaczynasz?",
+      "hash": "28cd51a3b0ff0b2f4362ea586744319555a11fd970a3f1a26d881274e87119d6"
+    },
+    "misje.ZAK-B-05.pytaniePrzejazd": {
+      "text": "Kiedy kierowca jadący jezdnią ma ustąpić Ci na przejeździe?",
+      "hash": "3b6e2b9948b1a7881d4b9c2eadd06dd3894a1154ffc5f916eab118eb7397406b"
+    },
+    "misje.ZAK-B-05.wyjasnienie": {
+      "text": "Najpierw zadbaj o bezpieczeństwo swoje i osoby, której pomagasz.",
+      "hash": "836fc179e4677885f3ebab0e4353024fd3090e201e1e78d8a28d6ad3ead7a3d5"
+    },
+    "misje.ZAK-B-05.wyjasnieniePrzejazd": {
+      "text": "Upewnij się, że wjazd jest bezpieczny, nawet gdy na przejeździe masz pierwszeństwo.",
+      "hash": "9475d28997d96ddf1607115e91bd302629c96f0162781f5dada25db76c83e0bc"
+    },
     "missionResults.gloryVoice": {
       "text": "Misja ukończona. Zobacz swój dobry nawyk w momencie chwały!",
       "hash": "d1c7639f1276c481ad8f93b01d72ae24a3ffccaa653573831a34639792454a85"
@@ -1715,8 +1763,8 @@
       "hash": "23cd10181d1b9f7f195eb0bac753c11ac1db15b140a649960e51ba372b62f978"
     },
     "przepisy.MAN-08.quiz": {
-      "text": "Jedź z prędkością, przy której zdążysz się zatrzymać: wolniej w tłumie, na kocich łbach, w deszczu i przy wyjazdach.",
-      "hash": "eb7257b51f8e6de5982a71ba754d526d4cceb1767414132b17b8754ceaa9c98d"
+      "text": "Jedź tak, by zdążyć się zatrzymać.",
+      "hash": "db67bb48bf9a87018f08a289fb71c8befc6762010f1a4dbb77c8b6e8e1d147e7"
     },
     "przepisy.MAN-09.feedback": {
       "text": "Podczas jazdy trzymaj co najmniej jedną rękę na kierownicy, a nogi na pedałach.",

@@ -26,6 +26,11 @@ Stan na 24.11.2026.
 - Wolna jazda obejmuje Piotrkowską z rikszą i rowerem cargo, pofabryczne podwórka z muralami oraz aleję z neutralnym tramwajem i kontrapasem w bocznej uliczce.
 - Cztery szkolenia `LOD-B-01`–`LOD-B-04` ćwiczą m.in. pierwszeństwo pieszych, bezpieczne wymijanie i ustępowanie przy bramie. Raport ścisły obejmuje 13/13 sytuacji i M01–M07. [Mapa, pomiary i zrzuty](docs/05_mapy.md#łódź)
 
+## Zakopane 1/2 — mapa (#141)
+
+- Wolna jazda obejmuje Krupówki, drewniane wille z Giewontem w tle, dwa mostki nad potokiem oraz dwukierunkową drogę o nachyleniu 12%.
+- Pięć ćwiczeń `ZAK-B-01`–`ZAK-B-05` obejmuje zjazd, pobocze, jazdę we mgle, deptak i pierwszą pomoc. Raport ścisły obejmuje 13/13 sytuacji i 7/7 modułów. Kampania Zakopanego jest zakresem kolejnej części. [Mapa i weryfikacja](docs/05_mapy.md#zakopane)
+
 ## Poznań 2/2 — kampania (#138)
 
 - Kampania „Trzy znaki na drewnie” zachowuje cztery szkolenia i dodaje sześć misji w trzech aktach, cztery drewniane rogale z zagadkami i przejazd kontrolny przez śluzę rowerową.

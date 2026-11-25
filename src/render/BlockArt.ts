@@ -7,6 +7,8 @@ import { shadowColor, shadowRise } from './shadows';
 const isPalaceTower = (b: Block) =>
   b.landmarkId === 'palace-test' || b.landmarkId === 'pkin';
 
+const isHighlandHouse = (b: Block) => b.landmarkId === 'zakopane-dom';
+
 const cornice = [
   ['#c0cbdc', '#1a1c2c'],
   ['#d98a5a', '#5a3a2e'],
@@ -50,6 +52,7 @@ export function visitRoofDetails(
 ) {
   if (
     isPalaceTower(b) ||
+    isHighlandHouse(b) ||
     b.landmarkId === 'planetarium' ||
     b.landmarkId === 'rotunda' ||
     b.landmarkId === 'metro' ||
@@ -88,6 +91,39 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
     (ctx) => {
       if (b.landmarkId === 'afrykarium') {
         paintAfrykariumRoof(ctx, b.width, b.height);
+        return;
+      }
+      if (isHighlandHouse(b)) {
+        const ridge = Math.floor(b.height * 0.42);
+        ctx.fillStyle = '#352a2b';
+        ctx.fillRect(0, 0, b.width, b.height);
+        for (let y = 2; y < b.height - 3; y += 5) {
+          for (let x = 2; x < b.width - 3; x += 11) {
+            const light = artHash(x, y, hash) % 3;
+            ctx.fillStyle = (
+              y < ridge
+                ? ['#443132', '#54393a', '#674545']
+                : ['#6a4439', '#7e5140', '#946147']
+            )[light]!;
+            ctx.fillRect(x + (y % 2), y, Math.min(10, b.width - x - 2), 4);
+          }
+        }
+        ctx.fillStyle = '#bd8460';
+        ctx.fillRect(2, ridge, b.width - 4, 2);
+        for (const x of [
+          Math.round(b.width / 3),
+          Math.round((b.width * 2) / 3),
+        ]) {
+          for (let y = 0; y < 11; y++) {
+            ctx.fillStyle = y % 2 ? '#a4684c' : '#d1a27a';
+            ctx.fillRect(x - y, ridge + 7 + y, 2 * y + 1, 1);
+          }
+          ctx.fillStyle = '#352a2b';
+          ctx.fillRect(x - 4, ridge + 15, 8, 5);
+          ctx.fillStyle = '#e8c39e';
+          ctx.fillRect(x - 3, ridge + 16, 2, 3);
+          ctx.fillRect(x + 1, ridge + 16, 2, 3);
+        }
         return;
       }
       const sheet = sheetImage(scene, 'block-roofs');
@@ -398,6 +434,25 @@ export function wallTexture(
   const material = wallMaterial(b, hash);
   const height = floors * FLOOR_PX;
   return surfaceTexture(scene, key, Math.ceil(width), height, (ctx) => {
+    if (isHighlandHouse(b)) {
+      ctx.fillStyle = sunny ? '#9c6545' : '#674431';
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = '#553627';
+      for (let y = 3; y < height; y += 4) ctx.fillRect(0, y, width, 1);
+      for (let x = 5; x < width - 6; x += 16) {
+        ctx.fillStyle = '#d9ab78';
+        ctx.fillRect(x - 1, 2, 8, 8);
+        ctx.fillStyle = '#333c57';
+        ctx.fillRect(x, 3, 6, 6);
+        ctx.fillStyle = '#f0dca8';
+        ctx.fillRect(x + 2, 3, 1, 6);
+      }
+      if (groundFloor) {
+        ctx.fillStyle = '#7c7770';
+        ctx.fillRect(0, height - 3, width, 3);
+      }
+      return;
+    }
     const sheet = sheetImage(scene, 'block-walls');
     for (let floor = 0; floor < floors; floor++) {
       const row = groundFloor && floor === floors - 1 ? 2 : floor % 2;

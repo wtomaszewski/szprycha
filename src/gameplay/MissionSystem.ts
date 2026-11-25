@@ -39,6 +39,7 @@ export type MissionResult = Outcome & {
   goodHabits: number;
   verdicts: readonly Verdict[];
   timeBonusEligible: boolean;
+  timeBonusEnabled?: false;
   illegalShortcut: boolean;
   points: number;
   completionPoints: number;
@@ -525,6 +526,7 @@ export class MissionSystem {
         highlight?.signId === this.shortcutSign?.id,
     );
     const allowsTimeBonus =
+      this.definition.premia_czasowa !== false &&
       !illegalShortcut &&
       (!this.options.cleanTimeBonus || this.score.minor === 0);
     const { smoothBonus, ...score } = this.score.result(
@@ -571,6 +573,9 @@ export class MissionSystem {
       }),
       ...(this.photos.size > 0 && { photos: this.photos.size }),
       illegalShortcut,
+      ...(this.definition.premia_czasowa === false && {
+        timeBonusEnabled: false,
+      }),
       timeBonusEligible:
         outcome.status === 'completed' &&
         this.score.major === 0 &&

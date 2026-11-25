@@ -35,6 +35,14 @@ export function drawMapDecorations(
       (p: { name: string }) => p.name === 'color',
     )?.value;
     const color = typeof tint === 'number' ? tint : undefined;
+    if (kind === 'giewont') {
+      scene.add
+        .image(x, y, 'giewont')
+        .setOrigin(0.5, 1)
+        .setScrollFactor(0.86, 1)
+        .setDepth(2);
+      continue;
+    }
     if (kind === 'poznan-koziolki') {
       townHallGoats = new TownHallGoats(scene, x, y);
       continue;
@@ -124,6 +132,16 @@ export function drawMapDecorations(
           .fillRect(x - 3, y + offset - 3, 7, 7)
           .fillStyle(0xc69063)
           .fillRect(x - 2, y + offset - 2, 5, 4);
+    } else if (kind === 'zakopane-mur') {
+      scenery.fillStyle(0x333c57).fillRect(x, y, width, height);
+      for (let row = 0; row < height; row += 8) {
+        scenery
+          .fillStyle(row % 16 ? 0x8b8581 : 0xaaa49b)
+          .fillRect(x + 2, y + row, width - 4, 6)
+          .fillStyle(0x566c86)
+          .fillRect(x + (row % 16 ? 9 : 15), y + row, 2, 6);
+        if (row % 32 === 0) centers.push({ x, y: y + row });
+      }
     } else if (kind === 'kladka-drewniana') {
       scenery.fillStyle(0x9b7352).fillRect(x, y, width, height);
       for (let dy = 2; dy < height - 2; dy += 8) {

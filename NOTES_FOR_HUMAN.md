@@ -70,7 +70,7 @@ Stan: 21.11.2026. Przeczytano AGENTS.md, dokumenty w kolejności §1, wszystkie 
 
 ## c) Reguły weryfikacja: true — lista do konsultanta
 
-Poniżej pełna lista 20 pozycji z content/przepisy.yaml. Nie zmieniano flag. Prosimy o potwierdzenie brzmienia, wyjątków, zakresu i źródła każdej reguły przed wydaniem.
+Poniżej lista reguł z `content/przepisy.yaml` do sprawdzenia przed wydaniem. Prosimy o potwierdzenie brzmienia, wyjątków, zakresu i źródła każdej reguły przed wydaniem.
 
 - **WYP-06** (M01) — Dodatkowe odblaski (zalecane).
 - **GDZIE-03b** (M02) — Pobocze przed jezdnią.
@@ -83,6 +83,7 @@ Poniżej pełna lista 20 pozycji z content/przepisy.yaml. Nie zmieniano flag. Pr
 - **PIER-05** (M04) — Przejazd dla rowerzystów.
 - **PIER-09** (M04) — Tramwaj.
 - **MAN-05** (M05) — Wyprzedzanie wolnych pojazdów z prawej.
+- **MAN-08** (M05) — Bezpieczna prędkość. Potwierdzić podstawę prawną (PoRD, art. 19 ust. 1), w tym uwzględnienie rzeźby terenu i widoczności.
 - **MAN-12** (M05) — Gdzie nie wyprzedzamy.
 - **MSC-05** (M06) — Jazda w kolumnie.
 - **PP-04** (M07) — Pozycja bezpieczna i drobne rany.

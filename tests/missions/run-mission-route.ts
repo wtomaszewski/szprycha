@@ -137,6 +137,7 @@ export function runMissionRoute(
   };
   const env = missionEnvironment(world, definition);
   const tuning = {
+    world,
     brakeForce: BRAKE_DECELERATION * settings.silnik.przyczepnosc[env.weather],
   };
   if (!mission.preparingBike && lightsRequired(env))
