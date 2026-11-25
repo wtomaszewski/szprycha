@@ -23,6 +23,8 @@ import {
 import { audioSettings } from './AudioControls';
 export type InputDevice = 'keyboard' | 'touch' | 'gamepad';
 
+const directionKey = /^(Arrow(Up|Down|Left|Right)|Key[WASD])$/;
+
 interface OverlayControls {
   keyboard(event: KeyboardEvent): boolean;
   gamepad(
@@ -90,6 +92,7 @@ export class DrivingControls {
     const pad = connectedGamepad();
     this.padButtons = pad?.buttons.map((button) => button.pressed) ?? [];
     this.root.className = plac ? 'driving-ui driving-plac' : 'driving-ui';
+    this.root.tabIndex = -1;
     this.root.setAttribute('aria-label', ui.driving.controls);
     const { quickActions, pauseMenu } = this;
     quickActions.className = 'ride-quick-actions';
@@ -396,7 +399,7 @@ export class DrivingControls {
         )
           e.preventDefault();
         if (
-          /^(Arrow(Up|Down|Left|Right)|Key[WASD])$/.test(e.code) &&
+          directionKey.test(e.code) &&
           e.target instanceof HTMLButtonElement &&
           this.root.contains(e.target)
         )
@@ -455,6 +458,10 @@ export class DrivingControls {
     this.pauseButton.focus();
   }
 
+  focusRide() {
+    this.root.focus({ preventScroll: true });
+  }
+
   private togglePause(explicit = true) {
     this.clear();
     if (this.paused) {
@@ -489,8 +496,25 @@ export class DrivingControls {
     this.lightButton.setAttribute('aria-pressed', String(on));
   }
 
-  clear() {
-    this.keys.clear();
+  bufferDirection(event: KeyboardEvent) {
+    if (
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      !directionKey.test(event.code)
+    )
+      return;
+    event.preventDefault();
+    this.keys.add(event.code);
+  }
+
+  clear({ preserveDirection = false } = {}) {
+    if (preserveDirection) {
+      for (const code of this.keys)
+        if (!directionKey.test(code)) this.keys.delete(code);
+    } else {
+      this.keys.clear();
+    }
     this.x = 0;
     this.y = 0;
     this.touchKeys.clear();

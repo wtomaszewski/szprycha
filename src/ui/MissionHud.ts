@@ -86,9 +86,11 @@ export class MissionHud {
   }
 
   focusEquipment() {
-    if (!this.equip.hidden) this.equip.focus();
-    else if (!this.lights.hidden) this.lights.focus();
-    else if (!this.vest.hidden) this.vest.focus();
+    const equipment = [this.equip, this.lights, this.vest].find(
+      (button) => !button.hidden,
+    );
+    equipment?.focus();
+    return Boolean(equipment);
   }
 
   update(
