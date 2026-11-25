@@ -20,7 +20,7 @@ const pins = [
   { id: 'poznan', x: 208, y: 144 },
   { id: 'lodz', x: 316, y: 196 },
   { id: 'krakow', x: 365, y: 258 },
-  { id: 'zakopane', x: 385, y: 282 },
+  { id: 'zakopane', x: 385, y: 318 },
   { id: 'wies', x: 450, y: 78 },
 ] as const;
 
