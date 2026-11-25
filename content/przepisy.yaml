@@ -288,7 +288,7 @@ przepisy:
     weryfikacja: false
     detektor: quiz-only
     waga_bledu: minor
-    feedback: "Masz pierwszeństwo, ale kierowca może Cię nie zauważyć. Patrz i bądź gotowy hamować."
+    feedback: "Masz pierwszeństwo, ale kierowca może Cię nie zauważyć. Obserwuj drogę, żeby w razie potrzeby zahamować."
   - id: ZNAK-B2T22
     modul: M03
     tytul: Kontraruch
@@ -470,7 +470,7 @@ przepisy:
   - id: MAN-04
     modul: M05
     tytul: Omijanie i wyprzedzanie
-    dla_dziecka: "Zanim ominiesz przeszkodę lub wyprzedzisz, obejrzyj się, zasygnalizuj i zachowaj bezpieczny odstęp. Wracaj na prawo, gdy już bezpiecznie minąłeś."
+    dla_dziecka: "Zanim ominiesz przeszkodę lub wyprzedzisz, obejrzyj się, zasygnalizuj i zachowaj bezpieczny odstęp. Wracaj na prawo, gdy możesz to zrobić bezpiecznie po ominięciu lub wyprzedzeniu."
     podstawa: "PoRD — omijanie, wyprzedzanie"
     weryfikacja: false
     detektor: sim
@@ -532,7 +532,7 @@ przepisy:
     weryfikacja: false
     detektor: sim
     waga_bledu: major
-    feedback: "Jednoosobowym rowerem jedź sam, a kolega może iść pieszo albo jechać swoim."
+    feedback: "Na jednoosobowym rowerze nie zabieraj pasażera, a kolega może iść pieszo albo jechać swoim."
   - id: MAN-11
     modul: M05
     tytul: Telefon w kieszeni
@@ -638,7 +638,7 @@ przepisy:
   - id: PP-02
     modul: M07
     tytul: Numer alarmowy 112
-    dla_dziecka: "Dzwoń na 112. Powiedz: gdzie jesteś, co się stało, ile osób potrzebuje pomocy. Odpowiadaj na pytania i nie rozłączaj się pierwszy."
+    dla_dziecka: "Dzwoń na 112. Powiedz: gdzie jesteś, co się stało, ile osób potrzebuje pomocy. Odpowiadaj na pytania i czekaj, aż dyspozytor zakończy rozmowę."
     podstawa: "Numer alarmowy 112"
     weryfikacja: false
     detektor: scenka

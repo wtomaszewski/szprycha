@@ -1617,7 +1617,7 @@
       "cel1Pytanie": "Gdzie siedmioletni Franek jedzie razem z dorosłym Kazikiem?",
       "cel1Odp1": "Po jezdni za kurierem.",
       "cel1Odp2": "Po chodniku pod opieką Kazika.",
-      "cel1Odp3": "Sam po pasie dla rowerów.",
+      "cel1Odp3": "Po pasie dla rowerów, bez opieki Kazika.",
       "cel1Feedback": "Franek ma siedem lat i jedzie chodnikiem pod opieką Kazika.",
       "cel2": "Poprowadź grupę po wspólnej drodze pieszo-rowerowej.",
       "cel3": "Zostaw miejsce innym i zasygnalizuj skręt.",
@@ -1798,7 +1798,7 @@
       "cel2_odp2": "Zawołam dorosłego i zapytam Turbo, czy mnie słyszy.",
       "cel3": "Wybierz, co powiesz dyspozytorowi w symulacji rozmowy.",
       "cel3_pytanie": "Dorosły prosi o wezwanie pomocy. Co mówisz po połączeniu z 112?",
-      "cel3_wyjasnienie": "Podaj miejsce, zdarzenie i liczbę poszkodowanych. Odpowiadaj na pytania i nie rozłączaj się pierwszy.",
+      "cel3_wyjasnienie": "Podaj miejsce, zdarzenie i liczbę poszkodowanych. Odpowiadaj na pytania i czekaj, aż dyspozytor zakończy rozmowę.",
       "cel3_odp1": "Na bulwarze Wisły przy kamiennych schodach. Turbo upadł. Jedna osoba potrzebuje pomocy.",
       "cel3_odp2": "Podaję tylko imię Turbo i kończę rozmowę.",
       "cel4": "Dorosły został przy Turbo. Jedź powoli dalej do znacznika przy zejściu."
@@ -1855,7 +1855,7 @@
               "item": "paczkę",
               "description": "Zawieź znalezioną paczkę do odbiorcy. Cel: {place}.",
               "intro": "Możemy już dostarczyć paczkę pod właściwy adres.",
-              "finish": "Paczka dotarła na miejsce. Dobra robota, kurierze!"
+              "finish": "Paczka dotarła na miejsce. Dobra robota!"
             }
           ]
         },
@@ -1999,7 +1999,7 @@
         "race": "Spróbuj wygrać z Turbo, przestrzegając przepisów.",
         "fragile": "Przewieź {item} tak, żeby przesyłka dotarła bez wstrząsów."
       },
-      "finish": "Dzięki za pomoc, kurierze!"
+      "finish": "Dzięki za pomoc!"
     },
     "templates": {
       "delivery": {
@@ -2086,7 +2086,7 @@
     },
     "LOD-A3-01": {
       "start": "Turbo przewrócił się przy muralu w fale. Zatrzymaj się w bezpiecznym miejscu, jestem obok.",
-      "koniec": "Dobrze, że zareagowałeś spokojnie. Zostanę z Turbo i będę słuchać wskazówek dyspozytora."
+      "koniec": "Dobrze, że udało się zareagować spokojnie. Zostanę z Turbo i będę słuchać wskazówek dyspozytora."
     },
     "LOD-A3-02": {
       "start": "Zawiła znalazł sterownik. Zawieź go do hali przez przejazd z sygnalizatorem dla rowerów.",
@@ -2111,7 +2111,7 @@
     },
     "ZAK-A3-01": {
       "start": "Zapnij kask i włącz obie lampki. Za mostkiem zsiądź przed znakiem zakazu wjazdu rowerów.",
-      "koniec": "Dorosły został z Turbo. Dzięki, że zatrzymałeś się bezpiecznie i dokładnie opisałeś miejsce."
+      "koniec": "Dorosły został z Turbo. Dzięki za bezpieczne zatrzymanie i dokładny opis miejsca."
     },
     "ZAK-A3-02": {
       "start": "Plansza jest gotowa. Dostarcz ją pod regle, a przed torami sprawdź światła i zapory.",
@@ -2163,7 +2163,7 @@
     },
     "WIE-A3-01": {
       "start": "Przy polu ktoś przewrócił się na drodze gruntowej. Zwolnij i rozejrzyj się, zanim podejdziesz.",
-      "koniec": "Rowerzysta odpowiada, a dorosły już z nim jest. Najpierw zadbałeś o bezpieczne miejsce."
+      "koniec": "Rowerzysta odpowiada, a dorosły już z nim jest. Dzięki za zabezpieczenie miejsca, zanim ruszyła pomoc."
     },
     "WIE-A3-02": {
       "start": "Tu jest sprawdzona mapa. Przy bramie zobaczysz znak, którego brakowało w mapie z próby Zakłócacza.",
@@ -2323,7 +2323,7 @@
     },
     "WRO-A3-06": {
       "start_tekst": "Krasnale wracają na Rynek! Poprowadź grupę w bezpiecznym odstępie i słuchaj poleceń Oli.",
-      "koniec_tekst": "Parada dotarła pod Ratusz! Mam już swoje miejsce w warsztacie Kazika, a ty jesteś naszym Pilotem Miejskim."
+      "koniec_tekst": "Parada dotarła pod Ratusz! Mam już swoje miejsce w warsztacie Kazika, a ty masz od nas tytuł Pilota Miejskiego."
     },
     "WRO-B-01": {
       "start_tekst": "Po zmroku zabierz lampkę na objazd przy Hali i fontannie.",
@@ -2556,7 +2556,7 @@
     },
     "KRA-A3-02": {
       "start": "Turbo potrzebuje pomocy. Zatrzymaj się bezpiecznie, ostrzeż innych i wezwij dorosłego.",
-      "koniec": "Dzięki, że się zatrzymałeś. Jak odpocznę, pomogę Kazikowi. Na trasę skrótami już się nie pcham."
+      "koniec": "Dzięki za zatrzymanie się. Jak odpocznę, pomogę Kazikowi. Na trasę skrótami już się nie pcham."
     },
     "KRA-A3-03": {
       "start": "Ktoś zaznaczył wąskie przejście serwisowe. Obejrzyj dozwoloną alejkę przed finałem.",

@@ -231,8 +231,8 @@
       "hash": "340e2ea59399059dc70ae411dd63d08a6c7edb232638ed681718410df1eada93"
     },
     "dialogi.KRA-A3-02.koniec": {
-      "text": "Dzięki, że się zatrzymałeś. Jak odpocznę, pomogę Kazikowi. Na trasę skrótami już się nie pcham.",
-      "hash": "95e1598f0899d338af9b53edbfc304a21d2ea4e23beaa915a88438b57b9bbfea"
+      "text": "Dzięki za zatrzymanie się. Jak odpocznę, pomogę Kazikowi. Na trasę skrótami już się nie pcham.",
+      "hash": "b92f30841c3bc59e58dc301de9fa1c0a7567865c18727ad0faa78bb7348a3753"
     },
     "dialogi.KRA-A3-02.start": {
       "text": "Turbo potrzebuje pomocy. Zatrzymaj się bezpiecznie, ostrzeż innych i wezwij dorosłego.",
@@ -327,8 +327,8 @@
       "hash": "aaf76265e79f834be15d2533e7d4115761200109812172f2b843b7de481b56be"
     },
     "dialogi.LOD-A3-01.koniec": {
-      "text": "Dobrze, że zareagowałeś spokojnie. Zostanę z Turbo i będę słuchać wskazówek dyspozytora.",
-      "hash": "89b817e67475e5a1845dbda9d641339ac10f01a1644fb9a33bfa17c79d2de735"
+      "text": "Dobrze, że udało się zareagować spokojnie. Zostanę z Turbo i będę słuchać wskazówek dyspozytora.",
+      "hash": "cbf2e25d247e4f6292cbe00f97b744c9a033fad6cb0e95350301a7abfa97aba3"
     },
     "dialogi.LOD-A3-01.start": {
       "text": "Turbo przewrócił się przy muralu w fale. Zatrzymaj się w bezpiecznym miejscu, jestem obok.",
@@ -607,8 +607,8 @@
       "hash": "18c8e22175bcedb892f70efb895db9019ed4d18407031b670a814214142281b7"
     },
     "dialogi.WIE-A3-01.koniec": {
-      "text": "Rowerzysta odpowiada, a dorosły już z nim jest. Najpierw zadbałeś o bezpieczne miejsce.",
-      "hash": "d54a708ff83dca0e61cd6e5a9965511951a7fba1bc8d41776bcc4059b05288ab"
+      "text": "Rowerzysta odpowiada, a dorosły już z nim jest. Dzięki za zabezpieczenie miejsca, zanim ruszyła pomoc.",
+      "hash": "179bfce09d6e18391461058c5e2f6ee59ef0193bdc6fd52affd7c4cda87a90d0"
     },
     "dialogi.WIE-A3-01.start": {
       "text": "Przy polu ktoś przewrócił się na drodze gruntowej. Zwolnij i rozejrzyj się, zanim podejdziesz.",
@@ -759,8 +759,8 @@
       "hash": "3bf1265519403d9e625fb802289cc6c87aedc7820c004bac43f08f02d3753333"
     },
     "dialogi.WRO-A3-06.koniec_tekst": {
-      "text": "Parada dotarła pod Ratusz! Mam już swoje miejsce w warsztacie Kazika, a ty jesteś naszym Pilotem Miejskim.",
-      "hash": "8889615053aed1f702aac22534924ffc62da9cd6edd9635486863aea74362a0d"
+      "text": "Parada dotarła pod Ratusz! Mam już swoje miejsce w warsztacie Kazika, a ty masz od nas tytuł Pilota Miejskiego.",
+      "hash": "25cdd07ba71875db79759c982ccac05625bdfcedda59617885efc934c8192242"
     },
     "dialogi.WRO-A3-06.start_tekst": {
       "text": "Krasnale wracają na Rynek! Poprowadź grupę w bezpiecznym odstępie i słuchaj poleceń Oli.",
@@ -871,8 +871,8 @@
       "hash": "d1dd49b0d97c594adfaecbeafa98ee39d29e3ea1b216de990fd06af9fe45217d"
     },
     "dialogi.ZAK-A3-01.koniec": {
-      "text": "Dorosły został z Turbo. Dzięki, że zatrzymałeś się bezpiecznie i dokładnie opisałeś miejsce.",
-      "hash": "5bef01985e1aa70119f5890908dae731ebacc669633df9ebaac2c3d111b614e1"
+      "text": "Dorosły został z Turbo. Dzięki za bezpieczne zatrzymanie i dokładny opis miejsca.",
+      "hash": "a73b91a16d9e28eaa98d1b6a50c05027283b3a3ecd61cef6b975466e60487968"
     },
     "dialogi.ZAK-A3-01.start": {
       "text": "Zapnij kask i włącz obie lampki. Za mostkiem zsiądź przed znakiem zakazu wjazdu rowerów.",
@@ -1235,8 +1235,8 @@
       "hash": "58566f42bd7b7acc864b743b64af6bdc7ae26797bb506bb3cf37e492cdbd7eac"
     },
     "misje.KRA-A3-02.cel3_wyjasnienie": {
-      "text": "Podaj miejsce, zdarzenie i liczbę poszkodowanych. Odpowiadaj na pytania i nie rozłączaj się pierwszy.",
-      "hash": "e022172faf605b09e7483a3239aac2c85fbe8ae90040941c06250db5028c6c8c"
+      "text": "Podaj miejsce, zdarzenie i liczbę poszkodowanych. Odpowiadaj na pytania i czekaj, aż dyspozytor zakończy rozmowę.",
+      "hash": "6fc8ac712b608189c88ad64c4abf2f9d59c58e13c09e0a329c1d175ccf8f9fc8"
     },
     "misje.KRA-B-02.pytanie": {
       "text": "Co pozwoliło Ci jechać kontrapasem w przeciwnym kierunku uliczką na Kazimierzu?",
@@ -1943,8 +1943,8 @@
       "hash": "7e2692bec7721d9d7222c4f23b6fc9b0beb07ead1bdff388b15c73796fcf2257"
     },
     "przepisy.MAN-10.feedback": {
-      "text": "Jednoosobowym rowerem jedź sam, a kolega może iść pieszo albo jechać swoim.",
-      "hash": "929153bdd3dcec213d6af942cfee359726e5e4c6b4764ac2837f332856ec472e"
+      "text": "Na jednoosobowym rowerze nie zabieraj pasażera, a kolega może iść pieszo albo jechać swoim.",
+      "hash": "16bfb558d85abc9fb52fdf66a4099c9a2a7095709d638a060fe7ac97752c83c0"
     },
     "przepisy.MAN-10.quiz": {
       "text": "Na zwykłym rowerze nie wolno wozić kolegi — ani na bagażniku, ani na ramie.",
