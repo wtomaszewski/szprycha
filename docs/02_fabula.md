@@ -102,6 +102,14 @@ Sierżant Ola prowadzi cztery szkolenia. Potem zespół SzprychaApp sprawdza, sk
 
 **Akt 3 — Światła na moście.** Po zmroku kurier przejeżdża przez Wartę. Za mostem zatrzymuje się w bezpiecznym miejscu i woła dorosłego do pomocy Turbo. Potem dostarcza Lenie planszę z poprawioną trasą, prowadząc rower chodnikiem wzdłuż alejki z B-9. Wystawa rusza.
 
+## ŁÓDŹ — „Nić do fabryki”
+
+**Akt 1 — Trzy szpulki, jeden trop.** Pan Kazik wysyła próbki na wystawę tkanin. Kurier objeżdża zamknięty pasaż i spotyka Lenę „Mapę”. Zagadki z trzech szpulek układają się w rysunek komina i błyskawicy. Kurier wiezie szkic przez Piotrkowską, zostawiając miejsce rowerowi cargo i rikszy.
+
+**Akt 2 — Warsztat pod muralem.** Po zmroku kurier dowozi plan Dawnej Fabryki kontrapasem. Zawiła rozpoznaje swój podpis Zakłócacza na szkicu. Zaznaczył nim warsztat, w którym został sterownik lamp wystawy. Sierżant Ola odsyła do Zawiły klucz znaleziony pod muralem. Kurier ustępuje pieszemu przy wyjeździe z bramy.
+
+**Akt 3 — Światło w fabryce.** Kurier zatrzymuje się w bezpiecznym miejscu po upadku Turbo, woła Olę i ćwiczy rozmowę z dyspozytorem 112. Potem dostarcza odnaleziony sterownik przez przejazd z osobną sygnalizacją rowerową. Zawiła uruchamia lampy wystawy w hali, a Lena dodaje do planszy wskazówki bezpiecznego dojazdu.
+
 ## ZAKOPANE — „Ślad pod Giewontem”
 
 **Akt 1 — Ślady na drewnie.** Kazik szykuje wystawę pod Giewontem. Kurier omija deptak, dostarcza pudełko i pokazuje Lenie „Mapie” rysunek pod wieczkiem. Trzy drewniane świerki z zagadkami prowadzą do szkicu sygnalizacji przy dworcu z podpisem Zakłócacza.

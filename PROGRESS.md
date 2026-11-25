@@ -21,6 +21,11 @@ Stan na 25.11.2026.
 - Po wynikach gra prowadzi do startu następnej misji lub treningu we wszystkich kampaniach. Przy zmianie mapy pokazuje przycisk przejścia. Zapis odtwarza prowadzenie po ponownym wyborze miasta.
 - [Przebieg kampanii](docs/03_misje.md#przejście-do-następnej-misji-kampanii-152) i [obsługa nawigacji](docs/08_ux_sterowanie_audio.md#dojazd-do-następnej-misji-152).
 
+## Łódź 2/2 — kampania (#140)
+
+- „Nić do fabryki” zachowuje cztery szkolenia, dodaje siedem misji głównych w trzech aktach, cztery autorskie szpulki z zagadkami i przejazd kontrolny przez aleję.
+- Główne misje ćwiczą M01–M07. Testy obejmują legalne przejazdy, nieopłacalne skróty, zapis kolekcji, scenkę pierwszej pomocy i dojazd do następnej misji. [Mapa, pomiary i zrzuty](docs/05_mapy.md#łódź)
+
 ## Łódź 1/2 — mapa (#139)
 
 - Wolna jazda obejmuje Piotrkowską z rikszą i rowerem cargo, pofabryczne podwórka z muralami oraz aleję z neutralnym tramwajem i kontrapasem w bocznej uliczce.

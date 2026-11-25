@@ -67,6 +67,9 @@ licencja:
     poznan:
       start: poz-sluza-start
       punkty: [poz-sluza-postoj, poz-sluza-meta]
+    lodz:
+      start: lod-aleja-przejazd-start
+      punkty: [lod-aleja-przejazd-postoj, lod-aleja-za-przejazdem]
     zakopane:
       start: zak-dworzec-start
       punkty: [zak-dworzec-swiatla, zak-dworzec-meta]

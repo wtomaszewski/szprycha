@@ -1,2 +1,33 @@
 zapowiedzi:
   - { regula: MAN-14, emocja: neutral, tekst: dialogi.lodz_zapowiedzi.MAN-14 }
+dialogi:
+  - id: dialogi.LOD-A1-01.start
+    linie: [{ postac: pan_kazik, emocja: neutral, tekst: dialogi.LOD-A1-01.start }]
+  - id: dialogi.LOD-A1-01.koniec
+    linie: [{ postac: pan_kazik, emocja: proud, tekst: dialogi.LOD-A1-01.koniec }]
+  - id: dialogi.LOD-A1-02.start
+    linie: [{ postac: lena_mapa, emocja: neutral, tekst: dialogi.LOD-A1-02.start }]
+  - id: dialogi.LOD-A1-02.koniec
+    linie: [{ postac: lena_mapa, emocja: proud, tekst: dialogi.LOD-A1-02.koniec }]
+  - id: dialogi.LOD-A1-03.start
+    linie: [{ postac: sierzant_ola, emocja: neutral, tekst: dialogi.LOD-A1-03.start }]
+  - id: dialogi.LOD-A1-03.koniec
+    linie: [{ postac: sierzant_ola, emocja: proud, tekst: dialogi.LOD-A1-03.koniec }]
+  - id: dialogi.LOD-A2-01.start
+    linie: [{ postac: inzynier_zawila, emocja: neutral, tekst: dialogi.LOD-A2-01.start }]
+  - id: dialogi.LOD-A2-01.koniec
+    linie: [{ postac: inzynier_zawila, emocja: proud, tekst: dialogi.LOD-A2-01.koniec }]
+  - id: dialogi.LOD-A2-02.start
+    linie: [{ postac: sierzant_ola, emocja: neutral, tekst: dialogi.LOD-A2-02.start }]
+  - id: dialogi.LOD-A2-02.koniec
+    linie: [{ postac: inzynier_zawila, emocja: neutral, tekst: dialogi.LOD-A2-02.koniec }]
+  - id: dialogi.LOD-A3-01.start
+    linie: [{ postac: sierzant_ola, emocja: neutral, tekst: dialogi.LOD-A3-01.start }]
+  - id: dialogi.LOD-A3-01.koniec
+    linie: [{ postac: sierzant_ola, emocja: proud, tekst: dialogi.LOD-A3-01.koniec }]
+  - id: dialogi.LOD-A3-02.start
+    linie: [{ postac: lena_mapa, emocja: neutral, tekst: dialogi.LOD-A3-02.start }]
+  - id: dialogi.LOD-A3-02.koniec
+    linie:
+      - { postac: inzynier_zawila, emocja: proud, tekst: dialogi.LOD-A3-02.koniec }
+      - { postac: lena_mapa, emocja: proud, tekst: dialogi.LOD-A3-02.epilog }

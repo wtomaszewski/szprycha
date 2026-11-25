@@ -324,18 +324,24 @@ Zrzuty kampanii pokazują [wybór Poznania](screenshots/138-kampania.webp), [dre
 | `LOD-B-03` | Włącz obie lampki, odczytaj tabliczkę pod B-2 i przejedź kontrapasem. |
 | `LOD-B-04` | Zatrzymaj się w bramie, przepuść pieszego na chodniku, sprawdź ruch na jezdni i wyjedź z podwórka. |
 
-`npm run coverage:maps -- --strict` weryfikuje 13/13 sytuacji i 7/7 modułów. `npm test -- tests/sim/lodz.test.ts` wykonuje po dziesięć minut ruchu na każdym z trzech ziaren, przejeżdża cztery szkolenia i sprawdza odrzucenie skrótu pod B-1. Testy Playwright sprawdzają wczytanie i zapamiętanie miasta, szkolenia, jazdę offline i renderowanie miejsc. [Raport pokrycia](coverage.md#łódź)
+**Kampania → Łódź** prowadzi od czterech szkoleń do siedmiu misji w trzech aktach. Trzy szpulki z zagadkami leżą na Piotrkowskiej, czwarta czeka na podwórku z muralami. Zsiądź z roweru, żeby je zebrać. Po finale i spełnieniu wymagań Licencji Szprychy można wybrać przejazd kontrolny przez aleję. [Fabuła](02_fabula.md#łódź--nić-do-fabryki) · [Misje](03_misje.md#kampania--łódź)
 
-Pomiary jazdy po buildzie produkcyjnym wykonano w Chromium 156.0.8078.79 headless, w rozdzielczości 640 × 360 (DPR 1), z WebGL i ograniczeniem CPU 4×. Tabela podaje medianę z dwóch prób po 11 s.
+`npm run coverage:maps -- --strict` sprawdza w CI 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/lodz.test.ts tests/missions/lodz-campaign.test.ts` obejmuje dziesięć minut ruchu dla każdego z trzech ziaren, wszystkie szkolenia i misje główne, przejazd kontrolny oraz próby skrótu z naruszeniem przepisów. Playwright sprawdza wybór trybu, zapis szpulki po zagadce, pierwszą pomoc, wznowienie dojazdu do finału, kampanię po zapisaniu mapy offline i renderowanie miejsc. [Raport pokrycia](coverage.md#łódź)
+
+Pomiary jazdy po buildzie produkcyjnym wykonano w Chromium 156.0.8078.79 headless, w rozdzielczości 640 × 360 (DPR 1), z WebGL i ograniczeniem CPU 4×. Tabela podaje medianę z trzech prób po 11 s dla #140.
 
 | Trasa | Średnie FPS | p95 czasu klatki |
 | --- | ---: | ---: |
-| Łódź, Piotrkowska | 52,69 | 33,30 ms |
-| Warszawa, Starówka | 51,81 | 33,35 ms |
+| Łódź, Piotrkowska | 52,66 | 33,40 ms |
+| Warszawa, Starówka | 50,29 | 33,40 ms |
 
-Po `npm run build && npm run preview` uruchom `BENCH_URL=http://127.0.0.1:4173/ BENCH_VIEWPORT=640x360 BENCH_MAP=lodz BENCH_RUNS=2 npm run benchmark:driving`. Dla Warszawy ustaw `BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free`.
+W pierwszej próbie w Łodzi odnotowano 36,35 FPS i p95 66,70 ms. Dwie pozostałe próby dały 52,93 i 52,66 FPS oraz p95 33,40 ms.
+
+Po `npm run build && npm run preview` uruchom `BENCH_URL=http://127.0.0.1:4173/ BENCH_VIEWPORT=640x360 BENCH_MAP=lodz BENCH_RUNS=3 npm run benchmark:driving`. Dla Warszawy ustaw `BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free`.
 
 Zrzuty z gry pokazują [Łódź na mapie Polski](screenshots/139-mapa-polski.webp), [Piotrkowską z rikszą i rowerem cargo](screenshots/139-piotrkowska.webp), [fabrykę](screenshots/139-fabryka.webp), [podwórka z muralami](screenshots/139-murale.webp), [kontrapas](screenshots/139-kontrapas.webp), [wyjazd przez bramę](screenshots/139-brama.webp) i [tramwaj przy przystanku](screenshots/139-tramwaj.webp).
+
+Zrzuty kampanii pokazują [wybór Łodzi](screenshots/140-kampania.webp), [szpulkę na Piotrkowskiej](screenshots/140-szpulki.webp), [zagadkę](screenshots/140-zagadka.webp) i [scenkę pierwszej pomocy](screenshots/140-pierwsza-pomoc.webp).
 
 ## ZAKOPANE
 

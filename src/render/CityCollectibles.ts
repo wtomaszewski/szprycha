@@ -48,6 +48,14 @@ const collections = {
     variants: 1,
     paint: paintSzyszka,
   },
+  szpulka: {
+    field: 'szpulki',
+    label: ui.driving.szpulki,
+    hint: ui.driving.szpulkiHint,
+    question: ui.driving.szpulkaQuestion,
+    variants: 1,
+    paint: paintSzpulka,
+  },
   swierk: {
     field: 'swierki',
     label: ui.driving.swierki,
@@ -215,6 +223,38 @@ function paintRogal(ctx: CanvasRenderingContext2D) {
       '................',
     ],
     { '#': '#542d29', h: '#ffd496', a: '#cf884e', b: '#9a5434' },
+  );
+}
+
+function paintSzpulka(ctx: CanvasRenderingContext2D) {
+  paintPixels(
+    ctx,
+    [
+      '................',
+      '....########....',
+      '...#hhhhhhhw#...',
+      '...#wwwwwwww#...',
+      '....#aaaaaa#....',
+      '....#ttttat#....',
+      '....#aaaatb#....',
+      '....#ttatbb#....',
+      '....#aatbbb#....',
+      '....#tttbbt#....',
+      '....#abbbaa#.t..',
+      '...#hhhhhhhw#t..',
+      '...#wwwwwwww#t..',
+      '....########t...',
+      '................',
+      '................',
+    ],
+    {
+      '#': '#40283a',
+      h: '#ffd496',
+      w: '#a9613f',
+      a: '#20a99f',
+      t: '#8de9cc',
+      b: '#246275',
+    },
   );
 }
 

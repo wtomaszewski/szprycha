@@ -18,6 +18,12 @@ export function lodzScenery({
     rect(`${kind}-${x}-${y}`, x, y, 0, 0, { kind, turn });
   const poi = (id: string, x: number, y: number, heading = 0, size = 34) =>
     rect(`lod-${id}`, x - size / 2, y - size / 2, size, size, { heading });
+  const spools = [
+    ['szpulka-arkady', 2020, 861, 'Q014'],
+    ['szpulka-latarnia', 1860, 861, 'Q068'],
+    ['szpulka-pasaz', 1538, 861, 'Q039'],
+    ['szpulka-mural', 3480, 1510, 'Q033'],
+  ] as const;
   const blocks = [
     block(
       'fabryka-hala',
@@ -207,6 +213,32 @@ export function lodzScenery({
     poi('brama-start', 3268, 1259, -Math.PI / 2),
     poi('brama-postoj', 3268, 1228, -Math.PI / 2, 20),
     poi('brama-meta', 3268, 1112, -Math.PI / 2),
+    poi('pasaz-objazd', 1720, 861),
+    poi('szpulki-start', 2070, 861, Math.PI),
+    ...spools.map(([id, x, y]) => poi(id, x, y, Math.PI, 24)),
+    poi('podworko-pomoc-start', 3268, 1310),
+    poi('podworko-pomoc', 3410, 1310),
+    poi('aleja-przejazd-start', 2784, 896, Math.PI / 2),
+    poi('aleja-przejazd-postoj', 2784, 994, Math.PI / 2),
+    poi('aleja-za-przejazdem', 2784, 1180, Math.PI / 2),
+    poi('fabryka-wejscie', 2784, 1248, Math.PI / 2),
   ];
-  return { blocks, props, collisions, districts, pois };
+  const collectibles = spools.map(([id, x, y, question]) =>
+    rect(`lod-${id}`, x, y, 0, 0, { kind: 'szpulka', question }),
+  );
+  const map_decorations = [
+    rect('rower-turbo-pod-muralem', 3430, 1316, 0, 0, {
+      kind: 'fallen-bike',
+      mission: 'LOD-A3-01',
+    }),
+  ];
+  return {
+    blocks,
+    props,
+    collisions,
+    districts,
+    pois,
+    collectibles,
+    map_decorations,
+  };
 }

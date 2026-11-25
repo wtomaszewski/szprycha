@@ -286,6 +286,66 @@
       "text": "Na bulwarach spacerują piesi. Zatrzymaj się przy znaczniku i przećwicz, co zrobić, gdy ktoś upadnie.",
       "hash": "22595f0a6e33ec9d32a2e84357802fc64b1afa604e899aece9a653d64c05ad04"
     },
+    "dialogi.LOD-A1-01.koniec": {
+      "text": "Na stoisku ktoś zostawił trzy szpulki z wyrytymi znakami. Pokaż je Lenie.",
+      "hash": "f93bd3cad89f44e755df6983c2be7327453ba2087f43ff439b07ea0469f8a118"
+    },
+    "dialogi.LOD-A1-01.start": {
+      "text": "Zawieź próbki na wystawę tkanin przy Piotrkowskiej. Pasaż jest zamknięty, objedź go od południa.",
+      "hash": "4f4395debe86da13d90496bc00d58fff0d2bb8d0fb62be326d1169f0989f39a6"
+    },
+    "dialogi.LOD-A1-02.koniec": {
+      "text": "Nitka układa się w błyskawicę obok komina. Zanieśmy ten szkic Oli.",
+      "hash": "85244f6eef2c81f1113a63f8538afa5ffa5bc6dbfa399149c573a2fb5d0b2ffe"
+    },
+    "dialogi.LOD-A1-02.start": {
+      "text": "Rozwiąż zagadkę przy każdej szpulce. Trzy ślady razem powinny nam coś powiedzieć.",
+      "hash": "5c69818be9dd8ee830e7d1fc9cd65d012c42b80b3cdd3ff78836bb2937199608"
+    },
+    "dialogi.LOD-A1-03.koniec": {
+      "text": "Lena już wie, skąd zna komin ze szkicu. Zawiła czeka przy kontrapasie z planem dawnej fabryki.",
+      "hash": "abbbfcf5c784848758dcf1c65798149446063a7c213f8bc0e91ac8322c8bd622"
+    },
+    "dialogi.LOD-A1-03.start": {
+      "text": "Podaj szkic Lenie po drugiej stronie Piotrkowskiej. Wymiń cargo i rikszę z odstępem.",
+      "hash": "05d262333a6bd608e4c1d800be6a84fbb34e43142e08396793a4373e99cbf3e8"
+    },
+    "dialogi.LOD-A2-01.koniec": {
+      "text": "Ta błyskawica to mój dawny podpis Zakłócacza. Szpulki wskazują warsztat pod muralem, gdzie został sterownik wystawy.",
+      "hash": "83b611731f35209380fd9f07061682ac7eace79ce84e96d0270b0f5609fe6750"
+    },
+    "dialogi.LOD-A2-01.start": {
+      "text": "Weź plan i dojedź do mnie kontrapasem. Po zmroku pamiętaj o obu lampkach.",
+      "hash": "ad9faace40655953de4cd275425e75b41b57493d669e0983d6b21ae150d1719f"
+    },
+    "dialogi.LOD-A2-02.koniec": {
+      "text": "Dzięki za klucz. Ja zajmę się warsztatem, a ty wróć do Oli. Turbo został na podwórku.",
+      "hash": "7769cc7f63c388df18679d28b425ad6c531bf25324bdeb5feb47d0f4614927a6"
+    },
+    "dialogi.LOD-A2-02.start": {
+      "text": "Klucz do warsztatu jest przy bramie. Zanim wyjedziesz, daj pieszemu przejść po chodniku.",
+      "hash": "aaf76265e79f834be15d2533e7d4115761200109812172f2b843b7de481b56be"
+    },
+    "dialogi.LOD-A3-01.koniec": {
+      "text": "Dobrze, że zareagowałeś spokojnie. Zostanę z Turbo i będę słuchać wskazówek dyspozytora.",
+      "hash": "89b817e67475e5a1845dbda9d641339ac10f01a1644fb9a33bfa17c79d2de735"
+    },
+    "dialogi.LOD-A3-01.start": {
+      "text": "Turbo przewrócił się przy muralu w fale. Zatrzymaj się w bezpiecznym miejscu, jestem obok.",
+      "hash": "4c5b10bf0268582851fbdc306673887a8ccd45011d98a9aeeddfcd9abaa2ce99"
+    },
+    "dialogi.LOD-A3-02.epilog": {
+      "text": "Szpulki wrócą na wystawę. Dopiszę na planszy, jak bezpiecznie do niej dojechać.",
+      "hash": "53daed1df246cffe89de175f102eb3649964219c92948f2887ee7f4a34841840"
+    },
+    "dialogi.LOD-A3-02.koniec": {
+      "text": "Lampy wystawy działają. Moje stare oznaczenie posłużyło wam za wskazówkę do warsztatu.",
+      "hash": "bf9071027af714d22a5a1c474404544e0158ced37c7c5416e842b2313c5129d3"
+    },
+    "dialogi.LOD-A3-02.start": {
+      "text": "Zawiła znalazł sterownik. Zawieź go do hali przez przejazd z sygnalizatorem dla rowerów.",
+      "hash": "b473685450f98676a9684a9ffb0868f96cdd9db4015d680268381172221151c8"
+    },
     "dialogi.POZ-A1-01.koniec": {
       "text": "Trzy rogale mają wycięte znaki. Lena pomoże ci odczytać, co znaczą.",
       "hash": "1069ce62671dd41be3b488689b0f93b2c70da330b003f514f7ba85fbd145c1ae"
@@ -1193,6 +1253,30 @@
     "misje.KRA-B-03.wyjasnienie": {
       "text": "Zadbaj o swoje bezpieczeństwo i ostrzeż innych, zanim podejdziesz z pomocą.",
       "hash": "b17c076808d9856694f47faca564a40dd0adeee353b3b5d11f9f1c75ec27a6f5"
+    },
+    "misje.LOD-A3-01.bezpieczenstwo_wyjasnienie": {
+      "text": "Najpierw zadbaj o własne bezpieczeństwo i sprawdź, czy miejsce jest bezpieczne.",
+      "hash": "e3443a44760d471803b09892ded135e87448d49bc5bdabbe91e94ccc77a59cdc"
+    },
+    "misje.LOD-A3-01.dorosly_wyjasnienie": {
+      "text": "Zawołaj dorosłego i sprawdź, czy poszkodowany odpowiada.",
+      "hash": "b94ba5c57ad749e9eecf448add23b9b94addc21378141756587b6d18f5bdf97a"
+    },
+    "misje.LOD-A3-01.pytanie_bezpieczenstwo": {
+      "text": "Turbo się przewrócił. Od czego zaczynasz?",
+      "hash": "d7e931d3186f0ca0f5228421e88a6d306a8796bff962b604c9f7448d310c55fa"
+    },
+    "misje.LOD-A3-01.pytanie_dorosly": {
+      "text": "Możesz podejść bezpiecznie. Co robisz teraz?",
+      "hash": "9b76ef9c34c09ef04f0a7d5add3e867890f2ea349465ed8e0b7bd5c3e0caacf6"
+    },
+    "misje.LOD-A3-01.pytanie_telefon": {
+      "text": "Turbo odpowiada, ale bardzo boli go szyja. Ola prosi cię o telefon na 112. Co powiesz?",
+      "hash": "e07053db2d07d53522c4727b2609346df4bb252588ca6f2be82185fd21f4aeb0"
+    },
+    "misje.LOD-A3-01.telefon_wyjasnienie": {
+      "text": "Podaj miejsce, opisz zdarzenie i liczbę poszkodowanych. Słuchaj dyspozytora i czekaj, aż zakończy rozmowę.",
+      "hash": "516e85c69c2fd8ed2b6f6a94b73339fc39614f4831a0ee58105fe1694089bfa9"
     },
     "misje.LOD-B-01.pomoc_wyjasnienie": {
       "text": "Zanim podejdziesz, zadbaj o swoje bezpieczeństwo i ostrzeż osoby w pobliżu.",

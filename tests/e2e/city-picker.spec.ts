@@ -2,6 +2,8 @@ import { expect, test } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { cityPin } from './city-picker';
 
+test.use({ baseURL: 'http://127.0.0.1:4174' });
+
 const { campaign, freeRide, map } = pl.cityPicker;
 
 test('selects a city, keeps the latest choice, and limits orders to its campaign', async ({
@@ -14,6 +16,8 @@ test('selects a city, keeps the latest choice, and limits orders to its campaign
   await expect(canvas).toHaveAttribute('aria-label', map);
   await expect(cityPin(page, 'warszawa')).toBeFocused();
   await expect(cityPin(page, 'poznan')).toBeEnabled();
+  await expect(cityPin(page, 'lodz')).toBeEnabled();
+  await expect(cityPin(page, 'zakopane')).toBeEnabled();
   await page.keyboard.press('Escape');
   await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
   await page.getByRole('button', { name: campaign }).click();
@@ -21,7 +25,7 @@ test('selects a city, keeps the latest choice, and limits orders to its campaign
   await page.mouse.move(0, 0);
   await page.screenshot({ path: info.outputPath('mapa-polski.png') });
   await cityPin(page, 'wroclaw').press('Enter');
-  // The first entry loads the driving scene on demand, within the 12 s startup budget.
+  // The production build loads the driving scene on demand within 12 s.
   await expect(canvas).toHaveAttribute('data-mission', 'WRO-T-01', {
     timeout: 12_000,
   });

@@ -38,6 +38,7 @@ export const eventRules = {
     'MAN-03',
     'MAN-05',
     'MAN-08',
+    'MAN-14',
   ],
   swiatla_palac: ['SYG-01', 'SYG-02'],
   zielona_strzalka: ['ZNAK-S2'],

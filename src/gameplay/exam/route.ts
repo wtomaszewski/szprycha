@@ -19,6 +19,7 @@ export function examRoute(
       gdansk: 'GDA-EGZAMIN',
       wies: 'WIE-EGZAMIN',
       poznan: 'POZ-EGZAMIN',
+      lodz: 'LOD-EGZAMIN',
       zakopane: 'ZAK-EGZAMIN',
     }[city],
     miasto: city,

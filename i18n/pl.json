@@ -250,6 +250,9 @@
     "szyszkaQuestion": "Zagadka szyszki",
     "rogale": "Drewniane rogale",
     "rogaleHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać drewnianego rogala.",
+    "szpulki": "Szpulki nici",
+    "szpulkiHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać szpulkę.",
+    "szpulkaQuestion": "Zagadka ze szpulki",
     "rogalQuestion": "Zagadka drewnianego rogala",
     "bursztyny": "Bursztyny",
     "bursztynyHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać bursztyn.",
@@ -489,6 +492,7 @@
       "zbierz_szyszke": "Zsiądź z roweru i podejdź do szyszki.",
       "zbierz_swierk": "Zsiądź z roweru i podejdź do drewnianego świerka.",
       "zbierz_rogala": "Zsiądź z roweru i podejdź do drewnianego rogala.",
+      "zbierz_szpulke": "Zsiądź z roweru i podejdź do szpulki.",
       "zbierz_bursztyn": "Zsiądź z roweru i podejdź do bursztynu.",
       "zbierz_krasnala": "Zsiądź z roweru i podejdź do krasnala.",
       "przygotuj_rower": "Załóż kask i włącz światła.",
@@ -698,6 +702,68 @@
       "wyjasnienie": "Włączasz się do ruchu. Ustąp pieszym na chodniku i wszystkim jadącym jezdnią.",
       "meta": "Poczekaj, aż pieszy przejdzie, sprawdź jezdnię i wyjedź z bramy.",
       "powrot": "Zatrzymaj się przed chodnikiem i poczekaj, aż pieszy zwolni przejazd."
+    },
+    "LOD-A1-01": {
+      "tytul": "Próbki na Piotrkowską",
+      "opis": "Zawieź próbki tkanin na wystawę i objedź zamknięty pasaż.",
+      "start": "Zapnij kask przed ruszeniem.",
+      "odbior": "Odbierz próbki tkanin od Pana Kazika.",
+      "objazd": "Miń latarnię po południowej stronie zamkniętego pasażu.",
+      "meta": "Zostaw próbki na stoisku wystawy."
+    },
+    "LOD-A1-02": {
+      "tytul": "Trzy szpulki, jeden trop",
+      "opis": "Odczytaj zagadki ze szpulek i połącz ślady na Piotrkowskiej.",
+      "arkady": "Zsiądź i znajdź szpulkę przy stoisku.",
+      "latarnia": "Podejdź do szpulki przy latarni.",
+      "pasaz": "Podejdź do ostatniej szpulki od południowej strony pasażu."
+    },
+    "LOD-A1-03": {
+      "tytul": "Szkic między rikszami",
+      "opis": "Zawieź Lenie szkic ze szpulek. Po drodze wymiń rower cargo i rikszę.",
+      "odbior": "Odbierz od Oli szkic ze szpulek.",
+      "rozjazd": "Trzymaj się prawej strony na odcinku z ruchem z naprzeciwka.",
+      "meta": "Wymiń rikszę z odstępem i oddaj Lenie szkic."
+    },
+    "LOD-A2-01": {
+      "tytul": "Nitka pod prąd",
+      "opis": "Po zmroku zawieź Zawile plan warsztatów, korzystając z kontrapasa.",
+      "odbior": "Zabierz plan warsztatów.",
+      "znak": "Sprawdź tabliczkę przy wlocie i wybierz kontrapas.",
+      "meta": "Zostań na kontrapasie aż do punktu odbioru planu."
+    },
+    "LOD-A2-02": {
+      "tytul": "Klucz spod muralu",
+      "opis": "Odbierz klucz do warsztatu i przepuść pieszego przy wyjeździe z bramy.",
+      "odbior": "Odbierz od Oli klucz znaleziony na podwórku.",
+      "meta": "Ustąp pieszemu, sprawdź jezdnię i przekaż klucz Zawile."
+    },
+    "LOD-A3-01": {
+      "tytul": "Pomoc na podwórku",
+      "opis": "Turbo przewrócił się obok muralu. Zatrzymaj się i pomóż z Olą.",
+      "podejdz": "Zatrzymaj się przy brzegu podwórka, z dala od bramy.",
+      "pytanie_bezpieczenstwo": "Turbo się przewrócił. Od czego zaczynasz?",
+      "bezpieczenstwo_odp1": "Zostawiam rower w bramie i od razu biegnę do Turbo.",
+      "bezpieczenstwo_odp2": "Odstawiam rower na bok i sprawdzam, czy mogę bezpiecznie podejść.",
+      "bezpieczenstwo_wyjasnienie": "Najpierw zadbaj o własne bezpieczeństwo i sprawdź, czy miejsce jest bezpieczne.",
+      "zawolaj": "Zorientuj się, jak reaguje Turbo.",
+      "pytanie_dorosly": "Możesz podejść bezpiecznie. Co robisz teraz?",
+      "dorosly_odp1": "Wołam Olę i pytam Turbo, czy mnie słyszy.",
+      "dorosly_odp2": "Chwytam Turbo za ręce i od razu stawiam go na nogi.",
+      "dorosly_wyjasnienie": "Zawołaj dorosłego i sprawdź, czy poszkodowany odpowiada.",
+      "zadzwon": "Przećwicz rozmowę z numerem 112.",
+      "pytanie_telefon": "Turbo odpowiada, ale bardzo boli go szyja. Ola prosi cię o telefon na 112. Co powiesz?",
+      "telefon_odp1": "Niech ktoś szybko przyjedzie. Rozłączam się.",
+      "telefon_odp2": "W Łodzi, na podwórku z muralem w fale przy ceglanej fabryce, upadł jeden rowerzysta. Odpowiada i boli go szyja.",
+      "telefon_wyjasnienie": "Podaj miejsce, opisz zdarzenie i liczbę poszkodowanych. Słuchaj dyspozytora i czekaj, aż zakończy rozmowę."
+    },
+    "LOD-A3-02": {
+      "tytul": "Światło w fabryce",
+      "opis": "Dostarcz sterownik wystawy przez przejazd z osobnym sygnałem dla rowerów.",
+      "odbior": "Odbierz od Leny sterownik lamp wystawy.",
+      "postoj": "Zbliż się do rowerowego sygnalizatora i sprawdź jego sygnał.",
+      "przejazd": "Poczekaj na zielone dla rowerów i przejedź na drugą stronę.",
+      "meta": "Oddaj sterownik Zawile przy wejściu do ceglanej hali."
     },
     "ZAK-A1-01": {
       "tytul": "Pudełko pod Giewontem",
@@ -1997,6 +2063,35 @@
   "dialogi": {
     "lodz_zapowiedzi": {
       "MAN-14": "Zostaw miejsce jadącym z naprzeciwka, a gdy jest ciasno, zwolnij albo się zatrzymaj."
+    },
+    "LOD-A1-01": {
+      "start": "Zawieź próbki na wystawę tkanin przy Piotrkowskiej. Pasaż jest zamknięty, objedź go od południa.",
+      "koniec": "Na stoisku ktoś zostawił trzy szpulki z wyrytymi znakami. Pokaż je Lenie."
+    },
+    "LOD-A1-02": {
+      "start": "Rozwiąż zagadkę przy każdej szpulce. Trzy ślady razem powinny nam coś powiedzieć.",
+      "koniec": "Nitka układa się w błyskawicę obok komina. Zanieśmy ten szkic Oli."
+    },
+    "LOD-A1-03": {
+      "start": "Podaj szkic Lenie po drugiej stronie Piotrkowskiej. Wymiń cargo i rikszę z odstępem.",
+      "koniec": "Lena już wie, skąd zna komin ze szkicu. Zawiła czeka przy kontrapasie z planem dawnej fabryki."
+    },
+    "LOD-A2-01": {
+      "start": "Weź plan i dojedź do mnie kontrapasem. Po zmroku pamiętaj o obu lampkach.",
+      "koniec": "Ta błyskawica to mój dawny podpis Zakłócacza. Szpulki wskazują warsztat pod muralem, gdzie został sterownik wystawy."
+    },
+    "LOD-A2-02": {
+      "start": "Klucz do warsztatu jest przy bramie. Zanim wyjedziesz, daj pieszemu przejść po chodniku.",
+      "koniec": "Dzięki za klucz. Ja zajmę się warsztatem, a ty wróć do Oli. Turbo został na podwórku."
+    },
+    "LOD-A3-01": {
+      "start": "Turbo przewrócił się przy muralu w fale. Zatrzymaj się w bezpiecznym miejscu, jestem obok.",
+      "koniec": "Dobrze, że zareagowałeś spokojnie. Zostanę z Turbo i będę słuchać wskazówek dyspozytora."
+    },
+    "LOD-A3-02": {
+      "start": "Zawiła znalazł sterownik. Zawieź go do hali przez przejazd z sygnalizatorem dla rowerów.",
+      "koniec": "Lampy wystawy działają. Moje stare oznaczenie posłużyło wam za wskazówkę do warsztatu.",
+      "epilog": "Szpulki wrócą na wystawę. Dopiszę na planszy, jak bezpiecznie do niej dojechać."
     },
     "ZAK-A1-01": {
       "start": "Dowieź pudełko na wystawę. Przez Krupówki obowiązuje B-1. Jedź drogą wspólną obok.",

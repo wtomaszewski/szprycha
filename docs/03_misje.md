@@ -73,7 +73,7 @@ Losowanie używa ziarna i stałego kroku symulacji. Rozpatruje tylko zdarzenia p
 ### Uruchamianie misji
 
 - `mapa` wskazuje plik Tiled bez rozszerzenia (domyślnie wartość z `miasto`). Samouczki używają `akt: 0`. `start.kask_zapiety` określa stan kasku przed ruszeniem, a `ruch_ai: false` pozwala przećwiczyć manewr bez ruchu AI.
-- Cele są wykonywane kolejno, po osiągnięciu obszaru POI. `zbierz_obwarzanka`, `zbierz_bursztyn`, `zbierz_szyszke`, `zbierz_rogala` i `zbierz_swierk` wymagają dojścia z rowerem do oznaczonej znajdźki i odpowiedzi na pytanie przypisane w warstwie `collectibles`. Zdobycz z profilu liczy się przy ponownym przejeździe. `odbierz` i `oddaj` bez własnego `poi` korzystają z ostatniego wskazanego POI. `wymagany_nawyk` wymaga werdyktu `good` dla wskazanej reguły w trakcie danego celu.
+- Cele są wykonywane kolejno, po osiągnięciu obszaru POI. `zbierz_obwarzanka`, `zbierz_bursztyn`, `zbierz_szyszke`, `zbierz_rogala`, `zbierz_szpulke` i `zbierz_swierk` wymagają dojścia z rowerem do oznaczonej znajdźki i odpowiedzi na pytanie przypisane w warstwie `collectibles`. Zdobycz z profilu liczy się przy ponownym przejeździe. `odbierz` i `oddaj` bez własnego `poi` korzystają z ostatniego wskazanego POI. `wymagany_nawyk` wymaga werdyktu `good` dla wskazanej reguły w trakcie danego celu.
 - `przygotuj_rower` może być pierwszym celem misji. Do jego ukończenia trzeba zapiąć kask i włączyć obie lampy. Pole `wymagana_kamizelka: true` dodaje kamizelkę do wyposażenia konkretnego ćwiczenia. `start.zmrok: true` ustawia warunki ćwiczenia.
 - `skrot.odcinek` wskazuje strefę Tiled objętą znakiem B-1 lub B-2 bez wyjątku dla rowerów. Za jazdę rowerem przez tę strefę silnik wystawia zwykły werdykt zgodnie z wagą reguły. Podsumowanie misji informuje o nielegalnym przejeździe i odjęciu premii za czas. Prowadzenie roweru pozostaje dozwolone.
 - `wyscig.trasa_rywala` wskazuje polilinię Tiled w warstwie `race_routes`. Wynik rywala uwzględnia werdykty z jego przejazdu. Do zaliczenia wyścigu trzeba zdobyć od niego więcej punktów.
@@ -217,6 +217,17 @@ Kampania uwzględnia ukończone szkolenia z Wolnej jazdy. Kolejne misje główne
 | Akt 1 | `POZ-A1-01` Pudełko na Rynek · `POZ-A1-02` Trzy znaki na drewnie | Zapięcie kasku, dostawa z objazdem zamkniętego pasażu i trzy zagadki o strefie zamieszkania, zebrze i sygnalizowaniu skrętu. |
 | Akt 2 | `POZ-A2-01` Trop przez zebrę · `POZ-A2-02` Plan przed światłami | Zatrzymanie i rzeczywiste ustąpienie pieszej idącej na peron. Dojazd do śluzy pasem i przejazd na zielonym. |
 | Akt 3 | `POZ-A3-01` Światła na moście · `POZ-A3-02` Plansza na Ostrów | Kask i lampki o zmroku, bezpieczne podejście po upadku, wezwanie dorosłego i sprawdzenie reakcji oraz przeprowadzenie roweru chodnikiem przy B-9. |
+
+## Kampania — ŁÓDŹ
+
+SzprychaApp uwzględnia szkolenia zaliczone w Wolnej jeździe. Każda z siedmiu głównych misji otwiera kolejny etap.
+
+| Etap | Misje | Ćwiczenia |
+| --- | --- | --- |
+| Szkolenie | `LOD-B-01`–`LOD-B-04` | Strefa zamieszkania, wymijanie, kontrapas po zmroku i ustąpienie przy wyjeździe z bramy. |
+| Akt 1 | `LOD-A1-01` Próbki na Piotrkowską · `LOD-A1-02` Trzy szpulki, jeden trop · `LOD-A1-03` Szkic między rikszami | Przygotowanie roweru, objazd B-1, trzy zagadki drogowe oraz rzeczywiste wymijanie roweru cargo i rikszy. |
+| Akt 2 | `LOD-A2-01` Nitka pod prąd · `LOD-A2-02` Klucz spod muralu | Światła i jazda kontrapasem z tabliczką pod B-2, zatrzymanie i ustąpienie przy wyjeździe z bramy. |
+| Akt 3 | `LOD-A3-01` Pomoc na podwórku · `LOD-A3-02` Światło w fabryce | Bezpieczne podejście, wezwanie dorosłego i rozmowa z 112 w scence. Dojazd DDR do sygnalizowanego przejazdu rowerowego i dostawa do hali. |
 
 ## Kampania — ZAKOPANE
 
