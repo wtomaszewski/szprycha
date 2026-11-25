@@ -147,10 +147,8 @@ function paintObwarzanek(ctx: CanvasRenderingContext2D) {
     '......####......',
   ];
   const colors = {
-    '#': '#5b3150',
-    a: '#c76b3b',
+    a: '#d98a5a',
     o: '#ef9c53',
-    h: '#ffe19a',
   } as const;
   paintPixels(ctx, rows, colors);
 }
@@ -176,7 +174,7 @@ function paintBursztyn(ctx: CanvasRenderingContext2D) {
       '................',
       '................',
     ],
-    { '#': '#4b2737', h: '#ffe1a1', o: '#ffad4f', a: '#d77730', b: '#a94a32' },
+    { o: '#feae34', a: '#ef7d57', b: '#a65e46' },
   );
 }
 
@@ -186,13 +184,13 @@ function paintSzyszka(ctx: CanvasRenderingContext2D) {
     [
       '................',
       '........##......',
-      '.......#h#......',
+      '.......#hh#.....',
       '......#aa#......',
       '.....#hhba#.....',
-      '....#hbbha#.....',
+      '....#hhbha#.....',
       '....#abhab#.....',
       '...#hhbbbab#....',
-      '...#abbhhba#....',
+      '...#abhhhba#....',
       '...#hhbaaab#....',
       '...#abbbhbb#....',
       '....#bhaab#.....',
@@ -201,7 +199,7 @@ function paintSzyszka(ctx: CanvasRenderingContext2D) {
       '................',
       '................',
     ],
-    { '#': '#472c30', h: '#ffcd75', a: '#bb7848', b: '#7b472e' },
+    { a: '#d98a5a', b: '#8b6d5c' },
   );
 }
 
@@ -211,8 +209,8 @@ function paintRogal(ctx: CanvasRenderingContext2D) {
     [
       '................',
       '......####......',
-      '....##hhha##....',
-      '...#hhaaabaa#...',
+      '....##hhhh##....',
+      '...#hhhaabaa#...',
       '..#haaaahaaba#..',
       '.#haabaaabaaba#.',
       '.#aabahaaabaab#.',
@@ -226,7 +224,7 @@ function paintRogal(ctx: CanvasRenderingContext2D) {
       '................',
       '................',
     ],
-    { '#': '#542d29', h: '#ffd496', a: '#cf884e', b: '#9a5434' },
+    { a: '#d98a5a', b: '#a65e46' },
   );
 }
 
@@ -252,12 +250,10 @@ function paintSzpulka(ctx: CanvasRenderingContext2D) {
       '................',
     ],
     {
-      '#': '#40283a',
-      h: '#ffd496',
-      w: '#a9613f',
-      a: '#20a99f',
-      t: '#8de9cc',
-      b: '#246275',
+      w: '#b86f50',
+      a: '#257179',
+      t: '#73eff7',
+      b: '#29366f',
     },
   );
 }
@@ -268,12 +264,12 @@ function paintSwierk(ctx: CanvasRenderingContext2D) {
     [
       '................',
       '.......##.......',
-      '......#ha#......',
-      '.....#haaa#.....',
-      '....#haaabb#....',
+      '......#hh#......',
+      '.....#hhaa#.....',
+      '....#hhaabb#....',
       '.....##aa##.....',
       '....#hahab#.....',
-      '...#haahaab#....',
+      '...#hhahaab#....',
       '..#haaabbbbb#...',
       '...##haaab##....',
       '..#haahaaaab#...',
@@ -283,7 +279,7 @@ function paintSwierk(ctx: CanvasRenderingContext2D) {
       '......####......',
       '................',
     ],
-    { '#': '#542d29', h: '#ffe19a', a: '#c98952', b: '#9a5434' },
+    { a: '#d98a5a', b: '#a65e46' },
   );
 }
 
@@ -294,7 +290,8 @@ function paintPixels(
 ) {
   rows.forEach((row, y) => {
     [...row].forEach((pixel, x) => {
-      const color = colors[pixel];
+      const color =
+        pixel === '#' ? '#1a1c2c' : pixel === 'h' ? '#f0dca8' : colors[pixel];
       if (!color) return;
       ctx.fillStyle = color;
       ctx.fillRect(x, y, 1, 1);
