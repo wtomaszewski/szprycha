@@ -690,9 +690,15 @@ export class WorldModel {
           )
             continue;
           if (
-            ['C-13', 'C-13/C-16', 'D-15', 'D-40', 'D-41', 'P-23'].includes(
-              sign.code,
-            ) &&
+            [
+              'C-13',
+              'C-13/C-16',
+              'D-3',
+              'D-15',
+              'D-40',
+              'D-41',
+              'P-23',
+            ].includes(sign.code) &&
             this.zones.some(({ id }) => id === sign.affects)
           )
             continue;

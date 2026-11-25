@@ -48,6 +48,7 @@
     "map:generate:gdansk": "tsx tools/gen-gdansk-map.ts",
     "map:generate:wies": "tsx tools/gen-wies-map.ts",
     "map:generate:poznan": "tsx tools/gen-poznan-map.ts",
+    "map:generate:lodz": "tsx tools/gen-lodz-map.ts",
     "map:generate:zakopane": "tsx tools/gen-zakopane-map.ts"
   },
   "dependencies": {

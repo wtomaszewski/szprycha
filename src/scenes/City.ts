@@ -27,6 +27,7 @@ import { showBreakReminder } from '../ui/BreakReminder';
 import { verdictHaptics } from '../platform/haptics';
 import { CANVAS, Scene, GameObjects } from 'phaser';
 import { drawMapDecorations } from '../render/MapDecorations';
+import type { PalaceReflection } from '../render/LandmarkArt';
 import type { TownHallGoats } from '../render/TownHallGoats';
 import { DistrictGates } from '../render/DistrictGates';
 import trainingUrl from '../../maps/miasteczko.tmj?url';
@@ -34,6 +35,7 @@ import warsawUrl from '../../maps/warszawa.tmj?url';
 import wroclawUrl from '../../maps/wroclaw.tmj?url';
 import krakowUrl from '../../maps/krakow.tmj?url';
 import gdanskUrl from '../../maps/gdansk.tmj?url';
+import lodzUrl from '../../maps/lodz.tmj?url';
 import poznanUrl from '../../maps/poznan.tmj?url';
 import zakopaneUrl from '../../maps/zakopane.tmj?url';
 import giewontUrl from '../../assets/generated/giewont.png?url';
@@ -91,7 +93,9 @@ import {
   type MissionProgress,
 } from '../gameplay/MissionProgress';
 import {
+  isCampaignCity,
   missionCity,
+  type CampaignCity,
   type MissionCity,
   type PlayableCity,
 } from '../content/missions';
@@ -163,6 +167,7 @@ const mapUrls = {
   krakow: krakowUrl,
   gdansk: gdanskUrl,
   poznan: poznanUrl,
+  lodz: lodzUrl,
   zakopane: zakopaneUrl,
   wies: wiesUrl,
 };
@@ -226,6 +231,7 @@ export class City extends Scene {
   private traffic!: TrafficParticipants;
   private citySound!: CitySound;
   private townHallGoats?: TownHallGoats;
+  private palaceReflection?: PalaceReflection;
   private sirenArt!: GameObjects.Graphics;
   private readonly activeAgents: AgentState[] = [];
   private agents!: readonly (RoadTrafficAgent | RoutedAgent)[];
@@ -507,6 +513,7 @@ export class City extends Scene {
               mapId === 'krakow' ||
               mapId === 'gdansk' ||
               mapId === 'poznan' ||
+              mapId === 'lodz' ||
               mapId === 'zakopane' ||
               mapId === 'wies') &&
             !definition
@@ -531,6 +538,7 @@ export class City extends Scene {
     const scenery = drawMapDecorations(this, tilemap, mapId, definition?.id);
     this.citySound = new CitySound(this.world, scenery.peacocks);
     this.townHallGoats = scenery.townHallGoats;
+    this.palaceReflection = scenery.palaceReflection;
     this.townHallGoats?.draw(0, this.reducedEffects);
     this.worldWidth = tilemap.widthInPixels;
     this.worldHeight = tilemap.heightInPixels;
@@ -654,7 +662,8 @@ export class City extends Scene {
       emergency: 0,
     };
     this.actors = this.agents.map(
-      ({ kind }) => new TrafficArt(this, kind, variants[kind]++, mapId),
+      ({ kind, cycleBody }) =>
+        new TrafficArt(this, kind, variants[kind]++, mapId, cycleBody),
     );
     this.rivalSprite = this.mission?.race
       ? this.add
@@ -714,11 +723,13 @@ export class City extends Scene {
               ? ui.driving.gdanskTitle
               : mapId === 'poznan'
                 ? ui.cityPicker.poznan
-                : mapId === 'zakopane'
-                  ? ui.cityPicker.zakopane
-                  : mapId === 'wies'
-                    ? ui.driving.wiesTitle
-                    : ui.driving.title;
+                : mapId === 'lodz'
+                  ? ui.cityPicker.lodz
+                  : mapId === 'zakopane'
+                    ? ui.cityPicker.zakopane
+                    : mapId === 'wies'
+                      ? ui.driving.wiesTitle
+                      : ui.driving.title;
     this.graphics.lite = this.lowQuality();
     this.controls = new DrivingControls(
       tutorial ? ui.tutorial.title : examRide ? ui.exam.ride : areaTitle,
@@ -934,12 +945,16 @@ export class City extends Scene {
                 (this.city === 'krakow' ||
                   this.city === 'gdansk' ||
                   this.city === 'poznan' ||
+                  this.city === 'lodz' ||
                   this.city === 'zakopane' ||
                   this.city === 'wies')
                   ? 'freeRide'
                   : 'campaign',
             }),
-          !freeRide && !dailyOrder && !definition?.poboczna
+          !freeRide &&
+            isCampaignCity(this.city) &&
+            !dailyOrder &&
+            !definition?.poboczna
             ? () => this.continueCampaign()
             : undefined,
         );
@@ -979,13 +994,13 @@ export class City extends Scene {
     this.debug = new RuleDebugOverlay(this, this.world, this.controls.root);
     this.controls.setWalking(this.rider.walking);
     if (pose) this.controls.setLights(pose.lights);
-    if (guidedAfter && this.city !== 'zakopane') {
+    if (guidedAfter && isCampaignCity(this.city)) {
       if (!pose)
         this.progress.saveCampaignRide(
           this.city,
           this.campaignPosition(guidedAfter),
         );
-      this.guideCampaign(guidedAfter);
+      this.guideCampaign(this.city, guidedAfter);
     }
     const lifecycle = new AbortController();
     const { signal } = lifecycle;
@@ -1120,8 +1135,7 @@ export class City extends Scene {
     } satisfies Ride);
   }
 
-  private guideCampaign(after: string) {
-    if (this.city === 'zakopane') return;
+  private guideCampaign(city: CampaignCity, after: string) {
     const panel = document.createElement('section');
     panel.className = 'mission-panel campaign-navigation-panel';
     panel.setAttribute('aria-label', ui.campaignRide.navigation);
@@ -1129,7 +1143,7 @@ export class City extends Scene {
     this.controls.root.append(panel);
 
     const next = this.progress.nextCampaignDestination(
-      this.city,
+      city,
       after,
       this.content,
     );
@@ -1147,7 +1161,7 @@ export class City extends Scene {
 
     if (!next) {
       const complete = campaignCompleted(
-        this.city,
+        city,
         this.progress.store.profile,
         this.content,
       );
@@ -2795,6 +2809,7 @@ export class City extends Scene {
     this.cameraFocus.y += (targetY - this.cameraFocus.y) * blend;
     this.positionRideCamera();
     cullMapChunks(this.mapChunks, camera);
+    this.palaceReflection?.update(camera, at, reduced);
     this.collectibles?.update(camera);
     if (this.townHallGoats) {
       const phase = this.townHallGoats.draw(at, reduced);

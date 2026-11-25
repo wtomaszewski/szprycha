@@ -66,6 +66,7 @@ async function checkPrecache(dist: string) {
         'gdansk',
         'wies',
         'poznan',
+        'lodz',
         'zakopane',
       ].map((city) =>
         expect.stringMatching(new RegExp(`^assets/${city}-.*\\.tmj$`)),
@@ -108,6 +109,7 @@ async function checkPrecache(dist: string) {
         'gdansk',
         'wies',
         'poznan',
+        'lodz',
         'zakopane',
       ].map((city) =>
         expect.stringMatching(new RegExp(`^assets/${city}-.*\\.tmj$`)),

@@ -13,7 +13,11 @@ Gra używa lokalnych kopii fontów WOFF2, dołączonych do pamięci podręcznej 
 
 ### Nagrania lektora (`voice/pl/`)
 
-Wpis do uzupełnienia po wyborze głosu i pierwszym renderowaniu. Dostawca, plan z licencją komercyjną, nazwa i identyfikator głosu z biblioteki, data pozyskania oraz wersja i adres zaakceptowanego regulaminu oczekują na decyzję Wojtka. Publikacja obejmuje wyłącznie głos biblioteczny z potwierdzonymi prawami, bez klonowania głosu realnej osoby. Źródła warunków dla obsługiwanych usług [ElevenLabs](https://elevenlabs.io/terms-of-use) i [Azure Speech](https://www.microsoft.com/licensing/terms/productoffering/MicrosoftAzure/all).
+| Pliki                                            | Dostawca i plan                                                                    | Głos                                                                                         | Data pozyskania | Warunki                                                                                                                             |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `voice/pl/*.ogg`, `voice/pl/*.m4a` (636 kwestii) | Microsoft Azure AI Speech, neuronowa synteza mowy, plan S0 (płatny), konto wydawcy | `pl-PL-ZofiaNeural`, standardowy głos z biblioteki Azure, bez klonowania głosu realnej osoby | 2026-11-24      | [Microsoft Product Terms — Azure](https://www.microsoft.com/licensing/terms/productoffering/MicrosoftAzure/all), stan na 2026-11-24 |
+
+Teksty kwestii są autorskie (`content/`, `i18n/pl.json`). Audio wygenerował lokalnie `tools/voice/render.ts`, a FFmpeg zakodował je do Opus/OGG i AAC/M4A. Klucz API nie trafia do repozytorium. Potwierdzenie wydawcy dotyczące komercyjnej dystrybucji offline (web, Google Play, App Store), treści dla dzieci i praw do nagrań po zakończeniu subskrypcji jest w [#7](https://github.com/wtomaszewski/szprycha/issues/7).
 
 ## Zasoby własne projektu
 
@@ -37,6 +41,8 @@ Wpis do uzupełnienia po wyborze głosu i pierwszym renderowaniu. Dostawca, plan
 Sylwetka Giewontu w `generated/giewont.png` pochodzi z `tools/zakopane-art.ts` i `tools/gen-placeholders.ts`. Drewniane wille, mostki i mur oporowy Zakopanego generują `tools/gen-zakopane-map.ts`, `tools/zakopane-scenery.ts`, `src/render/BlockArt.ts` i `src/render/MapDecorations.ts`. Zrzuty `docs/screenshots/141-*` pochodzą z lokalnej gry uruchomionej przez Playwright. Wszystkie te elementy są zasobami własnymi na warunkach licencji projektu.
 
 Krakowskie obwarzanki rysuje `src/render/CityCollectibles.ts`. Zrzuty kampanii z #106 pochodzą z lokalnej gry uruchomionej przez Playwright.
+
+W #109 generator `src/render/LandmarkArt.ts` rysuje Stadion Narodowy, odbicie Pałacu na Wodzie, dach i przeszklenia Afrykarium, pergolę Hali Stulecia oraz rabaty. Dekoracje korzystają też z istniejącego arkusza `generated/props.png` i rozmieszczenia z `tools/gen-warsaw-map.ts` oraz `tools/wroclaw-scenery.ts`. To autorskie rysunki projektu bez logotypów, zdjęć i plików zewnętrznych. Zrzuty `docs/screenshots/109/` pochodzą z lokalnej gry uruchomionej przez Playwright.
 
 Listy w `content/zleceniodawcy.yaml` są autorskie. Gra komponuje portrety i sprite’y fikcyjnych klientów przy użyciu `src/render/portraitArt.ts` i `src/render/dailyClientArt.ts`. Galerię tworzy `tools/client-gallery.ts`. Pozostałe zrzuty `docs/screenshots/103-*` pochodzą z lokalnej gry.
 

@@ -11,10 +11,7 @@ export function createTrafficObstacles(
   agent: TrafficPose,
   metersPerPixel: number,
 ) {
-  const { halfLength, halfWidth } = footprintInPixels(
-    agent.kind,
-    metersPerPixel,
-  );
+  const { halfLength, halfWidth } = footprintInPixels(agent, metersPerPixel);
   const segment = agent.kind === 'tram';
   const obstacle: Obstacle = {
     x: 0,

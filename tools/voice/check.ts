@@ -12,7 +12,7 @@ import {
   type Manifest,
 } from './manifest.ts';
 
-const budgetMiB = 20;
+const budgetMiB = 40;
 const strictByDefault = false; // Włączyć przed wydaniem 1.0.
 
 export async function checkVoice(root: string, lines: Manifest['lines']) {

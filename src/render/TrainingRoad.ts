@@ -279,6 +279,17 @@ export class TrainingRoad {
           .fillStyle(cyclePath ? 0x3b5dc9 : 0xf4f4f4)
           .fillCircle(x, y, 11);
         bicyclePictogram(signs, x, y, cyclePath ? 0xf4f4f4 : 0x1a1c2c, 1);
+      } else if (sign.code === 'D-3') {
+        signs
+          .fillStyle(0x1a1c2c)
+          .fillRect(x - 13, y - 17, 26, 34)
+          .fillStyle(0xf4f4f4)
+          .fillRect(x - 11, y - 15, 22, 30)
+          .fillStyle(0x3b5dc9)
+          .fillRect(x - 10, y - 14, 20, 28)
+          .fillStyle(0xf4f4f4)
+          .fillRect(x - 2, y - 3, 4, 12)
+          .fillTriangle(x, y - 10, x - 6, y - 2, x + 6, y - 2);
       } else if (sign.code === 'D-40' || sign.code === 'D-41') {
         signs
           .fillStyle(0xf4f4f4)

@@ -68,6 +68,7 @@ W `m3c-part2.yaml` pole `objects` dodaje obiekty do wskazanych warstw Tiled, a `
 | MAN-04 | Spojrzenie i sygnał, brak przygotowania, za mały odstęp, jazda za pojazdem |
 | MAN-05 | Wyprzedzenie z prawej z odstępem i bez, wyprzedzenie z lewej, ominięcie stojącego |
 | MAN-08 | Droga zatrzymania przed pieszym przy różnych prędkościach oraz przy gołoledzi |
+| MAN-14 | Bezpieczne wymijanie rikszy, za mały odstęp od cargo, jazda w tym samym kierunku i hamowanie ochronne |
 | MAN-12 | Czekanie i ominięcie pojazdu ustępującego pieszemu, powód nieznany, niekierowana zebra i skrzyżowanie |
 
 

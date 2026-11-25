@@ -1,4 +1,5 @@
 import type { tiledMap } from './tiled-map.ts';
+import { pergolaPosts } from '../src/render/LandmarkArt.ts';
 
 export function wroclawScenery({
   rect,
@@ -20,6 +21,7 @@ export function wroclawScenery({
       wall,
       ...(landmarkId && { landmarkId }),
     });
+  const pergola = { x: 4902, y: 105, width: 296, height: 86 };
   const blocks = [
     block(
       'ratusz-korpus',
@@ -250,19 +252,6 @@ export function wroclawScenery({
         'plaster',
       ),
     ),
-    ...Array.from({ length: 9 }, (_, i) => {
-      const angle = Math.PI + (i * Math.PI) / 8;
-      return block(
-        `pergola-kolumna-${i + 1}`,
-        Math.round(5040 + 148 * Math.cos(angle)),
-        Math.round(181 + 86 * Math.sin(angle)),
-        20,
-        20,
-        2,
-        'stone',
-        'sand',
-      );
-    }),
   ];
 
   const props: ReturnType<typeof rect>[] = [];
@@ -318,6 +307,13 @@ export function wroclawScenery({
     ['tree', 400, 840],
     ['tree', 285, 1938],
     ['tree', 699, 2130],
+    ['tree', 5372, 303],
+    ['tree', 5484, 361],
+    ['bench', 5414, 414],
+    ['bin', 5439, 414],
+    ['tree', 5474, 2632],
+    ['tree', 5524, 2705],
+    ['bench', 5450, 2696],
   ] as const)
     prop(kind, x, y);
   for (let i = 0; i < 28; i++) {
@@ -334,6 +330,11 @@ export function wroclawScenery({
       kind: 'truss-bridge',
       color: 0xb13e53,
     }),
+    rect('pergola-hali', pergola.x, pergola.y, pergola.width, pergola.height, {
+      kind: 'centennial-pergola',
+    }),
+    rect('rabata-przy-hali', 5380, 357, 72, 39, { kind: 'planted-bed' }),
+    rect('rabata-przy-afrykarium', 5426, 2642, 63, 34, { kind: 'planted-bed' }),
     rect('fontanna-multimedialna', 5026, 160, 0, 0, {
       kind: 'fountain',
       color: 0xff77a8,
@@ -402,6 +403,13 @@ export function wroclawScenery({
       rect('stadion-wroclaw', 520, 864, 0, 0),
       rect('magazyn-gangu', 1220, 1640, 0, 0),
     ],
-    collisions: [rect('bramka-obwodnica', 584, 3136, 22, 64, { kind: 'wall' })],
+    collisions: [
+      rect('bramka-obwodnica', 584, 3136, 22, 64, { kind: 'wall' }),
+      ...pergolaPosts(pergola).map(({ x, y }, i) =>
+        rect(`pergola-kolumna-${i + 1}`, x - 10, y - 10, 20, 20, {
+          kind: 'wall',
+        }),
+      ),
+    ],
   };
 }

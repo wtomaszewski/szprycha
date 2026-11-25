@@ -266,6 +266,11 @@ for (const {
         .getByRole('button', { name: pl.driving.menu, exact: true })
         .tap();
 
+      await page.getByRole('button', { name: pl.cityPicker.freeRide }).tap();
+      await expect(cityPin(page, 'lodz')).toBeEnabled();
+      await layout(page, page.locator('.city-picker button'), target);
+      await page.getByRole('button', { name: pl.cityPicker.back }).tap();
+
       await page.getByRole('button', { name: pl.cityPicker.campaign }).tap();
       await layout(page, page.locator('.city-picker button'), target);
       await cityPin(page, 'warszawa').tap();

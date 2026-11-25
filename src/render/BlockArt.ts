@@ -1,5 +1,6 @@
 import type { Scene, Textures } from 'phaser';
 import { artHash, roofDetails, roofKinds, wallKinds } from './artFrames';
+import { paintAfrykariumGlass, paintAfrykariumRoof } from './LandmarkArt';
 import { FLOOR_PX, type Block } from './projection';
 import { shadowColor, shadowRise } from './shadows';
 
@@ -58,10 +59,12 @@ export function visitRoofDetails(
     b.landmarkId === 'palac-na-wodzie' ||
     b.landmarkId === 'hala-stulecia' ||
     b.landmarkId === 'stadion-wroclaw' ||
-    b.landmarkId === 'stadion-narodowy' ||
+    b.landmarkId === 'afrykarium' ||
     b.landmarkId === 'zamek-krolewski' ||
     b.landmarkId === 'ratusz-wroclawski' ||
     b.landmarkId === 'sukiennice' ||
+    b.landmarkId === 'lodz-fabryka-komin' ||
+    b.landmarkId?.startsWith('lodz-mural-') ||
     b.landmarkId === 'wawel-kopula' ||
     b.landmarkId === 'wawel-baszta' ||
     b.landmarkId?.startsWith('katedra-wieza-')
@@ -86,6 +89,10 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
     Math.ceil(b.width),
     Math.ceil(b.height),
     (ctx) => {
+      if (b.landmarkId === 'afrykarium') {
+        paintAfrykariumRoof(ctx, b.width, b.height);
+        return;
+      }
       if (isHighlandHouse(b)) {
         const ridge = Math.floor(b.height * 0.42);
         ctx.fillStyle = '#352a2b';
@@ -134,6 +141,18 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
       ctx.fillStyle = light;
       ctx.fillRect(0, 0, b.width, 2);
       ctx.fillRect(0, 0, 2, b.height);
+      if (b.landmarkId === 'lodz-fabryka-komin') {
+        ctx.fillStyle = '#8c4b3e';
+        ctx.fillRect(0, 0, b.width, b.height);
+        ctx.fillStyle = '#c17a5b';
+        ctx.fillRect(1, 1, b.width - 2, 3);
+        ctx.fillRect(1, 4, 3, b.height - 5);
+        ctx.fillStyle = '#3b272a';
+        ctx.fillRect(5, 5, b.width - 10, b.height - 10);
+        ctx.fillStyle = '#1a1c2c';
+        ctx.fillRect(7, 7, b.width - 14, b.height - 14);
+        return;
+      }
       if (palace) {
         for (let x = 4; x < b.width - 3; x += 8) {
           ctx.fillRect(x, 2, 4, 2);
@@ -266,24 +285,7 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
         ctx.fillRect(cx - 2, cy - 2, 5, 5);
         return;
       }
-      if (b.landmarkId === 'stadion-narodowy') {
-        ctx.fillStyle = '#c0cbdc';
-        ctx.fillRect(0, 0, b.width, b.height);
-        const vertical = b.height > b.width;
-        const along = vertical ? b.height : b.width;
-        const across = vertical ? b.width : b.height;
-        for (let i = 0; i < along; i += 5) {
-          ctx.fillStyle = i % 20 < 10 ? '#f4f4f4' : '#e43b44';
-          if (vertical) ctx.fillRect(2, i, across - 4, 5);
-          else ctx.fillRect(i, 2, 5, across - 4);
-        }
-        ctx.fillStyle = '#f4f4f4';
-        if (vertical) ctx.fillRect(8, 0, across - 16, along);
-        else ctx.fillRect(0, 8, along, across - 16);
-        ctx.fillStyle = '#94b0c2';
-        if (vertical) ctx.fillRect(14, 0, across - 28, along);
-        else ctx.fillRect(0, 14, along, across - 28);
-      } else if (b.landmarkId === 'hala-stulecia') {
+      if (b.landmarkId === 'hala-stulecia') {
         const radius = b.width / 2;
         ctx.clearRect(0, 0, b.width, b.height);
         // Integer scanlines draw the complete silhouette of each concrete ring.
@@ -347,13 +349,6 @@ export function roofTexture(scene: Scene, key: string, b: Block, hash: number) {
           ctx.fillStyle = '#3e8948';
           ctx.fillRect(b.width / 2, y, b.width / 2 - inset, 1);
         }
-      } else if (b.landmarkId === 'afrykarium') {
-        ctx.fillStyle = '#94b0c2';
-        for (let x = 8; x < b.width - 10; x += 4) {
-          const wave = Math.round(8 * Math.sin(x / 18));
-          ctx.fillRect(x, 16 + wave, 4, b.height - 32);
-          ctx.clearRect(x, 0, 4, 7 + Math.floor((wave + 8) / 2));
-        }
       } else if (b.landmarkId === 'stadion-wroclaw') {
         ctx.fillStyle = '#333c57';
         ctx.fillRect(15, 15, b.width - 30, b.height - 30);
@@ -397,7 +392,12 @@ export function wallEmissionTexture(
     Math.ceil(width),
     floors * FLOOR_PX,
     (ctx) => {
-      if (b.landmarkId === 'stadion-narodowy') return;
+      if (
+        b.landmarkId === 'afrykarium' ||
+        b.landmarkId === 'lodz-fabryka-komin' ||
+        b.landmarkId?.startsWith('lodz-mural-')
+      )
+        return;
       for (let floor = 0; floor < floors; floor++) {
         const row = groundFloor && floor === floors - 1 ? 2 : floor % 2;
         for (let x = 0; x < width; x += 32) {
@@ -494,6 +494,60 @@ export function wallTexture(
       ctx.fillStyle = '#f2e2c4';
       for (let y = 0; y < height; y += FLOOR_PX) ctx.fillRect(0, y, width, 2);
     }
+    if (b.landmarkId === 'lodz-kamienica') {
+      ctx.fillStyle = '#e9d7ba';
+      for (let y = 0; y < height; y += FLOOR_PX) ctx.fillRect(0, y, width, 2);
+      for (let x = 1; x < width; x += 32) ctx.fillRect(x, 0, 2, height);
+      if (groundFloor) {
+        ctx.fillStyle = '#613f43';
+        ctx.fillRect(width / 2 - 7, height - 13, 14, 13);
+        ctx.fillRect(width / 2 - 5, height - 15, 10, 2);
+      }
+    }
+    if (b.landmarkId === 'lodz-fabryka-komin') {
+      ctx.fillStyle = '#8c4b3e';
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = '#533230';
+      for (let y = 3; y < height; y += 4) {
+        ctx.fillRect(0, y, width, 1);
+        for (let x = y % 8 === 3 ? 5 : 11; x < width; x += 12)
+          ctx.fillRect(x, y - 3, 1, 3);
+      }
+      ctx.fillStyle = '#af6950';
+      ctx.fillRect(0, 0, width, 4);
+    }
+    if (b.landmarkId === 'lodz-fabryka-hala') {
+      for (let y = 0; y < height; y += FLOOR_PX) {
+        for (let x = 3; x < width - 10; x += 20) {
+          ctx.fillStyle = '#482b28';
+          ctx.fillRect(x, y + 6, 10, FLOOR_PX - 6);
+          ctx.fillRect(x + 2, y + 4, 6, 2);
+          ctx.fillStyle = '#829092';
+          ctx.fillRect(x + 2, y + 7, 6, 2);
+        }
+      }
+    }
+    const mural = b.landmarkId;
+    if (
+      (mural === 'lodz-mural-fale' || mural === 'lodz-mural-romb') &&
+      width >= 60
+    ) {
+      const left = Math.floor(width * 0.15);
+      const right = Math.ceil(width * 0.85);
+      ctx.fillStyle = '#252941';
+      ctx.fillRect(left, 6, right - left, height - 12);
+      for (let x = left; x < right - 2; x += 3) {
+        const phase = (x - left) / (right - left);
+        const offset =
+          mural === 'lodz-mural-fale'
+            ? Math.round((Math.sin(phase * Math.PI * 4) * (height - 32)) / 3)
+            : Math.round((0.5 - Math.abs(phase - 0.5)) * (height - 18));
+        ctx.fillStyle = mural === 'lodz-mural-fale' ? '#38b8a6' : '#ad80c4';
+        ctx.fillRect(x, height / 2 - 5 + offset, 3, 5);
+        ctx.fillStyle = '#f3ba70';
+        ctx.fillRect(x, height / 2 - 2 - offset, 3, 5);
+      }
+    }
     if (b.landmarkId === 'zuraw-korpus') {
       ctx.fillStyle = '#3e2c28';
       ctx.fillRect(0, 0, width, height);
@@ -505,7 +559,9 @@ export function wallTexture(
         ctx.fillRect(width / 2 - 9, height - 14, 18, 14);
       }
     }
-    if (b.wall === 'glass') {
+    if (b.landmarkId === 'afrykarium') {
+      paintAfrykariumGlass(ctx, 0, 0, width, height);
+    } else if (b.wall === 'glass') {
       ctx.fillStyle = '#333c57';
       ctx.fillRect(0, 0, width, height);
       for (let y = 1; y < height; y += FLOOR_PX)
@@ -513,15 +569,6 @@ export function wallTexture(
           ctx.fillStyle = (x + y) % 36 === 3 ? '#73eff7' : '#0099db';
           ctx.fillRect(x, y, Math.min(10, width - x), 9);
         }
-    }
-    if (b.landmarkId === 'stadion-narodowy') {
-      ctx.fillStyle = '#f4f4f4';
-      ctx.fillRect(0, 0, width, height);
-      ctx.fillStyle = '#e43b44';
-      for (let y = 2; y < height - 2; y += 2)
-        for (let x = -height; x < width; x += 16) ctx.fillRect(x + y, y, 8, 2);
-      ctx.fillStyle = '#94b0c2';
-      ctx.fillRect(0, height - 3, width, 3);
     }
     if (b.landmarkId === 'palac-na-wodzie') {
       ctx.fillStyle = '#c0cbdc';

@@ -1,6 +1,7 @@
 import { PNG } from 'pngjs';
 import { PixelTile } from '../src/render/PixelTile.ts';
 import {
+  cyclistVariants,
   emergencyTypes,
   helmetColors,
   largeVehicleTypes,
@@ -599,13 +600,29 @@ export function spriteArt() {
     ),
     'traffic-cyclist': sheet(
       'traffic-cyclist',
-      (t, row) =>
-        drawRider(
-          t,
-          2 * pedalFrames + (row % pedalFrames),
-          1 + Math.floor(row / pedalFrames),
-          [white, mint, gold][Math.floor(row / pedalFrames)]!,
-        ),
+      (t, row) => {
+        const body = Math.floor(row / pedalFrames);
+        const pose = 2 * pedalFrames + (row % pedalFrames);
+        if (body < cyclistVariants) {
+          drawRider(t, pose, 1 + body, [white, mint, gold][body]!);
+          return;
+        }
+        const rickshaw = body === cyclistVariants;
+        drawRider(t, pose, rickshaw ? 1 : 3, cream);
+        if (rickshaw) {
+          for (const x of [7, 21]) t.bevel(x, 23, 4, 8, ink);
+          t.bevel(8, 25, 16, 7, ink);
+          t.bevel(9, 26, 14, 5, teal);
+          t.rect(11, 27, 10, 2, mint);
+          t.rect(11, 29, 10, 1, cream);
+        } else {
+          t.bevel(15, 0, 3, 5, ink);
+          t.bevel(11, 2, 11, 9, ink);
+          t.bevel(12, 3, 9, 7, brown);
+          t.rect(13, 4, 7, 2, gold);
+          t.rect(15, 3, 2, 6, cream);
+        }
+      },
       riderDirections,
     ),
     'traffic-pedestrian': sheet(

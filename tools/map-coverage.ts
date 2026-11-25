@@ -121,6 +121,7 @@ function mapFeatures(world?: WorldModel) {
         shoulder?.shoulderUsable && !parallelBikeInfra,
     ),
     turns: world?.laneGraph.movements ?? [],
+    oncomingCycles: routes.some(({ cycle_body }) => cycle_body !== undefined),
     tramJunction: routes.some(
       ({ kind, junctions }) => kind === 'tram' && junctions.length > 0,
     ),
@@ -181,6 +182,7 @@ function mapRules(world: WorldModel, f: ReturnType<typeof mapFeatures>) {
     [f.night.length, nightRules],
     [f.parkedCars.length, ['MAN-06']],
     [f.speedHazard, ['MAN-08']],
+    [f.oncomingCycles, ['MAN-14']],
     [
       f.turns.some(({ maneuver }) => maneuver === 'right'),
       ['MAN-01', 'MAN-02'],

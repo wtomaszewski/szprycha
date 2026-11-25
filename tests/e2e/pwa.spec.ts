@@ -72,7 +72,7 @@ test('Chromium can install the build and play offline after the first visit', as
 
   expect(
     (await cachedPaths()).filter((path) =>
-      /\/radio\/|\.(ogg|m4a)$|\/(warszawa|wroclaw|krakow|gdansk|wies|poznan|zakopane)-[^/]+\.tmj$/.test(
+      /\/radio\/|\.(ogg|m4a)$|\/(warszawa|wroclaw|krakow|gdansk|wies|poznan|lodz|zakopane)-[^/]+\.tmj$/.test(
         path,
       ),
     ),
@@ -136,8 +136,8 @@ test('Chromium can install the build and play offline after the first visit', as
   ).toEqual([]);
 });
 
-for (const city of ['wies', 'zakopane'] as const)
-  test(`downloads ${city} on first use and opens the same map offline`, async ({
+for (const city of ['wies', 'lodz', 'zakopane'] as const)
+  test(`downloads ${pl.cityPicker[city]} on first use and opens it offline`, async ({
     page,
     context,
   }) => {
@@ -145,7 +145,7 @@ for (const city of ['wies', 'zakopane'] as const)
     await page.waitForFunction(
       () => navigator.serviceWorker.controller !== null,
     );
-    const mapPath = new RegExp(`/${city}-[^/]+\\.tmj$`);
+    const mapPath = new RegExp(`/${city}-[^/]+[.]tmj$`);
     const firstVisit = page.waitForResponse(
       (response) =>
         mapPath.test(new URL(response.url()).pathname) && response.ok(),
