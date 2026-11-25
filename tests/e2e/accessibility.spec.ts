@@ -1,11 +1,13 @@
 import AxeBuilder from '@axe-core/playwright';
+import { PNG } from 'pngjs';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
+import questions from '../../content/pytania.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
-import { chooseCity } from './city-picker';
+import { chooseCity, cityPin, startAt } from './city-picker';
 import { mockGamepad } from './helpers/gamepad';
 import { answer, parentZone } from './helpers/parent-gate';
-import { profile } from './helpers/profile';
+import { profile, seedProgress } from './helpers/profile';
 
 function button(scope: Page | Locator, name: string) {
   return scope.getByRole('button', { name, exact: true });
@@ -139,6 +141,7 @@ test('menu, wybór miasta, Pomoc, Plac i kolejność fokusu', async ({ page }) =
   await page.keyboard.press('Tab');
   await expect(button(page, pl.cityPicker.wroclaw)).toBeFocused();
   await page.keyboard.press('Escape');
+  await expect(campaign).toBeFocused();
   await useKeyboard(page, button(page, pl.tutorial.help));
   await audit(page, dialog(page, pl.tutorial.help), pl.tutorial.help);
   await page.keyboard.press('Escape');
@@ -489,5 +492,423 @@ test.describe('200% tekstu i nawigacja padem', () => {
     await expect(button(pause, pl.driving.simple)).toBeFocused();
     await tap(1);
     await expect(pause).toBeHidden();
+  });
+});
+
+const pickerCities = [
+  'warszawa',
+  'wroclaw',
+  'gdansk',
+  'poznan',
+  'lodz',
+  'krakow',
+  'zakopane',
+  'wies',
+] as const;
+
+for (const viewport of [
+  { width: 1280, height: 720 },
+  { width: 844, height: 390 },
+]) {
+  test(`dziewięć pinezek Wolnej jazdy (${viewport.width} × ${viewport.height})`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.goto('/');
+    await expect(button(page, pl.cityPicker.campaign)).toBeVisible();
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+    await expect(button(page, pl.cityPicker.freeRide)).toBeFocused();
+    await page.keyboard.press('Enter');
+    const picker = page.getByRole('main', { name: pl.cityPicker.title });
+    await audit(page, picker, pl.cityPicker.title);
+    await expect(
+      page.getByRole('img', { name: pl.cityPicker.map }),
+    ).toBeVisible();
+    const training = button(picker, pl.driving.title);
+    const pins = [...pickerCities.map((city) => cityPin(page, city)), training];
+    await expect(picker.locator('.city-picker-pin')).toHaveCount(9);
+    const first = pins[0]!;
+    const size = await first.evaluate(
+      (node) => getComputedStyle(node).fontSize,
+    );
+    await page.evaluate(
+      () => (document.documentElement.style.fontSize = '200%'),
+    );
+    await expect(first).toHaveCSS('font-size', `${2 * parseFloat(size)}px`);
+    for (const pin of pins) {
+      await expect(pin).toBeFocused();
+      await expect(pin).toBeInViewport({ ratio: 0.99 });
+      const reachable = await pin.evaluate((node) => {
+        const { x, y, width, height } = node.getBoundingClientRect();
+        return node.contains(
+          document.elementFromPoint(x + width / 2, y + height / 2),
+        );
+      });
+      expect(reachable).toBe(true);
+      await page.keyboard.press('Tab');
+    }
+    await expect(button(picker, pl.cityPicker.back)).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
+    await expect(training).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('canvas')).toHaveAttribute(
+      'data-map',
+      'miasteczko',
+      { timeout: 15_000 },
+    );
+  });
+}
+
+const newMaps = [
+  {
+    city: 'gdansk',
+    prefix: 'GDA',
+    counter: 'bursztyny',
+    puzzle: 'bursztynQuestion',
+    question: 'Q014',
+    total: 6,
+    saved: ['gda-bursztyn-kamienice', 'gda-bursztyn-fontanna'],
+  },
+  {
+    city: 'wies',
+    prefix: 'WIE',
+    counter: 'szyszki',
+    puzzle: 'szyszkaQuestion',
+    question: 'Q063',
+    total: 4,
+    saved: ['wie-szyszka-lawka', 'wie-szyszka-ganek'],
+  },
+  {
+    city: 'poznan',
+    prefix: 'POZ',
+    counter: 'rogale',
+    puzzle: 'rogalQuestion',
+    question: 'Q014',
+    total: 4,
+    saved: ['poz-rogal-domki', 'poz-rogal-latarnia'],
+  },
+  {
+    city: 'lodz',
+    prefix: 'LOD',
+    counter: 'szpulki',
+    puzzle: 'szpulkaQuestion',
+    question: 'Q014',
+    total: 4,
+    saved: ['lod-szpulka-latarnia', 'lod-szpulka-pasaz'],
+  },
+  {
+    city: 'zakopane',
+    prefix: 'ZAK',
+    counter: 'swierki',
+    puzzle: 'swierkQuestion',
+    question: 'Q057',
+    total: 4,
+    saved: ['zak-swierk-willa', 'zak-swierk-latarnia'],
+  },
+] as const;
+
+for (const map of newMaps) {
+  test(`dialog, kolekcja i wyniki kampanii · ${pl.cityPicker[map.city]}`, async ({
+    page,
+    baseURL,
+  }) => {
+    test.setTimeout(55_000);
+    await page.setViewportSize({ width: 844, height: 390 });
+    const pad = map.city === 'gdansk' ? undefined : await mockGamepad(page);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await seedProgress(page, baseURL, {
+      completed: [
+        ...Array.from(
+          { length: map.city === 'zakopane' ? 5 : 4 },
+          (_, i) => `${map.prefix}-B-0${i + 1}`,
+        ),
+        `${map.prefix}-A1-01`,
+      ],
+      [map.counter]: [...map.saved],
+    });
+    await page.goto('/');
+    const campaign = button(page, pl.cityPicker.campaign);
+    await expect(campaign).toBeVisible();
+    if (pad) await pad.tap(13);
+    else await page.keyboard.press('Tab');
+    await expect(campaign).toBeFocused();
+    if (pad) await pad.tap(0);
+    else await page.keyboard.press('Enter');
+    const city = cityPin(page, map.city);
+    for (const id of pickerCities) {
+      await expect(cityPin(page, id)).toBeFocused();
+      if (id === map.city) break;
+      if (pad) await pad.tap(13);
+      else await page.keyboard.press('Tab');
+    }
+    await expect(city).toBeFocused();
+    if (pad) await pad.tap(0);
+    else await page.keyboard.press('Enter');
+    const canvas = page.locator(`canvas[data-map="${map.city}"]`);
+    await expect(canvas).toHaveAttribute('data-mission', `${map.prefix}-A1-02`);
+    const story = dialog(page, pl.dialogueUi.title);
+    const skip = button(story, pl.dialogueUi.skip);
+    await audit(page, story, pl.dialogueUi.title);
+    await expect(story).toHaveAccessibleDescription(/\S/);
+    const next = button(story, pl.dialogueUi.next);
+    await expect(next).toBeFocused();
+    if (pad) {
+      await pad.tap(12);
+      await expect(skip).toBeFocused();
+      await pad.tap(0);
+    } else {
+      await page.keyboard.press('Shift+Tab');
+      await expect(skip).toBeFocused();
+      await page.keyboard.press('Enter');
+    }
+
+    const label = pl.driving[map.counter];
+    const count = page.getByRole('status', { name: label });
+    await expect(count).toHaveText(`${label} 2/${map.total}`);
+    const phone = dialog(page, pl.phone.title);
+    if (pad) await pad.tap(8);
+    else await page.keyboard.press('KeyM');
+    await expect(phone).toBeVisible();
+    await expect(phone).toContainText(`${label} 2/${map.total}`);
+    await expect(button(phone, pl.phone.close)).toBeFocused();
+    if (pad) await pad.tap(1);
+    else await page.keyboard.press('Escape');
+    await expect(button(page, pl.phone.open)).toBeFocused();
+
+    if (pad) await pad.tap(0);
+    else {
+      await page.keyboard.press('Escape');
+      const pause = dialog(page, pl.driving.paused);
+      await useKeyboard(page, button(pause, pl.driving.classic));
+      await page.keyboard.press('Escape');
+      await page.keyboard.press('KeyX');
+    }
+    await expect(canvas).toHaveAttribute('data-walking', 'true');
+    const puzzle = dialog(page, pl.driving[map.puzzle]);
+    if (pad) await pad.setAxes(0, -1);
+    else await page.keyboard.down('ArrowRight');
+    try {
+      await expect(puzzle).toBeVisible();
+    } finally {
+      if (pad) await pad.setAxes(0, 0);
+      else await page.keyboard.up('ArrowRight');
+    }
+    const question = questions.pytania.find(({ id }) => id === map.question)!;
+    await audit(page, puzzle, pl.driving[map.puzzle]);
+    await expect(puzzle).toHaveAccessibleDescription(question.pytanie);
+    const answers = question.odpowiedzi.map((text) => button(puzzle, text));
+    await expectFocusLoop(page, answers[0]!, answers.at(-1)!);
+    for (let index = 0; index < question.poprawna; index++) {
+      if (pad) await pad.tap(13);
+      else await page.keyboard.press('Tab');
+    }
+    await expect(answers[question.poprawna]!).toBeFocused();
+    if (pad) await pad.tap(0);
+    else await page.keyboard.press('Enter');
+    const proceed = button(puzzle, pl.progression.continue);
+    await expect(proceed).toBeFocused();
+    await expect(puzzle.getByRole('status')).toHaveText(question.wyjasnienie);
+    if (pad) await pad.tap(0);
+    else await page.keyboard.press('Enter');
+    await expect(count).toHaveText(`${label} 3/${map.total}`);
+    // The recorded items still require visiting their checkpoints on this ride.
+    if (pad) await pad.setAxes(0, -1);
+    else await page.keyboard.down('ArrowRight');
+    try {
+      if (map.city === 'lodz' && pad) {
+        // Let the sign-reading encounter finish while still at the last spool.
+        await page.waitForFunction(
+          () => Number(document.querySelector('canvas')?.dataset.x) <= 1544,
+          undefined,
+          { timeout: 20_000 },
+        );
+        await pad.setButton(1);
+      }
+      await expect(story).toBeVisible({ timeout: 25_000 });
+    } finally {
+      if (pad) await pad.setAxes(0, 0);
+      else await page.keyboard.up('ArrowRight');
+    }
+    await useKeyboard(page, skip);
+    const results = dialog(page, pl.missionUi.completed);
+    await audit(page, results, pl.missionUi.completed);
+    await expect(results.locator('.mission-confetti')).toBeHidden();
+    await expect(button(results, pl.missionResults.skip)).toBeHidden();
+  });
+}
+
+test('stop-klatka po wjechaniu na tory we Wsi i lesie', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await startAt(page, 'wies', 1150, 1296, -Math.PI / 2, {
+    crossing: 'przejazd-gminny',
+    seconds: 22,
+  });
+  await page.goto('/');
+  const title = await ruleTitle(page, 'MSC-01');
+  await chooseCity(page, 'wies');
+  const replay = dialog(page, pl.replay.title);
+  await driveUntil(page, replay);
+  await audit(page, replay, pl.replay.title);
+  const tip = await replay.locator('#replay-feedback').textContent();
+  expect(tip).toBeTruthy();
+  await expect(replay).toHaveAccessibleDescription(`${title} ${tip}`);
+  const first = replay.getByRole('button').first();
+  await expect(first).toBeFocused();
+  await expectFocusLoop(page, first, replay.getByRole('button').last());
+});
+
+async function ruleTitle(page: Page, rule: string) {
+  const content: GameContent = await (
+    await page.request.get('/data/content.json')
+  ).json();
+  return content.przepisy.przepisy.find(({ id }) => id === rule)!.tytul;
+}
+
+async function driveUntil(page: Page, panel: Locator) {
+  await page.keyboard.down('ArrowUp');
+  try {
+    await expect(panel).toBeVisible({ timeout: 12_000 });
+  } finally {
+    await page.keyboard.up('ArrowUp');
+  }
+}
+
+async function enableReducedEffects(page: Page) {
+  const settings = dialog(page, pl.settings.title);
+  await useKeyboard(page, button(page, pl.settings.title));
+  const reduce = settings.getByRole('checkbox', {
+    name: pl.settings.reducedEffects,
+  });
+  await reduce.focus();
+  await page.keyboard.press('Space');
+  await expect(reduce).toBeChecked();
+  await page.keyboard.press('Escape');
+}
+
+function pixel(image: PNG, x: number, y: number) {
+  const offset = (y * image.width + x) * 4;
+  return '#' + image.data.subarray(offset, offset + 3).toString('hex');
+}
+
+test('mgła i zjazd mają odrębne kształty, a za szybki zjazd opisuje przyczynę', async ({
+  page,
+  baseURL,
+}, info) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await seedProgress(page, baseURL, { completed: ['ZAK-B-01', 'ZAK-B-02'] });
+  await page.goto('/');
+  await enableReducedEffects(page);
+  const title = await ruleTitle(page, 'MAN-08');
+  await chooseCity(page, 'zakopane', 'campaign');
+  const story = dialog(page, pl.dialogueUi.title);
+  await useKeyboard(page, button(story, pl.dialogueUi.skip));
+  await expect(page.locator('canvas')).toHaveAttribute('data-weather', 'fog');
+  const shot = await page.screenshot({
+    clip: { x: 600, y: 298, width: 80, height: 28 },
+  });
+  await info.attach('Mgła i zjazd', { body: shot, contentType: 'image/png' });
+  const image = PNG.sync.read(shot);
+  for (const y of [7, 14, 20]) expect(pixel(image, 18, y)).toBe('#f4f4f4');
+  expect(pixel(image, 62, 14)).toBe('#f4f4f4');
+  expect(pixel(image, 62, 7)).toBe('#1a1c2c');
+  expect(
+    ratio(pixel(image, 62, 14), pixel(image, 62, 7)),
+  ).toBeGreaterThanOrEqual(3);
+
+  await useKeyboard(page, button(page, pl.missionUi.equip));
+  await useKeyboard(page, button(page, pl.missionUi.turnOnLights));
+  const failure = dialog(page, pl.missionFailure.title);
+  await driveUntil(page, failure);
+  await audit(page, failure, pl.missionFailure.title);
+  await expect(failure).toHaveAccessibleDescription(new RegExp(title));
+  await expect(failure.locator('.mission-failure-stamp')).toHaveCSS(
+    'animation-name',
+    'none',
+  );
+  await expectFocusLoop(
+    page,
+    button(failure, pl.missionFailure.retry),
+    button(failure, pl.missionFailure.exit),
+  );
+});
+
+test('mniej efektów zatrzymuje miganie lamp bez ukrywania krzyża', async ({
+  page,
+}, info) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.clock.install();
+  await startAt(page, 'warszawa', 3470, 2482, -Math.PI / 2, {
+    crossing: 'mokotow-przejazd-z-zaporami',
+    seconds: 23,
+  });
+  await page.goto('/');
+  await enableReducedEffects(page);
+  await chooseCity(page, 'warszawa');
+  await expect(page.locator('canvas')).toHaveAttribute('data-x', '3470');
+  const capture = () =>
+    page.screenshot({ clip: { x: 697, y: 289, width: 38, height: 32 } });
+  const first = await capture();
+  await page.clock.runFor(650);
+  const second = await capture();
+  await info.attach('Sygnał kolejowy', {
+    body: second,
+    contentType: 'image/png',
+  });
+  for (const shot of [first, second]) {
+    const image = PNG.sync.read(shot);
+    for (const x of [11, 25]) {
+      expect(pixel(image, x, 21)).toBe('#f04a4b');
+      expect(pixel(image, x, 5)).toBe('#f4f4f4');
+    }
+    expect(pixel(image, 18, 9)).toBe('#f4f4f4');
+  }
+});
+
+test.describe('zimny start wydania web', () => {
+  test.use({ baseURL: 'http://127.0.0.1:4174', serviceWorkers: 'block' });
+
+  test('plansza startowa i ładowanie jazdy mają komunikat w DOM', async ({
+    page,
+  }) => {
+    let finishContent!: () => void;
+    const contentReady = new Promise<void>(
+      (resolve) => (finishContent = resolve),
+    );
+    await page.route('**/data/content.json', async (route) => {
+      await contentReady;
+      await route.continue();
+    });
+    const status = page.locator('#status');
+    try {
+      await page.goto('/');
+      await expect(page.locator('#pwa-splash')).toHaveAttribute('alt', '');
+      await expect(status).toHaveRole('status');
+      await expect(status).toHaveText(pl.loading);
+      await audit(page, status, '');
+    } finally {
+      finishContent();
+    }
+    await expect(status).toBeHidden();
+    await expect(page.locator('#pwa-splash')).toHaveCount(0);
+    await useKeyboard(page, button(page, pl.cityPicker.freeRide));
+    let finishRide!: () => void;
+    const rideReady = new Promise<void>((resolve) => (finishRide = resolve));
+    await page.route(/\/assets\/City-[^/]+\.js$/, async (route) => {
+      await rideReady;
+      await route.continue();
+    });
+    try {
+      await useKeyboard(page, cityPin(page, 'zakopane'));
+      await expect(status).toHaveText(pl.loading);
+      await audit(page, page.getByRole('main'), pl.cityPicker.title);
+    } finally {
+      finishRide();
+    }
+    await expect(page.locator('canvas[data-map="zakopane"]')).toHaveAttribute(
+      'data-x',
+      /\d+/,
+    );
+    await expect(status).toBeHidden();
   });
 });

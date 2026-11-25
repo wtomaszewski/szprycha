@@ -262,7 +262,8 @@ export class TrainingRoad {
           .fillRect(x - 5, y - 5, 10, 4);
       } else if (sign.code === 'G-3') {
         for (const [width, color] of [
-          [6, 0xe43b44],
+          [8, 0x1a1c2c],
+          [5, 0xe43b44],
           [3, 0xf4f4f4],
         ] as const)
           signs
@@ -699,7 +700,7 @@ export class TrainingRoad {
             postY,
           );
       }
-      signalHousing(this.lights, postX, postY, 24, 14);
+      signalHousing(this.lights, postX, postY - 3, 24, 20);
       const phase = Math.floor(at * 2) % 2;
       for (const [index, offset] of [-5, 5].entries()) {
         const active = flashing && (reducedEffects || phase === index);
@@ -712,8 +713,9 @@ export class TrainingRoad {
       }
       if (flashing) {
         this.lights
-          .lineStyle(1, 0xf4f4f4)
-          .lineBetween(postX - 7, postY + 5, postX + 7, postY + 5);
+          .lineStyle(2, 0xf4f4f4)
+          .lineBetween(postX - 6, postY - 10, postX + 6, postY - 5)
+          .lineBetween(postX + 6, postY - 10, postX - 6, postY - 5);
       }
     }
   }

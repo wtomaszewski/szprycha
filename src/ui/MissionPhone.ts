@@ -13,6 +13,7 @@ export class MissionPhone {
   private readonly storyList = document.createElement('ul');
   private readonly dailyHeading = document.createElement('h3');
   private readonly dailyList = document.createElement('ul');
+  private readonly collection = document.createElement('p');
   private readonly list = document.createElement('ul');
   private starts: HTMLButtonElement[] = [];
 
@@ -57,6 +58,7 @@ export class MissionPhone {
     this.dailyList.setAttribute('aria-labelledby', this.dailyHeading.id);
     this.panel.append(
       header,
+      this.collection,
       this.storyHeading,
       this.storyList,
       this.dailyHeading,
@@ -93,7 +95,10 @@ export class MissionPhone {
     mode: PhoneMode,
     daily: readonly DailyOrder[] = [],
     story?: PhoneStory,
+    collection?: string,
   ) {
+    this.collection.hidden = !collection;
+    this.collection.textContent = collection ?? '';
     this.starts = [];
     this.list.replaceChildren();
     this.storyList.replaceChildren();

@@ -16,6 +16,11 @@ Stan na 25.11.2026.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Audyt dostępności nowych map (#176)
+
+- Audyt objął pięć kampanii, kolekcje, wybór dziewięciu map w Wolnej jeździe oraz komunikaty zimnego startu.
+- SzprychaApp udostępnia podgląd kolekcji. Na płótnie kształty odróżniają mgłę, spadek i ostrzeżenie kolejowe. [Wyniki audytu i zrzuty](docs/AUDYT_DOSTEPNOSCI.md#nowe-mapy)
+
 ## Ciągłość kampanii (#152)
 
 - Po wynikach gra prowadzi do startu następnej misji lub treningu we wszystkich kampaniach. Przy zmianie mapy pokazuje przycisk przejścia. Zapis odtwarza prowadzenie po ponownym wyborze miasta.

@@ -1382,6 +1382,7 @@ export class City extends Scene {
       this.mission && !this.mission.result ? 'active' : 'available',
       this.dailyOffers,
       this.phoneStory,
+      this.collectibles?.preview,
     );
   }
 
@@ -2957,6 +2958,7 @@ export class City extends Scene {
       reduced,
       this.series.glowing,
       reviewing,
+      Boolean(this.world.roadGradeAt(r.x / scale, r.y / scale)),
     );
     const time = night ? 'night' : 'day';
     const canvas = this.game.canvas;

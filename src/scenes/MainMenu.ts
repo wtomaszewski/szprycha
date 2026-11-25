@@ -31,6 +31,7 @@ export class MainMenu extends Scene {
     data?:
       | GameContent
       | {
+          cityPickerMode?: 'campaign' | 'freeRide';
           examResult?: ExamResult;
           mapUnavailable?: string;
           openExam?: boolean;
@@ -164,7 +165,14 @@ export class MainMenu extends Scene {
       about.dialog,
       help.dialog,
     );
-    title.focus();
+    const pickerMode =
+      data && 'cityPickerMode' in data ? data.cityPickerMode : undefined;
+    (pickerMode === 'campaign'
+      ? campaign
+      : pickerMode === 'freeRide'
+        ? freeRide
+        : title
+    ).focus();
     this.readGamepad = menuGamepad(menu);
     const startDrive = (event: KeyboardEvent) => {
       if (

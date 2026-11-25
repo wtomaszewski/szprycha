@@ -348,6 +348,10 @@ export class CityCollectibles {
     parent.append(this.counter);
   }
 
+  get preview() {
+    return `${this.counter.value} · ${this.collection.hint}`;
+  }
+
   get questionLabel() {
     return this.collection.question;
   }
