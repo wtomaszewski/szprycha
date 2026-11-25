@@ -67,6 +67,9 @@ licencja:
     poznan:
       start: poz-sluza-start
       punkty: [poz-sluza-postoj, poz-sluza-meta]
+    lodz:
+      start: lod-aleja-przejazd-start
+      punkty: [lod-aleja-przejazd-postoj, lod-aleja-za-przejazdem]
 silnik:
   ttc_minor_s: 2.0
   ttc_major_s: 1.0

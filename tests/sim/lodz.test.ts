@@ -19,7 +19,7 @@ const dusk: EnvState = { ...day, time: 'dusk' };
 
 it('covers 13 road situations and teaches M01–M07 in Łódź', () => {
   const training = missionContent.misje.filter(
-    ({ miasto }) => miasto === 'lodz',
+    ({ miasto, akt }) => miasto === 'lodz' && akt === 0,
   );
   const { situations, modules } = analyseMapCoverage(
     world,

@@ -218,6 +218,17 @@ Kampania uwzględnia ukończone szkolenia z Wolnej jazdy. Kolejne misje główne
 | Akt 2 | `POZ-A2-01` Trop przez zebrę · `POZ-A2-02` Plan przed światłami | Zatrzymanie i rzeczywiste ustąpienie pieszej idącej na peron. Dojazd do śluzy pasem i przejazd na zielonym. |
 | Akt 3 | `POZ-A3-01` Światła na moście · `POZ-A3-02` Plansza na Ostrów | Kask i lampki o zmroku, bezpieczne podejście po upadku, wezwanie dorosłego i sprawdzenie reakcji oraz przeprowadzenie roweru chodnikiem przy B-9. |
 
+## Kampania — ŁÓDŹ
+
+SzprychaApp uwzględnia szkolenia zaliczone w Wolnej jeździe. Każda z siedmiu głównych misji otwiera kolejny etap.
+
+| Etap | Misje | Ćwiczenia |
+| --- | --- | --- |
+| Szkolenie | `LOD-B-01`–`LOD-B-04` | Strefa zamieszkania, wymijanie, kontrapas po zmroku i ustąpienie przy wyjeździe z bramy. |
+| Akt 1 | `LOD-A1-01` Próbki na Piotrkowską · `LOD-A1-02` Trzy szpulki, jeden trop · `LOD-A1-03` Szkic między rikszami | Przygotowanie roweru, objazd B-1, trzy zagadki drogowe oraz rzeczywiste wymijanie roweru cargo i rikszy. |
+| Akt 2 | `LOD-A2-01` Nitka pod prąd · `LOD-A2-02` Klucz spod muralu | Światła i jazda kontrapasem z tabliczką pod B-2, zatrzymanie i ustąpienie przy wyjeździe z bramy. |
+| Akt 3 | `LOD-A3-01` Pomoc na podwórku · `LOD-A3-02` Światło w fabryce | Bezpieczne podejście, wezwanie dorosłego i rozmowa z 112 w scence. Dojazd DDR do sygnalizowanego przejazdu rowerowego i dostawa do hali. |
+
 ## Wspólne — Miasteczko Ruchu Drogowego
 - **Plac manewrowy:** PLAC-01 ósemka, PLAC-02 slalom, PLAC-03 wąski tor, PLAC-04 zatrzymanie w polu, PLAC-05 ruszanie i sygnalizacja, PLAC-06 jazda z jedną ręką (sygnalizowanie skrętu). Każdy element: brąz/srebro/złoto czasowe, ale tylko przejazd bez dotknięcia linii/pachołka i bez podparcia nogą się liczy.
 - **Licencja Szprychy** — egzamin (docs/02 §Finał, docs/04 §6).
