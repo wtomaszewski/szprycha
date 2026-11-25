@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
 import { chooseCity } from './city-picker';
-import { profile } from './helpers/profile';
+import { profile, seedProgress } from './helpers/profile';
 
 test.use({ timezoneId: 'Europe/Warsaw', reducedMotion: 'reduce' });
 
@@ -110,15 +110,29 @@ test('unlocks daily offers only after completing that city’s campaign', async 
   ).toHaveCount(3);
 });
 
-test('retries a timed-out daily delivery from its start', async ({ page }) => {
-  test.setTimeout(120_000);
+test('retries a timed-out daily delivery from its start', async ({
+  page,
+  baseURL,
+}) => {
   await page.clock.setFixedTime(new Date('2026-11-23T12:00:00+01:00'));
+  // This seed offers a night delivery with an unfastened helmet at the start.
+  await seedProgress(page, baseURL, { nicknameSeed: 6 });
   await page.goto('/');
   const canvas = page.locator('canvas');
   await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
-  // This seed offers a night delivery with an unfastened helmet at the start.
-  await profile(page, { nicknameSeed: 6 });
-  await page.reload();
+  // Keep the generated delivery and its failure rules, with a short timer in this fixture.
+  await page.evaluate(async (moduleUrl) => {
+    const { DailyOrderGenerator } = (await import(
+      moduleUrl
+    )) as typeof import('../../src/gameplay/procedural/orders');
+    const { generate } = DailyOrderGenerator.prototype;
+    DailyOrderGenerator.prototype.generate = function (...args) {
+      const offers = generate.apply(this, args);
+      for (const offer of offers)
+        if (offer.kind === 'delivery') offer.definition.limit_s = 2;
+      return offers;
+    };
+  }, '/src/gameplay/procedural/orders.ts');
   await chooseCity(page, 'warszawa');
   await page.keyboard.press('KeyM');
   const phone = page.getByRole('dialog', { name: pl.phone.title });
@@ -143,9 +157,7 @@ test('retries a timed-out daily delivery from its start', async ({ page }) => {
   await dialogue.getByRole('button', { name: pl.dialogueUi.skip }).click();
 
   const failure = page.getByRole('dialog', { name: pl.missionFailure.title });
-  await expect(failure).toContainText(pl.missionFailure.reasons.czas_minal, {
-    timeout: 100_000,
-  });
+  await expect(failure).toContainText(pl.missionFailure.reasons.czas_minal);
   await expect.poll(async () => (await profile(page)).missionPoints).toBe(0);
   await failure.getByRole('button', { name: pl.missionFailure.retry }).click();
   await expect(failure).toBeHidden();

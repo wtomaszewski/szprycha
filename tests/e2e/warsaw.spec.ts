@@ -1,5 +1,8 @@
 import { expect as playwrightExpect, test, type Page } from '@playwright/test';
 import { chooseCity } from './city-picker';
+import { profile, seedProgress } from './helpers/profile';
+import { installRideClock, setRideClockRate } from './helpers/ride-clock';
+import { shiftPois } from './helpers/shift-pois';
 import type { GameContent } from '../../src/content/schemas';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import questions from '../../content/pytania.json' with { type: 'json' };
@@ -9,6 +12,8 @@ import {
   type WarsawMissionId,
   type Waypoint,
 } from '../missions/warsaw-routes';
+
+test.use({ baseURL: 'http://127.0.0.1:4174', serviceWorkers: 'block' });
 
 const expect = playwrightExpect.configure({ timeout: 12_000 });
 const canvas = (page: Page) => page.locator('canvas');
@@ -33,29 +38,9 @@ async function routeWithGamepad(page: Page, points: Waypoint[]) {
   }, points);
 }
 
-test('completes Warsaw act 1 in order and explains the illegal shortcut', async ({
-  page,
-}) => {
-  test.setTimeout(480_000);
+async function installGamepad(page: Page) {
   await page.addInitScript(() => {
     let route: Waypoint[] = [];
-    let rate = 1;
-    const wallTime = performance.now.bind(performance);
-    let lastWallTime = wallTime();
-    let gameTime = lastWallTime;
-    const now = () => {
-      const current = wallTime();
-      gameTime += (current - lastWallTime) * rate;
-      lastWallTime = current;
-      return gameTime;
-    };
-    const raf = window.requestAnimationFrame.bind(window);
-    Object.defineProperty(performance, 'now', { value: now });
-    window.requestAnimationFrame = (callback) => raf(() => callback(now()));
-    window.addEventListener('test:warsaw-rate', (event) => {
-      now();
-      rate = (event as CustomEvent<number>).detail;
-    });
     let addressedEvent = false;
     window.addEventListener('test:warsaw-route', (event) => {
       route = (event as CustomEvent<Waypoint[]>).detail;
@@ -131,7 +116,13 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
       },
     });
   });
+}
 
+const ids = Object.keys(warsawRoutes) as WarsawMissionId[];
+
+test('completes STOP training with Warsaw act 1 still locked', async ({
+  page,
+}) => {
   await page.goto('/');
   await expect(canvas(page)).toHaveAttribute('data-scene', 'MainMenu');
   await page.keyboard.press('Enter');
@@ -160,212 +151,281 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
   await page.keyboard.up('ArrowUp');
   await skip(page);
 
-  const ids = Object.keys(warsawRoutes) as WarsawMissionId[];
-  const speedUp = (detail: number) =>
-    page.evaluate((speed) => {
-      window.dispatchEvent(
-        new CustomEvent('test:warsaw-rate', { detail: speed }),
-      );
-    }, detail);
-  for (const [index, id] of ids.entries()) {
-    await test.step(id, async () => {
-      await expect(
-        page.getByText(pl.missionUi.completed, { exact: true }),
-      ).toBeVisible();
-      await page.keyboard.press('KeyM');
-      await expect(order(page, id)).toBeEnabled();
-      for (const locked of ids.slice(index + 1))
-        await expect(order(page, locked)).toHaveCount(0);
-      await order(page, id).click();
-      await expect(canvas(page)).toHaveAttribute('data-mission', id);
-      await expect(canvas(page)).toHaveAttribute(
-        'data-map',
-        id === 'WAW-T-02' ? 'miasteczko' : 'warszawa',
-      );
-      await skip(page);
-      if (id === 'WAW-T-02') {
-        await page.screenshot({ path: 'test-results/m4d-garaz.png' });
-        await page.getByRole('button', { name: pl.missionUi.equip }).click();
-        await expect(
-          page.getByRole('button', { name: pl.missionUi.turnOnLights }),
-        ).toBeVisible();
-        await expect(page.getByText(pl.misje[id].cel2)).toHaveCount(0);
-        await page
-          .getByRole('button', { name: pl.missionUi.turnOnLights })
-          .click();
-        await expect(page.getByText(pl.misje[id].cel2)).toBeVisible();
-      }
-      if (id === 'WAW-A1-02')
-        await page.screenshot({ path: 'test-results/m4d-praga.png' });
-      if (id === 'WAW-A1-03') {
-        await expect(canvas(page)).toHaveAttribute('data-y', '878');
-        await page.keyboard.down('ArrowUp');
-        await expect
-          .poll(() => riderY(page), { intervals: [30, 50, 70] })
-          .toBeLessThanOrEqual(590);
-        await page.keyboard.up('ArrowUp');
-        await page.keyboard.down('Space');
-        await expect(canvas(page)).toHaveAttribute('data-speed', '0');
-        const stoppedY = await riderY(page);
-        expect(stoppedY).toBeGreaterThan(512);
-        expect(stoppedY).toBeLessThan(576);
-        const crossingTraffic = page.getByText(
-          pl.trafficEvents.pojazd_na_skrzyzowaniu,
-          { exact: true },
-        );
-        await expect(crossingTraffic).toBeVisible();
-        await expect(crossingTraffic).toBeHidden({ timeout: 12_000 });
-        await page.keyboard.up('Space');
+  await expect(
+    page.getByText(pl.missionUi.completed, { exact: true }),
+  ).toBeVisible();
+  await expect
+    .poll(async () => (await profile(page)).bestScores['WAW-T-01'])
+    .toBeDefined();
+});
 
-        await page.keyboard.down('ArrowUp');
-        await expect
-          .poll(() => riderY(page), { intervals: [30, 50, 70] })
-          .toBeLessThanOrEqual(378);
-        await page.keyboard.up('ArrowUp');
-        await page.keyboard.down('Space');
-        await expect(canvas(page)).toHaveAttribute('data-speed', '0');
-        await page.keyboard.up('Space');
-        await expect(
-          page.getByText(pl.misje[id].cel4, { exact: true }),
-        ).toBeVisible();
-      }
-      await page.keyboard.press('Escape');
-      await page
-        .getByRole('button', { name: pl.driving.classic, exact: true })
-        .click();
-      await page.keyboard.press('Escape');
-      if (id === 'WAW-A1-03') {
-        // The keyboard has already cleared STOP. Now enter the passage and deliver.
-        await routeWithGamepad(page, warsawRoutes[id].shortcut.slice(2));
-        const lesson = page.getByRole('dialog', { name: pl.replay.title });
-        await expect(lesson.locator('#replay-feedback')).toContainText(
-          'Białe koło z czerwoną obwódką oznacza zakaz ruchu także dla rowerów',
-        );
-        await page.screenshot({
-          path: 'test-results/m4d-skrot-stop-klatka.png',
-        });
-        await lesson.getByRole('button', { name: pl.replay.resume }).click();
-        await speedUp(4);
-      } else if (id === 'WAW-A1-04') {
-        await routeWithGamepad(page, warsawRoutes[id].legal);
-        await expect
-          .poll(async () => Number(await canvas(page).getAttribute('data-x')), {
-            timeout: 14_000,
-          })
-          .toBeGreaterThan(2450);
-        await page.screenshot({ path: 'test-results/m4d-most.png' });
-        await expect(
-          page.getByText(pl.trafficEvents.pieszy_na_pasach, { exact: true }),
-        ).toBeVisible({ timeout: 15_000 });
-        await speedUp(4);
-      } else if (id === 'WAW-A1-05') {
-        const shocks = page.getByRole('progressbar', {
-          name: pl.missionUi.shocks,
-        });
-        await expect(shocks).toBeVisible();
-        await expect(shocks).toHaveAttribute('value', '0');
-        await routeWithGamepad(page, warsawRoutes[id].legal);
-        await expect(
-          page.getByText(pl.trafficEvents.turysci_na_starowce, { exact: true }),
-        ).toBeVisible({ timeout: 12_000 });
-        await page.screenshot({ path: 'test-results/m4d-starowka.png' });
-        await speedUp(4);
-      } else if (id === 'WAW-A1-06') {
-        const photo = page.getByRole('button', {
-          name: pl.missionUi.photograph,
-        });
-        const [stop, junction, sidewalk, crossing, sign, ...clue] =
-          warsawRoutes[id].legal;
-        await routeWithGamepad(page, [stop!, junction!]);
-        await expect(
-          page.getByText(pl.trafficEvents.polecenie_oli, { exact: true }),
-        ).toBeVisible();
-        await expect(
-          page.getByText(pl.trafficEvents.olaRusza, { exact: true }),
-        ).toBeVisible();
-        await expect(photo).toBeDisabled();
-        await expect
-          .poll(async () => Number(await canvas(page).getAttribute('data-x')))
-          .toBeGreaterThan(3568);
-        await expect(canvas(page)).toHaveAttribute('data-speed', '0');
-        await routeWithGamepad(page, [sidewalk!, crossing!, sign!]);
-        await expect(photo).toBeEnabled({ timeout: 20_000 });
-        await page.screenshot({ path: 'test-results/m4d-znak.png' });
-        await photo.click();
-        await expect(page.getByText(pl.m5c.photoSaved)).toBeVisible();
-        await expect(
-          page.getByText(pl.misje[id].cel4, { exact: true }),
-        ).toBeVisible();
-        await routeWithGamepad(page, clue);
-        await speedUp(4);
-      } else {
-        await routeWithGamepad(page, warsawRoutes[id].legal);
-        if (id !== 'WAW-T-02') await speedUp(4);
-      }
-      const replay = page.getByRole('dialog', { name: pl.replay.title });
-      const control = page.getByRole('dialog', {
-        name: pl.progression.questionTitle,
-      });
-      await expect(async () => {
-        if (await replay.isVisible())
-          await replay.getByRole('button', { name: pl.replay.resume }).click();
-        if (await control.isVisible()) {
-          const prompt = await control
-            .locator('.control-question-prompt')
-            .textContent();
-          const options = await control
-            .locator('.control-question-answers button')
-            .allTextContents();
-          const question = findDisplayedQuestion(
-            questions.pytania,
-            prompt,
-            options,
-          )!;
-          await control
-            .getByRole('button', {
-              name: question.odpowiedzi[question.poprawna],
-              exact: true,
-            })
-            .click();
-          await control
-            .getByRole('button', { name: pl.progression.continue })
-            .click();
-        }
-        await expect(dialogue(page)).toBeVisible({ timeout: 500 });
-      }).toPass({ timeout: 100_000, intervals: [150] });
-      await speedUp(1);
-      if (id === 'WAW-A1-04')
-        await expect(dialogue(page)).toContainText(pl.dialogi[id].koniec_tekst);
-      if (id === 'WAW-A1-06') {
-        await dialogue(page)
-          .getByRole('button', { name: pl.dialogueUi.next })
-          .click();
-        await expect(dialogue(page)).toContainText(pl.dialogi[id].final);
-      }
-      await routeWithGamepad(page, []);
-      await skip(page);
-      if (id === 'WAW-A1-02')
-        await page.screenshot({ path: 'test-results/m4d-bazar.png' });
-      if (id === 'WAW-A1-03') {
-        await expect(
-          page.getByText(pl.missionUi.illegalShortcut),
-        ).toBeVisible();
-        await page.screenshot({ path: 'test-results/m4d-skrot-wynik.png' });
-      }
-      await expect(
-        page.getByText(pl.missionUi.completed, { exact: true }),
-      ).toBeVisible();
-      const summary = page.getByRole('region', { name: pl.missionUi.result });
-      if (id === 'WAW-A1-04') {
-        await expect(summary).toContainText(pl.missionUi.yourPoints);
-        await expect(summary).toContainText(pl.missionUi.turboPoints);
-      }
-      if (id === 'WAW-A1-05')
-        await expect(summary).toContainText(pl.missionUi.smoothBonus);
-      if (id === 'WAW-A1-06')
-        await expect(summary).toContainText(`${pl.missionUi.photos} 1`);
+const pragaDetour = [
+  'praga_szkola',
+  'praga_zjazd_polnoc',
+  'praga_petla_zachod',
+  'praga_petla_wschod',
+  'praga_lacznik_srodek',
+  'praga_lacznik_zachod',
+  'praga_osiedle_powrot',
+  'praga_warsztat_powrot',
+];
+const riverDetour = [
+  'starowka_lacznik',
+  'bulwar_polnoc',
+  'bulwar_srodek',
+  'bulwar_poludnie',
+  'bulwar_noc_start',
+  'bulwary_noca',
+];
+
+// Leave the original delivery, traffic and sign locations in place. Put the
+// return checkpoints on a short route so the mission still advances each goal.
+const detourFinish = {
+  'WAW-A1-01': [239, 405],
+  'WAW-A1-02': [1452, 1125],
+  'WAW-A1-03': [1300, 248],
+  'WAW-A1-04': [3034, 596],
+  'WAW-A1-05': [3784, 764],
+  'WAW-A1-06': [3820, 346],
+} as const;
+const shortRoutes = {
+  'WAW-T-02': warsawRoutes['WAW-T-02'].legal,
+  'WAW-A1-01': warsawRoutes['WAW-A1-01'].legal.slice(0, 4),
+  'WAW-A1-02': warsawRoutes['WAW-A1-02'].legal.slice(0, 5),
+  'WAW-A1-03': warsawRoutes['WAW-A1-03'].shortcut.slice(2, 4),
+  'WAW-A1-04': [
+    ...warsawRoutes['WAW-A1-04'].legal.slice(0, 5),
+    { x: 3034, y: 596 },
+  ],
+  'WAW-A1-05': warsawRoutes['WAW-A1-05'].legal.slice(0, 4),
+  'WAW-A1-06': warsawRoutes['WAW-A1-06'].legal.slice(0, 7),
+};
+
+for (const [index, id] of ids.entries()) {
+  test(`unlocks and completes Warsaw order ${id}`, async ({
+    page,
+    baseURL,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await installRideClock(page);
+    await installGamepad(page);
+    if (id !== 'WAW-T-02') {
+      const points = index <= 3 ? pragaDetour : riverDetour;
+      await shiftPois(
+        page,
+        'warszawa',
+        Object.fromEntries(points.map((name) => [name, detourFinish[id]])),
+      );
+    }
+    const completed = ['WAW-T-01', ...ids.slice(0, index)];
+    await seedProgress(page, baseURL, {
+      completed,
+      bestScores: Object.fromEntries(completed.map((mission) => [mission, 0])),
     });
-  }
+    await page.goto('/');
+    if (id === 'WAW-T-02') {
+      await expect(canvas(page)).toHaveAttribute('data-scene', 'MainMenu');
+      await page.keyboard.press('Enter');
+      await expect(canvas(page)).toHaveAttribute('data-map', 'miasteczko');
+    } else {
+      await chooseCity(page, 'warszawa');
+    }
+    await page.keyboard.press('KeyM');
+    await expect(order(page, id)).toBeEnabled();
+    for (const locked of ids.slice(index + 1))
+      await expect(order(page, locked)).toHaveCount(0);
+    await order(page, id).click();
+    await expect(canvas(page)).toHaveAttribute('data-mission', id);
+    await expect(canvas(page)).toHaveAttribute(
+      'data-map',
+      id === 'WAW-T-02' ? 'miasteczko' : 'warszawa',
+    );
+    await skip(page);
+    if (id === 'WAW-T-02') {
+      await page.screenshot({ path: 'test-results/m4d-garaz.png' });
+      await page.getByRole('button', { name: pl.missionUi.equip }).click();
+      await expect(
+        page.getByRole('button', { name: pl.missionUi.turnOnLights }),
+      ).toBeVisible();
+      await expect(page.getByText(pl.misje[id].cel2)).toHaveCount(0);
+      await page
+        .getByRole('button', { name: pl.missionUi.turnOnLights })
+        .click();
+      await expect(page.getByText(pl.misje[id].cel2)).toBeVisible();
+    }
+    if (id === 'WAW-A1-02')
+      await page.screenshot({ path: 'test-results/m4d-praga.png' });
+    await page.keyboard.press('Escape');
+    await page
+      .getByRole('button', { name: pl.driving.classic, exact: true })
+      .click();
+    await page.keyboard.press('Escape');
+    if (id === 'WAW-A1-03') {
+      await expect(canvas(page)).toHaveAttribute('data-y', '878');
+      await setRideClockRate(page, 2);
+      await routeWithGamepad(page, [
+        { x: 1130, y: 548, maxInput: 0.6, until: 'traffic-ended' },
+      ]);
+      await expect
+        .poll(() => riderY(page), { intervals: [30, 50, 70] })
+        .toBeLessThanOrEqual(590);
+      await expect(canvas(page)).toHaveAttribute('data-speed', '0');
+      const stoppedY = await riderY(page);
+      expect(stoppedY).toBeGreaterThan(512);
+      expect(stoppedY).toBeLessThan(576);
+      const crossingTraffic = page.getByText(
+        pl.trafficEvents.pojazd_na_skrzyzowaniu,
+        { exact: true },
+      );
+      await expect(crossingTraffic).toBeVisible();
+      await expect(crossingTraffic).toBeHidden({ timeout: 12_000 });
+      await routeWithGamepad(page, [{ x: 1130, y: 351, maxInput: 0.6 }]);
+      await expect
+        .poll(() => riderY(page), { intervals: [30, 50, 70] })
+        .toBeLessThanOrEqual(378);
+      await expect(canvas(page)).toHaveAttribute('data-speed', '0');
+      await expect(
+        page.getByText(pl.misje[id].cel4, { exact: true }),
+      ).toBeVisible();
+    }
+    if (id === 'WAW-A1-03') {
+      // Enter the passage only after the rider has cleared STOP.
+      await routeWithGamepad(page, shortRoutes[id]);
+      const lesson = page.getByRole('dialog', { name: pl.replay.title });
+      await expect(lesson.locator('#replay-feedback')).toContainText(
+        'Białe koło z czerwoną obwódką oznacza zakaz ruchu także dla rowerów',
+      );
+      await page.screenshot({
+        path: 'test-results/m4d-skrot-stop-klatka.png',
+      });
+      await lesson.getByRole('button', { name: pl.replay.resume }).click();
+      await setRideClockRate(page, 4);
+    } else if (id === 'WAW-A1-04') {
+      await setRideClockRate(page, 2);
+      await routeWithGamepad(page, shortRoutes[id]);
+      await expect
+        .poll(async () => Number(await canvas(page).getAttribute('data-x')), {
+          timeout: 14_000,
+        })
+        .toBeGreaterThan(2450);
+      await page.screenshot({ path: 'test-results/m4d-most.png' });
+      await expect(
+        page.getByText(pl.trafficEvents.pieszy_na_pasach, { exact: true }),
+      ).toBeVisible({ timeout: 15_000 });
+      await setRideClockRate(page, 4);
+    } else if (id === 'WAW-A1-05') {
+      const shocks = page.getByRole('progressbar', {
+        name: pl.missionUi.shocks,
+      });
+      await expect(shocks).toBeVisible();
+      await expect(shocks).toHaveAttribute('value', '0');
+      await routeWithGamepad(page, shortRoutes[id]);
+      await expect(
+        page.getByText(pl.trafficEvents.turysci_na_starowce, { exact: true }),
+      ).toBeVisible({ timeout: 12_000 });
+      await page.screenshot({ path: 'test-results/m4d-starowka.png' });
+      await setRideClockRate(page, 4);
+    } else if (id === 'WAW-A1-06') {
+      const photo = page.getByRole('button', {
+        name: pl.missionUi.photograph,
+      });
+      const [stop, junction, sidewalk, crossing, sign, ...clue] =
+        shortRoutes[id];
+      await routeWithGamepad(page, [stop!, junction!]);
+      await expect(
+        page.getByText(pl.trafficEvents.polecenie_oli, { exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByText(pl.trafficEvents.olaRusza, { exact: true }),
+      ).toBeVisible();
+      await expect(photo).toBeDisabled();
+      await expect
+        .poll(async () => Number(await canvas(page).getAttribute('data-x')))
+        .toBeGreaterThan(3568);
+      await expect(canvas(page)).toHaveAttribute('data-speed', '0');
+      await setRideClockRate(page, 2);
+      await routeWithGamepad(page, [sidewalk!, crossing!, sign!]);
+      await expect(photo).toBeEnabled({ timeout: 20_000 });
+      await page.screenshot({ path: 'test-results/m4d-znak.png' });
+      await photo.click();
+      await expect(page.getByText(pl.m5c.photoSaved)).toBeVisible();
+      await expect(
+        page.getByText(pl.misje[id].cel4, { exact: true }),
+      ).toBeVisible();
+      await routeWithGamepad(page, clue);
+      await setRideClockRate(page, 4);
+    } else {
+      await routeWithGamepad(page, shortRoutes[id]);
+      if (id !== 'WAW-T-02') await setRideClockRate(page, 4);
+    }
+    const replay = page.getByRole('dialog', { name: pl.replay.title });
+    const control = page.getByRole('dialog', {
+      name: pl.progression.questionTitle,
+    });
+    await expect(async () => {
+      if (await replay.isVisible())
+        await replay.getByRole('button', { name: pl.replay.resume }).click();
+      if (await control.isVisible()) {
+        const prompt = await control
+          .locator('.control-question-prompt')
+          .textContent();
+        const options = await control
+          .locator('.control-question-answers button')
+          .allTextContents();
+        const question = findDisplayedQuestion(
+          questions.pytania,
+          prompt,
+          options,
+        )!;
+        await control
+          .getByRole('button', {
+            name: question.odpowiedzi[question.poprawna],
+            exact: true,
+          })
+          .click();
+        await control
+          .getByRole('button', { name: pl.progression.continue })
+          .click();
+      }
+      await expect(dialogue(page)).toBeVisible({ timeout: 500 });
+    }).toPass({ timeout: 20_000, intervals: [150] });
+    await setRideClockRate(page, 1);
+    if (id === 'WAW-A1-04')
+      await expect(dialogue(page)).toContainText(pl.dialogi[id].koniec_tekst);
+    if (id === 'WAW-A1-06') {
+      await dialogue(page)
+        .getByRole('button', { name: pl.dialogueUi.next })
+        .click();
+      await expect(dialogue(page)).toContainText(pl.dialogi[id].final);
+    }
+    await routeWithGamepad(page, []);
+    await skip(page);
+    if (id === 'WAW-A1-02')
+      await page.screenshot({ path: 'test-results/m4d-bazar.png' });
+    if (id === 'WAW-A1-03') {
+      await expect(page.getByText(pl.missionUi.illegalShortcut)).toBeVisible();
+      await page.screenshot({ path: 'test-results/m4d-skrot-wynik.png' });
+    }
+    await expect(
+      page.getByText(pl.missionUi.completed, { exact: true }),
+    ).toBeVisible();
+    const summary = page.getByRole('region', { name: pl.missionUi.result });
+    if (id === 'WAW-A1-04') {
+      await expect(summary).toContainText(pl.missionUi.yourPoints);
+      await expect(summary).toContainText(pl.missionUi.turboPoints);
+    }
+    if (id === 'WAW-A1-05')
+      await expect(summary).toContainText(pl.missionUi.smoothBonus);
+    if (id === 'WAW-A1-06')
+      await expect(summary).toContainText(`${pl.missionUi.photos} 1`);
+    await expect
+      .poll(async () => (await profile(page)).bestScores[id])
+      .toBeDefined();
+    if (id === 'WAW-A1-06') await checkSavedFinale(page);
+  });
+}
+
+async function checkSavedFinale(page: Page) {
   await page.reload();
   await page.getByRole('button', { name: pl.skillMap.title }).click();
   const skillMap = page.getByRole('dialog', { name: pl.skillMap.title });
@@ -395,4 +455,4 @@ test('completes Warsaw act 1 in order and explains the illegal shortcut', async 
   await expect(canvas(page)).toHaveAttribute('data-map', 'warszawa');
   await page.keyboard.press('KeyM');
   await expect(order(page, 'WAW-A1-06')).toBeEnabled();
-});
+}

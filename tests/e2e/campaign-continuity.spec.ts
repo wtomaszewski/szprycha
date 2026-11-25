@@ -1,7 +1,9 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { chooseCity, driveTo, startAt } from './city-picker';
-import { profile } from './helpers/profile';
+import { profile, seedProgress } from './helpers/profile';
+import { shiftPois } from './helpers/shift-pois';
+import { installRideClock, setRideClockRate } from './helpers/ride-clock';
 
 const city = (page: Page) => page.locator('canvas[data-scene="City"]');
 const directions = (page: Page) =>
@@ -65,7 +67,7 @@ async function accept(page: Page, id: string) {
   );
 }
 
-test.use({ serviceWorkers: 'block' });
+test.use({ baseURL: 'http://127.0.0.1:4174', serviceWorkers: 'block' });
 
 test('Warsaw continues after training, transfers maps, and accepts at the marker', async ({
   page,
@@ -122,18 +124,29 @@ test.describe('mobile 640 × 360', () => {
 
   test('Poznań restores a guided ride and accepts the next mission after stopping', async ({
     page,
+    baseURL,
   }, info) => {
-    test.setTimeout(75_000);
-    await seed(page, [
-      'POZ-B-01',
-      'POZ-B-02',
-      'POZ-B-03',
-      'POZ-B-04',
-      'POZ-A1-01',
-      'POZ-A1-02',
-      'POZ-A2-01',
-      'POZ-A2-02',
-    ]);
+    await installRideClock(page);
+    // Keep the turn, bridge and help objectives, with a shorter approach on the same lane.
+    await shiftPois(page, 'poznan', {
+      'poz-bulwar-start': [1712, 1988],
+      'poz-bulwar-zakret': [1712, 2008],
+      'poz-bulwar-most': [1712, 2035],
+    });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await seedProgress(page, baseURL, {
+      completed: [
+        'POZ-B-01',
+        'POZ-B-02',
+        'POZ-B-03',
+        'POZ-B-04',
+        'POZ-A1-01',
+        'POZ-A1-02',
+        'POZ-A2-01',
+        'POZ-A2-02',
+      ],
+    });
+    await page.goto('/');
     await chooseCity(page, 'poznan', 'campaign');
     await expect(city(page)).toHaveAttribute('data-mission', 'POZ-A3-01');
     await skip(page);
@@ -144,7 +157,7 @@ test.describe('mobile 640 × 360', () => {
       .getByRole('button', { name: pl.missionUi.turnOnLights, exact: true })
       .click();
     await page.keyboard.press('KeyX');
-    await driveTo(page, 'ArrowRight', 'x', 1707, true);
+    await setRideClockRate(page, 2);
     await driveTo(page, 'ArrowDown', 'y', 2072, true);
     for (const answer of [
       pl.misje['POZ-B-04'].odp2,
@@ -172,6 +185,7 @@ test.describe('mobile 640 × 360', () => {
       path: screenshot,
       contentType: 'image/png',
     });
+    await setRideClockRate(page, 2);
     await driveTo(page, 'ArrowLeft', 'x', 1555, false);
     await expect(offer(page)).toBeHidden();
     await driveTo(page, 'ArrowDown', 'y', 2160, true);

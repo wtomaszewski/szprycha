@@ -1,14 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 import { chooseCity } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
-import {
-  progressDatabase,
-  progressRecordKey,
-  progressStoreName,
-  type ProgressProfile,
-} from '../../src/core/progressStore';
+import { seedProgress } from './helpers/profile';
 import { campaignRoutes } from '../missions/warsaw-campaign-routes';
 import { warsawRoutes, type Waypoint } from '../missions/warsaw-routes';
+
+test.use({ baseURL: 'http://127.0.0.1:4174', serviceWorkers: 'block' });
 
 const canvas = (page: Page) => page.locator('canvas');
 const phone = (page: Page) =>
@@ -23,38 +20,6 @@ const order = (page: Page, id: keyof typeof pl.misje) =>
 const acts = Object.keys(campaignRoutes) as (keyof typeof campaignRoutes)[];
 const completedAct1 = ['WAW-T-01', ...Object.keys(warsawRoutes)];
 
-async function saveCompletions(page: Page, completed: string[]) {
-  await page.evaluate(
-    ({ database, store, key, completed }) =>
-      new Promise<void>((resolve, reject) => {
-        const open = indexedDB.open(database);
-        open.onerror = () => reject(open.error);
-        open.onsuccess = () => {
-          const db = open.result;
-          const transaction = db.transaction(store, 'readwrite');
-          const records = transaction.objectStore(store);
-          const read = records.get(key);
-          read.onsuccess = () => {
-            const profile: ProgressProfile = read.result;
-            profile.completed = completed;
-            records.put(profile, key);
-          };
-          transaction.oncomplete = () => {
-            db.close();
-            resolve();
-          };
-          transaction.onabort = () => reject(transaction.error);
-        };
-      }),
-    {
-      database: progressDatabase,
-      store: progressStoreName,
-      key: progressRecordKey,
-      completed,
-    },
-  );
-}
-
 async function openPhone(page: Page) {
   await chooseCity(page, 'warszawa');
   await expect(canvas(page)).toHaveAttribute('data-map', 'warszawa');
@@ -62,31 +27,36 @@ async function openPhone(page: Page) {
   await expect(phone(page)).toBeVisible();
 }
 
-test('unlocks each Warsaw order in sequence from saved campaign progress', async ({
+test('keeps Warsaw acts 2 and 3 locked without campaign progress', async ({
   page,
 }) => {
-  test.setTimeout(100_000);
   await page.goto('/');
   await openPhone(page);
   for (const id of acts) await expect(order(page, id)).toHaveCount(0);
-
-  for (const [index, id] of acts.entries()) {
-    await test.step(id, async () => {
-      await saveCompletions(page, [...completedAct1, ...acts.slice(0, index)]);
-      await page.reload();
-      await openPhone(page);
-      await expect(order(page, id)).toBeEnabled();
-      for (const locked of acts.slice(index + 1))
-        await expect(order(page, locked)).toHaveCount(0);
-      await order(page, id).click();
-      await expect(canvas(page)).toHaveAttribute('data-mission', id);
-      await expect(dialogue(page)).toBeVisible();
-    });
-  }
 });
+
+for (const [index, id] of acts.entries()) {
+  test(`unlocks Warsaw order ${id} in sequence from saved campaign progress`, async ({
+    page,
+    baseURL,
+  }) => {
+    await seedProgress(page, baseURL, {
+      completed: [...completedAct1, ...acts.slice(0, index)],
+    });
+    await page.goto('/');
+    await openPhone(page);
+    await expect(order(page, id)).toBeEnabled();
+    for (const locked of acts.slice(index + 1))
+      await expect(order(page, locked)).toHaveCount(0);
+    await order(page, id).click();
+    await expect(canvas(page)).toHaveAttribute('data-mission', id);
+    await expect(dialogue(page)).toBeVisible();
+  });
+}
 
 test('corrects an unsafe first-aid choice and unlocks the convoy after reload', async ({
   page,
+  baseURL,
 }) => {
   test.setTimeout(65_000);
   const id = 'WAW-A3-04';
@@ -132,13 +102,10 @@ test('corrects an unsafe first-aid choice and unlocks the convoy after reload', 
     },
     campaignRoutes[id].filter(({ answer }) => answer === undefined),
   );
+  await seedProgress(page, baseURL, {
+    completed: [...completedAct1, ...acts.slice(0, acts.indexOf(id))],
+  });
   await page.goto('/');
-  await expect(canvas(page)).toHaveAttribute('data-scene', 'MainMenu');
-  await saveCompletions(page, [
-    ...completedAct1,
-    ...acts.slice(0, acts.indexOf(id)),
-  ]);
-  await page.reload();
   await openPhone(page);
   await expect(order(page, 'WAW-A3-05')).toHaveCount(0);
   await order(page, id).click();

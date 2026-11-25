@@ -39,3 +39,61 @@ export async function profile(page: Page, updates?: Partial<ProgressProfile>) {
     { ...storage, updates },
   );
 }
+
+export async function seedProgress(
+  page: Page,
+  baseURL: string | undefined,
+  saved: Pick<
+    Partial<ProgressProfile>,
+    'completed' | 'bestScores' | 'nicknameSeed'
+  >,
+) {
+  if (!baseURL) throw new Error('A base URL is required to seed progress');
+  // Version 2 is the first IndexedDB format with scores and a nickname seed.
+  const state = {
+    cookies: [],
+    origins: [
+      {
+        origin: new URL(baseURL).origin,
+        localStorage: [],
+        indexedDB: [
+          {
+            name: storage.database,
+            version: 1,
+            stores: [
+              {
+                name: storage.store,
+                autoIncrement: false,
+                indexes: [],
+                records: [
+                  {
+                    key: storage.key,
+                    value: {
+                      version: 2,
+                      completed: [],
+                      introduced: [],
+                      progression: {
+                        bestStars: {},
+                        tokens: 0,
+                        longestSeries: 0,
+                      },
+                      nicknameSeed: 184,
+                      missionPoints: 0,
+                      bestScores: {},
+                      quizXp: 0,
+                      achievementXp: {},
+                      licencePassed: false,
+                      mastery: {},
+                      ...saved,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+  await page.context().setStorageState(state);
+}
