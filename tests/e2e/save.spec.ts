@@ -34,7 +34,9 @@ test('opens missions with IndexedDB disabled and communicates that progress is t
     });
   });
   await page.goto('/');
-  await expect(page.getByRole('status')).toContainText(pl.skillMap.sessionOnly);
+  await expect(
+    page.getByRole('status').filter({ hasText: pl.skillMap.sessionOnly }),
+  ).toBeVisible();
   await chooseCity(page, 'warszawa', 'campaign');
   await expect(page.locator('canvas')).toHaveAttribute(
     'data-mission',
