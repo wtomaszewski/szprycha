@@ -1,5 +1,4 @@
 import { expect, test, type Page } from '@playwright/test';
-import { chooseCity } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
 import {
@@ -8,6 +7,9 @@ import {
   progressStoreName,
   type ProgressProfile,
 } from '../../src/core/progressStore';
+
+// Exercise the bundled app and let Playwright intercept the mission fixture.
+test.use({ baseURL: 'http://127.0.0.1:4174', serviceWorkers: 'block' });
 
 async function startDuskPractice(page: Page) {
   await page.goto('/');
@@ -67,8 +69,13 @@ async function startDuskPractice(page: Page) {
   await expect(goal.getByRole('progressbar')).toHaveAttribute('value', '0');
   await panel.getByRole('button', { name: pl.m5c.close }).click();
 
-  await chooseCity(page, 'warszawa');
-  await expect(page.locator('canvas')).toHaveAttribute('data-scene', 'City');
+  // WAW-T-02 takes place on the training map, which opens directly from the menu.
+  await page
+    .getByRole('button', { name: pl.driving.title, exact: true })
+    .click();
+  await page
+    .locator('canvas[data-scene="City"][data-map="miasteczko"]')
+    .waitFor();
   await page.keyboard.press('KeyM');
   await page
     .getByRole('button', {
@@ -110,7 +117,9 @@ test('a failed mission does not credit a daily challenge earned during the attem
     const response = await route.fetch();
     const content: GameContent = await response.json();
     const mission = content.misje.find(({ id }) => id === 'WAW-T-02')!;
-    mission.limit_s = 8;
+    // Start the failure timer only after bike preparation has credited the habit.
+    const ride = mission.cele.find(({ typ }) => typ === 'dojedz')!;
+    ride.limit_s = 2;
     mission.warunki_porazki.push('czas_minal');
     await route.fulfill({ response, json: content });
   });
