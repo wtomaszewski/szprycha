@@ -1,11 +1,6 @@
+import { defaultMap, type MapId } from './cityMaps';
 import { startCity } from './startScene';
 import { Geom, Scene } from 'phaser';
-import {
-  campaignCity,
-  isCampaignCity,
-  playableCity,
-  type PlayableCity,
-} from '../content/missions';
 import type { GameContent } from '../content/schemas';
 import { ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
@@ -22,6 +17,7 @@ const pins = [
   { id: 'krakow', x: 365, y: 258 },
   { id: 'zakopane', x: 385, y: 318 },
   { id: 'wies', x: 450, y: 78 },
+  { id: defaultMap, x: 528, y: 274 },
 ] as const;
 
 // A simplified outline of Poland in four-pixel steps, from the Baltic coast
@@ -136,17 +132,20 @@ export class CityPicker extends Scene {
     const leave = () => {
       if (leaving) return;
       leaving = true;
-      this.scene.start('MainMenu');
+      this.scene.start('MainMenu', { cityPickerMode: mode });
     };
     const freeRide = mode === 'freeRide';
-    const enter = async (city: PlayableCity) => {
+    const enter = async (city: MapId) => {
       if (leaving) return;
       leaving = true;
+      if (city === defaultMap) {
+        startCity(this, { map: city, freeRide: true }, city);
+        return;
+      }
       await progress.selectCity(city, freeRide);
-      const campaign = !freeRide && isCampaignCity(city);
-      const resume = campaign ? progress.campaignRide(city) : undefined;
+      const resume = freeRide ? undefined : progress.campaignRide(city);
       const mission =
-        campaign && !resume ? progress.nextMission(city, content) : undefined;
+        !freeRide && !resume ? progress.nextMission(city, content) : undefined;
       const map = resume?.map ?? city;
       startCity(
         this,
@@ -167,37 +166,28 @@ export class CityPicker extends Scene {
     back.className = 'city-picker-back';
     back.textContent = labels.back;
     back.addEventListener('click', leave);
-    controls.append(back);
     const destinations = document.createElement('div');
     destinations.className = 'city-picker-destinations';
-    controls.append(destinations);
+    controls.append(destinations, back);
     let selected = back;
     const selectedCity = freeRide
       ? progress.freeRideCity
       : progress.selectedCity;
     for (const { id, x, y } of pins) {
-      if (!freeRide && !isCampaignCity(id)) continue;
+      if (!freeRide && id === defaultMap) continue;
       const pin = document.createElement('button');
       pin.type = 'button';
       pin.className = 'city-picker-pin';
       pin.style.setProperty('--pin-x', `${(100 * x) / 640}%`);
       pin.style.setProperty('--pin-y', `${(100 * y) / 360}%`);
       const caption = document.createElement('span');
-      caption.textContent = labels[id];
+      caption.textContent = id === defaultMap ? ui.driving.title : labels[id];
       pin.append(caption);
-      const city = (freeRide ? playableCity : campaignCity).safeParse(id);
-      if (city.success) {
-        pin.addEventListener('click', () => void enter(city.data));
-        if (id === selectedCity) {
-          pin.classList.add('city-picker-selected');
-          pin.setAttribute('aria-current', 'true');
-          selected = pin;
-        }
-      } else {
-        pin.disabled = true;
-        const status = document.createElement('small');
-        status.textContent = labels.soon;
-        pin.append(status);
+      pin.addEventListener('click', () => void enter(id));
+      if (id === selectedCity) {
+        pin.classList.add('city-picker-selected');
+        pin.setAttribute('aria-current', 'true');
+        selected = pin;
       }
       destinations.append(pin);
     }

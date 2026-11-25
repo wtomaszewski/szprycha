@@ -1,5 +1,5 @@
 import type { Scene } from 'phaser';
-import { showError } from '../core/presentation';
+import { showError, ui } from '../core/presentation';
 import type { MissionProgress } from '../gameplay/MissionProgress';
 import type { Ride } from './City';
 import { defaultRideMap, downloadMap, isMap } from './cityMaps';
@@ -24,6 +24,11 @@ export function startScene(
     return;
   }
   pending.add(origin);
+  const status = document.getElementById('status')!;
+  status.textContent = ui.loading;
+  const clearStatus = () => {
+    if (status.textContent === ui.loading) status.textContent = '';
+  };
   const controller = new AbortController();
   const mapDownload =
     preloadMap && isMap(preloadMap) && !origin.cache.tilemap.exists(preloadMap)
@@ -33,6 +38,7 @@ export function startScene(
   const cancel = () => {
     leaving = true;
     controller.abort();
+    clearStatus();
   };
   origin.events.once('shutdown', cancel);
   void scenes[key]()
@@ -49,6 +55,7 @@ export function startScene(
     .finally(() => {
       origin.events.off('shutdown', cancel);
       pending.delete(origin);
+      clearStatus();
     });
 }
 

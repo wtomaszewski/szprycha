@@ -9,19 +9,13 @@ import { loadContent } from '../content/load';
 import { loadMissionProgress } from '../gameplay/MissionProgress';
 import { applyAccessibility } from '../ui/RidePreferences';
 import { ui, showError } from '../core/presentation';
-import { readingFont } from '../core/fonts';
 export class Preload extends Scene {
   constructor() {
     super('Preload');
   }
   create() {
-    this.add
-      .text(320, 180, ui.loading, {
-        fontFamily: readingFont,
-        fontSize: '24px',
-        color: '#ffcd75',
-      })
-      .setOrigin(0.5);
+    const status = document.getElementById('status')!;
+    status.textContent = ui.loading;
     void Promise.all([loadContent(), loadMissionProgress()])
       .then(([content, progress]) => {
         const url = rankingUrl(import.meta.env.VITE_RANKING_URL);
@@ -33,6 +27,7 @@ export class Preload extends Scene {
         applyAccessibility(progress.store.profile);
         this.registry.set('missionProgress', progress);
         document.getElementById('pwa-splash')?.remove();
+        status.textContent = '';
         this.registry.set('content', content);
         const tutorial = progress.store.profile.tutorial;
         if (isTutorialStep(tutorial)) startCity(this, { tutorial });

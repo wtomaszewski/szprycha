@@ -154,9 +154,16 @@ canvas {
   left: 10%;
   width: 80%;
   text-align: center;
+  padding: 0.5rem;
+  background: var(--ui-bg);
+  color: var(--ui-text);
+  pointer-events: none;
 }
 #status:empty {
-  display: none;
+  width: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
 }
 #pwa-splash {
   position: fixed;
@@ -1480,37 +1487,13 @@ html[data-gamepad-navigation]
   background: #ef9c64;
 }
 
-.city-picker-pin span,
-.city-picker-pin small {
+.city-picker-pin span {
   padding: calc(2px * var(--picker-zoom)) calc(4px * var(--picker-zoom));
   background: var(--ui-bg);
-  white-space: nowrap;
-}
-
-.city-picker-pin small {
-  font: var(--reading-small)/1 var(--reading-font);
-}
-
-@media (max-width: 740px) {
-  .city-picker-pin small {
-    font-size: 1.25rem;
-  }
 }
 
 .city-picker-selected span {
   box-shadow: 0 2px var(--ui-accent);
-}
-
-.city-picker-pin:disabled {
-  color: #e0e5eb;
-  opacity: 1;
-  border-color: transparent;
-  background: transparent;
-  cursor: default;
-}
-
-.city-picker-pin:disabled::before {
-  background: #94b0c2;
 }
 
 .quiz-panel {
@@ -2152,8 +2135,7 @@ html[data-gamepad-navigation]
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 6px;
   }
-  .city-picker-pin,
-  .city-picker-pin:disabled {
+  .city-picker-pin {
     transform: none;
     min-width: var(--tap-size);
     align-content: center;
@@ -2163,10 +2145,6 @@ html[data-gamepad-navigation]
   }
   .city-picker-pin::before {
     display: none;
-  }
-  .city-picker-pin span,
-  .city-picker-pin small {
-    white-space: normal;
   }
 }
 @media (max-width: 480px) and (orientation: portrait) {

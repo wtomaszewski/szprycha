@@ -43,3 +43,33 @@ Emulacja dotyku w Chromium obejmuje 640 × 360 i 360 × 640 px, z asymetrycznymi
 Test mierzy rzeczywisty obszar dotykowy przycisków, list wyboru, suwaków i etykiet pól wyboru po przewinięciu. Każdy mieści się w obszarze bezpiecznym, ma co najmniej 44 × 44 px i odbiera dotyk w środku. Pomiary kontrastu porównują tekst, ikony i obrysy fokusu z pikselami ich tła na zrzucie. Najniższy odczyt wyniósł 6,66:1 w zwykłym kontraście i 15,77:1 w wysokim kontraście. Raport Playwright zapisuje odczyty dla każdego wariantu. [Zgłoszenie #111](https://github.com/wtomaszewski/szprycha/issues/111) · [Test Playwright](../tests/e2e/small-phone.spec.ts)
 
 Zrzuty obejmują początek i koniec przewijanych wyników. Polecenie `UPDATE_SMALL_PHONE_SCREENSHOTS=1 npm run test:e2e -- tests/e2e/small-phone.spec.ts` odtwarza zrzuty. [Zrzuty małych telefonów](screenshots/male-telefony-111/)
+
+## Nowe mapy
+
+25.11.2026 · [Zgłoszenie #176](https://github.com/wtomaszewski/szprycha/issues/176)
+
+| Obszar | Sprawdzenie i poprawki |
+| --- | --- |
+| Wybór mapy | Wolna jazda ma dziewięć pinezek, w tym Miasteczko ruchu. Kampania zawiera osiem miast. Test przechodzi po dziewięciu pinezkach klawiszem Tab także przy 844 × 390 px i tekście 200%. Powrót z wyboru mapy przenosi fokus na przycisk, który go otworzył. |
+| Kolekcje | Gdańsk, Wieś i las, Poznań, Łódź oraz Zakopane mają nazwane liczniki w HUD-zie. SzprychaApp pokazuje też licznik i instrukcję zbierania. Scenariusze obejmują wybór miasta, otwarcie telefonu, zsiadanie, podejście do znajdźki, odpowiedź na zagadkę, komunikat o odpowiedzi i aktualizację licznika. Gdańsk sprawdzono klawiaturą, cztery pozostałe mapy padem przez symulowane Gamepad API. |
+| Kampanie | Axe WCAG A/AA, nazwy i opisy, kolejność i zawijanie fokusu, kontrast palety oraz układ przy tekście 200% sprawdzono w rozmowach, zagadkach i wynikach misji. Stop-klatki obejmują wjazd na wiejski przejazd w trakcie przejazdu pociągu (MSC-01), wymijanie roweru cargo w Łodzi (MAN-14), przejście do wysepki w Poznaniu (PIER-10) i za szybki zjazd we mgle w Zakopanem (MAN-08). |
+| Przejazdy kolejowe | Wiejski przejazd jest pasywny. Przed torami stoją A-10 z sylwetką lokomotywy i G-3 z krzyżem obrysowanym ciemną linią. Pociąg ma osobną sylwetkę na torach. Na aktywnym przejeździe w Warszawie znakiem ostrzeżenia jest jasny krzyż nad dwiema lampami. Przy „Mniej efektów” lampy świecą stale w fazie ostrzegawczej, co test sprawdza na dwóch klatkach. |
+| Mgła i spadek | Na płótnie po lewej nad rowerem widać trzy poziome kreski oznaczające mgłę. Po prawej nad rowerem znajduje się ukośna strzałka ostrzegająca o spadku. Oba symbole są statyczne i mają jasny kształt na ciemnym tle. Test sprawdza ich położenie, piksele kształtów i kontrast. Preferencja systemowa wyłącza animację wyników, a „Mniej efektów” wyłącza też animację pieczątki nieudanej próby. |
+| Zimny start i sklepy | Produkcyjna plansza PWA ma pusty tekst alternatywny. Komunikat o ładowaniu menu i pierwszej jazdy pojawia się w regionie `status`, a po załadowaniu znika. Materiały sklepowe #171 obejmują statyczne zrzuty i metadane. Audyt sprawdza też „O grze” oraz planszę PWA i pierwsze wejście do jazdy z #167. |
+
+### Zrzuty przed i po
+
+| Widok | Przed | Po |
+| --- | --- | --- |
+| Wybór mapy, 844 × 390 px | [Przed](screenshots/nowe-mapy-176/mapa-przed.png) | [Po](screenshots/nowe-mapy-176/mapa-po.png) |
+| Podgląd kolekcji w SzprychaApp | [Przed](screenshots/nowe-mapy-176/kolekcja-przed.png) | [Po](screenshots/nowe-mapy-176/kolekcja-po.png) |
+| Wiejski przejazd bez pociągu | [Przed](screenshots/nowe-mapy-176/kolej-wolna-przed.png) | [Po](screenshots/nowe-mapy-176/kolej-wolna-po.png) |
+| Wiejski przejazd z pociągiem | [Przed](screenshots/nowe-mapy-176/kolej-zamknieta-przed.png) | [Po](screenshots/nowe-mapy-176/kolej-zamknieta-po.png) |
+| Aktywny sygnał kolejowy i zamknięte zapory | [Przed](screenshots/nowe-mapy-176/kolej-sygnal-przed.png) | [Po](screenshots/nowe-mapy-176/kolej-sygnal-po.png) |
+| Mgła i spadek w Zakopanem | [Przed](screenshots/nowe-mapy-176/mgla-zjazd-przed.png) | [Po](screenshots/nowe-mapy-176/mgla-zjazd-po.png) |
+| Zimny start web przy wstrzymanym ładowaniu treści | [Przed](screenshots/nowe-mapy-176/start-przed.png) | [Po](screenshots/nowe-mapy-176/start-po.png) |
+
+### Odłożone
+
+- Fizyczny pad, odczyt komunikatów w NVDA, TalkBack lub VoiceOver i mobilne WebView wymagają prób na urządzeniach. Testy automatyczne sprawdzają nazwy i opisy w drzewie dostępności Chromium.
+- Prowadzenie po świecie wyłącznie z czytnikiem ekranu pozostaje odrębnym zadaniem. Zrzuty i próbki pikseli obejmują wybrane sygnały na płótnie. Testy axe obejmują interfejs DOM.

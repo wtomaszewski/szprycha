@@ -11,6 +11,8 @@ const trailLength = 8;
 export class CityAtmosphere {
   private readonly precipitation;
   private readonly fog;
+  private readonly warnings;
+  private steep = false;
   private readonly puddles;
   private readonly ambient;
   private readonly trail;
@@ -42,6 +44,7 @@ export class CityAtmosphere {
       .image(0, 0, 'city-effects', effectFrame.fog)
       .setDepth(sceneDepth.weather)
       .setVisible(false);
+    this.warnings = scene.add.graphics().setDepth(sceneDepth.weather + 1);
     this.puddles = scene.add
       .graphics()
       .setDepth(sceneDepth.weatherGround)
@@ -80,6 +83,7 @@ export class CityAtmosphere {
     reduced: boolean,
     showTrail: boolean,
     reviewing: boolean,
+    steep: boolean,
   ) {
     const staticEffects = reduced || lite || reviewing;
     const tick = Math.floor(at * 12);
@@ -106,6 +110,13 @@ export class CityAtmosphere {
         .setAlpha(
           (weather === 'fog_dense' ? 0.88 : 0.43) * (reduced ? 0.65 : 1),
         );
+    if (fog || steep) {
+      this.warnings.setPosition(Math.round(rider.x), Math.round(rider.y) - 32);
+    }
+    if (weather !== this.weather || steep !== this.steep) {
+      this.drawWarnings(fog, steep);
+      this.steep = steep;
+    }
     if (wet || snow) {
       this.precipitation.setPosition(x, y);
       if (
@@ -137,6 +148,30 @@ export class CityAtmosphere {
       this.weather = weather;
     }
     this.drawTrail(rider, at, showTrail && !reviewing, staticEffects, update);
+  }
+
+  private drawWarnings(fog: boolean, steep: boolean) {
+    const art = this.warnings.clear();
+    if (fog) {
+      const x = -15;
+      art
+        .fillStyle(0x1a1c2c)
+        .fillRect(x - 12, -9, 24, 18)
+        .fillStyle(0xf4f4f4)
+        .fillRect(x - 6, -5, 15, 2)
+        .fillRect(x - 9, -1, 15, 2)
+        .fillRect(x - 6, 3, 15, 2);
+    }
+    if (steep) {
+      const x = 15;
+      art
+        .fillStyle(0x1a1c2c)
+        .fillRect(x - 12, -9, 24, 18)
+        .lineStyle(2, 0xf4f4f4)
+        .lineBetween(x - 8, -5, x + 7, 4)
+        .lineBetween(x + 7, 4, x + 7, -2)
+        .lineBetween(x + 7, 4, x + 1, 5);
+    }
   }
 
   private drawPuddles(camera: Cameras.Scene2D.Camera, night: boolean) {
