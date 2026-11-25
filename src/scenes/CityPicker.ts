@@ -8,16 +8,17 @@ import type { MissionProgress } from '../gameplay/MissionProgress';
 import { menuGamepad } from '../ui/KeyboardGamepad';
 
 type Mode = 'campaign' | 'freeRide';
+const mapFrame = { x: 24, y: 43, width: 592, height: 280 };
 const pins = [
   { id: 'warszawa', x: 426, y: 169 },
   { id: 'wroclaw', x: 210, y: 228 },
   { id: 'gdansk', x: 319, y: 79 },
   { id: 'poznan', x: 208, y: 144 },
-  { id: 'lodz', x: 316, y: 196 },
-  { id: 'krakow', x: 365, y: 258 },
-  { id: 'zakopane', x: 385, y: 318 },
+  { id: 'lodz', x: 316, y: 171 },
+  { id: 'krakow', x: 365, y: 229 },
+  { id: 'zakopane', x: 385, y: 287 },
   { id: 'wies', x: 450, y: 78 },
-  { id: defaultMap, x: 528, y: 274 },
+  { id: defaultMap, x: 528, y: 269 },
 ] as const;
 
 // A simplified outline of Poland in four-pixel steps, from the Baltic coast
@@ -88,9 +89,10 @@ export class CityPicker extends Scene {
     const labels = ui.cityPicker;
     const g = this.add.graphics();
     g.fillStyle(0x1a1c2c).fillRect(0, 0, 640, 360);
-    g.fillStyle(0x213b52).fillRect(24, 43, 592, 272);
-    g.lineStyle(1, 0x566c86).strokeRect(24, 43, 592, 272);
-    for (let y = 56; y < 312; y += 16)
+    const { x: left, y: top, width, height } = mapFrame;
+    g.fillStyle(0x213b52).fillRect(left, top, width, height);
+    g.lineStyle(1, 0x566c86).strokeRect(left, top, width, height);
+    for (let y = 56; y < top + height; y += 16)
       for (let x = 32; x < 612; x += 16)
         g.fillStyle(0x2b4a61).fillRect(x, y, 1, 1);
 
@@ -168,6 +170,13 @@ export class CityPicker extends Scene {
     back.addEventListener('click', leave);
     const destinations = document.createElement('div');
     destinations.className = 'city-picker-destinations';
+    destinations.style.setProperty('--frame-left', `${(100 * left) / 640}%`);
+    destinations.style.setProperty('--frame-top', `${(100 * top) / 360}%`);
+    destinations.style.setProperty('--frame-width', `${(100 * width) / 640}%`);
+    destinations.style.setProperty(
+      '--frame-height',
+      `${(100 * height) / 360}%`,
+    );
     controls.append(destinations, back);
     let selected = back;
     const selectedCity = freeRide
@@ -178,11 +187,15 @@ export class CityPicker extends Scene {
       const pin = document.createElement('button');
       pin.type = 'button';
       pin.className = 'city-picker-pin';
-      pin.style.setProperty('--pin-x', `${(100 * x) / 640}%`);
-      pin.style.setProperty('--pin-y', `${(100 * y) / 360}%`);
+      pin.style.setProperty('--pin-x', `${(100 * (x - left)) / width}%`);
+      pin.style.setProperty('--pin-y', `${(100 * (y - top)) / height}%`);
+      const marker = document.createElement('span');
+      marker.className = 'city-picker-marker';
+      marker.setAttribute('aria-hidden', 'true');
       const caption = document.createElement('span');
+      caption.className = 'city-picker-caption';
       caption.textContent = id === defaultMap ? ui.driving.title : labels[id];
-      pin.append(caption);
+      pin.append(marker, caption);
       pin.addEventListener('click', () => void enter(id));
       if (id === selectedCity) {
         pin.classList.add('city-picker-selected');

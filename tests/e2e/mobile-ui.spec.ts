@@ -396,3 +396,72 @@ test.describe('custom touch controls', () => {
     await expect(action(pl.driving.brake)).toHaveAttribute('data-slot', '1');
   });
 });
+
+for (const viewport of [
+  { width: 844, height: 390 },
+  { width: 1280, height: 720 },
+  { width: 768, height: 1024 },
+  { width: 360, height: 640 },
+]) {
+  test.describe(`city picker at ${viewport.width} × ${viewport.height}`, () => {
+    const mobile = viewport.width !== 1280;
+    test.use({ viewport, isMobile: mobile, hasTouch: mobile });
+
+    for (const mode of ['campaign', 'freeRide'] as const) {
+      test(`keeps city pins and captions inside the map frame (${mode})`, async ({
+        page,
+      }) => {
+        await page.goto('/');
+        await page
+          .getByRole('button', { name: pl.cityPicker[mode], exact: true })
+          .click();
+
+        const frame = page.locator('.city-picker-destinations');
+        const pins = frame.locator('.city-picker-pin');
+        const grid = viewport.width <= 480;
+        // The training town is available only in free ride.
+        await expect(pins).toHaveCount(mode === 'campaign' ? 8 : 9);
+        await expect(cityPin(page, 'zakopane')).toBeVisible();
+        await page.evaluate(() => document.fonts.ready);
+
+        const bounds = await frame.boundingBox();
+        expect(bounds).not.toBeNull();
+        const { x, y, width, height } = bounds!;
+        const parts = await pins.evaluateAll(
+          (buttons, grid) =>
+            buttons.flatMap((button) => {
+              const elements = grid
+                ? [button, button.querySelector('.city-picker-caption')!]
+                : Array.from(button.children);
+              return elements.map((element) => {
+                const { left, top, right, bottom } =
+                  element.getBoundingClientRect();
+                return { city: button.textContent, left, top, right, bottom };
+              });
+            }),
+          grid,
+        );
+
+        for (const [i, part] of parts.entries()) {
+          expect(part.right, part.city).toBeGreaterThan(part.left);
+          expect(part.bottom, part.city).toBeGreaterThan(part.top);
+          expect(part.left, part.city).toBeGreaterThanOrEqual(x);
+          expect(part.top, part.city).toBeGreaterThanOrEqual(y);
+          expect(part.right, part.city).toBeLessThanOrEqual(x + width);
+          expect(part.bottom, part.city).toBeLessThanOrEqual(y + height);
+
+          for (const other of parts.slice(i + 1)) {
+            if (grid && part.city === other.city) continue;
+            expect(
+              part.left < other.right &&
+                part.right > other.left &&
+                part.top < other.bottom &&
+                part.bottom > other.top,
+              `${part.city} / ${other.city}`,
+            ).toBe(false);
+          }
+        }
+      });
+    }
+  });
+}

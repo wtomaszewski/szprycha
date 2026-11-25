@@ -1437,6 +1437,14 @@ html[data-gamepad-navigation]
   bottom: 2%;
 }
 
+.city-picker-destinations {
+  position: absolute;
+  left: var(--frame-left);
+  top: var(--frame-top);
+  width: var(--frame-width);
+  height: var(--frame-height);
+}
+
 .city-picker-pin {
   position: absolute;
   left: var(--pin-x);
@@ -1445,7 +1453,7 @@ html[data-gamepad-navigation]
   justify-items: center;
   align-content: start;
   gap: calc(3px * var(--picker-zoom));
-  transform: translate(-50%, -22%);
+  transform: translate(-50%, calc(-2px - 14.5px * var(--picker-zoom)));
   min-width: 72px;
   min-height: 44px;
   padding: calc(4px * var(--picker-zoom)) calc(7px * var(--picker-zoom));
@@ -1458,8 +1466,7 @@ html[data-gamepad-navigation]
   background: var(--ui-bg);
 }
 
-.city-picker-pin::before {
-  content: '';
+.city-picker-marker {
   width: calc(18px * var(--picker-zoom));
   height: calc(21px * var(--picker-zoom));
   background: var(--ui-accent);
@@ -1483,16 +1490,17 @@ html[data-gamepad-navigation]
   );
 }
 
-.city-picker-selected::before {
+.city-picker-selected .city-picker-marker {
   background: #ef9c64;
 }
 
-.city-picker-pin span {
+.city-picker-caption {
   padding: calc(2px * var(--picker-zoom)) calc(4px * var(--picker-zoom));
   background: var(--ui-bg);
+  overflow-wrap: normal;
 }
 
-.city-picker-selected span {
+.city-picker-selected .city-picker-caption {
   box-shadow: 0 2px var(--ui-accent);
 }
 
@@ -2130,10 +2138,16 @@ html[data-gamepad-navigation]
     justify-self: start;
   }
   .city-picker-destinations {
+    position: static;
     grid-row: 3;
+    width: auto;
+    height: auto;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 6px;
+    padding: 6px;
+    border: 1px solid var(--ui-border);
+    background: var(--ui-bg);
   }
   .city-picker-pin {
     transform: none;
@@ -2143,7 +2157,7 @@ html[data-gamepad-navigation]
     border-color: var(--ui-border);
     font: var(--reading-small)/1.1 var(--reading-font);
   }
-  .city-picker-pin::before {
+  .city-picker-marker {
     display: none;
   }
 }
