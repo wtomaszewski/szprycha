@@ -62,6 +62,7 @@ export async function validateMaps(root: string, content: GameContent) {
     zbierz_szyszke: 'szyszka',
     zbierz_rogala: 'rogal',
     zbierz_szpulke: 'szpulka',
+    zbierz_swierk: 'swierk',
   } as const;
   for (const mission of [...content.misje, ...examRoutes]) {
     const map = mission.mapa ?? mission.miasto;
@@ -74,7 +75,8 @@ export async function validateMaps(root: string, content: GameContent) {
         goal.typ === 'zbierz_bursztyn' ||
         goal.typ === 'zbierz_szyszke' ||
         goal.typ === 'zbierz_rogala' ||
-        goal.typ === 'zbierz_szpulke'
+        goal.typ === 'zbierz_szpulke' ||
+        goal.typ === 'zbierz_swierk'
       ) {
         const kind = collectibleKinds[goal.typ];
         const item = world.collectibles.get(goal.poi);

@@ -110,6 +110,14 @@ Sierżant Ola prowadzi cztery szkolenia. Potem zespół SzprychaApp sprawdza, sk
 
 **Akt 3 — Światło w fabryce.** Kurier zatrzymuje się w bezpiecznym miejscu po upadku Turbo, woła Olę i ćwiczy rozmowę z dyspozytorem 112. Potem dostarcza odnaleziony sterownik przez przejazd z osobną sygnalizacją rowerową. Zawiła uruchamia lampy wystawy w hali, a Lena dodaje do planszy wskazówki bezpiecznego dojazdu.
 
+## ZAKOPANE — „Ślad pod Giewontem”
+
+**Akt 1 — Ślady na drewnie.** Kazik szykuje wystawę pod Giewontem. Kurier omija deptak, dostarcza pudełko i pokazuje Lenie „Mapie” rysunek pod wieczkiem. Trzy drewniane świerki z zagadkami prowadzą do szkicu sygnalizacji przy dworcu z podpisem Zakłócacza.
+
+**Akt 2 — Sygnał i mgła.** Zawiła rozpoznaje swój dawny szkic próbny i prosi o sprawdzenie przejazdu z osobnym sygnałem rowerowym. Sierżant Ola pomaga zaznaczyć na planie zjazd, na którym mgła skraca widoczność i trzeba zacząć hamować wcześniej.
+
+**Akt 3 — Powrót pod regle.** Za drewnianym mostkiem Turbo upada. Kurier zatrzymuje się w bezpiecznym miejscu, woła dorosłego i ćwiczy rozmowę z dyspozytorem 112. Potem odbiera od Leny poprawioną planszę, jedzie poboczem i czeka na otwarcie zapór. Plansza trafia na wystawę.
+
 ## Finał wspólny — „Licencja Szprychy”
 Egzamin odblokowuje się po ukończeniu kampanii co najmniej jednego miasta, osiągnięciu rangi Mistrz Szlaku oraz mastery ≥70% w każdym module (M01–M08). Sierżant Ola prowadzi teorię (quiz), próbę na placu i przejazd kontrolny w mieście ukończonej kampanii. Po zaliczeniu Kazik wręcza Licencję, Turbo bije brawo, DJ Dzwonek komentuje na żywo, a gracz zdobywa rangę **Legenda Szprychy** i złoty dzwonek.
 

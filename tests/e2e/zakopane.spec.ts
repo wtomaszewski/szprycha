@@ -2,6 +2,8 @@ import { expect, test, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { chooseCity, cityPin, driveTo, startAt } from './city-picker';
 import { readProfile } from './progress-profile';
+import { profile } from './helpers/profile';
+import questions from '../../content/pytania.json' with { type: 'json' };
 
 const trainings = [
   'ZAK-B-01',
@@ -10,6 +12,17 @@ const trainings = [
   'ZAK-B-04',
   'ZAK-B-05',
 ] as const;
+
+async function openCampaignAt(page: Page, completed: string[]) {
+  await page.goto('/');
+  await expect(page.locator('canvas')).toHaveAttribute(
+    'data-scene',
+    'MainMenu',
+  );
+  await profile(page, { completed, freeRideCity: 'zakopane' });
+  await page.reload();
+  await chooseCity(page, 'zakopane', 'campaign');
+}
 
 test.use({ serviceWorkers: 'block' });
 
@@ -51,7 +64,7 @@ test('opens Zakopane from Poland, renders Krupówki and remembers the free-ride 
   await page
     .getByRole('button', { name: pl.cityPicker.campaign, exact: true })
     .click();
-  await expect(pin).toHaveCount(0);
+  await expect(pin).toBeEnabled();
   await page.getByRole('button', { name: pl.cityPicker.back }).click();
   await page.getByRole('button', { name: pl.cityPicker.freeRide }).click();
   await expect(pin).toBeFocused();
@@ -144,4 +157,102 @@ test('renders both wooden bridge approaches over the stream', async ({
   await expect(canvas).toHaveAttribute('data-x', '1936');
   await expect(canvas).toHaveAttribute('data-y', '1754');
   await page.screenshot({ path: info.outputPath('141-mostki.png') });
+});
+
+test('opens the campaign at its first training and remembers the selection', async ({
+  page,
+}, info) => {
+  await page.goto('/');
+  await page
+    .getByRole('button', { name: pl.cityPicker.campaign, exact: true })
+    .click();
+  const pin = cityPin(page, 'zakopane');
+  await expect(pin).toBeEnabled();
+  await pin.hover();
+  await page.screenshot({ path: info.outputPath('142-kampania.png') });
+  await pin.press('Enter');
+  await expect(page.locator('canvas[data-map="zakopane"]')).toHaveAttribute(
+    'data-mission',
+    trainings[0],
+  );
+  await expect
+    .poll(async () => (await readProfile(page)).selectedCity)
+    .toBe('zakopane');
+});
+
+test('reuses completed training and restores the wooden spruce after its riddle', async ({
+  page,
+}, info) => {
+  test.setTimeout(50_000);
+  await openCampaignAt(page, [...trainings, 'ZAK-A1-01']);
+  const canvas = page.locator('canvas[data-map="zakopane"]');
+  await expect(canvas).toHaveAttribute('data-mission', 'ZAK-A1-02');
+  await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
+  const count = page.getByRole('status', { name: pl.driving.swierki });
+  await expect(count).toHaveText(`${pl.driving.swierki} 0/4`);
+  await page.keyboard.press('KeyX');
+  await expect(canvas).toHaveAttribute('data-walking', 'true');
+  await page.screenshot({ path: info.outputPath('142-swierki.png') });
+
+  const puzzle = page.getByRole('dialog', { name: pl.driving.swierkQuestion });
+  await page.keyboard.down('ArrowUp');
+  try {
+    await expect(puzzle).toBeVisible();
+  } finally {
+    await page.keyboard.up('ArrowUp');
+  }
+  const question = questions.pytania.find(({ id }) => id === 'Q057')!;
+  await expect(puzzle).toContainText(question.pytanie);
+  await page.screenshot({ path: info.outputPath('142-zagadka.png') });
+  await puzzle
+    .getByRole('button', {
+      name: question.odpowiedzi[question.poprawna],
+      exact: true,
+    })
+    .click();
+  await puzzle.getByRole('button', { name: pl.progression.continue }).click();
+  await expect(count).toHaveText(`${pl.driving.swierki} 1/4`);
+  await expect
+    .poll(async () => (await readProfile(page)).swierki)
+    .toEqual(['zak-swierk-stojak']);
+
+  await page.reload();
+  await chooseCity(page, 'zakopane', 'campaign');
+  await expect(canvas).toHaveAttribute('data-mission', 'ZAK-A1-02');
+  await expect(count).toHaveText(`${pl.driving.swierki} 1/4`);
+});
+
+test('rejects speeding on the campaign descent after equipping both lights', async ({
+  page,
+}, info) => {
+  test.setTimeout(50_000);
+  await openCampaignAt(page, [
+    ...trainings,
+    'ZAK-A1-01',
+    'ZAK-A1-02',
+    'ZAK-A2-01',
+  ]);
+  const canvas = page.locator('canvas[data-map="zakopane"]');
+  await expect(canvas).toHaveAttribute('data-mission', 'ZAK-A2-02');
+  await expect(canvas).toHaveAttribute('data-weather', 'fog');
+  await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
+  await page.getByRole('button', { name: pl.missionUi.equip }).click();
+  await page.getByRole('button', { name: pl.missionUi.turnOnLights }).click();
+  await expect(
+    page.getByText(pl.misje['ZAK-B-03'].meta, { exact: true }),
+  ).toBeVisible();
+  await page.screenshot({ path: info.outputPath('142-zjazd.png') });
+
+  const failure = page.getByRole('dialog', {
+    name: pl.missionFailure.title,
+    exact: true,
+  });
+  await page.keyboard.down('ArrowUp');
+  try {
+    await expect(failure).toBeVisible({ timeout: 15_000 });
+  } finally {
+    await page.keyboard.up('ArrowUp');
+  }
+  await expect(failure).toContainText(pl.missionFailure.reasons.dowolny_blad);
+  expect((await readProfile(page)).completed).not.toContain('ZAK-A2-02');
 });

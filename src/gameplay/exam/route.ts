@@ -20,6 +20,7 @@ export function examRoute(
       wies: 'WIE-EGZAMIN',
       poznan: 'POZ-EGZAMIN',
       lodz: 'LOD-EGZAMIN',
+      zakopane: 'ZAK-EGZAMIN',
     }[city],
     miasto: city,
     akt: 0,

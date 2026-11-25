@@ -56,6 +56,14 @@ const collections = {
     variants: 1,
     paint: paintSzpulka,
   },
+  swierk: {
+    field: 'swierki',
+    label: ui.driving.swierki,
+    hint: ui.driving.swierkiHint,
+    question: ui.driving.swierkQuestion,
+    variants: 1,
+    paint: paintSwierk,
+  },
 } as const;
 type CollectionKind = keyof typeof collections;
 
@@ -247,6 +255,31 @@ function paintSzpulka(ctx: CanvasRenderingContext2D) {
       t: '#8de9cc',
       b: '#246275',
     },
+  );
+}
+
+function paintSwierk(ctx: CanvasRenderingContext2D) {
+  paintPixels(
+    ctx,
+    [
+      '................',
+      '.......##.......',
+      '......#ha#......',
+      '.....#haaa#.....',
+      '....#haaabb#....',
+      '.....##aa##.....',
+      '....#hahab#.....',
+      '...#haahaab#....',
+      '..#haaabbbbb#...',
+      '...##haaab##....',
+      '..#haahaaaab#...',
+      '.#haaabaaaaab#..',
+      '.#####aab#####..',
+      '......#ab#......',
+      '......####......',
+      '................',
+    ],
+    { '#': '#542d29', h: '#ffe19a', a: '#c98952', b: '#9a5434' },
   );
 }
 

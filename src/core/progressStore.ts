@@ -189,7 +189,7 @@ export const graphicsQualities = ['auto', 'full', 'lite'] as const;
 const krakowProfileSchema = storyProfileSchema.extend({
   version: z.literal(11),
   selectedCity: campaignCity
-    .exclude(['gdansk', 'wies', 'poznan', 'lodz'])
+    .exclude(['gdansk', 'wies', 'poznan', 'lodz', 'zakopane'])
     .optional(),
   freeRideCity: z.enum(['krakow', 'gdansk', 'wies']).optional(),
   obwarzanki: z.array(id).optional(),
@@ -217,6 +217,7 @@ const profileSchema = krakowProfileSchema.extend({
   szyszki: z.array(id).optional(),
   rogale: z.array(id).optional(),
   szpulki: z.array(id).optional(),
+  swierki: z.array(id).optional(),
   campaignRides: z
     .partialRecord(campaignCity, campaignRideSchema)
     .optional()

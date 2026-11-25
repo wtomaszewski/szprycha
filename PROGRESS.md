@@ -18,7 +18,7 @@ Stan na 25.11.2026.
 
 ## Ciągłość kampanii (#152)
 
-- Po wynikach gra prowadzi do startu następnej misji lub treningu we wszystkich sześciu kampaniach. Przy zmianie mapy pokazuje przycisk przejścia. Zapis odtwarza prowadzenie po ponownym wyborze miasta.
+- Po wynikach gra prowadzi do startu następnej misji lub treningu we wszystkich kampaniach. Przy zmianie mapy pokazuje przycisk przejścia. Zapis odtwarza prowadzenie po ponownym wyborze miasta.
 - [Przebieg kampanii](docs/03_misje.md#przejście-do-następnej-misji-kampanii-152) i [obsługa nawigacji](docs/08_ux_sterowanie_audio.md#dojazd-do-następnej-misji-152).
 
 ## Łódź 2/2 — kampania (#140)
@@ -31,10 +31,15 @@ Stan na 25.11.2026.
 - Wolna jazda obejmuje Piotrkowską z rikszą i rowerem cargo, pofabryczne podwórka z muralami oraz aleję z neutralnym tramwajem i kontrapasem w bocznej uliczce.
 - Cztery szkolenia `LOD-B-01`–`LOD-B-04` ćwiczą m.in. pierwszeństwo pieszych, bezpieczne wymijanie i ustępowanie przy bramie. Raport ścisły obejmuje 13/13 sytuacji i M01–M07. [Mapa, pomiary i zrzuty](docs/05_mapy.md#łódź)
 
+## Zakopane 2/2 — kampania (#142)
+
+- „Ślad pod Giewontem” obejmuje pięć dotychczasowych szkoleń, sześć głównych misji w trzech aktach, cztery drewniane świerki z zagadkami oraz przejazd kontrolny przy dworcu.
+- Misje główne ćwiczą M01–M07. Jazda ponad bezpieczną prędkość na zjeździe kończy próbę bez punktów. Czas nie wpływa na wynik, także w szkoleniach. [Mapa, pomiary i zrzuty](docs/05_mapy.md#zakopane)
+
 ## Zakopane 1/2 — mapa (#141)
 
 - Wolna jazda obejmuje Krupówki, drewniane wille z Giewontem w tle, dwa mostki nad potokiem oraz dwukierunkową drogę o nachyleniu 12%.
-- Pięć ćwiczeń `ZAK-B-01`–`ZAK-B-05` obejmuje zjazd, pobocze, jazdę we mgle, deptak i pierwszą pomoc. Raport ścisły obejmuje 13/13 sytuacji i 7/7 modułów. Kampania Zakopanego jest zakresem kolejnej części. [Mapa i weryfikacja](docs/05_mapy.md#zakopane)
+- Pięć ćwiczeń `ZAK-B-01`–`ZAK-B-05` obejmuje zjazd, pobocze, jazdę we mgle, deptak i pierwszą pomoc. Raport ścisły obejmuje 13/13 sytuacji i 7/7 modułów. [Mapa i weryfikacja](docs/05_mapy.md#zakopane)
 
 ## Poznań 2/2 — kampania (#138)
 

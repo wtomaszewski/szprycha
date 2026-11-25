@@ -17,6 +17,7 @@ test('selects a city, keeps the latest choice, and limits orders to its campaign
   await expect(cityPin(page, 'warszawa')).toBeFocused();
   await expect(cityPin(page, 'poznan')).toBeEnabled();
   await expect(cityPin(page, 'lodz')).toBeEnabled();
+  await expect(cityPin(page, 'zakopane')).toBeEnabled();
   await page.keyboard.press('Escape');
   await expect(canvas).toHaveAttribute('data-scene', 'MainMenu');
   await page.getByRole('button', { name: campaign }).click();

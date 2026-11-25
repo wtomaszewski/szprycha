@@ -367,18 +367,28 @@ Mapa zawiera także rondo, skrzyżowanie z drogą z pierwszeństwem i STOP-em or
 
 Wynik ćwiczeń zależy od ukończenia zadań i bezpiecznej jazdy. Wjazd na deptak podczas `ZAK-B-04` kończy próbę. Reguły `MAN-08`, `GDZIE-03b` i `MSC-04` odwołują się do danych przepisów. Szacowana droga zatrzymania uwzględnia czas reakcji, kierunek względem spadku i przyczepność. Na zjeździe i we mgle silnik porównuje ją z zasięgiem widoczności zapisanym dla odcinka. [Przepisy gry](../content/przepisy.yaml)
 
-`npm run coverage:maps -- --strict` obejmuje 13/13 sytuacji i 7/7 modułów M01–M07. `npm test -- tests/sim/zakopane.test.ts` sprawdza przejazdy, niedozwolony skrót, deterministyczność nachylenia, hamowanie i trzy próby po dziesięć minut ruchu AI. [Raport pokrycia](coverage.md#zakopane)
+### Kampania „Ślad pod Giewontem”
 
-Pomiary wykonano na buildzie produkcyjnym w Chromium 156.0.8078.79 headless z WebGL, pełną grafiką, widokiem 640 × 360 i ograniczeniem CPU 4×. Tabela podaje mediany dwóch 11-sekundowych prób w Wolnej jeździe.
+Wybierz **Kampania → Zakopane**. Ukończone ćwiczenia `ZAK-B-01`–`ZAK-B-05` z Wolnej jazdy odblokowują sześć głównych misji w trzech aktach. Po ostatniej misji i spełnieniu wymagań Licencji Szprychy można odbyć przejazd kontrolny z sygnalizatorem S-6 przy dworcu. [Fabuła](02_fabula.md#zakopane--ślad-pod-giewontem) · [Lista misji](03_misje.md#kampania--zakopane)
+
+Trzy drewniane świerki z zagadkami leżą przy drodze pieszo-rowerowej wzdłuż Krupówek. Czwarty można zebrać za potokiem w Wolnej jeździe. Podejdź pieszo, prowadząc rower. Zdobyte świerki zapisują się w profilu.
+
+Podczas zjazdu we mgle trzeba kontrolować drogę zatrzymania. Naruszenie MAN-08 kończy próbę bez punktów i gwiazdek. Wszystkie misje kampanii wyłączają premię za czas. Wjazd rowerem na deptak przy B-1 lub w leśną alejkę przy B-9 również przerywa próbę. Wyznaczone cele prowadzą obok deptaka i przez alejkę pieszo.
+
+`npm run coverage:maps -- --strict` sprawdza w CI 13/13 sytuacji i 7/7 modułów M01–M07. Testy w `tests/sim/zakopane.test.ts` i `tests/missions/zakopane-campaign.test.ts` obejmują szkolenia, sześć legalnych tras i trasę egzaminu, zakazane skróty, przejazd przez S-6, punktację zjazdu i trzy symulacje ruchu po dziesięć minut. Playwright sprawdza wybór kampanii, zapis znajdźki i zbyt szybki zjazd we mgle. [Raport pokrycia](coverage.md#zakopane)
+
+Pomiary po dodaniu kampanii wykonano na buildzie produkcyjnym w Chromium 156.0.8078.79 headless z WebGL, pełną grafiką, widokiem 640 × 360 i ograniczeniem CPU 4×. Tabela podaje mediany dwóch 11-sekundowych prób w Wolnej jeździe.
 
 | Odcinek | Średnie FPS | p95 klatki |
 | --- | ---: | ---: |
-| Zakopane, Krupówki | 57,96 | 16,8 ms |
-| Warszawa, Starówka | 46,83 | 33,4 ms |
+| Zakopane, Krupówki | 58,60 | 16,8 ms |
+| Warszawa, Starówka | 53,20 | 33,4 ms |
 
 Po `npm run build && npm run preview` uruchom `BENCH_URL=http://127.0.0.1:4173/ BENCH_VIEWPORT=640x360 BENCH_MAP=zakopane BENCH_RUNS=2 npm run benchmark:driving`. Dla Warszawy ustaw `BENCH_MAP=warszawa BENCH_FRAGMENT=starowka BENCH_MODE=free`.
 
 Zrzuty z Chromium pokazują [mapę Polski](screenshots/141-mapa-polski.webp), [Krupówki i Giewont](screenshots/141-krupowki.webp), [mostki](screenshots/141-mostki.webp), [pobocze](screenshots/141-pobocze.webp) i [zjazd we mgle](screenshots/141-mgla.webp).
+
+Zrzuty kampanii pokazują [wybór Zakopanego](screenshots/142-kampania.webp), [figurki przy Krupówkach](screenshots/142-swierki.webp), [zagadkę o B-1](screenshots/142-zagadka.webp) i [misję na zjeździe we mgle](screenshots/142-zjazd.webp).
 
 ## Miasteczko Ruchu Drogowego (wspólny hub, osobna mała mapa 80×60)
 Wzorowane na prawdziwych szkolnych miasteczkach ruchu: małe skrzyżowania każdego typu, mini-rondo, sygnalizacja, przejazd kolejowy z zaporami, znaki z Albumu na tablicach, **plac manewrowy** (ósemka, slalom, tor wąski, pole zatrzymania). Tu: samouczek, plac, quiz w budynku szkoły, egzamin Licencji.

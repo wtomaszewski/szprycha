@@ -1,0 +1,61 @@
+dialogi:
+  - id: dialogi.ZAK-A1-01.start
+    linie:
+      - postac: pan_kazik
+        emocja: neutral
+        tekst: dialogi.ZAK-A1-01.start
+  - id: dialogi.ZAK-A1-01.koniec
+    linie:
+      - postac: pan_kazik
+        emocja: proud
+        tekst: dialogi.ZAK-A1-01.koniec
+  - id: dialogi.ZAK-A1-02.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.ZAK-A1-02.start
+  - id: dialogi.ZAK-A1-02.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: proud
+        tekst: dialogi.ZAK-A1-02.koniec
+  - id: dialogi.ZAK-A2-01.start
+    linie:
+      - postac: inzynier_zawila
+        emocja: neutral
+        tekst: dialogi.ZAK-A2-01.start
+  - id: dialogi.ZAK-A2-01.koniec
+    linie:
+      - postac: inzynier_zawila
+        emocja: proud
+        tekst: dialogi.ZAK-A2-01.koniec
+  - id: dialogi.ZAK-A2-02.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.ZAK-A2-02.start
+  - id: dialogi.ZAK-A2-02.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.ZAK-A2-02.koniec
+  - id: dialogi.ZAK-A3-01.start
+    linie:
+      - postac: sierzant_ola
+        emocja: neutral
+        tekst: dialogi.ZAK-A3-01.start
+  - id: dialogi.ZAK-A3-01.koniec
+    linie:
+      - postac: sierzant_ola
+        emocja: proud
+        tekst: dialogi.ZAK-A3-01.koniec
+  - id: dialogi.ZAK-A3-02.start
+    linie:
+      - postac: lena_mapa
+        emocja: neutral
+        tekst: dialogi.ZAK-A3-02.start
+  - id: dialogi.ZAK-A3-02.koniec
+    linie:
+      - postac: lena_mapa
+        emocja: proud
+        tekst: dialogi.ZAK-A3-02.koniec

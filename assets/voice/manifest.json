@@ -838,6 +838,54 @@
       "text": "Sprawdź kask i obie lampki, a potem zrób krótką rundę.",
       "hash": "04c82170c704a50328819b84d462149c17c92f4b4ccb11316013285bc7b6a7c0"
     },
+    "dialogi.ZAK-A1-01.koniec": {
+      "text": "Pod wieczkiem jest rysunek Giewontu. Pokaż go Lenie, zna te drewniane świerki.",
+      "hash": "922182ef5507662d4a93b04fa18b66cc01fce6a62a345bc5a2f412465abe3eb2"
+    },
+    "dialogi.ZAK-A1-01.start": {
+      "text": "Dowieź pudełko na wystawę. Przez Krupówki obowiązuje B-1. Jedź drogą wspólną obok.",
+      "hash": "a475b66d7420ac43014af587e454ad69ad4b57fa5d33d5ac6200856c9a5aae21"
+    },
+    "dialogi.ZAK-A1-02.koniec": {
+      "text": "Trzy nacięcia układają się w sygnalizator. Na szkicu dworca jest podpis Zakłócacza.",
+      "hash": "e8613426dbd486f7902efa3491c7858a72e651e0561ec1811fdb652087d15e19"
+    },
+    "dialogi.ZAK-A1-02.start": {
+      "text": "Pod świerkami znajdziesz zagadki. Dopasuj odpowiedzi i sprawdź, dokąd prowadzi fioletowy ślad.",
+      "hash": "0b1f376828f3bf063140e08cd52e9cddf51c181630a940db63750fb57de2a1c1"
+    },
+    "dialogi.ZAK-A2-01.koniec": {
+      "text": "Wiemy, gdzie jechać przy dworcu. Ola sprawdzi z Tobą, co widać na zjeździe.",
+      "hash": "bc42dc482be7fb0bd3ea19c376ed43a054dcfa8a01b083bc7141b0d2fc94137b"
+    },
+    "dialogi.ZAK-A2-01.start": {
+      "text": "To mój stary szkic próbny. Sprawdź prawdziwy sygnał rowerowy przy dworcu i zawieź szkic na drugą stronę.",
+      "hash": "7ca9687f91f14854a239736675896d03bb8aa578779ab56f6396a897eef456bb"
+    },
+    "dialogi.ZAK-A2-02.koniec": {
+      "text": "Na szkicu zaznaczymy miejsce, w którym warto zwolnić. Przy potoku robi się już ciemno.",
+      "hash": "8e68ed2f2110bc0ad578c9bd81737b850321f9c5403457144daa51ce4ac9d824"
+    },
+    "dialogi.ZAK-A2-02.start": {
+      "text": "Mgła skróciła widoczność. Włącz lampki i zwolnij tak, by wyhamować na odcinku, który widzisz.",
+      "hash": "d1dd49b0d97c594adfaecbeafa98ee39d29e3ea1b216de990fd06af9fe45217d"
+    },
+    "dialogi.ZAK-A3-01.koniec": {
+      "text": "Dorosły został z Turbo. Dzięki, że zatrzymałeś się bezpiecznie i dokładnie opisałeś miejsce.",
+      "hash": "5bef01985e1aa70119f5890908dae731ebacc669633df9ebaac2c3d111b614e1"
+    },
+    "dialogi.ZAK-A3-01.start": {
+      "text": "Zapnij kask i włącz obie lampki. Za mostkiem zsiądź przed znakiem zakazu wjazdu rowerów.",
+      "hash": "b6de63fdc3c4ac141e09a3471cb3ad6a8d1a17517f9a2bd397eff8032ae5241c"
+    },
+    "dialogi.ZAK-A3-02.koniec": {
+      "text": "Na wystawie pokażemy Twoją trasę. Jest na niej miejsce i na hamowanie, i na czekanie.",
+      "hash": "948cc8c759e3e9b8231d0ebe589bf5aa84737953141eeebfba507d249fac43b8"
+    },
+    "dialogi.ZAK-A3-02.start": {
+      "text": "Plansza jest gotowa. Dostarcz ją pod regle, a przed torami sprawdź światła i zapory.",
+      "hash": "35e7b1c6c39d075c0a730ce482c3a87f0800579a2606f30940ce8b70934a9d20"
+    },
     "dialogi.lektor.ZNAK-STOP": {
       "text": "Przed linią stop zatrzymaj się całkowicie i ustąp pierwszeństwa.",
       "hash": "54047d2f5a5067a18ca4dc92009b476bc5f95aec2f73e60ee2859b036f57e75a"
@@ -1521,6 +1569,42 @@
     "misje.WRO-B-04.cel1_wyjasnienie": {
       "text": "Wyjątek dla rowerów pod znakiem pozwala wjechać zgodnie z oznakowaniem.",
       "hash": "d56b80277d2757433880c8887cf99d4233737ec4bfd3f69f4c7a84ff24e5fa2c"
+    },
+    "misje.ZAK-A2-01.pytanie": {
+      "text": "Zapala się zielone dla rowerów, ale auto jeszcze zjeżdża z przejazdu. Co robisz?",
+      "hash": "562fd5266f38629913ca0269ee240d5fbbe6a5919e28bf24dad5658b3cef4f4a"
+    },
+    "misje.ZAK-A2-01.wyjasnienie": {
+      "text": "Czekaj na zielone dla rowerów i wjedź dopiero, gdy przejazd jest wolny.",
+      "hash": "218f8f832d8b12aa412c3a18ce2bbac6cf0d109a5cbac00281230e729d24973d"
+    },
+    "misje.ZAK-A3-01.pytanie": {
+      "text": "Turbo się przewrócił przy leśnej alejce. Od czego zaczynasz?",
+      "hash": "18c72e55481ca07659c0cd5af338a54372e5c5589771922340b5fd04a0bc2da0"
+    },
+    "misje.ZAK-A3-01.pytanieDorosly": {
+      "text": "Jesteś już w bezpiecznym miejscu. Jak sprawdzasz, czy Turbo reaguje?",
+      "hash": "1012e23e96b0364739d8f5f584e1e16cba65958cd592bb4db68e763be633d339"
+    },
+    "misje.ZAK-A3-01.pytanieTelefon": {
+      "text": "Turbo nie odpowiada, a dorosły jest przy nim. Co powiesz pod numerem 112?",
+      "hash": "c076dfd81d399677acef945b7eeaf874d55662eed362bcb9857dabd1bb4797d0"
+    },
+    "misje.ZAK-A3-01.wyjasnienieDorosly": {
+      "text": "Zawołaj dorosłego, sprawdź reakcję Turbo i nie przesuwaj go bez potrzeby.",
+      "hash": "52a382b90e22481b9fce403b1d2e7167937aa35611539802c9095f0987ac0ab7"
+    },
+    "misje.ZAK-A3-01.wyjasnienieTelefon": {
+      "text": "Podaj miejsce, opisz zdarzenie, powiedz, ile osób potrzebuje pomocy, i czekaj na polecenia.",
+      "hash": "07c817df30fa95af196cc8b57b8d4cd332deb0c19971fae909d02e55fd9ca129"
+    },
+    "misje.ZAK-A3-02.pytanie": {
+      "text": "Zapora zaczyna się podnosić, ale czerwone światła nadal migają. Co robisz?",
+      "hash": "902da626ad4f67410aa7e35e17715f6108a5b16d41b2d5e207ba2c66c9eff2bf"
+    },
+    "misje.ZAK-A3-02.wyjasnienie": {
+      "text": "Przejedź, gdy zapory są całkiem otwarte, światła nie migają i za torami jest miejsce.",
+      "hash": "e6eae2df09db42ab3d826ef914ff3733ad8c5dbcf5f4e6a9e3ba0429130910ec"
     },
     "misje.ZAK-B-01.pytanie": {
       "text": "Jak kontrolować prędkość na zjeździe?",
