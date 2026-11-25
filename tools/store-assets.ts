@@ -19,6 +19,9 @@ export const storeScenes = [
   '03-plac-manewrowy',
   '04-album-znakow',
   '05-mapa-umiejetnosci',
+  '06-zakopane-bezpieczny-zjazd',
+  '07-wies-postoj-przed-torami',
+  '08-lodz-odstep-od-rikszy',
 ] as const;
 
 type StoreAsset = { path: string; width: number; height: number };

@@ -20,6 +20,9 @@ it('uses stable screenshot names and landscape sizes for all five device slots',
     '03-plac-manewrowy.png',
     '04-album-znakow.png',
     '05-mapa-umiejetnosci.png',
+    '06-zakopane-bezpieczny-zjazd.png',
+    '07-wies-postoj-przed-torami.png',
+    '08-lodz-odstep-od-rikszy.png',
   ];
   const sizes = [
     ['google-play/telefon', 1920, 1080],
