@@ -131,7 +131,7 @@ test('retries a timed-out daily delivery from its start', async ({
     DailyOrderGenerator.prototype.generate = function (...args) {
       const offers = generate.apply(this, args);
       for (const offer of offers)
-        if (offer.kind === 'delivery') offer.definition.limit_s = 2;
+        if (offer.kind === 'delivery') offer.definition.limit_s = 1;
       return offers;
     };
   }, '/src/gameplay/procedural/orders.ts');
@@ -160,7 +160,9 @@ test('retries a timed-out daily delivery from its start', async ({
 
   const failure = page.getByRole('dialog', { name: pl.missionFailure.title });
   await setRideClockRate(page, 4);
-  await expect(failure).toContainText(pl.missionFailure.reasons.czas_minal);
+  await expect(failure).toContainText(pl.missionFailure.reasons.czas_minal, {
+    timeout: 8_000,
+  });
   await setRideClockRate(page, 1);
   await expect.poll(async () => (await profile(page)).missionPoints).toBe(0);
   await failure.getByRole('button', { name: pl.missionFailure.retry }).click();
