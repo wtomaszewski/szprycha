@@ -1,6 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import { chooseCity, cityPin, driveTo, startAt } from './city-picker';
+import { legacyProgressKey } from '../../src/core/progressStore';
+import type { GameContent } from '../../src/content/schemas';
 import { readProfile } from './progress-profile';
 import { profile } from './helpers/profile';
 import questions from '../../content/pytania.json' with { type: 'json' };
@@ -78,10 +80,18 @@ test('opens Zakopane from Poland, renders Krupówki and remembers the free-ride 
 test('blocks motion until the rider prepares for fog and rejects a fast descent', async ({
   page,
 }, info) => {
-  await page.goto('/');
-  await chooseCity(page, 'zakopane');
-  await startTraining(page, 'ZAK-B-03');
-  const canvas = page.locator('canvas');
+  const id = 'ZAK-B-03';
+  // Load the fog training directly, without loading the free-ride scene first.
+  await page.addInitScript(
+    ({ key, completed }) =>
+      localStorage.setItem(key, JSON.stringify({ completed })),
+    { key: legacyProgressKey, completed: trainings.slice(0, 2) },
+  );
+  await page.goto('http://127.0.0.1:4174/');
+  await chooseCity(page, 'zakopane', 'campaign');
+  const canvas = page.locator('canvas[data-map="zakopane"]');
+  await expect(canvas).toHaveAttribute('data-mission', id);
+  await page.getByRole('button', { name: pl.dialogueUi.skip }).click();
   await expect(canvas).toHaveAttribute('data-weather', 'fog');
   const equip = page.getByRole('button', {
     name: pl.missionUi.equip,
@@ -93,30 +103,45 @@ test('blocks motion until the rider prepares for fog and rejects a fast descent'
   });
   await expect(equip).toBeVisible();
   await expect(lights).toBeVisible();
+  await expect(canvas).toHaveAttribute('data-y', '1832');
   await page.keyboard.down('ArrowUp');
+  await page.keyboard.down('KeyC');
   try {
-    await expect.poll(async () => canvas.getAttribute('data-y')).toBe('1832');
-    await page.waitForTimeout(400); // Hold the pedal across simulation ticks.
+    // The HUD confirms that the scene has processed input during preparation.
+    await expect(canvas).toHaveAttribute('data-actions', /"looking":true/);
     await expect(canvas).toHaveAttribute('data-y', '1832');
+    await expect(canvas).toHaveAttribute('data-speed', '0');
   } finally {
+    await page.keyboard.up('KeyC');
     await page.keyboard.up('ArrowUp');
   }
   await equip.click();
   await lights.click();
   await expect(lights).toBeHidden();
   await expect(
-    page.getByText(pl.misje['ZAK-B-03'].meta, { exact: true }),
+    page.getByText(pl.misje[id].meta, { exact: true }),
   ).toBeVisible();
   await page.screenshot({ path: info.outputPath('141-mgla.png') });
+  const content: GameContent = await (
+    await page.request.get('/data/content.json')
+  ).json();
+  const safeSpeed = content.przepisy.przepisy.find(
+    ({ id }) => id === 'MAN-08',
+  )!;
+  const failure = page.getByRole('dialog', {
+    name: pl.missionFailure.title,
+    exact: true,
+  });
   await page.keyboard.down('ArrowUp');
   try {
-    await expect(
-      page.getByRole('dialog', { name: pl.missionFailure.title, exact: true }),
-    ).toBeVisible({ timeout: 12_000 });
+    await expect(failure).toBeVisible({ timeout: 12_000 });
   } finally {
     await page.keyboard.up('ArrowUp');
   }
-  expect((await readProfile(page)).completed).not.toContain('ZAK-B-03');
+  await expect(failure).toContainText(
+    `${pl.missionFailure.reasons.dowolny_blad} · ${safeSpeed.tytul}`,
+  );
+  expect((await readProfile(page)).completed).not.toContain(id);
 });
 
 test('reaches the shoulder stop and finishes without points for speed', async ({

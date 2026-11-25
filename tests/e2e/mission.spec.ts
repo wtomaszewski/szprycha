@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { chooseCity, cityPin } from './city-picker';
+import { chooseCity, cityPin, driveTo } from './city-picker';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import questions from '../../content/pytania.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
@@ -173,9 +173,12 @@ async function reachStopQuestion(
   page: Page,
   accelerate: 'ArrowUp' | 'ArrowDown',
   highlightPath?: string,
+  openMission = async () => {
+    await page.goto('/');
+    await chooseCity(page, 'warszawa', 'campaign');
+  },
 ) {
-  await page.goto('/');
-  await chooseCity(page, 'warszawa', 'campaign');
+  await openMission();
   await skipDialogue(page);
   await page.getByRole('button', { name: pl.missionUi.equip }).click();
 
@@ -218,62 +221,90 @@ async function reachStopQuestion(
   return { canvas, resume, attention, question, stop };
 }
 
-test('clears full Road Attention on a correct answer and grants stars', async ({
-  page,
-}) => {
-  test.setTimeout(45_000);
-  const { tap } = await mockGamepad(page);
-  const { canvas, resume, attention, question, stop } = await reachStopQuestion(
-    page,
-    'ArrowUp',
-    'test-results/m4c-stop-highlight.png',
-  );
-  await expectQuestionSign(question, 'B-20');
-  const clock = await page.getByLabel(pl.missionUi.timer).textContent();
-  await tap(0);
-  await expect(question.getByRole('button').first()).not.toBeFocused();
-  await tap(13);
-  await expect(question.getByRole('button').first()).toBeFocused();
-  const correct = question.getByRole('button', {
-    name: stop.odpowiedzi[stop.poprawna],
-    exact: true,
+async function openStopPractice(page: Page) {
+  await page.route(/\/miasteczko(?:-[^/]+)?\.tmj(?:\?|$)/, async (route) => {
+    if (route.request().resourceType() === 'script') return route.continue();
+    const response = await route.fetch();
+    const map = await response.json();
+    const pois = map.layers.find(
+      ({ name }: { name: string }) => name === 'pois',
+    );
+    const point = (id: string) =>
+      pois.objects.find(({ name }: { name: string }) => name === id);
+    // Keep the first goal and all STOP crossings, but trim the approach.
+    point('tutorial_start').y = point('tutorial_jazda').y - 12;
+    await route.fulfill({ response, json: map });
   });
-  await correct.focus();
-  await tap(0);
-  await expect(question.getByRole('status')).toHaveText(
-    `${pl.progression.wiseHead} +100`,
-  );
-  await expect(attention).toContainText('0/3');
-  await expect(page.getByLabel(pl.missionUi.timer)).toHaveText(clock!);
-  await question.getByRole('button', { name: pl.progression.continue }).click();
-  await expect(question).toBeHidden();
-  await page.keyboard.down('ArrowUp');
-  await expect(resume).toBeVisible();
-  await page.keyboard.up('ArrowUp');
-  await resume.click();
-
-  await page.keyboard.down('ArrowUp');
-  await expect
-    .poll(async () => Number(await canvas.getAttribute('data-y')), {
-      intervals: [25, 50, 75],
-    })
-    .toBeGreaterThanOrEqual(1218);
-  await page.keyboard.up('ArrowUp');
-  await page.keyboard.down('Space');
+  await page.goto('/');
+  await page
+    .getByRole('button', { name: pl.driving.title, exact: true })
+    .click();
+  const canvas = page.locator('canvas[data-map="miasteczko"]');
   await expect(canvas).toHaveAttribute('data-speed', '0');
-  await page.waitForTimeout(450);
-  await page.keyboard.up('Space');
-  await page.keyboard.down('ArrowUp');
-  await expect(dialogue(page)).toBeVisible();
-  await page.keyboard.up('ArrowUp');
-  await skipDialogue(page);
-  const result = page.getByRole('region', { name: pl.missionUi.result });
-  await expect(result).toContainText(pl.missionUi.completed);
-  await expect(result).toContainText(`${pl.progression.stars} 1 ★`);
-  await expect(result).toContainText(pl.missionUi.yourPoints);
-  await expect(result).toContainText(`${pl.progression.missionSeries} 1`);
-  await expect(result).toContainText(`${pl.progression.tokens} +10`);
-  await page.screenshot({ path: 'test-results/m5a-wynik.png' });
+  await page.getByRole('button', { name: pl.phone.open }).click();
+  await page
+    .getByRole('dialog', { name: pl.phone.title })
+    .getByRole('button', { name: `${pl.phone.start} · ${tutorial.tytul}` })
+    .click();
+  await expect(canvas).toHaveAttribute('data-mission', 'WAW-T-01');
+  await expect(canvas).toHaveAttribute('data-y', '1038');
+}
+
+test.describe('Road Attention on the training map', () => {
+  test.use({ baseURL: 'http://127.0.0.1:4174', serviceWorkers: 'block' });
+
+  test('clears full Road Attention on a correct answer and grants stars', async ({
+    page,
+  }) => {
+    test.setTimeout(45_000);
+    const { tap } = await mockGamepad(page);
+    const { canvas, resume, attention, question, stop } =
+      await reachStopQuestion(
+        page,
+        'ArrowUp',
+        'test-results/m4c-stop-highlight.png',
+        () => openStopPractice(page),
+      );
+    await expectQuestionSign(question, 'B-20');
+    const clock = await page.getByLabel(pl.missionUi.timer).textContent();
+    await tap(0);
+    await expect(question.getByRole('button').first()).not.toBeFocused();
+    await tap(13);
+    await expect(question.getByRole('button').first()).toBeFocused();
+    const correct = question.getByRole('button', {
+      name: stop.odpowiedzi[stop.poprawna],
+      exact: true,
+    });
+    await correct.focus();
+    await tap(0);
+    await expect(question.getByRole('status')).toHaveText(
+      `${pl.progression.wiseHead} +100`,
+    );
+    await expect(attention).toContainText('0/3');
+    await expect(page.getByLabel(pl.missionUi.timer)).toHaveText(clock!);
+    await question
+      .getByRole('button', { name: pl.progression.continue })
+      .click();
+    await expect(question).toBeHidden();
+    await page.keyboard.down('ArrowUp');
+    await expect(resume).toBeVisible();
+    await page.keyboard.up('ArrowUp');
+    await resume.click();
+
+    await driveTo(page, 'ArrowUp', 'y', 1218, true);
+    await expect(canvas).toHaveAttribute('data-stop-ready', 'true');
+    await page.keyboard.down('ArrowUp');
+    await expect(dialogue(page)).toBeVisible();
+    await page.keyboard.up('ArrowUp');
+    await skipDialogue(page);
+    const result = page.getByRole('region', { name: pl.missionUi.result });
+    await expect(result).toContainText(pl.missionUi.completed);
+    await expect(result).toContainText(`${pl.progression.stars} 1 ★`);
+    await expect(result).toContainText(pl.missionUi.yourPoints);
+    await expect(result).toContainText(`${pl.progression.missionSeries} 1`);
+    await expect(result).toContainText(`${pl.progression.tokens} +10`);
+    await page.screenshot({ path: 'test-results/m5a-wynik.png' });
+  });
 });
 
 test('restarts from the mission spawn after a failed control question at a checkpoint', async ({
