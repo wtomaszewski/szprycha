@@ -3,6 +3,7 @@ import {
   progressDatabase,
   progressRecordKey,
   progressStoreName,
+  ProgressStore,
   type ProgressProfile,
 } from '../../../src/core/progressStore';
 
@@ -38,4 +39,43 @@ export async function profile(page: Page, updates?: Partial<ProgressProfile>) {
       }),
     { ...storage, updates },
   );
+}
+
+export async function seedProgress(
+  page: Page,
+  baseURL: string | undefined,
+  saved: Partial<ProgressProfile>,
+) {
+  if (!baseURL) throw new Error('A base URL is required to seed progress');
+  const initial = new ProgressStore().profile;
+  delete initial.tutorial;
+  const state = {
+    cookies: [],
+    origins: [
+      {
+        origin: new URL(baseURL).origin,
+        localStorage: [],
+        indexedDB: [
+          {
+            name: storage.database,
+            version: 1,
+            stores: [
+              {
+                name: storage.store,
+                autoIncrement: false,
+                indexes: [],
+                records: [
+                  {
+                    key: storage.key,
+                    value: { ...initial, nicknameSeed: 184, ...saved },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+  await page.context().setStorageState(state);
 }
