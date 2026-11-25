@@ -20,7 +20,16 @@ const maps = {
   warszawa: [1000, 452],
   wroclaw: [3140, 1940],
 } as const;
-type MapId = keyof typeof maps;
+const laterMaps = {
+  krakow: { missionId: 'KRA-B-01', point: [1616, 630] },
+  gdansk: { missionId: 'GDA-B-01', point: [1660, 650] },
+  wies: { missionId: 'WIE-B-01', point: [1280, 446] },
+  poznan: { missionId: 'POZ-B-01', point: [1712, 700] },
+  lodz: { missionId: 'LOD-B-01', point: [1780, 770] },
+  zakopane: { missionId: 'ZAK-B-01', point: [1650, 810] },
+} as const;
+type LaterMap = keyof typeof laterMaps;
+type MapId = keyof typeof maps | LaterMap;
 const conditions = {
   dzien: ['day', 'clear', undefined],
   noc: ['night', 'clear', undefined],
@@ -97,7 +106,7 @@ async function moveStart(
 
 async function auditWeather(
   page: Page,
-  map: MapId,
+  map: keyof typeof maps,
   condition: Condition,
   [x, y]: readonly [number, number] = maps[map],
   signalOutage?: boolean,
@@ -137,12 +146,129 @@ async function auditWeather(
   await expect(canvas).toHaveAttribute('data-weather', weather);
 }
 
-for (const map of Object.keys(maps) as MapId[])
+for (const map of Object.keys(maps) as (keyof typeof maps)[])
   for (const condition of ['dzien', 'noc', 'deszcz', 'snieg'] as const)
     test(map + ' ' + condition, async ({ page }) => {
       await auditWeather(page, map, condition);
       await screenshot(page, map + '-' + condition);
     });
+
+async function auditLaterMap(
+  page: Page,
+  map: LaterMap,
+  condition: Condition,
+  [x, y]: readonly [number, number] = laterMaps[map].point,
+) {
+  const { missionId } = laterMaps[map];
+  const [lighting, weather, precipitation] = conditions[condition];
+  await moveStart(page, map, x, y, true);
+  await page.route('**/data/content.json', async (route) => {
+    const response = await route.fetch();
+    const content: GameContent = await response.json();
+    const mission = content.misje.find((item) => item.id === missionId)!;
+    const objective = mission.cele.find((item) => item.typ === 'dojedz')!;
+    mission.start = {
+      poi: 'tutorial_start',
+      kask_zapiety: true,
+      noc: lighting === 'night' ? true : undefined,
+      pogoda: precipitation,
+    };
+    mission.cele = [{ ...objective, poi: 'audit-target' }];
+    mission.checkpointy = [];
+    mission.zdarzenia_wymuszone = [];
+    mission.skrot = undefined;
+    mission.dialog_start = undefined;
+    mission.ruch_ai = true;
+    await route.fulfill({ response, json: content });
+  });
+
+  await page.goto('/');
+  await waitForMainMenu(page);
+  await chooseCity(page, map, 'campaign');
+  const skip = page.getByRole('button', { name: pl.dialogueUi.skip });
+  if (await skip.isVisible()) await skip.click();
+  await expect(skip).toBeHidden();
+  const canvas = page.locator('canvas');
+  await expect(canvas).toHaveAttribute('data-map', map);
+  await expect(canvas).toHaveAttribute('data-x', String(x));
+  await expect(canvas).toHaveAttribute('data-y', String(y));
+  await expect(canvas).toHaveAttribute('data-lighting', lighting);
+  await expect(canvas).toHaveAttribute('data-weather', weather);
+  if (lighting === 'night') await page.keyboard.press('KeyL');
+  await expect
+    .poll(() =>
+      canvas.evaluate((element: HTMLCanvasElement) => {
+        const { width, height } = element.getBoundingClientRect();
+        const scale = (width * devicePixelRatio) / element.width;
+        return (
+          Number.isInteger(scale) &&
+          scale > 0 &&
+          height * devicePixelRatio === element.height * scale
+        );
+      }),
+    )
+    .toBe(true);
+}
+
+test.describe('audyt #181', () => {
+  test.describe.configure({ mode: 'parallel' });
+  for (const device of ['desktop', 'telefon'] as const) {
+    test.describe(device, () => {
+      if (device === 'telefon')
+        test.use({
+          viewport: { width: 740, height: 390 },
+          hasTouch: true,
+          isMobile: true,
+        });
+      for (const map of Object.keys(laterMaps) as LaterMap[])
+        for (const condition of ['dzien', 'noc', 'deszcz', 'snieg'] as const)
+          test(`${map} ${condition}`, async ({ page }) => {
+            await auditLaterMap(page, map, condition);
+            if (device === 'telefon')
+              await expect(
+                page.getByLabel(pl.driving.joystick).filter({ visible: true }),
+              ).toBeVisible();
+            await screenshot(page, `181-${map}-${condition}-${device}`);
+          });
+    });
+  }
+});
+
+const roadViews = [
+  ['krakow', 'snieg', [1440, 1016]],
+  ['gdansk', 'noc', [1024, 1110]],
+  ['wies', 'deszcz', [1088, 1128]],
+  ['poznan', 'snieg', [2504, 652]],
+  ['lodz', 'noc', [2824, 1088]],
+  ['zakopane', 'deszcz', [1840, 1056]],
+] as const;
+
+test.describe('oznakowanie #181', () => {
+  test.describe.configure({ mode: 'parallel' });
+  test.use({ reducedMotion: 'no-preference' });
+  for (const [map, condition, point] of roadViews)
+    test(`${map} ${condition}`, async ({ page }) => {
+      await auditLaterMap(page, map, condition, point);
+      await screenshot(page, `181-${map}-oznakowanie`);
+    });
+});
+
+const landmarkViews = [
+  ['krakow', 'wawel', [1656, 1616]],
+  ['gdansk', 'zuraw', [1716, 1776]],
+  ['wies', 'skansen', [2248, 1432]],
+  ['lodz', 'fabryka', [2864, 1500]],
+  ['zakopane', 'giewont', [1464, 790]],
+] as const;
+
+test.describe('sylwetki #181', () => {
+  test.describe.configure({ mode: 'parallel' });
+  for (const [map, place, point] of landmarkViews)
+    test(`${map} ${place}`, async ({ page }) => {
+      await auditLaterMap(page, map, 'dzien', point);
+      await screenshot(page, `181-${map}-${place}`);
+    });
+});
 
 const signViews = [
   ['warszawa', 'praga', [1115, 445]],

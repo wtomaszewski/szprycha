@@ -16,6 +16,11 @@ Stan na 25.11.2026.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Audyt grafiki sześciu późniejszych map (#181)
+
+- Porównano Kraków, Gdańsk, Wieś i las, Poznań, Łódź i Zakopane w czterech warunkach na desktopie i telefonie. Znajdźki mają wyraźniejsze krawędzie i refleksy, a D-46 i D-47 pokazują napis nad tablicą. [Raport i zrzuty](docs/AUDYT_GRAFIKI.md#audyt-sześciu-późniejszych-map--181)
+- Odłożono kontrolę migotania podczas jazdy na fizycznych urządzeniach. [Zakres wcześniejszych prób (#110)](https://github.com/wtomaszewski/szprycha/issues/110)
+
 ## Audyt dostępności nowych map (#176)
 
 - Audyt objął pięć kampanii, kolekcje, wybór dziewięciu map w Wolnej jeździe oraz komunikaty zimnego startu.

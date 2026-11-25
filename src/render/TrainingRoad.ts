@@ -350,7 +350,7 @@ export class TrainingRoad {
             color: '#1a1c2c',
           })
           .setOrigin(0.5)
-          .setDepth(6);
+          .setDepth(7); // Keep the text above the cached sign face.
         if (sign.code === 'D-47')
           scene.add
             .graphics()
