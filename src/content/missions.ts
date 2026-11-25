@@ -10,13 +10,10 @@ export const campaignCity = z.enum([
   'gdansk',
   'wies',
   'poznan',
-]);
-export type CampaignCity = z.infer<typeof campaignCity>;
-export const playableCity = z.enum([
-  ...campaignCity.options,
-  'lodz',
   'zakopane',
 ]);
+export type CampaignCity = z.infer<typeof campaignCity>;
+export const playableCity = z.enum([...campaignCity.options, 'lodz']);
 export type PlayableCity = z.infer<typeof playableCity>;
 
 export function isCampaignCity(city: PlayableCity): city is CampaignCity {
@@ -48,6 +45,7 @@ const missionGoal = z.discriminatedUnion('typ', [
   z.strictObject({ ...goalFields, typ: z.literal('zbierz_bursztyn'), poi: id }),
   z.strictObject({ ...goalFields, typ: z.literal('zbierz_szyszke'), poi: id }),
   z.strictObject({ ...goalFields, typ: z.literal('zbierz_rogala'), poi: id }),
+  z.strictObject({ ...goalFields, typ: z.literal('zbierz_swierk'), poi: id }),
   z
     .strictObject({
       ...goalFields,
@@ -171,7 +169,8 @@ export const missionSchema = z
         (mission.miasto === 'gdansk' && /^GDA-B-0[1-4]$/.test(mission.id)) ||
         (mission.miasto === 'wies' && /^WIE-B-0[1-4]$/.test(mission.id)) ||
         (mission.miasto === 'poznan' && /^POZ-B-0[1-4]$/.test(mission.id)) ||
-        (mission.miasto === 'lodz' && /^LOD-B-0[1-4]$/.test(mission.id)));
+        (mission.miasto === 'lodz' && /^LOD-B-0[1-4]$/.test(mission.id)) ||
+        (mission.miasto === 'zakopane' && /^ZAK-B-0[1-5]$/.test(mission.id)));
     if (!legacyCityTraining && !mission.id.startsWith(`${prefix}-${act}-`))
       ctx.addIssue({
         code: 'custom',

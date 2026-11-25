@@ -1,5 +1,9 @@
 # Notatki dla człowieka
 
+## Zakopane 2/2 — kampania (#142)
+
+- Do weryfikacji przed wydaniem pozostają oznaczone w danych `GDZIE-03b`, `GDZIE-11`, `PIER-05`, `SYG-02` i `MAN-08`, w tym ocena bezpiecznej drogi zatrzymania na spadku we mgle. Scenkę `PP-01`–`PP-03` obejmuje przegląd merytoryczny M07.
+
 ## Wieś i las 2/2 — kampania (#128)
 
 - Przed wydaniem konsultant sprawdza zakres korzystania z przejezdnego pobocza (`GDZIE-03b`) i sformułowanie zalecenia o dodatkowych odblaskach (`WYP-06`). W misji o zmroku kamizelka jest częścią ćwiczenia poprawiającego widoczność.

@@ -48,6 +48,14 @@ const collections = {
     variants: 1,
     paint: paintSzyszka,
   },
+  swierk: {
+    field: 'swierki',
+    label: ui.driving.swierki,
+    hint: ui.driving.swierkiHint,
+    question: ui.driving.swierkQuestion,
+    variants: 1,
+    paint: paintSwierk,
+  },
 } as const;
 type CollectionKind = keyof typeof collections;
 
@@ -207,6 +215,31 @@ function paintRogal(ctx: CanvasRenderingContext2D) {
       '................',
     ],
     { '#': '#542d29', h: '#ffd496', a: '#cf884e', b: '#9a5434' },
+  );
+}
+
+function paintSwierk(ctx: CanvasRenderingContext2D) {
+  paintPixels(
+    ctx,
+    [
+      '................',
+      '.......##.......',
+      '......#ha#......',
+      '.....#haaa#.....',
+      '....#haaabb#....',
+      '.....##aa##.....',
+      '....#hahab#.....',
+      '...#haahaab#....',
+      '..#haaabbbbb#...',
+      '...##haaab##....',
+      '..#haahaaaab#...',
+      '.#haaabaaaaab#..',
+      '.#####aab#####..',
+      '......#ab#......',
+      '......####......',
+      '................',
+    ],
+    { '#': '#542d29', h: '#ffe19a', a: '#c98952', b: '#9a5434' },
   );
 }
 

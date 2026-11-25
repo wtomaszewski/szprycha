@@ -17,6 +17,12 @@ export function zakopaneScenery({
     rect(`${kind}-${x}-${y}`, x, y, 0, 0, { kind });
   const downhill = Math.PI / 2;
   const uphill = -downhill;
+  const trees = [
+    ['swierk-stojak', 1555, 863, 'Q057'],
+    ['swierk-willa', 1740, 863, 'Q017'],
+    ['swierk-latarnia', 2050, 863, 'Q035'],
+    ['swierk-potok', 2002, 2101, 'Q006'],
+  ] as const;
 
   const blocks = [
     block('willa-przy-deptaku', 1312, 651, 124, 81, 4),
@@ -62,6 +68,9 @@ export function zakopaneScenery({
       rect('zjazd', 3648, 1376, 608, 864),
       rect('droga-poza-zabudowa', 864, 2624, 448, 960),
     ],
+    collectibles: trees.map(([id, x, y, question]) =>
+      rect(`zak-${id}`, x, y, 0, 0, { kind: 'swierk', question }),
+    ),
     pois: [
       point('zjazd-start', 3968, 1456, downhill),
       point('zjazd-postoj', 3968, 1778, downhill, 52),
@@ -77,6 +86,17 @@ export function zakopaneScenery({
       point('mostek-start', 1936, 949, downhill),
       point('mostek-przejazd', 1936, 994, downhill, 38),
       point('mostek-meta', 1936, 2078, downhill, 48),
+      point('swierki-start', 1494, 863),
+      ...trees.map(([id, x, y]) => point(id, x, y)),
+      point('dworzec-start', 2784, 688, downhill),
+      point('dworzec-swiatla', 2784, 988, downhill, 48),
+      point('dworzec-meta', 2784, 1504, downhill, 48),
+      point('pomoc-start', 1616, 1558, downhill),
+      point('pomoc-mostek', 1616, 2000, downhill, 48),
+      point('pomoc-znak', 1584, 2108, downhill, 48),
+      point('pomoc-meta', 1584, 2376, downhill, 48),
+      point('kolej-postoj', 1104, 3190, uphill, 48),
+      point('kolej-meta', 1104, 2736, uphill, 48),
     ],
     map_decorations: [
       rect('giewont', 1430, 706, 0, 0, { kind: 'giewont' }),

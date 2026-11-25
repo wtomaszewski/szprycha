@@ -242,6 +242,9 @@
     "wiesTitle": "Wieś i las",
     "districtLocked": "Przejście zamknięte. Zatrzymaj się i otwórz ćwiczenia w SzprychaApp.",
     "districtsOpened": "Nowe przejście otwarte! Wróć do Wolnej jazdy, żeby je odkryć.",
+    "swierki": "Drewniane świerki",
+    "swierkiHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać drewniany świerk.",
+    "swierkQuestion": "Zagadka drewnianego świerka",
     "szyszki": "Szyszki",
     "szyszkiHint": "Zsiądź z roweru i rozwiąż zagadkę, żeby zebrać szyszkę.",
     "szyszkaQuestion": "Zagadka szyszki",
@@ -484,6 +487,7 @@
       "oddaj": "Oddaj przesyłkę w zaznaczonym miejscu.",
       "zbierz_obwarzanka": "Zsiądź z roweru i podejdź do obwarzanka.",
       "zbierz_szyszke": "Zsiądź z roweru i podejdź do szyszki.",
+      "zbierz_swierk": "Zsiądź z roweru i podejdź do drewnianego świerka.",
       "zbierz_rogala": "Zsiądź z roweru i podejdź do drewnianego rogala.",
       "zbierz_bursztyn": "Zsiądź z roweru i podejdź do bursztynu.",
       "zbierz_krasnala": "Zsiądź z roweru i podejdź do krasnala.",
@@ -694,6 +698,65 @@
       "wyjasnienie": "Włączasz się do ruchu. Ustąp pieszym na chodniku i wszystkim jadącym jezdnią.",
       "meta": "Poczekaj, aż pieszy przejdzie, sprawdź jezdnię i wyjedź z bramy.",
       "powrot": "Zatrzymaj się przed chodnikiem i poczekaj, aż pieszy zwolni przejazd."
+    },
+    "ZAK-A1-01": {
+      "tytul": "Pudełko pod Giewontem",
+      "opis": "Zawieź drewniane świerki na wystawę drogą pieszo-rowerową obok Krupówek.",
+      "odbior": "Odbierz od Kazika pudełko drewnianych świerków.",
+      "meta": "Oddaj pudełko na końcu drogi pieszo-rowerowej."
+    },
+    "ZAK-A1-02": {
+      "tytul": "Trzy świerki i jeden trop",
+      "opis": "Rozwiąż zagadki z trzech drewnianych świerków i odczytaj wskazówkę Leny.",
+      "stojak": "Zsiądź z roweru i podejdź do świerka przy stojaku.",
+      "willa": "Podejdź do świerka przed drewnianą willą.",
+      "latarnia": "Poszukaj ostatniego świerka przy latarni."
+    },
+    "ZAK-A2-01": {
+      "tytul": "Zielone przy dworcu",
+      "opis": "Dostarcz szkic przez przejazd dla rowerów z sygnałem S-6.",
+      "odbior": "Odbierz szkic sygnalizacji od Zawiły.",
+      "postoj": "Zatrzymaj się przed przejazdem i sprawdź sygnalizator rowerowy.",
+      "pytanie": "Zapala się zielone dla rowerów, ale auto jeszcze zjeżdża z przejazdu. Co robisz?",
+      "odp1": "Czekam, aż przejazd będzie wolny.",
+      "odp2": "Wjeżdżam od razu, bo mam zielone.",
+      "wyjasnienie": "Czekaj na zielone dla rowerów i wjedź dopiero, gdy przejazd jest wolny.",
+      "meta": "Przejedź na zielonym dla rowerów i oddaj szkic na drodze rowerowej."
+    },
+    "ZAK-A2-02": {
+      "tytul": "Kartka spod regli",
+      "opis": "Przygotuj rower i przewieź notatkę o widoczności przez zjazd we mgle.",
+      "odbior": "Odbierz od Oli notatkę o widoczności.",
+      "meta": "Hamuj wcześniej, żeby oddać notatkę przy końcu zjazdu."
+    },
+    "ZAK-A3-01": {
+      "tytul": "Pomoc za mostkiem",
+      "opis": "Oświetlony rower przeprowadź leśną alejką i pomóż Turbo po upadku.",
+      "mostek": "Przejedź przez drewniany mostek i uważaj na pieszych.",
+      "znak": "Podejdź do wlotu alejki z B-9.",
+      "meta": "Zsiądź i przeprowadź rower alejką do bezpiecznego miejsca przy Turbo.",
+      "pytanie": "Turbo się przewrócił przy leśnej alejce. Od czego zaczynasz?",
+      "dorosly": "Zawołaj dorosłego, który może Ci pomóc.",
+      "pytanieDorosly": "Jesteś już w bezpiecznym miejscu. Jak sprawdzasz, czy Turbo reaguje?",
+      "odpDorosly1": "Wołam dorosłego i pytam głośno: „Czy mnie słyszysz?”.",
+      "odpDorosly2": "Przesuwam Turbo i stawiam go na nogi.",
+      "wyjasnienieDorosly": "Zawołaj dorosłego, sprawdź reakcję Turbo i nie przesuwaj go bez potrzeby.",
+      "telefon": "Przećwicz rozmowę z dyspozytorem 112.",
+      "pytanieTelefon": "Turbo nie odpowiada, a dorosły jest przy nim. Co powiesz pod numerem 112?",
+      "odpTelefon1": "„Przyjedźcie szybko!” i od razu się rozłączę.",
+      "odpTelefon2": "„Zakopane, leśna alejka za drewnianym mostkiem. Jedna osoba upadła i nie odpowiada”.",
+      "wyjasnienieTelefon": "Podaj miejsce, opisz zdarzenie, powiedz, ile osób potrzebuje pomocy, i czekaj na polecenia."
+    },
+    "ZAK-A3-02": {
+      "tytul": "Plansza za torami",
+      "opis": "Dostarcz planszę z bezpieczną trasą, jadąc poboczem i czekając przed zaporami.",
+      "odbior": "Odbierz od Leny planszę z poprawioną trasą.",
+      "postoj": "Zostań na prawym poboczu i zatrzymaj się przed torami.",
+      "pytanie": "Zapora zaczyna się podnosić, ale czerwone światła nadal migają. Co robisz?",
+      "odp1": "Czekam, aż światła zgasną i zapora całkiem się otworzy.",
+      "odp2": "Przejeżdżam, skoro zapora już się podnosi.",
+      "wyjasnienie": "Przejedź, gdy zapory są całkiem otwarte, światła nie migają i za torami jest miejsce.",
+      "meta": "Przejedź przez otwarty przejazd i oddaj planszę na prawym poboczu."
     },
     "ZAK-B-01": {
       "tytul": "Zjazd spod regli",
@@ -1934,6 +1997,30 @@
   "dialogi": {
     "lodz_zapowiedzi": {
       "MAN-14": "Zostaw miejsce jadącym z naprzeciwka, a gdy jest ciasno, zwolnij albo się zatrzymaj."
+    },
+    "ZAK-A1-01": {
+      "start": "Dowieź pudełko na wystawę. Przez Krupówki obowiązuje B-1. Jedź drogą wspólną obok.",
+      "koniec": "Pod wieczkiem jest rysunek Giewontu. Pokaż go Lenie, zna te drewniane świerki."
+    },
+    "ZAK-A1-02": {
+      "start": "Pod świerkami znajdziesz zagadki. Dopasuj odpowiedzi i sprawdź, dokąd prowadzi fioletowy ślad.",
+      "koniec": "Trzy nacięcia układają się w sygnalizator. Na szkicu dworca jest podpis Zakłócacza."
+    },
+    "ZAK-A2-01": {
+      "start": "To mój stary szkic próbny. Sprawdź prawdziwy sygnał rowerowy przy dworcu i zawieź szkic na drugą stronę.",
+      "koniec": "Wiemy, gdzie jechać przy dworcu. Ola sprawdzi z Tobą, co widać na zjeździe."
+    },
+    "ZAK-A2-02": {
+      "start": "Mgła skróciła widoczność. Włącz lampki i zwolnij tak, by wyhamować na odcinku, który widzisz.",
+      "koniec": "Na szkicu zaznaczymy miejsce, w którym warto zwolnić. Przy potoku robi się już ciemno."
+    },
+    "ZAK-A3-01": {
+      "start": "Zapnij kask i włącz obie lampki. Za mostkiem zsiądź przed znakiem zakazu wjazdu rowerów.",
+      "koniec": "Dorosły został z Turbo. Dzięki, że zatrzymałeś się bezpiecznie i dokładnie opisałeś miejsce."
+    },
+    "ZAK-A3-02": {
+      "start": "Plansza jest gotowa. Dostarcz ją pod regle, a przed torami sprawdź światła i zapory.",
+      "koniec": "Na wystawie pokażemy Twoją trasę. Jest na niej miejsce i na hamowanie, i na czekanie."
     },
     "poznan_zapowiedzi": {
       "GDZIE-13": "W śluzie zaczekaj przed autami i rusz dopiero, gdy sygnał na to pozwoli.",

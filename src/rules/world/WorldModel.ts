@@ -292,7 +292,7 @@ const collectibleProperties = z.discriminatedUnion('kind', [
     variant: z.number().int().nonnegative().default(0),
   }),
   z.object({
-    kind: z.enum(['obwarzanek', 'bursztyn', 'szyszka', 'rogal']),
+    kind: z.enum(['obwarzanek', 'bursztyn', 'szyszka', 'rogal', 'swierk']),
     question: z.string().regex(/^Q[0-9]+$/),
   }),
 ]);

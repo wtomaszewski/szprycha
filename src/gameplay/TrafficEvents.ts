@@ -33,6 +33,7 @@ export const eventRules = {
   cwiczenie_trasy: [
     'PIER-08',
     'GDZIE-02',
+    'GDZIE-03b',
     'GDZIE-11',
     'MAN-03',
     'MAN-05',

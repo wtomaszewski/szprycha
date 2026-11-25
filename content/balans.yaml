@@ -67,6 +67,9 @@ licencja:
     poznan:
       start: poz-sluza-start
       punkty: [poz-sluza-postoj, poz-sluza-meta]
+    zakopane:
+      start: zak-dworzec-start
+      punkty: [zak-dworzec-swiatla, zak-dworzec-meta]
 silnik:
   ttc_minor_s: 2.0
   ttc_major_s: 1.0

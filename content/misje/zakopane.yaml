@@ -1,7 +1,6 @@
 - id: ZAK-B-01
   miasto: zakopane
   akt: 0
-  poboczna: true
   tytul: misje.ZAK-B-01.tytul
   opis: misje.ZAK-B-01.opis
   zleceniodawca: sierzant_ola
@@ -21,6 +20,8 @@
   checkpointy: [zak-zjazd-postoj]
   warunki_porazki: [dowolny_blad]
   reguly_cwiczone: [MAN-08, GDZIE-03]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_trasy, przy: zak-zjazd-start, regula: MAN-08 }
   par_s: 45
   premia_czasowa: false
   min_dobre_nawyki: 0
@@ -29,7 +30,6 @@
 - id: ZAK-B-02
   miasto: zakopane
   akt: 0
-  poboczna: true
   tytul: misje.ZAK-B-02.tytul
   opis: misje.ZAK-B-02.opis
   zleceniodawca: sierzant_ola
@@ -48,6 +48,8 @@
     - { typ: dojedz, poi: zak-pobocze-meta, opis: misje.ZAK-B-02.meta }
   warunki_porazki: [dowolny_blad]
   reguly_cwiczone: [GDZIE-03b]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_trasy, przy: zak-pobocze-start, regula: GDZIE-03b }
   par_s: 45
   premia_czasowa: false
   min_dobre_nawyki: 0
@@ -56,7 +58,6 @@
 - id: ZAK-B-03
   miasto: zakopane
   akt: 0
-  poboczna: true
   tytul: misje.ZAK-B-03.tytul
   opis: misje.ZAK-B-03.opis
   zleceniodawca: sierzant_ola
@@ -75,6 +76,8 @@
       wyjasnienie: misje.ZAK-B-03.wyjasnienie
   warunki_porazki: [dowolny_blad]
   reguly_cwiczone: [KASK-01, MSC-04, MAN-08]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_trasy, przy: zak-mgla-start, regula: MAN-08 }
   par_s: 45
   premia_czasowa: false
   min_dobre_nawyki: 0
@@ -83,7 +86,6 @@
 - id: ZAK-B-04
   miasto: zakopane
   akt: 0
-  poboczna: true
   tytul: misje.ZAK-B-04.tytul
   opis: misje.ZAK-B-04.opis
   zleceniodawca: sierzant_ola
@@ -103,6 +105,8 @@
   skrot: { odcinek: krupowki }
   warunki_porazki: [dowolny_blad]
   reguly_cwiczone: [ZNAK-B1, GDZIE-11]
+  zdarzenia_wymuszone:
+    - { typ: czytaj_oznakowanie, przy: zak-krupowki-znak, regula: ZNAK-B1 }
   par_s: 60
   premia_czasowa: false
   min_dobre_nawyki: 0
@@ -111,7 +115,6 @@
 - id: ZAK-B-05
   miasto: zakopane
   akt: 0
-  poboczna: true
   tytul: misje.ZAK-B-05.tytul
   opis: misje.ZAK-B-05.opis
   zleceniodawca: sierzant_ola
@@ -137,7 +140,213 @@
       wyjasnienie: misje.ZAK-B-05.wyjasnienie
   warunki_porazki: [dowolny_blad]
   reguly_cwiczone: [PIER-05, GDZIE-11, PP-01]
+  zdarzenia_wymuszone:
+    - { typ: po_zdarzeniu, przy: zak-mostek-meta, regula: PP-01 }
   par_s: 75
   premia_czasowa: false
   min_dobre_nawyki: 0
   nagrody: { zetony: 0, xp: 0 }
+
+- id: ZAK-A1-01
+  miasto: zakopane
+  akt: 1
+  tytul: misje.ZAK-A1-01.tytul
+  opis: misje.ZAK-A1-01.opis
+  zleceniodawca: pan_kazik
+  typ: dostawa
+  wymagania: { misje_ukonczone: [ZAK-B-01, ZAK-B-02, ZAK-B-03, ZAK-B-04, ZAK-B-05] }
+  start: { poi: zak-krupowki-start, kask_zapiety: false }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.ZAK-B-03.lampki }
+    - { typ: odbierz, poi: zak-krupowki-start, przedmiot: pudelko_swierkow, opis: misje.ZAK-A1-01.odbior }
+    - { typ: dojedz, poi: zak-krupowki-znak, opis: misje.ZAK-B-04.meta }
+    - { typ: oddaj, poi: zak-krupowki-meta, przedmiot: pudelko_swierkow, opis: misje.ZAK-A1-01.meta }
+  checkpointy: [zak-krupowki-znak]
+  zdarzenia_wymuszone:
+    - { typ: czytaj_oznakowanie, przy: zak-krupowki-znak, regula: ZNAK-B1 }
+  skrot: { odcinek: krupowki }
+  warunki_porazki: [dowolny_blad]
+  reguly_cwiczone: [KASK-01, GDZIE-11, ZNAK-B1]
+  par_s: 120
+  premia_czasowa: false
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 12, xp: 100 }
+  dialog_start: dialogi.ZAK-A1-01.start
+  dialog_koniec: dialogi.ZAK-A1-01.koniec
+
+- id: ZAK-A1-02
+  miasto: zakopane
+  akt: 1
+  tytul: misje.ZAK-A1-02.tytul
+  opis: misje.ZAK-A1-02.opis
+  zleceniodawca: lena_mapa
+  typ: detektyw
+  wymagania: { misje_ukonczone: [ZAK-A1-01] }
+  start: { poi: zak-swierki-start }
+  ruch_ai: false
+  cele:
+    - { typ: zbierz_swierk, poi: zak-swierk-stojak, opis: misje.ZAK-A1-02.stojak }
+    - { typ: zbierz_swierk, poi: zak-swierk-willa, opis: misje.ZAK-A1-02.willa }
+    - { typ: zbierz_swierk, poi: zak-swierk-latarnia, opis: misje.ZAK-A1-02.latarnia }
+  zdarzenia_wymuszone:
+    - { typ: czytaj_oznakowanie, przy: zak-swierki-start, regula: ZNAK-B1 }
+  reguly_cwiczone: [ZNAK-B1, GDZIE-11, PIER-05]
+  warunki_porazki: [dowolny_blad]
+  par_s: 120
+  premia_czasowa: false
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 14, xp: 120 }
+  dialog_start: dialogi.ZAK-A1-02.start
+  dialog_koniec: dialogi.ZAK-A1-02.koniec
+
+- id: ZAK-A2-01
+  miasto: zakopane
+  akt: 2
+  tytul: misje.ZAK-A2-01.tytul
+  opis: misje.ZAK-A2-01.opis
+  zleceniodawca: inzynier_zawila
+  typ: dostawa
+  wymagania: { misje_ukonczone: [ZAK-A1-02] }
+  start: { poi: zak-dworzec-start }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: zak-dworzec-start, przedmiot: szkic_sygnalu, opis: misje.ZAK-A2-01.odbior }
+    - typ: wybor
+      poi: zak-dworzec-swiatla
+      opis: misje.ZAK-A2-01.postoj
+      regula: PIER-05
+      pytanie: misje.ZAK-A2-01.pytanie
+      odpowiedzi: [misje.ZAK-A2-01.odp1, misje.ZAK-A2-01.odp2]
+      poprawna: 0
+      wyjasnienie: misje.ZAK-A2-01.wyjasnienie
+    - { typ: oddaj, poi: zak-dworzec-meta, przedmiot: szkic_sygnalu, opis: misje.ZAK-A2-01.meta }
+  checkpointy: [zak-dworzec-swiatla]
+  zdarzenia_wymuszone:
+    - { typ: swiatla_palac, przy: zak-dworzec-swiatla, regula: SYG-02 }
+  reguly_cwiczone: [PIER-05, SYG-02]
+  warunki_porazki: [dowolny_blad]
+  par_s: 120
+  premia_czasowa: false
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 16, xp: 140 }
+  dialog_start: dialogi.ZAK-A2-01.start
+  dialog_koniec: dialogi.ZAK-A2-01.koniec
+
+- id: ZAK-A2-02
+  miasto: zakopane
+  akt: 2
+  tytul: misje.ZAK-A2-02.tytul
+  opis: misje.ZAK-A2-02.opis
+  zleceniodawca: sierzant_ola
+  typ: dostawa
+  wymagania: { misje_ukonczone: [ZAK-A2-01] }
+  start: { poi: zak-zjazd-start, pogoda: mgla, kask_zapiety: false }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.ZAK-B-03.lampki }
+    - { typ: odbierz, poi: zak-zjazd-start, przedmiot: kartka_o_widocznosci, opis: misje.ZAK-A2-02.odbior }
+    - typ: wybor
+      poi: zak-zjazd-postoj
+      opis: misje.ZAK-B-03.meta
+      regula: MAN-08
+      pytanie: misje.ZAK-B-03.pytanie
+      odpowiedzi: [misje.ZAK-B-03.odp1, misje.ZAK-B-03.odp2]
+      poprawna: 1
+      wyjasnienie: misje.ZAK-B-03.wyjasnienie
+    - { typ: oddaj, poi: zak-zjazd-meta, przedmiot: kartka_o_widocznosci, opis: misje.ZAK-A2-02.meta }
+  checkpointy: [zak-zjazd-postoj]
+  zdarzenia_wymuszone:
+    - { typ: cwiczenie_trasy, przy: zak-zjazd-start, regula: MAN-08 }
+  reguly_cwiczone: [MAN-08, MSC-04]
+  warunki_porazki: [dowolny_blad]
+  par_s: 120
+  premia_czasowa: false
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 16, xp: 150 }
+  dialog_start: dialogi.ZAK-A2-02.start
+  dialog_koniec: dialogi.ZAK-A2-02.koniec
+
+- id: ZAK-A3-01
+  miasto: zakopane
+  akt: 3
+  tytul: misje.ZAK-A3-01.tytul
+  opis: misje.ZAK-A3-01.opis
+  zleceniodawca: sierzant_ola
+  typ: pomoc
+  wymagania: { misje_ukonczone: [ZAK-A2-02] }
+  start: { poi: zak-pomoc-start, zmrok: true, kask_zapiety: false }
+  ruch_ai: false
+  cele:
+    - { typ: przygotuj_rower, opis: misje.ZAK-B-03.lampki }
+    - { typ: dojedz, poi: zak-pomoc-mostek, opis: misje.ZAK-A3-01.mostek }
+    - { typ: dojedz, poi: zak-pomoc-znak, opis: misje.ZAK-A3-01.znak }
+    - typ: wybor
+      poi: zak-pomoc-meta
+      opis: misje.ZAK-A3-01.meta
+      regula: PP-01
+      pytanie: misje.ZAK-A3-01.pytanie
+      odpowiedzi: [misje.ZAK-B-05.odp1, misje.ZAK-B-05.odp2]
+      poprawna: 1
+      wyjasnienie: misje.ZAK-B-05.wyjasnienie
+    - typ: wybor
+      poi: zak-pomoc-meta
+      opis: misje.ZAK-A3-01.dorosly
+      regula: PP-03
+      pytanie: misje.ZAK-A3-01.pytanieDorosly
+      odpowiedzi: [misje.ZAK-A3-01.odpDorosly1, misje.ZAK-A3-01.odpDorosly2]
+      poprawna: 0
+      wyjasnienie: misje.ZAK-A3-01.wyjasnienieDorosly
+    - typ: wybor
+      poi: zak-pomoc-meta
+      opis: misje.ZAK-A3-01.telefon
+      regula: PP-02
+      pytanie: misje.ZAK-A3-01.pytanieTelefon
+      odpowiedzi: [misje.ZAK-A3-01.odpTelefon1, misje.ZAK-A3-01.odpTelefon2]
+      poprawna: 1
+      wyjasnienie: misje.ZAK-A3-01.wyjasnienieTelefon
+  checkpointy: [zak-pomoc-mostek, zak-pomoc-znak]
+  zdarzenia_wymuszone:
+    - { typ: czytaj_oznakowanie, przy: zak-pomoc-znak, regula: ZNAK-B9 }
+    - { typ: po_zdarzeniu, przy: zak-pomoc-meta, regula: PP-01 }
+  reguly_cwiczone: [MSC-04, ZNAK-B9, PP-01]
+  warunki_porazki: [dowolny_blad]
+  par_s: 120
+  premia_czasowa: false
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 18, xp: 170 }
+  dialog_start: dialogi.ZAK-A3-01.start
+  dialog_koniec: dialogi.ZAK-A3-01.koniec
+
+- id: ZAK-A3-02
+  miasto: zakopane
+  akt: 3
+  tytul: misje.ZAK-A3-02.tytul
+  opis: misje.ZAK-A3-02.opis
+  zleceniodawca: lena_mapa
+  typ: dostawa
+  wymagania: { misje_ukonczone: [ZAK-A3-01] }
+  start: { poi: zak-pobocze-start }
+  ruch_ai: false
+  cele:
+    - { typ: odbierz, poi: zak-pobocze-start, przedmiot: plansza_spaceru, opis: misje.ZAK-A3-02.odbior }
+    - typ: wybor
+      poi: zak-kolej-postoj
+      opis: misje.ZAK-A3-02.postoj
+      regula: MSC-01
+      pytanie: misje.ZAK-A3-02.pytanie
+      odpowiedzi: [misje.ZAK-A3-02.odp1, misje.ZAK-A3-02.odp2]
+      poprawna: 0
+      wyjasnienie: misje.ZAK-A3-02.wyjasnienie
+    - { typ: oddaj, poi: zak-kolej-meta, przedmiot: plansza_spaceru, opis: misje.ZAK-A3-02.meta }
+  checkpointy: [zak-kolej-postoj]
+  zdarzenia_wymuszone:
+    - { typ: przejazd_kolejowy, przy: zak-kolej-postoj, regula: MSC-01 }
+  reguly_cwiczone: [GDZIE-03b, MSC-01]
+  warunki_porazki: [dowolny_blad]
+  par_s: 120
+  premia_czasowa: false
+  min_dobre_nawyki: 0
+  nagrody: { zetony: 20, xp: 200 }
+  dialog_start: dialogi.ZAK-A3-02.start
+  dialog_koniec: dialogi.ZAK-A3-02.koniec
