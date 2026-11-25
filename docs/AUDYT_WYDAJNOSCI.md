@@ -93,12 +93,38 @@ Po drugiej rundzie liczby tekstur w menu ustabilizowały się dla poszczególnyc
 
 Gra zachowuje cache plików mapy na dysku. Przy wejściu na inną mapę usuwa poprzednią mapę Tiled z pamięci oraz jej tekstury podłoża, elewacji, znaków i dekoracji. Wspólne atlasy pozostają dostępne. Generowanie podłoża rysuje oznakowanie tylko w zajętych fragmentach.
 
+### Dziewięć map (#174)
+
+Pomiar z 25.11.2026 wykonano na buildach produkcyjnych z `main` (`fa9caa1`) i z poprawką, używając Chromium 156.0.8078.79 headless, WebGL SwiftShader, 1280 × 720 i CPU 4×. Jeden profil przejechał trzy rundy po dziewięciu mapach z pełną jakością grafiki. Na każdej mapie benchmark powtarza ten sam odcinek jazdy, trzymając dżojstik przez maksymalnie pięć sekund i wracając do punktu startu klawiszem R. Daje to ok. 22 sekundy sterowania na wizytę i 10 minut łącznie. Przed każdym odczytem w menu oraz w początkowym i końcowym Miasteczku benchmark wymusza GC przez CDP. Tekstury liczy jako udane alokacje WebGL pomniejszone o jawne zwolnienia.
+
+Podłoże generowane przy zbliżeniu kamery i fragmenty scenerii były już zwalniane przy zmianie mapy. Atlasy kolekcji, tekstury animowanej wody oraz obraz paralaksy Giewontu pozostawały w globalnym cache. Po poprawce ich klucze zawierają identyfikator mapy, więc przy zmianie miasta są usuwane razem z pozostałymi teksturami poprzedniej mapy. Powtórne wejście na tę samą mapę nadal wykorzystuje jej cache.
+
+| Punkt pomiaru | Sterta po zmianie R1 / R2 / R3 (MiB) | Tekstury na `main` (R3) | Tekstury po zmianie R1 / R2 / R3 | Słuchacze DOM po zmianie R1 / R2 / R3 |
+| --- | ---: | ---: | ---: | ---: |
+| Miasteczko, początek jazdy | 21,34 | 183 | 183 | 292 |
+| Menu po Miasteczku | 20,60 / 23,09 / 23,41 | 225 | 155 / 155 / 155 | 280 / 280 / 280 |
+| Menu po Warszawie | 22,27 / 23,91 / 24,23 | 452 | 390 / 390 / 390 | 279 / 279 / 279 |
+| Menu po Wrocławiu | 23,01 / 24,04 / 24,24 | 467 | 411 / 411 / 411 | 279 / 279 / 279 |
+| Menu po Krakowie | 22,66 / 23,70 / 23,79 | 363 | 306 / 306 / 306 | 279 / 279 / 279 |
+| Menu po Gdańsku | 22,56 / 23,47 / 23,62 | 279 | 228 / 228 / 228 | 279 / 279 / 279 |
+| Menu po Wsi i lesie | 22,56 / 23,45 / 23,45 | 237 | 171 / 171 / 171 | 279 / 279 / 279 |
+| Menu po Poznaniu | 22,60 / 23,24 / 23,37 | 262 | 204 / 204 / 204 | 279 / 279 / 279 |
+| Menu po Łodzi | 22,97 / 23,40 / 23,56 | 270 | 201 / 201 / 201 | 279 / 279 / 279 |
+| Menu po Zakopanem | 22,88 / 23,25 / 23,43 | 223 | 165 / 165 / 165 | 281 / 281 / 281 |
+| Miasteczko, końcowy powrót | 26,88 | 253 | 183 | 305 |
+
+Wiersze Miasteczka na początku i na końcu pokazują pojedynczy pomiar w trakcie jazdy. Liczby tekstur i słuchaczy DOM po poprawce były jednakowe w rundach drugiej i trzeciej na wszystkich dziewięciu mapach. Przy końcowym powrocie do Miasteczka aktywnych było o 70 tekstur mniej niż na `main`.
+
+Test `tests/e2e/memory.spec.ts` w zadaniu `Web quality` dwukrotnie odwiedza Gdańsk, Wieś i las oraz Zakopane. Sprawdza, czy każda mapa alokuje tekstury WebGL i czy po powrocie do menu wynik drugiej rundy nie przekracza pierwszego o więcej niż dwie tekstury. Limit testu wynosi 55 sekund.
+
+W `benchmark:driving` na Krupówkach (Canvas, 1280 × 720, CPU 4×, pełna jakość, osobne rdzenie dla benchmarku i E2E) mediana trzech prób wyniosła 58,10 FPS na `main` i 58,28 FPS po poprawce. Mediana p95 wyniosła 16,8 ms w obu wersjach. W buildach pomiarowych `budget:bundle` wykazał spadek rozmiaru `dist` z 50 508 865 do 50 508 861 B, a pierwszego pobrania z 4 125 812 do 4 125 808 B.
+
 ## Odtworzenie pomiarów
 
 - Po `npm ci` uruchom `npm run build` i `npm run budget:bundle`. Podaj drugi katalog jako `npm run budget:bundle -- <dist>`, aby porównać rewizje.
 - Po `npx playwright install chromium` uruchom `npm run benchmark:startup -- --check`. Polecenie samo wystawia bieżący `dist`. Aby użyć innego buildu, ustaw `BENCH_URL` na adres jego podglądu. Opcja `--waterfall` wypisuje czasy żądań CDP w milisekundach względem kliknięcia mapy lub przycisku Miasteczka.
 - Przy uruchomionym podglądzie ustaw `BENCH_URL`, `BENCH_RENDERER=canvas` i `BENCH_MAP`, a następnie uruchom `npm run benchmark:driving`. Dla Wrocławia w tym porównaniu użyj `BENCH_FRAGMENT=bulwary`. Noc z deszczem ustawia `BENCH_LIGHT=night BENCH_RAIN=1`. Skrzyżowanie mierzy `BENCH_FRAGMENT=sygnalizacja` z `BENCH_COUNTDOWNS=on` i `off`.
-- Przy uruchomionym podglądzie ustaw `BENCH_URL` i uruchom `npm run benchmark:memory`. Polecenie wypisuje pomiar początkowy, pomiary w menu po każdym mieście i końcowy powrót do Miasteczka.
+- Przy uruchomionym podglądzie ustaw `BENCH_URL` i uruchom `npm run benchmark:memory`. Polecenie wypisuje pomiar początkowy, pomiary w menu po każdej z dziewięciu map w trzech rundach i końcowy powrót do Miasteczka. `BENCH_MINUTES` pozwala skrócić próbę, a `BENCH_CHROMIUM_PATH` wskazać inny plik wykonywalny Chromium.
 - Uruchom `npm run test:e2e -- tests/e2e/pwa.spec.ts tests/e2e/graphics-quality.spec.ts` do odtworzenia prób offline, aktualizacji i ręcznego wyboru jakości. Automatyka używa liczby procesorów logicznych oraz czasu klatek lokalnie w pamięci. W profilu pozostaje wyłącznie wybrana opcja grafiki.
 
 [Ustawienie jakości grafiki w pauzie na ekranie telefonu](screenshots/123-jakosc-grafiki.png)

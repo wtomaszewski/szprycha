@@ -67,8 +67,12 @@ const collections = {
 } as const;
 type CollectionKind = keyof typeof collections;
 
-function loadCollection(scene: Scene, textureKey: CollectionKind) {
-  const { variants, paint } = collections[textureKey];
+function loadCollection(
+  scene: Scene,
+  kind: CollectionKind,
+  textureKey: string,
+) {
+  const { variants, paint } = collections[kind];
   if (scene.textures.exists(textureKey)) return;
   const texture = scene.textures.createCanvas(
     textureKey,
@@ -315,9 +319,10 @@ export class CityCollectibles {
     private readonly store: ProgressStore,
     parent: HTMLElement,
     kind: CollectionKind,
+    textureKey: string,
   ) {
     this.collection = collections[kind];
-    loadCollection(scene, kind);
+    loadCollection(scene, kind, textureKey);
     const found = new Set(store.profile[this.collection.field]);
     const objects = [...world.collectibles.values()].filter(
       (item) => item.kind === kind,
@@ -330,7 +335,7 @@ export class CityCollectibles {
         .image(
           item.x / scale,
           item.y / scale,
-          kind,
+          textureKey,
           item.kind === 'gnome' ? item.variant : 0,
         )
         .setDepth(8)

@@ -395,8 +395,8 @@ export class City extends Scene {
         frameWidth: 48,
         frameHeight: 48,
       });
-    if (mapId === 'zakopane' && !this.textures.exists('giewont'))
-      this.load.image('giewont', giewontUrl);
+    if (mapId === 'zakopane' && !this.textures.exists('zakopane-giewont'))
+      this.load.image('zakopane-giewont', giewontUrl);
     loadTrafficArt(this);
     loadCityEffects(this);
     const onError = ({ key }: { key: string }) => {
@@ -418,28 +418,21 @@ export class City extends Scene {
   }: Ride) {
     const mapId = this.mapId;
     const definition = this.definition;
+    const previous = this.cachedMap;
+    if (previous && previous !== mapId) {
+      // Keep textures for same-map restarts. Map-owned keys begin with the map ID.
+      this.cache.tilemap.remove(previous);
+      const prefix = `${previous}-`;
+      for (const key of this.textures.getTextureKeys())
+        if (key.startsWith(prefix)) this.textures.remove(key);
+    }
+    this.cachedMap = mapId;
     const cached = this.cache.tilemap.get(mapId) as
       { data: unknown } | undefined;
     if (!cached) {
       this.scene.start('MainMenu', { mapUnavailable: mapId });
       return;
     }
-    const previous = this.cachedMap;
-    if (previous && previous !== mapId) {
-      this.cache.tilemap.remove(previous);
-      for (const key of this.textures.getTextureKeys())
-        if (
-          [
-            `ground-${previous}-`,
-            `block-${previous}-`,
-            `${previous}-marks-`,
-            `${previous}-signs-`,
-            `${previous}-scenery-`,
-          ].some((prefix) => key.startsWith(prefix))
-        )
-          this.textures.remove(key);
-    }
-    this.cachedMap = mapId;
     this.freeRide = freeRide;
     this.campaignArrow = undefined;
     this.campaignPanel = undefined;
@@ -810,6 +803,7 @@ export class City extends Scene {
           this.progress.store,
           this.controls.details,
           this.world.collectibles.values().next().value!.kind,
+          `${mapId}-collectibles`,
         )
       : undefined;
     if (!this.mission && !tutorial) {

@@ -12,10 +12,11 @@ const chunkTiles = 16;
 function waterTexture(
   scene: Scene,
   source: HTMLImageElement,
+  mapId: string,
   width: number,
   height: number,
 ) {
-  const key = `water-${width}-${height}`;
+  const key = `${mapId}-water-${width}-${height}`;
   if (!scene.textures.exists(key)) {
     const canvas = document.createElement('canvas');
     canvas.width = width;
@@ -36,6 +37,7 @@ function waterTexture(
 function drawWater(
   scene: Scene,
   source: HTMLImageElement,
+  mapId: string,
   ground: Tilemaps.LayerData | null,
 ) {
   if (!ground) return [];
@@ -74,6 +76,7 @@ function drawWater(
     const key = waterTexture(
       scene,
       source,
+      mapId,
       width * TILE,
       (bottom - row) * TILE,
     );
@@ -134,7 +137,7 @@ export function drawMapGround(
 
   for (let row = 0; row < map.height; row += chunkTiles)
     for (let col = 0; col < map.width; col += chunkTiles) {
-      const base = `ground-${mapId}-${col}-${row}`;
+      const base = `${mapId}-ground-${col}-${row}`;
       const name = snow ? base + '-snow' : base;
       const previous = snow ? base : base + '-snow';
       // Keep one set of ground textures per map when changing seasons.
@@ -200,7 +203,7 @@ export function drawMapGround(
       if (image.visible !== visible) image.setVisible(visible);
     }
   };
-  return { update, water: drawWater(scene, source, layers[0] ?? null) };
+  return { update, water: drawWater(scene, source, mapId, layers[0] ?? null) };
 }
 
 /** Keep static vector scenery in camera-culled textures, like the tile layers. */

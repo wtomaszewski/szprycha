@@ -1,21 +1,35 @@
 import { chromium } from '@playwright/test';
 import { setTimeout } from 'node:timers/promises';
 import { legacyProgressKey } from '../src/core/progressStore';
+import type { MapId } from '../src/scenes/cityMaps';
 import pl from '../i18n/pl.json' with { type: 'json' };
+import {
+  readWebGLTextures,
+  swiftShaderArgs,
+  trackWebGLTextures,
+} from './webgl-textures';
 
 const maps = {
   miasteczko: { x: 624, y: 1120, heading: -Math.PI / 2 },
   warszawa: { x: 550, y: 1145, heading: 0 },
   wroclaw: { x: 1440, y: 1536, heading: 0 },
   krakow: { x: 1290, y: 776, heading: 0 },
-};
-type MapId = keyof typeof maps;
+  gdansk: { x: 1390, y: 783, heading: 0 },
+  wies: { x: 1208, y: 866, heading: -Math.PI / 2 },
+  poznan: { x: 1380, y: 862, heading: 0 },
+  lodz: { x: 1438, y: 742, heading: 0 },
+  zakopane: { x: 1376, y: 886, heading: 0 },
+} satisfies Record<MapId, { x: number; y: number; heading: number }>;
+const mapIds = Object.keys(maps) as MapId[];
+const mapRequest = new RegExp(
+  `/(?:maps|assets)/(${mapIds.join('|')})(?:-[^/]+)?\\.tmj(?:\\?|$)`,
+);
 const minutes = Number(process.env.BENCH_MINUTES ?? 10);
 if (!Number.isFinite(minutes) || minutes <= 0)
   throw new Error('BENCH_MINUTES must be positive');
 const browser = await chromium.launch({
   executablePath: process.env.BENCH_CHROMIUM_PATH,
-  args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+  args: swiftShaderArgs,
 });
 try {
   const page = await browser.newPage({
@@ -23,54 +37,30 @@ try {
     hasTouch: true,
     serviceWorkers: 'block',
   });
+  page.setDefaultTimeout(30_000);
   await page.route('**/assets/radio/**', (route) => route.abort());
-  await page.route(
-    /\/(maps|assets)\/(miasteczko|warszawa|wroclaw|krakow)(?:-[^/]+)?\.tmj$/,
-    async (route) => {
-      const id = /\/(miasteczko|warszawa|wroclaw|krakow)(?:-[^/]+)?\.tmj$/.exec(
-        route.request().url(),
-      )![1] as MapId;
-      const { x, y, heading } = maps[id];
-      const response = await route.fetch();
-      const tiled = await response.json();
-      const player = tiled.layers
-        .find(({ name }: { name: string }) => name === 'spawns')
-        .objects.find(({ name }: { name: string }) => name === 'player');
-      Object.assign(player, {
-        x,
-        y,
-        properties: [{ name: 'heading', type: 'float', value: heading }],
-      });
-      await route.fulfill({ response, json: tiled });
-    },
-  );
+  await page.route(mapRequest, async (route) => {
+    if (route.request().resourceType() === 'script') return route.continue();
+    const id = mapRequest.exec(route.request().url())![1] as MapId;
+    const { x, y, heading } = maps[id];
+    const response = await route.fetch();
+    const tiled = await response.json();
+    const player = tiled.layers
+      .find(({ name }: { name: string }) => name === 'spawns')
+      .objects.find(({ name }: { name: string }) => name === 'player');
+    player.x = x;
+    player.y = y;
+    player.properties = [
+      ...(player.properties ?? []).filter(
+        ({ name }: { name: string }) => name !== 'heading',
+      ),
+      { name: 'heading', type: 'float', value: heading },
+    ];
+    await route.fulfill({ response, json: tiled });
+  });
+  await page.addInitScript(trackWebGLTextures);
   await page.addInitScript((key) => {
-    localStorage.setItem(
-      key,
-      JSON.stringify({ completed: ['KRA-B-01', 'KRA-B-02', 'KRA-B-03'] }),
-    );
-    const textures = { live: 0, created: 0 };
-    Object.defineProperty(window, '__benchmarkTextures', { value: textures });
-    const live = new WeakSet<WebGLTexture>();
-    for (const { prototype } of [
-      WebGLRenderingContext,
-      WebGL2RenderingContext,
-    ]) {
-      const { createTexture, deleteTexture } = prototype;
-      prototype.createTexture = function () {
-        const texture = createTexture.call(this);
-        if (texture && !live.has(texture)) {
-          live.add(texture);
-          textures.created++;
-          textures.live++;
-        }
-        return texture;
-      };
-      prototype.deleteTexture = function (texture: WebGLTexture | null) {
-        if (texture && live.delete(texture)) textures.live--;
-        deleteTexture.call(this, texture);
-      };
-    }
+    localStorage.setItem(key, JSON.stringify({ completed: [] }));
   }, legacyProgressKey);
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
@@ -90,9 +80,7 @@ try {
         documents,
         nodes,
         jsEventListeners,
-        textures: await page.evaluate(() =>
-          Reflect.get(window, '__benchmarkTextures'),
-        ),
+        textures: await page.evaluate(readWebGLTextures),
       }),
     );
   };
@@ -128,50 +116,33 @@ try {
       .click();
     await page.locator('canvas[data-scene="MainMenu"]').waitFor();
   };
-  let previousMap: MapId | undefined;
   const openMap = async (map: MapId) => {
     if (map === 'miasteczko') {
-      // Older builds reused the most recent ride payload when starting the town.
-      if (previousMap && previousMap !== map) {
-        await page
-          .getByRole('button', { name: pl.tutorial.help, exact: true })
-          .click();
-        await page
-          .getByRole('button', { name: pl.tutorial.replay, exact: true })
-          .click();
-        await page
-          .getByRole('button', { name: pl.tutorial.skip, exact: true })
-          .click();
-        await page.locator('canvas[data-scene="MainMenu"]').waitFor();
-      }
       await page
         .getByRole('button', { name: pl.driving.title, exact: true })
         .click();
     } else {
-      await page.getByRole('button', { name: pl.cityPicker.freeRide }).click();
+      await page
+        .getByRole('button', { name: pl.cityPicker.freeRide, exact: true })
+        .click();
       await page
         .getByRole('button', { name: pl.cityPicker[map], exact: true })
         .click();
     }
     await page
-      .locator(`canvas[data-map="${map}"][data-x]`)
+      .locator(`canvas[data-scene="City"][data-map="${map}"][data-x]`)
       .waitFor({ timeout: 60_000 });
-    previousMap = map;
   };
   console.log(
     `Chromium ${browser.version()}, WebGL (SwiftShader), CPU 4x, ${minutes} min input`,
   );
   await openMap('miasteczko');
-  const renderer = await canvas.evaluate((element: HTMLCanvasElement) =>
-    element.getContext('2d') ? 'Canvas' : 'WebGL',
-  );
-  if (renderer !== 'WebGL')
+  if (!(await page.evaluate(readWebGLTextures)).live)
     throw new Error('WebGL required for texture counts');
   await sample('start:miasteczko');
   await goBack();
 
   const laps = 3;
-  const mapIds = Object.keys(maps) as MapId[];
   const rideMs = (minutes * 60_000) / (laps * mapIds.length);
   for (let lap = 1; lap <= laps; lap++) {
     for (const map of mapIds) {
@@ -187,7 +158,7 @@ try {
         .getByLabel(pl.driving.joystick)
         .boundingBox();
       if (!stick) throw new Error('Missing joystick');
-      const horizontal = map !== 'miasteczko';
+      const { heading } = maps[map];
       let pixels = 0;
       let rideTime = 0;
       const position = () =>
@@ -203,8 +174,8 @@ try {
         );
         await page.mouse.down();
         await page.mouse.move(
-          stick.x + stick.width * (horizontal ? 0.565 : 0.5),
-          stick.y + stick.height * (horizontal ? 0.5 : 0.435),
+          stick.x + stick.width * (0.5 + Math.cos(heading) * 0.065),
+          stick.y + stick.height * (0.5 + Math.sin(heading) * 0.065),
         );
         const interval = Math.min(5000, rideMs - rideTime);
         await setTimeout(interval);
