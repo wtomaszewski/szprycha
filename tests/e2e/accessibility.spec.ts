@@ -4,10 +4,11 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import pl from '../../i18n/pl.json' with { type: 'json' };
 import questions from '../../content/pytania.json' with { type: 'json' };
 import type { GameContent } from '../../src/content/schemas';
-import { chooseCity, cityPin, startAt } from './city-picker';
+import { chooseCity, cityPin, startAt, waitForCity } from './city-picker';
 import { mockGamepad } from './helpers/gamepad';
 import { answer, parentZone } from './helpers/parent-gate';
 import { profile, seedProgress } from './helpers/profile';
+import { shiftPois } from './helpers/shift-pois';
 
 function button(scope: Page | Locator, name: string) {
   return scope.getByRole('button', { name, exact: true });
@@ -608,14 +609,22 @@ const newMaps = [
   },
 ] as const;
 
+const bundledCampaignTest = test.extend({
+  baseURL: 'http://127.0.0.1:4174',
+  serviceWorkers: 'block',
+});
+
 for (const map of newMaps) {
-  test(`dialog, kolekcja i wyniki kampanii · ${pl.cityPicker[map.city]}`, async ({
-    page,
-    baseURL,
-  }) => {
+  const testCampaign = map.city === 'gdansk' ? bundledCampaignTest : test;
+  const title = `dialog, kolekcja i wyniki kampanii · ${pl.cityPicker[map.city]}`;
+  testCampaign(title, async ({ page, baseURL }) => {
     test.setTimeout(55_000);
     await page.setViewportSize({ width: 844, height: 390 });
     const pad = map.city === 'gdansk' ? undefined : await mockGamepad(page);
+    if (map.city === 'gdansk') {
+      // Keep the keyboard approach to the real amber checkpoint short at low FPS.
+      await shiftPois(page, map.city, { 'gda-bursztyny-start': [1440, 635] });
+    }
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await seedProgress(page, baseURL, {
       completed: [
@@ -645,6 +654,7 @@ for (const map of newMaps) {
     await expect(city).toBeFocused();
     if (pad) await pad.tap(0);
     else await page.keyboard.press('Enter');
+    await waitForCity(page);
     const canvas = page.locator(`canvas[data-map="${map.city}"]`);
     await expect(canvas).toHaveAttribute('data-mission', `${map.prefix}-A1-02`);
     const story = dialog(page, pl.dialogueUi.title);
