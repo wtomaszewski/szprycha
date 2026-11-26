@@ -1,19 +1,15 @@
-THIRD_PARTY_NOTICES_MOBILE
-
-Capacitor Android, iOS and Cordova compatibility code, Ionic
-Capacitor Preferences and Haptics, Ionic
-License: MIT
-Versions, copyright notices and full texts accompany the packages in THIRD_PARTY_NOTICES.
-Sources: https://github.com/ionic-team/capacitor and https://github.com/ionic-team/capacitor-plugins
+Capacitor native components and Haptics/Preferences plug-ins (MIT)
+Copyright (c) 2017-present Drifty Co.
+Copyright 2020-present Ionic
+The full MIT texts are included in the @capacitor package notices below.
+The Android Cordova plug-in project is generated from the @capacitor/cli template.
 
 Android Jetpack libraries (AndroidX)
 Copyright The Android Open Source Project
-License: Apache-2.0
 Source: https://android.googlesource.com/platform/frameworks/support/
 
-Apache Cordova Android framework 14.0.1
-License: Apache-2.0
-Source: https://github.com/apache/cordova-android
+Apache Cordova Android framework
+Source: https://github.com/apache/cordova-android/blob/rel/14.0.1/NOTICE
 
 Apache Cordova
 Copyright 2015-2020 The Apache Software Foundation
@@ -21,24 +17,31 @@ Copyright 2015-2020 The Apache Software Foundation
 This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
 
-Kotlin runtime 2.0.21
+Apache Cordova code in the Capacitor iOS compatibility framework
+Sources: https://github.com/ionic-team/capacitor/tree/8.6.2/ios/CapacitorCordova
+         https://github.com/apache/cordova-ios/blob/master/NOTICE
+
+Apache Cordova
+Copyright 2012 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+Kotlin runtime and coroutines
 Copyright JetBrains and Kotlin contributors
-License: Apache-2.0
-Source: https://github.com/JetBrains/kotlin
+Sources: https://github.com/JetBrains/kotlin and https://github.com/Kotlin/kotlinx.coroutines
 
-Kotlin Coroutines 1.8.1 and JetBrains Java Annotations 23.0.0
-Copyright JetBrains and respective contributors
-License: Apache-2.0
-Sources: https://github.com/Kotlin/kotlinx.coroutines and https://github.com/JetBrains/java-annotations
+JetBrains Java Annotations
+Copyright JetBrains and contributors
+Source: https://github.com/JetBrains/java-annotations
 
-JSpecify 1.0.0
+JSpecify
 Copyright The JSpecify Authors
-License: Apache-2.0
 Source: https://github.com/jspecify/jspecify
 
-Guava ListenableFuture 1.0
+Guava ListenableFuture
 Copyright Google LLC and Guava contributors
-License: Apache-2.0
-Source: https://github.com/google/guava
+License inherited from the parent POM:
+https://repo.maven.apache.org/maven2/com/google/guava/guava-parent/26.0-android/guava-parent-26.0-android.pom
 
-The full Apache-2.0 license is included above in THIRD_PARTY_NOTICES.
+The full Apache-2.0 text is included below in THIRD_PARTY_NOTICES.

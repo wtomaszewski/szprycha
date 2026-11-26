@@ -1,0 +1,411 @@
+{
+  "androidReleaseReviewed": true,
+  "dependencies": [
+    {
+      "coordinate": ":capacitor-android",
+      "version": "8.6.2",
+      "scope": "runtime",
+      "licenses": ["MIT"],
+      "source": "https://github.com/ionic-team/capacitor/tree/8.6.2/android"
+    },
+    {
+      "coordinate": ":capacitor-cordova-android-plugins",
+      "version": "8.6.2",
+      "scope": "runtime",
+      "licenses": ["MIT"],
+      "source": "https://registry.npmjs.org/@capacitor/cli/8.6.2"
+    },
+    {
+      "coordinate": ":capacitor-haptics",
+      "version": "8.0.2",
+      "scope": "runtime",
+      "licenses": ["MIT"],
+      "source": "https://registry.npmjs.org/@capacitor/haptics/8.0.2"
+    },
+    {
+      "coordinate": ":capacitor-preferences",
+      "version": "8.0.1",
+      "scope": "runtime",
+      "licenses": ["MIT"],
+      "source": "https://registry.npmjs.org/@capacitor/preferences/8.0.1"
+    },
+    {
+      "coordinate": "androidx.activity:activity",
+      "version": "1.11.0",
+      "scope": "runtime",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/activity/activity/1.11.0/activity-1.11.0.pom"
+    },
+    {
+      "coordinate": "androidx.appcompat:appcompat",
+      "version": "1.7.1",
+      "scope": "runtime",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/appcompat/appcompat/1.7.1/appcompat-1.7.1.pom"
+    },
+    {
+      "coordinate": "androidx.coordinatorlayout:coordinatorlayout",
+      "version": "1.3.0",
+      "scope": "runtime",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/coordinatorlayout/coordinatorlayout/1.3.0/coordinatorlayout-1.3.0.pom"
+    },
+    {
+      "coordinate": "androidx.core:core",
+      "version": "1.17.0",
+      "scope": "runtime",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/core/core/1.17.0/core-1.17.0.pom"
+    },
+    {
+      "coordinate": "androidx.core:core-splashscreen",
+      "version": "1.2.0",
+      "scope": "runtime",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/core/core-splashscreen/1.2.0/core-splashscreen-1.2.0.pom"
+    },
+    {
+      "coordinate": "androidx.fragment:fragment",
+      "version": "1.8.9",
+      "scope": "runtime",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/fragment/fragment/1.8.9/fragment-1.8.9.pom"
+    },
+    {
+      "coordinate": "androidx.webkit:webkit",
+      "version": "1.14.0",
+      "scope": "runtime",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/webkit/webkit/1.14.0/webkit-1.14.0.pom"
+    },
+    {
+      "coordinate": "https://github.com/ionic-team/capacitor-swift-pm.git",
+      "version": "8.6.2",
+      "scope": "runtime",
+      "licenses": ["MIT", "Apache-2.0"],
+      "source": "https://github.com/ionic-team/capacitor-swift-pm/blob/8.6.2/Package.swift"
+    },
+    {
+      "coordinate": "npm:@capacitor/haptics",
+      "version": "8.0.2",
+      "scope": "runtime",
+      "licenses": ["MIT"],
+      "source": "https://registry.npmjs.org/@capacitor/haptics/8.0.2"
+    },
+    {
+      "coordinate": "npm:@capacitor/preferences",
+      "version": "8.0.1",
+      "scope": "runtime",
+      "licenses": ["MIT"],
+      "source": "https://registry.npmjs.org/@capacitor/preferences/8.0.1"
+    },
+    {
+      "coordinate": "org.apache.cordova:framework",
+      "version": "14.0.1",
+      "scope": "runtime",
+      "licenses": ["Apache-2.0"],
+      "source": "https://repo.maven.apache.org/maven2/org/apache/cordova/framework/14.0.1/framework-14.0.1.pom"
+    },
+    {
+      "coordinate": "androidx.annotation:annotation",
+      "version": "1.8.1",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/annotation/annotation/1.8.1/annotation-1.8.1.pom"
+    },
+    {
+      "coordinate": "androidx.annotation:annotation-experimental",
+      "version": "1.4.1",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/annotation/annotation-experimental/1.4.1/annotation-experimental-1.4.1.pom"
+    },
+    {
+      "coordinate": "androidx.annotation:annotation-jvm",
+      "version": "1.8.1",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/annotation/annotation-jvm/1.8.1/annotation-jvm-1.8.1.pom"
+    },
+    {
+      "coordinate": "androidx.appcompat:appcompat-resources",
+      "version": "1.7.1",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/appcompat/appcompat-resources/1.7.1/appcompat-resources-1.7.1.pom"
+    },
+    {
+      "coordinate": "androidx.arch.core:core-common",
+      "version": "2.2.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/arch/core/core-common/2.2.0/core-common-2.2.0.pom"
+    },
+    {
+      "coordinate": "androidx.arch.core:core-runtime",
+      "version": "2.2.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/arch/core/core-runtime/2.2.0/core-runtime-2.2.0.pom"
+    },
+    {
+      "coordinate": "androidx.collection:collection",
+      "version": "1.4.2",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/collection/collection/1.4.2/collection-1.4.2.pom"
+    },
+    {
+      "coordinate": "androidx.collection:collection-jvm",
+      "version": "1.4.2",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/collection/collection-jvm/1.4.2/collection-jvm-1.4.2.pom"
+    },
+    {
+      "coordinate": "androidx.concurrent:concurrent-futures",
+      "version": "1.1.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/concurrent/concurrent-futures/1.1.0/concurrent-futures-1.1.0.pom"
+    },
+    {
+      "coordinate": "androidx.core:core-ktx",
+      "version": "1.17.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/core/core-ktx/1.17.0/core-ktx-1.17.0.pom"
+    },
+    {
+      "coordinate": "androidx.core:core-viewtree",
+      "version": "1.0.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/core/core-viewtree/1.0.0/core-viewtree-1.0.0.pom"
+    },
+    {
+      "coordinate": "androidx.cursoradapter:cursoradapter",
+      "version": "1.0.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/cursoradapter/cursoradapter/1.0.0/cursoradapter-1.0.0.pom"
+    },
+    {
+      "coordinate": "androidx.customview:customview",
+      "version": "1.0.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/customview/customview/1.0.0/customview-1.0.0.pom"
+    },
+    {
+      "coordinate": "androidx.drawerlayout:drawerlayout",
+      "version": "1.0.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/drawerlayout/drawerlayout/1.0.0/drawerlayout-1.0.0.pom"
+    },
+    {
+      "coordinate": "androidx.emoji2:emoji2",
+      "version": "1.3.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/emoji2/emoji2/1.3.0/emoji2-1.3.0.pom"
+    },
+    {
+      "coordinate": "androidx.emoji2:emoji2-views-helper",
+      "version": "1.3.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/emoji2/emoji2-views-helper/1.3.0/emoji2-views-helper-1.3.0.pom"
+    },
+    {
+      "coordinate": "androidx.interpolator:interpolator",
+      "version": "1.0.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/interpolator/interpolator/1.0.0/interpolator-1.0.0.pom"
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-common",
+      "version": "2.6.2",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-common/2.6.2/lifecycle-common-2.6.2.pom"
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-livedata",
+      "version": "2.6.2",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-livedata/2.6.2/lifecycle-livedata-2.6.2.pom"
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-livedata-core",
+      "version": "2.6.2",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-livedata-core/2.6.2/lifecycle-livedata-core-2.6.2.pom"
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-process",
+      "version": "2.6.2",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-process/2.6.2/lifecycle-process-2.6.2.pom"
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-runtime",
+      "version": "2.6.2",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-runtime/2.6.2/lifecycle-runtime-2.6.2.pom"
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-viewmodel",
+      "version": "2.6.2",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-viewmodel/2.6.2/lifecycle-viewmodel-2.6.2.pom"
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-viewmodel-savedstate",
+      "version": "2.6.2",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-viewmodel-savedstate/2.6.2/lifecycle-viewmodel-savedstate-2.6.2.pom"
+    },
+    {
+      "coordinate": "androidx.loader:loader",
+      "version": "1.0.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/loader/loader/1.0.0/loader-1.0.0.pom"
+    },
+    {
+      "coordinate": "androidx.profileinstaller:profileinstaller",
+      "version": "1.4.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/profileinstaller/profileinstaller/1.4.0/profileinstaller-1.4.0.pom"
+    },
+    {
+      "coordinate": "androidx.resourceinspection:resourceinspection-annotation",
+      "version": "1.0.1",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/resourceinspection/resourceinspection-annotation/1.0.1/resourceinspection-annotation-1.0.1.pom"
+    },
+    {
+      "coordinate": "androidx.savedstate:savedstate",
+      "version": "1.2.1",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/savedstate/savedstate/1.2.1/savedstate-1.2.1.pom"
+    },
+    {
+      "coordinate": "androidx.startup:startup-runtime",
+      "version": "1.1.1",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/startup/startup-runtime/1.1.1/startup-runtime-1.1.1.pom"
+    },
+    {
+      "coordinate": "androidx.tracing:tracing",
+      "version": "1.2.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/tracing/tracing/1.2.0/tracing-1.2.0.pom"
+    },
+    {
+      "coordinate": "androidx.vectordrawable:vectordrawable",
+      "version": "1.1.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/vectordrawable/vectordrawable/1.1.0/vectordrawable-1.1.0.pom"
+    },
+    {
+      "coordinate": "androidx.vectordrawable:vectordrawable-animated",
+      "version": "1.1.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/vectordrawable/vectordrawable-animated/1.1.0/vectordrawable-animated-1.1.0.pom"
+    },
+    {
+      "coordinate": "androidx.versionedparcelable:versionedparcelable",
+      "version": "1.1.1",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/versionedparcelable/versionedparcelable/1.1.1/versionedparcelable-1.1.1.pom"
+    },
+    {
+      "coordinate": "androidx.viewpager:viewpager",
+      "version": "1.0.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/androidx/viewpager/viewpager/1.0.0/viewpager-1.0.0.pom"
+    },
+    {
+      "coordinate": "com.google.guava:listenablefuture",
+      "version": "1.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://repo.maven.apache.org/maven2/com/google/guava/listenablefuture/1.0/listenablefuture-1.0.pom"
+    },
+    {
+      "coordinate": "org.jetbrains.kotlin:kotlin-stdlib",
+      "version": "2.0.21",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.0.21/kotlin-stdlib-2.0.21.pom"
+    },
+    {
+      "coordinate": "org.jetbrains.kotlinx:kotlinx-coroutines-android",
+      "version": "1.8.1",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-android/1.8.1/kotlinx-coroutines-android-1.8.1.pom"
+    },
+    {
+      "coordinate": "org.jetbrains.kotlinx:kotlinx-coroutines-bom",
+      "version": "1.8.1",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-bom/1.8.1/kotlinx-coroutines-bom-1.8.1.pom"
+    },
+    {
+      "coordinate": "org.jetbrains.kotlinx:kotlinx-coroutines-core",
+      "version": "1.8.1",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.8.1/kotlinx-coroutines-core-1.8.1.pom"
+    },
+    {
+      "coordinate": "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm",
+      "version": "1.8.1",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.1/kotlinx-coroutines-core-jvm-1.8.1.pom"
+    },
+    {
+      "coordinate": "org.jetbrains:annotations",
+      "version": "23.0.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://repo.maven.apache.org/maven2/org/jetbrains/annotations/23.0.0/annotations-23.0.0.pom"
+    },
+    {
+      "coordinate": "org.jspecify:jspecify",
+      "version": "1.0.0",
+      "scope": "transitive",
+      "licenses": ["Apache-2.0"],
+      "source": "https://repo.maven.apache.org/maven2/org/jspecify/jspecify/1.0.0/jspecify-1.0.0.pom"
+    },
+    {
+      "coordinate": "com.android.tools.build:gradle",
+      "version": "8.13.0",
+      "scope": "build",
+      "licenses": ["Apache-2.0"],
+      "source": "https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/8.13.0/gradle-8.13.0.pom"
+    }
+  ]
+}

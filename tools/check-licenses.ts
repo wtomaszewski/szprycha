@@ -1,3 +1,8 @@
+import {
+  auditNativeLicenses,
+  buildNativeNotices,
+  nativeLicensesPresent,
+} from './check-native-licenses.ts';
 import { localFonts } from './font-coverage.ts';
 import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -159,12 +164,13 @@ function readNotice(path: string) {
   return body;
 }
 
-export function buildThirdPartyNotices(root: string) {
+export function buildThirdPartyNotices(root: string, mobile = false) {
   const audit = auditLicenses(root);
   const errors = violations(audit.production);
   if (errors.length) throw new Error(errors.join('\n'));
 
   const sections = new Set<string>();
+  if (mobile) sections.add(buildNativeNotices(root, allowed));
   for (const { directory, label, license } of audit.production.entries) {
     const files = noticeFiles(directory);
     if (!files.some((name) => /^(licen[cs]e|copying)/i.test(name))) {
@@ -180,6 +186,7 @@ export function buildThirdPartyNotices(root: string) {
     sections.add([`${label} (${license})`, ...texts].join('\n\n'));
   }
   if (
+    mobile ||
     audit.production.entries.some(({ license }) => license === 'Apache-2.0')
   ) {
     sections.add(readNotice(resolve(root, 'assets/licenses/Apache-2.0.txt')));
@@ -214,5 +221,34 @@ if (
   for (const error of errors) console.error(`ERROR (production): ${error}`);
   const serverErrors = violations(server);
   for (const error of serverErrors) console.error(`ERROR (server): ${error}`);
+  if (nativeLicensesPresent(process.cwd())) {
+    const reportOption = process.argv.indexOf('--gradle-report');
+    const reportPath = process.argv[reportOption + 1];
+    if (reportOption !== -1 && (!reportPath || reportPath.startsWith('--'))) {
+      throw new Error('--gradle-report requires a path to the Gradle report');
+    }
+    const native = auditNativeLicenses(process.cwd(), allowed, {
+      strict: process.argv.includes('--strict'),
+      gradleReport:
+        reportOption === -1 ? undefined : readFileSync(reportPath!, 'utf8'),
+    });
+    console.log(
+      '\nnative (' + native.dependencies.length + ' manifest entries)',
+    );
+    for (const { coordinate, version, licenses } of native.dependencies)
+      console.log(
+        '  ' +
+          coordinate +
+          '@' +
+          version +
+          ': ' +
+          (licenses?.join(', ') ?? 'Pending review'),
+      );
+    for (const warning of native.warnings)
+      console.warn('WARNING (native): ' + warning);
+    for (const error of native.errors)
+      console.error('ERROR (native): ' + error);
+    if (native.errors.length) process.exitCode = 1;
+  }
   if (errors.length || serverErrors.length) process.exitCode = 1;
 }

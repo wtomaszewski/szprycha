@@ -1,18 +1,6 @@
 import { z } from 'zod';
 
-const names = [
-  String.raw`GTA\d*|Grand\s+Theft\s+Auto|Rockstar`,
-  String.raw`Policj\p{L}*|PSP|Państwow\p{L}*\s+Straż\p{L}*\s+Pożarn\p{L}*|WORD|Pogotowi\p{L}*\s+Ratunkow\p{L}*`,
-  String.raw`PKP|MZA|ZTM|MPK|SKM|WKD|Polregio|Intercity|Flixbus|RegioJet|Polski\s+Bus|Leo\s+Express`,
-  String.raw`Kolej\p{L}*\s+(?:Mazowieck\p{L}*|Dolnośląsk\p{L}*)|Metro\s+Warszawsk\p{L}*|Tramwaj\p{L}*\s+(?:Warszawsk\p{L}*|Śląsk\p{L}*)`,
-  String.raw`Alfa\s+Romeo|Audi|BMW|BYD|Chevrolet|Chrysler|Citro[eë]n|Cupra|Dacia|Daewoo|Daihatsu|Dodge|Ferrari|Fiat|Ford`,
-  String.raw`Honda|Hyundai|Jaguar|Jeep|Kia|Lamborghini|Land\s+Rover|Lexus|Mazda|Mercedes|MG|Mini\s+Cooper|Mitsubishi|Nissan`,
-  'Opel|Peugeot|Porsche|Renault|Saab|Seat|[SŠ]koda|Smart|Subaru|Suzuki|Tesla|Toyota|Volkswagen|Volvo|VW',
-];
-const forbiddenNames = new RegExp(
-  String.raw`(?<![\p{L}\p{N}])(?:${names.join('|')})(?![\p{L}\p{N}])`,
-  'iu',
-);
+import { forbiddenBrands } from './brand-denylist.ts';
 
 const storeText = (limit: number) =>
   z
@@ -20,7 +8,7 @@ const storeText = (limit: number) =>
     .trim()
     .min(1)
     .max(limit)
-    .refine((text) => !forbiddenNames.test(text.normalize('NFKC')), {
+    .refine((text) => forbiddenBrands(text).length === 0, {
       message: 'Store copy contains a forbidden name',
     });
 
