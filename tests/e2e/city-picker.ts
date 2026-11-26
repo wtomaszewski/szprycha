@@ -6,6 +6,11 @@ export function cityPin(page: Page, city: PlayableCity) {
   return page.getByRole('button', { name: pl.cityPicker[city], exact: true });
 }
 
+export async function waitForCity(page: Page) {
+  // The picker returns before the lazy-loaded riding scene is ready.
+  await page.locator('canvas[data-scene="City"]').waitFor();
+}
+
 export async function chooseCity(
   page: Page,
   city: PlayableCity,
@@ -15,7 +20,7 @@ export async function chooseCity(
     .getByRole('button', { name: pl.cityPicker[mode], exact: true })
     .click();
   await cityPin(page, city).click();
-  await page.locator('canvas[data-scene="City"]').waitFor();
+  await waitForCity(page);
 }
 
 export async function startAt(

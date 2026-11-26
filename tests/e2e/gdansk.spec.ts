@@ -8,8 +8,11 @@ import {
   driveTo,
   startAt,
   stopRider,
+  waitForCity,
 } from './city-picker';
 import { readProfile } from './progress-profile';
+
+test.use({ baseURL: 'http://127.0.0.1:4174', serviceWorkers: 'block' });
 
 test('opens Gdańsk in free ride and unlocks Ołowianka after training', async ({
   page,
@@ -24,6 +27,7 @@ test('opens Gdańsk in free ride and unlocks Ołowianka after training', async (
   await expect(pin).toBeEnabled();
   await page.screenshot({ path: info.outputPath('125-mapa-polski.png') });
   await pin.click();
+  await waitForCity(page);
 
   const canvas = page.locator('canvas[data-map="gdansk"]');
   await expect(canvas).toHaveAttribute('aria-label', pl.driving.gdanskTitle);
@@ -87,6 +91,7 @@ test('opens Gdańsk in free ride and unlocks Ołowianka after training', async (
     .click();
   await expect(pin).toBeFocused();
   await pin.press('Enter');
+  await waitForCity(page);
   await expect(canvas).toHaveAttribute('data-y', '2154');
   await page.keyboard.press('KeyX');
   await expect(canvas).toHaveAttribute('data-walking', 'true');
@@ -108,6 +113,7 @@ test('starts the Gdańsk campaign with the first training mission', async ({
   await pin.hover();
   await page.screenshot({ path: info.outputPath('126-kampania.png') });
   await pin.press('Enter');
+  await waitForCity(page);
   await expect(page.locator('canvas[data-map="gdansk"]')).toHaveAttribute(
     'data-mission',
     'GDA-B-01',
@@ -199,6 +205,7 @@ test('resumes Gdańsk after training and saves amber only after a correct answer
   const pin = cityPin(page, 'gdansk');
   await expect(pin).toBeFocused();
   await pin.press('Enter');
+  await waitForCity(page);
   await expect(canvas).toHaveAttribute('data-mission', 'GDA-A1-02');
   await expect(counter).toHaveText('Bursztyny 1/6');
 });
