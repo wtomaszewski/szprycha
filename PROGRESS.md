@@ -1,6 +1,6 @@
 # Postęp projektu
 
-Stan na 25.11.2026.
+Stan na 26.11.2026.
 
 | Kamień | Zakres                                      | Status                                                                                       |
 | ------ | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -15,6 +15,11 @@ Stan na 25.11.2026.
 | M8     | Audio i szlif                               | Ukończony. M8a (#71), M8b (#72) i M8c (#73) w `main`.                                        |
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
+
+## Kontrola licencji przed wydaniem (#184)
+
+- Kontrola offline obejmuje natywne zależności Androida i iOS. Manifest zawiera też przejrzane zależności przechodnie z `releaseRuntimeClasspath`. Noty natywne trafiają do paczki mobilnej i ekranu „O grze”.
+- Vitest skanuje treści gry, manifest lektora, teksty sklepowe i generatory map pod kątem zakazanych oznaczeń. [Polityka licencji i procedura weryfikacji](docs/LICENCJE.md)
 
 ## Audyt grafiki sześciu późniejszych map (#181)
 
