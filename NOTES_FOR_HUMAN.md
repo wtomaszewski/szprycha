@@ -1,5 +1,39 @@
 # Notatki dla człowieka
 
+## Bank pytań i egzamin teoretyczny (#187)
+
+Nowe pytania do sprawdzenia przez konsultanta wraz z regułami, po których dziedziczą flagę weryfikacji.
+
+- `Q073` · `WYP-06`
+- `Q076` · `GDZIE-03b`
+- `Q077` · `GDZIE-11`
+- `Q083` · `PIER-09`
+- `Q085` · `MAN-08`
+- `Q086` · `MAN-05`, `MAN-08`
+- `Q094` · `MAN-08`
+- `Q095` · `MSC-05`
+- `Q096` · `MSC-05`
+- `Q104` · `PLAC-02`
+- `Q105` · `PLAC-03`
+- `Q106` · `PLAC-04`
+- `Q107` · `PLAC-05`
+- `Q108` · `PLAC-06`
+
+Uzupełniono też flagę w dotychczasowych pytaniach `Q011`, `Q028`, `Q032`, `Q049`, `Q054`.
+
+Nowe klucze do `npm run voice:render`. Dla każdego identyfikatora od `Q069` do `Q108` włącznie są to obie kwestie, np. `pytania.Q069.pytanie` i `pytania.Q069.wyjasnienie`. Kolektor lektora dodał też klucze reguł, które po raz pierwszy są pierwszą regułą pytania.
+
+- `przepisy.KONTROLA-01.quiz`
+- `przepisy.MSC-03.quiz`
+- `przepisy.PLAC-02.quiz`
+- `przepisy.PLAC-03.quiz`
+- `przepisy.PLAC-04.quiz`
+- `przepisy.PLAC-05.quiz`
+- `przepisy.PLAC-06.quiz`
+- `przepisy.PP-03.quiz`
+- `przepisy.WYP-05.quiz`
+- `przepisy.WYP-06.quiz`
+
 ## Zakopane 2/2 — kampania (#142)
 
 - Do weryfikacji przed wydaniem pozostają oznaczone w danych `GDZIE-03b`, `GDZIE-11`, `PIER-05`, `SYG-02` i `MAN-08`, w tym ocena bezpiecznej drogi zatrzymania na spadku we mgle. Scenkę `PP-01`–`PP-03` obejmuje przegląd merytoryczny M07.

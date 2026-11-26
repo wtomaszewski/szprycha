@@ -49,12 +49,13 @@ export function licenceRequirements(
 }
 
 export function drawExamQuestions(content: GameContent, seed: number) {
-  // Reserve one question per module when the exam is long enough, then
-  // apportion the remaining slots by the size of the remaining module banks.
   const { pytania } = content.pytania;
   const limit = content.balans.licencja.teoria_pytan;
-  const minimum = Number(limit >= moduleId.options.length);
-  const reserved = minimum * moduleId.options.length;
+  const roadModules = moduleId.options.filter((module) => module !== 'M08');
+  const twoPerRoadModule = limit >= 2 * roadModules.length;
+  const minimum = twoPerRoadModule
+    ? 2
+    : Number(limit >= moduleId.options.length);
   const groups = moduleId.options.map((module, index) => {
     const questions = drawQuestions(
       pytania.filter(({ modul }) => modul === module),
@@ -63,16 +64,28 @@ export function drawExamQuestions(content: GameContent, seed: number) {
       content.balans.mastery,
       (seed + index) >>> 0,
     );
-    const quota =
-      pytania.length === reserved
-        ? 0
-        : ((questions.length - minimum) * (limit - reserved)) /
-          (pytania.length - reserved);
-    return { questions, quota, count: minimum + Math.floor(quota) };
+    const count = twoPerRoadModule && module === 'M08' ? 0 : minimum;
+    return { questions, count, remainder: 0 };
   });
-  const remaining = limit - groups.reduce((sum, { count }) => sum + count, 0);
-  const byRemainder = [...groups].sort((a, b) => (b.quota % 1) - (a.quota % 1));
-  for (const group of byRemainder.slice(0, remaining)) group.count++;
+
+  // Allocate the remaining seats in proportion to each remaining pool.
+  // Equal remainders keep the order of moduleId.options.
+  const reserved = groups.reduce((sum, { count }) => sum + count, 0);
+  const available = pytania.length - reserved;
+  const extra = limit - reserved;
+  let unassigned = extra;
+  if (extra > 0) {
+    for (const group of groups) {
+      const share = (group.questions.length - group.count) * extra;
+      const seats = Math.floor(share / available);
+      group.count += seats;
+      group.remainder = share % available;
+      unassigned -= seats;
+    }
+    const byRemainder = [...groups].sort((a, b) => b.remainder - a.remainder);
+    for (const group of byRemainder.slice(0, unassigned)) group.count++;
+  }
+
   const questions = groups.flatMap(({ questions, count }) =>
     questions.slice(0, count),
   );

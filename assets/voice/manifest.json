@@ -1870,6 +1870,10 @@
       "text": "Minuta przeglądu oszczędza godzinę naprawy.",
       "hash": "9066198c3b4c7d539c4ecfced2a3ac5a74e3d65c5867db124d8d09daacdb5eaf"
     },
+    "przepisy.KONTROLA-01.quiz": {
+      "text": "Przed jazdą sprawdź: hamulce, dzwonek, światła, odblask, opony, łańcuch i czy siodełko jest na dobrej wysokości.",
+      "hash": "1bc1959b26fb43f14a6e5260276b2602d50e822283d3191f46a153edc4bf8d05"
+    },
     "przepisy.MAN-01.feedback": {
       "text": "Przed zmianą kierunku albo pasa pokaż ręką, dokąd jedziesz.",
       "hash": "ef98a57898c0083bc0075c7c29bb44db35e590c947f120589a2df5d0d050cb84"
@@ -2002,6 +2006,10 @@
       "text": "Z bramy wyjeżdżamy powoli — za rogiem może iść pieszy.",
       "hash": "5d8d4e11282aa8293983182946da23f75d045618b4de051277f04256ab4ec184"
     },
+    "przepisy.MSC-03.quiz": {
+      "text": "Wyjeżdżając z bramy lub podwórka, zatrzymaj się przed chodnikiem, przepuść pieszych, potem pojazdy.",
+      "hash": "dfc0456b45c52fc168b0125c44b30a7fd8061cd4bb918baa6a99d5747c35b73c"
+    },
     "przepisy.MSC-04.feedback": {
       "text": "Gdy robi się ciemno lub słabo widać, włącz obie lampki.",
       "hash": "789dcd2e6777fbe7275bdacd6c7f7276b0292f896250985705b286042bef1343"
@@ -2110,21 +2118,41 @@
       "text": "Spokojnie i płynnie — slalom wygrywa ten, kto nie szarpie kierownicą.",
       "hash": "19b0bccb0b432b725317b0fc5c68c5455a418312e8d31c5de1feb98c0683e99f"
     },
+    "przepisy.PLAC-02.quiz": {
+      "text": "Przejedź slalom między pachołkami, nie potrącając żadnego.",
+      "hash": "b427449d80397f19c3339b5b0bd9c219dd8fd5a6204301c280061fda328bcf3d"
+    },
     "przepisy.PLAC-03.feedback": {
       "text": "Nie za wolno!",
       "hash": "f21127a5c1651520e65a1a5f4084e8f17fe7fb159014fe96d6cd03c79ddbdef7"
+    },
+    "przepisy.PLAC-03.quiz": {
+      "text": "Przejedź wąskim torem bez wyjeżdżania za linie.",
+      "hash": "1695e652d341ba61d4ef903676560fec482d52990f97f9a289373ef4e1aa0869"
     },
     "przepisy.PLAC-04.feedback": {
       "text": "Hamuj wcześniej i delikatniej — dojedziesz idealnie do linii.",
       "hash": "428dabb25a89e2e84213f112e4704f39e2732d5b12271e20ba493d43aff23ebf"
     },
+    "przepisy.PLAC-04.quiz": {
+      "text": "Zatrzymaj się dokładnie w wyznaczonym polu, hamując płynnie.",
+      "hash": "dde29fd135d367b7f42b73176ac93fef0443581ab6b963985e66447927c3e5c7"
+    },
     "przepisy.PLAC-05.feedback": {
       "text": "Najpierw spojrzenie przez ramię, potem ręka, potem jazda.",
       "hash": "8ba301ca7f4652643ad9a92e78518a79797383957a819d63741be9b8aa07a29c"
     },
+    "przepisy.PLAC-05.quiz": {
+      "text": "Ruszając, obejrzyj się przez lewe ramię i pokaż lewą ręką kierunek.",
+      "hash": "75a574c8d5d41f03ba2627b50a5639818a476c855068155f0ff24e2a0f4ced31"
+    },
     "przepisy.PLAC-06.feedback": {
       "text": "Ręka w bok, wzrok przed siebie — rower jedzie prosto, gdy Ty patrzysz prosto.",
       "hash": "2ae200c74db3888a08f1a883b4183a82c870b97add261e74273e2eff1eabfa3d"
+    },
+    "przepisy.PLAC-06.quiz": {
+      "text": "Pokaż ręką skręt i utrzymaj prosty tor jazdy jedną ręką na kierownicy.",
+      "hash": "61a5292314f20cc9ca64810cee71c64290c6808f01964091997b5effefbd71a8"
     },
     "przepisy.PP-01.feedback": {
       "text": "Ratownik, który sam wpadnie pod auto, nikomu nie pomoże.",
@@ -2145,6 +2173,10 @@
     "przepisy.PP-03.feedback": {
       "text": "Mów głośno i wyraźnie.",
       "hash": "6182991e47c969117d541de636bdb2ac25219bd24c9ee2e6da6bd3ed936def4a"
+    },
+    "przepisy.PP-03.quiz": {
+      "text": "Zawołaj dorosłego.",
+      "hash": "21cfb69a7fa3fb78170f635111c305488e00fb6605801ee48b64bd4cb0b93119"
     },
     "przepisy.PP-04.feedback": {
       "text": "Pozycja bezpieczna chroni drogi oddechowe.",
@@ -2214,9 +2246,17 @@
       "text": "Gdy słabo widać, włącz tylną czerwoną lampkę, żeby kierowcy widzieli Cię z daleka.",
       "hash": "76b5b117761a812577c4dcad4fa0e9b9d8e86927b890043e76dadab75b609198"
     },
+    "przepisy.WYP-05.quiz": {
+      "text": "Z tyłu: czerwone światło pozycyjne (może migać).",
+      "hash": "45e42d5c11b6b80e1c61e68b8d7cbc5eda87e6f2e838f71efcb7c4d25de838a4"
+    },
     "przepisy.WYP-06.feedback": {
       "text": "Kamizelka odblaskowa to supermoc widoczności.",
       "hash": "2a57fb7e02978a96f9474e98881885c8e9838f4a21d9646132327b7da91e7ad8"
+    },
+    "przepisy.WYP-06.quiz": {
+      "text": "Odblaski na pedałach, szprychach i kamizelka odblaskowa nie zawsze są obowiązkowe, ale bardzo pomagają po zmroku.",
+      "hash": "eacf46610b55048b8093c1821bc32e3f43dba98c28f47524265828109a3577a5"
     },
     "przepisy.ZNAK-A7.feedback": {
       "text": "Przy odwróconym trójkącie przepuść jadących drogą, na którą wjeżdżasz.",
@@ -2833,6 +2873,326 @@
     "pytania.Q068.wyjasnienie": {
       "text": "Przy wymijaniu zachowaj bezpieczny odstęp. Gdy jest ciasno, zjedź w prawo, zwolnij lub poczekaj.",
       "hash": "2a8800bcfad3dda628d7c68543d7701e795f8cf3aa147e645a5585ba88d59190"
+    },
+    "pytania.Q069.pytanie": {
+      "text": "Podczas sprawdzania roweru żadna z klamek nie zatrzymuje koła. Co robisz przed wyjazdem?",
+      "hash": "787cf9fef0d0efe89e8144d6ecb6c95e322c2da3afeb14b768ec0e76eec78cab"
+    },
+    "pytania.Q069.wyjasnienie": {
+      "text": "Rower potrzebuje co najmniej jednego skutecznego hamulca. Sprawdź jego działanie przed wyjazdem.",
+      "hash": "53d3e699bdceb3ebe2ca9e70ee0126a9f187eb2e52d8e17d7d771f36519190bb"
+    },
+    "pytania.Q070.pytanie": {
+      "text": "Kask przechyla się na bok, gdy obracasz głowę, choć pasek jest zapięty. Co robisz?",
+      "hash": "f1535ea23de372c8ac760425735088b69d10c03f5336e42a7e63c15ee7e611f6"
+    },
+    "pytania.Q070.wyjasnienie": {
+      "text": "Zapięty kask ma leżeć prosto i nie przesuwać się przy ruchach głowy.",
+      "hash": "7c8e47e6a223dc2670f9639ecf3aa05294ad7c6f76aa558caabd123d59013e3c"
+    },
+    "pytania.Q071.pytanie": {
+      "text": "Po zmroku widzisz, że z tyłu roweru jest czerwony odblask, ale lampka nie świeci. Czego brakuje?",
+      "hash": "5cc345f5c2855f52ad15e895ce0ffdb9839451ab3765e5aad7faedce76994acc"
+    },
+    "pytania.Q071.wyjasnienie": {
+      "text": "Odblask odbija cudze światło. Po zmroku z tyłu roweru ma też świecić czerwona lampka.",
+      "hash": "818717ec06f38e8effe4739a957f6ebb6339e2b5acb03621908ae82e19b2c162"
+    },
+    "pytania.Q072.pytanie": {
+      "text": "W rowerze zamiast dzwonka działa inny sygnał o łagodnym, wyraźnym dźwięku. Czy może zastąpić dzwonek?",
+      "hash": "6a3c5358f68ca8f19775816eecc207d1d1d80287b1aa7ee2e6113dfff4f1677f"
+    },
+    "pytania.Q072.wyjasnienie": {
+      "text": "Można używać dzwonka lub innego sygnału ostrzegawczego o nieprzeraźliwym dźwięku.",
+      "hash": "c0978cf3b54a7aed8687080afb6ec61e553b0aa13648592c696c59e90bb3237f"
+    },
+    "pytania.Q073.pytanie": {
+      "text": "Przed wieczorną jazdą obie lampki już świecą. Co dodatkowo pomoże innym dostrzec Cię z daleka?",
+      "hash": "5f29211d650b1357f9bcad9c4d47efd2c3dacad6b6cc242992a9cd286f13459a"
+    },
+    "pytania.Q073.wyjasnienie": {
+      "text": "Kamizelka odbija światło padające z reflektorów. Pomaga zauważyć Cię po zmroku.",
+      "hash": "219f91af18ed360d8a5161db558a1370c856673f8ad9202d9797d4ba61f28359"
+    },
+    "pytania.Q074.pytanie": {
+      "text": "Hamulce i lampki działają. Co jeszcze warto sprawdzić w rowerze przed wyjazdem?",
+      "hash": "bf3beffa3681d6a25ddfd44949670e72475eb08d18d50f5b5a357328e4e99fdc"
+    },
+    "pytania.Q074.wyjasnienie": {
+      "text": "Przegląd przed jazdą obejmuje również sprawdzenie opon i łańcucha.",
+      "hash": "64bbb02d81b31c39e9eeb461b1800fa8c7422729ca638723427d2a46f64f6826"
+    },
+    "pytania.Q075.pytanie": {
+      "text": "Z tyłu roweru działa czerwona lampka, a obok jest czerwony trójkątny odblask. Co trzeba zmienić?",
+      "hash": "6b39d6ff61ef140e72ac2c2d6db67275e7555563df6d48db509fd9d4be0f836d"
+    },
+    "pytania.Q075.wyjasnienie": {
+      "text": "Z tyłu potrzebny jest czerwony odblask o kształcie innym niż trójkąt, także wtedy, gdy lampka działa.",
+      "hash": "924b4ee39dfc167fda502241d7b587241133aad0b14db11875b7b924f0337607"
+    },
+    "pytania.Q076.pytanie": {
+      "text": "Jedziesz poza miastem. Zaczyna się droga dla rowerów w Twoim kierunku, a obok nadal jest równe pobocze. Gdzie kontynuujesz jazdę?",
+      "hash": "b574fdfeda9761d580d2f613775e42783ad11d8a6b0a8acd01f36a5268ea6135"
+    },
+    "pytania.Q076.wyjasnienie": {
+      "text": "Pobocze służy do jazdy, gdy brakuje drogi i pasa dla rowerów. Tutaj masz drogę dla rowerów w swoim kierunku.",
+      "hash": "eb8ca40b2d486d2393b8ab92a491f4c1ee37be4e86c6d792eddf5525139f5c7a"
+    },
+    "pytania.Q077.pytanie": {
+      "text": "Na wspólnej drodze dla pieszych i rowerów kilka osób idzie obok siebie i nie ma dość miejsca na przejazd. Jak reagujesz?",
+      "hash": "3b1d83d0a9d9059da8053aa97e1f94af007d54f739a5eafddacd0390f3e10fa2"
+    },
+    "pytania.Q077.wyjasnienie": {
+      "text": "Na wspólnej drodze ustępuj pieszym. Jeśli brakuje miejsca, poczekaj na bezpieczny przejazd.",
+      "hash": "f60d0106f1b6d7f28234a95727c3784c87b917ef545484fe96b9c8259e1f49dc"
+    },
+    "pytania.Q078.pytanie": {
+      "text": "W śluzie rowerowej stoisz przed samochodami. Na odpowiednim dla Ciebie świetle nadal jest czerwone. Co robisz?",
+      "hash": "e17677569b9d9eb32c593dfcf9006e02af5332e1733db080e81cf6c7709256b4"
+    },
+    "pytania.Q078.wyjasnienie": {
+      "text": "Śluza pozwala czekać przed samochodami. Możesz z niej ruszyć dopiero, gdy sygnał na to pozwala.",
+      "hash": "ccaf320210ddc149f5eeb1c488a737fd6950bbdfc08cafa95bdc3e120c93b931"
+    },
+    "pytania.Q079.pytanie": {
+      "text": "Na ulicy w strefie zamieszkania jedziesz wolniej niż 20 km/h. Przed Tobą ludzie idą środkiem. Jak reagujesz?",
+      "hash": "e9845e085f7ad53f1c08297ec9789b4dd3ee4e80954537af4a9c34187783d7d3"
+    },
+    "pytania.Q079.wyjasnienie": {
+      "text": "W strefie zamieszkania piesi mają pierwszeństwo na całej szerokości drogi.",
+      "hash": "d744de14e0d030998b60dfcfe5eb3f9e471aa4fcc675431a764d2968b7680c04"
+    },
+    "pytania.Q080.pytanie": {
+      "text": "Przy wjeździe w jednokierunkową ulicę widzisz ten znak z tabliczką. Dla Twojego kierunku jest wyznaczony kontrapas. Którędy jedziesz?",
+      "hash": "fd99b46862b8ed9005d78b86acdccd65488c43a8f1830fe60115ae645e5a800b"
+    },
+    "pytania.Q080.wyjasnienie": {
+      "text": "Tabliczka pozwala wjechać rowerem, a kontrapas wyznaczony dla Twojego kierunku wskazuje miejsce do jazdy.",
+      "hash": "c70894052ee0efada0b5fa05411ff5dbc7fd2e8ae8eea7905644d8438ccb4c40"
+    },
+    "pytania.Q081.pytanie": {
+      "text": "Zielone światło zmienia się na żółte, a do linii masz dość miejsca, żeby spokojnie zahamować. Co robisz?",
+      "hash": "6bf761ac94e4a26f3fbe84fe1651d426512a907806399c35f151252650d5b2af"
+    },
+    "pytania.Q081.wyjasnienie": {
+      "text": "Na żółtym świetle zostań przed linią, jeśli możesz się przed nią bezpiecznie zatrzymać.",
+      "hash": "9a4f818df02122105066b1bc95b3b04b90e9204954c5ff38a48f7f0fde5d21b7"
+    },
+    "pytania.Q082.pytanie": {
+      "text": "Jedziesz po rondzie i chcesz zjechać następnym wylotem. Kiedy i jak pokazujesz zamiar zjazdu?",
+      "hash": "58084daba16d78f65e084172c3ece4b443aecfb558abd32bb84d933119066eb7"
+    },
+    "pytania.Q082.wyjasnienie": {
+      "text": "Zjazd z ronda sygnalizuj prawą ręką odpowiednio wcześnie, zanim zmienisz tor jazdy.",
+      "hash": "9d4a76ce41823263620e7acd956d70ed2b67e418a224791c0f9ab4c8d02479fb"
+    },
+    "pytania.Q083.pytanie": {
+      "text": "Na skrzyżowanie równorzędne dojeżdżasz rowerem. Z lewej jedzie tramwaj, a z prawej samochód. Ich tory jazdy przecinają się. Kto jedzie pierwszy?",
+      "hash": "293d78111a2d16dd34ef824db1218808eb46d7b9d0508da8cb6bbacb3e082060"
+    },
+    "pytania.Q083.wyjasnienie": {
+      "text": "Na skrzyżowaniu równorzędnym tramwaj ma pierwszeństwo przed rowerem i samochodem.",
+      "hash": "6555777c12cc736382098da5326133a0f6f052b0c5ae01d3c06c2dbbc5919019"
+    },
+    "pytania.Q084.pytanie": {
+      "text": "Na parkingu w strefie ruchu ruszasz z miejsca postojowego. Alejką obok jedzie rower. Co robisz?",
+      "hash": "9c44423d6b8fc74b0114432a56f64b5d8ce6dd5562d68a766272376e7677854d"
+    },
+    "pytania.Q084.wyjasnienie": {
+      "text": "Ruszając z miejsca, włączasz się do ruchu. Ustąp osobom, które już jadą alejką.",
+      "hash": "239353c0fafeccfa0a85b8fd2eb6a52030ae46fdecc6378739da3b079985004d"
+    },
+    "pytania.Q085.pytanie": {
+      "text": "Na zjeździe gęstnieje mgła. Widzisz coraz krótszy odcinek drogi przed sobą. Jak dostosowujesz jazdę?",
+      "hash": "b3edd8f7a292f180376d6b5470955fbdcb5e6c9d9503b71cb1fd013f7dcc4b58"
+    },
+    "pytania.Q085.wyjasnienie": {
+      "text": "Na zjeździe we mgle zwolnij, żeby dało się zatrzymać na odcinku, który widzisz.",
+      "hash": "61d1207e4dc60d1254e23be47c3b3eaec8426d535291926f3dadf335667b4193"
+    },
+    "pytania.Q086.pytanie": {
+      "text": "Jedziesz obok torów. Samochód przed Tobą zwalnia przy prawej krawędzi, a między nim i krawężnikiem jest ciasno. Co robisz?",
+      "hash": "c97e2a0414b7d4baf18eda0463e3a59ec09d7f7bc6d50f57fd477de724253c36"
+    },
+    "pytania.Q086.wyjasnienie": {
+      "text": "Przy wyprzedzaniu z prawej trzeba zachować ostrożność. W ciasnym miejscu bezpieczniej poczekać za autem.",
+      "hash": "ab821d6423e05c20fe3f565fc74f8ae7bc72c934f1486aa79dcdb887eacbf92d"
+    },
+    "pytania.Q087.pytanie": {
+      "text": "Zbliżasz się do przejazdu kolejowego bez zapór. Widzisz nadjeżdżający pociąg. Co robisz?",
+      "hash": "58fcd1a9bab276450bb82c1bd6d696d7c00161340d766d31872c9ec5b0e04b55"
+    },
+    "pytania.Q087.wyjasnienie": {
+      "text": "Nadjeżdżający pociąg trzeba przepuścić także na przejeździe bez zapór.",
+      "hash": "2b99213093a8dec4c3021e3e537b6057ba64650d67655e15aa1e4d4d6bcf1b2e"
+    },
+    "pytania.Q088.pytanie": {
+      "text": "Za przejazdem kolejowym stoją samochody. Nie ma miejsca, by cały rower zmieścił się za torami. Gdzie czekasz?",
+      "hash": "1eef8cf6471a3aeb3bdaed6768d459c6d2fd70cf6f3ba63b79cdc7c340c504b9"
+    },
+    "pytania.Q088.wyjasnienie": {
+      "text": "Wjedź na przejazd dopiero, gdy możesz przejechać cały odcinek bez zatrzymania na torach.",
+      "hash": "4ebb4acaf8f0f0ff4ac7a8645d64460f2649f7072043beba07ca507c010719d7"
+    },
+    "pytania.Q089.pytanie": {
+      "text": "Pociąg już przejechał, zapory jeszcze się podnoszą, a czerwone światła wciąż migają. Co robisz?",
+      "hash": "695920bf8e679a3b6381465264bfedc07e96b45fa4aff01da3f11681077aa8b0"
+    },
+    "pytania.Q089.wyjasnienie": {
+      "text": "Migające światła oznaczają, że nadal trzeba czekać, nawet gdy pociąg już minął przejazd.",
+      "hash": "f9b1cda4cedf27ee005eee16a99026dfb58b5d34481b44d67b5d2dd39d4464fa"
+    },
+    "pytania.Q090.pytanie": {
+      "text": "Tramwaj stoi na przystanku bez wysepki. Z chodnika ktoś rusza przez jezdnię do otwartych drzwi. Jak reagujesz?",
+      "hash": "9a838931a1dd1b187da1fd132740944728e4f95a023af3fe602cf22236ac120f"
+    },
+    "pytania.Q090.wyjasnienie": {
+      "text": "Przy przystanku bez wysepki zatrzymaj się, aby przepuścić także osoby idące z chodnika do tramwaju.",
+      "hash": "b00de9f702a2a55fd59962a8f18ca0c7754ce27883170dd51916ab5ed5862ea5"
+    },
+    "pytania.Q091.pytanie": {
+      "text": "Przy przystanku bez wysepki jedna osoba wysiadająca z tramwaju jest już na chodniku, a następna właśnie schodzi na jezdnię. Kiedy ruszasz?",
+      "hash": "bfab94f6a52f798b0d16c89b3bfd33648ed523f7a14f61679df8f53a14af8cac"
+    },
+    "pytania.Q091.wyjasnienie": {
+      "text": "Poczekaj, aż osoby wysiadające przejdą przez jezdnię i można będzie bezpiecznie ruszyć.",
+      "hash": "5aef902cf1dcef1264bd3ff97834eaaf34bb628d3dc8c1234f73b8d892150b9e"
+    },
+    "pytania.Q092.pytanie": {
+      "text": "Z bramy wyjeżdżasz w stronę ulicy z torami tramwajowymi. Przed jezdnią jest chodnik, którym ktoś idzie. W jakiej kolejności działasz?",
+      "hash": "dbd49d68e3c7a6e482840144c79af9702fdcc5155b1042d0a7dd1700aca589a8"
+    },
+    "pytania.Q092.wyjasnienie": {
+      "text": "Przed chodnikiem zatrzymaj się i przepuść pieszych. Wjeżdżając na jezdnię, ustąp jadącym pojazdom.",
+      "hash": "d354a31015a95fbfc18053e66d2b94fb0f2c69b915f6229efc5923b6f3084d25"
+    },
+    "pytania.Q093.pytanie": {
+      "text": "W dzień wpadasz w gęstą mgłę. Jak używasz lampek, gdy droga jest słabo widoczna?",
+      "hash": "03a19d2f3bea34e50646a432ffec4f7849bcd1ba6ca1b651a1d5e3dcf5f386f0"
+    },
+    "pytania.Q093.wyjasnienie": {
+      "text": "We mgle włącz światła z przodu i z tyłu. Dzięki temu widać rower z obu stron.",
+      "hash": "e5c63d3dcf5e20e850b5ca16cca26eaf00ce38b792ef142eb809cb743e2d17ec"
+    },
+    "pytania.Q094.pytanie": {
+      "text": "Zaczyna padać, a mokry zjazd kończy się zakrętem. Co robisz przed zjazdem?",
+      "hash": "c2fae420e44ba3a429d5644b42b907cad428a5f7db901f6547c1dae9e772f622"
+    },
+    "pytania.Q094.wyjasnienie": {
+      "text": "W deszczu włącz światła. Na zjeździe dobierz prędkość tak, żeby móc się bezpiecznie zatrzymać.",
+      "hash": "ce3ddfab5f009f30dc15b054bc804b3507c61c47bf59d622fdc8c81aedda9a4d"
+    },
+    "pytania.Q095.pytanie": {
+      "text": "Dwie kolumny rowerowe mają jechać tą samą drogą. Jaki odstęp zostawia druga kolumna?",
+      "hash": "93ba9941be23309df06c1d2d0e29d1584b7ccde7c130f92893e559caf7623fa9"
+    },
+    "pytania.Q095.wyjasnienie": {
+      "text": "Między kolumnami rowerowymi zostaw co najmniej 200 metrów odstępu.",
+      "hash": "ada6deca82ac43f1e6df8689a44a9e1612d4f5ef431c460a433e34dc949882f1"
+    },
+    "pytania.Q096.pytanie": {
+      "text": "Na wycieczkę rusza 18 osób na rowerach. Jak ustawić grupę, żeby zachować zasady jazdy w kolumnach?",
+      "hash": "4cb8868e4642b0563c8b2e4bc5226aa6b8fbceddf2739769649e08e3594b85e8"
+    },
+    "pytania.Q096.wyjasnienie": {
+      "text": "W jednej kolumnie może jechać najwyżej 15 rowerów. Między kolumnami trzeba zostawić co najmniej 200 metrów.",
+      "hash": "a54a4bc270b0e24e8108e9540bcf4937a5521a06e49de7bd184f7eb3026d7f15"
+    },
+    "pytania.Q097.pytanie": {
+      "text": "Widzisz upadek przed zakrętem, którym nadal jadą rowery. Gdzie odstawiasz swój rower?",
+      "hash": "08c37c371c0401dd62e6ec7afadc6efb99d36b1158df44be352f8dcd5aece8a2"
+    },
+    "pytania.Q097.wyjasnienie": {
+      "text": "Odstaw rower poza drogą, żeby nie stwarzał kolejnego zagrożenia.",
+      "hash": "7752a2602ad9913abc379d7296ece92430c76c0cde5115dedbb8cbe9b1fc8608"
+    },
+    "pytania.Q098.pytanie": {
+      "text": "Po upadku na drodze stoisz już w bezpiecznym miejscu. Zbliżają się kolejne rowery, a w pobliżu jest ktoś dorosły. Co robisz?",
+      "hash": "c9018278a41d586b668a3c7166caae18fc4a97aaa7321590b6eb509bc1f07ca4"
+    },
+    "pytania.Q098.wyjasnienie": {
+      "text": "Ostrzeż innych z bezpiecznego miejsca i poproś dorosłą osobę o pomoc.",
+      "hash": "68fee263e34e547e4dcf1fcea2c486b54ee236582d293e6b49aaaf42d77372b3"
+    },
+    "pytania.Q099.pytanie": {
+      "text": "Dzwonisz pod 112 z drogi bez adresu. Obok widać mostek i słupek z numerem. Jak opisujesz miejsce?",
+      "hash": "6a8a6eca9f0976e7c1b13e2ff1d81402516d9026a0d1c0cd919a59fd486dc145"
+    },
+    "pytania.Q099.wyjasnienie": {
+      "text": "Gdy nie znasz adresu zdarzenia, opisz widoczne punkty orientacyjne, które pomogą znaleźć miejsce.",
+      "hash": "04d7fa17e5f54d043f24f8356216e9a3bc52c79dfa1838e2b457a6351652c1a4"
+    },
+    "pytania.Q100.pytanie": {
+      "text": "Podajesz przez telefon lokalizację i liczbę osób potrzebujących pomocy. Osoba odbierająca zgłoszenie zadaje kolejne pytanie. Co robisz?",
+      "hash": "f4c6bf030e1ed0ea604e005f7731107185eb339587e4150b63c7edcb5354b678"
+    },
+    "pytania.Q100.wyjasnienie": {
+      "text": "Odpowiadaj na pytania i zostań na linii, aż osoba odbierająca zgłoszenie zakończy rozmowę.",
+      "hash": "0f4472dfd6f7085c6523272ebab1449f5940b61b0bdceacee0dc632aff9130c6"
+    },
+    "pytania.Q101.pytanie": {
+      "text": "Ktoś upada obok drogi. Miejsce jest już bezpieczne, a niedaleko stoi dorosła osoba. Kogo prosisz o pomoc?",
+      "hash": "10b28c416a77b82253b2b5312adc40c60d2478c2ac7687f851412ae0d6821b04"
+    },
+    "pytania.Q101.wyjasnienie": {
+      "text": "Po zabezpieczeniu miejsca upadku zawołaj dorosłą osobę, która jest w pobliżu.",
+      "hash": "2a7869ee355ae0f45f300238cfc25109eac5abfd13e2c4070796535548c83206"
+    },
+    "pytania.Q102.pytanie": {
+      "text": "Dzwonisz pod 112. Osoba odbierająca zna już miejsce. Po upadku pomocy potrzebują dwie osoby. Jaką informację dodajesz?",
+      "hash": "77ef1d81e473693d10dd79be106f6429cad53fb7ee5aa4cb08d5756a3fa51151"
+    },
+    "pytania.Q102.wyjasnienie": {
+      "text": "Oprócz miejsca podaj, co się stało i ile osób potrzebuje pomocy.",
+      "hash": "94225c3f03b695d2ddcafc7756498a0ec9c5ecb3e9ad4ef7bdc9d0d6e38908de"
+    },
+    "pytania.Q103.pytanie": {
+      "text": "Dorosła osoba zostaje z dwiema osobami po upadku i prosi Cię o wezwanie pomocy. Masz telefon i stoisz bezpiecznie. Co robisz?",
+      "hash": "5ca365f8e790aee2e9db45469fc415b9c2be0ff1ccfc043b2fa542d81d7c6a2a"
+    },
+    "pytania.Q103.wyjasnienie": {
+      "text": "Gdy dorosła osoba jest przy potrzebujących pomocy, możesz z bezpiecznego miejsca wezwać pomoc pod numerem 112.",
+      "hash": "60a04042870f3c76c03278904f243a5120a0d497ef7fd0dfd4387418917d1870"
+    },
+    "pytania.Q104.pytanie": {
+      "text": "Na placu przejeżdżasz slalom. Jedno koło dotyka pachołka, który się chwieje, ale nie upada. Jak oceniasz przejazd?",
+      "hash": "f4a234abb5bdbcc37e794810d5ef3a4aec529b6b9f3ef463c09212c276f9bdc7"
+    },
+    "pytania.Q104.wyjasnienie": {
+      "text": "W tym ćwiczeniu przejedź między pachołkami bez potrącenia żadnego z nich.",
+      "hash": "b37fba5c2d8b213b0f30c11a29ffb6ef554b73bea6399cc7d609fbbe9509c1c9"
+    },
+    "pytania.Q105.pytanie": {
+      "text": "Na wąskim torze czujesz, że rower zaczyna się chwiać przy bardzo wolnej jeździe. Jaki jest cel ćwiczenia?",
+      "hash": "85ba686ce43481a03475dee45dc65fc8d00076afeb2a9631c57b2fa26c265f2f"
+    },
+    "pytania.Q105.wyjasnienie": {
+      "text": "Jedź równym tempem, które pozwala zachować równowagę. Na tym torze obydwa koła mają zostać między liniami.",
+      "hash": "687e362cd8337222492e2224c7a64d2a40b4562eae46492764f2dd7e89b73a34"
+    },
+    "pytania.Q106.pytanie": {
+      "text": "Na placu zbliżasz się do prostokąta, w którym masz stanąć. Jak najłatwiej zatrzymać się w jego granicach?",
+      "hash": "677c1bec9aec10740eb110dd078504b131c777be6ac43e39e4e4db529e68301e"
+    },
+    "pytania.Q106.wyjasnienie": {
+      "text": "Płynne hamowanie z wyprzedzeniem pomaga zatrzymać rower dokładnie wewnątrz pola.",
+      "hash": "7d59b33d84e5b377e42887128ed1ef1c24fc17100d4b7a6aeb2d8767c8a969b1"
+    },
+    "pytania.Q107.pytanie": {
+      "text": "Na placu czekasz przy krawędzi i masz ruszyć po zasygnalizowaniu manewru. Jaka jest kolejność?",
+      "hash": "57e99503ef43040e0281c9264b6d8fc5a25673e89949db66ec437241eaabf31d"
+    },
+    "pytania.Q107.wyjasnienie": {
+      "text": "W tym ćwiczeniu najpierw sprawdź, co jest za Tobą, potem pokaż kierunek i dopiero rusz.",
+      "hash": "a8b6a55705561f29310ff0f1c64d47d1251adea62708039a026cf9018d06a291"
+    },
+    "pytania.Q108.pytanie": {
+      "text": "Na prostym torze ćwiczysz pokazywanie skrętu w prawo. Jak przejeżdżasz odcinek, sygnalizując ręką?",
+      "hash": "9fab1d3b4a8900a3fff520087364466ad4c6f1105074aa73cf7f01edb1833101"
+    },
+    "pytania.Q108.wyjasnienie": {
+      "text": "Podczas sygnalizowania prowadź rower prosto, trzymając drugą rękę na kierownicy.",
+      "hash": "bc10d58b18a71d7ad6d76da7dc14e4afafb6e328fdbd1ab50a1d4c4105aeb7c4"
     }
   },
   "recorded": {
