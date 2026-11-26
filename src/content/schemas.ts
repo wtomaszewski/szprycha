@@ -66,36 +66,94 @@ export const signsSchema = z.strictObject({
     )
     .min(1),
 });
-export const questionsSchema = z.strictObject({
-  stan_prawny: date,
-  uwaga: text,
-  pytania: z
-    .array(
-      z
-        .strictObject({
-          id: text.regex(/^Q\d+$/),
-          modul: moduleId,
-          przepisy: z.array(id).min(1),
-          poziom: z.number().int().min(1).max(3),
-          pytanie: text,
-          odpowiedzi: z.array(text).min(2),
-          poprawna: count,
-          wyjasnienie: text.max(140),
-          zrodlo: text,
-          obrazek: text.optional(),
-          weryfikacja: z.boolean().optional(),
-        })
-        .refine((q) => q.poprawna < q.odpowiedzi.length, {
-          path: ['poprawna'],
-          message: 'Answer index out of range',
-        })
-        .refine((q) => q.obrazek !== undefined || !describesSign(q.pytanie), {
-          path: ['obrazek'],
-          message: 'Question about a sign requires an illustration (obrazek)',
-        }),
-    )
-    .min(1),
-});
+const minimumQuestions = {
+  M01: 12,
+  M02: 12,
+  M03: 12,
+  M04: 12,
+  M05: 12,
+  M06: 12,
+  M07: 10,
+  M08: 6,
+} as const satisfies Record<z.infer<typeof moduleId>, number>;
+
+export const questionsSchema = z
+  .strictObject({
+    stan_prawny: date,
+    uwaga: text,
+    pytania: z
+      .array(
+        z
+          .strictObject({
+            id: text.regex(/^Q\d+$/),
+            modul: moduleId,
+            przepisy: z.array(id).min(1),
+            poziom: z.number().int().min(1).max(3),
+            pytanie: text,
+            odpowiedzi: z.array(text).min(2),
+            poprawna: count,
+            wyjasnienie: text.max(140),
+            zrodlo: text,
+            obrazek: text.optional(),
+            weryfikacja: z.boolean().optional(),
+          })
+          .refine((q) => q.poprawna < q.odpowiedzi.length, {
+            path: ['poprawna'],
+            message: 'Answer index out of range',
+          })
+          .refine((q) => q.obrazek !== undefined || !describesSign(q.pytanie), {
+            path: ['obrazek'],
+            message: 'Question about a sign requires an illustration (obrazek)',
+          }),
+      )
+      .min(108),
+  })
+  .superRefine(({ pytania }, ctx) => {
+    const prompts = new Set<string>();
+    const answerCounts = new Map<number, number>();
+    for (const [index, question] of pytania.entries()) {
+      const prompt = question.pytanie
+        .normalize('NFKC')
+        .toLocaleLowerCase('pl')
+        .replace(/[^\p{L}\p{N}\p{M}]+/gu, ' ')
+        .trim();
+      // A sign-identification question includes the illustration in its prompt.
+      const key = `${prompt}|${question.obrazek ?? ''}`;
+      if (prompts.has(key))
+        ctx.addIssue({
+          code: 'custom',
+          path: ['pytania', index, 'pytanie'],
+          message: `Duplicate question text: ${question.id}`,
+        });
+      prompts.add(key);
+      answerCounts.set(
+        question.poprawna,
+        (answerCounts.get(question.poprawna) ?? 0) + 1,
+      );
+    }
+    for (const module of moduleId.options) {
+      const questions = pytania.filter(({ modul }) => modul === module);
+      if (questions.length < minimumQuestions[module])
+        ctx.addIssue({
+          code: 'custom',
+          path: ['pytania'],
+          message: `${module} requires at least ${minimumQuestions[module]} questions`,
+        });
+      if (new Set(questions.map(({ poziom }) => poziom)).size !== 3)
+        ctx.addIssue({
+          code: 'custom',
+          path: ['pytania'],
+          message: `${module} requires all three difficulty levels`,
+        });
+    }
+    for (const [index, correct] of answerCounts)
+      if (correct / pytania.length > 0.4)
+        ctx.addIssue({
+          code: 'custom',
+          path: ['pytania'],
+          message: `Correct answer index ${index} exceeds 40% of the bank`,
+        });
+  });
 
 function describesSign(prompt: string) {
   // An unsigned junction describes a traffic situation without a sign to show.
@@ -354,7 +412,7 @@ export const contentSchema = z
       data.misje.map((mission) => mission.id),
       ['misje'],
     );
-    const rules = new Map(data.przepisy.przepisy.map((r) => [r.id, r.modul]));
+    const rules = new Map(data.przepisy.przepisy.map((r) => [r.id, r]));
     const signs = new Map(data.znaki.znaki.map((s) => [s.kod, s.kategoria]));
     function reference(value: string, path: (string | number)[]) {
       if (!rules.has(value))
@@ -371,7 +429,7 @@ export const contentSchema = z
     );
     data.pytania.pytania.forEach((q, i) => {
       const path = ['pytania', 'pytania', i];
-      const primaryModule = rules.get(q.przepisy[0]!);
+      const primaryModule = rules.get(q.przepisy[0]!)?.modul;
       if (primaryModule && primaryModule !== q.modul)
         ctx.addIssue({
           code: 'custom',
@@ -380,6 +438,15 @@ export const contentSchema = z
         });
       unique(q.przepisy, [...path, 'przepisy']);
       q.przepisy.forEach((r, j) => reference(r, [...path, 'przepisy', j]));
+      if (
+        !q.weryfikacja &&
+        q.przepisy.some((rule) => rules.get(rule)?.weryfikacja)
+      )
+        ctx.addIssue({
+          code: 'custom',
+          path: [...path, 'weryfikacja'],
+          message: 'Question must inherit the review flag from its rules',
+        });
       if (q.obrazek) {
         const codes = illustratedSigns(q.obrazek);
         unique(codes, [...path, 'obrazek']);
@@ -395,13 +462,6 @@ export const contentSchema = z
             });
       }
     });
-    for (const module of moduleId.options)
-      if (!data.pytania.pytania.some(({ modul }) => modul === module))
-        ctx.addIssue({
-          code: 'custom',
-          path: ['pytania', 'pytania'],
-          message: `Missing quiz questions for ${module}`,
-        });
     const questionRules = new Set(
       data.pytania.pytania.flatMap((q) => q.przepisy),
     );

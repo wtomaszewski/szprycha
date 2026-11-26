@@ -71,7 +71,7 @@ Dla każdej reguły `ruleId`:
 
 **Egzamin „Licencja Szprychy”** (wartości w `balans.yaml`, domyślnie wzorowane na egzaminie szkolnym):
 - Warunki dostępu obejmują ukończenie kampanii jednego miasta, rangę Mistrz Szlaku i mastery każdego modułu ≥70.
-- Teoria: 25 pytań losowanych proporcjonalnie z modułów, próg **80%**.
+- Teoria obejmuje 25 pytań losowanych bez powtórzeń. M01–M07 mają po dwa zagwarantowane miejsca. Pozostałe miejsca są dzielone proporcjonalnie do liczby pozostałych pytań w każdym module, w tym M08. Ziarno ustala wybór i kolejność pytań. Próg zaliczenia to **80%**.
 - Plac: wynik to suma punktów z sześciu elementów. Domyślnie czysty element daje **1 pkt**, drobny błąd **0,5 pkt**, a poważny błąd **0 pkt**. Decyduje najpoważniejszy błąd w danym elemencie. Próg **90%** to **5,4 z 6 pkt**, więc jeden drobny błąd daje zaliczenie (5,5 pkt), a dwa drobne lub jeden poważny dają 5 pkt. Parametry w `content/balans.yaml` opisują próbę w grze i wymagają porównania z aktualnymi kryteriami egzaminu szkolnego.
 - Przejazd kontrolny: trasa w mieście, 0 błędów `major`, max 2 `minor`.
 - Po zaliczeniu wszystkich części gracz może wydrukować certyfikat z nickiem, datą wydania i wynikiem.

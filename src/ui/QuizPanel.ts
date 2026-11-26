@@ -1,5 +1,5 @@
 import { audio } from '../audio/GameAudio';
-import { questionVoiceLine, quizExplanationLine } from '../audio/voiceLines';
+import { questionVoiceLine } from '../audio/voiceLines';
 import portrait from '../../assets/generated/portraits/sierzant_ola.png?url';
 import { moduleId, type GameContent } from '../content/schemas';
 import { ui } from '../core/presentation';
@@ -40,9 +40,6 @@ function heading(text: string) {
 
 export function quizPanel(progress: MissionProgress, content: GameContent) {
   const { store } = progress;
-  const rules = new Map(
-    content.przepisy.przepisy.map((rule) => [rule.id, rule]),
-  );
   const dialog = document.createElement('dialog');
   dialog.className = 'game-dialog quiz-panel';
   dialog.setAttribute('aria-labelledby', 'quiz-title');
@@ -160,7 +157,7 @@ export function quizPanel(progress: MissionProgress, content: GameContent) {
         );
         if (!correct)
           feedback.append(paragraph(question.odpowiedzi[question.poprawna]!));
-        const detail = quizExplanationLine(rules.get(question.przepisy[0]!)!);
+        const detail = questionVoiceLine(question, 'wyjasnienie');
         feedback.append(paragraph(detail.text));
         audio.read('lesson', detail);
         if (result.achievements.length) audio.play('unlock');

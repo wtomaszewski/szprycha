@@ -1,5 +1,6 @@
 import { IDBFactory } from 'fake-indexeddb';
 import { expect, it } from 'vitest';
+import { moduleId } from '../../src/content/schemas';
 import {
   ProgressStore,
   type ProgressProfile,
@@ -45,14 +46,29 @@ function exam(): ExamResult {
   };
 }
 
-it('draws a deterministic set of distinct questions spanning all modules regardless of the review schedule', () => {
+it('reserves two questions per road module and apportions the rest by remaining pool size', () => {
   const questions = drawExamQuestions(content, 42);
   expect(questions).toHaveLength(25);
   expect(new Set(questions.map(({ id }) => id)).size).toBe(25);
-  expect(new Set(questions.map(({ modul }) => modul)).size).toBe(8);
+  expect(
+    Object.fromEntries(
+      moduleId.options.map((module) => [
+        module,
+        questions.filter(({ modul }) => modul === module).length,
+      ]),
+    ),
+  ).toEqual({ M01: 4, M02: 4, M03: 3, M04: 3, M05: 4, M06: 3, M07: 3, M08: 1 });
   expect(drawExamQuestions(content, 42)).toEqual(questions);
-  expect(drawExamQuestions(content, 43)).not.toEqual(questions);
-  for (const limit of [1, content.pytania.pytania.length]) {
+  expect(
+    drawExamQuestions(content, 43)
+      .map(({ id }) => id)
+      .sort(),
+  ).not.toEqual(questions.map(({ id }) => id).sort());
+});
+
+it.each([1, 8, 14, content.pytania.pytania.length])(
+  'draws exactly %i distinct questions when the exam length is configured',
+  (limit) => {
     const config = {
       ...content,
       balans: {
@@ -60,11 +76,21 @@ it('draws a deterministic set of distinct questions spanning all modules regardl
         licencja: { ...balans.licencja, teoria_pytan: limit },
       },
     };
-    expect(
-      new Set(drawExamQuestions(config, 42).map(({ id }) => id)).size,
-    ).toBe(limit);
-  }
-});
+    const questions = drawExamQuestions(config, 42);
+    expect(questions).toHaveLength(limit);
+    expect(new Set(questions.map(({ id }) => id)).size).toBe(limit);
+    const modules = new Set(questions.map(({ modul }) => modul));
+    if (limit === 8) expect(modules.size).toBe(8);
+    if (limit === 14) {
+      expect(modules.size).toBe(7);
+      expect(modules.has('M08')).toBe(false);
+      for (const module of modules)
+        expect(questions.filter(({ modul }) => modul === module)).toHaveLength(
+          2,
+        );
+    }
+  },
+);
 
 it('accepts the configured threshold inclusively and requires the full practical exam', () => {
   const result = exam();

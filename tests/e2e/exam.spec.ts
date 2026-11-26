@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { findDisplayedQuestion } from './question-dialog';
 import pl from '../../i18n/pl.json' with { type: 'json' };
+import { moduleId } from '../../src/content/schemas';
 import {
   FIXED_STEP,
   type DriveInput,
@@ -110,6 +111,11 @@ test('earns, prints and reopens the licence entirely offline', async ({
       .getByRole('button', { name: question.odpowiedzi[index], exact: true })
       .click();
   }
+  const questions = content.pytania.pytania.filter(({ id }) => seen.has(id));
+  for (const module of moduleId.options.filter((module) => module !== 'M08'))
+    expect(
+      questions.filter(({ modul }) => modul === module).length,
+    ).toBeGreaterThanOrEqual(2);
   await expect(panel.getByText('20 / 25', { exact: false })).toBeVisible();
   await expect(await profile(page)).toEqual(before);
   await panel.getByRole('button', { name: exam.startPractice }).click();

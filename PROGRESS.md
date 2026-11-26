@@ -16,6 +16,11 @@ Stan na 26.11.2026.
 | M9     | PWA, Capacitor, Android/iOS                 | Ukończony (M9a–M9c). PWA offline, układ mobilny oraz projekty Android i iOS.                 |
 | M10    | Rankingi online i panel klasy (opcjonalnie) | Ukończony technicznie                                                                        |
 
+## Bank pytań i egzamin teoretyczny (#187)
+
+- Bank ma 108 autorskich pytań, w tym 40 nowych o wyposażeniu, sytuacjach drogowych, wzywaniu pomocy i ćwiczeniach na placu. Każdy moduł zawiera pytania na wszystkich trzech poziomach.
+- W egzaminie na 25 pytań moduły M01–M07 dostają po dwa miejsca. Pozostałe pytania są dobierane proporcjonalnie, z udziałem M08. Quiz wyświetla wyjaśnienie konkretnej odpowiedzi także bez nagrania lektora.
+
 ## Kontrola licencji przed wydaniem (#184)
 
 - Kontrola offline obejmuje natywne zależności Androida i iOS. Manifest zawiera też przejrzane zależności przechodnie z `releaseRuntimeClasspath`. Noty natywne trafiają do paczki mobilnej i ekranu „O grze”.

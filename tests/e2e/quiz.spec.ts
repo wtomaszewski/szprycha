@@ -41,7 +41,7 @@ async function reachCourierRank(page: Page) {
   );
 }
 
-test('solves both sign illustrations offline and retains scheduled reviews after reload', async ({
+test('solves illustrated questions and shows explanations offline, then retains scheduled reviews', async ({
   page,
   context,
 }, testInfo) => {
@@ -127,14 +127,14 @@ test('solves both sign illustrations offline and retains scheduled reviews after
         exact: true,
       }),
     ).toBeVisible();
+    await expect(
+      dialog.getByText(question.wyjasnienie, { exact: true }),
+    ).toBeVisible();
     if (isComposition) {
       await expect(
         dialog.getByText(question.odpowiedzi[question.poprawna]!, {
           exact: true,
         }),
-      ).toBeVisible();
-      await expect(
-        dialog.getByText(/rowerem wolno tam wjechać pod prąd/),
       ).toBeVisible();
     }
     await dialog

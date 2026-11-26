@@ -20,7 +20,10 @@ describe('canonical content', () => {
     expect(contentFiles).toContain('wyzwania.yaml');
     expect(content.przepisy.przepisy.length).toBeGreaterThan(0);
     expect(content.znaki.znaki.length).toBeGreaterThanOrEqual(40);
-    expect(content.pytania.pytania.length).toBeGreaterThanOrEqual(50);
+    expect(content.pytania.pytania.length).toBeGreaterThanOrEqual(108);
+    expect(
+      new Set(content.pytania.pytania.map(({ zrodlo }) => zrodlo)),
+    ).toEqual(new Set(['wlasne']));
     expect(content.osiagniecia.osiagniecia.length).toBeGreaterThan(0);
     expect(content.misje.some(({ id }) => id === 'WAW-T-01')).toBe(true);
   });
@@ -67,6 +70,53 @@ describe('canonical content', () => {
     );
     expect(() => contentSchema.parse(content)).toThrow(
       'Missing quiz question for ZNAK-P23',
+    );
+  });
+  it('rejects duplicate IDs and normalizes question text before checking for duplicates', async () => {
+    const content = await readContent();
+    const [first, second] = content.pytania.pytania;
+    const secondId = second!.id;
+    second!.id = first!.id;
+    expect(() => contentSchema.parse(content)).toThrow(
+      `Duplicate ID: ${first!.id}`,
+    );
+    second!.id = secondId;
+    second!.pytanie = first!.pytanie
+      .toLocaleUpperCase('pl')
+      .normalize('NFD')
+      .replaceAll(' ', '   ')
+      .replace('?', ' !');
+    expect(() => contentSchema.parse(content)).toThrow(
+      'Duplicate question text',
+    );
+  });
+  it('requires enough questions in every module and all three difficulty levels', () => {
+    const questions = structuredClone(bank);
+    questions.pytania.find(({ modul }) => modul === 'M08')!.modul = 'M01';
+    expect(() => questionsSchema.parse(questions)).toThrow(
+      'M08 requires at least 6 questions',
+    );
+    for (const question of questions.pytania)
+      if (question.modul === 'M01' && question.poziom === 3)
+        question.poziom = 2;
+    expect(() => questionsSchema.parse(questions)).toThrow(
+      'M01 requires all three difficulty levels',
+    );
+  });
+  it('rejects a bank where a correct answer index exceeds 40%', () => {
+    const questions = structuredClone(bank);
+    for (const question of questions.pytania) question.poprawna = 1;
+    expect(() => questionsSchema.parse(questions)).toThrow(
+      'Correct answer index 1 exceeds 40%',
+    );
+  });
+  it('requires a review flag when even a secondary rule needs verification', async () => {
+    const content = await readContent();
+    const question = content.pytania.pytania.find(({ id }) => id === 'Q049')!;
+    expect(question.weryfikacja).toBe(true);
+    delete question.weryfikacja;
+    expect(() => contentSchema.parse(content)).toThrow(
+      'Question must inherit the review flag from its rules',
     );
   });
   it('validates each sign and the order of a quiz illustration composition', async () => {
